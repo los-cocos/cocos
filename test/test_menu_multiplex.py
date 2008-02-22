@@ -110,6 +110,5 @@ class ScoreMenu(Menu):
 if __name__ == "__main__":
     director.init( resizable=True)
     director.run( Scene( 
-            MultiplexLayer( 
-                ( MainMenu(), OptionMenu(), ScoreMenu() )
-            ) ) )
+            MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
+            ) ) 

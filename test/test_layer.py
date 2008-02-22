@@ -25,16 +25,16 @@ class SpriteLayer ( AnimationLayer ):
         sprite4 = ActionSprite('grossinis_sister1.png')
         sprite5 = ActionSprite('grossinis_sister1.png')
 
-        sprite1.translate = Point3( 320,240,0)
+        sprite1.place( 320,240,0)
 
-        sprite4.translate = Point3( 20,180,0)
-        sprite5.translate = Point3( 20,180,0)
+        sprite4.place( 20,180,0)
+        sprite5.place( 20,180,0)
 
         self.add( sprite1 )
         self.add( sprite4 )
         self.add( sprite5 )
 
-        mo = move( Point3(600,0,0), 10 )
+        mo = move( (600,0,0), 10 )
 
         ro = rotate( 300, 5 )
         ro2 = rotate( -300, 5 )
@@ -143,6 +143,5 @@ if __name__ == "__main__":
     director.init( resizable=True)
     director.run( Scene( 
             SpriteLayer(),
-            MultiplexLayer( 
-                ( MainMenu(), OptionMenu(), ScoreMenu() ) )
+            MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
             ) )

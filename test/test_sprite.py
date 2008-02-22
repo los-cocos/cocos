@@ -28,13 +28,13 @@ class SpriteLayer ( AnimationLayer ):
         sprite4 = ActionSprite('grossinis_sister1.png')
         sprite5 = ActionSprite('grossinis_sister1.png')
 
-        sprite1.translate = Point3( 320,240,0)
+        sprite1.place(320,240,0)
 
-        sprite2.translate = Point3( 20,180,0)
-        sprite3.translate = Point3( 20,180,0)
+        sprite2.place(20,180,0)
+        sprite3.place(20,180,0)
 
-        sprite4.translate = Point3( 20,180,0)
-        sprite5.translate = Point3( 20,180,0)
+        sprite4.place(20,180,0)
+        sprite5.place(20,180,0)
 
         self.add( sprite1 )
         self.add( sprite2 )
@@ -42,10 +42,10 @@ class SpriteLayer ( AnimationLayer ):
         self.add( sprite4 )
         self.add( sprite5 )
 
-        go = goto( Point3(320,240,0), 5 )
-        go2 = goto( Point3(40,80,0), 5 )
+        go = goto( (320,240,0), 5 )
+        go2 = goto( (40,80,0), 5 )
 
-        mo = move( Point3(600,0,0), 10 )
+        mo = move( (600,0,0), 10 )
 
         ro = rotate( 300, 5 )
         ro2 = rotate( -300, 5 )

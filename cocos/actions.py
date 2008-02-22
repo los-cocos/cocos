@@ -1,4 +1,8 @@
 #
+# Los Cocos: An extension for Pyglet
+# http://code.google.com/p/los-cocos/
+#
+#
 # Based on actions.py from Grossini's Hell
 #
 
@@ -45,6 +49,9 @@ class ActionSprite( object ):
         glScalef(self.scale, self.scale, 1)
         self.sprite.blit( -self.sprite.width / 2, - self.sprite.height / 2 )
         glPopMatrix()
+
+    def place( self, *coords ):
+        self.translate = Point3( *coords )
 
 
 class ActionCreator:

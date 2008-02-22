@@ -1,3 +1,7 @@
+#
+# Los Cocos: An extension for Pyglet
+# http://code.google.com/p/los-cocos/
+#
 """
 Layer class and subclasses
 """
@@ -57,7 +61,7 @@ class Layer(object):
 # show one at the time
 #
 class MultiplexLayer( Layer ):
-    def __init__( self, layers ):
+    def __init__( self, *layers ):
         super( MultiplexLayer, self ).__init__()
 
         self.layers = layers 

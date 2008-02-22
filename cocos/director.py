@@ -1,3 +1,7 @@
+#
+# Los Cocos: An extension for Pyglet
+# http://code.google.com/p/los-cocos/
+#
 """
 Framework to handle game's logic
 """

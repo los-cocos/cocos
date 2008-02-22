@@ -108,7 +108,7 @@ class Vector2:
             return self.x == other[0] and \
                    self.y == other[1]
 
-    def __neq__(self, other):
+    def __ne__(self, other):
         return not self.__eq__(other)
 
     def __nonzero__(self):
@@ -308,7 +308,7 @@ class Vector3:
                    self.y == other[1] and \
                    self.z == other[2]
 
-    def __neq__(self, other):
+    def __ne__(self, other):
         return not self.__eq__(other)
 
     def __nonzero__(self):
@@ -353,9 +353,16 @@ class Vector3:
 
     def __add__(self, other):
         if isinstance(other, Vector3):
-            return Vector3(self.x + other.x,
-                           self.y + other.y,
-                           self.z + other.z)
+            # Vector + Vector -> Vector
+            # Vector + Point -> Point
+            # Point + Point -> Vector
+            if self.__class__ is other.__class__:
+                _class = Vector3
+            else:
+                _class = Point3
+            return _class(self.x + other.x,
+                          self.y + other.y,
+                          self.z + other.z)
         else:
             assert hasattr(other, '__len__') and len(other) == 3
             return Vector3(self.x + other[0],
@@ -376,6 +383,13 @@ class Vector3:
 
     def __sub__(self, other):
         if isinstance(other, Vector3):
+            # Vector - Vector -> Vector
+            # Vector - Point -> Point
+            # Point - Point -> Vector
+            if self.__class__ is other.__class__:
+                _class = Vector3
+            else:
+                _class = Point3
             return Vector3(self.x - other.x,
                            self.y - other.y,
                            self.z - other.z)
@@ -398,10 +412,20 @@ class Vector3:
                            other.z - self[2])
 
     def __mul__(self, other):
-        assert type(other) in (int, long, float)
-        return Vector3(self.x * other,
-                       self.y * other,
-                       self.z * other)
+        if isinstance(other, Vector3):
+            # TODO component-wise mul/div in-place and on Vector2; docs.
+            if self.__class__ is Point3 or other.__class__ is Point3:
+                _class = Point3
+            else:
+                _class = Vector3
+            return _class(self.x * other.x,
+                          self.y * other.y,
+                          self.z * other.z)
+        else: 
+            assert type(other) in (int, long, float)
+            return Vector3(self.x * other,
+                           self.y * other,
+                           self.z * other)
 
     __rmul__ = __mul__
 
@@ -551,26 +575,48 @@ class Matrix3:
          self.c, self.g, self.k) = L
 
     def __mul__(self, other):
-        A = self
-        B = other
         if isinstance(other, Matrix3):
+            # Caching repeatedly accessed attributes in local variables
+            # apparently increases performance by 20%.  Attrib: Will McGugan.
+            Aa = self.a
+            Ab = self.b
+            Ac = self.c
+            Ae = self.e
+            Af = self.f
+            Ag = self.g
+            Ai = self.i
+            Aj = self.j
+            Ak = self.k
+            Ba = other.a
+            Bb = other.b
+            Bc = other.c
+            Be = other.e
+            Bf = other.f
+            Bg = other.g
+            Bi = other.i
+            Bj = other.j
+            Bk = other.k
             C = Matrix3()
-            C.a = A.a * B.a + A.b * B.e + A.c * B.i
-            C.b = A.a * B.b + A.b * B.f + A.c * B.j
-            C.c = A.a * B.c + A.b * B.g + A.c * B.k
-            C.e = A.e * B.a + A.f * B.e + A.g * B.i
-            C.f = A.e * B.b + A.f * B.f + A.g * B.j
-            C.g = A.e * B.c + A.f * B.g + A.g * B.k
-            C.i = A.i * B.a + A.j * B.e + A.k * B.i
-            C.j = A.i * B.b + A.j * B.f + A.k * B.j
-            C.k = A.i * B.c + A.j * B.g + A.k * B.k
+            C.a = Aa * Ba + Ab * Be + Ac * Bi
+            C.b = Aa * Bb + Ab * Bf + Ac * Bj
+            C.c = Aa * Bc + Ab * Bg + Ac * Bk
+            C.e = Ae * Ba + Af * Be + Ag * Bi
+            C.f = Ae * Bb + Af * Bf + Ag * Bj
+            C.g = Ae * Bc + Af * Bg + Ag * Bk
+            C.i = Ai * Ba + Aj * Be + Ak * Bi
+            C.j = Ai * Bb + Aj * Bf + Ak * Bj
+            C.k = Ai * Bc + Aj * Bg + Ak * Bk
             return C
         elif isinstance(other, Point2):
+            A = self
+            B = other
             P = Point2(0, 0)
             P.x = A.a * B.x + A.b * B.y + A.c
             P.y = A.e * B.x + A.f * B.y + A.g
             return P
         elif isinstance(other, Vector2):
+            A = self
+            B = other
             V = Vector2(0, 0)
             V.x = A.a * B.x + A.b * B.y 
             V.y = A.e * B.x + A.f * B.y 
@@ -582,24 +628,34 @@ class Matrix3:
 
     def __imul__(self, other):
         assert isinstance(other, Matrix3)
-        a = self.a
-        b = self.b
-        c = self.c
-        e = self.e
-        f = self.f
-        g = self.g
-        i = self.i
-        j = self.j
-        k = self.k
-        self.a = a * other.a + b * other.e + c * other.i
-        self.b = a * other.b + b * other.f + c * other.j
-        self.c = a * other.c + b * other.g + c * other.k
-        self.e = e * other.a + f * other.e + g * other.i
-        self.f = e * other.b + f * other.f + g * other.j
-        self.g = e * other.c + f * other.g + g * other.k
-        self.i = i * other.a + j * other.e + k * other.i
-        self.j = i * other.b + j * other.f + k * other.j
-        self.k = i * other.c + j * other.g + k * other.k
+        # Cache attributes in local vars (see Matrix3.__mul__).
+        Aa = self.a
+        Ab = self.b
+        Ac = self.c
+        Ae = self.e
+        Af = self.f
+        Ag = self.g
+        Ai = self.i
+        Aj = self.j
+        Ak = self.k
+        Ba = other.a
+        Bb = other.b
+        Bc = other.c
+        Be = other.e
+        Bf = other.f
+        Bg = other.g
+        Bi = other.i
+        Bj = other.j
+        Bk = other.k
+        self.a = Aa * Ba + Ab * Be + Ac * Bi
+        self.b = Aa * Bb + Ab * Bf + Ac * Bj
+        self.c = Aa * Bc + Ab * Bg + Ac * Bk
+        self.e = Ae * Ba + Af * Be + Ag * Bi
+        self.f = Ae * Bb + Af * Bf + Ag * Bj
+        self.g = Ae * Bc + Af * Bg + Ag * Bk
+        self.i = Ai * Ba + Aj * Be + Ak * Bi
+        self.j = Ai * Bb + Aj * Bf + Ak * Bj
+        self.k = Ai * Bc + Aj * Bg + Ak * Bk
         return self
 
     def identity(self):
@@ -709,34 +765,69 @@ class Matrix4:
          self.d, self.h, self.l, self.p) = L
 
     def __mul__(self, other):
-        A = self
-        B = other
         if isinstance(other, Matrix4):
+            # Cache attributes in local vars (see Matrix3.__mul__).
+            Aa = self.a
+            Ab = self.b
+            Ac = self.c
+            Ad = self.d
+            Ae = self.e
+            Af = self.f
+            Ag = self.g
+            Ah = self.h
+            Ai = self.i
+            Aj = self.j
+            Ak = self.k
+            Al = self.l
+            Am = self.m
+            An = self.n
+            Ao = self.o
+            Ap = self.p
+            Ba = other.a
+            Bb = other.b
+            Bc = other.c
+            Bd = other.d
+            Be = other.e
+            Bf = other.f
+            Bg = other.g
+            Bh = other.h
+            Bi = other.i
+            Bj = other.j
+            Bk = other.k
+            Bl = other.l
+            Bm = other.m
+            Bn = other.n
+            Bo = other.o
+            Bp = other.p
             C = Matrix4()
-            C.a = A.a * B.a + A.b * B.e + A.c * B.i + A.d * B.m
-            C.b = A.a * B.b + A.b * B.f + A.c * B.j + A.d * B.n
-            C.c = A.a * B.c + A.b * B.g + A.c * B.k + A.d * B.o
-            C.d = A.a * B.d + A.b * B.h + A.c * B.l + A.d * B.p
-            C.e = A.e * B.a + A.f * B.e + A.g * B.i + A.h * B.m
-            C.f = A.e * B.b + A.f * B.f + A.g * B.j + A.h * B.n
-            C.g = A.e * B.c + A.f * B.g + A.g * B.k + A.h * B.o
-            C.h = A.e * B.d + A.f * B.h + A.g * B.l + A.h * B.p
-            C.i = A.i * B.a + A.j * B.e + A.k * B.i + A.l * B.m
-            C.j = A.i * B.b + A.j * B.f + A.k * B.j + A.l * B.n
-            C.k = A.i * B.c + A.j * B.g + A.k * B.k + A.l * B.o
-            C.l = A.i * B.d + A.j * B.h + A.k * B.l + A.l * B.p
-            C.m = A.m * B.a + A.n * B.e + A.o * B.i + A.p * B.m
-            C.n = A.m * B.b + A.n * B.f + A.o * B.j + A.p * B.n
-            C.o = A.m * B.c + A.n * B.g + A.o * B.k + A.p * B.o
-            C.p = A.m * B.d + A.n * B.h + A.o * B.l + A.p * B.p
+            C.a = Aa * Ba + Ab * Be + Ac * Bi + Ad * Bm
+            C.b = Aa * Bb + Ab * Bf + Ac * Bj + Ad * Bn
+            C.c = Aa * Bc + Ab * Bg + Ac * Bk + Ad * Bo
+            C.d = Aa * Bd + Ab * Bh + Ac * Bl + Ad * Bp
+            C.e = Ae * Ba + Af * Be + Ag * Bi + Ah * Bm
+            C.f = Ae * Bb + Af * Bf + Ag * Bj + Ah * Bn
+            C.g = Ae * Bc + Af * Bg + Ag * Bk + Ah * Bo
+            C.h = Ae * Bd + Af * Bh + Ag * Bl + Ah * Bp
+            C.i = Ai * Ba + Aj * Be + Ak * Bi + Al * Bm
+            C.j = Ai * Bb + Aj * Bf + Ak * Bj + Al * Bn
+            C.k = Ai * Bc + Aj * Bg + Ak * Bk + Al * Bo
+            C.l = Ai * Bd + Aj * Bh + Ak * Bl + Al * Bp
+            C.m = Am * Ba + An * Be + Ao * Bi + Ap * Bm
+            C.n = Am * Bb + An * Bf + Ao * Bj + Ap * Bn
+            C.o = Am * Bc + An * Bg + Ao * Bk + Ap * Bo
+            C.p = Am * Bd + An * Bh + Ao * Bl + Ap * Bp
             return C
         elif isinstance(other, Point3):
+            A = self
+            B = other
             P = Point3(0, 0, 0)
             P.x = A.a * B.x + A.b * B.y + A.c * B.z + A.d
             P.y = A.e * B.x + A.f * B.y + A.g * B.z + A.h
             P.z = A.i * B.x + A.j * B.y + A.k * B.z + A.l
             return P
         elif isinstance(other, Vector3):
+            A = self
+            B = other
             V = Vector3(0, 0, 0)
             V.x = A.a * B.x + A.b * B.y + A.c * B.z
             V.y = A.e * B.x + A.f * B.y + A.g * B.z
@@ -749,38 +840,55 @@ class Matrix4:
 
     def __imul__(self, other):
         assert isinstance(other, Matrix4)
-        a = self.a
-        b = self.b
-        c = self.c
-        d = self.d
-        e = self.e
-        f = self.f
-        g = self.g
-        h = self.h
-        i = self.i
-        j = self.j
-        k = self.k
-        l = self.l
-        m = self.m
-        n = self.n
-        o = self.o
-        p = self.p
-        self.a = a * other.a + b * other.e + c * other.i + d * other.m
-        self.b = a * other.b + b * other.f + c * other.j + d * other.n
-        self.c = a * other.c + b * other.g + c * other.k + d * other.o
-        self.d = a * other.d + b * other.h + c * other.l + d * other.p
-        self.e = e * other.a + f * other.e + g * other.i + h * other.m
-        self.f = e * other.b + f * other.f + g * other.j + h * other.n
-        self.g = e * other.c + f * other.g + g * other.k + h * other.o
-        self.h = e * other.d + f * other.h + g * other.l + h * other.p
-        self.i = i * other.a + j * other.e + k * other.i + l * other.m
-        self.j = i * other.b + j * other.f + k * other.j + l * other.n
-        self.k = i * other.c + j * other.g + k * other.k + l * other.o
-        self.l = i * other.d + j * other.h + k * other.l + l * other.p
-        self.m = m * other.a + n * other.e + o * other.i + p * other.m
-        self.n = m * other.b + n * other.f + o * other.j + p * other.n
-        self.o = m * other.c + n * other.g + o * other.k + p * other.o
-        self.p = m * other.d + n * other.h + o * other.l + p * other.p
+        # Cache attributes in local vars (see Matrix3.__mul__).
+        Aa = self.a
+        Ab = self.b
+        Ac = self.c
+        Ad = self.d
+        Ae = self.e
+        Af = self.f
+        Ag = self.g
+        Ah = self.h
+        Ai = self.i
+        Aj = self.j
+        Ak = self.k
+        Al = self.l
+        Am = self.m
+        An = self.n
+        Ao = self.o
+        Ap = self.p
+        Ba = other.a
+        Bb = other.b
+        Bc = other.c
+        Bd = other.d
+        Be = other.e
+        Bf = other.f
+        Bg = other.g
+        Bh = other.h
+        Bi = other.i
+        Bj = other.j
+        Bk = other.k
+        Bl = other.l
+        Bm = other.m
+        Bn = other.n
+        Bo = other.o
+        Bp = other.p
+        self.a = Aa * Ba + Ab * Be + Ac * Bi + Ad * Bm
+        self.b = Aa * Bb + Ab * Bf + Ac * Bj + Ad * Bn
+        self.c = Aa * Bc + Ab * Bg + Ac * Bk + Ad * Bo
+        self.d = Aa * Bd + Ab * Bh + Ac * Bl + Ad * Bp
+        self.e = Ae * Ba + Af * Be + Ag * Bi + Ah * Bm
+        self.f = Ae * Bb + Af * Bf + Ag * Bj + Ah * Bn
+        self.g = Ae * Bc + Af * Bg + Ag * Bk + Ah * Bo
+        self.h = Ae * Bd + Af * Bh + Ag * Bl + Ah * Bp
+        self.i = Ai * Ba + Aj * Be + Ak * Bi + Al * Bm
+        self.j = Ai * Bb + Aj * Bf + Ak * Bj + Al * Bn
+        self.k = Ai * Bc + Aj * Bg + Ak * Bk + Al * Bo
+        self.l = Ai * Bd + Aj * Bh + Ak * Bl + Al * Bp
+        self.m = Am * Ba + An * Be + Ao * Bi + Ap * Bm
+        self.n = Am * Bb + An * Bf + Ao * Bj + Ap * Bn
+        self.o = Am * Bc + An * Bg + Ao * Bk + Ap * Bo
+        self.p = Am * Bd + An * Bh + Ao * Bl + Ap * Bp
         return self
 
     def identity(self):
@@ -955,30 +1063,38 @@ class Quaternion:
 
     def __mul__(self, other):
         if isinstance(other, Quaternion):
-            A = self
-            B = other
+            Ax = self.x
+            Ay = self.y
+            Az = self.z
+            Aw = self.w
+            Bx = other.x
+            By = other.y
+            Bz = other.z
+            Bw = other.w
             Q = Quaternion()
-            Q.x =  A.x * B.w + A.y * B.z - A.z * B.y + A.w * B.x    
-            Q.y = -A.x * B.z + A.y * B.w + A.z * B.x + A.w * B.y
-            Q.z =  A.x * B.y - A.y * B.x + A.z * B.w + A.w * B.z
-            Q.w = -A.x * B.x - A.y * B.y - A.z * B.z + A.w * B.w
+            Q.x =  Ax * Bw + Ay * Bz - Az * By + Aw * Bx    
+            Q.y = -Ax * Bz + Ay * Bw + Az * Bx + Aw * By
+            Q.z =  Ax * By - Ay * Bx + Az * Bw + Aw * Bz
+            Q.w = -Ax * Bx - Ay * By - Az * Bz + Aw * Bw
             return Q
         elif isinstance(other, Vector3):
-            V = other
             w = self.w
             x = self.x
             y = self.y
             z = self.z
+            Vx = other.x
+            Vy = other.y
+            Vz = other.z
             return other.__class__(\
-               w * w * V.x + 2 * y * w * V.z - 2 * z * w * V.y + \
-               x * x * V.x + 2 * y * x * V.y + 2 * z * x * V.z - \
-               z * z * V.x - y * y * V.x,
-               2 * x * y * V.x + y * y * V.y + 2 * z * y * V.z + \
-               2 * w * z * V.x - z * z * V.y + w * w * V.y - \
-               2 * x * w * V.z - x * x * V.y,
-               2 * x * z * V.x + 2 * y * z * V.y + \
-               z * z * V.z - 2 * w * y * V.x - y * y * V.z + \
-               2 * w * x * V.y - x * x * V.z + w * w * V.z)
+               w * w * Vx + 2 * y * w * Vz - 2 * z * w * Vy + \
+               x * x * Vx + 2 * y * x * Vy + 2 * z * x * Vz - \
+               z * z * Vx - y * y * Vx,
+               2 * x * y * Vx + y * y * Vy + 2 * z * y * Vz + \
+               2 * w * z * Vx - z * z * Vy + w * w * Vy - \
+               2 * x * w * Vz - x * x * Vy,
+               2 * x * z * Vx + 2 * y * z * Vy + \
+               z * z * Vz - 2 * w * y * Vx - y * y * Vz + \
+               2 * w * x * Vy - x * x * Vz + w * w * Vz)
         else:
             other = other.copy()
             other._apply_transform(self)
@@ -986,14 +1102,18 @@ class Quaternion:
 
     def __imul__(self, other):
         assert isinstance(other, Quaternion)
-        x = self.x
-        y = self.y
-        z = self.z
-        w = self.w
-        self.x =  x * other.w + y * other.z - z * other.y + w * other.x    
-        self.y = -x * other.z + y * other.w + z * other.x + w * other.y
-        self.z =  x * other.y - y * other.x + z * other.w + w * other.z
-        self.w = -x * other.x - y * other.y - z * other.z + w * other.w
+        Ax = self.x
+        Ay = self.y
+        Az = self.z
+        Aw = self.w
+        Bx = other.x
+        By = other.y
+        Bz = other.z
+        Bw = other.w
+        self.x =  Ax * Bw + Ay * Bz - Az * By + Aw * Bx    
+        self.y = -Ax * Bz + Ay * Bw + Az * Bx + Aw * By
+        self.z =  Ax * By - Ay * Bx + Az * Bw + Aw * Bz
+        self.w = -Ax * Bx - Ay * By - Az * Bz + Aw * Bw
         return self
 
     def __abs__(self):
@@ -1431,6 +1551,9 @@ class LineSegment2(Line2):
     def __abs__(self):
         return abs(self.v)
 
+    def magnitude_squared(self):
+        return self.v.magnitude_squared()
+
     def _swap(self):
         # used by connect methods to switch order of points
         self.p = self.p2
@@ -1545,7 +1668,7 @@ def _connect_line3_plane(L, P):
     u = (P.k - P.n.dot(L.p)) / d
     if not L._u_in(u):
         # intersects out of range, choose nearest endpoint
-        u = max(min(u, 1.0, 0.0))
+        u = max(min(u, 1.0), 0.0)
         return _connect_point3_plane(Point3(L.p.x + u * L.v.x,
                                             L.p.y + u * L.v.y,
                                             L.p.z + u * L.v.z), P)
@@ -1663,7 +1786,7 @@ class Point3(Vector3, Geometry):
         return _intersect_point3_sphere(self, other)
 
     def connect(self, other):
-        other._connect_point3(self)
+        return other._connect_point3(self)
 
     def _connect_point3(self, other):
         if self != other:
@@ -1713,8 +1836,9 @@ class Line3:
         else:
             raise AttributeError, '%r' % (args,)
         
-        if not self.v:
-            raise AttributeError, 'Line has zero-length vector'
+        # XXX This is annoying.
+        #if not self.v:
+        #    raise AttributeError, 'Line has zero-length vector'
 
     def __copy__(self):
         return self.__class__(self.p, self.v)
@@ -1783,6 +1907,9 @@ class LineSegment3(Line3):
     def __abs__(self):
         return abs(self.v)
 
+    def magnitude_squared(self):
+        return self.v.magnitude_squared()
+
     def _swap(self):
         # used by connect methods to switch order of points
         self.p = self.p2
@@ -1849,13 +1976,14 @@ class Plane:
                    isinstance(args[1], Point3) and \
                    isinstance(args[2], Point3)
             self.n = (args[1] - args[0]).cross(args[2] - args[0])
+            self.n.normalize()
             self.k = self.n.dot(args[0])
         elif len(args) == 2:
             if isinstance(args[0], Point3) and isinstance(args[1], Vector3):
-                self.n = args[1].copy()
+                self.n = args[1].normalized()
                 self.k = self.n.dot(args[0])
             elif isinstance(args[0], Vector3) and type(args[1]) == float:
-                self.n = args[0].copy()
+                self.n = args[0].normalized()
                 self.k = args[1]
             else:
                 raise AttributeError, '%r' % (args,)
