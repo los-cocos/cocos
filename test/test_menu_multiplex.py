@@ -1,3 +1,8 @@
+#
+# Los Cocos: Multi-Menu Example
+# http://code.google.com/p/los-cocos/
+#
+
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))

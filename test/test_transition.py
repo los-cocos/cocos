@@ -1,6 +1,6 @@
-
 #
-# framework libs
+# Los Cocos: Transition Example
+# http://code.google.com/p/los-cocos/
 #
 
 import sys
