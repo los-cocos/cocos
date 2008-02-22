@@ -1,6 +1,5 @@
 
 import actions
-import anims
 import director
 import effect
 import euclid
