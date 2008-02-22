@@ -8,6 +8,8 @@ from pyglet import clock
 from pyglet import media
 from pyglet.gl import *
 
+__all__ = ['director']
+
 class Director(event.EventDispatcher):
     """
     scene = is the scene that is running now
@@ -144,7 +146,7 @@ class Director(event.EventDispatcher):
         In Fullscreen mode the resolution is different from the Window mode
         but the size is emulated.
         """
-        return ( self._window_original_height, self._window_original_height)
+        return ( self._window_original_width, self._window_original_height)
         
     def enable_alpha_blending( self ):
         """
@@ -169,7 +171,7 @@ class Director(event.EventDispatcher):
         x_diff = self._window_original_width / float( self.window.width - self._offset_x * 2 )
         y_diff = self._window_original_height / float( self.window.height - self._offset_y * 2 )
 
-        adjust_x = (self.window.width * x_diff - self._window_original_widht ) / 2
+        adjust_x = (self.window.width * x_diff - self._window_original_width ) / 2
         adjust_y = (self.window.height * y_diff - self._window_original_height ) / 2
 
         return ( int( x_diff * x) - adjust_x,   int( y_diff * y ) - adjust_y )
@@ -193,7 +195,8 @@ class Director(event.EventDispatcher):
         glLoadIdentity()
         glOrtho(0, self._window_original_width, 0, self._window_original_height, -1, 1)
         glMatrixMode(gl.GL_MODELVIEW)
-    
+
+
 director = Director()
 Director.register_event_type('on_push')
 Director.register_event_type('on_pop')

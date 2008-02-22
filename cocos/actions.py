@@ -8,8 +8,6 @@ from euclid import *
 from pyglet import image
 from pyglet.gl import *
 
-import foo
-
 class ActionSprite( object ):
     def __init__( self, img ):
         self.sprite = image.load( img )

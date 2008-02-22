@@ -1,5 +1,4 @@
 #
-#
 # Menu class for pyglet
 #
 # Ideas borrowed from:
@@ -15,9 +14,10 @@ from pyglet import window
 from pyglet.window import key
 from pyglet.gl import *
 
-from new_api import *
+from layer import *
+from director import *
 
-__all__ = [ 'Menu', 'MenuItem', 'ToggleMenuItem' ]
+__all__ = [ 'Menu', 'MenuItem', 'ToggleMenuItem', 'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM' ]
 
 #
 # Class Menu
@@ -128,16 +128,11 @@ class Menu(Layer):
         item.selected_color = self.font_items_selected_color
         self.items.append( item )
 
-    # overriden method from Scene
-    def draw( self ):
+    # overriden method from Layer
+    def step( self, dt ):
         self.title_text.draw()
         for i in self.items:
-            i.draw()
-
-
-    def tick( self, dt ):
-        for i in self.items:
-            i.tick( dt )
+            i.step(dt)
 
     def build_items( self ):
         """build_items() -> None
@@ -149,18 +144,6 @@ class Menu(Layer):
         self.selected_index = 0
         self.items[ self.selected_index ].selected = True
 
-
-    #
-    # Called when the menu will appear
-    #
-    def enter( self ):
-        director.get_window().push_handlers( self.on_key_press, self.on_mouse_motion, self.on_mouse_release )
-
-    #
-    # Called when the menu will disappear
-    #
-    def exit( self ):
-        director.get_window().pop_handlers()
 
     #
     # Called everytime a key is pressed
@@ -188,7 +171,7 @@ class Menu(Layer):
         if symbol in (key.DOWN, key.UP):
             self.items[ old_idx ].selected = False
             self.items[ self.selected_index ].selected = True 
-            self.sound.play()
+#            self.sound.play()
             return True
 
         return ret
@@ -207,13 +190,6 @@ class Menu(Layer):
                 self.items[ self.selected_index ].selected = False
                 i.selected = True
                 self.selected_index = idx
-
-    #
-    # Called everytime you press escape
-    #
-    def on_quit( self ):
-        pass        # override in subclases
-
 
 #
 # MenuItem
@@ -261,14 +237,11 @@ class MenuItem( object ):
         return (x1,y1,x2,y2)
 
 
-    def draw( self ):
+    def step( self, dt ):
         if self.selected:
             self.text_selected.draw()
         else:
             self.text.draw()
-
-    def tick( self, dt ):
-        pass
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ENTER and self.activate_func:
@@ -312,10 +285,6 @@ class ToggleMenuItem( MenuItem ):
 
     def _get_label(self):
         return self.toggle_label + (self.value and ': ON' or ': OFF')
-
-    def tick( self, dt ):
-        # useful to animate the items
-        pass
 
     def on_key_press(self, symbol, modifiers):
         if symbol in ( key.LEFT, key.RIGHT, key.ENTER):
