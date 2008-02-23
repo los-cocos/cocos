@@ -12,6 +12,19 @@ from euclid import *
 from pyglet import image
 from pyglet.gl import *
 
+__all__ = [ 'ActionSprite',                     # base class
+            'place','move', 'goto',
+            'call',
+            'rotate','scale',
+            'delay', 'random_delay',
+            'timewarp','linear',
+            'jump','sin',
+            'bezier',
+            'sequence','spawn',
+            'reverse',
+            'repeat','random_repeat',
+            ]
+
 class ActionSprite( object ):
     def __init__( self, img ):
         self.sprite = image.load( img )
@@ -19,7 +32,9 @@ class ActionSprite( object ):
         self.to_remove = []
         self.translate = Point3(0,0,0)
         self.scale = 1.0
+        self.scale_old = self.scale
         self.angle = 0.0
+        self.angle_old = self.angle
 
     def do( self, what ):
         action = what( self )
@@ -45,8 +60,15 @@ class ActionSprite( object ):
         glPushMatrix()
         glLoadIdentity()
         glTranslatef(self.translate.x, self.translate.y, self.translate.z )
-        glRotatef(self.angle, 0, 0, 1)
-        glScalef(self.scale, self.scale, 1)
+
+        # local variables arte cheaper than a matrix multiplication (I guess)
+        if self.angle != self.angle_old:
+            glRotatef(self.angle, 0, 0, 1)
+            self.angle_old = self.angle
+        if self.scale != self.scale_old:
+            glScalef(self.scale, self.scale, 1)
+            self.scale_old = self.scale
+
         self.sprite.blit( -self.sprite.width / 2, - self.sprite.height / 2 )
         glPopMatrix()
 
@@ -113,7 +135,7 @@ class DecoratorAction(Action):
         self.step(dt)
 
 class GotoAction( Action ):
-    def init(self, start, end, duration=1000):
+    def init(self, start, end, duration=5):
         self.start_position = start
         self.end_position = end
         self.duration = duration
@@ -128,14 +150,23 @@ class GotoAction( Action ):
     def done(self):
         return (self.runtime > self.duration)
 
-def goto(goal, duration=1000):
+def goto(goal, duration=5):
+    """goto( (coords), seconds) -> Action
+
+    Creates an action that moves the sprite to "coords". The action will last "seconds"
+    """
     def create(target):
         return GotoAction( target, 
                 start=target.translate, 
-                end=goal, duration=duration)
+                end=Point3(*goal), duration=duration)
     return ActionCreator(create)
 
-def move(delta, duration=1000):
+
+def move(delta, duration=5):
+    """move( (coords), seconds) -> Action
+
+    Creates an action that moves the sprite delta "coords". The action will last "seconds"
+    """
     def create(target):
         return GotoAction(target, 
                 start=target.translate, 
@@ -143,7 +174,7 @@ def move(delta, duration=1000):
     return ActionCreator(create)
 
 class ScaleAction(Action):
-    def init(self, start, end, duration=1000):
+    def init(self, start, end, duration=5):
         self.start_scale = start
         self.end_scale = end
         self.duration = duration
@@ -160,7 +191,7 @@ class ScaleAction(Action):
         return (self.runtime > self.duration)
 
 
-def scale(amount, duration=1000):
+def scale(amount, duration=5):
     def create(target):
         return ScaleAction(target, 
                 start=target.scale, 
@@ -168,7 +199,7 @@ def scale(amount, duration=1000):
     return ActionCreator(create)
 
 class RotateAction(Action):
-    def init(self, start, angle, duration=1000):
+    def init(self, start, angle, duration=5):
         self.start_angle = start
         self.angle = angle
         self.duration = duration
@@ -183,7 +214,7 @@ class RotateAction(Action):
         return (self.runtime > self.duration)
 
 
-def rotate(angle, duration=1000):
+def rotate(angle, duration=5):
     def create(target):
         return RotateAction(target, 
                 start=target.angle, 
@@ -251,10 +282,14 @@ class PlaceAction(Action):
     def start(self):
         self.target.translate = self.position
 
-def place(position):
+def place(*position):
+    """place( coords ) -> Action
+
+    Creates an action that places the sprite in "coords".
+    """
     def create(target):
         return PlaceAction(target, 
-            position)
+            Point3(*position) )
     return ActionCreator(create)       
 
 
@@ -412,7 +447,7 @@ def reverse(action):
  
 
 class BezierAction( Action ):
-    def init(self, start, bezier, duration=1000):
+    def init(self, start, bezier, duration=5):
         self.start_position = start
         self.duration = duration
         self.bezier = bezier
@@ -427,7 +462,7 @@ class BezierAction( Action ):
     def done(self):
         return (self.runtime > self.duration)
 
-def bezier(goal, duration=1000):
+def bezier(goal, duration=5):
     def create(target):
         return BezierAction( target, 
                 start=target.translate, 
