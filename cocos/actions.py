@@ -134,6 +134,7 @@ class DecoratorAction(Action):
         """ override. don't increment runtime"""
         self.step(dt)
 
+
 class GotoAction( Action ):
     def init(self, start, end, duration=5):
         self.start_position = start

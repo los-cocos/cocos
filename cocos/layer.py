@@ -107,8 +107,9 @@ class AnimationLayer(Layer):
 
         self.objects = []
 
-    def add( self, o ):
-        self.objects.append( o )
+    def add( self, *o ):
+        for i in o:
+            self.objects.append( i )
 
     """
     dt animations

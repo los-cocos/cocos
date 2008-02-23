@@ -11,7 +11,7 @@ from pyglet import image
 from pyglet.gl import *
 from pyglet.window import key
 
-from cocos.actions import *
+from cocos.actions2 import *
 from cocos.director import director
 from cocos.layer import Layer, AnimationLayer
 from cocos.scene import Scene
@@ -23,20 +23,30 @@ class SpriteLayer ( AnimationLayer ):
     def __init__( self ):
         super( SpriteLayer, self ).__init__()
 
-        sprite1 = ActionSprite('grossini.png')
+        sprite1 = ActionSprite('grossinis_sister1.png')
         sprite2 = ActionSprite('grossinis_sister2.png')
+        sprite3 = ActionSprite('grossini.png')
+        sprite4 = ActionSprite('grossini.png')
+        sprite5 = ActionSprite('grossini.png')
 
-        sprite1.place(0,0,0)
-        sprite2.place(640,0,0)
+        sprite1.place( (0,0,0) )
+        sprite2.place( (640,0,0) )
+        sprite3.place( (320,0,0) )
+        sprite4.place( (320,240,0) )
+        sprite5.place( (0,0,0) )
 
-        self.add( sprite1 )
-        self.add( sprite2 )
+        self.add( sprite1, sprite2, sprite3, sprite4, sprite5 )
 
-        go = goto( (320,240,0), 5 )
-        pl = place( 320,400,0 )
+        go = Goto( (320,240,0), 5 )
+        mo = Move( (0,-200,0), 5 )
+        ro = Rotate( 720, 5 )
+        sc = Scale( 2.5, 5 )
 
-        sprite1.do( go + pl )
-        sprite2.do( go )
+        sprite1.do( go | ro )
+        sprite2.do( go + mo )
+        sprite3.do( go )
+        sprite4.do( Spawn(ro,mo,sc) )
+        sprite5.do( Sequence( Goto( (640,0,0), 1.25 ), Goto( (640,480,0), 1.25 ), Goto( (0,480,0), 1.25 ), Goto( (0,0,0), 1.25 ) ) )
 
     def on_key_release( self, keys, mod ):
         if keys == key.ENTER:
