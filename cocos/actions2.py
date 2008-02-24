@@ -3,11 +3,16 @@
 # http://code.google.com/p/los-cocos/
 #
 #
-# Based on actions.py from Grossini's Hell
+# Based on actions.py from Grossini's Hell:
+#    http://www.pyweek.org/e/Pywiii/
+#
+# Based on actions.py from Pygext:
+#     http://opioid-interactive.com/~shang/projects/pygext/
 #
 
-import time, random
+import random
 import copy
+import math
 
 from euclid import *
 
@@ -15,10 +20,16 @@ from pyglet import image
 from pyglet.gl import *
 
 
-__all__ = [ 'ActionSprite',                     # base class
+__all__ = [ 'ActionSprite',                     # Sprite class
+
+            'Action','IntervalAction',          # Action classes
+
             'Goto','Move',                      # movement actions
             'Rotate','Scale',                   # object modification
-            'Spawn', 'Sequence',                # queueing actions
+            'Spawn', 'Sequence', 'Repeat',      # queueing actions
+            'CallFunc','CallFuncS',             # Calls a function
+            'Delay', 'RandomDelay',             # Delays
+            'Jump',
             ]
 
 class ActionSprite( object ):
@@ -57,7 +68,7 @@ class ActionSprite( object ):
         glLoadIdentity()
         glTranslatef(self.translate.x, self.translate.y, self.translate.z )
 
-        # comparison is cheaper than a matrix multiplication
+        # comparison is cheaper than an OpenGL matrix multiplication
         if self.angle != 0.0:
             glRotatef(self.angle, 0, 0, 1)
         if self.scale != 1.0:
@@ -101,7 +112,11 @@ class Action(object):
     def __or__(self, action):
         return Spawn(self, action)
 
-class Rotate( Action ):
+class IntervalAction( Action ):
+    def done(self):
+        return (self.runtime > self.duration)
+
+class Rotate( IntervalAction ):
     def init(self, angle, duration=5):
         self.angle = angle
         self.duration = duration
@@ -115,11 +130,8 @@ class Rotate( Action ):
                         min(1,float(self.runtime)/self.duration)
                     )) % 360 
 
-    def done(self):
-        return (self.runtime > self.duration)
 
-
-class Scale(Action):
+class Scale(IntervalAction):
     def init(self, end, duration=5):
         self.end_scale = end
         self.duration = duration
@@ -134,18 +146,14 @@ class Scale(Action):
                     delta * (
                         min(1,float(self.runtime)/self.duration)
                     ))
-        
-    def done(self):
-        return (self.runtime > self.duration)
 
-class Goto( Action ):
+class Goto( IntervalAction ):
     def init(self, end, duration=5):
         self.end_position = Point3( *end )
         self.duration = duration
 
     def start( self ):
         self.start_position = self.target.translate
-
 
     def step(self,dt):
         delta = self.end_position-self.start_position
@@ -154,14 +162,15 @@ class Goto( Action ):
                         min(1,float(self.runtime)/self.duration)
                     ))
 
-    def done(self):
-        return (self.runtime > self.duration)
-
 
 class Move( Goto ):
+    def init(self, delta, duration=5):
+        self.delta = Point3( *delta)
+        self.duration = duration
+
     def start( self ):
         self.start_position = self.target.translate
-        self.end_position = self.start_position + self.end_position
+        self.end_position = self.start_position + self.delta
 
 
 class Spawn(Action):
@@ -181,7 +190,6 @@ class Sequence(Action):
     """Queues 1 action after the other. One the 1st action finishes, then the next one will start"""
     def init(self, *actions):
         self.actions = actions
-        self.count = 0
         
     def instantiate(self):
         self.current = self.actions[self.count]
@@ -189,6 +197,7 @@ class Sequence(Action):
         self.current._start()
     
     def start(self):
+        self.count = 0
         self.instantiate()
         
     def done(self):
@@ -200,3 +209,84 @@ class Sequence(Action):
             self.count += 1
             if not self.done():
                 self.instantiate()            
+
+
+class Repeat(Action):
+    """Repeats an action. It is is similar to Sequence, but it runs the same action every time"""
+    def init(self, action, times=-1):
+        self.action = action
+        self.times = times
+        
+    def start(self):
+        self.count = 0
+        self.instantiate()
+
+    def instantiate(self):
+        self.action.target = self.target
+        self.action._start()
+        
+    def done(self):
+        return (self.times != -1) and (self.count>=self.times)
+        
+    def step(self, dt):
+        self.action._step(dt)
+        if self.action.done():
+            self.count += 1
+            if not self.done():
+                self.instantiate()            
+
+
+class CallFunc(Action):
+    """An action that will call a funtion."""
+    def init(self, func, args, kwargs):
+        self.func = func
+        self.args = args
+        self.kwargs = kwargs
+        
+    def done(self):
+        return True
+        
+    def start(self):
+        self.func(*self.args, **self.kwargs)
+
+
+class CallFuncS(CallFunc):
+    """An action that will call a funtion with the target as the first argument"""
+    def start(self):
+        self.func( self.target, *self.args, **self.kwargs)
+
+        
+class Delay(Action):
+    """Delays the actions in seconds"""
+    def init(self, delta):
+        self.delta = delta
+        
+    def done(self):
+        return ( self.delta <= self.runtime )
+
+
+class RandomDelay(Delay):
+    """Delays the actions in random seconds between low and hi"""
+    def init(self, low, hi):
+        self.delta = random.randint(low, hi)
+        
+    def done(self):
+        return ( self.delta <= self.runtime )
+
+
+class Jump(IntervalAction):
+    def init(self, height=150, width=120, jumps=1, duration=5 ):
+        self.height = height
+        self.width = width
+        self.duration = duration
+        self.jumps = jumps
+
+    def start( self ):
+        self.start_position = self.target.translate
+
+    def step(self, dt):
+        y = int( self.height * ( math.sin( (self.runtime/self.duration) * math.pi * self.jumps ) ) )
+        y = abs(y)
+
+        x = self.width * min(1,float(self.runtime)/self.duration)
+        self.target.translate = self.start_position + (x,y,0)
