@@ -41,28 +41,36 @@ class SpriteLayer ( AnimationLayer ):
 
         self.add( sprite1, sprite2, sprite3, sprite4, sprite5, sprite6, sprite7 )
 
-        go = Goto( (320,240,0), 5 )
-        mo = Move( (0,-200,0), 5 )
+        go = Goto( (320,240,0), 5)
+        mo = Move( (0,170,0), 5 )
         ro = Rotate( 720, 5 )
-        sc = Scale( 2.5, 5 )
+        sc = Scale( 8, 2 )
 
         ro1 = Rotate( 720, 5 )
         ro2 = Rotate( -720, 5 )
 
-        go1 = Goto( (0,0,0), 5 )
-        go2 = Goto( (640,480,0), 5 )
-        mo1 = Move( (300,0,0), 4 )
-        mo2 = Move( (-300,0,0), 4 )
+        go1 = Goto( (400,240,0), 1 )
+        go2 = Goto( (400,300,0), 1 )
+        go3 = Goto( (200,300,0), 2 )
+        go4 = Goto( (200,240,0), 1 )
+        mo1 = Move( (50,0,0), 0.5 )
+        mo2 = Move( (0,50,0), 0.5 )
+
+        ju = Jump( height=50, width=200, jumps=4, duration=4 )
+        ju2 = Jump( height=50, width=-200, jumps=4, duration=4 )
 
         de = Delay( 0.5 )
 
-        sprite1.do( go | ro )
-        sprite2.do( go + mo )
-        sprite3.do( go )
-        sprite4.do( Spawn(ro,mo,sc) )
-        sprite5.do( Sequence( Goto( (640,0,0), 1.25 ), de, Goto( (640,480,0), 1.25 ), de, Goto( (0,480,0), 1.25 ), de, Goto( (0,0,0), 1.25 ) ) )
-        sprite6.do( Jump( width=600, jumps=5, duration=5) )
-        sprite7.do( Jump( width=-600, jumps=5, duration=5) )
+#        sprite1.do( go | ro )
+#        sprite2.do( go + mo )
+#        sprite3.do( go )
+#        sprite4.do( Spawn(ro,mo,sc) )
+#        sprite4.do( Repeat( mo1 + mo2 ) )
+#        sprite4.do( Repeat( go1 + go2 + go3 + go4 ) )
+        sprite4.do( Repeat( mo1 + Repeat(ju,3) + mo2 + ju2 ) )
+#        sprite5.do( Sequence( ju, Goto( (640,0,0), 1.25 ), de, Goto( (640,480,0), 1.25 ), de, Goto( (0,480,0), 1.25 ), de, Goto( (0,0,0), 1.25 ) ) )
+#        sprite6.do( Repeat( ju ) )
+#        sprite7.do( Repeat( ju2 ) )
 
     def on_key_release( self, keys, mod ):
         if keys == key.ENTER:
