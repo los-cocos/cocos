@@ -280,10 +280,13 @@ class SpriteReuseSequence( SpriteLayer ):
         move = Move( (0,100,0), 2)
         jump2 = Jump(50,-200,4, 2)
 
+        rotate = Rotate( -360, 2 )
+
         seq = Repeat(jump + move + jump2,3)
 
         sprite1.do( seq )
         sprite2.do( seq )
+        sprite2.do( Repeat( rotate) )
 
 
 examples = { 1: ("Example #1 - Goto", "Goto( (x,y,0), duration )", SpriteGoto ),
@@ -301,7 +304,7 @@ examples = { 1: ("Example #1 - Goto", "Goto( (x,y,0), duration )", SpriteGoto ),
  13: ("Example #13 - Repeat Sequence of Repeats", "Run a sequence of repeats\nsprite.do( Repeat( Repat(jump) + Repeat(move) + Repeat(jump2) )", SpriteRepeatSeq2),
  14: ("Example #14 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )", SpriteTrigger ),
  15: ("Example #15 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
- 16: ("Example #16 - Reusable Actions #2","Run the same sequence of action in different sprites\nseq=action1+Repeat(action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)", SpriteReuseSequence),
+ 16: ("Example #16 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
 
 }
 
