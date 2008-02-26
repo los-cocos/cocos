@@ -34,8 +34,8 @@ class SpriteLayer ( AnimationLayer ):
 
         self.add( sprite1, sprite2, sprite3 )
 
-        ju_right = Jump( height=100, width=600, jumps=4, duration=5 )
-        ju_left = Jump( height=100, width=-600, jumps=4, duration=5 )
+        ju_right = Jump( y=100, x=600, jumps=4, duration=5 )
+        ju_left = Jump( y=100, x=-600, jumps=4, duration=5 )
 
         sc = Scale( 9, 5 )
         rot = Rotate( 180, 5 )
