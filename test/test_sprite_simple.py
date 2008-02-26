@@ -16,6 +16,7 @@ from cocos.director import director
 from cocos.layer import Layer, AnimationLayer
 from cocos.scene import Scene
 
+import foo      # Bezier configurations
 
 
 class SpriteLayer ( AnimationLayer ):
@@ -34,7 +35,7 @@ class SpriteLayer ( AnimationLayer ):
         sprite1.place( (0,0,0) )
         sprite2.place( (640,0,0) )
         sprite3.place( (320,0,0) )
-        sprite4.place( (320,240,0) )
+        sprite4.place( (120,40,0) )
         sprite5.place( (0,0,0) )
         sprite6.place( (20,200,0) )
         sprite7.place( (620,200,0) )
@@ -56,6 +57,8 @@ class SpriteLayer ( AnimationLayer ):
         mo1 = Move( (50,0,0), 0.5 )
         mo2 = Move( (0,50,0), 0.5 )
 
+        bz = Bezier( foo.curva, 5 )
+
         ju = Jump( height=50, width=200, jumps=4, duration=4 )
         ju2 = Jump( height=50, width=-200, jumps=4, duration=4 )
 
@@ -63,11 +66,11 @@ class SpriteLayer ( AnimationLayer ):
 
 #        sprite1.do( go | ro )
 #        sprite2.do( go + mo )
-#        sprite3.do( go )
+        sprite4.do( Repeat( bz, 3) )
 #        sprite4.do( Spawn(ro,mo,sc) )
 #        sprite4.do( Repeat( mo1 + mo2 ) )
 #        sprite4.do( Repeat( go1 + go2 + go3 + go4 ) )
-        sprite4.do( Repeat( mo1 + Repeat(ju,3) + mo2 + ju2 ) )
+#        sprite4.do( Repeat( mo1 + Repeat(ju,3) + mo2 + ju2 ) )
 #        sprite5.do( Sequence( ju, Goto( (640,0,0), 1.25 ), de, Goto( (640,480,0), 1.25 ), de, Goto( (0,480,0), 1.25 ), de, Goto( (0,0,0), 1.25 ) ) )
 #        sprite6.do( Repeat( ju ) )
 #        sprite7.do( Repeat( ju2 ) )

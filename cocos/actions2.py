@@ -24,7 +24,9 @@ __all__ = [ 'ActionSprite',                     # Sprite class
 
             'Action','IntervalAction',          # Action classes
 
-            'Goto','Move','Jump',               # movement actions
+            'Place',                            # placement action
+            'Goto','Move',                      # movement actions
+            'Jump','Bezier',                    # complex movement actions
             'Rotate','Scale',                   # object modification
             'Spawn', 'Sequence', 'Repeat',      # queueing actions
             'CallFunc','CallFuncS',             # Calls a function
@@ -87,6 +89,7 @@ class ActionSprite( object ):
     def place( self, coords ):
         self.translate = Point3( *coords )
 
+
 class Action(object):
     def __init__(self, *args, **kwargs):
         self.init(*args, **kwargs)
@@ -122,17 +125,44 @@ class Action(object):
         pass
 
     def get_runtime( self ):
-        """Returns the runtime. IntervalActions can modify this value."""
+        """Returns the runtime.
+        IntervalActions can modify this value. Don't access self.runtime directly"""
         return self.runtime
 
     def __add__(self, action):
+        """Is the Sequence Action"""
         return Sequence(self, action)
 
     def __or__(self, action):
+        """Is the Spawn Action"""
         return Spawn(self, action)
 
 
 class IntervalAction( Action ):
+    """IntervalAction( dir=ForwardDir, mode=PingPongMode )
+
+    Abstract Class that defines the direction of any Interval
+    Action. Interval Actions are the ones that can go forward or
+    backwards in time. 
+    
+    For example: Goto, Move, Rotate are Interval Actions.
+    CallFunc is not.
+
+    dir can be: ForwardDir or BackwardDir
+    mode can be: PingPongMode or RepeatMode
+    """
+    
+    def __init__( self, *args, **kwargs ):
+        super( IntervalAction, self ).__init__( *args, **kwargs )
+
+        self.direction = ForwardDir
+        self.mode = PingPongMode
+
+        if kwargs.has_key('dir'):
+            self.direction = kwargs['dir']
+        if kwargs.has_key('mode'):
+            self.mode = kwargs['mode']
+
 
     def restart( self ):
         self.runtime=0
@@ -155,12 +185,27 @@ class IntervalAction( Action ):
             raise Exception("Unknown Interval Mode: %s" % (str( self.mode) ) )
 
 
+class Place( Action ):
+    """Place( (x,y,0) )
+
+    Creates and action that will place the sprite in the position x,y.
+
+    Example: Place( (320,240,0) )
+    """
+    def init(self, position):
+        self.position = Point3(*position)
+        
+    def start(self):
+        self.target.translate = self.position
+
+    def done(self):
+        return True
+
+
 class Rotate( IntervalAction ):
-    def init(self, angle, duration=5, dir=ForwardDir, mode=PingPongMode):
+    def init(self, angle, duration=5 ):
         self.angle = angle
         self.duration = duration
-        self.mode = mode
-        self.direction = dir
 
     def start( self ):       
         self.start_angle = self.target.angle
@@ -173,11 +218,9 @@ class Rotate( IntervalAction ):
 
 
 class Scale(IntervalAction):
-    def init(self, end, duration=5, dir=ForwardDir, mode=PingPongMode):
+    def init(self, end, duration=5 ):
         self.end_scale = end
         self.duration = duration
-        self.mode = mode
-        self.direction = dir
 
     def start( self ):
         self.start_scale = self.target.scale
@@ -191,11 +234,17 @@ class Scale(IntervalAction):
                     ))
 
 class Goto( IntervalAction ):
-    def init(self, end, duration=5, dir=ForwardDir, mode=PingPongMode):
+    """Goto( (x,y,0), duration)
+
+    Creates an action that will move a sprite to the position x,y
+    x and y are absolute coordinates.
+    Duration is is seconds.
+
+    Example: Goto( (50,10,0), 8 )
+    It will move a sprite to the position x=50, y=10 in 8 seconds."""
+    def init(self, end, duration=5):
         self.end_position = Point3( *end )
         self.duration = duration
-        self.mode = mode
-        self.direction = dir
 
     def start( self ):
         self.start_position = self.target.translate
@@ -209,11 +258,18 @@ class Goto( IntervalAction ):
 
 
 class Move( Goto ):
-    def init(self, delta, duration=5, dir=ForwardDir, mode=PingPongMode):
+    """Move( (x,y,0), duration)
+
+    Creates an action that will move a sprite x,y pixels.
+    x and y are relative to the position of the sprite.
+    Duration is is seconds.
+
+    Example: Move( (50,10,0), 8 )
+    It will move a sprite 50 pixels to the right and 10 pixels to the top
+    for 8 seconds."""
+    def init(self, delta, duration=5):
         self.delta = Point3( *delta)
         self.duration = duration
-        self.mode = mode
-        self.direction = dir
 
     def start( self ):
         self.start_position = self.target.translate
@@ -221,13 +277,21 @@ class Move( Goto ):
 
 
 class Jump(IntervalAction):
-    def init(self, height=150, width=120, jumps=1, duration=5, dir=ForwardDir, mode=PingPongMode ):
+    """Jump( height, width, quantity_of_jumps, duration )
+
+    Creates an actions that moves a sprite Width pixels doing
+    the number of Quanitty_Of_Jumps jumps with a height of Height pixels,
+    for Duration seconds.
+
+    Example: Jump(50,200, 5, 6)
+    It will do 5 jumps travelling 200 pixels to the right for 6 seconds.
+    The height of each jump will be 50 pixels each."""
+    
+    def init(self, height=150, width=120, jumps=1, duration=5):
         self.height = height
         self.width = width
         self.duration = duration
         self.jumps = jumps
-        self.mode = mode
-        self.direction = dir
 
     def start( self ):
         self.start_position = self.target.translate
@@ -238,6 +302,22 @@ class Jump(IntervalAction):
 
         x = self.width * min(1,float(self.get_runtime())/self.duration)
         self.target.translate = self.start_position + (x,y,0)
+
+class Bezier( IntervalAction ):
+    def init(self, bezier, duration=5):
+        self.duration = duration
+        self.bezier = bezier
+
+    def start( self ):
+        self.start_position = self.target.translate
+
+    def step(self,dt):
+        at = self.get_runtime() / self.duration
+        p = self.bezier.at( at )
+
+        self.target.translate = ( self.start_position +
+            Point3( p[0], p[1], 0 ) )
+
 
 class Spawn(Action):
     """Spawn a  new action immediately"""
