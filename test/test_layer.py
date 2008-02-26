@@ -17,6 +17,8 @@ from cocos.scene import *
 from cocos.layer import *
 from cocos.actions import *
 
+
+
 class SpriteLayer ( AnimationLayer ):
 
     def __init__( self ):

@@ -52,7 +52,17 @@ class ActionSprite( object ):
         self.angle = 0.0
 
     def do( self, action ):
-        a = copy.deepcopy( action )
+        # HACK:
+        try:
+            # deepcopy fails when copying the CallFunc. Investigate further
+            a = copy.deepcopy( action )
+        except Exception, e:
+            # but deepcopy is needed when running the same sequence of actions
+            # in different sprites at the same time
+            print "WARNING: Running this action is with various sprites at the time has an unpredictable behaviour"
+            print action
+            a = copy.copy( action )
+
         a.target = self
         a._start()
         self.actions.append( a )
@@ -153,15 +163,18 @@ class IntervalAction( Action ):
     """
     
     def __init__( self, *args, **kwargs ):
-        super( IntervalAction, self ).__init__( *args, **kwargs )
 
         self.direction = ForwardDir
         self.mode = PingPongMode
 
         if kwargs.has_key('dir'):
             self.direction = kwargs['dir']
+            del(kwargs['dir'])
         if kwargs.has_key('mode'):
             self.mode = kwargs['mode']
+            del(kwargs['mode'])
+
+        super( IntervalAction, self ).__init__( *args, **kwargs )
 
 
     def restart( self ):
@@ -277,7 +290,7 @@ class Move( Goto ):
 
 
 class Jump(IntervalAction):
-    """Jump( height, width, quantity_of_jumps, duration )
+    """Jump( y, x, quantity_of_jumps, duration )
 
     Creates an actions that moves a sprite Width pixels doing
     the number of Quanitty_Of_Jumps jumps with a height of Height pixels,
@@ -287,9 +300,9 @@ class Jump(IntervalAction):
     It will do 5 jumps travelling 200 pixels to the right for 6 seconds.
     The height of each jump will be 50 pixels each."""
     
-    def init(self, height=150, width=120, jumps=1, duration=5):
-        self.height = height
-        self.width = width
+    def init(self, y=150, x=120, jumps=1, duration=5):
+        self.y = y
+        self.x = x
         self.duration = duration
         self.jumps = jumps
 
@@ -297,10 +310,10 @@ class Jump(IntervalAction):
         self.start_position = self.target.translate
 
     def step(self, dt):
-        y = int( self.height * ( math.sin( (self.get_runtime()/self.duration) * math.pi * self.jumps ) ) )
+        y = int( self.y * ( math.sin( (self.get_runtime()/self.duration) * math.pi * self.jumps ) ) )
         y = abs(y)
 
-        x = self.width * min(1,float(self.get_runtime())/self.duration)
+        x = self.x * min(1,float(self.get_runtime())/self.duration)
         self.target.translate = self.start_position + (x,y,0)
 
 class Bezier( IntervalAction ):
@@ -414,7 +427,7 @@ class Repeat(Action):
 
 class CallFunc(Action):
     """An action that will call a funtion."""
-    def init(self, func, args, kwargs):
+    def init(self, func, *args, **kwargs):
         self.func = func
         self.args = args
         self.kwargs = kwargs
