@@ -11,7 +11,7 @@ from pyglet import image
 from pyglet.gl import *
 from pyglet.window import key
 
-from cocos.actions2 import *
+from cocos.actions import *
 from cocos.director import director
 from cocos.layer import Layer, AnimationLayer
 from cocos.scene import Scene

@@ -21,32 +21,27 @@ class SpriteLayer ( AnimationLayer ):
 
     def __init__( self ):
         super( SpriteLayer, self ).__init__()
-        sprite1 = ActionSprite('grossini.png')
-        sprite4 = ActionSprite('grossinis_sister1.png')
-        sprite5 = ActionSprite('grossinis_sister1.png')
 
-        sprite1.place( 320,240,0)
+        sprite1 = ActionSprite('grossinis_sister1.png')
+        sprite2 = ActionSprite('grossinis_sister2.png')
+        sprite3 = ActionSprite('grossini.png')
 
-        sprite4.place( 20,180,0)
-        sprite5.place( 20,180,0)
+        sprite1.place( (20,100,0) )
+        sprite2.place( (620,100,0) )
+        sprite3.place( (320,240,0) )
 
-        self.add( sprite1 )
-        self.add( sprite4 )
-        self.add( sprite5 )
+        self.add( sprite1, sprite2, sprite3 )
 
-        mo = move( (600,0,0), 10 )
+        ju_right = Jump( height=100, width=600, jumps=4, duration=5 )
+        ju_left = Jump( height=100, width=-600, jumps=4, duration=5 )
 
-        ro = rotate( 300, 5 )
-        ro2 = rotate( -300, 5 )
+        sc = Scale( 9, 5 )
+        rot = Rotate( 180, 5 )
 
-        sc_up = scale( 15, 5 )
-        sc_down = scale( 0.1, 5 )
-
-        sprite1.do( repeat( sc_up + sc_down ) )
-        sprite1.do( repeat( ro + ro2 ) )
-        sprite4.do( jump( mo ) )
-        sprite5.do( reverse( jump( mo ) ) )
-
+        sprite1.do( Repeat( ju_right ) )
+        sprite2.do( Repeat( ju_left ) )
+        sprite3.do( Repeat( sc ) )
+        sprite3.do( Repeat( rot ) )
 
 class MainMenu(Menu):
     def __init__( self ):
