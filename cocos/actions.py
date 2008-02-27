@@ -56,13 +56,14 @@ class ActionSprite( object ):
         self.show = True
 
     def do( self, action ):
-        # HACK:
         try:
-            # deepcopy fails when copying the CallFunc. Investigate further
+            # HACK:
+            # deepcopy is needed to run the same sequence of actions
+            # in different sprites at the same time
             a = copy.deepcopy( action )
         except Exception, e:
-            # but deepcopy is needed when running the same sequence of actions
-            # in different sprites at the same time
+            # but deepcopy fails when copying the CallFunc calling an instance
+            # method.
             print "WARNING: Running this action with various sprites at the time has an unpredictable behaviour"
             print "CallFunc / CallFuncS actions can't be deep-copied when they are calling instance methods."
             print "Workaround: Make it call a free function instead."
@@ -399,7 +400,7 @@ class Spawn(Action):
 class Sequence(Action):
     """Queues 1 action after the other. One the 1st action finishes, then the next one will start"""
     def init(self,  *actions, **kwargs ):
-        self.actions = actions
+        self.actions = [ copy.copy(a) for a in actions]
         self.direction = ForwardDir
         self.mode = PingPongMode
         if kwargs.has_key('dir'):
@@ -448,7 +449,7 @@ class Sequence(Action):
 class Repeat(Action):
     """Repeats an action. It is is similar to Sequence, but it runs the same action every time"""
     def init(self, action, times=-1):
-        self.action = action
+        self.action = copy.copy( action )
         self.times = times
 
     def restart( self ):
