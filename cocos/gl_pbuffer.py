@@ -2,7 +2,22 @@ from pyglet.gl.glx import *
 import ctypes
 
 class Pbuffer (object):
+    """Wrapper for OpenGL pbuffer extensions. 
+    See http://oss.sgi.com/projects/ogl-sample/registry/SGIX/pbuffer.txt for details
+    
+    Caveats:
+      * Only GLX version implemented
+      * not tested, may not be working
+    """
+
     def __init__ (self, window, attrs=[], width=None, height=None):
+        """Create new pbuffer with given size, on same display as `window'
+        
+        (`width', `height') is the same as the window, if not specified
+        
+        attrs is a list of alternating GLX_PBUFFER_<attr>, <value>. For example,
+        [GLX_DEPTH, 32, GLX_DOUBLEBUFFER, 1]
+        """
         self.window = window
 
         # Get configuration options
@@ -28,11 +43,12 @@ class Pbuffer (object):
         if self.pbuf is None:
             raise Exception ("No valid configuration for pbuffer found")
         # Create a context for the buffer
-        self.ctx = glXCreateNewContext (window._x_display, conf[c], GLX_RGBA_TYPE, None, True)
+        self.ctx = glXCreateNewContext (window._x_display, conf[c], GLX_RGBA_TYPE, self.window._context._context, True)
         if not self.ctx:
             raise Exception ("Failed to create context for this buffer")
 
     def switch_to(self):
+        """Set this pbuffer as current GL context"""
         ok = glXMakeContextCurrent (self.window._x_display, self.pbuf, self.pbuf, self.ctx)
         if not ok:
             raise Exception("Failed to switch GL context")
