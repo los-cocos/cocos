@@ -299,21 +299,22 @@ class SpriteReuseSequence( SpriteLayer ):
         sprite2.do( Repeat( rotate) )
 
 
-examples = { 1: ("Example #1 - Goto", "Goto( (x,y,0), duration )", SpriteGoto ),
- 2: ("Example #2 - Move", "Move( (delta-x,delta-y,0), duration )", SpriteMove ),
- 3: ("Example #3 - Scale", "Scale( zoom-factor, duration)", SpriteScale ),
- 4: ("Example #4 - Rotate", "Rotate( degrees, duration)", SpriteRotate ),
- 5: ("Example #5 - Jump", "Jump( y, x, jumps, duration)", SpriteJump),
- 6: ("Example #6 - Bezier", "Bezier( bezier_conf, duration)", SpriteBezier),
- 7: ("Example #7 - Spawn", "Run 2 (or more) actions at the same time\nsprite.do( Jump() | Rotate() )", SpriteSpawn),
- 8: ("Example #8 - Sequence", "Run actions sequentialy\nsprite.do( Bezier() + Move() + Jump()  )", SpriteSequence),
- 9: ("Example #9 - Blink", "Show and hide and sprite\nsprite.do( Blink( times, duration ) )\n\nShow() and Hide() are actions too.", SpriteBlink),
- 10: ("Example #10 - Delay","Delays between actions\nsprite.do(Move() + Delay( seconds ) + Jump() )\n\nRandomDelay() also exists", SpriteDelay ),
+examples = {
+ 1: ("Example #1 - Goto", "sprite.do( Goto( (x,y,0), duration ) )", SpriteGoto ),
+ 2: ("Example #2 - Move", "sprite.do( Move( (delta-x,delta-y,0), duration ) )", SpriteMove ),
+ 3: ("Example #3 - Scale", "sprite.do( Scale( zoom-factor, duration) )", SpriteScale ),
+ 4: ("Example #4 - Rotate", "sprite.do( Rotate( degrees, duration) )", SpriteRotate ),
+ 5: ("Example #5 - Jump", "sprite.do( Jump( y, x, jumps, duration) )", SpriteJump),
+ 6: ("Example #6 - Bezier", "sprite.do( Bezier( bezier_conf, duration) )", SpriteBezier),
+ 7: ("Example #7 - Spawn", "Run 2 (or more) actions at the same time:\n\nsprite.do( Jump() | Rotate() )\nor:\nsprite.do( Spawn( Jump(), Rotate() ) )\nor:\nsprite.do( Jump() )\nsprite.do( Rotate() )", SpriteSpawn),
+ 8: ("Example #8 - Sequence", "Run actions sequentialy:\n\nsprite.do( Bezier() + Move() + Jump() )\nor:\nsprite.do( Sequence( Bezier(), Move(), Jump() ) )", SpriteSequence),
+ 9: ("Example #9 - Blink", "Show and hide an sprite\nsprite.do( Blink( times, duration ) )\n\nShow() and Hide() are actions too.", SpriteBlink),
+ 10: ("Example #10 - Delay","Delays between actions\nsprite.do(Move() + Delay( seconds ) + Jump() )\n\nRandomDelay() is an action too.", SpriteDelay ),
  11: ("Example #11 - Repeat", "Run the same action in 'RepeatMode'\nsprite.do( Repeat( Jump( mode=RepeatMode) )", SpriteRepeat),
  12: ("Example #12 - Repeat a-la PingPong", "Run the same action in 'PingPongMode' (default mode)\nsprite.do( Repeat( Jump( mode=PingPongMode) )", SpriteRepeat2),
  13: ("Example #13 - Repeat a Sequence", "Run a sequence many times\nsprite.do( Repeat( jump + move + jump2 )", SpriteRepeatSeq),
  14: ("Example #14 - Repeat Sequence of Repeats", "Run a sequence of repeats\nsprite.do( Repeat( Repat(jump) + Repeat(move) + Repeat(jump2) )", SpriteRepeatSeq2),
- 15: ("Example #15 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS() passes the sprite as the 1st parameter", SpriteTrigger ),
+ 15: ("Example #15 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS() is the action passes the sprite as the 1st parameter", SpriteTrigger ),
  16: ("Example #16 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
  17: ("Example #17 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
 
