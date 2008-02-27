@@ -211,8 +211,8 @@ class MenuItem( object ):
         self.halign = None
         self.valign = None
 
-    def _get_box( self ):
-        """_get_box() -> (x1,y1,x2,y2)
+    def get_box( self ):
+        """get_box() -> (x1,y1,x2,y2)
 
         returns a tuple that contains the margins of the item."""
        
@@ -265,7 +265,7 @@ class MenuItem( object ):
         """is_inside_box( x, y ) -> Boolean
 
         Returns whether x,y are inside the item."""
-        (ax,ay,bx,by) = self._get_box()
+        (ax,ay,bx,by) = self.get_box()
         if( x >= ax and x <= bx and y >= ay and y <= by ):
             return True
         return False

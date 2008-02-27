@@ -2,6 +2,8 @@
 # Los Cocos: An extension for Pyglet
 # http://code.google.com/p/los-cocos/
 #
+# To see some examples, see:
+#    test/test_sprite.py
 #
 # Based on actions.py from Grossini's Hell:
 #    http://www.pyweek.org/e/Pywiii/
@@ -31,6 +33,7 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'Spawn', 'Sequence', 'Repeat',      # queueing actions
             'CallFunc','CallFuncS',             # Calls a function
             'Delay', 'RandomDelay',             # Delays
+            'Hide', 'Show','Blink',             # Hide or Shows the sprite
 
             'ForwardDir','BackwardDir',         # Movement Directions
             'RepeatMode', 'PingPongMode',       # Repeat modes
@@ -50,6 +53,7 @@ class ActionSprite( object ):
         self.translate = Point3(0,0,0)
         self.scale = 1.0
         self.angle = 0.0
+        self.show = True
 
     def do( self, action ):
         # HACK:
@@ -60,6 +64,7 @@ class ActionSprite( object ):
             # but deepcopy is needed when running the same sequence of actions
             # in different sprites at the same time
             print "WARNING: Running this action is with various sprites at the time has an unpredictable behaviour"
+            print "The problem is that CallFunc actions can't be deepcopied when they are not calling free functions."
             print action
             a = copy.copy( action )
 
@@ -83,22 +88,34 @@ class ActionSprite( object ):
         self.draw()
 
     def draw( self ):
-        glPushMatrix()
-        glLoadIdentity()
-        glTranslatef(self.translate.x, self.translate.y, self.translate.z )
+        if self.show:
+            glPushMatrix()
+            glLoadIdentity()
+            glTranslatef(self.translate.x, self.translate.y, self.translate.z )
 
-        # comparison is cheaper than an OpenGL matrix multiplication
-        if self.angle != 0.0:
-            glRotatef(self.angle, 0, 0, 1)
-        if self.scale != 1.0:
-            glScalef(self.scale, self.scale, 1)
+            # comparison is cheaper than an OpenGL matrix multiplication
+            if self.angle != 0.0:
+                glRotatef(self.angle, 0, 0, 1)
+            if self.scale != 1.0:
+                glScalef(self.scale, self.scale, 1)
 
-        self.sprite.blit( -self.sprite.width / 2, - self.sprite.height / 2 )
-        glPopMatrix()
+            # hotspot is in the center of the sprite.
+            # TODO: hotspot shall be customizable
+            self.sprite.blit( -self.sprite.width / 2, - self.sprite.height / 2 )
+
+            glPopMatrix()
 
     def place( self, coords ):
         self.translate = Point3( *coords )
 
+    def get_box( self ):
+        """get_box() -> (x1,y1,x2,y2)
+
+        Returns the box that continas the srpite in Screen coordinates"""
+        x2 = self.sprite.width / 2
+        y2 = self.sprite.height / 2
+        return (self.translate.x - x2, self.translate.y - x2,
+                self.translate.x +  x2, self.translate.y + y2 )
 
 class Action(object):
     def __init__(self, *args, **kwargs):
@@ -214,6 +231,39 @@ class Place( Action ):
     def done(self):
         return True
 
+
+class Hide( Action ):
+    """Hide()
+
+    Hides the sprite. To show it again call the Show() action"""
+    def start(self):
+        self.target.show = False
+
+    def done(self):
+        return True
+
+class Show( Action ):
+    """Show()
+
+    Show the sprite. To hide it call the Hide() action"""
+    def start(self):
+        self.target.show = True
+
+    def done(self):
+        return True
+
+class Blink( IntervalAction ): 
+    """Blink( number_of_times, duration)
+
+    Blinks the sprite a Number_of_Times, for Duration seconds"""
+    def init(self, times, duration):
+        self.times = times
+        self.duration = duration
+        
+    def step(self, dt):
+        slice = self.duration / float( self.times )
+        m =  self.get_runtime() % slice
+        self.target.show = (m  >  slice / 2.0)
 
 class Rotate( IntervalAction ):
     def init(self, angle, duration=5 ):
