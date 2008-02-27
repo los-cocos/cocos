@@ -26,26 +26,43 @@ class TextureFilterEffect (Effect):
     def __init__ (self):
         self.texture = image.Texture.create_for_size(GL_TEXTURE_2D, 
             director.window.width, director.window.height, GL_RGB)
+        
+        self._grabber = TextureGrabber()
+        self._grabber.grab (self.texture)
+        
         self.texture = self.texture.get_region(0, 0, director.window.width, director.window.height)
 
     def prepare (self, target, dt):
-        director.window.clear()
+        self._grabber.before_render(self.texture)
         target.step (dt)
-        buffer = image.get_buffer_manager().get_color_buffer()
-        self.texture.blit_into(buffer, 0, 0, 0)
+        self._grabber.after_render(self.texture)
             
     def show (self):
         self.texture.blit (0, 0)
 
-class TextureFilterEffectPbuffer (Effect):
+# Auxiliar classes for render-to-texture
 
-    """Base class for texture based effects. Prepare setups self.texture,
-    with a window sized capture. Show just blits the texture, override to
-    do more interesting things.
-    Requires pbuffer extensions
+def TextureGrabber():
+    """Return an instance of the best texture grabbing class"""
+    return FBOGrabber()
+
+class GenericGrabber(object):
+    def grab (self, texture):
+        pass
     
-    NOT WORKING"""
-    def __init__ (self):
+    def before_render (self, texture):
+        director.window.clear()
+        
+    def after_render (self, texture):
+        buffer = image.get_buffer_manager().get_color_buffer()
+        texture.blit_into(buffer, 0, 0, 0)
+
+class PbufferGrabber(object):
+    """Requires pbuffer extensions
+    
+    NOT WORKING
+    """
+    def grab (self, texture):
         self.pbuf = Pbuffer(director.window, [
             GLX_CONFIG_CAVEAT, GLX_NONE,
             GLX_RED_SIZE, 8,
@@ -54,48 +71,37 @@ class TextureFilterEffectPbuffer (Effect):
             GLX_DEPTH_SIZE, 24,
             GLX_DOUBLEBUFFER, 1,
             ])
-        self.texture = image.Texture.create_for_size(GL_TEXTURE_2D, 
-            director.window.width, director.window.height, GL_RGB)
-        self.texture = self.texture.get_region(0, 0, director.window.width, director.window.height)
-
-    def prepare (self, target, dt):
+    
+    def before_render (self, texture):
         self.pbuf.switch_to()
         gl.glViewport(0, 0, self.pbuf.width, self.pbuf.height)
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
         gl.glOrtho(0, self.pbuf.width, 0, self.pbuf.height, -1, 1)
         gl.glMatrixMode(gl.GL_MODELVIEW)
-
-        target.step (dt)
+        
+    def after_render (self, texture):
         buffer = image.get_buffer_manager().get_color_buffer()
-        self.texture.blit_into (buffer, 0, 0, 0)
+        texture.blit_into (buffer, 0, 0, 0)
         director.window.switch_to()
-            
-    def show (self):
-        self.texture.blit (0, 0)
 
-class TextureFilterEffectFramebuffer (Effect):
+
+class FBOGrabber(object):
     """Base class for texture based effects. Prepare setups self.texture,
     with a window sized capture. Show just blits the texture, override to
     do more interesting things.
     Requires framebuffer_object extensions"""
-    def __init__ (self):
+    def grab (self, texture):
         self.fbuf = FramebufferObject()
-        self.texture = image.Texture.create_for_size(GL_TEXTURE_2D, 
-            director.window.width, director.window.height, GL_RGB)
         self.fbuf.bind()
-        self.fbuf.texture2d (self.texture)
+        self.fbuf.texture2d (texture)
         self.fbuf.check_status()
         self.fbuf.unbind()
-        self.texture = self.texture.get_region(0, 0, director.window.width, director.window.height)
-
-    def prepare (self, target, dt):
+    
+    def before_render (self, texture):
         self.fbuf.bind()
         glClear(GL_COLOR_BUFFER_BIT)
-        target.step (dt)
-        buffer = image.get_buffer_manager().get_color_buffer()
+        
+    def after_render (self, texture):
         self.fbuf.unbind()
-            
-    def show (self):
-        self.texture.blit (0, 0)
 
