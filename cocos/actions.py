@@ -30,13 +30,13 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'Goto','Move',                      # movement actions
             'Jump','Bezier',                    # complex movement actions
             'Rotate','Scale',                   # object modification
-            'Spawn', 'Sequence', 'Repeat',      # queueing actions
+            'Spawn','Sequence','Repeat',        # queueing actions
             'CallFunc','CallFuncS',             # Calls a function
-            'Delay', 'RandomDelay',             # Delays
-            'Hide', 'Show','Blink',             # Hide or Shows the sprite
+            'Delay','RandomDelay',              # Delays
+            'Hide','Show','Blink',              # Hide or Shows the sprite
 
             'ForwardDir','BackwardDir',         # Movement Directions
-            'RepeatMode', 'PingPongMode',       # Repeat modes
+            'RepeatMode','PingPongMode',        # Repeat modes
             ]
 
 
@@ -63,8 +63,9 @@ class ActionSprite( object ):
         except Exception, e:
             # but deepcopy is needed when running the same sequence of actions
             # in different sprites at the same time
-            print "WARNING: Running this action is with various sprites at the time has an unpredictable behaviour"
-            print "The problem is that CallFunc actions can't be deepcopied when they are not calling free functions."
+            print "WARNING: Running this action with various sprites at the time has an unpredictable behaviour"
+            print "CallFunc / CallFuncS actions can't be deep-copied when they are calling instance methods."
+            print "Workaround: Make it call a free function instead."
             print action
             a = copy.copy( action )
 
