@@ -10,6 +10,8 @@ from cocos.actions import ActionSprite, Rotate, Repeat
 import pyglet
 from pyglet import gl
 
+from pyglet.window import key
+
 class GrossiniLayer(AnimationLayer):
     def __init__( self ):
         super( GrossiniLayer, self ).__init__()
@@ -24,6 +26,12 @@ class GrossiniLayer(AnimationLayer):
 
         g.do( Repeat( rot ) )
 
+    def on_key_press( self, k , m ):
+        if k == key.ENTER:
+            director.replace( transitions.SlideLRTransition2(
+                                Scene (c2, g), Scene(c1, g), 5 )
+                                )
+            return True
 
 class ColorLayer(Layer):
     def __init__(self, *color):
