@@ -45,6 +45,20 @@ class TextureFilterEffect (Effect):
     def show (self):
         self.texture.blit (0, 0)
 
+class ColorizeEffect (TextureFilterEffect):
+    """Applies recoloring (multiplication) and alpha blending."""
+    def __init__ (self, color=(1,1,1,1)):
+        super (ColorizeEffect, self).__init__ ()
+        self.color = color
+
+    def show (self):
+        glEnable (GL_BLEND)
+        glColor4f (*self.color)
+        self.texture.blit (0, 0)
+        glColor4f (1,1,1,1)
+        # Not disabling this, other people assumes it is on :(
+        #glDisable (GL_BLEND) 
+
 # Auxiliar classes for render-to-texture
 
 _best_grabber = None
