@@ -33,21 +33,36 @@ Animating a sprite
 ==================
 
 To animate an sprite you need to execute an action.
-Possible actions are:
 
-    * Move
-    * Goto
-    * Rotate
-    * Scale
-    * Jump
-    * etc...
+Actions that modifies the sprite's properties:
 
-and there are composite actions like:
+    * Move( (x,y,0), duration)
+    * Goto( (x,y,0), duration )
+    * Rotate( degrees, duration )
+    * Scale( zoom_factor, duration )
+    * Jump( height, x, number_of_jumps, duration )
+    * Bezier( bezier_configuration, duration )
+    * Place( (x,y,0) )
+    * Animate( animation_name )
+    * FadeIn( duration )
+    * FadeOut( duration )
+    * Blink( times_to_blink, duration ) 
+    * Show()
+    * Hide()
 
-    * Repeat
-    * Spawn
-    * Sequence
-    * etc...
+Composite actions:
+
+    * Repeat( action )
+    * Spawn( list_of_actions )
+    * Sequence( list_of_actions )
+
+Misc actions:
+
+    * CallFunc( function )
+    * CallFuncS( function )
+    * Delay( seconds )
+    * RandomDelay( lo_seconds, hi_seconds )
+
 
 To execute any action you need to create an action::
 
