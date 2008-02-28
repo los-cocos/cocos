@@ -12,6 +12,7 @@
 #     http://opioid-interactive.com/~shang/projects/pygext/
 #
 
+
 import random
 import copy
 import math
@@ -21,6 +22,8 @@ from euclid import *
 from pyglet import image
 from pyglet.gl import *
 
+
+__docformat__ = 'restructuredtext'
 
 __all__ = [ 'ActionSprite',                     # Sprite class
 
@@ -50,12 +53,7 @@ class PingPongMode: pass
 class RepeatMode: pass
 
 class ActionSprite( object ):
-    """An sprite that supports **Actions**
-
-    To execute an action use the **do** method.
-
-    **sprite.do( Action )**"""
-
+    '''Creates an instance of ActionSprite. ActionSprites can execute actions.'''
     
     def __init__( self, img ):
         self.frame = image.load( img )
@@ -69,6 +67,15 @@ class ActionSprite( object ):
         self.color = [1.0,1.0,1.0,1.0]
 
     def do( self, action ):
+        '''Executes an *action*.
+        When the action finished, it will be removed from the sprite's queue.
+
+        :Parameters:
+            `action` : an Action instance
+                Action that will be executed.
+        :rtype: Action instance
+        :return: A clone of *action*
+        '''
         try:
             # HACK:
             # deepcopy is needed to run the same sequence of actions
@@ -86,11 +93,16 @@ class ActionSprite( object ):
         a.target = self
         a._start()
         self.actions.append( a )
+        return a
 
-    def done(self, what):
-        self.to_remove.append( what )
+    def done(self, action ):
+        self.to_remove.append( action )
         
     def step(self, dt):
+        """step(dt)
+
+        dt delta time in seconds since the last time it was called
+        This method is called n times per seconds, where n are the FPS."""
         for action in self.actions:
             action._step(dt)
             if action.done():
@@ -103,6 +115,9 @@ class ActionSprite( object ):
         self.draw()
 
     def draw( self ):
+        '''
+        '''
+ 
         if self.show:
             glPushMatrix()
             glLoadIdentity()
@@ -123,18 +138,31 @@ class ActionSprite( object ):
             glPopMatrix()
 
     def place( self, coords ):
+        '''Places the sprite in the coordinates *coords*.
+
+        :Parameters:
+            `coords` : (x,y,0)
+                Coordinates where the sprite will be translated.'''
         self.translate = Point3( *coords )
 
     def get_box( self ):
-        """get_box() -> (x1,y1,x2,y2)
+        ''' Returns the box that continas the sprite in Screen coordinates
 
-        Returns the box that continas the srpite in Screen coordinates"""
+        :rtype: (x1,x2,y1,y2)
+        :returns: Returns the box that contains the sprite in screen coordinates'''
+
         x2 = self.frame.width / 2
         y2 = self.frame.height / 2
         return (self.translate.x - x2, self.translate.y - x2,
                 self.translate.x +  x2, self.translate.y + y2 )
 
     def add_animation( self, animation ):
+        '''Adds a new *Animation* instance to the sprite. These Animations can be animated
+        using the *Animate* action.
+
+        :Parameters:
+            `animation` : Animation instance
+                Animation that will be executed.'''
         self.animations[ animation.name ] = animation
 
 class Action(object):
