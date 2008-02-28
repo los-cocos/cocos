@@ -282,6 +282,9 @@ class Blink( IntervalAction ):
         self.target.show = (m  >  slice / 2.0)
 
 class Rotate( IntervalAction ):
+    """Rotate( degrees, duration )
+
+    Rotates a sprite counter-clockwise"""
     def init(self, angle, duration=5 ):
         self.angle = angle
         self.duration = duration
@@ -297,6 +300,9 @@ class Rotate( IntervalAction ):
 
 
 class Scale(IntervalAction):
+    """Scale( zoom_factor, duration )
+
+    Scales an sprite with a given zoom_factor"""
     def init(self, end, duration=5 ):
         self.end_scale = end
         self.duration = duration
@@ -383,6 +389,9 @@ class Jump(IntervalAction):
         self.target.translate = self.start_position + (x,y,0)
 
 class Bezier( IntervalAction ):
+    """Bezier( bezier_configuration, duration )
+
+    Moves a sprite through a bezier path"""
     def init(self, bezier, duration=5):
         self.duration = duration
         self.bezier = bezier

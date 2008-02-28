@@ -331,8 +331,8 @@ class SpriteAnimate( SpriteLayer ):
 
 examples = {
  1: ("Example #1 - Goto", "sprite.do( Goto( (x,y,0), duration ) )", SpriteGoto ),
- 2: ("Example #2 - Move", "sprite.do( Move( (delta-x,delta-y,0), duration ) )", SpriteMove ),
- 3: ("Example #3 - Scale", "sprite.do( Scale( zoom-factor, duration) )", SpriteScale ),
+ 2: ("Example #2 - Move", "sprite.do( Move( (delta_x,delta_y,0), duration ) )", SpriteMove ),
+ 3: ("Example #3 - Scale", "sprite.do( Scale( zoom_factor, duration) )", SpriteScale ),
  4: ("Example #4 - Rotate", "sprite.do( Rotate( degrees, duration) )", SpriteRotate ),
  5: ("Example #5 - Jump", "sprite.do( Jump( y, x, jumps, duration) )", SpriteJump),
  6: ("Example #6 - Bezier", "sprite.do( Bezier( bezier_conf, duration) )", SpriteBezier),
@@ -345,7 +345,7 @@ examples = {
  13: ("Example #13 - Repeat a Sequence", "Run a sequence many times\nsprite.do( Repeat( jump + move + jump2 )", SpriteRepeatSeq),
  14: ("Example #14 - Repeat a Sequence 2", "Run a sequence of duplicate Actions\nsprite.do( Repeat( rotate + move + rotate + move + rotate + move + rotate ) )", SpriteRepeatMove ),
  15: ("Example #15 - Repeat Sequence of Repeats", "Run a sequence of repeats\nsprite.do( Repeat( Repat(jump) + Repeat(move) + Repeat(jump2) )", SpriteRepeatSeq2),
- 16: ("Example #16 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS() is the action passes the sprite as the 1st parameter", SpriteTrigger ),
+ 16: ("Example #16 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS(), another action, passes the sprite as the 1st parameter", SpriteTrigger ),
  17: ("Example #17 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
  18: ("Example #18 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
  19: ("Example #19 - Animate", "Animate a sprite:\na = Animation('dance',0.5,'image1.png',image2.png','image3.png')\nsprite.add_animation(a)\nsprite.do( Animate('dance' ) )", SpriteAnimate),
@@ -353,5 +353,6 @@ examples = {
 }
 
 if __name__ == "__main__":
-    director.init()
+    director.init( resizable=True )
+    director.window.set_vsync( False )
     director.run( get_sprite_example( 1 ) )
