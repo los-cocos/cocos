@@ -28,7 +28,7 @@ class Quad2DTransition(TransitionScene):
         self.dt += dt
         if self.dt >= self.duration:
             director.replace( self.in_scene )
-        x, y = director.window.width, director.window.height
+        x, y = director.get_window_size()
         # draw scene one
         self.out_scene.on_enter()
         self.out_scene.step(dt)
@@ -57,10 +57,11 @@ class Quad2DTransition(TransitionScene):
     def blit_texture(self, texture, p):
         glEnable(GL_TEXTURE_2D)        
         glBindTexture(texture.target, texture.id)
+        x, y = director.get_window_size()
         
         #return        
-        x = 2**ceil( log( texture.width, 2) )
-        y = 2**ceil( log( texture.height, 2) )
+        x = 2**ceil( log( x, 2) )
+        y = 2**ceil( log( y, 2) )
         glBegin(GL_QUADS)
         glTexCoord2d(0.0,0.0); glVertex2d(*p(0.0,0.0));
         glTexCoord2d(1,0.0); glVertex2d(*p(x,0.0));
@@ -72,19 +73,20 @@ class Quad2DTransition(TransitionScene):
         
 class SlideLRTransition(Quad2DTransition):       
     def out_proyect(self, x, y):
-        dx = director.window.width * (self.dt/self.duration)
+        dx = director.get_window_size()[0] * (self.dt/self.duration)
         return (x-dx, y)
     
     def in_proyect(self, x, y):
-        dx = director.window.width * (1-self.dt/self.duration)
+        dx = director.get_window_size()[0] * (1-self.dt/self.duration)
         return (x+dx, y)    
         
 class SlideLRTransition2(Quad2DTransition):       
     def out_proyect(self, x, y):
-        dx = director.window.width * ((self.dt/self.duration)**2)
+        dx = director.get_window_size()[0] * ((self.dt/self.duration)**2)
         return (x-dx, y)
     
     def in_proyect(self, x, y):
-        dx = director.window.width * (1-(self.dt/self.duration)**2)
+        dx = director.get_window_size()[0] * (1-(self.dt/self.duration)**2)
+        print director.get_window_size()[0], x, y, dx
         return (x+dx, y)      
         

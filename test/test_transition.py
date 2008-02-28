@@ -32,7 +32,7 @@ class ColorLayer(Layer):
         
     def step(self, dt):
         gl.glColor4f(*self.color)
-        x, y = director.window.width, director.window.height
+        x, y = director.get_window_size()
         gl.glBegin(gl.GL_QUADS)
         gl.glVertex2f( 0, 0 )
         gl.glVertex2f( 0, y )
@@ -42,7 +42,8 @@ class ColorLayer(Layer):
         gl.glColor4f(1,1,1,1)    
 
 if __name__ == "__main__":
-    director.init()
+    director.init(resizable=True)
+    #director.window.set_fullscreen(True)
     g = GrossiniLayer()
     c1 = ColorLayer(1,0,0,1)
     c2 = ColorLayer(0,1,1,1)
