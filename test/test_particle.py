@@ -17,9 +17,11 @@ class ParticleLayer( AnimationLayer ):
     def __init__( self ):
         super( ParticleLayer, self ).__init__()
 
-        self.particle = ParticleEngine( 120 )
+        p1 = ParticleEmitter( 60, (320,240) )
+        p2 = ParticleEmitter( 60, (120,340) )
+        p3 = ParticleEmitter( 60, (420,340) )
 
-        self.add( self.particle )
+        self.add( p1, p2, p3 )
 
 
 if __name__ == "__main__":
