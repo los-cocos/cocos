@@ -10,7 +10,7 @@ import random
 
 from pyglet.gl import *
 
-__all__ = [ 'Particle', 'ParticleEngine' ]
+__all__ = [ 'Particle', 'ParticleEmitter' ]
 
 class Particle(object):
     def __init__(self):
@@ -18,20 +18,21 @@ class Particle(object):
         self.y = 0
         self.vx = 25-random.random()*50
         self.vy = random.random()*50
-        self.color = (1.0,1.0,1.0,1.0)
+        self.color = (random.random(),random.random(),random.random(),random.random())
         self.lifetime = 3 + random.random() * 3
         self.active = True
-        self.rotate = 1.0
+        self.angle = 0.0
         self.scale = 1.0
         self.gravity = 20
 
 
-class ParticleEngine( object ):
+class ParticleEmitter( object ):
 
-    def __init__( self, n ):
+    def __init__( self, n, coords ):
         self.particles = [ Particle() for i in range(n) ]
         self.size = (3,3)
         self.hotspot = (0.5, 0.5)
+        self.coords = coords
 
         self.create_particle()
 
@@ -54,19 +55,29 @@ class ParticleEngine( object ):
         glEndList()
 
     def step( self, dt ):
+
+        x = self.coords[0]
+        y = self.coords[1]
+
+        to_be_deleted = []
+
         for p in self.particles:
             p.lifetime -= dt
             if p.lifetime < 0:
-                self.particles.remove( p )
+                to_be_deleted.append( p )
                 continue
             p.x += p.vx * dt
             p.y += p.vy * dt
             p.vy -= p.gravity * dt
 
-
-        for p in self.particles:
             glPushMatrix()
             glColor4f(*p.color)
-            glTranslatef(p.x+320,p.y+240,0)
+#            glRotatef(p.angle, 0, 0, 1)
+#            glScalef( p.scale, p.scale, 1 )
+            glTranslatef(p.x + x, p.y+y,0)
             glCallList(self.listid)
             glPopMatrix()
+
+        for p in to_be_deleted:
+            self.particles.remove( p )
+
