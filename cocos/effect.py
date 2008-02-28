@@ -47,9 +47,24 @@ class TextureFilterEffect (Effect):
 
 # Auxiliar classes for render-to-texture
 
+_best_grabber = None
+
 def TextureGrabber():
     """Return an instance of the best texture grabbing class"""
-    return FBOGrabber()
+    # Why this isn't done on module import? Because we need an initialized
+    # GL Context to query availability of extensions
+    global _best_grabber
+    if _best_grabber is not None:
+        return _best_grabber()
+    # Preferred method: framebuffer object
+    try:
+        _best_grabber = FBOGrabber
+        return _best_grabber()
+    except:
+        pass
+    # Fallback: GL generic grabber
+    _best_grabber = GenericGrabber
+    return _best_grabber()
 
 class GenericGrabber(object):
     def grab (self, texture):
@@ -79,11 +94,11 @@ class PbufferGrabber(object):
     
     def before_render (self, texture):
         self.pbuf.switch_to()
-        gl.glViewport(0, 0, self.pbuf.width, self.pbuf.height)
-        gl.glMatrixMode(gl.GL_PROJECTION)
-        gl.glLoadIdentity()
-        gl.glOrtho(0, self.pbuf.width, 0, self.pbuf.height, -1, 1)
-        gl.glMatrixMode(gl.GL_MODELVIEW)
+        #gl.glViewport(0, 0, self.pbuf.width, self.pbuf.height)
+        #gl.glMatrixMode(gl.GL_PROJECTION)
+        #gl.glLoadIdentity()
+        #gl.glOrtho(0, self.pbuf.width, 0, self.pbuf.height, -1, 1)
+        #gl.glMatrixMode(gl.GL_MODELVIEW)
         
     def after_render (self, texture):
         buffer = image.get_buffer_manager().get_color_buffer()
