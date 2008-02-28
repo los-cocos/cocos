@@ -1,6 +1,8 @@
 from gl_pbuffer import Pbuffer
 from gl_framebuffer_object import FramebufferObject
 from pyglet.gl import *
+from director import director
+from pyglet import image
 
 # Auxiliar classes for render-to-texture
 
@@ -20,6 +22,8 @@ def TextureGrabber():
     except:
         pass
     # Fallback: GL generic grabber
+    print "Warning: using fallback texture grabber. Effects will treat" \
+          "layer transparency as black"
     _best_grabber = GenericGrabber
     return _best_grabber()
 
@@ -68,8 +72,11 @@ class FBOGrabber(object):
     with a window sized capture. Show just blits the texture, override to
     do more interesting things.
     Requires framebuffer_object extensions"""
-    def grab (self, texture):
+    def __init__ (self):
+        # This code is on init to make creation fail if FBOs are not available
         self.fbuf = FramebufferObject()
+
+    def grab (self, texture):
         self.fbuf.bind()
         self.fbuf.texture2d (texture)
         self.fbuf.check_status()
