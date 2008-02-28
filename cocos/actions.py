@@ -540,7 +540,8 @@ class Animate( IntervalAction ):
 
     def step( self, dt ):
         i =  self.get_runtime() / self.animation.delay
-        self.target.frame = self.animation.frames[ int(i) ]
+        i = min(int(i), len(self.animation.frames)-1)
+        self.target.frame = self.animation.frames[i]
 
 
 class Animation( object ):
