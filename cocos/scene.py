@@ -34,7 +34,7 @@ class Scene(object):
         (name can be used later to remove the layer)
         """
         elem = zvalue, layer
-        self.layers.insert( bisect.bisect( elem, self.layers ), elem )
+        bisect.insort( self.layers,  elem )
         
     def remove( self, layer_name ):
         """
