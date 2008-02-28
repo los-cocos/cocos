@@ -4,6 +4,7 @@ from pyglet import image
 from math import *
 import scene
 from director import director
+import framegrabber
 
 class TransitionScene(scene.Scene):
     """
@@ -17,6 +18,17 @@ class Quad2DTransition(TransitionScene):
     def __init__(self, out_scene, in_scene, duration=10):
         self.in_scene = in_scene
         self.out_scene = out_scene
+        self.in_texture = image.Texture.create_for_size(GL_TEXTURE_2D, 
+            director.window.width, director.window.height, GL_RGB)
+        
+        self.in_grabber = framegrabber.TextureGrabber()
+        self.in_grabber.grab (self.in_texture)
+
+        self.out_texture = image.Texture.create_for_size(GL_TEXTURE_2D, 
+            director.window.width, director.window.height, GL_RGB)
+        
+        self.out_grabber = framegrabber.TextureGrabber()
+        self.out_grabber.grab (self.out_texture)
         
         self.dt = 0
         self.duration = duration
@@ -30,29 +42,23 @@ class Quad2DTransition(TransitionScene):
             director.replace( self.in_scene )
         x, y = director.get_window_size()
         # draw scene one
-        self.out_scene.on_enter()
+        self.out_grabber.before_render(self.out_texture)
         self.out_scene.step(dt)
-        self.out_scene.on_exit()
+        self.out_grabber.after_render(self.out_texture)
         
-        # capture and clear
-        buffer = image.get_buffer_manager().get_color_buffer()
-        out_texture = buffer.texture
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # draw scene two
-        self.in_scene.on_enter()
+        self.in_grabber.before_render(self.in_texture)
         self.in_scene.step(dt)
-        self.in_scene.on_exit()
+        self.in_grabber.after_render(self.in_texture)
         
     
-        # capture and clear
-        in_buffer = image.get_buffer_manager().get_color_buffer()
-        in_texture = buffer.texture
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         #paste both scenes
-        self.blit_texture( out_texture, self.out_proyect)
-        self.blit_texture( in_texture, self.in_proyect)
+        self.blit_texture( self.out_texture, self.out_proyect)
+        self.blit_texture( self.in_texture, self.in_proyect)
         
     def blit_texture(self, texture, p):
         glEnable(GL_TEXTURE_2D)        
