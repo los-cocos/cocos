@@ -19,7 +19,8 @@ class ParticleLayer( AnimationLayer ):
 
         p1 = ParticleEmitter( 60, (220,200), "particle.png" )
         p2 = ParticleEmitter( 60, (320,240), "particle.png"  )
-        p3 = ParticleEmitter( 60, (420,280), "particle.png" )
+
+        p3 = SmokeEmitter( 60, (420,280), "particle.png" )
 
         self.add( p1, p2, p3 )
 
