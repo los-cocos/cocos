@@ -7,6 +7,7 @@ Layer class and subclasses
 """
 
 from cocos.director import *
+from pyglet import gl
 
 __all__ = [ 'Layer', 'MultiplexLayer', 'AnimationLayer' ]
 
@@ -116,3 +117,20 @@ class AnimationLayer(Layer):
     """
     def step( self, dt ):
         [ o.step(dt) for o in self.objects ]
+
+class ColorLayer(Layer):
+    def __init__(self, *color):
+        self.color = color
+        super(ColorLayer, self).__init__()
+        
+    def step(self, dt):
+        gl.glColor4f(*self.color)
+        x, y = director.get_window_size()
+        gl.glBegin(gl.GL_QUADS)
+        gl.glVertex2f( 0, 0 )
+        gl.glVertex2f( 0, y )
+        gl.glVertex2f( x, y )
+        gl.glVertex2f( x, 0 )
+        gl.glEnd()
+        gl.glColor4f(1,1,1,1)    
+

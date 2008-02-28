@@ -3,7 +3,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from cocos.director import director
-from cocos.layer import Layer, AnimationLayer
+from cocos.layer import Layer, AnimationLayer, ColorLayer
 from cocos.scene import Scene
 from cocos.transitions import *
 from cocos.actions import ActionSprite, Rotate, Repeat
@@ -54,22 +54,6 @@ class ControlLayer(Layer):
                     )
             control_p = (control_p + 1) % len(control_list)
             return True
-
-class ColorLayer(Layer):
-    def __init__(self, *color):
-        self.color = color
-        super(ColorLayer, self).__init__()
-        
-    def step(self, dt):
-        gl.glColor4f(*self.color)
-        x, y = director.get_window_size()
-        gl.glBegin(gl.GL_QUADS)
-        gl.glVertex2f( 0, 0 )
-        gl.glVertex2f( 0, y )
-        gl.glVertex2f( x, y )
-        gl.glVertex2f( x, 0 )
-        gl.glEnd()
-        gl.glColor4f(1,1,1,1)    
 
 class GrossiniLayer(AnimationLayer):
     def __init__( self ):
