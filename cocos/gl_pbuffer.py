@@ -1,4 +1,7 @@
-from pyglet.gl.glx import *
+try:
+    from pyglet.gl.glx import *
+except:
+    pass
 import ctypes
 
 class Pbuffer (object):

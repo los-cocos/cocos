@@ -1,6 +1,11 @@
 from director import director
 from pyglet.gl import *
-from pyglet.gl.glx import *
+
+try:
+    from pyglet.gl.glx import *
+except:
+    pass
+    
 from pyglet import image
 from gl_pbuffer import Pbuffer
 from gl_framebuffer_object import FramebufferObject
