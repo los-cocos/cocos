@@ -2,9 +2,58 @@
 # Los Cocos: An extension for Pyglet
 # http://code.google.com/p/los-cocos/
 #
-"""
-Framework to handle game's logic
-"""
+'''Singleton that handles the logic behind the Scenes
+
+Director
+========
+
+Initializing
+------------
+
+The director is the singleton that creates and handles the main ``Window``
+and manages the logic behind the ``Scenes``. 
+
+The first thing to do, is to initialize the ``director``::
+
+    from cocos.director import *
+    director.init( list_of_arguments )
+
+This will initialize the director, and will create a 640x480 window.
+The parameters that are supported by director.init() are the same
+parameters that are supported by pyglet.window.Window().
+
+Some of the supported parameters are:
+
+    * ``fullscreen``: Boolean. Window is created in fullscreen. Default is False
+    * ``resizable``: Boolean. Window is resizable. Default is False
+    * ``vsync``: Boolean. Sync with the vertical retrace. Default is True
+    * ``width``: Integer. Window width size. efault is 640
+    * ``height``: Integer. Window. height size. efault is 480
+    * ``caption``: String. Window title
+    * ``visible``: Boolean. Window is visible or not. Default is True.
+
+For example::
+
+    director.init( caption="Hello World", fullcreen=True )
+
+For a complete list of the supported parameters, see the pyglet Window
+documentation.
+
+Running an Scene
+----------------
+
+Once you have initialized the director, you can run your first ``Scene``::
+
+    director.run( Scene( MyLayer() ) )
+
+This will run an ``Scene`` that has only 1 layer: ``MyLayer``
+For more information about ``Scenes`` and ``Layers``, go to the the Scenes and Layer
+documentation::
+
+    XXX: Finish end(), push(), pop(), replace()
+'''
+
+__docformat__ = 'restructuredtext'
 
 
 from pyglet import window, event
@@ -24,7 +73,7 @@ class Director(event.EventDispatcher):
     
     def init(self, *args, **kwargs):
         """
-        init(size, caption, fullscree, resizable, etc-from-pyglet) -> window
+        init(size, caption, fullscreen, resizable, etc-from-pyglet) -> window
         creates widnow 
         """
         

@@ -37,18 +37,18 @@ class FontLayer( Layer ):
 
         self.text_title = font.Text(ft_title, self.title,
             x=5,
-            y=480,
+            y=director.get_window_size()[1],
             halign=font.Text.LEFT,
             valign=font.Text.TOP)
 
         self.text_subtitle = font.Text(ft_subtitle, self.subtitle,
             x=5,
-            y=400,
+            y=director.get_window_size()[1] - 80,
             halign=font.Text.LEFT,
             valign=font.Text.TOP)
 
         self.text_help = font.Text(ft_help,"Press LEFT / RIGHT for prev/next example, ENTER to restart example",
-            x=320,
+            x=director.get_window_size()[0] /2,
             y=20,
             halign=font.Text.CENTER,
             valign=font.Text.CENTER)
@@ -370,6 +370,5 @@ examples = {
 }
 
 if __name__ == "__main__":
-    director.init( resizable=True )
-#    director.window.set_vsync( False )
+    director.init( resizable=True, caption='Los Cocos - Sprite example' )
     director.run( get_sprite_example( 1 ) )

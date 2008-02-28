@@ -36,32 +36,32 @@ To animate an sprite you need to execute an action.
 
 Actions that modifies the sprite's properties:
 
-    * Move( (x,y,0), duration)
-    * Goto( (x,y,0), duration )
-    * Rotate( degrees, duration )
-    * Scale( zoom_factor, duration )
-    * Jump( height, x, number_of_jumps, duration )
-    * Bezier( bezier_configuration, duration )
-    * Place( (x,y,0) )
-    * Animate( animation_name )
-    * FadeIn( duration )
-    * FadeOut( duration )
-    * Blink( times_to_blink, duration ) 
-    * Show()
-    * Hide()
+    * ``Move( (x,y,0), duration)``
+    * ``Goto( (x,y,0), duration )``
+    * ``Rotate( degrees, duration )``
+    * ``Scale( zoom_factor, duration )``
+    * ``Jump( height, x, number_of_jumps, duration )``
+    * ``Bezier( bezier_configuration, duration )``
+    * ``Place( (x,y,0) )``
+    * ``Animate( animation_name )``
+    * ``FadeIn( duration )``
+    * ``FadeOut( duration )``
+    * ``Blink( times_to_blink, duration )``
+    * ``Show()``
+    * ``Hide()``
 
 Composite actions:
 
-    * Repeat( action )
-    * Spawn( list_of_actions )
-    * Sequence( list_of_actions )
+    * ``Repeat( action )``
+    * ``Spawn( list_of_actions )``
+    * ``Sequence( list_of_actions )``
 
 Misc actions:
 
-    * CallFunc( function )
-    * CallFuncS( function )
-    * Delay( seconds )
-    * RandomDelay( lo_seconds, hi_seconds )
+    * ``CallFunc( function )``
+    * ``CallFuncS( function )``
+    * ``Delay( seconds )``
+    * ``RandomDelay( lo_seconds, hi_seconds )``
 
 
 To execute any action you need to create an action::
