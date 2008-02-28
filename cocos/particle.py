@@ -9,6 +9,7 @@
 import random
 
 from pyglet.gl import *
+from pyglet import image
 
 __all__ = [ 'Particle', 'ParticleEmitter' ]
 
@@ -17,7 +18,7 @@ class Particle(object):
         self.x = 0
         self.y = 0
         self.vx = 25-random.random()*50
-        self.vy = random.random()*50
+        self.vy = 40+random.random()*30
         self.color = (random.random(),random.random(),random.random(),random.random())
         self.lifetime = 3 + random.random() * 3
         self.active = True
@@ -28,13 +29,22 @@ class Particle(object):
 
 class ParticleEmitter( object ):
 
-    def __init__( self, n, coords ):
+    def __init__( self, n, coords, filename ):
         self.particles = [ Particle() for i in range(n) ]
-        self.size = (3,3)
+        self.size = (10,10)
         self.hotspot = (0.5, 0.5)
         self.coords = coords
+        self.texture = None
+
+        if filename:
+            self.load_texture( filename )
 
         self.create_particle()
+
+
+    def load_texture( self, filename ):        
+        textureSurface = image.load(filename)
+        self.texture=textureSurface.texture
 
     def create_particle( self):
         xs,ys = self.size
@@ -46,10 +56,10 @@ class ParticleEmitter( object ):
         glNewList(self.listid, GL_COMPILE)
 
         glBegin(GL_QUADS)
-        glVertex2f(hx,hy)
-        glVertex2f(hx+xs,hy)
-        glVertex2f(hx+xs,hy+ys)
-        glVertex2f(hx,hy+ys)
+        glTexCoord2f(0,0); glVertex2f(hx,hy)
+        glTexCoord2f(1,0); glVertex2f(hx+xs,hy)
+        glTexCoord2f(1,1); glVertex2f(hx+xs,hy+ys)
+        glTexCoord2f(0,1); glVertex2f(hx,hy+ys)
         glEnd()
 
         glEndList()
@@ -60,6 +70,9 @@ class ParticleEmitter( object ):
         y = self.coords[1]
 
         to_be_deleted = []
+
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.texture.id )
 
         for p in self.particles:
             p.lifetime -= dt
@@ -72,12 +85,14 @@ class ParticleEmitter( object ):
 
             glPushMatrix()
             glColor4f(*p.color)
-#            glRotatef(p.angle, 0, 0, 1)
-#            glScalef( p.scale, p.scale, 1 )
             glTranslatef(p.x + x, p.y+y,0)
             glCallList(self.listid)
             glPopMatrix()
 
+        glDisable( GL_TEXTURE_2D )
+
         for p in to_be_deleted:
             self.particles.remove( p )
 
+    def __del__(self):
+        glDeleteLists(self.listid, 1)
