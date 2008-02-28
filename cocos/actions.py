@@ -12,6 +12,58 @@
 #     http://opioid-interactive.com/~shang/projects/pygext/
 #
 
+'''Classes to manipulate sprites.
+
+Sprites
+=======
+
+Creating sprites
+================
+
+An sprite is created instantiating the ActionSprite class::
+
+    from cocos.actions import *
+
+    sprite = ActionSprite('sprite_texture.png')
+
+``sprite_texture.png`` is an image file with the shape of the sprite
+
+
+Animating a sprite
+==================
+
+To animate an sprite you need to execute an action.
+Possible actions are:
+
+    * Move
+    * Goto
+    * Rotate
+    * Scale
+    * Jump
+    * etc...
+
+and there are composite actions like:
+
+    * Repeat
+    * Spawn
+    * Sequence
+    * etc...
+
+To execute any action you need to create an action::
+
+    move = Move( (50,0,0), 5 )
+
+In this case, ``move`` is an action that will move the sprite
+50 pixels to the right (``x`` coordinate), 0 pixel in the ``y`` coordinate,
+and 0 pixels in the ``z`` coordinate in 5 seconds.
+
+
+And now tell the sprite to execute it::
+
+    sprite.do( move )
+'''
+
+__docformat__ = 'restructuredtext'
 
 import random
 import copy
@@ -21,9 +73,6 @@ from euclid import *
 
 from pyglet import image
 from pyglet.gl import *
-
-
-__docformat__ = 'restructuredtext'
 
 __all__ = [ 'ActionSprite',                     # Sprite class
 
