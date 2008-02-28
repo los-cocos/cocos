@@ -118,7 +118,7 @@ class SpriteRepeatMove( SpriteLayer ):
 class SpriteScale( SpriteLayer ):
     def on_enter( self ):
         sprite = ActionSprite("grossini.png")
-        sprite.place( (320,100,0) )
+        sprite.place( (320,240,0) )
 
         self.add( sprite )
 
@@ -192,14 +192,30 @@ class SpriteDelay( SpriteLayer ):
 class SpriteBlink( SpriteLayer ):
     def on_enter( self ):
         sprite = ActionSprite("grossini.png")
-        sprite.place( (120,100,0) )
+        sprite.place( (320,240,0) )
 
         self.add( sprite )
         
         blink = Blink( 10, 2 )
 
         sprite.do( blink )
+
+class SpriteFadeOut( SpriteLayer ):
+    def on_enter( self ):
+        sprite1 = ActionSprite("grossinis_sister1.png")
+        sprite2 = ActionSprite("grossinis_sister2.png")
+
+        sprite1.place( (200,240,0) )
+        sprite2.place( (440,240,0) )
+
+        self.add( sprite1, sprite2 )
         
+        fadeout = FadeOut( 2 )
+        fadein = FadeIn( 2 )
+
+        sprite1.do( fadein )
+        sprite2.do( fadeout )
+
 class SpriteRepeat( SpriteLayer ):
     def on_enter( self ):
         sprite = ActionSprite("grossini.png")
@@ -339,20 +355,21 @@ examples = {
  7: ("Example #7 - Spawn", "Run 2 (or more) actions at the same time:\n\nsprite.do( Jump() | Rotate() )\nor:\nsprite.do( Spawn( Jump(), Rotate() ) )\nor:\nsprite.do( Jump() )\nsprite.do( Rotate() )", SpriteSpawn),
  8: ("Example #8 - Sequence", "Run actions sequentialy:\n\nsprite.do( Bezier() + Move() + Jump() )\nor:\nsprite.do( Sequence( Bezier(), Move(), Jump() ) )", SpriteSequence),
  9: ("Example #9 - Blink", "Show and hide an sprite\nsprite.do( Blink( times, duration ) )\n\nShow() and Hide() are actions too.", SpriteBlink),
- 10: ("Example #10 - Delay","Delays between actions\nsprite.do(Move() + Delay( seconds ) + Jump() )\n\nRandomDelay() is an action too.", SpriteDelay ),
- 11: ("Example #11 - Repeat", "Run the same action in 'RepeatMode'\nsprite.do( Repeat( Jump( mode=RepeatMode) )", SpriteRepeat),
- 12: ("Example #12 - Repeat a-la PingPong", "Run the same action in 'PingPongMode' (default mode)\nsprite.do( Repeat( Jump( mode=PingPongMode) )", SpriteRepeat2),
- 13: ("Example #13 - Repeat a Sequence", "Run a sequence many times\nsprite.do( Repeat( jump + move + jump2 )", SpriteRepeatSeq),
- 14: ("Example #14 - Repeat a Sequence 2", "Run a sequence of duplicate Actions\nsprite.do( Repeat( rotate + move + rotate + move + rotate + move + rotate ) )", SpriteRepeatMove ),
- 15: ("Example #15 - Repeat Sequence of Repeats", "Run a sequence of repeats\nsprite.do( Repeat( Repat(jump) + Repeat(move) + Repeat(jump2) )", SpriteRepeatSeq2),
- 16: ("Example #16 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS(), another action, passes the sprite as the 1st parameter", SpriteTrigger ),
- 17: ("Example #17 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
- 18: ("Example #18 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
- 19: ("Example #19 - Animate", "Animate a sprite:\na = Animation('dance',0.5,'image1.png',image2.png','image3.png')\nsprite.add_animation(a)\nsprite.do( Animate('dance' ) )", SpriteAnimate),
+ 10: ("Example #10 - FadeIn and FadeOut", "Fades in and out and sprite\nsprite1.do( FadeIn( duration ) )\nsprite2.do( FadeOut(duration)).", SpriteFadeOut),
+ 11: ("Example #11 - Delay","Delays between actions\nsprite.do(Move() + Delay( seconds ) + Jump() )\n\nRandomDelay() is an action too.", SpriteDelay ),
+ 12: ("Example #12 - Repeat", "Run the same action in 'RepeatMode'\nsprite.do( Repeat( Jump( mode=RepeatMode) )", SpriteRepeat),
+ 13: ("Example #13 - Repeat a-la PingPong", "Run the same action in 'PingPongMode' (default mode)\nsprite.do( Repeat( Jump( mode=PingPongMode) )", SpriteRepeat2),
+ 14: ("Example #14 - Repeat a Sequence", "Run a sequence many times\nsprite.do( Repeat( jump + move + jump2 )", SpriteRepeatSeq),
+ 15: ("Example #15 - Repeat a Sequence #2", "Run a sequence of duplicate Actions\nsprite.do( Repeat( rotate + move + rotate + move + rotate + move + rotate ) )", SpriteRepeatMove ),
+ 16: ("Example #16 - Repeat Sequence of Repeats", "Run a sequence of repeats\nsprite.do( Repeat( Repat(jump) + Repeat(move) + Repeat(jump2) )", SpriteRepeatSeq2),
+ 17: ("Example #17 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS(), another action, passes the sprite as the 1st parameter", SpriteTrigger ),
+ 18: ("Example #18 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
+ 19: ("Example #19 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
+ 20: ("Example #20 - Animate", "Animate a sprite:\na = Animation('dance',0.5,'image1.png',image2.png','image3.png')\nsprite.add_animation(a)\nsprite.do( Animate('dance' ) )", SpriteAnimate),
 
 }
 
 if __name__ == "__main__":
     director.init( resizable=True )
-    director.window.set_vsync( False )
+#    director.window.set_vsync( False )
     director.run( get_sprite_example( 1 ) )

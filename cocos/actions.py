@@ -35,6 +35,7 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'Delay','RandomDelay',              # Delays
             'Hide','Show','Blink',              # Hide or Shows the sprite
             'Animate',                          # Animates the sprite
+            'FadeOut','FadeIn',                 # Fades out the sprite
 
             'Animation',                        # class that holds the frames to animate
 
@@ -65,6 +66,7 @@ class ActionSprite( object ):
         self.angle = 0.0
         self.show = True
         self.animations = {}
+        self.color = [1.0,1.0,1.0,1.0]
 
     def do( self, action ):
         try:
@@ -104,6 +106,8 @@ class ActionSprite( object ):
         if self.show:
             glPushMatrix()
             glLoadIdentity()
+
+            glColor4f(*self.color)
             glTranslatef(self.translate.x, self.translate.y, self.translate.z )
 
             # comparison is cheaper than an OpenGL matrix multiplication
@@ -536,6 +540,32 @@ class RandomDelay(Delay):
         
     def done(self):
         return ( self.delta <= self.runtime )
+
+
+class FadeOut( IntervalAction ):
+    """FadeOut(duration)
+
+    Fades out an sprite"""
+    def init( self, duration ):
+        self.duration = duration
+
+    def start( self ):
+        self.sprite_color = copy.copy( self.target.color )
+
+    def step( self, dt ):
+        p = self.get_runtime() / self.duration
+        c = self.sprite_color[3] - self.sprite_color[3] * p
+        self.target.color[3] = c
+
+
+class FadeIn( FadeOut):
+    """FadeIn(duration)
+
+    Fades in an sprite"""
+    def step( self, dt ):
+        p = self.get_runtime() / self.duration
+        c = self.sprite_color[3] * p
+        self.target.color[3] = c
 
 
 class Animate( IntervalAction ):
