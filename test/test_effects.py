@@ -8,7 +8,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from cocos.director import director
-from cocos.layer import Layer
+from cocos.layer import Layer, ColorLayer
 from cocos.scene import Scene
 from cocos.effect import TextureFilterEffect, ColorizeEffect
 import pyglet
@@ -36,6 +36,21 @@ class MyEffect (TextureFilterEffect):
     def show (self):
         self.texture.blit (0, 0, width=director.window.width*self.scale)
 
+class DynamicColorizeEffect (ColorizeEffect):
+    def __init__ (self):
+        super (ColorizeEffect, self).__init__ ()
+        self.color = (1,1,1,1)
+        self.timer = 0
+
+    def prepare (self, target, dt):
+        super (ColorizeEffect, self).prepare (target, dt)
+        self.timer += dt
+        # red glow: 
+        red = self.timer % 2
+        if red > 1: red = 2-red
+        # set color
+        self.color = (red,1,1,1)
+        
 if __name__ == "__main__":
     director.init()
     # One little ball is scaled
@@ -43,9 +58,12 @@ if __name__ == "__main__":
     l1.set_effect (MyEffect(0.5))
     # The one above it is translucent
     l2 = PictureLayer(100)
-    l2.set_effect (ColorizeEffect(color=(1,1,1,0.75))) # 75 % opacity
-    # The onw above has no effect
+    l2.set_effect (ColorizeEffect(color=(0.5,1,0.5,0.75))) # 75 % opacity, greenish hue
+    # The one above it is translucent
     l3 = PictureLayer(150)
-    director.run( Scene (l1, l2, l3) )
+    l3.set_effect (DynamicColorizeEffect())
+    # The one above has no effect
+    l4 = PictureLayer(200)
+    director.run( Scene (ColorLayer(0.8,0.8,0.8,1), l1, l2, l3, l4) )
 
 

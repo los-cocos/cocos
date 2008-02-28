@@ -24,7 +24,7 @@ class TextureFilterEffect (Effect):
     do more interesting things"""
     def __init__ (self):
         self.texture = image.Texture.create_for_size(GL_TEXTURE_2D, 
-            director.window.width, director.window.height, GL_RGB)
+            director.window.width, director.window.height, GL_RGBA)
         
         self._grabber = TextureGrabber()
         self._grabber.grab (self.texture)
@@ -50,6 +50,6 @@ class ColorizeEffect (TextureFilterEffect):
         glColor4f (*self.color)
         self.texture.blit (0, 0)
         glColor4f (1,1,1,1)
-        # Not disabling this, other people assumes it is on :(
+        # Not disabling this, other people assumes it is on :( (including image.blit)
         #glDisable (GL_BLEND) 
 
