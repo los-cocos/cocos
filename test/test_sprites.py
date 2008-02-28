@@ -314,6 +314,21 @@ class SpriteReuseSequence( SpriteLayer ):
         sprite2.do( Repeat( rotate) )
 
 
+class SpriteAnimate( SpriteLayer ):
+    def on_enter( self ):
+        sprite = ActionSprite("grossinis_sister1.png")
+
+        a = Animation("dance", 0.5 )
+        for i in range(1,15):
+            a.add_frame( "grossini_dance_%02d.png" % i)
+
+        sprite.add_animation( a )
+        sprite.place( (320,240,0) )
+
+        self.add( sprite )
+
+        sprite.do( Animate("dance") )
+
 examples = {
  1: ("Example #1 - Goto", "sprite.do( Goto( (x,y,0), duration ) )", SpriteGoto ),
  2: ("Example #2 - Move", "sprite.do( Move( (delta-x,delta-y,0), duration ) )", SpriteMove ),
@@ -333,6 +348,7 @@ examples = {
  16: ("Example #16 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS() is the action passes the sprite as the 1st parameter", SpriteTrigger ),
  17: ("Example #17 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
  18: ("Example #18 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
+ 19: ("Example #19 - Animate", "Animate a sprite:\na = Animation('dance',0.5,'image1.png',image2.png','image3.png')\nsprite.add_animation(a)\nsprite.do( Animate('dance' ) )", SpriteAnimate),
 
 }
 
