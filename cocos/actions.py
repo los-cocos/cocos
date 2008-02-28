@@ -34,6 +34,9 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'CallFunc','CallFuncS',             # Calls a function
             'Delay','RandomDelay',              # Delays
             'Hide','Show','Blink',              # Hide or Shows the sprite
+            'Animate',                          # Animates the sprite
+
+            'Animation',                        # class that holds the frames to animate
 
             'ForwardDir','BackwardDir',         # Movement Directions
             'RepeatMode','PingPongMode',        # Repeat modes
@@ -46,14 +49,22 @@ class PingPongMode: pass
 class RepeatMode: pass
 
 class ActionSprite( object ):
+    """An sprite that supports **Actions**
+
+    To execute an action use the **do** method.
+
+    **sprite.do( Action )**"""
+
+    
     def __init__( self, img ):
-        self.sprite = image.load( img )
+        self.frame = image.load( img )
         self.actions = []
         self.to_remove = []
         self.translate = Point3(0,0,0)
         self.scale = 1.0
         self.angle = 0.0
         self.show = True
+        self.animations = {}
 
     def do( self, action ):
         try:
@@ -103,7 +114,7 @@ class ActionSprite( object ):
 
             # hotspot is in the center of the sprite.
             # TODO: hotspot shall be customizable
-            self.sprite.blit( -self.sprite.width / 2, - self.sprite.height / 2 )
+            self.frame.blit( -self.frame.width / 2, - self.frame.height / 2 )
 
             glPopMatrix()
 
@@ -114,10 +125,13 @@ class ActionSprite( object ):
         """get_box() -> (x1,y1,x2,y2)
 
         Returns the box that continas the srpite in Screen coordinates"""
-        x2 = self.sprite.width / 2
-        y2 = self.sprite.height / 2
+        x2 = self.frame.width / 2
+        y2 = self.frame.height / 2
         return (self.translate.x - x2, self.translate.y - x2,
                 self.translate.x +  x2, self.translate.y + y2 )
+
+    def add_animation( self, animation ):
+        self.animations[ animation.name ] = animation
 
 class Action(object):
     def __init__(self, *args, **kwargs):
@@ -513,3 +527,28 @@ class RandomDelay(Delay):
         
     def done(self):
         return ( self.delta <= self.runtime )
+
+
+class Animate( IntervalAction ):
+    """Animates a sprite given the name of an Animation"""
+    def init( self, animation_name ):
+        self.animation_name = animation_name
+
+    def start( self ):
+        self.animation = self.target.animations[self.animation_name]
+        self.duration = len( self.animation.frames ) * self.animation.delay
+
+    def step( self, dt ):
+        i =  self.get_runtime() / self.animation.delay
+        self.target.frame = self.animation.frames[ int(i) ]
+
+
+class Animation( object ):
+    """Creates an animation with a name, a delay per frames and a list of images"""
+    def __init__( self, name, delay, *frames):
+        self.name = name
+        self.delay = delay
+        self.frames = [ image.load(i) for i in frames]
+        
+    def add_frame( self, frame ):
+        self.frames.append( image.load( frame ) )
