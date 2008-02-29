@@ -54,3 +54,17 @@ class ColorizeEffect (TextureFilterEffect):
         # Not disabling this, other people assumes it is on :( (including image.blit)
         #glDisable (GL_BLEND) 
 
+class RepositionEffect (TextureFilterEffect):
+    """Applies repositioning and scaling"""
+    def __init__ (self, x=0, y=0, width=None, height=None):
+        super (RepositionEffect, self).__init__ ()
+        self.x = x
+        self.y = y
+        if width is None: width = self.texture.width
+        if height is None: height = self.texture.height
+        self.width = width
+        self.height = height
+
+    def show (self):
+        self.texture.blit (self.x, self.y, width=self.width, height=self.height)
+

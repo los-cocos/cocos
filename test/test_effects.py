@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from cocos.director import director
 from cocos.layer import Layer, ColorLayer
 from cocos.scene import Scene
-from cocos.effect import TextureFilterEffect, ColorizeEffect
+from cocos.effect import TextureFilterEffect, ColorizeEffect, RepositionEffect
 import pyglet
 from pyglet import font
 from pyglet.window import key
@@ -29,14 +29,6 @@ class PictureLayer(Layer):
         if self.x > 200 and self.speed > 0: self.speed = -self.speed
         if self.x < 100 and self.speed < 0: self.speed = -self.speed
         self.img.blit (self.x, self.y)
-
-class MyEffect (TextureFilterEffect):
-    def __init__ (self, scale=1.0):
-        super (MyEffect, self).__init__ ()
-        self.scale=scale
-
-    def show (self):
-        self.texture.blit (0, 0, width=director.get_window_size()[0]*self.scale)
 
 class DynamicColorizeEffect (ColorizeEffect):
     def __init__ (self):
@@ -100,13 +92,11 @@ if __name__ == "__main__":
          " No effect", None),
         ("ball.set_effect (ColorizeEffect(color=(0.5,1,0.5,0.65)))\n"
          " Greenish hue, 65% opacity", ColorizeEffect(color=(0.5,1,0.5,0.65))),
-        ("ball.set_effect (MyEffect(0.5))\n"
-         " You can define a custom effect. This one scales horizontally", MyEffect(0.5)),
+        ("ball.set_effect (RepositionEffect(width=director.get_window_size()[0]/2))\n"
+         " Horizontally scaled 50%", RepositionEffect(width=director.get_window_size()[0]/2)),
         ("ball.set_effect (DynamicColorizeEffect())\n"
          " Dynamic colorize effect made inheriting ColorizeEffect\n"
          " and redefining prepare() to change self.color each frame", DynamicColorizeEffect()),
               ]
     ball = PictureLayer(240)
     director.run( Scene (ColorLayer(0.1,0.1,0.2,1), ball, ControlLayer()) )
-
-
