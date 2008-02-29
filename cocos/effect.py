@@ -23,13 +23,14 @@ class TextureFilterEffect (Effect):
     with a window sized capture. Show just blits the texture, override to
     do more interesting things"""
     def __init__ (self):
+        w, h = director.get_window_size()
         self.texture = image.Texture.create_for_size(GL_TEXTURE_2D, 
-            director.window.width, director.window.height, GL_RGBA)
+            w, h, GL_RGBA)
         
         self._grabber = TextureGrabber()
         self._grabber.grab (self.texture)
         
-        self.texture = self.texture.get_region(0, 0, director.window.width, director.window.height)
+        self.texture = self.texture.get_region(0, 0, w, h)
 
     def prepare (self, target, dt):
         self._grabber.before_render(self.texture)
