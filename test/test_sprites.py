@@ -1,5 +1,5 @@
 #
-# Los Cocos: Sprite Example
+# Los Cocos: Sprite Test
 # http://code.google.com/p/los-cocos/
 #
 
@@ -19,8 +19,8 @@ from cocos.scene import Scene
 import foo      # Bezier configurations
 
 
-def get_sprite_example( index ):
-    d = examples[index]
+def get_sprite_test( index ):
+    d = tests[index]
     return Scene( FontLayer( title = d[0], subtitle=d[1]), d[2]( index ) )
 
 
@@ -47,7 +47,7 @@ class FontLayer( Layer ):
             halign=font.Text.LEFT,
             valign=font.Text.TOP)
 
-        self.text_help = font.Text(ft_help,"Press LEFT / RIGHT for prev/next example, ENTER to restart example",
+        self.text_help = font.Text(ft_help,"Press LEFT / RIGHT for prev/next test, ENTER to restart test",
             x=director.get_window_size()[0] /2,
             y=20,
             halign=font.Text.CENTER,
@@ -71,14 +71,14 @@ class SpriteLayer( AnimationLayer ):
         if keys == key.LEFT:
             self.index -= 1
             if self.index < 1:
-                self.index = len( examples )
+                self.index = len( tests )
         elif keys == key.RIGHT:
             self.index += 1
-            if self.index > len( examples ):
+            if self.index > len( tests ):
                 self.index = 1
 
         if keys in (key.LEFT, key.RIGHT, key.ENTER):
-            director.replace( get_sprite_example( self.index ) )
+            director.replace( get_sprite_test( self.index ) )
             return True
 
 class SpriteGoto( SpriteLayer ):
@@ -345,30 +345,30 @@ class SpriteAnimate( SpriteLayer ):
 
         sprite.do( Animate("dance") )
 
-examples = {
- 1: ("Example #1 - Goto", "sprite.do( Goto( (x,y,0), duration ) )", SpriteGoto ),
- 2: ("Example #2 - Move", "sprite.do( Move( (delta_x,delta_y,0), duration ) )", SpriteMove ),
- 3: ("Example #3 - Scale", "sprite.do( Scale( zoom_factor, duration) )", SpriteScale ),
- 4: ("Example #4 - Rotate", "sprite.do( Rotate( degrees, duration) )", SpriteRotate ),
- 5: ("Example #5 - Jump", "sprite.do( Jump( y, x, jumps, duration) )", SpriteJump),
- 6: ("Example #6 - Bezier", "sprite.do( Bezier( bezier_conf, duration) )", SpriteBezier),
- 7: ("Example #7 - Spawn", "Run 2 (or more) actions at the same time:\n\nsprite.do( Jump() | Rotate() )\nor:\nsprite.do( Spawn( Jump(), Rotate() ) )\nor:\nsprite.do( Jump() )\nsprite.do( Rotate() )", SpriteSpawn),
- 8: ("Example #8 - Sequence", "Run actions sequentialy:\n\nsprite.do( Bezier() + Move() + Jump() )\nor:\nsprite.do( Sequence( Bezier(), Move(), Jump() ) )", SpriteSequence),
- 9: ("Example #9 - Blink", "Show and hide an sprite\nsprite.do( Blink( times, duration ) )\n\nShow() and Hide() are actions too.", SpriteBlink),
- 10: ("Example #10 - FadeIn and FadeOut", "Fades in and out and sprite\nsprite1.do( FadeIn( duration ) )\nsprite2.do( FadeOut(duration)).", SpriteFadeOut),
- 11: ("Example #11 - Delay","Delays between actions\nsprite.do(Move() + Delay( seconds ) + Jump() )\n\nRandomDelay() is an action too.", SpriteDelay ),
- 12: ("Example #12 - Repeat", "Run the same action in 'RepeatMode'\nsprite.do( Repeat( Jump( mode=RepeatMode) )", SpriteRepeat),
- 13: ("Example #13 - Repeat a-la PingPong", "Run the same action in 'PingPongMode' (default mode)\nsprite.do( Repeat( Jump( mode=PingPongMode) )", SpriteRepeat2),
- 14: ("Example #14 - Repeat a Sequence", "Run a sequence many times\nsprite.do( Repeat( jump + move + jump2 )", SpriteRepeatSeq),
- 15: ("Example #15 - Repeat a Sequence #2", "Run a sequence of duplicate Actions\nsprite.do( Repeat( rotate + move + rotate + move + rotate + move + rotate ) )", SpriteRepeatMove ),
- 16: ("Example #16 - Repeat Sequence of Repeats", "Run a sequence of repeats\nsprite.do( Repeat( Repat(jump) + Repeat(move) + Repeat(jump2) )", SpriteRepeatSeq2),
- 17: ("Example #17 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS(), another action, passes the sprite as the 1st parameter", SpriteTrigger ),
- 18: ("Example #18 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
- 19: ("Example #19 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
- 20: ("Example #20 - Animate", "Animate a sprite:\na = Animation('dance',0.5,'image1.png',image2.png','image3.png')\nsprite.add_animation(a)\nsprite.do( Animate('dance' ) )", SpriteAnimate),
+tests = {
+ 1: ("Test #1 - Goto", "sprite.do( Goto( (x,y,0), duration ) )", SpriteGoto ),
+ 2: ("Test #2 - Move", "sprite.do( Move( (delta_x,delta_y,0), duration ) )", SpriteMove ),
+ 3: ("Test #3 - Scale", "sprite.do( Scale( zoom_factor, duration) )", SpriteScale ),
+ 4: ("Test #4 - Rotate", "sprite.do( Rotate( degrees, duration) )", SpriteRotate ),
+ 5: ("Test #5 - Jump", "sprite.do( Jump( y, x, jumps, duration) )", SpriteJump),
+ 6: ("Test #6 - Bezier", "sprite.do( Bezier( bezier_conf, duration) )", SpriteBezier),
+ 7: ("Test #7 - Spawn", "Run 2 (or more) actions at the same time:\n\nsprite.do( Jump() | Rotate() )\nor:\nsprite.do( Spawn( Jump(), Rotate() ) )\nor:\nsprite.do( Jump() )\nsprite.do( Rotate() )", SpriteSpawn),
+ 8: ("Test #8 - Sequence", "Run actions sequentialy:\n\nsprite.do( Bezier() + Move() + Jump() )\nor:\nsprite.do( Sequence( Bezier(), Move(), Jump() ) )", SpriteSequence),
+ 9: ("Test #9 - Blink", "Show and hide an sprite\nsprite.do( Blink( times, duration ) )\n\nShow() and Hide() are actions too.", SpriteBlink),
+ 10: ("Test #10 - FadeIn and FadeOut", "Fades in and out and sprite\nsprite1.do( FadeIn( duration ) )\nsprite2.do( FadeOut(duration)).", SpriteFadeOut),
+ 11: ("Test #11 - Delay","Delays between actions\nsprite.do(Move() + Delay( seconds ) + Jump() )\n\nRandomDelay() is an action too.", SpriteDelay ),
+ 12: ("Test #12 - Repeat", "Run the same action in 'RepeatMode'\nsprite.do( Repeat( Jump( mode=RepeatMode) )", SpriteRepeat),
+ 13: ("Test #13 - Repeat a-la PingPong", "Run the same action in 'PingPongMode' (default mode)\nsprite.do( Repeat( Jump( mode=PingPongMode) )", SpriteRepeat2),
+ 14: ("Test #14 - Repeat a Sequence", "Run a sequence many times\nsprite.do( Repeat( jump + move + jump2 )", SpriteRepeatSeq),
+ 15: ("Test #15 - Repeat a Sequence #2", "Run a sequence of duplicate Actions\nsprite.do( Repeat( rotate + move + rotate + move + rotate + move + rotate ) )", SpriteRepeatMove ),
+ 16: ("Test #16 - Repeat Sequence of Repeats", "Run a sequence of repeats\nsprite.do( Repeat( Repat(jump) + Repeat(move) + Repeat(jump2) )", SpriteRepeatSeq2),
+ 17: ("Test #17 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS(), another action, passes the sprite as the 1st parameter", SpriteTrigger ),
+ 18: ("Test #18 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
+ 19: ("Test #19 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
+ 20: ("Test #20 - Animate", "Animate a sprite:\na = Animation('dance',0.5,'image1.png',image2.png','image3.png')\nsprite.add_animation(a)\nsprite.do( Animate('dance' ) )", SpriteAnimate),
 
 }
 
 if __name__ == "__main__":
-    director.init( resizable=True, caption='Los Cocos - Sprite example' )
-    director.run( get_sprite_example( 1 ) )
+    director.init( resizable=True, caption='Los Cocos - Sprite test' )
+    director.run( get_sprite_test( 1 ) )

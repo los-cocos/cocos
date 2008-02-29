@@ -374,7 +374,7 @@ class Blink( IntervalAction ):
         
     def step(self, dt):
         slice = self.duration / float( self.times )
-        m =  self.get_runtime() % slice
+        m =  min( self.duration, self.get_runtime()) % slice
         self.target.show = (m  >  slice / 2.0)
 
 class Rotate( IntervalAction ):
@@ -477,7 +477,7 @@ class Jump(IntervalAction):
         self.start_position = self.target.translate
 
     def step(self, dt):
-        y = int( self.y * ( math.sin( (self.get_runtime()/self.duration) * math.pi * self.jumps ) ) )
+        y = int( self.y * ( math.sin( (min(1, self.get_runtime()/self.duration)) * math.pi * self.jumps ) ) )
         y = abs(y)
 
         x = self.x * min(1,float(self.get_runtime())/self.duration)
@@ -644,7 +644,7 @@ class FadeOut( IntervalAction ):
         self.sprite_color = copy.copy( self.target.color )
 
     def step( self, dt ):
-        p = self.get_runtime() / self.duration
+        p = min(1, self.get_runtime() / self.duration )
         c = self.sprite_color[3] - self.sprite_color[3] * p
         self.target.color[3] = c
 
@@ -654,7 +654,7 @@ class FadeIn( FadeOut):
 
     Fades in an sprite"""
     def step( self, dt ):
-        p = self.get_runtime() / self.duration
+        p = min(1, self.get_runtime() / self.duration )
         c = self.sprite_color[3] * p
         self.target.color[3] = c
 
