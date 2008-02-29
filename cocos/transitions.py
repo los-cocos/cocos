@@ -61,7 +61,9 @@ class Quad2DTransition(TransitionScene):
         
     
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
+        self.draw_scenes(dt)
+        
+    def draw_scenes(self, dt):
         #paste both scenes
         self.blit_texture( self.out_texture, self.out_proyect)
         self.blit_texture( self.in_texture, self.in_proyect)
@@ -69,10 +71,6 @@ class Quad2DTransition(TransitionScene):
     def blit_texture(self, texture, p):
         x, y = director.get_window_size()
         
-        #texture = texture.get_region(
-        #        director._offset_x,
-        #        director._offset_y, 
-        #        x,y)
         glEnable(GL_TEXTURE_2D)        
         glBindTexture(texture.target, texture.id)
         
@@ -95,26 +93,7 @@ class Quad2DTransition(TransitionScene):
         
     
 class FadeTransition(Quad2DTransition):
-    def step(self, dt):
-        self.dt += dt
-        if self.dt >= self.duration:
-            director.replace( self.in_scene )
-        x, y = director.get_window_size()
-        # draw scene one
-        self.out_grabber.before_render(self.out_texture)
-        self.out_scene.step(dt)
-        self.out_grabber.after_render(self.out_texture)
-        
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-        # draw scene two
-        self.in_grabber.before_render(self.in_texture)
-        self.in_scene.step(dt)
-        self.in_grabber.after_render(self.in_texture)
-        
-    
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
+    def draw_scenes(self, dt):
         #paste both scenes
         p = self.dt/self.duration
         glColor4f(1,1,1,max(0,1-p*2))
@@ -211,8 +190,37 @@ class GrowTransition(Quad2DTransition):
             return (director.get_window_size()[0]-dx, y)
         return (x, y)       
 
+class CornerMoveTransition(Quad2DTransition):  
+      
+    def out_proyect(self, x, y):
+        if not (x!=0 and y==0): return x,y
+        xz, yz = director.get_window_size()
+        dt = (self.dt/self.duration)
+        x = xz * (1-dt)
+        y = yz * dt
+        return (x, y)
+    
+    def in_proyect(self, x, y):
+        if not (x==0 and y!=0): return x,y
+        xz, yz = director.get_window_size()
+        dt = (self.dt/self.duration)
+        x = xz * (1-dt)
+        y = yz * dt
+        return (x, y)
+    
 
 class ShrinkAndGrow(Quad2DTransition):       
+    def draw_scenes(self, dt):
+        #paste both scenes
+        
+        if self.dt/self.duration < 0.5:
+            self.blit_texture( self.in_texture, self.in_proyect)
+            self.blit_texture( self.out_texture, self.out_proyect)
+        else:
+            self.blit_texture( self.out_texture, self.out_proyect)
+            self.blit_texture( self.in_texture, self.in_proyect)
+        
+        
     def out_proyect(self, x, y):
         dt = (self.dt/self.duration)
         cx = director.get_window_size()[0]/4

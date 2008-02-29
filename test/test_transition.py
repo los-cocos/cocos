@@ -110,6 +110,7 @@ if __name__ == "__main__":
         MoveInBTransition,
         MoveInLTransition,
         MoveInRTransition,
+        CornerMoveTransition,
         ]
     current_transition = 0
     
