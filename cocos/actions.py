@@ -244,8 +244,8 @@ class Action(object):
         self.restart()
 
     def _step(self, dt):
-        self.step(dt)
         self.runtime += dt
+        self.step(dt)
         
     def init(self):
         pass
@@ -393,7 +393,6 @@ class Rotate( IntervalAction ):
                     self.angle * (
                         min(1,float(self.get_runtime())/self.duration)
                     )) % 360 
-
 
 class Scale(IntervalAction):
     """Scale( zoom_factor, duration )
