@@ -1,3 +1,4 @@
+"""A thin wrapper for OpenGL pbuffer objets. For implementation use only"""
 import ctypes, sys
 
 if sys.platform=='darwin':

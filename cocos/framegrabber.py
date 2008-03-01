@@ -1,3 +1,9 @@
+"""Utility classes for rendering to a texture.
+
+It is mostly used for internal implementation of cocos, you normally shouldn't
+need it. If you are curious, check implementation of effects to see an example.
+"""
+
 from gl_pbuffer import Pbuffer
 from gl_framebuffer_object import FramebufferObject
 from pyglet.gl import *
@@ -8,8 +14,10 @@ from pyglet import image
 
 _best_grabber = None
 
+__all__ = ['TextureGrabber']
+
 def TextureGrabber():
-    """Return an instance of the best texture grabbing class"""
+    """Returns an instance of the best texture grabbing class"""
     # Why this isn't done on module import? Because we need an initialized
     # GL Context to query availability of extensions
     global _best_grabber
@@ -28,6 +36,9 @@ def TextureGrabber():
     return _best_grabber()
 
 class GenericGrabber(object):
+    """A simple render-to-texture mechanism. Destroys the current GL display;
+    and considers the whole layer as opaque. But it works in any GL
+    implementation."""
     def grab (self, texture):
         pass
     
@@ -39,9 +50,10 @@ class GenericGrabber(object):
         texture.blit_into(buffer, 0, 0, 0)
 
 class PbufferGrabber(object):
-    """Requires pbuffer extensions
+    """A render-to texture mechanism using pbuffers.
+    Requires pbuffer extensions. Currently only implemented in GLX.
     
-    NOT WORKING
+    Not working yet, very untested
     """
     def grab (self, texture):
         self.pbuf = Pbuffer(director.window, [
@@ -55,11 +67,12 @@ class PbufferGrabber(object):
     
     def before_render (self, texture):
         self.pbuf.switch_to()
-        #gl.glViewport(0, 0, self.pbuf.width, self.pbuf.height)
-        #gl.glMatrixMode(gl.GL_PROJECTION)
-        #gl.glLoadIdentity()
-        #gl.glOrtho(0, self.pbuf.width, 0, self.pbuf.height, -1, 1)
-        #gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glViewport(0, 0, self.pbuf.width, self.pbuf.height)
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glLoadIdentity()
+        gl.glOrtho(0, self.pbuf.width, 0, self.pbuf.height, -1, 1)
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glEnable (gl.GL_TEXTURE_2D)
         
     def after_render (self, texture):
         buffer = image.get_buffer_manager().get_color_buffer()
@@ -68,9 +81,10 @@ class PbufferGrabber(object):
 
 
 class FBOGrabber(object):
-    """Base class for texture based effects. Prepare setups self.texture,
-    with a window sized capture. Show just blits the texture, override to
-    do more interesting things.
+    """Render-to texture system based on framebuffer objects (the GL
+    extension). It is quite fast and portable, but requires a recent GL
+    implementation/driver.
+
     Requires framebuffer_object extensions"""
     def __init__ (self):
         # This code is on init to make creation fail if FBOs are not available

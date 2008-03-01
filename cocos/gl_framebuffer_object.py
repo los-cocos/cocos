@@ -1,3 +1,5 @@
+"""A thin wrapper for OpenGL framebuffer objets. For implementation use only"""
+
 from ctypes import c_int, byref
 from pyglet.gl import *
 from pyglet.gl.glext_arb import *
