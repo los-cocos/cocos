@@ -427,8 +427,15 @@ class Place( Action ):
     Example::
 
         action = Place( (320,240,0) )
+        sprite.do( action )
     """
     def init(self, position):
+        """Init method.
+
+        :Parameters:
+            `position` : (x,y,0)
+                Coordinates where the sprite will be placed
+        """
         self.position = Point3(*position)
         
     def start(self):
@@ -446,6 +453,7 @@ class Hide( Action ):
     Example::
 
         action = Hide()
+        sprite.do( action )
     """
     def start(self):
         self.target.show = False
@@ -461,6 +469,7 @@ class Show( Action ):
     Example::
 
         action = Show()
+        sprite.do( action )
     """
     def start(self):
         self.target.show = True
@@ -476,10 +485,19 @@ class Blink( IntervalAction ):
     Example::
 
         action = Blink( 10, 2 ) # Blinks 10 times in 2 seconds
+        sprite.do( action )
     """
 
 
     def init(self, times, duration):
+        """Init method.
+
+        :Parameters:
+            `times` : integer
+                Number of times to blink
+            `duration` : float
+                Duration time in seconds
+        """
         self.times = times
         self.duration = duration
         
@@ -489,10 +507,22 @@ class Blink( IntervalAction ):
         self.target.show = (m  >  slice / 2.0)
 
 class Rotate( IntervalAction ):
-    """Rotate( degrees, duration )
+    """Rotates a sprite counter-clockwise
 
-    Rotates a sprite counter-clockwise"""
+    Example::
+
+        action = Rotate( 180, 2 )       # rotates the sprite 180 degrees in 2 seconds
+        sprite.do( action )
+    """
     def init(self, angle, duration=5 ):
+        """Init method.
+        
+        :Parameters:
+            `angle` : float
+                Degrees that the sprite will be rotated. Positive degrees rotates the sprite conter-clockwise.
+            `duration` : float
+                Duration time in seconds
+        """
         self.angle = angle
         self.duration = duration
 
@@ -506,11 +536,23 @@ class Rotate( IntervalAction ):
                     )) % 360 
 
 class Scale(IntervalAction):
-    """Scale( zoom_factor, duration )
+    """Scales the sprite
 
-    Scales an sprite with a given zoom_factor"""
-    def init(self, end, duration=5 ):
-        self.end_scale = end
+    Example::
+
+        action = Scale( 5, 2 )       # scales the sprite 5x in 5 seconds
+        sprite.do( action )
+    """
+    def init(self, zoom, duration=5 ):
+        """Init method.
+        
+        :Parameters:
+            `zoom` : float
+                scale factor
+            `duration` : float
+                Duration time in seconds
+        """
+        self.end_scale = zoom
         self.duration = duration
 
     def start( self ):
@@ -525,19 +567,25 @@ class Scale(IntervalAction):
                     ))
 
 class Goto( IntervalAction ):
-    """Goto( (x,y,0), duration)
-
-    Creates an action that will move a sprite to the position x,y
+    """Creates an action that will move a sprite to the position x,y
     x and y are absolute coordinates.
-    Duration is is seconds.
 
     Example::
 
-        action = Goto( (50,10,0), 8 )
+        action = Goto( (50,10,0), 8 )       # Move the sprite to coords x=50, y=10 in 8 seconds
+        sprite.do( action )
+    """
+    def init(self, dst_coords, duration=5):
+        """Init method.
 
-    It will move a sprite to the position x=50, y=10 in 8 seconds."""
-    def init(self, end, duration=5):
-        self.end_position = Point3( *end )
+        :Parameters:
+            `dst_coords` : (x,y,0)
+                Coordinates where the sprite will be placed at the end of the action
+            `duration` : float
+                Duration time in seconds
+        """
+
+        self.end_position = Point3( *dst_coords )
         self.duration = duration
 
     def start( self ):
@@ -552,19 +600,24 @@ class Goto( IntervalAction ):
 
 
 class Move( Goto ):
-    """Move( (x,y,0), duration)
-
-    Creates an action that will move a sprite x,y pixels.
+    """Creates an action that will move a sprite x,y pixels.
     x and y are relative to the position of the sprite.
     Duration is is seconds.
 
     Example::
 
-        action = Move( (50,10,0), 8 )
-
-    It will move a sprite 50 pixels to the right and 10 pixels upwards
-    in 8 seconds."""
+        action = Move( (-50,0,0), 8 )  # Move the sprite 50 pixels to the left in 8 seconds
+        sprite.do( action )
+    """
     def init(self, delta, duration=5):
+        """Init method.
+
+        :Parameters:
+            `delta` : (x,y,0)
+                Delta coordinates
+            `duration` : float
+                Duration time in seconds
+        """
         self.delta = Point3( *delta)
         self.duration = duration
 
@@ -582,12 +635,24 @@ class Jump(IntervalAction):
 
     Example::
 
-        action = Jump(50,200, 5, 6)
-
-    It will do 5 jumps travelling 200 pixels to the right for 6 seconds.
-    The height of each jump will be 50 pixels each."""
+        action = Jump(50,200, 5, 6)    # Move the sprite 200 pixels to the left
+        sprite.do( action )            # in 6 seconds, doing 5 jumps
+                                       # of 50 pixels of height
+    """
     
     def init(self, y=150, x=120, jumps=1, duration=5):
+        """Init method
+
+        :Parameters:
+            `y` : integer
+                Height of jumps
+            `x` : integer
+                horizontal movement relative to the startin position
+            `jumps` : integer
+                quantity of jumps
+            `duration` : float
+                Duration time in seconds
+        """
         self.y = y
         self.x = x
         self.duration = duration
@@ -604,10 +669,23 @@ class Jump(IntervalAction):
         self.target.translate = self.start_position + (x,y,0)
 
 class Bezier( IntervalAction ):
-    """Bezier( bezier_configuration, duration )
+    """Moves a sprite through a bezier path
 
-    Moves a sprite through a bezier path"""
+    Example::
+
+        action = Bezier( bezier_conf.path1, 5 )   # Moves the sprite using the
+        sprite.do( action )                       # bezier path 'bezier_conf.path1'
+                                                  # in 5 seconds
+    """
     def init(self, bezier, duration=5):
+        """Init method
+
+        :Parameters:
+            `bezier` : Bezier instance
+                A bezier configuration
+            `duration` : float
+                Duration time in seconds
+        """
         self.duration = duration
         self.bezier = bezier
 
@@ -623,8 +701,35 @@ class Bezier( IntervalAction ):
 
 
 class Spawn(Action):
-    """Spawn a  new action immediately"""
+    """Spawn a  new action immediately.
+    You can spawn actions using:
+        
+        * the Spanw() class
+        * the overriden *|* operator
+        * call sprite.do() many times
+
+    Example::
+
+        action = Spawn( action1, action2, action3 )
+        sprite.do( action )
+
+        or:
+
+        sprite.do( action1 | action2 | action3 )
+
+        or:
+
+        sprite.do( action1 )
+        sprite.do( action2 )
+        sprite.do( action3 )
+    """
     def init(self, *actions):
+        """Init method
+
+        :Parameters:
+            `actions` : list of actions
+                The list of actions that will be spawned
+        """
         self.actions = actions
 
     def done(self):
@@ -636,8 +741,28 @@ class Spawn(Action):
 
 
 class Sequence(Action):
-    """Queues 1 action after the other. One the 1st action finishes, then the next one will start"""
+    """Run actions sequentially: One after another
+    You can sequence actions using:
+        
+        * the Sequence() class
+        * the overriden *+* operator
+
+    Example::
+
+        action = Sequence( action1, action2, action3 )
+        sprite.do( action )
+
+        or:
+
+        sprite.do( action1 + action2 + action3 )
+        """
     def init(self,  *actions, **kwargs ):
+        """Init method
+
+        :Parameters:
+            `actions` : list of actions
+                List of actions to be sequenced
+        """
         self.actions = [ copy.copy(a) for a in actions]
         self.direction = ForwardDir
         self.mode = PingPongMode
