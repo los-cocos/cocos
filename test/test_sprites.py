@@ -31,9 +31,9 @@ class FontLayer( Layer ):
         self.title = title
         self.subtitle = subtitle
 
-        ft_title = font.load( None, 32 )
-        ft_subtitle = font.load( None, 18 )
-        ft_help = font.load( None, 16 )
+        ft_title = font.load( "arial", 32 )
+        ft_subtitle = font.load( "arial", 18 )
+        ft_help = font.load( "arial", 16 )
 
         self.text_title = font.Text(ft_title, self.title,
             x=5,
