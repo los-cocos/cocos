@@ -18,7 +18,8 @@ The first thing to do, is to initialize the ``director``::
     from cocos.director import *
     director.init( list_of_arguments )
 
-This will initialize the director, and will create a 640x480 window.
+This will initialize the director, and will create a display area 
+(a 640x480 window by default).
 The parameters that are supported by director.init() are the same
 parameters that are supported by pyglet.window.Window().
 
@@ -46,9 +47,11 @@ Once you have initialized the director, you can run your first ``Scene``::
 
     director.run( Scene( MyLayer() ) )
 
-This will run an scene that has only 1 layer: ``MyLayer``. You can run an scene
+This will run an scene that has only 1 layer: ``MyLayer()``. You can run an scene
 that has multiple layers. For more information about ``Layers`` and ``Scenes``
 refer to the ``Layers`` and ``Scene`` documentation.
+
+`cocos.director.Director`
 
 Once an scene is running you can do the following actions:
 
@@ -63,8 +66,37 @@ Once an scene is running you can do the following actions:
         Will pop out an scene from the queue, and it will replace the running scene.
 
     * ``director.end( end_value ):``
-        Finished the current scene with an end value of ``end_value``. The next scene
+        Finishes the current scene with an end value of ``end_value``. The next scene
         to be run will be popped from the queue.
+
+Other functions you can use are:
+
+    * ``director.get_window_size():``
+      Returns an (x,y) pair with the _logical_ dimensions of the display.
+      The display might have been resized, but coordinates are always relative
+      to this size. If you need the _physical_ dimensions, check the dimensions
+      of ``director.window``
+
+    
+    * ``get_virtual_coordinates(self, x, y):``
+      Transforms coordinates that belongs the real (physical) window size, to
+      the coordinates that belongs to the virtual (logical) window. Returns
+      an x,y pair in logical coordinates.
+
+The director also has some useful attributes:
+
+    * ``director.return_value``: The value returned by the last scene that
+      called ``director.end``. This is useful to use scenes somewhat like
+      function calls: you push a scene to call it, and check the return value
+      when the director returns control to you.
+
+    * ``director.window``: This is the pyglet window handled by this director,
+      if you happen to need low level access to it.
+            
+    * ``self.show_FPS``: You can set this to a boolean value to enable, disable
+      the framerate indicator.
+            
+    * ``self.scene``: The scene currently active
             
 '''
 
@@ -271,7 +303,8 @@ class Director(event.EventDispatcher):
 
 
 director = Director()
-'''The singleton. Don't instantiate Director(). Just use this singleton.'''
+"""The singleton; check `cocos.director.Director` for details on usage.
+Don't instantiate Director(). Just use this singleton."""
 
 Director.register_event_type('on_push')
 Director.register_event_type('on_pop')
