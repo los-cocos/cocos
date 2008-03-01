@@ -40,20 +40,20 @@ For example::
 For a complete list of the supported parameters, see the pyglet Window
 documentation.
 
-Running an Scene
+Running a Scene
 ----------------
 
 Once you have initialized the director, you can run your first ``Scene``::
 
     director.run( Scene( MyLayer() ) )
 
-This will run an scene that has only 1 layer: ``MyLayer()``. You can run an scene
+This will run a scene that has only 1 layer: ``MyLayer()``. You can run a scene
 that has multiple layers. For more information about ``Layers`` and ``Scenes``
 refer to the ``Layers`` and ``Scene`` documentation.
 
 `cocos.director.Director`
 
-Once an scene is running you can do the following actions:
+Once a scene is running you can do the following actions:
 
     * ``director.replace( new_scene ):``
         Replaces the running scene with the new_scene 
@@ -63,7 +63,7 @@ Once an scene is running you can do the following actions:
         and new_scene will be executed.
 
     * ``director.pop():``
-        Will pop out an scene from the queue, and it will replace the running scene.
+        Will pop out a scene from the queue, and it will replace the running scene.
 
     * ``director.end( end_value ):``
         Finishes the current scene with an end value of ``end_value``. The next scene
@@ -140,10 +140,10 @@ class Director(event.EventDispatcher):
         return self.window
 
     def run(self, scene):
-        """Runs an scene, entering in the Director's main loop.
+        """Runs a scene, entering in the Director's main loop.
 
         :Parameters:   
-            `scene` : an Scene instance
+            `scene` : a Scene instance
                 It is the scene that will be run.
         """
         fps_display = clock.ClockDisplay()
@@ -189,7 +189,7 @@ class Director(event.EventDispatcher):
         on the stack of suspended scene. The new scene will be executed.
 
         :Parameters:   
-            `scene` : an Scene instance
+            `scene` : a Scene instance
                 It is the scene that will be run.
            """
         self.dispatch_event("on_push", scene )
@@ -199,7 +199,7 @@ class Director(event.EventDispatcher):
         self.scene_stack.append( self.scene )
         
     def pop(self):
-        """Pops out an scene from the queue. This scene will replace the running scene.
+        """Pops out a scene from the queue. This scene will replace the running scene.
            The running scene will be deleted.
         """
         self.dispatch_event("on_pop")
@@ -211,7 +211,7 @@ class Director(event.EventDispatcher):
         """Replaces the running scene with a new one. The running scene is terminated.
 
         :Parameters:   
-            `scene` : an Scene instance
+            `scene` : a Scene instance
                 It is the scene that will be run.
         """  
         self.next_scene = scene
