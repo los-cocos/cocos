@@ -48,9 +48,16 @@ RIGHT = font.Text.RIGHT
 TOP = font.Text.TOP
 BOTTOM = font.Text.BOTTOM
 
-
-
 class Menu(Layer):
+    """Abstract base class for menu layers.
+    
+    Normal usage is:
+
+     - create a descendent from this class
+     - override __init__ to set all style attributes, add items,
+       and call build_items
+     - add to a scene
+    """
 
     def __init__( self, title = ''):
         super(Menu, self).__init__()
@@ -211,8 +218,10 @@ class Menu(Layer):
 # MenuItem
 #
 class MenuItem( object ):
+    """A menu item triggering a function."""
 
     def __init__(self, label, activate_func):
+        """New menu item with given label, which calls activate_func when selected"""
         self.label = label
         self.activate_func = activate_func
 
@@ -292,8 +301,14 @@ class MenuItem( object ):
 # Item that can be toggled
 #
 class ToggleMenuItem( MenuItem ):
+    """A menu item for a boolean toggle option.
+    
+    When selected, ``self.value`` is toggled, and a callback function is
+    called with ``self.value`` as argument."""
 
     def __init__(self, label, value, toggle_func):
+        """New toggle item with given label; toggle_func (value) is called
+        when selected."""
         self.toggle_label = label
         self.value = value
         self.toggle_func = toggle_func
