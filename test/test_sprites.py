@@ -31,9 +31,9 @@ class FontLayer( Layer ):
         self.title = title
         self.subtitle = subtitle
 
-        ft_title = font.load( "arial", 32 )
-        ft_subtitle = font.load( "arial", 18 )
-        ft_help = font.load( "arial", 16 )
+        ft_title = font.load( "Arial", 32 )
+        ft_subtitle = font.load( "Arial", 18 )
+        ft_help = font.load( "Arial", 16 )
 
         self.text_title = font.Text(ft_title, self.title,
             x=5,
@@ -402,8 +402,8 @@ tests = {
  18: ("Test #18 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
  19: ("Test #19 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
  20: ("Test #20 - Animate", "Animate a sprite:\na = Animation('dance',0.5,'image1.png',image2.png','image3.png')\nsprite.add_animation(a)\nsprite.do( Animate('dance' ) )", SpriteAnimate),
- 21: ("Test #21 - Alter time", "You can change the speed of time:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0,0), 5, time_func=Accelerate)\nsprite.do(move),", SpriteAlterTime),
- 22: ("Test #22 - Repeat time altered actions", "Repeat actions that were time-altered:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0,0), 5, time_func=Accelerate)\nsprite.do(Repeat(move)),", SpriteRepeatAlterTime),
+ 21: ("Test #21 - Alter time", "You can change the speed of time:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0,0), 5, time_func=accelerate)\nsprite.do(move)\n\nThe other sprite is doing the same action without altering the time", SpriteAlterTime),
+ 22: ("Test #22 - Repeat time altered actions", "Repeat actions that were time-altered:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0,0), 5, time_func=accelerate)\nsprite.do(Repeat(move))\n\nThe other sprite is doing the same action without altering the time", SpriteRepeatAlterTime),
 
 }
 
