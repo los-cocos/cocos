@@ -108,6 +108,8 @@ __all__ = [ 'ActionSprite',                     # Sprite class
 
             'ForwardDir','BackwardDir',         # Movement Directions
             'RepeatMode','PingPongMode',        # Repeat modes
+
+            'accelerate',                       # a function that gives the time acceleration
             ]
 
 
@@ -335,6 +337,9 @@ class IntervalAction( Action ):
         if self.time_func:
             rt = self.time_func( rt, self.duration )
         return rt
+
+def accelerate( t, duration ):
+    return t * (t/duration)
 
 class Place( Action ):
     """Place( (x,y,0) )

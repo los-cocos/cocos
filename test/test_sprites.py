@@ -378,8 +378,14 @@ class SpriteRepeatAlterTime( SpriteLayer ):
         sprite1.do( Repeat(move1) )
         sprite2.do( Repeat(move2) )
 
-def accelerate( t, duration ):
-    return t * (t/duration)
+# accelerate() is a function that is part of actions.py
+# It is really simple. Look at it:
+# and it is very simple:
+#
+#def accelerate( t, duration ):
+#    return t * (t/duration)
+#
+# To try some cool effects, create your own alter-time function!
    
 tests = {
  1: ("Test #1 - Goto", "sprite.do( Goto( (x,y,0), duration ) )", SpriteGoto ),
