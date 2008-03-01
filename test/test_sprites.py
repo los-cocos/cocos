@@ -332,7 +332,7 @@ class SpriteReuseSequence( SpriteLayer ):
 
 class SpriteAnimate( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossinis_sister1.png")
+        sprite = ActionSprite("grossini.png")
 
         a = Animation("dance", 0.5 )
         for i in range(1,15):
@@ -345,6 +345,42 @@ class SpriteAnimate( SpriteLayer ):
 
         sprite.do( Animate("dance") )
 
+class SpriteAlterTime( SpriteLayer ):
+    def on_enter( self ):
+        sprite1 = ActionSprite("grossinis_sister1.png")
+        sprite2 = ActionSprite("grossinis_sister2.png")
+
+        sprite1.place( (20,100,0 ) )
+        sprite2.place( (20,300,0 ) )
+
+        move1 = Move( (500,0,0), 3 )
+        move2 = Move( (500,0,0), 3, time_func=accelerate)
+
+        self.add( sprite1, sprite2 )
+
+        sprite1.do( move1 )
+        sprite2.do( move2 )
+
+
+class SpriteRepeatAlterTime( SpriteLayer ):
+    def on_enter( self ):
+        sprite1 = ActionSprite("grossinis_sister1.png")
+        sprite2 = ActionSprite("grossinis_sister2.png")
+
+        sprite1.place( (20,100,0 ) )
+        sprite2.place( (20,300,0 ) )
+
+        move1 = Move( (500,0,0), 3 )
+        move2 = Move( (500,0,0), 3, time_func=accelerate)
+
+        self.add( sprite1, sprite2 )
+
+        sprite1.do( Repeat(move1) )
+        sprite2.do( Repeat(move2) )
+
+def accelerate( t, duration ):
+    return t * (t/duration)
+   
 tests = {
  1: ("Test #1 - Goto", "sprite.do( Goto( (x,y,0), duration ) )", SpriteGoto ),
  2: ("Test #2 - Move", "sprite.do( Move( (delta_x,delta_y,0), duration ) )", SpriteMove ),
@@ -366,6 +402,8 @@ tests = {
  18: ("Test #18 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
  19: ("Test #19 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
  20: ("Test #20 - Animate", "Animate a sprite:\na = Animation('dance',0.5,'image1.png',image2.png','image3.png')\nsprite.add_animation(a)\nsprite.do( Animate('dance' ) )", SpriteAnimate),
+ 21: ("Test #21 - Alter time", "You can change the speed of time:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0,0), 5, time_func=Accelerate)\nsprite.do(move),", SpriteAlterTime),
+ 22: ("Test #21 - Repeat time altered actions", "Repeat actions that were time-altered:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0,0), 5, time_func=Accelerate)\nsprite.do(Repeat(move)),", SpriteRepeatAlterTime),
 
 }
 

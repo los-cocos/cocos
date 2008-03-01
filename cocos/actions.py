@@ -278,7 +278,7 @@ class Action(object):
 
 
 class IntervalAction( Action ):
-    """IntervalAction( dir=ForwardDir, mode=PingPongMode )
+    """IntervalAction( dir=ForwardDir, mode=PingPongMode, time_func=None )
 
     Abstract Class that defines the direction of any Interval
     Action. Interval Actions are the ones that can go forward or
@@ -289,12 +289,14 @@ class IntervalAction( Action ):
 
     dir can be: ForwardDir or BackwardDir
     mode can be: PingPongMode or RepeatMode
+    time_func can be any function that alters the time
     """
     
     def __init__( self, *args, **kwargs ):
 
         self.direction = ForwardDir
         self.mode = PingPongMode
+        self.time_func = None
 
         if kwargs.has_key('dir'):
             self.direction = kwargs['dir']
@@ -302,7 +304,10 @@ class IntervalAction( Action ):
         if kwargs.has_key('mode'):
             self.mode = kwargs['mode']
             del(kwargs['mode'])
-
+        if kwargs.has_key('time_func'):
+            self.time_func= kwargs['time_func']
+            del(kwargs['time_func'])
+    
         super( IntervalAction, self ).__init__( *args, **kwargs )
 
 
@@ -319,13 +324,17 @@ class IntervalAction( Action ):
         return (self.runtime > self.duration)
 
     def get_runtime( self ):
+        rt = 0
         if self.direction == ForwardDir:
-            return self.runtime
+            rt = self.runtime
         elif self.direction== BackwardDir:
-            return self.duration - self.runtime
+            rt = self.duration - self.runtime
         else:
             raise Exception("Unknown Interval Mode: %s" % (str( self.mode) ) )
 
+        if self.time_func:
+            rt = self.time_func( rt, self.duration )
+        return rt
 
 class Place( Action ):
     """Place( (x,y,0) )
