@@ -186,9 +186,7 @@ class PingPongMode: pass
 class RepeatMode: pass
 
 class ActionSprite( object ):
-    '''ActionSprite( image_filenaem )
-
-    Creates an instance of ActionSprite. ActionSprites can execute actions.
+    '''ActionSprites are sprites that can execute actions.
 
     Example::
     
@@ -417,12 +415,19 @@ class IntervalAction( Action ):
         return rt
 
 def accelerate( t, duration ):
+    """Function that simulates an acceleration from 0 to duration seconds.
+    Use this function to alter the time of some IntervalActions.
+
+    :Parameters:
+        `t` : float
+            Elapsed time since the start of the action. 
+        `duration` : float
+            Duration time in seconds.
+    """
     return t * (t/duration)
 
 class Place( Action ):
-    """Place( (x,y,0) )
-
-    Creates and action that will place the sprite in the position x,y.
+    """Place the sprite in the position x,y.
 
     Example::
 
@@ -446,9 +451,7 @@ class Place( Action ):
 
 
 class Hide( Action ):
-    """Hide()
-
-    Hides the sprite. To show it again call the `Show` () action
+    """Hides the sprite. To show it again call the `Show` () action
 
     Example::
 
@@ -462,9 +465,7 @@ class Hide( Action ):
         return True
 
 class Show( Action ):
-    """Show()
-
-    Shows the sprite. To hide it call the `Hide` () action
+    """Shows the sprite. To hide it call the `Hide` () action
 
     Example::
 
@@ -478,9 +479,7 @@ class Show( Action ):
         return True
 
 class Blink( IntervalAction ): 
-    """Blink( number_of_times, duration)
-
-    Blinks the sprite a Number_of_Times, for Duration seconds
+    """Blinks the sprite a Number_of_Times, for Duration seconds
 
     Example::
 
@@ -507,7 +506,7 @@ class Blink( IntervalAction ):
         self.target.show = (m  >  slice / 2.0)
 
 class Rotate( IntervalAction ):
-    """Rotates a sprite counter-clockwise
+    """Rotates a sprite counter-clockwise in degrees
 
     Example::
 
@@ -540,7 +539,7 @@ class Scale(IntervalAction):
 
     Example::
 
-        action = Scale( 5, 2 )       # scales the sprite 5x in 5 seconds
+        action = Scale( 5, 2 )       # scales the sprite 5x in 2 seconds
         sprite.do( action )
     """
     def init(self, zoom, duration=5 ):
@@ -567,8 +566,7 @@ class Scale(IntervalAction):
                     ))
 
 class Goto( IntervalAction ):
-    """Creates an action that will move a sprite to the position x,y
-    x and y are absolute coordinates.
+    """Moves a sprite to the position x,y. x and y are absolute coordinates.
 
     Example::
 
@@ -600,7 +598,7 @@ class Goto( IntervalAction ):
 
 
 class Move( Goto ):
-    """Creates an action that will move a sprite x,y pixels.
+    """Mve a sprite x,y pixels.
     x and y are relative to the position of the sprite.
     Duration is is seconds.
 
@@ -627,11 +625,7 @@ class Move( Goto ):
 
 
 class Jump(IntervalAction):
-    """Jump( y, x, quantity_of_jumps, duration )
-
-    Creates an actions that moves a sprite Width pixels doing
-    the number of Quanitty_Of_Jumps jumps with a height of Height pixels,
-    in Duration seconds.
+    """Moves a sprite simulating a jump movement.
 
     Example::
 
@@ -810,8 +804,23 @@ class Sequence(Action):
 
 
 class Repeat(Action):
-    """Repeats an action. It is is similar to Sequence, but it runs the same action every time"""
+    """Repeats an action. It is is similar to Sequence, but it runs the same action every time
+
+    Example::
+
+        action = Jump( 50,200,3,5)
+        repeat = Repeat( action, times=5 )
+        sprite.do( repeat )
+    """
     def init(self, action, times=-1):
+        """Init method.
+
+        :Parameters:
+            `action` : `Action` instance
+                The action that will be repeated
+            `times` : integer
+                The number of times that the action will be repeated. -1, which is the default value, means *repeat forever*
+        """
         self.action = copy.copy( action )
         self.times = times
 
@@ -841,7 +850,16 @@ class Repeat(Action):
 
 
 class CallFunc(Action):
-    """An action that will call a funtion."""
+    """An action that will call a function.
+
+    Example::
+
+        def my_func():        
+            print "hello baby"
+
+        action = CallFunc( my_func )
+        sprite.do( action )
+    """
     def init(self, func, *args, **kwargs):
         self.func = func
         self.args = args
@@ -855,34 +873,75 @@ class CallFunc(Action):
 
 
 class CallFuncS(CallFunc):
-    """An action that will call a funtion with the target as the first argument"""
+    """An action that will call a funtion with the target as the first argument
+
+        def my_func( sprite ):        
+            print "hello baby"
+
+        action = CallFuncS( my_func )
+        sprite.do( action )
+        """
     def start(self):
         self.func( self.target, *self.args, **self.kwargs)
 
         
 class Delay(Action):
-    """Delays the actions in seconds"""
-    def init(self, delta):
-        self.delta = delta
+    """Delays the action a certain ammount of seconds
+   
+   Example::
+
+        action = Delay(2.5)
+        sprite.do( action )
+    """
+    def init(self, delay):
+        """Init method
+
+        :Parameters:
+            `delay` : float
+                Seconds of delay 
+        """
+        self.delay = delay
         
     def done(self):
-        return ( self.delta <= self.runtime )
+        return ( self.delay <= self.runtime )
 
 
 class RandomDelay(Delay):
-    """Delays the actions in random seconds between low and hi"""
+    """Delays the actions between *min* and *max* seconds
+   
+   Example::
+
+        action = RandomDelay(2.5, 4.5)      # delays the action between 2.5 and 4.5 seconds
+        sprite.do( action )
+    """
     def init(self, low, hi):
-        self.delta = random.randint(low, hi)
-        
-    def done(self):
-        return ( self.delta <= self.runtime )
+        """Init method
+
+        :Parameters:
+            `low` : float
+                Minimun seconds of delay
+            `hi` : float
+                Maximun seconds of delay
+        """
+        self.delay = random.randint(low, hi)
 
 
 class FadeOut( IntervalAction ):
     """FadeOut(duration)
+    Fades out an sprite
+   
+    Example::
 
-    Fades out an sprite"""
+        action = FadeOut( 2 )
+        sprite.do( action )
+    """
     def init( self, duration ):
+        """Init method.
+
+        :Parameters:
+            `duration` : float
+                Seconds that it will take to fade
+        """
         self.duration = duration
 
     def start( self ):
@@ -896,8 +955,13 @@ class FadeOut( IntervalAction ):
 
 class FadeIn( FadeOut):
     """FadeIn(duration)
+    Fades in an sprite
+   
+    Example::
 
-    Fades in an sprite"""
+        action = FadeIn( 2 )
+        sprite.do( action )
+    """
     def step( self, dt ):
         p = min(1, self.get_runtime() / self.duration )
         c = self.sprite_color[3] * p
