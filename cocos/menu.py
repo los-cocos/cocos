@@ -1,3 +1,19 @@
+"""A menu layer for los-cocos.
+
+Menu
+====
+
+This module provides a Menu class, which is a layer you can use in cocos
+apps. Menus can contain regular items (which trigger a function when selected)
+or toggle items (which toggle a flag when selected).
+
+When you need a menu, you can define a class inheriting ``Menu'', and setting
+some attributes which control the menu appearance. Then you add MenuItems to
+it, prepare it, and use it as you would use any layer.
+
+There is a menu demo in the samples folder.
+
+"""
 #
 # Menu class for pyglet
 #
@@ -28,7 +44,7 @@ CENTER = font.Text.CENTER
 LEFT = font.Text.LEFT
 RIGHT = font.Text.RIGHT
 
-# Vertial Align
+# Vertical Align
 TOP = font.Text.TOP
 BOTTOM = font.Text.BOTTOM
 
