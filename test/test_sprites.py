@@ -343,7 +343,7 @@ class SpriteAnimate( SpriteLayer ):
 
         self.add( sprite )
 
-        sprite.do( Animate("dance") )
+        sprite.do( Animate("dance") + Animate("default") )
 
 class SpriteAlterTime( SpriteLayer ):
     def on_enter( self ):

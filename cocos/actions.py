@@ -194,7 +194,6 @@ class ActionSprite( object ):
     '''
     
     def __init__( self, img ):
-        self.frame = image.load( img )
         self.actions = []
         self.to_remove = []
         self.translate = Point3(0,0,0)
@@ -203,6 +202,12 @@ class ActionSprite( object ):
         self.show = True
         self.animations = {}
         self.color = [1.0,1.0,1.0,1.0]
+
+        # create a default animation
+        default_anim = Animation( "default", 0, img)
+        self.frame = default_anim.frames[0]
+        self.add_animation( default_anim )
+
 
     def do( self, action ):
         '''Executes an *action*.
@@ -875,9 +880,11 @@ class CallFunc(Action):
 class CallFuncS(CallFunc):
     """An action that will call a funtion with the target as the first argument
 
-        def my_func( sprite ):        
-            print "hello baby"
+    Example::
 
+        def my_func( sprite ):
+            print "hello baby"
+        
         action = CallFuncS( my_func )
         sprite.do( action )
         """
@@ -969,8 +976,22 @@ class FadeIn( FadeOut):
 
 
 class Animate( IntervalAction ):
-    """Animates a sprite given the name of an Animation"""
+    """Animates a sprite given the name of an Animation
+
+    Example::
+
+        anim = Animation( "walk", 0.2, sprite01.png, sprite02.png, sprite03.png )
+        sprite.add_animation( anim )
+
+        sprite.do( Animate("walk") )
+    """
     def init( self, animation_name ):
+        """Init method.
+
+        :Parameters:
+            `animation_name` : string
+                The name of the animation
+        """
         self.animation_name = animation_name
 
     def start( self ):
@@ -978,17 +999,42 @@ class Animate( IntervalAction ):
         self.duration = len( self.animation.frames ) * self.animation.delay
 
     def step( self, dt ):
-        i =  self.get_runtime() / self.animation.delay
-        i = min(int(i), len(self.animation.frames)-1)
+        if self.animation.delay == 0:
+            # default animation, and 1 frame animations have a delay of 0
+            i = 0
+        else:
+            i =  self.get_runtime() / self.animation.delay
+            i = min(int(i), len(self.animation.frames)-1)
         self.target.frame = self.animation.frames[i]
 
 
 class Animation( object ):
-    """Creates an animation with a name, a delay per frames and a list of images"""
+    """Creates an animation
+
+    Example::
+
+        anim = Animation( "walk", 0.2, sprite01.png, sprite02.png, sprite03.png )
+    """
     def __init__( self, name, delay, *frames):
+        """Constructor
+
+        :Parameters:
+            `name` : string
+                Name of the animation.
+            `delay` : float
+                Delay between frames
+            `frames` : list_of_filenames
+                The images' filenames
+        """
         self.name = name
         self.delay = delay
         self.frames = [ image.load(i) for i in frames]
         
     def add_frame( self, frame ):
+        """Adds a frame to the animation
+
+        :Parameters:
+            `frame` : filename
+                An image filename. Supports all the images supported by Pyglet
+        """
         self.frames.append( image.load( frame ) )
