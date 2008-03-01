@@ -36,32 +36,32 @@ To animate an sprite you need to execute an action.
 
 Actions that modifies the sprite's properties:
 
-    * ``Move( (x,y,0), duration)``
-    * ``Goto( (x,y,0), duration )``
-    * ``Rotate( degrees, duration )``
-    * ``Scale( zoom_factor, duration )``
-    * ``Jump( height, x, number_of_jumps, duration )``
-    * ``Bezier( bezier_configuration, duration )``
-    * ``Place( (x,y,0) )``
-    * ``Animate( animation_name )``
-    * ``FadeIn( duration )``
-    * ``FadeOut( duration )``
-    * ``Blink( times_to_blink, duration )``
-    * ``Show()``
-    * ``Hide()``
+    * `Move` ( (x,y,0), duration)
+    * `Goto` ( (x,y,0), duration )
+    * `Rotate` ( degrees, duration )
+    * `Scale` ( zoom_factor, duration )
+    * `Jump` ( height, x, number_of_jumps, duration )
+    * `Bezier` ( bezier_configuration, duration )
+    * `Place` ( (x,y,0) )
+    * `Animate` ( animation_name )
+    * `FadeIn` ( duration )
+    * `FadeOut` ( duration )
+    * `Blink` ( times_to_blink, duration )
+    * `Show` ()
+    * `Hide` ()
 
 Composite actions:
 
-    * ``Repeat( action )``
-    * ``Spawn( list_of_actions )``
-    * ``Sequence( list_of_actions )``
+    * `Repeat` ( action )
+    * `Spawn` ( list_of_actions )
+    * `Sequence` ( list_of_actions )
 
 Misc actions:
 
-    * ``CallFunc( function )``
-    * ``CallFuncS( function )``
-    * ``Delay( seconds )``
-    * ``RandomDelay( lo_seconds, hi_seconds )``
+    * `CallFunc` ( function )
+    * `CallFuncS` ( function )
+    * `Delay` ( seconds )
+    * `RandomDelay` ( lo_seconds, hi_seconds )
 
 
 To execute any action you need to create an action::
@@ -76,6 +76,73 @@ and 0 pixels in the ``z`` coordinate in 5 seconds.
 And now tell the sprite to execute it::
 
     sprite.do( move )
+
+
+Interval Actions
+================
+
+An interval action is an action that takes place within a certain period of time.
+It has an start time, and a finish time. The finish time is the parameter
+``duration`` plus the start time.
+
+These `IntervalAction` have some interesting properties, like:
+
+  * They can run Forward (default)
+  * They can run Backwards
+  * They can alter the speed of time
+
+For example, if you run an action in a Forward direction and the you run it again in
+a Backward direction, then you are simulation a PingPong movement.
+
+These actions has 3 special parameters:
+
+    ``dir`` : direction
+        It can be `ForwardDir` or `BackwardDir` . Default is: `ForwardDir`
+    ``mode`` : repeat mode
+        It can be `PingPongMode` or `RepeatMode` . Default is : `PingPongMode` .
+    ``time_func`` : a function. The format of the function is f( runtime, duration )
+        If you want to alter the speed of time, you should provide your onw time_func or use the `accelerate` function.
+        Default : None. No alter-time function is used.
+
+Available IntervalActions
+=========================
+
+  * `Goto`
+  * `Move`
+  * `Jump`
+  * `Bezier`
+  * `Blink`
+  * `Rotate`
+  * `Scale`
+  * `Animate`
+  * `FadeOut`
+  * `FadeIn`
+
+Examples::
+
+    move = Move( (200,0,0), 5 )  # Moves 200 pixels to the right in 5 seconds.
+                                 # Direction: ForwardDir (default)
+                                 # RepeatMode:  PingPongMode (default)
+                                 # time_func:  No alter function (default)
+
+    rmove = Repeat( move )       # Will repeat the action *move* forever
+                                 # The repetitions are in PingPongMode
+                                 # times: -1 (default)
+
+    move2 = Move( (200,0,0), 5, time_func=accelerate )
+                                # Moves 200 pixels to the right in 5 seconds
+                                # time_func=accelerate. This means that the
+                                # speed is not linear. It will start to action
+                                # very slowly, and it will increment the speed
+                                # in each step. The total running time will be
+                                # 5 seconds.
+
+    move3 = Move( (200,0,0), 5, dir=BackwardDir )
+                                # Moves 200 pixels to the **left** in 5 seconds
+                                # But when you use this direction (BackwardDir)
+                                # the starting coords and the finishing coords
+                                # are inverted
+                                
 '''
 
 __docformat__ = 'restructuredtext'
@@ -113,13 +180,20 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             ]
 
 
-class ForwardDir: pass 
+class ForwardDir: pass
 class BackwardDir: pass
 class PingPongMode: pass
 class RepeatMode: pass
 
 class ActionSprite( object ):
-    '''Creates an instance of ActionSprite. ActionSprites can execute actions.'''
+    '''ActionSprite( image_filenaem )
+
+    Creates an instance of ActionSprite. ActionSprites can execute actions.
+
+    Example::
+    
+        sprite = ActionSprite('grossini.png')
+    '''
     
     def __init__( self, img ):
         self.frame = image.load( img )
@@ -165,10 +239,13 @@ class ActionSprite( object ):
         self.to_remove.append( action )
         
     def step(self, dt):
-        """step(dt)
+        """This functions is called *n* times per second, where
+        *n* are the FPS.
 
-        dt delta time in seconds since the last time it was called
-        This method is called n times per seconds, where n are the FPS."""
+        :Parameters:
+            `dt` : delta_time
+                The time that ellapsed since that last time this functions was called.
+        """
         for action in self.actions:
             action._step(dt)
             if action.done():
@@ -286,12 +363,13 @@ class IntervalAction( Action ):
     Action. Interval Actions are the ones that can go forward or
     backwards in time. 
     
-    For example: Goto, Move, Rotate are Interval Actions.
-    CallFunc is not.
+    For example: `Goto` , `Move` , `Rotate` are Interval Actions.
+    `CallFunc` is not.
 
-    dir can be: ForwardDir or BackwardDir
-    mode can be: PingPongMode or RepeatMode
-    time_func can be any function that alters the time
+    dir can be: `ForwardDir` or `BackwardDir`
+    mode can be: `PingPongMode` or `RepeatMode`
+    time_func can be any function that alters the time.
+    `accelerate` , a time-alter function, is provided with this lib.
     """
     
     def __init__( self, *args, **kwargs ):
@@ -346,7 +424,9 @@ class Place( Action ):
 
     Creates and action that will place the sprite in the position x,y.
 
-    Example: Place( (320,240,0) )
+    Example::
+
+        action = Place( (320,240,0) )
     """
     def init(self, position):
         self.position = Point3(*position)
@@ -361,7 +441,12 @@ class Place( Action ):
 class Hide( Action ):
     """Hide()
 
-    Hides the sprite. To show it again call the Show() action"""
+    Hides the sprite. To show it again call the `Show` () action
+
+    Example::
+
+        action = Hide()
+    """
     def start(self):
         self.target.show = False
 
@@ -371,7 +456,12 @@ class Hide( Action ):
 class Show( Action ):
     """Show()
 
-    Show the sprite. To hide it call the Hide() action"""
+    Shows the sprite. To hide it call the `Hide` () action
+
+    Example::
+
+        action = Show()
+    """
     def start(self):
         self.target.show = True
 
@@ -381,7 +471,14 @@ class Show( Action ):
 class Blink( IntervalAction ): 
     """Blink( number_of_times, duration)
 
-    Blinks the sprite a Number_of_Times, for Duration seconds"""
+    Blinks the sprite a Number_of_Times, for Duration seconds
+
+    Example::
+
+        action = Blink( 10, 2 ) # Blinks 10 times in 2 seconds
+    """
+
+
     def init(self, times, duration):
         self.times = times
         self.duration = duration
@@ -434,7 +531,10 @@ class Goto( IntervalAction ):
     x and y are absolute coordinates.
     Duration is is seconds.
 
-    Example: Goto( (50,10,0), 8 )
+    Example::
+
+        action = Goto( (50,10,0), 8 )
+
     It will move a sprite to the position x=50, y=10 in 8 seconds."""
     def init(self, end, duration=5):
         self.end_position = Point3( *end )
@@ -458,9 +558,12 @@ class Move( Goto ):
     x and y are relative to the position of the sprite.
     Duration is is seconds.
 
-    Example: Move( (50,10,0), 8 )
-    It will move a sprite 50 pixels to the right and 10 pixels to the top
-    for 8 seconds."""
+    Example::
+
+        action = Move( (50,10,0), 8 )
+
+    It will move a sprite 50 pixels to the right and 10 pixels upwards
+    in 8 seconds."""
     def init(self, delta, duration=5):
         self.delta = Point3( *delta)
         self.duration = duration
@@ -475,9 +578,12 @@ class Jump(IntervalAction):
 
     Creates an actions that moves a sprite Width pixels doing
     the number of Quanitty_Of_Jumps jumps with a height of Height pixels,
-    for Duration seconds.
+    in Duration seconds.
 
-    Example: Jump(50,200, 5, 6)
+    Example::
+
+        action = Jump(50,200, 5, 6)
+
     It will do 5 jumps travelling 200 pixels to the right for 6 seconds.
     The height of each jump will be 50 pixels each."""
     
