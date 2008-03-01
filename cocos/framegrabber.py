@@ -30,7 +30,7 @@ def TextureGrabber():
     except:
         pass
     # Fallback: GL generic grabber
-    print "Warning: using fallback texture grabber. Effects will treat" \
+    print "Warning: using fallback texture grabber. Effects will treat " \
           "layer transparency as black"
     _best_grabber = GenericGrabber
     return _best_grabber()
@@ -89,6 +89,7 @@ class FBOGrabber(object):
     def __init__ (self):
         # This code is on init to make creation fail if FBOs are not available
         self.fbuf = FramebufferObject()
+        self.fbuf.check_status()
 
     def grab (self, texture):
         self.fbuf.bind()
