@@ -15,12 +15,14 @@ else:
     from pyglet.gl.glx import *
 
     class Pbuffer (object):
-        """Wrapper for OpenGL pbuffer extensions. 
+        """
+        Wrapper for OpenGL pbuffer extensions. 
         See http://oss.sgi.com/projects/ogl-sample/registry/SGIX/pbuffer.txt for details
         
         Caveats:
-          * Only GLX version implemented
-          * not tested, may not be working
+
+         - Only GLX version implemented
+         - not tested, may not be working
         """
 
         def __init__ (self, window, attrs=[], width=None, height=None):
