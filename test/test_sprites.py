@@ -403,7 +403,7 @@ tests = {
  19: ("Test #19 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
  20: ("Test #20 - Animate", "Animate a sprite:\na = Animation('dance',0.5,'image1.png',image2.png','image3.png')\nsprite.add_animation(a)\nsprite.do( Animate('dance' ) )", SpriteAnimate),
  21: ("Test #21 - Alter time", "You can change the speed of time:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0,0), 5, time_func=Accelerate)\nsprite.do(move),", SpriteAlterTime),
- 22: ("Test #21 - Repeat time altered actions", "Repeat actions that were time-altered:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0,0), 5, time_func=Accelerate)\nsprite.do(Repeat(move)),", SpriteRepeatAlterTime),
+ 22: ("Test #22 - Repeat time altered actions", "Repeat actions that were time-altered:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0,0), 5, time_func=Accelerate)\nsprite.do(Repeat(move)),", SpriteRepeatAlterTime),
 
 }
 
