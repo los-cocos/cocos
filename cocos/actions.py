@@ -214,9 +214,9 @@ class ActionSprite( object ):
         When the action finished, it will be removed from the sprite's queue.
 
         :Parameters:
-            `action` : an Action instance
+            `action` : an `Action` instance
                 Action that will be executed.
-        :rtype: Action instance
+        :rtype: `Action` instance
         :return: A clone of *action*
         '''
         try:
@@ -303,11 +303,11 @@ class ActionSprite( object ):
                 self.translate.x +  x2, self.translate.y + y2 )
 
     def add_animation( self, animation ):
-        '''Adds a new *Animation* instance to the sprite. These Animations can be animated
+        '''Adds a new `Animation` instance to the sprite. These Animations can be animated
         using the *Animate* action.
 
         :Parameters:
-            `animation` : Animation instance
+            `animation` : `Animation` instance
                 Animation that will be executed.'''
         self.animations[ animation.name ] = animation
 
@@ -688,7 +688,7 @@ class Bezier( IntervalAction ):
         """Init method
 
         :Parameters:
-            `bezier` : Bezier instance
+            `bezier` : bezier_configuration instance
                 A bezier configuration
             `duration` : float
                 Duration time in seconds
