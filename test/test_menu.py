@@ -1,5 +1,5 @@
 #
-# Los Cocos: Menu Example
+# Los Cocos: Multi-Menu Example
 # http://code.google.com/p/los-cocos/
 #
 
@@ -11,10 +11,10 @@ from pyglet import image
 from pyglet.gl import *
 from pyglet import font
 
-
 from cocos.director import *
 from cocos.menu import *
 from cocos.scene import *
+from cocos.layer import *
 
 class MainMenu(Menu):
     def __init__( self ):
@@ -54,18 +54,61 @@ class MainMenu(Menu):
            
 
     def on_scores( self ):
-#        self.switch_to( 2 )
-        print "on_scores()"
+        self.switch_to( 2 )
 
     def on_options( self ):
-#        self.switch_to( 1 )
-        print "on_options()"
+        self.switch_to( 1 )
 
     def on_quit( self ):
         print "on_quit()"
         sys.exit()
 
 
+class OptionMenu(Menu):
+    def __init__( self ):
+        super( OptionMenu, self ).__init__("GROSSINI'S SISTERS" )
+
+        self.font_title = 'KonQa Black'
+#        self.font_items = 'You Are Loved'
+        self.menu_valign = BOTTOM
+        self.menu_halign = RIGHT
+
+        self.add_item( MenuItem('Fullscreen', self.on_fullscreen) )
+        self.add_item( ToggleMenuItem('Show FPS', True, self.on_show_fps) )
+        self.add_item( MenuItem('OK', self.on_quit) )
+        self.build_items()
+
+        self.fullscreen = False
+
+    # Callbacks
+    def on_fullscreen( self ):
+        self.fullscreen = not self.fullscreen
+        director.window.set_fullscreen( self.fullscreen )
+
+    def on_quit( self ):
+        self.switch_to( 0 )
+
+    def on_show_fps( self, value ):
+        director.show_FPS = value
+
+class ScoreMenu(Menu):
+    def __init__( self ):
+        super( ScoreMenu, self ).__init__("GROSSINI'S SISTERS" )
+
+        self.font_title = 'KonQa Black'
+#        self.font_items = 'You Are Loved'
+        self.menu_valign = BOTTOM
+        self.menu_halign = LEFT
+
+        self.add_item( MenuItem('Go Back', self.on_quit) )
+        self.build_items()
+
+    def on_quit( self ):
+        self.switch_to( 0 )
+
+
 if __name__ == "__main__":
     director.init( resizable=True)
-    director.run( Scene( MainMenu()) )
+    director.run( Scene( 
+            MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
+            ) ) 

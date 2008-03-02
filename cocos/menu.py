@@ -1,19 +1,3 @@
-"""A menu layer for los-cocos.
-
-Menu
-====
-
-This module provides a Menu class, which is a layer you can use in cocos
-apps. Menus can contain regular items (which trigger a function when selected)
-or toggle items (which toggle a flag when selected).
-
-When you need a menu, you can define a class inheriting ``Menu'', and setting
-some attributes which control the menu appearance. Then you add MenuItems to
-it, prepare it, and use it as you would use any layer.
-
-There is a menu demo in the samples folder.
-
-"""
 #
 # Menu class for pyglet
 #
@@ -23,6 +7,24 @@ There is a menu demo in the samples folder.
 #    Grossini's Hell: http://www.pyweek.org/e/Pywiii/ 
 # 
 #
+"""A menu layer for los-cocos.
+
+Menu
+====
+
+This module provides a Menu class, which is a layer you can use in cocos
+apps. Menus can contain regular items (which trigger a function when selected)
+or toggle items (which toggle a flag when selected).
+
+When you need a menu, you can define a class inheriting `Menu`, and setting
+some attributes which control the menu appearance. Then you add `MenuItem` s to
+it, prepare it, and use it as you would use any layer.
+
+There is a menu demo in the samples folder.
+
+"""
+
+__docformat__ = 'restructuredtext'
 
 from pyglet import font
 from pyglet import media
@@ -137,14 +139,19 @@ class Menu(Layer):
             elif self.menu_valign == BOTTOM:
                 pos_y = 0 + fo_height * len(self.items) - (idx * fo_height )
 
-            item.init_font( fo, fo_selected, pos_x, pos_y )
+            item._init_font( fo, fo_selected, pos_x, pos_y )
 
 
     def add_item( self, item ):
-        """add_item( menu_item ) -> None
+        """Adds an item to the menu.
 
-        Adds an item to the menu. The order of the list important since the
-        one will be shonw first."""
+        The order of the list important since the
+        one will be shonw first.
+
+        :Parameters:
+            `item` : a MenuItem
+                The MenuItem
+        """
         item.halign = self.menu_halign
         item.valign = self.menu_valign
         item.color = self.font_items_color
@@ -158,10 +165,9 @@ class Menu(Layer):
             i.step(dt)
 
     def build_items( self ):
-        """build_items() -> None
+        """Initializes all the menu items
 
-        Initialize the menu with the added menu items.
-        Don't call this method before adding all the menu items"""
+        Call this method after you've added all the menu items."""
         self._draw_title()
         self._draw_items()
         self.selected_index = 0
@@ -221,7 +227,14 @@ class MenuItem( object ):
     """A menu item triggering a function."""
 
     def __init__(self, label, activate_func):
-        """New menu item with given label, which calls activate_func when selected"""
+        """Creates a new menu item
+
+        :Parameters:
+            `label` : string
+                The label the of the menu item
+            `activate_func` : function
+                The callback function
+        """
         self.label = label
         self.activate_func = activate_func
 
@@ -237,9 +250,10 @@ class MenuItem( object ):
         self.valign = None
 
     def get_box( self ):
-        """get_box() -> (x1,y1,x2,y2)
+        """Returns the box that contains the menu item.
 
-        returns a tuple that contains the margins of the item."""
+        :rtype: (x1,x2,y1,y2)
+        :returns: returns a tuple (a rectangle) that sets the boundaries of the menu item."""
        
         if self.halign == CENTER:
             x_diff = - self.text.width / 2
@@ -273,11 +287,7 @@ class MenuItem( object ):
             self.activate_func()
             return True
 
-    def init_font( self, aFont, aFont_selected, x, y ):
-        """init_font( normal_font, selected_font, x, y) -> None
-
-        Creates pyglet Font objects ready to be drawn when necesary."""
-
+    def _init_font( self, aFont, aFont_selected, x, y ):
         # Unselected option
         self.text = font.Text( aFont, self.label, x=x , y=y, halign=self.halign, valign=self.valign )
         self.text.color = self.color
@@ -287,9 +297,11 @@ class MenuItem( object ):
         self.text_selected.color = self.selected_color
 
     def is_inside_box( self, x, y ):
-        """is_inside_box( x, y ) -> Boolean
+        """Returns whether the point (x,y) is inside the menu item.
 
-        Returns whether x,y are inside the item."""
+        :rtype: Boolean
+        :Returns: Whether or not the point (x,y) is inside the menu item
+        """
         (ax,ay,bx,by) = self.get_box()
         if( x >= ax and x <= bx and y >= ay and y <= by ):
             return True
@@ -303,12 +315,20 @@ class MenuItem( object ):
 class ToggleMenuItem( MenuItem ):
     """A menu item for a boolean toggle option.
     
-    When selected, ``self.value`` is toggled, and a callback function is
+    When selected, ``self.value`` is toggled, the callback function is
     called with ``self.value`` as argument."""
 
     def __init__(self, label, value, toggle_func):
-        """New toggle item with given label; toggle_func (value) is called
-        when selected."""
+        """Creates a Toggle Menu Item
+
+        :Parameters:
+            `label` : string
+                Item's label
+            `value` : Boolean
+                Item's default value: True or False
+            `toggle_func` : function
+                Callback function
+        """
         self.toggle_label = label
         self.value = value
         self.toggle_func = toggle_func
