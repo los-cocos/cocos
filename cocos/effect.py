@@ -25,10 +25,12 @@ An effect object should not be applied to several layers at once.
 __docformat__ = 'restructuredtext'
 
 from director import director
-from pyglet.gl import *
-
 from pyglet import image
+
+from pyglet.gl import *
 from framegrabber import TextureGrabber
+
+__all__ = ['Effect', 'TextureFilterEffect','ColorizeEffect', 'RepositionEffect']
 
 class Effect(object):
     """Abstract base class for effects. Effects are applied to layers (or

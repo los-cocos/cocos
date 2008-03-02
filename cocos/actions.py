@@ -336,18 +336,26 @@ class Action(object):
         return True
             
     def start(self):
+        """Called before the action starts to execute
+
+        When this method is called, the variable self.target will contain
+        a reference to the sprite. If you want to use this variable before
+        this method is called, an unexpected error will occur.
+        """
         pass
 
     def restart( self ):
-        """IntervalAction and other subclasses shall override this method"""
+        """Called before an action si restarted.
+
+        Called before action is restarted. This happens when an action
+        is being repeated."""
         self._start()
 
     def step(self, dt):
         pass
 
     def get_runtime( self ):
-        """Returns the runtime.
-        IntervalActions can modify this value. Don't access self.runtime directly"""
+        """Returns the runtime in seconds."""
         return self.runtime
 
     def __add__(self, action):
@@ -634,7 +642,7 @@ class Jump(IntervalAction):
 
     Example::
 
-        action = Jump(50,200, 5, 6)    # Move the sprite 200 pixels to the left
+        action = Jump(50,200, 5, 6)    # Move the sprite 200 pixels to the right
         sprite.do( action )            # in 6 seconds, doing 5 jumps
                                        # of 50 pixels of height
     """

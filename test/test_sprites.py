@@ -113,7 +113,7 @@ class SpriteRepeatMove( SpriteLayer ):
         move = Move( (150,0,0), 0.5 )
         rot = Rotate( 360, 0.5 )
 
-        sprite.do( Repeat( Sequence( rot + move , rot , move , rot , move , rot), 3 )  )
+        sprite.do( Repeat( Sequence( rot + move , rot , move , rot , move , rot) ) )
 
 class SpriteScale( SpriteLayer ):
     def on_enter( self ):
@@ -225,7 +225,7 @@ class SpriteRepeat( SpriteLayer ):
         
         jump = Jump(100,400,4,3, mode=RepeatMode )
 
-        sprite.do( Repeat( jump, 3 ) )
+        sprite.do( Repeat( jump ) )
 
 class SpriteRepeat2( SpriteLayer ):
     def on_enter( self ):
@@ -237,7 +237,7 @@ class SpriteRepeat2( SpriteLayer ):
         jump = Jump(100,400,4,3, mode=PingPongMode )
 #        jump = Jump(100,400,4,3 )
 
-        sprite.do( Repeat( jump, 3 ) )
+        sprite.do( Repeat( jump ) )
 
 
 class SpriteRepeatSeq( SpriteLayer ):
@@ -265,7 +265,7 @@ class SpriteRepeatSeq2( SpriteLayer ):
         move = Move( (0,100,0), 0.5 )
         jump2 = Jump(50,-200,4,1)
 
-        sprite.do( Repeat( Repeat(jump,3) + Repeat(move,3) + Repeat(jump2,3), 3 ) )
+        sprite.do( Repeat( Repeat(jump,3) + Repeat(move,3) + Repeat(jump2,3) ) )
 
 
 class SpriteTrigger( SpriteLayer ):
@@ -323,7 +323,7 @@ class SpriteReuseSequence( SpriteLayer ):
 
         rotate = Rotate( -360, 2 )
 
-        seq = Repeat(jump + move + jump2,3)
+        seq = Repeat(jump + move + jump2 )
 
         sprite1.do( seq )
         sprite2.do( seq )
@@ -401,9 +401,9 @@ tests = {
  11: ("Test #11 - Delay","Delays between actions\nsprite.do(Move() + Delay( seconds ) + Jump() )\n\nRandomDelay() is an action too.", SpriteDelay ),
  12: ("Test #12 - Repeat", "Run the same action in 'RepeatMode'\nsprite.do( Repeat( Jump( mode=RepeatMode) )", SpriteRepeat),
  13: ("Test #13 - Repeat a-la PingPong", "Run the same action in 'PingPongMode' (default mode)\nsprite.do( Repeat( Jump( mode=PingPongMode) )", SpriteRepeat2),
- 14: ("Test #14 - Repeat a Sequence", "Run a sequence many times\nsprite.do( Repeat( jump + move + jump2 )", SpriteRepeatSeq),
- 15: ("Test #15 - Repeat a Sequence #2", "Run a sequence of duplicate Actions\nsprite.do( Repeat( rotate + move + rotate + move + rotate + move + rotate ) )", SpriteRepeatMove ),
- 16: ("Test #16 - Repeat Sequence of Repeats", "Run a sequence of repeats\nsprite.do( Repeat( Repat(jump) + Repeat(move) + Repeat(jump2) )", SpriteRepeatSeq2),
+ 14: ("Test #14 - Repeat a Sequence", "Repeat a sequence 4 times\nsprite.do( Repeat( jump + move + jump2, 4 )", SpriteRepeatSeq),
+ 15: ("Test #15 - Repeat a Sequence #2", "Repeat a sequence of duplicate Actions\nsprite.do( Repeat( rot + move + rot + move + rot + move + rot ) )", SpriteRepeatMove ),
+ 16: ("Test #16 - Repeat Sequence of Repeats", "Repeat a sequence of repeats\nsprite.do( Repeat( Repeat(jump,3) + Repeat(move,3) + Repeat(jump2,3) )", SpriteRepeatSeq2),
  17: ("Test #17 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS(), another action, passes the sprite as the 1st parameter", SpriteTrigger ),
  18: ("Test #18 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
  19: ("Test #19 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
