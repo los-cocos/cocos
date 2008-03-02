@@ -77,23 +77,33 @@ class Menu(Layer):
         #
 
         # Title
-        self.font_title = ''            # Full font name
+        self.font_title = ''
+	"""Title's font name"""
         self.font_title_size = 72
+	"""Title's font size. Default size is 72"""
         self.font_title_color = ( 0.6, 0.6, 0.6, 1.0 )
+	"""Title's font color. Default color is (0.6, 0.6, 0.6, 1.0)"""
 
         # Items
         self.font_items = ''            # Full font name
+	"""Items' font name"""
         self.font_items_size = 48
+	"""Items' font size when unselected. Default size is 48"""
         self.font_items_color = (0.6, 0.6, 0.6, 1.0 ) 
+	"""Items' font color when unselected. Default color is (0.6, 0.6, 0.6, 1.0)"""
         self.font_items_selected_size = 64 
+	"""Items' font size when selected. Default size is 64"""
         self.font_items_selected_color = (1.0, 1.0, 1.0, 1.0 )
+	"""Items' font color when selected. Default color is (1.0, 1.0, 1.0, 1.0)"""
 
         # Sound
         self.sound_filename = 'menuchange.wav'
 
         # Alignment
         self.menu_halign = CENTER
+	"""Horizontal alignment. Possible options: CENTER, RIGHT or LEFT. Default is CENTER"""
         self.menu_valign = CENTER
+	"""Vertical alignment. Possible options: CENTER, TOP or BOTTOM. Default is CENTER"""
 
      
     def _draw_title( self ):
