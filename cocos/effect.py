@@ -21,6 +21,9 @@ And some abstract base classes to define your own effects:
 An effect object should not be applied to several layers at once.
 
 """
+
+__docformat__ = 'restructuredtext'
+
 from director import director
 from pyglet.gl import *
 
@@ -95,15 +98,15 @@ class RepositionEffect (TextureFilterEffect):
         Parameters are stored in ``self.x``, ``self.y``, ``self.width``,
         ``self.height``, which can be modified later.
         
-            :Parameters:
-                `x` :
-                    The horizontal shift for the layer (default=0)
-                `y` :
-                    The vertical shift for the layer (default=0)
-                `width` :
-                    The horizontal size for the layer (default=0)
-                `height` :
-                    The vertical size for the layer (default=0)
+        :Parameters:
+            `x` : Integer
+                The horizontal shift for the layer (default=0)
+            `y` : Integer
+                The vertical shift for the layer (default=0)
+            `width` : Integer
+                The horizontal size for the layer (default=0)
+            `height` : Integer
+                The vertical size for the layer (default=0)
 
         """
         super (RepositionEffect, self).__init__ ()
