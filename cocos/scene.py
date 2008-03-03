@@ -18,7 +18,7 @@ class Scene(object):
     def __init__(self, *layers):
         """
         Creates a Scene with layers, from bottom to top, giving a 
-        z-value from 1.0 to len(layers)
+        z-value from 0.0 to len(layers)-1
         """
         self.layers = []
         self.layers_name = {}
@@ -28,7 +28,7 @@ class Scene(object):
 
     def add( self, zvalue, layer, layer_name = None ):
         """
-        add(zvalue, layer, layer_name) -> None
+        add(zvalue, layer [, layer_name]) -> None
         
         Adds a layer at z-value depth, naming it 'name' if given.
         (name can be used later to remove the layer)

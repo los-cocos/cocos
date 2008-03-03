@@ -9,7 +9,10 @@ from cocos.director import director
 
 from pyglet import gl
 
+# Defining a new layer type...
 class Square(cocos.layer.Layer):
+    """Square (color, c, y, size=50) : A layer drawing a square at (x,y) of
+    given color and size"""
     def __init__(self, color, x, y, size=50):
         self.x = x
         self.y = y
@@ -30,8 +33,10 @@ class Square(cocos.layer.Layer):
         
 if __name__ == "__main__":
     director.init()
-    sc = cocos.scene.Scene( 
-        *[ Square((0.03*i,0.03*i,0.03*i,1) , i*20, i*20) for i in range(5,20) ]
-        )
+    # Create a large number of layers
+    layers = [ Square((0.03*i,0.03*i,0.03*i,1) , i*20, i*20) for i in range(5,20) ]
+    # Create a scene with all those layers
+    sc = cocos.scene.Scene(*layers)
+    # You can also add layers to a scene later:
     sc.add( 5.5, Square((1,0,0,0.5), 150,150, 210 ), "big_one" )
     director.run( sc )
