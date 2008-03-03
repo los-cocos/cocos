@@ -1,0 +1,22 @@
+How to install Cocos
+--------------------
+
+We didn't have time to code and test a setup.py so,
+here are the steps to install cocos in your
+machine:
+
+
+1) Copy "cocos" to your project
+
+$ cp -r cocos $PROJECT_HOME
+
+
+2) Or include cocos in your PYTHONPATH
+
+$ export PYTHONPATH=$PYTHONPATH:/path/to/cocos
+
+
+3) Or insert cocos in sys.path
+
+import sys
+sys.path.insert(0, PATH_TO_COCOS))
