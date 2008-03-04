@@ -17,7 +17,7 @@ class HelloWorld(cocos.layer.Layer):
         
     def step(self, dt):
         # this function is called on every frame
-        # dt is the elapsed time betwen this frame and the last        
+        # dt is the elapsed time between this frame and the last        
         self.text.draw()
 
 if __name__ == "__main__":
