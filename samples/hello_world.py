@@ -16,7 +16,7 @@ class HelloWorld(cocos.layer.Layer):
         self.text = font.Text(ft, 'Hello, World!', x=100, y=240)
         
     def step(self, dt):
-        # this funcition is called on every frame
+        # this function is called on every frame
         # dt is the elapsed time betwen this frame and the last        
         self.text.draw()
 
