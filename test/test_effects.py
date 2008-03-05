@@ -46,7 +46,8 @@ class DynamicColorizeEffect (ColorizeEffect):
         self.color = (red,1,1,1)
         
 class ControlLayer(Layer):
-    def step(self, dt):
+
+    def on_enter( self ):
         ft_title = font.load( None, 32 )
         ft_subtitle = font.load( None, 18 )
         ft_help = font.load( None, 16 )
@@ -56,20 +57,23 @@ class ControlLayer(Layer):
             y=480,
             halign=font.Text.LEFT,
             valign=font.Text.TOP)
-        self.text_title.draw()
 
         self.text_subtitle = font.Text(ft_subtitle, effects[current_effect][0],
             x=5,
             y=400,
             halign=font.Text.LEFT,
             valign=font.Text.TOP)
-        self.text_subtitle.draw()
         
         self.text_help = font.Text(ft_help,"Press LEFT / RIGHT for prev/next example",
             x=320,
             y=20,
             halign=font.Text.CENTER,
             valign=font.Text.CENTER)
+
+    def step(self, dt):
+        self.text_title.draw()
+        self.text_subtitle.text = effects[current_effect][0]
+        self.text_subtitle.draw()
         self.text_help.draw()
         
     def on_key_press( self, k , m ):

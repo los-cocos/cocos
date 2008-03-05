@@ -14,7 +14,7 @@ from pyglet.window import key
 
     
 class ControlLayer(Layer):
-    def step(self, dt):
+    def on_enter( self ):
         ft_title = font.load( "Arial", 32 )
         ft_subtitle = font.load( "Arial", 18 )
         ft_help = font.load( "Arial", 16 )
@@ -24,22 +24,26 @@ class ControlLayer(Layer):
             y=480,
             halign=font.Text.LEFT,
             valign=font.Text.TOP)
-        self.text_title.draw()
 
         self.text_subtitle = font.Text(ft_subtitle, transition_list[current_transition].__name__,
             x=5,
             y=400,
             halign=font.Text.LEFT,
             valign=font.Text.TOP)
-        self.text_subtitle.draw()
         
         self.text_help = font.Text(ft_help,"Press LEFT / RIGHT for prev/next example, ENTER to restart example",
             x=320,
             y=20,
             halign=font.Text.CENTER,
             valign=font.Text.CENTER)
+
+    def step( self, df ):
         self.text_help.draw()
-        
+
+        self.text_subtitle.text = transition_list[current_transition].__name__
+        self.text_subtitle.draw()
+        self.text_title.draw()
+
     def on_key_press( self, k , m ):
         global current_transition, control_p
         if k == key.LEFT:
