@@ -16,20 +16,33 @@ the event and accepts it.
 
 __docformat__ = 'restructuredtext'
 
-from cocos.director import *
+import pyglet
 from pyglet import gl
 
-__all__ = [ 'Layer', 'MultiplexLayer', 'AnimationLayer' ]
+from cocos.director import *
+
+__all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer' ]
 
 class Layer(object):
     """Class that handles events and other important game's behaviors"""
 
     effects = ()
 
-    def step(self, dt):
-        """Called once per cycle. Use this method to draw/animate your objects"""
-        pass
+    def __init__( self ):
+        self.batch = pyglet.graphics.Batch()
+        self.scheduled = False
+        self.objects = []
 
+    def add( self, *o ):
+        """Adds an object to the batch. The batch will draw it.
+
+        :Parameters:
+            `o` : list of objects
+                Object that supports the 'batch' property, like Sprites, Labels, etc.
+        """
+        for i in o:
+            self.objects.append( i )
+            i.batch = self.batch
 
     def set_effect (self, e):
         """
@@ -45,16 +58,23 @@ class Layer(object):
         else:
             self.effects = (e,)
 
-    def _prepare (self, dt):
-        for e in self.effects:
-            e.prepare (self, dt)
+    def on_draw( self ):
+        """Draws every object that is in the batch and possible custom objets"""
 
-    def _step(self, dt):
-        if not self.effects:
-            self.step (dt)
-        else:
+        if self.effects:
+            for e in self.effects:
+                e.prepare (self)
+
             for e in self.effects:
                 e.show ()
+        else:
+            self.batch.draw()
+            self.draw()
+
+
+    def draw( self ):        
+        """Subclasses shall override this method if they want to draw custom objets"""
+        pass           
 
     def on_enter( self ):
         """Called every time the layer enters into the scene"""
@@ -63,6 +83,24 @@ class Layer(object):
     def on_exit( self ):
         """Called every time the layer quits the scene"""
         pass 
+
+    def step( self, dt ):
+        """Called every frame when it is active.
+        See `enable_step` and `disable_step`
+        """
+        pass
+
+    # helper functions
+    def disable_step( self ):
+        """Disables the step callback"""
+        self.scheduled = False
+        pyglet.clock.unschedule( self.step )
+
+    def enable_step( self ):
+        """Enables the step callback. It calls the `step` method every frame"""
+        if not self.scheduled:
+            self.scheduled = True 
+            pyglet.clock.schedule( self.step )
 
 #
 # MultiplexLayer
@@ -101,9 +139,6 @@ class MultiplexLayer( Layer ):
         director.window.push_handlers( self.layers[ self.enabled_layer ] )
         self.layers[ self.enabled_layer ].on_enter()
 
-    def step( self, dt):
-        self.layers[ self.enabled_layer ].step( dt )
-
     def on_enter( self ):
         director.window.push_handlers( self.layers[ self.enabled_layer ] )
         self.layers[ self.enabled_layer ].on_enter()
@@ -112,23 +147,9 @@ class MultiplexLayer( Layer ):
         director.window.pop_handlers()
         self.layers[ self.enabled_layer ].on_exit()
 
+    def draw( self ):
+        self.layers[ self.enabled_layer ].on_draw()
 
-class AnimationLayer(Layer):
-    """Useful class to handle animated (or alive) objects
-
-    Each cycle it forwards the *step* call to all of its objects.
-    """
-    def __init__( self ):
-        super( AnimationLayer, self ).__init__()
-
-        self.objects = []
-
-    def add( self, *o ):
-        for i in o:
-            self.objects.append( i )
-
-    def step( self, dt ):
-        [ o.step(dt) for o in self.objects ]
 
 
 class ColorLayer(Layer):
@@ -136,8 +157,8 @@ class ColorLayer(Layer):
     def __init__(self, *color):
         self.color = color
         super(ColorLayer, self).__init__()
-        
-    def step(self, dt):
+
+    def draw(self):
         gl.glColor4f(*self.color)
         x, y = director.get_window_size()
         gl.glBegin(gl.GL_QUADS)
@@ -147,4 +168,3 @@ class ColorLayer(Layer):
         gl.glVertex2f( x, 0 )
         gl.glEnd()
         gl.glColor4f(1,1,1,1)    
-

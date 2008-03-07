@@ -45,36 +45,60 @@ class TransitionScene(scene.Scene):
         
         self.dt = 0.0
         self.duration = duration
+
+        self.scheduled = False
         
         super(TransitionScene, self).__init__()
+
+    # helper functions
+    def disable_step( self ):
+        """Disables the step callback"""
+        self.scheduled = False
+        pyglet.clock.unschedule( self.step )
+
+    def enable_step( self ):
+        """Enables the step callback. It calls the `step` method every frame"""
+        if not self.scheduled:
+            self.scheduled = True 
+            pyglet.clock.schedule( self.step )
         
+    def step( self, dt ):
+        pass
 
 class Quad2DTransition(TransitionScene):
     """
     Slides out one scene while sliding in onother.
     """    
+
+    def __init__( self, *args, **kwargs ):
+        super(Quad2DTransition, self ).__init__( *args, **kwargs)
+        self.enable_step()
+
     def step(self, dt):
         self.dt += dt
         if self.dt >= self.duration:
+            self.disable_step()
             director.replace( self.in_scene )
+
+    def on_draw( self ):
         x, y = director.get_window_size()
         # draw scene one
         self.out_grabber.before_render(self.out_texture)
-        self.out_scene.step(dt)
+        self.out_scene.on_draw()
         self.out_grabber.after_render(self.out_texture)
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # draw scene two
         self.in_grabber.before_render(self.in_texture)
-        self.in_scene.step(dt)
+        self.in_scene.on_draw()
         self.in_grabber.after_render(self.in_texture)
         
     
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        self.draw_scenes(dt)
+        self.draw_scenes()
         
-    def draw_scenes(self, dt):
+    def draw_scenes(self):
         #paste both scenes
         self.blit_texture( self.out_texture, self.out_proyect)
         self.blit_texture( self.in_texture, self.in_proyect)
@@ -104,7 +128,7 @@ class Quad2DTransition(TransitionScene):
         
     
 class FadeTransition(Quad2DTransition):
-    def draw_scenes(self, dt):
+    def draw_scenes(self):
         #paste both scenes
         p = self.dt/self.duration
         glColor4f(1,1,1,max(0,1-p*2))
@@ -221,7 +245,7 @@ class CornerMoveTransition(Quad2DTransition):
     
 
 class ShrinkAndGrow(Quad2DTransition):       
-    def draw_scenes(self, dt):
+    def draw_scenes(self):
         #paste both scenes
         
         if self.dt/self.duration < 0.5:

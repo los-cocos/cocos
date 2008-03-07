@@ -8,18 +8,18 @@ import cocos
 from cocos.director import director
 
 import pyglet
-from pyglet import font
 
 class KeyDisplay(cocos.layer.Layer):
     def __init__(self):
-        self.font = font.load('Arial', 24)
+
+        super( KeyDisplay, self ).__init__()
+
+        self.text = pyglet.text.Label("", x=100, y=280, batch=self.batch)
+
         # To keep track of which keys are pressed:
         self.keys_pressed = set()
         self.update_text()
         
-    def step(self, dt):
-        self.text.draw()
-
     def on_key_press (self, key, modifiers):
         """This function is called when a key is pressed.
         
@@ -47,17 +47,16 @@ class KeyDisplay(cocos.layer.Layer):
         key_names = [pyglet.window.key.symbol_string (k) for k in self.keys_pressed]
         text = 'Keys: '+','.join (key_names)
         # Update self.text
-        self.text = font.Text(self.font, text, x=100, y=280)
+        self.text.text = text
 
 class MouseDisplay(cocos.layer.Layer):
     def __init__(self):
-        self.font = font.load('Arial', 24)
+        super( MouseDisplay, self ).__init__()
+
         self.x = 100
         self.y = 240
-        self.text = font.Text(self.font, 'No mouse events yet', x=self.x, y=self.y)
+        self.text = pyglet.text.Label('No mouse events yet', font_size=18, x=self.x, y=self.y, batch=self.batch)
         
-    def step(self, dt):
-        self.text.draw()
 
     def on_mouse_motion (self, x, y, dx, dy):
         """This function is called when the mouse is moved over the app.
@@ -81,7 +80,9 @@ class MouseDisplay(cocos.layer.Layer):
 
     def update_text (self, x, y):
         text = 'Mouse @ %d,%d' % (x, y)
-        self.text = font.Text(self.font, text, x=self.x, y=self.y)
+        self.text.text = text
+        self.text.x = self.x
+        self.text.y = self.y
 
 if __name__ == "__main__":
     director.init(resizable=True)

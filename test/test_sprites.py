@@ -13,7 +13,7 @@ from pyglet.window import key
 
 from cocos.actions import *
 from cocos.director import director
-from cocos.layer import Layer, AnimationLayer
+from cocos.layer import Layer 
 from cocos.scene import Scene
 
 import foo      # Bezier configurations
@@ -31,38 +31,48 @@ class FontLayer( Layer ):
         self.title = title
         self.subtitle = subtitle
 
-        ft_title = font.load( "Arial", 32 )
-        ft_subtitle = font.load( "Arial", 18 )
-        ft_help = font.load( "Arial", 16 )
-
-        self.text_title = font.Text(ft_title, self.title,
+        self.text_title = pyglet.text.Label(self.title,
+            font_size=32,
             x=5,
             y=director.get_window_size()[1],
             halign=font.Text.LEFT,
-            valign=font.Text.TOP)
+            valign=font.Text.TOP,
+            batch=self.batch)
 
-        self.text_subtitle = font.Text(ft_subtitle, self.subtitle,
+        self.text_subtitle = pyglet.text.Label(self.subtitle,
+            font_size=18,
             x=5,
             y=director.get_window_size()[1] - 80,
             halign=font.Text.LEFT,
-            valign=font.Text.TOP)
+            valign=font.Text.TOP,
+            batch=self.batch )
 
-        self.text_help = font.Text(ft_help,"Press LEFT / RIGHT for prev/next test, ENTER to restart test",
+        self.text_help = pyglet.text.Label("Press LEFT / RIGHT for prev/next test, ENTER to restart test",
+            font_size=16,
             x=director.get_window_size()[0] /2,
             y=20,
             halign=font.Text.CENTER,
-            valign=font.Text.CENTER)
+            valign=font.Text.CENTER,
+            batch=self.batch )
 
-    def step( self, dt ):
-        self.text_title.draw()
-        self.text_subtitle.draw()
-        self.text_help.draw()
 
-class SpriteLayer( AnimationLayer ):
+class SpriteLayer( Layer ):
 
     def __init__( self, index=1 ):
         super(SpriteLayer, self ).__init__()
         self.index = index
+
+        self.image = pyglet.resource.image('grossini.png')
+        self.image.anchor_x = self.image.width / 2
+        self.image.anchor_y = self.image.height / 2
+
+        self.image_sister1 = pyglet.resource.image('grossinis_sister1.png')
+        self.image_sister1.anchor_x = self.image_sister1.width / 2
+        self.image_sister1.anchor_y = self.image_sister1.height / 2
+
+        self.image_sister2 = pyglet.resource.image('grossinis_sister2.png')
+        self.image_sister2.anchor_x = self.image_sister2.width / 2
+        self.image_sister2.anchor_y = self.image_sister2.height / 2
 
     def on_key_release( self, keys, mod ):
         # LEFT: go to previous scene
@@ -81,44 +91,43 @@ class SpriteLayer( AnimationLayer ):
             director.replace( get_sprite_test( self.index ) )
             return True
 
+    def on_exit( self ):
+        for o in self.objects:
+            o.stop()
+
 class SpriteGoto( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (320,100,0) )
+        sprite = ActionSprite( self.image, x=320, y=100 )
 
         self.add( sprite )
 
-        sprite.do( Goto( (620,100,0), 5 ) )
+        sprite.do( Goto( (620,100), 5 ) )
 
 
 class SpriteMove( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (320,100,0) )
+        sprite = ActionSprite( self.image, x=320, y=100 )
 
         self.add( sprite )
 
-        move = Move( (150,0,0), 3 )
-
+        move = Move( (150,0), 3 )
         sprite.do( move )
 
 
 class SpriteRepeatMove( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (120,100,0) )
+        sprite = ActionSprite( self.image, x=120, y=100 )
 
         self.add( sprite )
 
-        move = Move( (150,0,0), 0.5 )
+        move = Move( (150,0), 0.5 )
         rot = Rotate( 360, 0.5 )
 
         sprite.do( Repeat( Sequence( rot + move , rot , move , rot , move , rot) ) )
 
 class SpriteScale( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (320,240,0) )
+        sprite = ActionSprite( self.image, x=320, y=240 )
 
         self.add( sprite )
 
@@ -126,8 +135,7 @@ class SpriteScale( SpriteLayer ):
 
 class SpriteRotate( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (320,100,0) )
+        sprite = ActionSprite( self.image, x=320, y=100 )
 
         self.add( sprite )
 
@@ -135,8 +143,7 @@ class SpriteRotate( SpriteLayer ):
 
 class SpriteJump( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (120,100,0) )
+        sprite = ActionSprite( self.image, x=120, y=100 )
 
         self.add( sprite )
 
@@ -144,111 +151,98 @@ class SpriteJump( SpriteLayer ):
 
 class SpriteBezier( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (120,100,0) )
+        sprite = ActionSprite( self.image, x=120, y=100 )
 
         self.add( sprite )
 
         sprite.do( Bezier( foo.curva, 5 ) )
 
-
 class SpriteSpawn( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (120,100,0) )
+        sprite = ActionSprite( self.image, x=120, y=100 )
 
         self.add( sprite )
 
         jump = Jump(100,400,4,5)
-        rotate = Rotate( -720, 5 )
+        rotate = Rotate( 720, 5 )
         sprite.do( jump | rotate )
-
 
 class SpriteSequence( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (120,100,0) )
+        sprite = ActionSprite( self.image, x=120, y=100 )
 
         self.add( sprite )
         
         bz = Bezier( foo.curva, 3 )
-        move = Move( (0,-250,0), 3 )
+        move = Move( (0,-250), 3 )
         jump = Jump(100,-400,4,3)
 
         sprite.do( bz + move + jump )
 
 class SpriteDelay( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (120,100,0) )
+        sprite = ActionSprite( self.image, x=120, y=100 )
 
         self.add( sprite )
-        
-        move = Move( (250,0,0), 3 )
+
+        move = Move( (250,0), 3 )
         jump = Jump(100,-250,4,3)
 
         sprite.do( move + Delay(5) + jump )
 
 class SpriteBlink( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (320,240,0) )
+        sprite = ActionSprite( self.image, x=320, y=240 )
 
         self.add( sprite )
-        
+
         blink = Blink( 10, 2 )
 
         sprite.do( blink )
 
 class SpriteFadeOut( SpriteLayer ):
     def on_enter( self ):
-        sprite1 = ActionSprite("grossinis_sister1.png")
-        sprite2 = ActionSprite("grossinis_sister2.png")
-
-        sprite1.place( (200,240,0) )
-        sprite2.place( (440,240,0) )
+        sprite1 = ActionSprite( self.image_sister1, x=200, y=240 )
+        sprite2 = ActionSprite( self.image_sister2, x=440, y=240 )
 
         self.add( sprite1, sprite2 )
-        
+
         fadeout = FadeOut( 2 )
         fadein = FadeIn( 2 )
 
+        sprite1.opacity = 0
         sprite1.do( fadein )
         sprite2.do( fadeout )
 
 class SpriteRepeat( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (120,100,0) )
+        sprite = ActionSprite( self.image, x=120, y=100 )
 
         self.add( sprite )
-        
+
         jump = Jump(100,400,4,3, mode=RepeatMode )
 
         sprite.do( Repeat( jump ) )
 
 class SpriteRepeat2( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (120,100,0) )
+        sprite = ActionSprite( self.image, x=120, y=100 )
 
         self.add( sprite )
         
         jump = Jump(100,400,4,3, mode=PingPongMode )
-#        jump = Jump(100,400,4,3 )
 
         sprite.do( Repeat( jump ) )
 
 
 class SpriteRepeatSeq( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (120,100,0) )
+        sprite = ActionSprite( self.image, x=120, y=100 )
 
         self.add( sprite )
         
         jump = Jump(100,400,4,2)
-        move = Move( (0,100,0), 1 )
+        move = Move( (0,100), 1 )
         jump2 = Jump(50,-200,4,2)
 
         sprite.do( Repeat( jump + move + jump2 , 4 ) )
@@ -256,13 +250,12 @@ class SpriteRepeatSeq( SpriteLayer ):
 
 class SpriteRepeatSeq2( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-        sprite.place( (120,100,0) )
+        sprite = ActionSprite( self.image, x=120, y=100 )
 
         self.add( sprite )
         
         jump = Jump(50,200,4,1)
-        move = Move( (0,100,0), 0.5 )
+        move = Move( (0,100), 0.5 )
         jump2 = Jump(50,-200,4,1)
 
         sprite.do( Repeat( Repeat(jump,3) + Repeat(move,3) + Repeat(jump2,3) ) )
@@ -270,30 +263,24 @@ class SpriteRepeatSeq2( SpriteLayer ):
 
 class SpriteTrigger( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-
-        sprite.place( (120,100,0) )
-
+        sprite = ActionSprite( self.image, x=120, y=100 )
         self.add( sprite )
         
-        move = Move( (100,0,0), 2 )
+        move = Move( (100,0), 2 )
 
         sprite.do( move + CallFunc( self.say_hello )  )
 
     def say_hello( self ):
         print "HELLO BABY"
-        sprite2 = ActionSprite("grossinis_sister1.png")
-        sprite2.place( (270,110,0) )
+
+        sprite2 = ActionSprite( self.image_sister1, x=270, y=110 )
         self.add( sprite2 )
 
 
 class SpriteReuseAction( SpriteLayer ):
     def on_enter( self ):
-        sprite1 = ActionSprite("grossinis_sister1.png")
-        sprite2 = ActionSprite("grossinis_sister2.png")
-
-        sprite1.place( (120,250,0) )
-        sprite2.place( (20,100,0) )
+        sprite1 = ActionSprite( self.image_sister1, x=120, y=250 )
+        sprite2 = ActionSprite( self.image_sister2, x=20, y=100 )
 
         self.add( sprite1, sprite2 )
 
@@ -301,27 +288,19 @@ class SpriteReuseAction( SpriteLayer ):
         sprite1.do( jump )
         sprite2.do( jump )
 
-    def say_hello( self ):
-        print "HELLO BABY"
-        sprite2 = ActionSprite("grossinis_sister1.png")
-        sprite2.place( (270,110,0) )
-        self.add( sprite2 )
 
 class SpriteReuseSequence( SpriteLayer ):
     def on_enter( self ):
-        sprite1 = ActionSprite("grossinis_sister1.png")
-        sprite2 = ActionSprite("grossinis_sister2.png")
-
-        sprite1.place( (120,250,0) )
-        sprite2.place( (20,100,0) )
+        sprite1 = ActionSprite( self.image_sister1, x=120, y=250 )
+        sprite2 = ActionSprite( self.image_sister2, x=20, y=100 )
 
         self.add( sprite1, sprite2 )
 
         jump = Jump(50,200,4,2)
-        move = Move( (0,100,0), 2)
+        move = Move( (0,100), 2)
         jump2 = Jump(50,-200,4, 2)
 
-        rotate = Rotate( -360, 2 )
+        rotate = Rotate( 360, 2 )
 
         seq = Repeat(jump + move + jump2 )
 
@@ -330,33 +309,15 @@ class SpriteReuseSequence( SpriteLayer ):
         sprite2.do( Repeat( rotate) )
 
 
-class SpriteAnimate( SpriteLayer ):
-    def on_enter( self ):
-        sprite = ActionSprite("grossini.png")
-
-        a = Animation("dance", 0.5 )
-        for i in range(1,15):
-            a.add_frame( "grossini_dance_%02d.png" % i)
-
-        sprite.add_animation( a )
-        sprite.place( (320,240,0) )
-
-        self.add( sprite )
-
-        sprite.do( Animate("dance") + Animate("default") )
-
 class SpriteAlterTime( SpriteLayer ):
     def on_enter( self ):
-        sprite1 = ActionSprite("grossinis_sister1.png")
-        sprite2 = ActionSprite("grossinis_sister2.png")
-
-        sprite1.place( (20,100,0 ) )
-        sprite2.place( (20,300,0 ) )
-
-        move1 = Move( (500,0,0), 3 )
-        move2 = Move( (500,0,0), 3, time_func=accelerate)
+        sprite1 = ActionSprite( self.image_sister1, x=20, y=100 )
+        sprite2 = ActionSprite( self.image_sister2, x=20, y=300 )
 
         self.add( sprite1, sprite2 )
+
+        move1 = Move( (500,0), 3 )
+        move2 = Move( (500,0), 3, time_func=accelerate)
 
         sprite1.do( move1 )
         sprite2.do( move2 )
@@ -364,19 +325,17 @@ class SpriteAlterTime( SpriteLayer ):
 
 class SpriteRepeatAlterTime( SpriteLayer ):
     def on_enter( self ):
-        sprite1 = ActionSprite("grossinis_sister1.png")
-        sprite2 = ActionSprite("grossinis_sister2.png")
-
-        sprite1.place( (20,100,0 ) )
-        sprite2.place( (20,300,0 ) )
-
-        move1 = Move( (500,0,0), 3 )
-        move2 = Move( (500,0,0), 3, time_func=accelerate)
+        sprite1 = ActionSprite( self.image_sister1, x=20, y=100 )
+        sprite2 = ActionSprite( self.image_sister2, x=20, y=300 )
 
         self.add( sprite1, sprite2 )
 
+        move1 = Move( (500,0), 3 )
+        move2 = Move( (500,0), 3, time_func=accelerate)
+
         sprite1.do( Repeat(move1) )
         sprite2.do( Repeat(move2) )
+
 
 # accelerate() is a function that is part of actions.py
 # It is really simple. Look at it:
@@ -388,8 +347,8 @@ class SpriteRepeatAlterTime( SpriteLayer ):
 # To try some cool effects, create your own alter-time function!
    
 tests = {
- 1: ("Test #1 - Goto", "sprite.do( Goto( (x,y,0), duration ) )", SpriteGoto ),
- 2: ("Test #2 - Move", "sprite.do( Move( (delta_x,delta_y,0), duration ) )", SpriteMove ),
+ 1: ("Test #1 - Goto", "sprite.do( Goto( (x,y), duration ) )", SpriteGoto ),
+ 2: ("Test #2 - Move", "sprite.do( Move( (delta_x,delta_y), duration ) )", SpriteMove ),
  3: ("Test #3 - Scale", "sprite.do( Scale( zoom_factor, duration) )", SpriteScale ),
  4: ("Test #4 - Rotate", "sprite.do( Rotate( degrees, duration) )", SpriteRotate ),
  5: ("Test #5 - Jump", "sprite.do( Jump( y, x, jumps, duration) )", SpriteJump),
@@ -407,12 +366,12 @@ tests = {
  17: ("Test #17 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS(), another action, passes the sprite as the 1st parameter", SpriteTrigger ),
  18: ("Test #18 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
  19: ("Test #19 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
- 20: ("Test #20 - Animate", "Animate a sprite:\na = Animation('dance',0.5,'image1.png',image2.png','image3.png')\nsprite.add_animation(a)\nsprite.do( Animate('dance' ) )", SpriteAnimate),
- 21: ("Test #21 - Alter time", "You can change the speed of time:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0,0), 5, time_func=accelerate)\nsprite.do(move)\n\nThe other sprite is doing the same action without altering the time", SpriteAlterTime),
- 22: ("Test #22 - Repeat time altered actions", "Repeat actions that were time-altered:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0,0), 5, time_func=accelerate)\nsprite.do(Repeat(move))\n\nThe other sprite is doing the same action without altering the time", SpriteRepeatAlterTime),
+ 20: ("Test #20 - Alter time", "You can change the speed of time:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0), 5, time_func=accelerate)\nsprite.do(move)\n\nThe other sprite is doing the same action without altering the time", SpriteAlterTime),
+ 21: ("Test #21 - Repeat time altered actions", "Repeat actions that were time-altered:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0), 5, time_func=accelerate)\nsprite.do(Repeat(move))\n\nThe other sprite is doing the same action without altering the time", SpriteRepeatAlterTime),
 
 }
 
 if __name__ == "__main__":
     director.init( resizable=True, caption='Los Cocos - Sprite test' )
+#    director.window.set_fullscreen(True)
     director.run( get_sprite_test( 1 ) )

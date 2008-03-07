@@ -126,18 +126,22 @@ class Director(event.EventDispatcher):
         self.scene_stack = []
         self.show_FPS = True
 
-        # alpha blending
-        self.enable_alpha_blending()
 
         # save resolution and aspect for resize / fullscreen
-        self.window.on_resize = self._on_resize
+        self.window.on_resize = self.on_resize
+        self.window.on_draw = self.on_draw
         self._window_original_width = self.window.width
         self._window_original_height = self.window.height
         self._window_aspect =  self.window.width / float( self.window.height )
         self._offset_x = 0
         self._offset_y = 0
-        
+
+
+        # init fps
+        self.fps_display = clock.ClockDisplay()
+
         return self.window
+
 
     def run(self, scene):
         """Runs a scene, entering in the Director's main loop.
@@ -146,43 +150,35 @@ class Director(event.EventDispatcher):
             `scene` : a Scene instance
                 It is the scene that will be run.
         """
-        fps_display = clock.ClockDisplay()
 
-        self.scene = scene
-        self.scene_stack.append( scene )
+        self.scene = None
+        self.push( scene )
 
-        self.next_scene = None
+        pyglet.app.run()
 
-        self.scene.on_enter()
 
-        while not self.window.has_exit:
+    def on_draw( self ):
+        """Callback to draw the window.
+        It propagaes the event to the running scene."""
+         
+        self.window.clear()
 
-            if self.next_scene is not None:
-                self._set_scene( self.next_scene )
+        if self.next_scene is not None:
+            self._set_scene( self.next_scene )
 
-            if not self.scene_stack:
-                break
-            
-            dt = clock.tick()
+        if not self.scene_stack:
+            # How should I terminate the EventLoop ?
+            # pyglet.app.EventLoop().exit()
+            import sys
+            sys.exit(0)
 
-            # dispatch pyglet events
-            self.window.dispatch_events()
-            media.dispatch_events()
-#            self.dispatch_events('on_push', 'on_pop')
+        # draw all the objects
+        self.scene.on_draw()
 
-            # clear pyglets main window
-            self.window.clear()
+        # finally show the FPS
+        if self.show_FPS:
+            self.fps_display.draw()
 
-            # step / tick / draw
-            self.scene.step( dt )
-            
-            # show the FPS
-            if self.show_FPS:
-                fps_display.draw()
-
-            # show all the changes
-            self.window.flip()
-    
     
     def push(self, scene):
         """Suspends the execution of the running scene, pushing it
@@ -253,11 +249,6 @@ class Director(event.EventDispatcher):
         """
         return ( self._window_original_width, self._window_original_height)
         
-    def enable_alpha_blending( self ):
-        """Enables alpha blending in OpenGL using the GL_ONE_MINUS_SRC_ALPHA algorithm.
-        """
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
     def get_virtual_coordinates( self, x, y ):
         """Transforms coordinates that belongs the *real* window size, to the
@@ -281,10 +272,8 @@ class Director(event.EventDispatcher):
 
         return ( int( x_diff * x) - adjust_x,   int( y_diff * y ) - adjust_y )
 
-    #
-    # window resize handler
-    #
-    def _on_resize( self, width, height):
+
+    def on_resize( self, width, height):
         width_aspect = width
         height_aspect = int( width / self._window_aspect)
 
@@ -301,6 +290,15 @@ class Director(event.EventDispatcher):
         glOrtho(0, self._window_original_width, 0, self._window_original_height, -1, 1)
         glMatrixMode(gl.GL_MODELVIEW)
 
+        
+    #
+    # Misc functions
+    #
+    def enable_alpha_blending( self ):
+        """Enables alpha blending in OpenGL using the GL_ONE_MINUS_SRC_ALPHA algorithm. """
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        
 
 director = Director()
 """The singleton; check `cocos.director.Director` for details on usage.

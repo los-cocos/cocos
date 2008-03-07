@@ -37,14 +37,13 @@ class Effect(object):
     anything that is shown with a step (dt) method). Useful effects can
     inherit this one, which is just the identity effect"""
     
-    def prepare (self, target, dt):
+    def prepare (self, target):
         """Advance target in dt, preparing effect display."""
         self.target = target
-        self.dt = dt
     
     def show (self):
         """Show layer+effect on screen"""
-        self.target.step (self.dt)
+        self.target.draw()
 
 class TextureFilterEffect (Effect):
     """Base class for texture based effects. Prepare captures layer in
@@ -61,9 +60,10 @@ class TextureFilterEffect (Effect):
         
         self.texture = self.texture.get_region(0, 0, w, h)
 
-    def prepare (self, target, dt):
+    def prepare (self, target):
         self._grabber.before_render(self.texture)
-        target.step (dt)
+        target.batch.draw()
+        target.draw()
         self._grabber.after_render(self.texture)
             
     def show (self):

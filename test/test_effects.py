@@ -8,9 +8,11 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from cocos.director import director
-from cocos.layer import Layer, ColorLayer
+from cocos.layer import Layer, ColorLayer 
 from cocos.scene import Scene
 from cocos.effect import TextureFilterEffect, ColorizeEffect, RepositionEffect
+from cocos.actions import *
+
 import pyglet
 from pyglet import font
 from pyglet.window import key
@@ -19,26 +21,44 @@ from pyglet.gl import *
 class PictureLayer(Layer):
 
     def __init__ (self, y):
-        self.x = 100
-        self.y = y
-        self.speed = 35
-        self.img = pyglet.image.load ('ball.png')
-    
-    def step (self, dt):
-        self.x += self.speed * dt
-        if self.x > 200 and self.speed > 0: self.speed = -self.speed
-        if self.x < 100 and self.speed < 0: self.speed = -self.speed
-        self.img.blit (self.x, self.y)
+        super( PictureLayer, self ).__init__()
+        img0 = pyglet.image.load ('ball.png')
+        img1 = pyglet.image.load ('grossini.png')
+        img2 = pyglet.image.load ('grossinis_sister1.png')
+        img3 = pyglet.image.load ('grossinis_sister2.png')
 
+        sprite1 = ActionSprite( img0, x=20, y=40 )
+        sprite1.do( Repeat( Move( (500,0), 5 ) ) )
+
+        sprite2 = ActionSprite( img1, x=20, y=80 )
+        sprite2.do( Repeat( Move( (500,0), 4 ) ) )
+
+        sprite3 = ActionSprite( img2, x=20, y=180 )
+        sprite3.do( Repeat( Move( (500,0), 3 ) ) )
+
+        sprite4 = ActionSprite( img3, x=20, y=280 )
+        sprite4.do( Repeat( Move( (500,0), 2 ) ) )
+
+        self.add( sprite1, sprite2, sprite3, sprite4 )
+
+    def on_exit( self ):
+        for o in self.objects:
+            if hasattr(o, "stop"):
+                o.stop()
+    
 class DynamicColorizeEffect (ColorizeEffect):
     def __init__ (self):
         super (ColorizeEffect, self).__init__ ()
         self.color = (1,1,1,1)
         self.timer = 0
 
-    def prepare (self, target, dt):
-        super (ColorizeEffect, self).prepare (target, dt)
+        pyglet.clock.schedule( self.step )
+
+    def step( self, dt ):
         self.timer += dt
+    
+    def prepare (self, target):
+        super (ColorizeEffect, self).prepare (target)
         # red glow: 
         red = self.timer % 2
         if red > 1: red = 2-red
@@ -48,48 +68,49 @@ class DynamicColorizeEffect (ColorizeEffect):
 class ControlLayer(Layer):
 
     def on_enter( self ):
-        ft_title = font.load( None, 32 )
-        ft_subtitle = font.load( None, 18 )
-        ft_help = font.load( None, 16 )
 
-        self.text_title = font.Text(ft_title, "Effect Demos",
+        self.text_title = pyglet.text.Label("Effect Demos",
+            font_size=32,
             x=5,
-            y=480,
+            y=director.get_window_size()[1],
             halign=font.Text.LEFT,
-            valign=font.Text.TOP)
+            valign=font.Text.TOP,
+            batch=self.batch)
 
-        self.text_subtitle = font.Text(ft_subtitle, effects[current_effect][0],
+        self.text_subtitle = pyglet.text.Label(effects[current_effect][0],
+            font_size=18,
             x=5,
-            y=400,
+            y=director.get_window_size()[1] - 80,
             halign=font.Text.LEFT,
-            valign=font.Text.TOP)
-        
-        self.text_help = font.Text(ft_help,"Press LEFT / RIGHT for prev/next example",
-            x=320,
+            valign=font.Text.TOP,
+            batch=self.batch )
+
+        self.text_help = pyglet.text.Label("Press LEFT / RIGHT for prev/next test",
+            font_size=16,
+            x=director.get_window_size()[0] /2,
             y=20,
             halign=font.Text.CENTER,
-            valign=font.Text.CENTER)
+            valign=font.Text.CENTER,
+            batch=self.batch )
 
-    def step(self, dt):
-        self.text_title.draw()
-        self.text_subtitle.text = effects[current_effect][0]
-        self.text_subtitle.draw()
-        self.text_help.draw()
-        
     def on_key_press( self, k , m ):
         global current_effect
         if k == key.LEFT:
             current_effect = (current_effect-1)%len(effects)
             ball.set_effect(effects[current_effect][1])
-        if k == key.RIGHT:
+        elif k == key.RIGHT:
             current_effect = (current_effect+1)%len(effects)
             ball.set_effect(effects[current_effect][1])
 
+        if k in( key.LEFT, key.RIGHT ):
+            self.text_subtitle.text = effects[current_effect][0]
 
 current_effect = 0
 
 if __name__ == "__main__":
     director.init()
+
+    director.enable_alpha_blending()
 
     effects = [
         ("ball = Layer(...)\n"

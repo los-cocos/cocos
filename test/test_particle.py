@@ -12,7 +12,7 @@ from cocos.particle import *
 from cocos.layer import *
 from cocos.scene import *
 
-class ParticleLayer( AnimationLayer ):
+class ParticleLayer( Layer ):
 
     def __init__( self ):
         super( ParticleLayer, self ).__init__()
@@ -26,5 +26,6 @@ class ParticleLayer( AnimationLayer ):
 
 
 if __name__ == "__main__":
+    print "EXAMPLE DEPRECATED"
     director.init( resizable=True)
     director.run( Scene( ParticleLayer()) )
