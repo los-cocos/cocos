@@ -6,6 +6,9 @@
 """
 Scene class and subclasses
 """
+__docformat__ = 'restructuredtext'
+
+__all__ = ['Scene']
 
 import bisect
 
@@ -19,6 +22,10 @@ class Scene(object):
         """
         Creates a Scene with layers, from bottom to top, giving a 
         z-value from 0.0 to len(layers)-1
+        
+        :Parameters:
+            `layers` : list of `Layer`
+                Layers that will be part of the scene.
         """
         self.layers = []
         self.layers_name = {}
@@ -37,37 +44,41 @@ class Scene(object):
         bisect.insort( self.layers,  elem )
         
     def remove( self, layer_name ):
-        """
-        remove(layer_name or layer_reference) -> None
-        
-        Removes a layer from the scene given the layer_name or the layer.
+        """Removes a layer from the scene given the layer_name.
         If the layer can't be removed, and exception will be risen
+        
+        :Parameters:
+            `layer_name` : string
+                `Layer` name       
         """
         if layer_name in self.layers_name:
             layer = self.layers_name[ layer_name ]
             self.remove_layer( layer )
             del self.layers_name[ layer_name ]
+        else:
+            raise Exception("Layer not found: %s" % layer_name)
             
     def remove_layer(self, layer ):
-        """
-        remove_layer(layer) -> None
+        """Removes a layer from the scene given a layer's reference.
         
-        Removes a layer from the scene
-        """
+        :Parameters:
+            `layer` : `Layer`
+                `Layer` reference"""
         self.layers = [ (z, l) for (z,l) in self.layers if l != layer ]
         
     def end(self, value=None):
-        """
-        end(value) -> None
+        """Ends the current scene setting director.return_value with `value`
         
-        Ends the current scene setting director.return_value with value
+        :Parameters:
+            `value` : anything
+                The return value. It can be anything. A type or an instance.
         """
         director.return_value = value
         director.pop()
 
     def on_enter( self ):
         """
-        Called every time the scene is shown. The scene also registers the layer's events.
+        Called every time just before the scene is run.
         """        
         for z,l in self.layers:
             director.window.push_handlers( l )
@@ -75,10 +86,8 @@ class Scene(object):
             
         
     def on_exit( self ):
-        """
-        on_exit() -> None
-        
-        Called every time the scene is not longer shown
+        """      
+        Called every time just before the scene leaves the stage
         """
         for z,l in self.layers:
             l.on_exit()
@@ -86,13 +95,6 @@ class Scene(object):
 
 
     def on_draw( self ):                
-        """Draw callback. Propagate it to the layers"""
+        """Called every time the scene can be drawn."""
         for i, l in self.layers:
             l.on_draw()
-
-class TransitionScene(Scene):
-    """
-    A Scene that takes two scenes and makes a transition
-    """
-        
-

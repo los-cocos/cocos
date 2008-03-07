@@ -10,7 +10,7 @@ and/or partial transparency in some/all places), allowing to see other layers
 behind it. Layers are the ones defining appearance and behavior, so most
 of your programming time will be spent coding Layer subclasses that do what
 you need. The layer is where you define event handlers.
-Events are propagated to layers (from front to back) until some layer catchs
+Events are propagated to layers (from front to back) until some layer catches
 the event and accepts it.
 """
 
@@ -38,7 +38,8 @@ class Layer(object):
 
         :Parameters:
             `o` : list of objects
-                Object that supports the 'batch' property, like Sprites, Labels, etc.
+                Object that supports the 'batch' property, like Sprites,
+                Labels, `ActionSprite` , etc.
         """
         for i in o:
             self.objects.append( i )
@@ -59,7 +60,9 @@ class Layer(object):
             self.effects = (e,)
 
     def on_draw( self ):
-        """Draws every object that is in the batch and possible custom objets"""
+        """Draws every object that is in the batch.
+        It then calls ``self.draw()``. Subclassess shall override ``self.draw``
+        to draw custom objects."""
 
         if self.effects:
             for e in self.effects:
@@ -73,7 +76,7 @@ class Layer(object):
 
 
     def draw( self ):        
-        """Subclasses shall override this method if they want to draw custom objets"""
+        """Subclasses shall override this method if they want to draw custom objects"""
         pass           
 
     def on_enter( self ):
@@ -86,7 +89,12 @@ class Layer(object):
 
     def step( self, dt ):
         """Called every frame when it is active.
+        By default ``step`` is disabled.
         See `enable_step` and `disable_step`
+        
+        :Parameters:
+            `dt` : float
+                Time that elapsed since the last time ``step`` was called.
         """
         pass
 
@@ -97,7 +105,7 @@ class Layer(object):
         pyglet.clock.unschedule( self.step )
 
     def enable_step( self ):
-        """Enables the step callback. It calls the `step` method every frame"""
+        """Enables the step callback. It calls the `step()` method every frame"""
         if not self.scheduled:
             self.scheduled = True 
             pyglet.clock.schedule( self.step )
@@ -153,7 +161,13 @@ class MultiplexLayer( Layer ):
 
 
 class ColorLayer(Layer):
-    """Creates a layer of a certain color"""
+    """Creates a layer of a certain color.
+    The color shall be specified in the format (r,g,b,a).
+    
+    For example, to create green layer::
+    
+        l = ColorLayer( (0.0, 1.0, 0.0, 1.0 ) )
+    """
     def __init__(self, *color):
         self.color = color
         super(ColorLayer, self).__init__()

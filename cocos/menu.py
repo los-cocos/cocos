@@ -55,10 +55,11 @@ class Menu(Layer):
     
     Normal usage is:
 
-     - create a descendent from this class
-     - override __init__ to set all style attributes, add items,
-       and call build_items
-     - add to a scene
+     - create a subclass
+     - override __init__ to set all style attributes, 
+       then add items using `add_item()`,
+       and then call `build_items()`
+     - Finally you shall add the menu to a `Scene`
     """
 
     def __init__( self, title = ''):
@@ -145,11 +146,11 @@ class Menu(Layer):
         """Adds an item to the menu.
 
         The order of the list important since the
-        one will be shonw first.
+        first one will be shown first.
 
         :Parameters:
-            `item` : a MenuItem
-                The MenuItem
+            `item` : a `MenuItem`
+                The MenuItem that will part of the `Menu`
         """
         item.halign = self.menu_halign
         item.valign = self.menu_valign

@@ -147,8 +147,8 @@ class Director(event.EventDispatcher):
         """Runs a scene, entering in the Director's main loop.
 
         :Parameters:   
-            `scene` : a Scene instance
-                It is the scene that will be run.
+            `scene` : `Scene`
+                The scene that will be run.
         """
 
         self.scene = None
@@ -159,7 +159,7 @@ class Director(event.EventDispatcher):
 
     def on_draw( self ):
         """Callback to draw the window.
-        It propagaes the event to the running scene."""
+        It propagates the event to the running scene."""
          
         self.window.clear()
 
@@ -182,10 +182,10 @@ class Director(event.EventDispatcher):
     
     def push(self, scene):
         """Suspends the execution of the running scene, pushing it
-        on the stack of suspended scene. The new scene will be executed.
+        on the stack of suspended scenes. The new scene will be executed.
 
         :Parameters:   
-            `scene` : a Scene instance
+            `scene` : `Scene`
                 It is the scene that will be run.
            """
         self.dispatch_event("on_push", scene )
@@ -195,8 +195,9 @@ class Director(event.EventDispatcher):
         self.scene_stack.append( self.scene )
         
     def pop(self):
-        """Pops out a scene from the queue. This scene will replace the running scene.
-           The running scene will be deleted.
+        """Pops out a scene from the queue. This scene will replace the running one.
+           The running scene will be deleted. If there are no more scenes in the stack
+           the execution is terminated.
         """
         self.dispatch_event("on_pop")
         
@@ -207,7 +208,7 @@ class Director(event.EventDispatcher):
         """Replaces the running scene with a new one. The running scene is terminated.
 
         :Parameters:   
-            `scene` : a Scene instance
+            `scene` : `Scene`
                 It is the scene that will be run.
         """  
         self.next_scene = scene
@@ -274,6 +275,14 @@ class Director(event.EventDispatcher):
 
 
     def on_resize( self, width, height):
+        """Method that is called every time the main window is resized.
+        
+        :Parameters:
+            `width` : Integer
+                New width
+            `height` : Integer
+                New height
+        """
         width_aspect = width
         height_aspect = int( width / self._window_aspect)
 
@@ -295,7 +304,7 @@ class Director(event.EventDispatcher):
     # Misc functions
     #
     def enable_alpha_blending( self ):
-        """Enables alpha blending in OpenGL using the GL_ONE_MINUS_SRC_ALPHA algorithm. """
+        """Enables alpha blending in OpenGL using the GL_ONE_MINUS_SRC_ALPHA algorithm."""
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         
