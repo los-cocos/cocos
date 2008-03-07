@@ -52,12 +52,12 @@ class MainMenu(Menu):
         super( MainMenu, self ).__init__("GROSSINI'S SISTERS" )
 
         # you can override the font that will be used for the title and the items
-        self.font_title = 'KonQa Black'
+        self.font_title = 'You Are Loved'
         self.font_items = 'You Are Loved'
 
         font.add_directory('.')
 
-        self.font_title = 'KonQa Black'
+        self.font_title = 'You Are Loved'
         self.font_items = 'You Are Loved'
 
         # you can also override the font size and the colors. see menu.py for
@@ -97,7 +97,7 @@ class OptionMenu(Menu):
     def __init__( self ):
         super( OptionMenu, self ).__init__("GROSSINI'S SISTERS" )
 
-        self.font_title = 'KonQa Black'
+        self.font_title = 'You Are Loved'
 #        self.font_items = 'You Are Loved'
         self.menu_valign = BOTTOM
         self.menu_halign = RIGHT
@@ -124,7 +124,7 @@ class ScoreMenu(Menu):
     def __init__( self ):
         super( ScoreMenu, self ).__init__("GROSSINI'S SISTERS" )
 
-        self.font_title = 'KonQa Black'
+        self.font_title = 'You Are Loved'
 #        self.font_items = 'You Are Loved'
         self.menu_valign = BOTTOM
         self.menu_halign = LEFT
