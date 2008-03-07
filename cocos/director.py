@@ -102,7 +102,7 @@ The director also has some useful attributes:
 
 __docformat__ = 'restructuredtext'
 
-
+import pyglet
 from pyglet import window, event
 from pyglet import clock
 from pyglet import media

@@ -24,7 +24,6 @@ Actions that modifies the sprite's properties:
     * `Jump` ( height, x, number_of_jumps, duration )
     * `Bezier` ( bezier_configuration, duration )
     * `Place` ( (x,y) )
-    * `Animate` ( animation_name )
     * `FadeIn` ( duration )
     * `FadeOut` ( duration )
     * `Blink` ( times_to_blink, duration )
@@ -95,7 +94,6 @@ Available IntervalActions
   * `Blink`
   * `Rotate`
   * `Scale`
-  * `Animate`
   * `FadeOut`
   * `FadeIn`
 
