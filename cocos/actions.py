@@ -544,7 +544,7 @@ class Rotate( IntervalAction ):
     def step(self, dt):
         self.target.angle = (self.start_angle +
                     self.angle * (
-                        min(1,float(self.get_runtime())/self.duration)
+                        max(0,min(1,float(self.get_runtime())/self.duration))
                     )) % 360 
 
 class Scale(IntervalAction):
@@ -575,7 +575,7 @@ class Scale(IntervalAction):
 
         self.target.scale = (self.start_scale +
                     delta * (
-                        min(1,float(self.get_runtime() )/self.duration)
+                        max(0,min(1,float(self.get_runtime() )/self.duration))
                     ))
 
 class Goto( IntervalAction ):
@@ -606,7 +606,7 @@ class Goto( IntervalAction ):
         delta = self.end_position-self.start_position
         self.target.translate = (self.start_position +
                     delta * (
-                        min(1,float(self.get_runtime() )/self.duration)
+                        max(0,min(1,float(self.get_runtime() )/self.duration))
                     ))
 
 
@@ -669,10 +669,10 @@ class Jump(IntervalAction):
         self.start_position = self.target.translate
 
     def step(self, dt):
-        y = int( self.y * ( math.sin( (min(1, self.get_runtime()/self.duration)) * math.pi * self.jumps ) ) )
+        y = int( self.y * ( math.sin( max(0,(min(1, self.get_runtime()/self.duration)) * math.pi * self.jumps ) ) ) )
         y = abs(y)
 
-        x = self.x * min(1,float(self.get_runtime())/self.duration)
+        x = self.x * max(0,min(1,float(self.get_runtime())/self.duration))
         self.target.translate = self.start_position + (x,y,0)
 
 class Bezier( IntervalAction ):
@@ -963,7 +963,7 @@ class FadeOut( IntervalAction ):
         self.sprite_color = copy.copy( self.target.color )
 
     def step( self, dt ):
-        p = min(1, self.get_runtime() / self.duration )
+        p = max(min(1, self.get_runtime() / self.duration ),0)
         c = self.sprite_color[3] - self.sprite_color[3] * p
         self.target.color[3] = c
 
@@ -978,7 +978,7 @@ class FadeIn( FadeOut):
         sprite.do( action )
     """
     def step( self, dt ):
-        p = min(1, self.get_runtime() / self.duration )
+        p = max(min(1, self.get_runtime() / self.duration ),0)
         c = self.sprite_color[3] * p
         self.target.color[3] = c
 

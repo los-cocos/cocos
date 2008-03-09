@@ -1,6 +1,7 @@
 "Cocos": An extension of pyglet
 http://code.google.com/p/los-cocos/
 
+version: 0.1.1
 
 $ cd test
 

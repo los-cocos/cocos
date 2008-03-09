@@ -1,21 +1,25 @@
 #
 # framework libs
 #
+
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 from pyglet.window import mouse, key
 from pyglet.gl import *
 from pyglet import font
 
-from director import director
-from layer import Layer
-from layer import AnimationLayer
-from scene import Scene
-from path import Path
+from cocos.director import director
+from cocos.layer import Layer
+from cocos.layer import AnimationLayer
+from cocos.scene import Scene
+from cocos.path import Path,Bezier
 
 from primitives import Circle, Line
 import threading, string
 import time, cmd, math,random
 
-from path import Bezier
 
 def dist((x1,y1), (x2,y2)):
     return math.sqrt((x1-x2)**2+(y1-y2)**2)

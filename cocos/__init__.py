@@ -14,6 +14,5 @@ import euclid
 import layer
 import menu
 import path
-import primitives
 import scene
 import particle
