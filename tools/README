@@ -1,0 +1,9 @@
+Bezier path builder
+-------------------
+
+Run:
+ $ python path_draw.py foo.py
+ 
+ with the keys 1,2,... you can switch to different paths.
+ 
+ to save your modifications, press the key 's'
