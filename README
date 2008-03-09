@@ -2,6 +2,11 @@
 http://code.google.com/p/los-cocos/
 
 
+It needs pyglet 1.1a1 or newer
+This version doesn't work on pyglet 1.0
+
+If you want a working version for pyglet 1.0 download: cocos-0.1.1
+
 $ cd test
 
 execute all the tests there
