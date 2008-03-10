@@ -4,6 +4,7 @@ Bezier path builder
 Run:
  $ python path_draw.py foo.py
  
- with the keys 1,2,... you can switch to different paths.
- 
- to save your modifications, press the key 's'
+ press '0','1','2' + ENTER you can switch to different paths.
+
+ press 'n' to create a new path
+ press 's' to save your changes to the foo.py file

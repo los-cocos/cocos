@@ -2,7 +2,31 @@
 http://code.google.com/p/los-cocos/
 
 version: 0.1.1
+This version works OK with pyglet 1.0.
 
-$ cd test
+We don't recommend the use of pyglet v1.1a1 (or newer) with Cocos v0.1.x.
+Use Cocos v0.2.x if you want to use pyglet 1.1a1 or newer.
 
-execute all the tests there
+
+HOW TO:
+ * run the samples:
+   $ cd samples
+   $ python RUN_ALL_THE_SAMPLES.py
+     ( and read the samples source code )
+
+ * run the test (they are very interesting )
+   $ cd test
+   $ python RUN_ALL_THE_TEST.py
+     ( and read the samples source code )
+      
+ * read the programming guide:
+   * http://code.google.com/p/los-cocos/wiki/ProgrammingGuide
+   
+ * download and read the API reference:
+    * http://code.google.com/p/los-cocos/downloads/list
+    
+Do you have any doubt ?
+http://groups.google.com/group/cocos-discuss
+
+Did you find any bug ?
+http://code.google.com/p/los-cocos/issues/list

@@ -1,0 +1,15 @@
+
+v0.1.1 - March, 10th 2008
+  - Moved cocos/path_draw.py and cocos/primitives.py to tools/ (created tools dir)
+  - Added README in tools/
+  - Added this CHANGELOG file
+  - [fix] added "max(0,..." to IntervalAction since a negative value could occur
+    under certain circumstances
+  - Improved samples/
+  - Improved Programming Guide
+  - Improved API Reference Guide
+  - Added warning if pyglet version is not v1.0
+  
+  
+v0.1.0 - February, 29th 2008
+  - First public release

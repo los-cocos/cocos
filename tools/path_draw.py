@@ -149,7 +149,7 @@ class PathDraw(Layer):
         self.number = ""
         
     def save(self):
-        text = "from path import Bezier\n\n"
+        text = "from cocos.path import Bezier\n\n"
         for p in self.paths:
             text += p.name + " = "
             text += p.bezier().__repr__()
