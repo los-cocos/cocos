@@ -1,12 +1,29 @@
 "Cocos": An extension of pyglet
 http://code.google.com/p/los-cocos/
 
+version: 0.2.0
+This version works OK with pyglet 1.1a1 (or newer)
+If you want to use pyglet 1.0, use cocos v0.1.x instead.
 
-It needs pyglet 1.1a1 or newer
-This version doesn't work on pyglet 1.0
+HOW TO:
+ * run the samples:
+   $ cd samples
+   $ python RUN_ALL_THE_SAMPLES.py
+     ( and read the samples source code )
 
-If you want a working version for pyglet 1.0 download: cocos-0.1.1
+ * run the test (they are very interesting )
+   $ cd test
+   $ python RUN_ALL_THE_TEST.py
+     ( and read the samples source code )
+      
+ * read the programming guide:
+   * http://code.google.com/p/los-cocos/wiki/ProgrammingGuide
+   
+ * download and read the API reference:
+    * http://code.google.com/p/los-cocos/downloads/list
+    
+Do you have any doubt ?
+http://groups.google.com/group/cocos-discuss
 
-$ cd test
-
-execute all the tests there
+Did you find any bug ?
+http://code.google.com/p/los-cocos/issues/list
