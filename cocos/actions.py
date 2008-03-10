@@ -232,7 +232,7 @@ class ActionSprite( pyglet.sprite.Sprite ):
 
         :Parameters:
             `dt` : delta_time
-                The time that ellapsed since that last time this functions was called.
+                The time that elapsed since that last time this functions was called.
         """
         for action in self.actions:
             action._step(dt)
@@ -244,6 +244,7 @@ class ActionSprite( pyglet.sprite.Sprite ):
         self.to_remove = []
 
         if len( self.actions ) == 0:
++           self.schedule = False
             pyglet.clock.unschedule( self.step )
 
 
