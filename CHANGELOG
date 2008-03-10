@@ -1,0 +1,29 @@
+v0.2.0 - March, xxxx
+  - Director: uses the new pyglet 1.1 way to run apps.
+  - Director: doesn't have the step() method. Uses on_draw() instead.
+  - Scene: does not have the step() method. Uses on_draw() instead.
+  - Layer: step() is called only when it is enabled with Layer.enable_step()
+  - Layer: Removed AnimationLayer. No longer necessary.
+  - Layer: uses Batch.draw() to draw objects
+  - ActionSprite: is a subclass of pyglet.sprite.Sprite
+  - ActionSprite: Move() and Goto() uses (x,y) instead of (x,y,0)
+  - ActionSprite: removed Animate / Animation (part of pyglet.sprite.Sprite )
+  - ActionSprite: uses pyglet.clock.schedule() to be active.
+  - Effect: uses draw() and not step() to draw the layer
+  - Transition: added enable/disable_step(). Uses draw() to draw subscenes and not step()
+  - test/* and samples/* uses the resource.Text and not font.Text
+
+v0.1.1 - March, 10th 2008
+  - Moved cocos/path_draw.py and cocos/primitives.py to tools/ (created tools dir)
+  - Added README in tools/
+  - Added this CHANGELOG file
+  - [fix] added "max(0,..." to IntervalAction since a negative value could occur
+    under certain circumstances
+  - Improved samples/
+  - Improved Programming Guide
+  - Improved API Reference Guide
+  - Added warning if pyglet version is not v1.0
+  
+  
+v0.1.0 - February, 29th 2008
+  - First public release
