@@ -34,7 +34,7 @@ __all__ = ['Effect', 'TextureFilterEffect','ColorizeEffect', 'RepositionEffect']
 
 class Effect(object):
     """Abstract base class for effects. Effects are applied to layers (or
-    anything that is shown with a step (dt) method). Useful effects can
+    anything that is shown with a draw() method). Useful effects can
     inherit this one, which is just the identity effect"""
     
     def prepare (self, target):
