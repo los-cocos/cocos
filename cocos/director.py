@@ -123,8 +123,12 @@ class Director(event.EventDispatcher):
         """
         
         self.window = window.Window( *args, **kwargs )
-        self.scene_stack = []
         self.show_FPS = True
+
+        # scene related
+        self.scene_stack = []
+        self.scene = None
+        self.next_scene = None
 
 
         # save resolution and aspect for resize / fullscreen
@@ -151,8 +155,8 @@ class Director(event.EventDispatcher):
                 The scene that will be run.
         """
 
-        self.scene = None
-        self.push( scene )
+        self.scene_stack.append( self.scene )
+        self._set_scene( scene )
 
         pyglet.app.run()
 
