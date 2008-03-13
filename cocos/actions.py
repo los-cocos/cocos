@@ -244,7 +244,7 @@ class ActionSprite( pyglet.sprite.Sprite ):
         self.to_remove = []
 
         if len( self.actions ) == 0:
-            self.schedule = False
+            self.scheduled = False
             pyglet.clock.unschedule( self.step )
 
 
