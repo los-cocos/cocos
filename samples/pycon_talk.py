@@ -73,6 +73,7 @@ if __name__ == "__main__":
     director.init()
     
     background = BackgroundLayer("background.png")
+    #background = BackgroundLayer("coconut.jpg")
     main_scene = cocos.scene.Scene (background, TitleLayer("holamundo!"))
     director.run (main_scene)
 
