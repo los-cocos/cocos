@@ -738,13 +738,19 @@ class Spawn(Action):
                 The list of actions that will be spawned
         """
         self.actions = actions
+        self.cloned_actions = []
 
     def done(self):
-        return True
-        
+        ret = True
+        for i in self.cloned_actions:
+            ret = ret and i.done()
+
+        return ret
+
     def start(self):
         for a in self.actions:
-            self.target.do( a )
+            c = self.target.do( a )
+            self.cloned_actions.append( c )
 
 
 class Sequence(Action):
@@ -960,7 +966,7 @@ class FadeOut( IntervalAction ):
         self.duration = duration
 
     def start( self ):
-        self.sprite_color = copy.copy( self.target.color )
+        self.sprite_color = [1.0,1.0,1.0,1.0]
 
     def step( self, dt ):
         p = max(min(1, self.get_runtime() / self.duration ),0)
