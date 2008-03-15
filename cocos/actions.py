@@ -676,13 +676,19 @@ class Spawn(Action):
                 The list of actions that will be spawned
         """
         self.actions = actions
+        self.cloned_actions = []
 
     def done(self):
-        return True
-        
+        ret = True
+        for i in self.cloned_actions:
+            ret = ret and i.done()
+
+        return ret
+
     def start(self):
         for a in self.actions:
-            self.target.do( a )
+            c = self.target.do( a )
+            self.cloned_actions.append( c )
 
 
 class Sequence(Action):
