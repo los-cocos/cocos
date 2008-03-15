@@ -58,6 +58,8 @@ class ControlLayer(Layer):
                     )
             control_p = (control_p + 1) % len(control_list)
             return True
+        if k == key.ESCAPE:
+            director.scene.end()
 
 class GrossiniLayer(AnimationLayer):
     def __init__( self ):

@@ -17,6 +17,7 @@ import menu
 import path
 import scene
 import particle
+import transitions
 
 import pyglet
 if pyglet.version.find( '1.0' ) == -1:
