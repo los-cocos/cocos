@@ -4,7 +4,7 @@ Los Cocos: An extension for Pyglet
 http://code.google.com/p/los-cocos/
 """
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __author__ = "PyAr Team"
 version = __version__
 
