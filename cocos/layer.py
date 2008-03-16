@@ -19,7 +19,7 @@ __docformat__ = 'restructuredtext'
 from cocos.director import *
 from pyglet import gl
 
-__all__ = [ 'Layer', 'MultiplexLayer', 'AnimationLayer' ]
+__all__ = [ 'Layer', 'MultiplexLayer', 'AnimationLayer', 'ColorLayer' ]
 
 class Layer(object):
     """Class that handles events and other important game's behaviors"""
@@ -126,6 +126,9 @@ class AnimationLayer(Layer):
     def add( self, *o ):
         for i in o:
             self.objects.append( i )
+
+    def remove_all( self ):
+        self.objects = []
 
     def step( self, dt ):
         [ o.step(dt) for o in self.objects ]
