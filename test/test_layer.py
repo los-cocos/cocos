@@ -17,7 +17,58 @@ from cocos.scene import *
 from cocos.layer import *
 from cocos.actions import *
 
+import random; rr = random.randrange
 
+
+class Fire: 
+    def __init__(self,x,y,vy,frame,size):
+        self.x,self.y,self.vy,self.frame,self.size = x,y,vy,frame,size
+
+class FireManager( Layer ):
+    def __init__(self, view_width, num):
+        super( FireManager, self ).__init__()
+
+        self.view_width = view_width
+        self.goodies = []
+        self.batch = pyglet.graphics.Batch()
+        self.fimg = pyglet.image.load('fire.jpg')
+        self.group = pyglet.sprite.SpriteGroup(self.fimg.texture,
+            blend_src=GL_SRC_ALPHA, blend_dest=GL_ONE)
+        self.vertex_list = self.batch.add(4*num, GL_QUADS, self.group,
+            'v2i', 'c4B', ('t3f', self.fimg.texture.tex_coords*num))
+        for n in xrange(0, num):
+            f = Fire(0,0,0,0,0)
+            self.goodies.append(f)
+            self.vertex_list.vertices[n*8:(n+1)*8] = [0, 0, 0, 0, 0, 0, 0, 0]
+            self.vertex_list.colors[n*16:(n+1)*16] = [0,0,0,0,] * 4
+
+        self.enable_step()
+
+    def step(self,dt):
+        w,h = self.fimg.width,self.fimg.height
+        fires = self.goodies
+        verts, clrs = self.vertex_list.vertices, self.vertex_list.colors
+        for n,f in enumerate(fires):
+            if not f.frame:
+                f.x = rr(0,self.view_width)
+                f.y = rr(-120,-80)
+                f.vy = rr(40,70)/100.0
+                f.frame = rr(50,250)
+                f.size = 8+pow(rr(0.0,100)/100.0,2.0)*32;
+                f.scale= f.size/32.0
+            
+            x = f.x = f.x+ rr(-50,50)/100.0
+            y = f.y = f.y+f.vy*4
+            c = 3*f.frame/255.0;
+            r,g,b = (min(255,int(c*0xc2)),min(255,int(c*0x41)),min(255,int(c*0x21)))
+            f.frame -= 1
+            ww,hh = w*f.scale,h*f.scale
+            x-=ww/2
+            verts[n*8:(n+1)*8] = map(int,[x,y,x+ww,y,x+ww,y+hh,x,y+hh])
+            clrs[n*16:(n+1)*16] = [r,g,b,255] * 4
+    
+  
+    
 
 class SpriteLayer ( Layer ):
 
@@ -36,9 +87,9 @@ class SpriteLayer ( Layer ):
         self.image_sister2.anchor_x = self.image_sister2.width / 2
         self.image_sister2.anchor_y = self.image_sister2.height / 2
 
-        self.sprite1 = ActionSprite( self.image, x=20, y=100, batch=self.batch )
+        self.sprite1 = ActionSprite( self.image, x=320, y=240, batch=self.batch )
         self.sprite2 = ActionSprite( self.image_sister1, x=620, y=100, batch=self.batch )
-        self.sprite3 = ActionSprite( self.image_sister2, x=320, y=240, batch=self.batch )
+        self.sprite3 = ActionSprite( self.image_sister2, x=20, y=100, batch=self.batch )
 
         ju_right = Jump( y=100, x=600, jumps=4, duration=5 )
         ju_left = Jump( y=100, x=-600, jumps=4, duration=5 )
@@ -46,10 +97,10 @@ class SpriteLayer ( Layer ):
         sc = Scale( 9, 5 )
         rot = Rotate( 180, 5 )
 
-        self.sprite1.do( Repeat( ju_right ) )
+        self.sprite1.do( Repeat( sc ) )
+        self.sprite1.do( Repeat( rot ) )
         self.sprite2.do( Repeat( ju_left ) )
-        self.sprite3.do( Repeat( sc ) )
-        self.sprite3.do( Repeat( rot ) )
+        self.sprite3.do( Repeat( ju_right ) )
 
 class MainMenu(Menu):
     def __init__( self ):
@@ -145,6 +196,7 @@ class ScoreMenu(Menu):
 if __name__ == "__main__":
     director.init( resizable=True)
     director.run( Scene( 
+            FireManager(director.get_window_size()[0], 250),
             SpriteLayer(),
             MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
             ) )
