@@ -41,4 +41,5 @@ if __name__ == "__main__":
     sc = cocos.scene.Scene(*layers)
     # You can also add layers to a scene later:
     sc.add( 5.5, Square((1,0,0,0.5), 150,150, 210 ), "big_one" )
+    director.enable_alpha_blending()
     director.run( sc )
