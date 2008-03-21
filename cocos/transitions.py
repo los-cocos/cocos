@@ -87,7 +87,6 @@ class Quad2DTransition(TransitionScene):
             director.replace( self.in_scene )
 
     def on_draw( self ):
-        x, y = director.get_window_size()
         # draw scene one
         self.out_grabber.before_render(self.out_texture)
         self.out_scene.on_draw()

@@ -48,7 +48,7 @@ class PictureLayer(Layer):
     
 class DynamicColorizeEffect (ColorizeEffect):
     def __init__ (self):
-        super (ColorizeEffect, self).__init__ ()
+        super (DynamicColorizeEffect, self).__init__ ()
         self.color = (1,1,1,1)
         self.timer = 0
 
@@ -57,13 +57,13 @@ class DynamicColorizeEffect (ColorizeEffect):
     def step( self, dt ):
         self.timer += dt
     
-    def prepare (self, target):
-        super (ColorizeEffect, self).prepare (target)
+    def show(self):
         # red glow: 
         red = self.timer % 2
         if red > 1: red = 2-red
         # set color
         self.color = (red,1,1,1)
+        super (DynamicColorizeEffect, self).show()
         
 class ControlLayer(Layer):
 
@@ -78,7 +78,7 @@ class ControlLayer(Layer):
             batch=self.batch)
 
         self.text_subtitle = pyglet.text.Label(effects[current_effect][0],
-            font_size=18,
+            font_size=16,
             multiline=True,
             x=5,
             y=director.get_window_size()[1] - 80,
@@ -109,7 +109,8 @@ class ControlLayer(Layer):
 current_effect = 0
 
 if __name__ == "__main__":
-    director.init()
+    director.init( resizable=True )
+#    director.window.set_fullscreen(True)
 
     director.enable_alpha_blending()
 
@@ -122,7 +123,7 @@ if __name__ == "__main__":
          " Horizontally scaled 50%", RepositionEffect(width=director.get_window_size()[0]/2)),
         ("ball.set_effect (DynamicColorizeEffect())\n"
          " Dynamic colorize effect made inheriting ColorizeEffect\n"
-         " and redefining prepare() to change self.color each frame", DynamicColorizeEffect()),
+         " and redefining show() to change self.color each frame", DynamicColorizeEffect()),
               ]
     ball = PictureLayer(240)
     director.run( Scene (ColorLayer(0.1,0.1,0.2,1), ball, ControlLayer()) )

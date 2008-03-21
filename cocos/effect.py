@@ -51,7 +51,8 @@ class TextureFilterEffect (Effect):
     with a window sized capture. Show just blits the texture, override to
     do more interesting things"""
     def __init__ (self):
-        w, h = director.get_window_size()
+        w, h = director.window.get_size()
+        print "TextureFilterEffect(%d,%d)" % (w,h)
         self.texture = image.Texture.create_for_size(GL_TEXTURE_2D, 
             w, h, GL_RGBA)
         
