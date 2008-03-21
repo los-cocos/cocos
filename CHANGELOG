@@ -1,3 +1,7 @@
+v0.3.0 - XXX, xxx
+  - alpha blending eanabled by default. 
+    use director.set_alpha_bleding(True|False) to change.
+    
 v0.2.0 - March, 21th 2008
   - Director: uses the new pyglet 1.1 loop
   - Director: doesn't have the step() method. Uses on_draw() instead.

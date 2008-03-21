@@ -139,11 +139,13 @@ class Director(event.EventDispatcher):
         self._window_aspect =  self.window.width / float( self.window.height )
         self._offset_x = 0
         self._offset_y = 0
-
+        
+        # opengl settings
+        self.set_alpha_blending()
 
         # init fps
         self.fps_display = clock.ClockDisplay()
-
+    
         return self.window
 
 
@@ -307,10 +309,16 @@ class Director(event.EventDispatcher):
     #
     # Misc functions
     #
-    def enable_alpha_blending( self ):
-        """Enables alpha blending in OpenGL using the GL_ONE_MINUS_SRC_ALPHA algorithm."""
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    def set_alpha_blending( self, on=True ):
+        """
+        Enables/Disables alpha blending in OpenGL 
+        using the GL_ONE_MINUS_SRC_ALPHA algorithm."""
+        if on:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        else:
+            glDisable(GL_BLEND)
+        
         
 
 director = Director()
