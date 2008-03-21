@@ -40,6 +40,7 @@ class FontLayer( Layer ):
             batch=self.batch)
 
         self.text_subtitle = pyglet.text.Label(self.subtitle,
+            multiline=True,
             font_size=18,
             x=5,
             y=director.get_window_size()[1] - 80,
