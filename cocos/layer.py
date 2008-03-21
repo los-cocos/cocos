@@ -19,7 +19,7 @@ __docformat__ = 'restructuredtext'
 import pyglet
 from pyglet import gl
 
-from cocos.director import *
+from director import *
 
 __all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer' ]
 
