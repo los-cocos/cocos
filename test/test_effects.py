@@ -79,6 +79,7 @@ class ControlLayer(Layer):
 
         self.text_subtitle = pyglet.text.Label(effects[current_effect][0],
             font_size=18,
+            multiline=True,
             x=5,
             y=director.get_window_size()[1] - 80,
             halign=font.Text.LEFT,

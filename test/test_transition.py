@@ -28,6 +28,7 @@ class ControlLayer(Layer):
 
         self.text_subtitle = pyglet.text.Label( transition_list[current_transition].__name__,
             font_size=18,
+            multiline=True,
             x=5,
             y=director.get_window_size()[1] - 80,
             halign=font.Text.LEFT,

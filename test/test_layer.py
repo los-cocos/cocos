@@ -2,6 +2,9 @@
 # Los Cocos: Multi-Menu Example
 # http://code.google.com/p/los-cocos/
 #
+# Particle Engine done by Phil Hassey
+# http://www.imitationpickles.org
+#
 
 import sys
 import os

@@ -221,7 +221,7 @@ class SpriteRepeat( SpriteLayer ):
 
         self.add( sprite )
 
-        jump = Jump(100,400,4,3, mode=RepeatMode )
+        jump = Jump(100,400,4,3, mode=RestartMode )
 
         sprite.do( Repeat( jump ) )
 
@@ -359,7 +359,7 @@ tests = {
  9: ("Test #9 - Blink", "Show and hide an sprite\nsprite.do( Blink( times, duration ) )\n\nShow() and Hide() are actions too.", SpriteBlink),
  10: ("Test #10 - FadeIn and FadeOut", "Fades in and out and sprite\nsprite1.do( FadeIn( duration ) )\nsprite2.do( FadeOut(duration)).", SpriteFadeOut),
  11: ("Test #11 - Delay","Delays between actions\nsprite.do(Move() + Delay( seconds ) + Jump() )\n\nRandomDelay() is an action too.", SpriteDelay ),
- 12: ("Test #12 - Repeat", "Run the same action in 'RepeatMode'\nsprite.do( Repeat( Jump( mode=RepeatMode) )", SpriteRepeat),
+ 12: ("Test #12 - Repeat", "Run the same action in 'RestartMode'\nsprite.do( Repeat( Jump( mode=RepeatMode) )", SpriteRepeat),
  13: ("Test #13 - Repeat a-la PingPong", "Run the same action in 'PingPongMode' (default mode)\nsprite.do( Repeat( Jump( mode=PingPongMode) )", SpriteRepeat2),
  14: ("Test #14 - Repeat a Sequence", "Repeat a sequence 4 times\nsprite.do( Repeat( jump + move + jump2, 4 )", SpriteRepeatSeq),
  15: ("Test #15 - Repeat a Sequence #2", "Repeat a sequence of duplicate Actions\nsprite.do( Repeat( rot + move + rot + move + rot + move + rot ) )", SpriteRepeatMove ),

@@ -1,3 +1,9 @@
+#
+# Los Cocos: An extension for Pyglet
+# http://code.google.com/p/los-cocos/
+#
+'''Transitions between Scenes'''
+
 from pyglet import image
 from pyglet.gl import *
 
@@ -19,7 +25,7 @@ __all__ = ['TransitionScene',
 
 class TransitionScene(scene.Scene):
     """
-    A Scene that takes two scenes and makes a transition
+    A Scene that takes two scenes and makes a transition between them
     """
     in_texture = None
     out_texture = None

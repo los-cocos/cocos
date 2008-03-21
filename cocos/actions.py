@@ -79,7 +79,7 @@ These actions has 3 special parameters:
     ``dir`` : direction
         It can be `ForwardDir` or `BackwardDir` . Default is: `ForwardDir`
     ``mode`` : repeat mode
-        It can be `PingPongMode` or `RepeatMode` . Default is : `PingPongMode` .
+        It can be `PingPongMode` or `RestartMode` . Default is : `PingPongMode` .
     ``time_func`` : a function. The format of the function is f( runtime, duration )
         If you want to alter the speed of time, you should provide your onw time_func or use the `accelerate` function.
         Default : None. No alter-time function is used.
@@ -101,7 +101,7 @@ Examples::
 
     move = Move( (200,0), 5 )    # Moves 200 pixels to the right in 5 seconds.
                                  # Direction: ForwardDir (default)
-                                 # RepeatMode:  PingPongMode (default)
+                                 # RestartMode:  PingPongMode (default)
                                  # time_func:  No alter function (default)
 
     rmove = Repeat( move )       # Will repeat the action *move* forever
@@ -151,7 +151,7 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'FadeOut','FadeIn',                 # Fades out the sprite
 
             'ForwardDir','BackwardDir',         # Movement Directions
-            'RepeatMode','PingPongMode',        # Repeat modes
+            'RestartMode','PingPongMode',        # Repeat modes
 
             'accelerate',                       # a function that gives the time acceleration
             ]
@@ -160,7 +160,7 @@ __all__ = [ 'ActionSprite',                     # Sprite class
 class ForwardDir: pass
 class BackwardDir: pass
 class PingPongMode: pass
-class RepeatMode: pass
+class RestartMode: pass
 
 class ActionSprite( pyglet.sprite.Sprite ):
     '''ActionSprites are sprites that can execute actions.
@@ -316,7 +316,7 @@ class IntervalAction( Action ):
     `CallFunc` is not.
 
     dir can be: `ForwardDir` or `BackwardDir`
-    mode can be: `PingPongMode` or `RepeatMode`
+    mode can be: `PingPongMode` or `RestartMode`
     time_func can be any function that alters the time.
     `accelerate` , a time-alter function, is provided with this lib.
     """
