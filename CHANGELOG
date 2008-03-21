@@ -10,9 +10,17 @@ v0.2.0 - March, xxxx
   - ActionSprite: Move() and Goto() uses (x,y) instead of (x,y,0)
   - ActionSprite: removed Animate / Animation (part of pyglet.sprite.Sprite )
   - ActionSprite: uses pyglet.clock.schedule() to generate a ticker.
+  - ActionSprite: renamed RepeatMode to RestartMode
+  - ActionSprite: Spawn(a,b) + c works as expected
   - Effect: uses draw() and not step() to draw the layer
   - Transition: added enable/disable_step(). Uses draw() to draw subscenes and not step()
   - test/* and samples/* uses the resource.Text and not font.Text
+  - test/* added multiline=True in fonts
+
+
+v0.1.2 - March, 18th 2008
+  - ActionSprite: Fixed FadeIn
+  - ActionSprite: Spawn(a,b) + c works as expected
 
 
 v0.1.1 - March, 10th 2008
