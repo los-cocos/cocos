@@ -190,19 +190,7 @@ class ActionSprite( pyglet.sprite.Sprite ):
         :rtype: `Action` instance
         :return: A clone of *action*
         '''
-        try:
-            # HACK:
-            # deepcopy is needed to run the same sequence of actions
-            # in different sprites at the same time
-            a = copy.deepcopy( action )
-        except Exception, e:
-            # but deepcopy fails when copying the CallFunc calling an instance
-            # method.
-            print "WARNING: Running this action with various sprites at the time has an unpredictable behaviour"
-            print "CallFunc / CallFuncS actions can't be deep-copied when they are calling instance methods."
-            print "Workaround: Make it call a free function instead."
-            print action
-            a = copy.copy( action )
+        a = copy.deepcopy( action )
 
         a.target = self
         a._start()
@@ -827,6 +815,9 @@ class CallFunc(Action):
         
     def start(self):
         self.func(*self.args, **self.kwargs)
+        
+    def __deepcopy__(self, memo):
+        return copy.copy( self )
 
 
 class CallFuncS(CallFunc):
