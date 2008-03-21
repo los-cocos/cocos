@@ -97,4 +97,6 @@ class Scene(object):
     def on_draw( self ):                
         """Called every time the scene can be drawn."""
         for i, l in self.layers:
+            l._prepare()
+        for i, l in self.layers:
             l.on_draw()

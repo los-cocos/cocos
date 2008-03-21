@@ -126,4 +126,4 @@ if __name__ == "__main__":
          " and redefining show() to change self.color each frame", DynamicColorizeEffect()),
               ]
     ball = PictureLayer(240)
-    director.run( Scene (ColorLayer(0.1,0.1,0.2,1), ball, ControlLayer()) )
+    director.run( Scene (ColorLayer(0.0,0.0,1.0,1.0), ball, ControlLayer()) )

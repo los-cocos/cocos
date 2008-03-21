@@ -59,15 +59,18 @@ class Layer(object):
         else:
             self.effects = (e,)
 
+    def _prepare( self ):
+        """Prepares the layer fo the effects"""
+        if self.effects:
+            for e in self.effects:
+                e.prepare (self)
+
     def on_draw( self ):
         """Draws every object that is in the batch.
         It then calls ``self.draw()``. Subclassess shall override ``self.draw``
         to draw custom objects."""
 
         if self.effects:
-            for e in self.effects:
-                e.prepare (self)
-
             for e in self.effects:
                 e.show ()
         else:
