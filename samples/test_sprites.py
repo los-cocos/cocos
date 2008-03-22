@@ -96,32 +96,32 @@ class SpriteLayer( Layer ):
         for o in self.objects:
             o.stop()
 
-class SpriteGoto( SpriteLayer ):
+class SpriteMoveTo( SpriteLayer ):
     def on_enter( self ):
         sprite = ActionSprite( self.image, x=320, y=100 )
 
         self.add( sprite )
 
-        sprite.do( Goto( (620,100), 5 ) )
+        sprite.do( MoveTo( (620,100), 5 ) )
 
 
-class SpriteMove( SpriteLayer ):
+class SpriteMoveBy( SpriteLayer ):
     def on_enter( self ):
         sprite = ActionSprite( self.image, x=320, y=100 )
 
         self.add( sprite )
 
-        move = Move( (150,0), 3 )
+        move = MoveBy( (150,0), 3 )
         sprite.do( move )
 
 
-class SpriteRepeatMove( SpriteLayer ):
+class SpriteRepeatMoveBy( SpriteLayer ):
     def on_enter( self ):
         sprite = ActionSprite( self.image, x=120, y=100 )
 
         self.add( sprite )
 
-        move = Move( (150,0), 0.5 )
+        move = MoveBy( (150,0), 0.5 )
         rot = Rotate( 360, 0.5 )
 
         sprite.do( Repeat( Sequence( rot + move , rot , move , rot , move , rot) ) )
@@ -175,7 +175,7 @@ class SpriteSequence( SpriteLayer ):
         self.add( sprite )
         
         bz = Bezier( foo.curva, 3 )
-        move = Move( (0,-250), 3 )
+        move = MoveBy( (0,-250), 3 )
         jump = Jump(100,-400,4,3)
 
         sprite.do( bz + move + jump )
@@ -186,7 +186,7 @@ class SpriteDelay( SpriteLayer ):
 
         self.add( sprite )
 
-        move = Move( (250,0), 3 )
+        move = MoveBy( (250,0), 3 )
         jump = Jump(100,-250,4,3)
 
         sprite.do( move + Delay(5) + jump )
@@ -243,7 +243,7 @@ class SpriteRepeatSeq( SpriteLayer ):
         self.add( sprite )
         
         jump = Jump(100,400,4,2)
-        move = Move( (0,100), 1 )
+        move = MoveBy( (0,100), 1 )
         jump2 = Jump(50,-200,4,2)
 
         sprite.do( Repeat( jump + move + jump2 , 4 ) )
@@ -256,7 +256,7 @@ class SpriteRepeatSeq2( SpriteLayer ):
         self.add( sprite )
         
         jump = Jump(50,200,4,1)
-        move = Move( (0,100), 0.5 )
+        move = MoveBy( (0,100), 0.5 )
         jump2 = Jump(50,-200,4,1)
 
         sprite.do( Repeat( Repeat(jump,3) + Repeat(move,3) + Repeat(jump2,3) ) )
@@ -267,7 +267,7 @@ class SpriteTrigger( SpriteLayer ):
         sprite = ActionSprite( self.image, x=120, y=100 )
         self.add( sprite )
         
-        move = Move( (100,0), 2 )
+        move = MoveBy( (100,0), 2 )
 
         sprite.do( move + CallFunc( self.say_hello )  )
 
@@ -298,7 +298,7 @@ class SpriteReuseSequence( SpriteLayer ):
         self.add( sprite1, sprite2 )
 
         jump = Jump(50,200,4,2)
-        move = Move( (0,100), 2)
+        move = MoveBy( (0,100), 2)
         jump2 = Jump(50,-200,4, 2)
 
         rotate = Rotate( 360, 2 )
@@ -317,8 +317,8 @@ class SpriteAlterTime( SpriteLayer ):
 
         self.add( sprite1, sprite2 )
 
-        move1 = Move( (500,0), 3 )
-        move2 = Move( (500,0), 3, time_func=accelerate)
+        move1 = MoveBy( (500,0), 3 )
+        move2 = MoveBy( (500,0), 3, time_func=accelerate)
 
         sprite1.do( move1 )
         sprite2.do( move2 )
@@ -331,8 +331,8 @@ class SpriteRepeatAlterTime( SpriteLayer ):
 
         self.add( sprite1, sprite2 )
 
-        move1 = Move( (500,0), 3 )
-        move2 = Move( (500,0), 3, time_func=accelerate)
+        move1 = MoveBy( (500,0), 3 )
+        move2 = MoveBy( (500,0), 3, time_func=accelerate)
 
         sprite1.do( Repeat(move1) )
         sprite2.do( Repeat(move2) )
@@ -348,27 +348,27 @@ class SpriteRepeatAlterTime( SpriteLayer ):
 # To try some cool effects, create your own alter-time function!
    
 tests = {
- 1: ("Test #1 - Goto", "sprite.do( Goto( (x,y), duration ) )", SpriteGoto ),
- 2: ("Test #2 - Move", "sprite.do( Move( (delta_x,delta_y), duration ) )", SpriteMove ),
+ 1: ("Test #1 - MoveTo", "sprite.do( MoveTo( (x,y), duration ) )", SpriteMoveTo ),
+ 2: ("Test #2 - MoveBy", "sprite.do( MoveBy( (delta_x,delta_y), duration ) )", SpriteMoveBy ),
  3: ("Test #3 - Scale", "sprite.do( Scale( zoom_factor, duration) )", SpriteScale ),
  4: ("Test #4 - Rotate", "sprite.do( Rotate( degrees, duration) )", SpriteRotate ),
  5: ("Test #5 - Jump", "sprite.do( Jump( y, x, jumps, duration) )", SpriteJump),
  6: ("Test #6 - Bezier", "sprite.do( Bezier( bezier_conf, duration) )", SpriteBezier),
  7: ("Test #7 - Spawn", "Run 2 (or more) actions at the same time:\n\nsprite.do( Jump() | Rotate() )\nor:\nsprite.do( Spawn( Jump(), Rotate() ) )\nor:\nsprite.do( Jump() )\nsprite.do( Rotate() )", SpriteSpawn),
- 8: ("Test #8 - Sequence", "Run actions sequentialy:\n\nsprite.do( Bezier() + Move() + Jump() )\nor:\nsprite.do( Sequence( Bezier(), Move(), Jump() ) )", SpriteSequence),
+ 8: ("Test #8 - Sequence", "Run actions sequentialy:\n\nsprite.do( Bezier() + MoveBy() + Jump() )\nor:\nsprite.do( Sequence( Bezier(), MoveBy(), Jump() ) )", SpriteSequence),
  9: ("Test #9 - Blink", "Show and hide an sprite\nsprite.do( Blink( times, duration ) )\n\nShow() and Hide() are actions too.", SpriteBlink),
  10: ("Test #10 - FadeIn and FadeOut", "Fades in and out and sprite\nsprite1.do( FadeIn( duration ) )\nsprite2.do( FadeOut(duration)).", SpriteFadeOut),
- 11: ("Test #11 - Delay","Delays between actions\nsprite.do(Move() + Delay( seconds ) + Jump() )\n\nRandomDelay() is an action too.", SpriteDelay ),
+ 11: ("Test #11 - Delay","Delays between actions\nsprite.do(MoveBy() + Delay( seconds ) + Jump() )\n\nRandomDelay() is an action too.", SpriteDelay ),
  12: ("Test #12 - Repeat", "Run the same action in 'RestartMode'\nsprite.do( Repeat( Jump( mode=RepeatMode) )", SpriteRepeat),
  13: ("Test #13 - Repeat a-la PingPong", "Run the same action in 'PingPongMode' (default mode)\nsprite.do( Repeat( Jump( mode=PingPongMode) )", SpriteRepeat2),
  14: ("Test #14 - Repeat a Sequence", "Repeat a sequence 4 times\nsprite.do( Repeat( jump + move + jump2, 4 )", SpriteRepeatSeq),
- 15: ("Test #15 - Repeat a Sequence #2", "Repeat a sequence of duplicate Actions\nsprite.do( Repeat( rot + move + rot + move + rot + move + rot ) )", SpriteRepeatMove ),
+ 15: ("Test #15 - Repeat a Sequence #2", "Repeat a sequence of duplicate Actions\nsprite.do( Repeat( rot + move + rot + move + rot + move + rot ) )", SpriteRepeatMoveBy ),
  16: ("Test #16 - Repeat Sequence of Repeats", "Repeat a sequence of repeats\nsprite.do( Repeat( Repeat(jump,3) + Repeat(move,3) + Repeat(jump2,3) )", SpriteRepeatSeq2),
  17: ("Test #17 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS(), another action, passes the sprite as the 1st parameter", SpriteTrigger ),
  18: ("Test #18 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
  19: ("Test #19 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
- 20: ("Test #20 - Alter time", "You can change the speed of time:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0), 5, time_func=accelerate)\nsprite.do(move)\n\nThe other sprite is doing the same action without altering the time", SpriteAlterTime),
- 21: ("Test #21 - Repeat time altered actions", "Repeat actions that were time-altered:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = Move( (300,0), 5, time_func=accelerate)\nsprite.do(Repeat(move))\n\nThe other sprite is doing the same action without altering the time", SpriteRepeatAlterTime),
+ 20: ("Test #20 - Alter time", "You can change the speed of time:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = MoveBy( (300,0), 5, time_func=accelerate)\nsprite.do(move)\n\nThe other sprite is doing the same action without altering the time", SpriteAlterTime),
+ 21: ("Test #21 - Repeat time altered actions", "Repeat actions that were time-altered:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = MoveBy( (300,0), 5, time_func=accelerate)\nsprite.do(Repeat(move))\n\nThe other sprite is doing the same action without altering the time", SpriteRepeatAlterTime),
 
 }
 

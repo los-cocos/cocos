@@ -36,8 +36,8 @@ image.anchor_x = image.width / 2
 image.anchor_y = image.height / 2
 sprite_sister2 = ActionSprite(image, x=20, y=window.height/2, batch=batch)
 
-goto = Goto( (400,50), 2 )
-move = Move( (150,0), 2 )
+goto = MoveTo( (400,50), 2 )
+move = MoveBy( (150,0), 2 )
 rot = Rotate( 360, 1, time_func=accelerate )
 scale = Scale( 8, 1 )
 scale2 = Scale( 3, 5, time_func=accelerate  )

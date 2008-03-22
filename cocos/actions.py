@@ -17,8 +17,8 @@ To animate an sprite you need to execute an action.
 
 Actions that modifies the sprite's properties:
 
-    * `Move` ( (x,y), duration)
-    * `Goto` ( (x,y), duration )
+    * `MoveBy` ( (x,y), duration)
+    * `MoveTo` ( (x,y), duration )
     * `Rotate` ( degrees, duration )
     * `Scale` ( zoom_factor, duration )
     * `Jump` ( height, x, number_of_jumps, duration )
@@ -46,7 +46,7 @@ Misc actions:
 
 To execute any action you need to create an action::
 
-    move = Move( (50,0), 5 )
+    move = MoveBy( (50,0), 5 )
 
 In this case, ``move`` is an action that will move the sprite
 50 pixels to the right (``x`` coordinate), 0 pixel in the ``y`` coordinate,
@@ -87,8 +87,8 @@ These actions has 3 special parameters:
 Available IntervalActions
 =========================
 
-  * `Goto`
-  * `Move`
+  * `MoveTo`
+  * `MoveBy`
   * `Jump`
   * `Bezier`
   * `Blink`
@@ -99,7 +99,7 @@ Available IntervalActions
 
 Examples::
 
-    move = Move( (200,0), 5 )    # Moves 200 pixels to the right in 5 seconds.
+    move = MoveBy( (200,0), 5 )  # Moves 200 pixels to the right in 5 seconds.
                                  # Direction: ForwardDir (default)
                                  # RestartMode:  PingPongMode (default)
                                  # time_func:  No alter function (default)
@@ -108,7 +108,7 @@ Examples::
                                  # The repetitions are in PingPongMode
                                  # times: -1 (default)
 
-    move2 = Move( (200,0), 5, time_func=accelerate )
+    move2 = MoveBy( (200,0), 5, time_func=accelerate )
                                 # Moves 200 pixels to the right in 5 seconds
                                 # time_func=accelerate. This means that the
                                 # speed is not linear. It will start to action
@@ -116,7 +116,7 @@ Examples::
                                 # in each step. The total running time will be
                                 # 5 seconds.
 
-    move3 = Move( (200,0), 5, dir=BackwardDir )
+    move3 = MoveBy( (200,0), 5, dir=BackwardDir )
                                 # Moves 200 pixels to the **left** in 5 seconds
                                 # But when you use this direction (BackwardDir)
                                 # the starting coords and the finishing coords
@@ -141,7 +141,7 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'Action','IntervalAction',          # Action classes
 
             'Place',                            # placement action
-            'Goto','Move',                      # movement actions
+            'MoveTo','MoveBy',                      # movement actions
             'Jump','Bezier',                    # complex movement actions
             'Rotate','Scale',                   # object modification
             'Spawn','Sequence','Repeat',        # queueing actions
@@ -300,7 +300,7 @@ class IntervalAction( Action ):
     Action. Interval Actions are the ones that can go forward or
     backwards in time. 
     
-    For example: `Goto` , `Move` , `Rotate` are Interval Actions.
+    For example: `MoveTo` , `MoveBy` , `Rotate` are Interval Actions.
     `CallFunc` is not.
 
     dir can be: `ForwardDir` or `BackwardDir`
@@ -504,12 +504,12 @@ class Scale(IntervalAction):
                         max(0,min(1,float(self.get_runtime() )/self.duration))
                     ))
 
-class Goto( IntervalAction ):
+class MoveTo( IntervalAction ):
     """Moves a sprite to the position x,y. x and y are absolute coordinates.
 
     Example::
 
-        action = Goto( (50,10), 8 )       # Move the sprite to coords x=50, y=10 in 8 seconds
+        action = MoveTo( (50,10), 8 )       # Move the sprite to coords x=50, y=10 in 8 seconds
         sprite.do( action )
     """
     def init(self, dst_coords, duration=5):
@@ -536,14 +536,14 @@ class Goto( IntervalAction ):
                     ))
 
 
-class Move( Goto ):
+class MoveBy( MoveTo ):
     """Mve a sprite x,y pixels.
     x and y are relative to the position of the sprite.
     Duration is is seconds.
 
     Example::
 
-        action = Move( (-50,0), 8 )  # Move the sprite 50 pixels to the left in 8 seconds
+        action = MoveBy( (-50,0), 8 )  # Move the sprite 50 pixels to the left in 8 seconds
         sprite.do( action )
     """
     def init(self, delta, duration=5):
