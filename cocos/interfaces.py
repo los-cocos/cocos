@@ -11,7 +11,7 @@ __all__ = ['IContainer']
 
 class IContainer( object ):
 
-    supported_classes = (object)
+    supported_classes = (object,)
 
     def __init__( self ):
         self.childs = []
@@ -30,7 +30,7 @@ class IContainer( object ):
 
         # child must be a subclass of supported_classes
         if not isinstance( child, self.supported_classes ):
-            raise TypeError("Child doesn't belong to supported classess")
+            raise TypeError("Child doesn't belong to supported classes")
 
         if 'name' in kwargs:
             name = kwargs.pop('name')
@@ -104,3 +104,13 @@ if __name__ == '__main__':
         print 'remove_by_name(): FAILED'
     else:
         print 'remove_by_name(): OK'
+
+    try:
+        c = IContainer()
+        c.supported_classes= (tuple,dict)
+        for i in range(15):
+            c.add(i,z=i%3,name="%s" % i)
+    except TypeError, e:
+        print 'add unsupported types: OK'
+    else:
+        print 'add unsupported types: FAILED'
