@@ -28,16 +28,16 @@ class PictureLayer(Layer):
         img3 = pyglet.image.load ('grossinis_sister2.png')
 
         sprite1 = ActionSprite( img0, x=20, y=40 )
-        sprite1.do( Repeat( Move( (500,0), 5 ) ) )
+        sprite1.do( Repeat( MoveBy( (500,0), 5 ) ) )
 
         sprite2 = ActionSprite( img1, x=20, y=80 )
-        sprite2.do( Repeat( Move( (500,0), 4 ) ) )
+        sprite2.do( Repeat( MoveBy( (500,0), 4 ) ) )
 
         sprite3 = ActionSprite( img2, x=20, y=180 )
-        sprite3.do( Repeat( Move( (500,0), 3 ) ) )
+        sprite3.do( Repeat( MoveBy( (500,0), 3 ) ) )
 
         sprite4 = ActionSprite( img3, x=20, y=280 )
-        sprite4.do( Repeat( Move( (500,0), 2 ) ) )
+        sprite4.do( Repeat( MoveBy( (500,0), 2 ) ) )
 
         self.add( sprite1, sprite2, sprite3, sprite4 )
 
@@ -111,8 +111,6 @@ current_effect = 0
 if __name__ == "__main__":
     director.init( resizable=True )
 #    director.window.set_fullscreen(True)
-
-    director.enable_alpha_blending()
 
     effects = [
         ("ball = Layer(...)\n"

@@ -109,7 +109,6 @@ class GrossiniLayer2(Layer):
 
 if __name__ == "__main__":
     director.init(resizable=True)
-    director.enable_alpha_blending()
 #    director.window.set_fullscreen(True)
 
     transition_list = [

@@ -106,9 +106,6 @@ if __name__ == "__main__":
     pyglet.resource.path.append('.')
     pyglet.resource.reindex()
 
-    pyglet.resource.add_font('KonQa Black.ttf')
-    pyglet.resource.add_font('You Are Loved.ttf')
-
     director.init( resizable=True)
     director.run( Scene(
             MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )

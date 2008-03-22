@@ -98,12 +98,24 @@ class SpriteLayer( Layer ):
 
 class SpriteMoveTo( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=320, y=100 )
+        sprite1 = ActionSprite( self.image, x=320, y=100 )
+        sprite2 = ActionSprite( self.image, x=320, y=200 )
+        sprite3 = ActionSprite( self.image, x=320, y=300 )
 
-        self.add( sprite )
+        self.add( sprite1, sprite2, sprite3 )
 
-        sprite.do( MoveTo( (620,100), 5 ) )
+        sprite1.do( MoveTo( (620,100), 4, time_func=raro1 ) )
+        sprite2.do( MoveTo( (620,200), 4, time_func=raro2 ) )
+        sprite3.do( MoveTo( (620,300), 4 ) )
 
+
+def raro1( oldt, f ):
+    t = float(oldt) / f
+    return f * (t**2) * (t**2)
+
+def raro2( oldt, f ):
+    t = float(oldt) / f
+    return f * (t**2) * 2
 
 class SpriteMoveBy( SpriteLayer ):
     def on_enter( self ):
