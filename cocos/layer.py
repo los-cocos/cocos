@@ -35,17 +35,26 @@ class Layer(object):
         self.scheduled = False
         self.objects = []
 
-    def add( self, *o ):
+    def add( self, o, position=(0,0), rotation=0, scale=1, 
+                      opacity=255, color=(255,255,255) ):
         """Adds an object to the batch. The batch will draw it.
 
         :Parameters:
-            `o` : list of objects
-                Object that supports the 'batch' property, like Sprites,
+            `o` : Object that supports the 'batch' property, like Sprites,
                 Labels, `ActionSprite` , etc.
+            `position` : the posiition where to place its anchor
+                 this is the lower left corner by default
+            `rotation` : the rotation (degrees)
+            `opacity` : the opacity (0=transparent, 255=opaque)
+            `color` : the color to colorize the sprite (RGB 3-tuple)
         """
-        for i in o:
-            self.objects.append( i )
-            i.batch = self.batch
+        self.objects.append( o )
+        o.batch = self.batch
+        o.set_position( *position )
+        o.rotation = rotation
+        o.scale = scale
+        o.opacity = opacity
+        o.color = color
 
     def set_effect (self, e):
         """

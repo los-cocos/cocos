@@ -193,7 +193,7 @@ class ActionSprite( pyglet.sprite.Sprite ):
         a = copy.deepcopy( action )
 
         a.target = self
-        a._start()
+        a.start()
         self.actions.append( a )
 
         if not self.scheduled:
@@ -210,7 +210,12 @@ class ActionSprite( pyglet.sprite.Sprite ):
         """
         self.to_remove.append( action )
 
-    def stop(self):
+    def pause(self):
+        pass
+    def resume(self):
+        pass
+        
+    def flush(self):
         """Removes running actions from the queue"""
         for action in self.actions:
             self.to_remove.append( action )
@@ -231,7 +236,7 @@ class ActionSprite( pyglet.sprite.Sprite ):
             pyglet.clock.unschedule( self.step )
 
         for action in self.actions:
-            action._step(dt)
+            action.step(dt)
             if action.done():
                 self.remove( action )
                 
@@ -241,129 +246,427 @@ class Action(object):
     def __init__(self, *args, **kwargs):
         self.init(*args, **kwargs)
         self.target = None
-        
-    def _start(self):
-        self.start_count = 1
-        self.runtime = 0
-        self.start()
-        
-    def _restart(self):
-        self.start_count +=1
-        self.restart()
-
-    def _step(self, dt):
-        self.runtime += dt
-        self.step(dt)
-        
+              
     def init(self):
-        pass
-
-    def done(self):
-        return True
-            
-    def start(self):
-        """Called before the action starts to execute
-
-        When this method is called, the variable self.target will contain
-        a reference to the sprite. If you want to use this variable before
-        this method is called, an unexpected error will occur.
+        """ 
+        Gets called at initialization time, before a target it defined
         """
         pass
 
-    def restart( self ):
-        """Called before an action si restarted.
-
-        Called before action is restarted. This happens when an action
-        is being repeated."""
-        self._start()
-
-    def step(self, dt):
+    def start(self):
+        """
+        Gets called as soon as a target is asigned to this instance
+        """
         pass
-
-    def get_runtime( self ):
-        """Returns the runtime in seconds."""
-        return self.runtime
-
+                    
+    def step(self, dt):
+        """
+        Gets called every frame. `dt` is the number of seconds that elapsed
+        since the last call. If there was a pause and resume in the middle, 
+        the actual elapsed time may be bigger.
+        
+        This function will only be called byt the layer. Not other sprites.
+        """
+        pass
+        
+        
     def __add__(self, action):
         """Is the Sequence Action"""
         return Sequence(self, action)
 
+    def __mul__(self, other):
+        if not isinstance(other, int):
+            raise TypeError("Can only multiply actions by ints")
+        return Repeat( self, other )
+        
     def __or__(self, action):
         """Is the Spawn Action"""
         return Spawn(self, action)
 
 
 class IntervalAction( Action ):
-    """IntervalAction( dir=ForwardDir, mode=PingPongMode, time_func=None )
+    """
+    IntervalAction()
 
     Abstract Class that defines the direction of any Interval
-    Action. Interval Actions are the ones that can go forward or
-    backwards in time. 
+    Action. Interval Actions are the ones that have a fixed duration,
+    so we can make them go forward or backwards in time. 
     
     For example: `MoveTo` , `MoveBy` , `Rotate` are Interval Actions.
     `CallFunc` is not.
 
-    dir can be: `ForwardDir` or `BackwardDir`
-    mode can be: `PingPongMode` or `RestartMode`
-    time_func can be any function that alters the time.
-    `accelerate` , a time-alter function, is provided with this lib.
+    subclasses must ensure that instances have a duration attribute.
     """
     
     def __init__( self, *args, **kwargs ):
-
-        self.direction = ForwardDir
-        self.mode = PingPongMode
-        self.time_func = None
-
-        if kwargs.has_key('dir'):
-            self.direction = kwargs['dir']
-            del(kwargs['dir'])
-        if kwargs.has_key('mode'):
-            self.mode = kwargs['mode']
-            del(kwargs['mode'])
-        if kwargs.has_key('time_func'):
-            self.time_func= kwargs['time_func']
-            del(kwargs['time_func'])
-    
         super( IntervalAction, self ).__init__( *args, **kwargs )
-
-
-    def restart( self ):
-        self.runtime=0
-        if self.mode == PingPongMode:
-            if self.direction == ForwardDir:
-                self.direction = BackwardDir
-            else:
-                self.direction = ForwardDir 
- 
-    def done(self):
-        # It doesn't matter the mode, this is always valid
-        return (self.runtime > self.duration)
-
-    def get_runtime( self ):
-        rt = 0
-        if self.direction == ForwardDir:
-            rt = self.runtime
-        elif self.direction== BackwardDir:
-            rt = self.duration - self.runtime
+        self.elapsed = 0
+        
+    def update(self, t):
+        """
+        Gets called on every frame.
+        `t` is in [0,1]
+        If this action takes 5 seconds to execute, `t` will be equal to 0
+        at 0 seconds. `t` will be 0.5 at 2.5 seconds and `t` will be 1 at 5sec.
+        """
+        pass
+                    
+    def step(self, dt):
+        self.elapsed += dt
+        if self.duration:
+            self.update( min(1, self.elapsed/self.duration ) )
         else:
-            raise Exception("Unknown Interval Mode: %s" % (str( self.mode) ) )
+            self.update( 1 )
+            
+    def done(self):
+        return self.elapsed >= self.duration
+        
+class Rotate( IntervalAction ):
+    """Rotates a sprite clockwise in degrees
 
-        if self.time_func:
-            rt = self.time_func( rt, self.duration )
-        return rt
-
-def accelerate( t, duration ):
-    """Function that simulates an acceleration from 0 to duration seconds.
-    Use this function to alter the time of some IntervalActions.
-
-    :Parameters:
-        `t` : float
-            Elapsed time since the start of the action. 
-        `duration` : float
-            Duration time in seconds.
+    Example::
+        # rotates the sprite 180 degrees in 2 seconds
+        action = Rotate( 180, 2 )       
+        sprite.do( action )
     """
-    return t * (t/duration)
+    def init(self, angle, duration ):
+        """Init method.
+        
+        :Parameters:
+            `angle` : float
+                Degrees that the sprite will be rotated. 
+                Positive degrees rotates the sprite clockwise.
+            `duration` : float
+                Duration time in seconds
+        """
+        self.angle = angle
+        self.duration = duration
+
+    def start( self ): 
+        self.start_angle = self.target.rotation
+
+    def update(self, t):
+        self.target.rotation = (self.start_angle + self.angle * t ) % 360 
+
+
+class Reverse( IntervalAction ):
+    """Reverses the behaviour of the action
+
+    Example::
+        # rotates the sprite 180 degrees in 2 seconds counter clockwise
+        action = Reverse( Rotate( 180, 2 ) )
+        sprite.do( action )
+    """
+    def init(self, other ):
+        """Init method.
+        
+        :Parameters:
+            `other` : IntervalAction
+                The action that will be reversed
+        """
+        self.other = other
+        self.duration = other.duration
+
+    def start(self):
+        self.other.target = self.target
+        self.other.start()
+        
+    def update(self, t):
+        self.other.update( 1-t ) 
+
+class Speed( IntervalAction ):
+    """
+    Changes the speed of an action, making it take longer (speed>1)
+    or less (speed<1)
+
+    Example::
+        # rotates the sprite 180 degrees in 1 secondclockwise
+        action = Speed( Rotate( 180, 2 ), 2 )
+        sprite.do( action )
+    """
+    def init(self, other, speed ):
+        """Init method.
+        
+        :Parameters:
+            `other` : IntervalAction
+                The action that will be affected
+            `speed`: float
+                The speed change. 1 is no change. 
+                2 means twice as fast, takes half the time
+                0.5 means half as fast, takes double the time
+        """
+        self.other = other
+        self.speed = speed
+        self.duration = other.duration/speed
+
+    def start(self):
+        self.other.target = self.target
+        self.other.start()
+        
+    def update(self, t):
+        self.other.update( t ) 
+
+class Accelerate( IntervalAction ):
+    """
+    Changes the acceleration of an action
+    
+    Example::
+        # rotates the sprite 180 degrees in 2 seconds clockwise
+        # it starts slow and ends fast
+        action = Accelerate( Rotate( 180, 2 ), 4 )
+        sprite.do( action )
+    """
+    def init(self, other, rate ):
+        """Init method.
+        
+        :Parameters:
+            `other` : IntervalAction
+                The action that will be affected
+            `rate`: float
+                The acceleration rate. 1 is linear.
+                the new t is t**rate 
+        """
+        self.other = other
+        self.rate = rate
+        self.duration = other.duration
+
+    def start(self):
+        self.other.target = self.target
+        self.other.start()
+        
+    def update(self, t):
+        self.other.update( t**self.rate ) 
+
+
+class MoveTo( IntervalAction ):
+    """Moves a sprite to the position x,y. x and y are absolute coordinates.
+
+    Example::
+        # Move the sprite to coords x=50, y=10 in 8 seconds
+        
+        action = MoveTo( (50,10), 8 )       
+        sprite.do( action )
+    """
+    def init(self, dst_coords, duration=5):
+        """Init method.
+
+        :Parameters:
+            `dst_coords` : (x,y)
+                Coordinates where the sprite will be placed at the end of the action
+            `duration` : float
+                Duration time in seconds
+        """
+
+        self.end_position = Point2( *dst_coords )
+        self.duration = duration
+
+    def start( self ):
+        self.start_position = self.target.position
+        self.delta = self.end_position-self.start_position
+
+    def update(self,t):
+        self.target.position = self.start_position + self.delta * t
+
+class MoveBy( MoveTo ):
+    """Mve a sprite x,y pixels.
+    x and y are relative to the position of the sprite.
+    Duration is is seconds.
+
+    Example::
+        # Move the sprite 50 pixels to the left in 8 seconds
+        action = MoveBy( (-50,0), 8 )  
+        sprite.do( action )
+    """
+    def init(self, delta, duration=5):
+        """Init method.
+
+        :Parameters:
+            `delta` : (x,y)
+                Delta coordinates
+            `duration` : float
+                Duration time in seconds
+        """
+        self.delta = Point2( *delta)
+        self.duration = duration
+
+    def start( self ):
+        self.start_position = self.target.position
+        self.end_position = self.start_position + self.delta
+
+class FadeOut( IntervalAction ):
+    """FadeOut(duration)
+    Fades out an sprite
+   
+    Example::
+
+        action = FadeOut( 2 )
+        sprite.do( action )
+    """
+    def init( self, duration ):
+        """Init method.
+
+        :Parameters:
+            `duration` : float
+                Seconds that it will take to fade
+        """
+        self.duration = duration
+
+    def update( self, t ):
+        self.target.opacity = 255 * (1-t)
+
+
+class FadeIn( FadeOut):
+    """FadeIn(duration)
+    Fades in an sprite
+   
+    Example::
+
+        action = FadeIn( 2 )
+        sprite.do( action )
+    """
+    def update( self, t ):
+        self.target.opacity = 255 * t
+        
+class ScaleTo(IntervalAction):
+    """Scales the sprite
+
+    Example::
+        # scales the sprite to 5x in 2 seconds
+        action = ScaleTo( 5, 2 )       
+        sprite.do( action )
+    """
+    def init(self, scale, duration=5 ):
+        """Init method.
+        
+        :Parameters:
+            `scale` : float
+                scale factor
+            `duration` : float
+                Duration time in seconds
+        """
+        self.end_scale = scale
+        self.duration = duration
+
+    def start( self ):
+        self.start_scale = self.target.scale
+        self.delta = self.end_scale-self.start_scale
+
+    def update(self, t):
+        self.target.scale = self.start_scale + self.delta * t
+
+class ScaleBy(ScaleTo):
+    """Scales the sprite
+
+    Example::
+        # scales the sprite by 5x in 2 seconds
+        action = ScaleBy( 5, 2 )       
+        sprite.do( action )
+    """
+
+    def start( self ):
+        self.start_scale = self.target.scale
+        self.delta = self.start_scale*self.end_scale
+
+
+class Blink( IntervalAction ): 
+    """Blinks the sprite a Number_of_Times, for Duration seconds
+
+    Example::
+        # Blinks 10 times in 2 seconds
+        action = Blink( 10, 2 ) 
+        sprite.do( action )
+    """
+
+
+    def init(self, times, duration):
+        """Init method.
+
+        :Parameters:
+            `times` : integer
+                Number of times to blink
+            `duration` : float
+                Duration time in seconds
+        """
+        self.times = times
+        self.duration = duration
+        
+    def update(self, t):
+        slice = 1 / float( self.times )
+        m =  t % slice
+        self.target.visible = (m  >  slice / 2.0)
+
+
+class Bezier( IntervalAction ):
+    """Moves a sprite through a bezier path
+
+    Example::
+
+        action = Bezier( bezier_conf.path1, 5 )   # Moves the sprite using the
+        sprite.do( action )                       # bezier path 'bezier_conf.path1'
+                                                  # in 5 seconds
+    """
+    def init(self, bezier, duration=5):
+        """Init method
+
+        :Parameters:
+            `bezier` : bezier_configuration instance
+                A bezier configuration
+            `duration` : float
+                Duration time in seconds
+        """
+        self.duration = duration
+        self.bezier = bezier
+
+    def start( self ):
+        self.start_position = self.target.position
+
+    def update(self,t):
+        p = self.bezier.at( t )
+        self.target.position = ( self.start_position +Point2( *p ) )
+
+class Jump(IntervalAction):
+    """Moves a sprite simulating a jump movement.
+
+    Example::
+
+        action = Jump(50,200, 5, 6)    # Move the sprite 200 pixels to the right
+        sprite.do( action )            # in 6 seconds, doing 5 jumps
+                                       # of 50 pixels of height
+    """
+    
+    def init(self, y=150, x=120, jumps=1, duration=5):
+        """Init method
+
+        :Parameters:
+            `y` : integer
+                Height of jumps
+            `x` : integer
+                horizontal movement relative to the startin position
+            `jumps` : integer
+                quantity of jumps
+            `duration` : float
+                Duration time in seconds
+        """
+        self.y = y
+        self.x = x
+        self.duration = duration
+        self.jumps = jumps
+
+    def start( self ):
+        self.start_position = self.target.position
+
+    def step(self, dt):
+        y = int( self.y * ( math.sin( ( max(0,min(1, self.get_runtime()/self.duration)) * math.pi * self.jumps ) ) ) )
+        y = abs(y)
+
+        x = self.x * max(0,min(1,float(self.get_runtime())/self.duration))
+        self.target.position = self.start_position + Point2(x,y)
+
+
+
+
+
+# -----8<----- not done below this line
 
 class Place( Action ):
     """Place the sprite in the position x,y.
@@ -416,221 +719,6 @@ class Show( Action ):
 
     def done(self):
         return True
-
-class Blink( IntervalAction ): 
-    """Blinks the sprite a Number_of_Times, for Duration seconds
-
-    Example::
-
-        action = Blink( 10, 2 ) # Blinks 10 times in 2 seconds
-        sprite.do( action )
-    """
-
-
-    def init(self, times, duration):
-        """Init method.
-
-        :Parameters:
-            `times` : integer
-                Number of times to blink
-            `duration` : float
-                Duration time in seconds
-        """
-        self.times = times
-        self.duration = duration
-        
-    def step(self, dt):
-        slice = self.duration / float( self.times )
-        m =  min( self.duration, self.get_runtime()) % slice
-        self.target.visible = (m  >  slice / 2.0)
-
-class Rotate( IntervalAction ):
-    """Rotates a sprite counter-clockwise in degrees
-
-    Example::
-
-        action = Rotate( 180, 2 )       # rotates the sprite 180 degrees in 2 seconds
-        sprite.do( action )
-    """
-    def init(self, angle, duration=5 ):
-        """Init method.
-        
-        :Parameters:
-            `angle` : float
-                Degrees that the sprite will be rotated. Positive degrees rotates the sprite conter-clockwise.
-            `duration` : float
-                Duration time in seconds
-        """
-        self.angle = angle
-        self.duration = duration
-
-    def start( self ): 
-        self.start_angle = self.target.rotation
-
-    def step(self, dt):
-        self.target.rotation = (self.start_angle +
-                    self.angle * (
-                        max(0,min(1,float(self.get_runtime())/self.duration))
-                    )) % 360 
-
-class Scale(IntervalAction):
-    """Scales the sprite
-
-    Example::
-
-        action = Scale( 5, 2 )       # scales the sprite 5x in 2 seconds
-        sprite.do( action )
-    """
-    def init(self, zoom, duration=5 ):
-        """Init method.
-        
-        :Parameters:
-            `zoom` : float
-                scale factor
-            `duration` : float
-                Duration time in seconds
-        """
-        self.end_scale = zoom
-        self.duration = duration
-
-    def start( self ):
-        self.start_scale = self.target.scale
-        self.delta = self.end_scale-self.start_scale
-
-    def step(self, dt):
-
-        self.target.scale = (self.start_scale +
-                    self.delta * (
-                        max(0,min(1,float(self.get_runtime() )/self.duration))
-                    ))
-
-class MoveTo( IntervalAction ):
-    """Moves a sprite to the position x,y. x and y are absolute coordinates.
-
-    Example::
-
-        action = MoveTo( (50,10), 8 )       # Move the sprite to coords x=50, y=10 in 8 seconds
-        sprite.do( action )
-    """
-    def init(self, dst_coords, duration=5):
-        """Init method.
-
-        :Parameters:
-            `dst_coords` : (x,y)
-                Coordinates where the sprite will be placed at the end of the action
-            `duration` : float
-                Duration time in seconds
-        """
-
-        self.end_position = Point2( *dst_coords )
-        self.duration = duration
-
-    def start( self ):
-        self.start_position = self.target.position
-        self.delta = self.end_position-self.start_position
-
-    def step(self,dt):
-        self.target.position = (self.start_position +
-                    self.delta * (
-                        max(0,min(1,float(self.get_runtime() )/self.duration))
-                    ))
-
-
-class MoveBy( MoveTo ):
-    """Move a sprite x,y pixels.
-    x and y are relative to the position of the sprite.
-    Duration is is seconds.
-
-    Example::
-
-        action = MoveBy( (-50,0), 8 )  # Move the sprite 50 pixels to the left in 8 seconds
-        sprite.do( action )
-    """
-    def init(self, delta, duration=5):
-        """Init method.
-
-        :Parameters:
-            `delta` : (x,y)
-                Delta coordinates
-            `duration` : float
-                Duration time in seconds
-        """
-        self.delta = Point2( *delta)
-        self.duration = duration
-
-    def start( self ):
-        self.start_position = self.target.position
-        self.end_position = self.start_position + self.delta
-
-
-class Jump(IntervalAction):
-    """Moves a sprite simulating a jump movement.
-
-    Example::
-
-        action = Jump(50,200, 5, 6)    # Move the sprite 200 pixels to the right
-        sprite.do( action )            # in 6 seconds, doing 5 jumps
-                                       # of 50 pixels of height
-    """
-    
-    def init(self, y=150, x=120, jumps=1, duration=5):
-        """Init method
-
-        :Parameters:
-            `y` : integer
-                Height of jumps
-            `x` : integer
-                horizontal movement relative to the startin position
-            `jumps` : integer
-                quantity of jumps
-            `duration` : float
-                Duration time in seconds
-        """
-        self.y = y
-        self.x = x
-        self.duration = duration
-        self.jumps = jumps
-
-    def start( self ):
-        self.start_position = self.target.position
-
-    def step(self, dt):
-        y = int( self.y * ( math.sin( ( max(0,min(1, self.get_runtime()/self.duration)) * math.pi * self.jumps ) ) ) )
-        y = abs(y)
-
-        x = self.x * max(0,min(1,float(self.get_runtime())/self.duration))
-        self.target.position = self.start_position + Point2(x,y)
-
-class Bezier( IntervalAction ):
-    """Moves a sprite through a bezier path
-
-    Example::
-
-        action = Bezier( bezier_conf.path1, 5 )   # Moves the sprite using the
-        sprite.do( action )                       # bezier path 'bezier_conf.path1'
-                                                  # in 5 seconds
-    """
-    def init(self, bezier, duration=5):
-        """Init method
-
-        :Parameters:
-            `bezier` : bezier_configuration instance
-                A bezier configuration
-            `duration` : float
-                Duration time in seconds
-        """
-        self.duration = duration
-        self.bezier = bezier
-
-    def start( self ):
-        self.start_position = self.target.position
-
-    def step(self,dt):
-        at = max(0, min(1, self.get_runtime() / self.duration ) )
-        p = self.bezier.at( at )
-
-        self.target.position = ( self.start_position +
-            Point2( p[0], p[1] ) )
 
 
 class Spawn(Action):
@@ -877,38 +965,3 @@ class RandomDelay(Delay):
 
 
 
-class FadeOut( IntervalAction ):
-    """FadeOut(duration)
-    Fades out an sprite
-   
-    Example::
-
-        action = FadeOut( 2 )
-        sprite.do( action )
-    """
-    def init( self, duration ):
-        """Init method.
-
-        :Parameters:
-            `duration` : float
-                Seconds that it will take to fade
-        """
-        self.duration = duration
-
-    def step( self, dt ):
-        p = max(0, min(1, self.get_runtime() / self.duration ) )
-        self.target.opacity = 255 * (1-p)
-
-
-class FadeIn( FadeOut):
-    """FadeIn(duration)
-    Fades in an sprite
-   
-    Example::
-
-        action = FadeIn( 2 )
-        sprite.do( action )
-    """
-    def step( self, dt ):
-        p = max(0, min(1, self.get_runtime() / self.duration ) )
-        self.target.opacity = 255 * p
