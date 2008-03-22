@@ -537,7 +537,7 @@ class MoveTo( IntervalAction ):
 
 
 class MoveBy( MoveTo ):
-    """Mve a sprite x,y pixels.
+    """Move a sprite x,y pixels.
     x and y are relative to the position of the sprite.
     Duration is is seconds.
 

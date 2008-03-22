@@ -21,6 +21,8 @@ from pyglet import gl
 
 from director import *
 
+import bisect
+
 __all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer' ]
 
 class Layer(object):
