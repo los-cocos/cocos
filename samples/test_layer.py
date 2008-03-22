@@ -111,12 +111,9 @@ class MainMenu(Menu):
         # call superclass with the title
         super( MainMenu, self ).__init__("GROSSINI'S SISTERS" )
 
-        # you can override the font that will be used for the title and the items
-        self.font_title = 'KonQa Black'
-        self.font_items = 'You Are Loved'
-
         font.add_directory('.')
 
+        # you can override the font that will be used for the title and the items
         self.font_title = 'KonQa Black'
         self.font_items = 'You Are Loved'
 
