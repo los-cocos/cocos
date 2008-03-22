@@ -11,7 +11,7 @@ __all__ = ['IContainer']
 
 class IContainer( object ):
 
-    supported_classes = (object)
+    supported_classes = (object,)
 
     def __init__( self, *children ):
         self.children = []
