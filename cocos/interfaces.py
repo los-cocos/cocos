@@ -20,24 +20,16 @@ class IContainer( object ):
         self.add_children( *children )
 
 
-    def add( self, child, *args, **kwargs ):
+    def add( self, child, name='', z=0,  *args, **kwargs ):
         """Adds a child to the container
 
         :Parameters:
             `child` : object
                 object to be added
         """
-        name = ''
-        z = 0
-
         # child must be a subclass of supported_classes
         if not isinstance( child, self.supported_classes ):
             raise TypeError("%s is not istance of: %s" % (type(child), self.supported_classes) )
-
-        if 'name' in kwargs:
-            name = kwargs.pop('name')
-        if 'z' in kwargs:
-            z = kwargs.pop('z')                            
 
         elem = z, child
         bisect.insort( self.children,  elem )
