@@ -173,10 +173,7 @@ class Director(event.EventDispatcher):
             self._set_scene( self.next_scene )
 
         if not self.scene_stack:
-            # How should I terminate the EventLoop ?
-            # pyglet.app.EventLoop().exit()
-            import sys
-            sys.exit(0)
+            pyglet.app.exit()
 
         # draw all the objects
         self.scene.on_draw()
