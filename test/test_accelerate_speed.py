@@ -32,5 +32,6 @@ class TestLayer(cocos.layer.Layer):
 if __name__ == "__main__":
     director.init()
     test_layer = TestLayer ()
-    main_scene = cocos.scene.Scene (test_layer)
+    main_scene = cocos.scene.Scene ()
+    main_scene.add(test_layer)
     director.run (main_scene)

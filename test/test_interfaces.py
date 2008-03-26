@@ -10,7 +10,7 @@ def test_add():
     c = IContainer()
     for i in range(15):
         c.add(i)
-    expected_result = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11), (0, 12), (0, 13), (0, 14)]
+    expected_result = [(0, 0, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 1, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 2, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 3, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 4, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 5, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 6, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 7, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 8, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 9, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 10, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 11, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 12, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 13, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 14, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255})]
 
     assert c.children == expected_result
 
@@ -18,7 +18,7 @@ def test_add_z_name():
     c = IContainer()
     for i in range(15):
         c.add(i,z=i%3,name="%s" % i)
-    expected_result = [(0, 0), (0, 3), (0, 6), (0, 9), (0, 12), (1, 1), (1, 4), (1, 7), (1, 10), (1, 13), (2, 2), (2, 5), (2, 8), (2, 11), (2, 14)]
+    expected_result =[(0, 0, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 3, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 6, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 9, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 12, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 1, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 4, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 7, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 10, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 13, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 2, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 5, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 8, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 11, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 14, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255})]
 
     assert c.children == expected_result
 
@@ -27,7 +27,7 @@ def test_remove():
     for i in range(15):
         c.add(i,z=i%3,name="%s" % i)
     c.remove(3)
-    expected_result = [(0, 0), (0, 6), (0, 9), (0, 12), (1, 1), (1, 4), (1, 7), (1, 10), (1, 13), (2, 2), (2, 5), (2, 8), (2, 11), (2, 14)]    
+    expected_result = [(0, 0, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 6, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 9, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 12, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 1, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 4, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 7, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 10, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 13, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 2, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 5, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 8, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 11, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 14, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255})]
 
     assert c.children == expected_result
 
@@ -36,7 +36,7 @@ def test_remove_by_name():
     for i in range(15):
         c.add(i,z=i%3,name="%s" % i)
     c.remove_by_name('7')
-    expected_result = [(0, 0), (0, 3), (0, 6), (0, 9), (0, 12), (1, 1), (1, 4), (1, 10), (1, 13), (2, 2), (2, 5), (2, 8), (2, 11), (2, 14)]
+    expected_result = [(0, 0, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 3, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 6, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 9, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 12, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 1, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 4, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 10, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 13, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 2, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 5, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 8, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 11, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 14, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255})]
 
     assert c.children == expected_result
 

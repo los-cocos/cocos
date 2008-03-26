@@ -20,18 +20,36 @@ class IContainer( object ):
         self.add_children( *children )
 
 
-    def add( self, child, name='', z=0,  *args, **kwargs ):
+    def add( self, child, name='', z=0, position=(0,0), rotation=0.0, scale=1.0, color=(255,255,255), opacity=255):  
         """Adds a child to the container
 
         :Parameters:
             `child` : object
                 object to be added
+            `name` : str
+                Name of the child
+            `position` : tuple
+                 this is the lower left corner by default
+            `rotation` : int
+                the rotation (degrees)
+            `scale` : int
+                the zoom factor
+            `opacity` : int
+                the opacity (0=transparent, 255=opaque)
+            `color` : tuple
+                the color to colorize the child (RGB 3-tuple)
         """
         # child must be a subclass of supported_classes
         if not isinstance( child, self.supported_classes ):
             raise TypeError("%s is not istance of: %s" % (type(child), self.supported_classes) )
 
-        elem = z, child
+        properties = {'position' : position,
+                      'rotation' : rotation,
+                      'scale' : scale,
+                      'color' : color,
+                      'opacity' : opacity }
+
+        elem = z, child, properties
         bisect.insort( self.children,  elem )
 
         if name:
@@ -54,7 +72,7 @@ class IContainer( object ):
             `child` : object
                 object to be removed
         """
-        self.children = [ (z,c) for (z,c) in self.children if c != child ]
+        self.children = [ (z,c,p) for (z,c,p) in self.children if c != child ]
 
 
     def remove_by_name( self, name ):
@@ -67,59 +85,3 @@ class IContainer( object ):
         if name in self.children_names:
             child = self.children_names.pop( name )
             self.remove( child )
-
-
-def test_add():
-    c = IContainer()
-    for i in range(15):
-        c.add(i)
-    expected_result = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11), (0, 12), (0, 13), (0, 14)]
-
-    assert c.children == expected_result
-
-def test_add_z_name():
-    c = IContainer()
-    for i in range(15):
-        c.add(i,z=i%3,name="%s" % i)
-    expected_result = [(0, 0), (0, 3), (0, 6), (0, 9), (0, 12), (1, 1), (1, 4), (1, 7), (1, 10), (1, 13), (2, 2), (2, 5), (2, 8), (2, 11), (2, 14)]
-
-    assert c.children == expected_result
-
-def test_remove():
-    c = IContainer()
-    for i in range(15):
-        c.add(i,z=i%3,name="%s" % i)
-    c.remove(3)
-    expected_result = [(0, 0), (0, 6), (0, 9), (0, 12), (1, 1), (1, 4), (1, 7), (1, 10), (1, 13), (2, 2), (2, 5), (2, 8), (2, 11), (2, 14)]    
-
-    assert c.children == expected_result
-
-def test_remove_by_name():
-    c = IContainer()
-    for i in range(15):
-        c.add(i,z=i%3,name="%s" % i)
-    c.remove_by_name('7')
-    expected_result = [(0, 0), (0, 3), (0, 6), (0, 9), (0, 12), (1, 1), (1, 4), (1, 10), (1, 13), (2, 2), (2, 5), (2, 8), (2, 11), (2, 14)]
-
-    assert c.children == expected_result
-
-def test_add_unsupported_types():
-    try:
-        c = IContainer()
-        c.supported_classes= (tuple,dict)
-        for i in range(15):
-            c.add(i,z=i%3,name="%s" % i)
-    except TypeError, e:
-        print 'add unsupported types: OK'
-        assert 1 == 1
-    else:
-        print 'add unsupported types: FAILED'
-        assert 1 == 2
-
-if __name__ == '__main__':
-
-    test_add()
-    test_add_z_name()
-    test_remove()
-    test_remove_by_name()
-    test_add_unsupported_types()

@@ -10,6 +10,8 @@ __docformat__ = 'restructuredtext'
 
 __all__ = ['Scene']
 
+from pyglet.gl import *
+
 from interfaces import *
 from director import director
 from layer import *
@@ -48,7 +50,7 @@ class Scene(IContainer):
         """
         Called every time just before the scene is run.
         """        
-        for z,c in self.children:
+        for z,c,p in self.children:
             if isinstance(c,Layer):
                 director.window.push_handlers( c )
             c.on_enter()
@@ -58,7 +60,7 @@ class Scene(IContainer):
         """      
         Called every time just before the scene leaves the stage
         """
-        for z,c in self.children:
+        for z,c,p in self.children:
             c.on_exit()
             if isinstance(c,Layer):
                 director.window.pop_handlers()
@@ -66,12 +68,27 @@ class Scene(IContainer):
 
     def on_draw( self ):                
         """Called every time the scene can be drawn."""
-        for i, c in self.children:
+        for z,c,p in self.children:
             if isinstance(c,Layer):
                 c._prepare()
-        for i, c in self.children:
+        for z,c,p in self.children:
+            glPushMatrix()
+            glLoadIdentity()
+
+            if p['color'] != (255,255,255):
+                #glColor4f(*self.color)
+                pass
+
+            if p['scale'] != 1.0:
+                glScalef( p['scale'], p['scale'], 1)
+            if p['position'] != (0,0):
+                glTranslatef( p['position'][0], p['position'][1], 0 )
+            if p['rotation']!= 0.0:
+                glRotatef(p['rotation'], 0, 0, 1)
+
             c.on_draw()
 
+            glPopMatrix()
 
 if __name__ == '__main__':
     s = Scene( Layer(), Scene(), Layer() )
