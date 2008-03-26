@@ -69,45 +69,41 @@ class IContainer( object ):
             self.remove( child )
 
 
-if __name__ == '__main__':
+def test_add():
     c = IContainer()
     for i in range(15):
         c.add(i)
     expected_result = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10), (0, 11), (0, 12), (0, 13), (0, 14)]
-    if c.children != expected_result:
-        print 'add(c): FAILED'
-    else:
-        print 'add(c): OK'
 
+    assert c.children == expected_result
+
+def test_add_z_name():
     c = IContainer()
     for i in range(15):
         c.add(i,z=i%3,name="%s" % i)
     expected_result = [(0, 0), (0, 3), (0, 6), (0, 9), (0, 12), (1, 1), (1, 4), (1, 7), (1, 10), (1, 13), (2, 2), (2, 5), (2, 8), (2, 11), (2, 14)]
-    if c.children != expected_result:
-        print 'add(c,z,name): FAILED'
-    else:
-        print 'add(c,z,name): OK'
 
+    assert c.children == expected_result
+
+def test_remove():
     c = IContainer()
     for i in range(15):
         c.add(i,z=i%3,name="%s" % i)
     c.remove(3)
     expected_result = [(0, 0), (0, 6), (0, 9), (0, 12), (1, 1), (1, 4), (1, 7), (1, 10), (1, 13), (2, 2), (2, 5), (2, 8), (2, 11), (2, 14)]    
-    if c.children != expected_result:
-        print 'remove(): FAILED'
-    else:
-        print 'remove(): OK'
 
+    assert c.children == expected_result
+
+def test_remove_by_name():
     c = IContainer()
     for i in range(15):
         c.add(i,z=i%3,name="%s" % i)
     c.remove_by_name('7')
     expected_result = [(0, 0), (0, 3), (0, 6), (0, 9), (0, 12), (1, 1), (1, 4), (1, 10), (1, 13), (2, 2), (2, 5), (2, 8), (2, 11), (2, 14)]
-    if c.children != expected_result:
-        print 'remove_by_name(): FAILED'
-    else:
-        print 'remove_by_name(): OK'
 
+    assert c.children == expected_result
+
+def test_add_unsupported_types():
     try:
         c = IContainer()
         c.supported_classes= (tuple,dict)
@@ -115,5 +111,15 @@ if __name__ == '__main__':
             c.add(i,z=i%3,name="%s" % i)
     except TypeError, e:
         print 'add unsupported types: OK'
+        assert 1 == 1
     else:
         print 'add unsupported types: FAILED'
+        assert 1 == 2
+
+if __name__ == '__main__':
+
+    test_add()
+    test_add_z_name()
+    test_remove()
+    test_remove_by_name()
+    test_add_unsupported_types()

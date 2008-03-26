@@ -1,8 +1,8 @@
 "Cocos": A game library
 http://code.google.com/p/los-cocos/
 
-version: 0.2.0
-This version works OK with pyglet 1.1a1 (or newer)
+version: 0.3.0
+This version works OK with pyglet 1.1a2 (or newer)
 If you want to use pyglet 1.0, use cocos v0.1.x instead.
 
 
