@@ -68,27 +68,33 @@ class Scene(IContainer):
 
     def on_draw( self ):                
         """Called every time the scene can be drawn."""
+
+        glPushMatrix()
+
+        color = [ c / 255.0 for c in self.color ]
+        color.append( self.opacity / 255.0 )
+
+        if color != [1.0, 1.0, 1.0, 1.0]:
+            print color
+            glColor4f( *color)
+        if self.scale != 1.0:
+            glScalef( self.scale, self.scale, 1)
+        if self.position != (0,0):
+            glTranslatef( self.position[0], self.position[1], 0 )
+        if self.rotation != 0.0:
+            glRotatef(self.rotation, 0, 0, 1)
+
+        glPopMatrix()
+
         for z,c,p in self.children:
             if isinstance(c,Layer):
                 c._prepare()
+
         for z,c,p in self.children:
             glPushMatrix()
-            glLoadIdentity()
-
-            if p['color'] != (255,255,255):
-                #glColor4f(*self.color)
-                pass
-
-            if p['scale'] != 1.0:
-                glScalef( p['scale'], p['scale'], 1)
-            if p['position'] != (0,0):
-                glTranslatef( p['position'][0], p['position'][1], 0 )
-            if p['rotation']!= 0.0:
-                glRotatef(p['rotation'], 0, 0, 1)
-
             c.on_draw()
-
             glPopMatrix()
+
 
 if __name__ == '__main__':
     s = Scene( Layer(), Scene(), Layer() )

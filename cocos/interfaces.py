@@ -19,6 +19,14 @@ class IContainer( object ):
 
         self.add_children( *children )
 
+        self.position = (0,0)
+        self.scale = 1.0
+        self.rotation = 0.0
+        self.anchor_x = 0.5
+        self.ancho_y = 0.5
+        self.color = (255,255,255)
+        self.opacity = 255
+        self.mesh = None
 
     def add( self, child, name='', z=0, position=(0,0), rotation=0.0, scale=1.0, color=(255,255,255), opacity=255):  
         """Adds a child to the container
