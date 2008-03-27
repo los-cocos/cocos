@@ -136,6 +136,8 @@ import pyglet
 from pyglet import image
 from pyglet.gl import *
 
+from director import director
+
 __all__ = [ 'ActionObject',                     # Sprite class
 
             'Action','IntervalAction',          # Action classes
@@ -246,6 +248,32 @@ class ActionObject( object ):
             if action.done():
                 self.remove_action( action )
                 
+
+    def transform( self ):
+        """Apply ModelView transformations"""
+
+        x,y = director.get_window_size()
+
+        color = self.color + (self.opacity,)
+        if color != (255,255,255,255):
+            glColor4ub( * color )
+
+        if self.anchor_x != 0 or self.anchor_y != 0:
+            rel_x = self.anchor_x * x
+            rel_y = self.anchor_x * y
+            glTranslatef( rel_x, rel_y, 0 )
+
+        if self.scale != 1.0:
+            glScalef( self.scale, self.scale, 1)
+
+        if self.rotation != 0.0:
+            glRotatef( -self.rotation, 0, 0, 1)
+
+        if self.anchor_x != 0 or self.anchor_y != 0:
+            glTranslatef( -rel_x, -rel_y, 0 )
+
+        if self.position != (0,0):
+            glTranslatef( self.position[0], self.position[1], 0 )
 
 
 class Action(object):
