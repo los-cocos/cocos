@@ -15,8 +15,9 @@ from pyglet.gl import *
 from interfaces import *
 from director import director
 from layer import *
+from test_actions import *
 
-class Scene(IContainer):
+class Scene(IContainer, ActionObject):
     """
     """
    
@@ -69,22 +70,33 @@ class Scene(IContainer):
     def on_draw( self ):                
         """Called every time the scene can be drawn."""
 
+        # Apply transformation to current scene
         glPushMatrix()
 
-        color = [ c / 255.0 for c in self.color ]
-        color.append( self.opacity / 255.0 )
+        x,y = director.get_window_size()
 
-        if color != [1.0, 1.0, 1.0, 1.0]:
-            print color
-            glColor4f( *color)
+        color = self.color + (self.opacity,)
+        if color != (255,255,255,255):
+            glColor4ub( * color )
+
+        if self.anchor_x != 0 and self.anchor_y != 0:
+            rel_x = self.anchor_x * x
+            rel_y = self.anchor_x * y
+            glTranslatef( rel_x, rel_y, 0 )
+
         if self.scale != 1.0:
             glScalef( self.scale, self.scale, 1)
+
+        if self.rotation != 0.0:
+            glRotatef( -self.rotation, 0, 0, 1)
+
         if self.position != (0,0):
             glTranslatef( self.position[0], self.position[1], 0 )
-        if self.rotation != 0.0:
-            glRotatef(self.rotation, 0, 0, 1)
 
-        glPopMatrix()
+        if self.anchor_x != 0 and self.anchor_y != 0:
+            rel_x = self.anchor_x * x
+            rel_y = self.anchor_x * y
+            glTranslatef( -rel_x, -rel_y, 0 )
 
         for z,c,p in self.children:
             if isinstance(c,Layer):
@@ -92,8 +104,13 @@ class Scene(IContainer):
 
         for z,c,p in self.children:
             glPushMatrix()
+            self.apply_transformation( **p )
             c.on_draw()
             glPopMatrix()
+
+
+        glPopMatrix()
+
 
 
 if __name__ == '__main__':

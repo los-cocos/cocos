@@ -14,6 +14,10 @@ class IContainer( object ):
     supported_classes = (object,)
 
     def __init__( self, *children ):
+
+        super( IContainer, self).__init__()
+
+        print "__init__: IContainer"
         self.children = []
         self.children_names = {}
 
@@ -93,3 +97,30 @@ class IContainer( object ):
         if name in self.children_names:
             child = self.children_names.pop( name )
             self.remove( child )
+
+
+    def apply_transformation( self, color=(255,255,255), opacity=255, scale=1.0, rotation=0.0, position=(0,0) ):
+        """Apply a GL transformation
+
+        :Parameters:
+            `position` : tuple
+                 this is the lower left corner by default
+            `rotation` : int
+                the rotation (degrees)
+            `scale` : int
+                the zoom factor
+            `opacity` : int
+                the opacity (0=transparent, 255=opaque)
+            `color` : tuple
+                the color to colorize the child (RGB 3-tuple)
+        """
+
+        c = color + (opacity,)
+        if c != (255,255,255,255):
+            glColor4ub( * c )
+        if scale != 1.0:
+            glScalef( scale, scale, 1)
+        if position != (0,0):
+            glTranslatef( position[0], position[1], 0 )
+        if rotation != 0.0:
+            glRotatef( -rotation, 0, 0, 1)
