@@ -172,8 +172,6 @@ class ActionObject( object ):
     
     def __init__( self ):
 
-        print "__init__: ActionObject"
-
         super( ActionObject, self ).__init__()
 
         self.actions = []
@@ -246,7 +244,7 @@ class ActionObject( object ):
         for action in self.actions:
             action.step(dt)
             if action.done():
-                self.remove( action )
+                self.remove_action( action )
                 
 
 

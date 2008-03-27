@@ -6,6 +6,9 @@
 
 import bisect
 
+from pyglet.gl import *
+
+from director import director
 __all__ = ['IContainer']
 
 
@@ -17,7 +20,6 @@ class IContainer( object ):
 
         super( IContainer, self).__init__()
 
-        print "__init__: IContainer"
         self.children = []
         self.children_names = {}
 
@@ -32,7 +34,7 @@ class IContainer( object ):
         self.opacity = 255
         self.mesh = None
 
-    def add( self, child, name='', z=0, position=(0,0), rotation=0.0, scale=1.0, color=(255,255,255), opacity=255):  
+    def add( self, child, name='', z=0, position=(0,0), rotation=0.0, scale=1.0, color=(255,255,255), opacity=255, anchor_x=0.5, anchor_y=0.5):  
         """Adds a child to the container
 
         :Parameters:
@@ -50,6 +52,10 @@ class IContainer( object ):
                 the opacity (0=transparent, 255=opaque)
             `color` : tuple
                 the color to colorize the child (RGB 3-tuple)
+            `anchor_x` : float
+                x-point from where the image will be rotated / scaled. Value goes from 0 to 1
+            `anchor_y` : float
+                y-point from where the image will be rotated / scaled. Value goes from 0 to 1
         """
         # child must be a subclass of supported_classes
         if not isinstance( child, self.supported_classes ):
@@ -59,7 +65,10 @@ class IContainer( object ):
                       'rotation' : rotation,
                       'scale' : scale,
                       'color' : color,
-                      'opacity' : opacity }
+                      'opacity' : opacity,
+                      'anchor_x' : anchor_x,
+                      'anchor_y' : anchor_y,
+                      }
 
         elem = z, child, properties
         bisect.insort( self.children,  elem )
@@ -99,7 +108,7 @@ class IContainer( object ):
             self.remove( child )
 
 
-    def apply_transformation( self, color=(255,255,255), opacity=255, scale=1.0, rotation=0.0, position=(0,0) ):
+    def apply_transformation( self, color=(255,255,255), opacity=255, scale=1.0, rotation=0.0, position=(0,0), anchor_x=0.5, anchor_y=0.5 ):
         """Apply a GL transformation
 
         :Parameters:
@@ -109,18 +118,37 @@ class IContainer( object ):
                 the rotation (degrees)
             `scale` : int
                 the zoom factor
-            `opacity` : int
-                the opacity (0=transparent, 255=opaque)
             `color` : tuple
                 the color to colorize the child (RGB 3-tuple)
+            `opacity` : int
+                the opacity (0=transparent, 255=opaque)
+            `anchor_x` : float
+                x-point from where the image will be rotated / scaled. Value goes from 0 to 1
+            `anchor_y` : float
+                y-point from where the image will be rotated / scaled. Value goes from 0 to 1
         """
+
+        x,y = director.get_window_size()
 
         c = color + (opacity,)
         if c != (255,255,255,255):
             glColor4ub( * c )
+
+        # Anchor point for scaling and rotation
+        if self.anchor_x != 0 or self.anchor_y != 0:
+            rel_x = self.anchor_x * x
+            rel_y = self.anchor_x * y
+            glTranslatef( rel_x, rel_y, 0 )
+
         if scale != 1.0:
             glScalef( scale, scale, 1)
-        if position != (0,0):
-            glTranslatef( position[0], position[1], 0 )
+
         if rotation != 0.0:
             glRotatef( -rotation, 0, 0, 1)
+
+        if self.anchor_x != 0 or self.anchor_y != 0:
+            glTranslatef( -rel_x, -rel_y, 0 )
+
+        if position != (0,0):
+            glTranslatef( position[0], position[1], 0 )
+

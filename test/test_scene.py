@@ -42,9 +42,10 @@ class TestLayer(cocos.layer.Layer):
 
 if __name__ == "__main__":
     director.init()
-    test_layer = TestLayer ()
-    main_scene = cocos.scene.Scene( ColorLayer( 0.0,0.0,1.0,1.0 ), test_layer)
-#    main_scene.do( MoveBy( (200,200), 2 ) )
+    main_scene = cocos.scene.Scene()
+    main_scene.add( ColorLayer( 1.0, 0.0, 0.0, 1.0 ), scale=1.2 )
+    main_scene.add( ColorLayer( 0.0, 0.0, 1.0, 1.0 ), rotation=90 )
+    main_scene.add( TestLayer(), rotation=45 )
     main_scene.do( Rotate( 360, 2 ) )
     main_scene.do( ScaleTo( 0.5, 1 ) )
     director.run (main_scene)

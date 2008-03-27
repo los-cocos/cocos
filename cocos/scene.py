@@ -79,7 +79,7 @@ class Scene(IContainer, ActionObject):
         if color != (255,255,255,255):
             glColor4ub( * color )
 
-        if self.anchor_x != 0 and self.anchor_y != 0:
+        if self.anchor_x != 0 or self.anchor_y != 0:
             rel_x = self.anchor_x * x
             rel_y = self.anchor_x * y
             glTranslatef( rel_x, rel_y, 0 )
@@ -90,13 +90,11 @@ class Scene(IContainer, ActionObject):
         if self.rotation != 0.0:
             glRotatef( -self.rotation, 0, 0, 1)
 
+        if self.anchor_x != 0 or self.anchor_y != 0:
+            glTranslatef( -rel_x, -rel_y, 0 )
+
         if self.position != (0,0):
             glTranslatef( self.position[0], self.position[1], 0 )
-
-        if self.anchor_x != 0 and self.anchor_y != 0:
-            rel_x = self.anchor_x * x
-            rel_y = self.anchor_x * y
-            glTranslatef( -rel_x, -rel_y, 0 )
 
         for z,c,p in self.children:
             if isinstance(c,Layer):
@@ -108,9 +106,7 @@ class Scene(IContainer, ActionObject):
             c.on_draw()
             glPopMatrix()
 
-
         glPopMatrix()
-
 
 
 if __name__ == '__main__':
