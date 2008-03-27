@@ -4,7 +4,7 @@
 #
 """Interfaces uses internally by Sprites, Layers and Scenes"""
 
-import bisect
+import bisect, copy
 
 from pyglet.gl import *
 
@@ -152,4 +152,86 @@ class IContainer( object ):
         if position != (0,0):
             glTranslatef( position[0], position[1], 0 )
 
+class IActionTarget:
+    def __init__(self):
+        self.actions = []
+        self.to_remove = []
+        self.scheduled = False
+        self.skip_frame = False
+
+
+
+    def do( self, action ):
+        '''Executes an *action*.
+        When the action finished, it will be removed from the sprite's queue.
+
+        :Parameters:
+            `action` : an `Action` instance
+                Action that will be executed.
+        :rtype: `Action` instance
+        :return: A clone of *action*
+        '''
+        a = copy.deepcopy( action )
+        
+        a.target = self
+        a.start()
+        self.actions.append( a )
+
+        if not self.scheduled:
+            self.scheduled = True
+            pyglet.clock.schedule( self.step )
+        return a
+
+    def remove(self, action ):
+        """Removes an action from the queue
+
+        :Parameters:
+            `action` : Action
+                Action to be removed
+        """
+        self.to_remove.append( action )
+
+    def pause(self):
+        if not self.scheduled:
+            return
+        self.scheduled = False
+        pyglet.clock.unschedule( self.step )
+        
+    def resume(self):
+        if self.scheduled:
+            return
+        self.scheduled = True
+        pyglet.clock.schedule( self.step )
+        self.skip_frame = True
+        
+        
+    def flush(self):
+        """Removes running actions from the queue"""
+        for action in self.actions:
+            self.to_remove.append( action )
+
+    def step(self, dt):
+        """This method is called every frame.
+
+        :Parameters:
+            `dt` : delta_time
+                The time that elapsed since that last time this functions was called.
+        """
+        for x in self.to_remove:
+            self.actions.remove( x )
+        self.to_remove = []
+        
+        if self.skip_frame:
+            self.skip_frame = False
+            return
+        
+        if len( self.actions ) == 0:
+            self.scheduled = False
+            pyglet.clock.unschedule( self.step )
+
+        for action in self.actions:
+            action.step(dt)
+            if action.done():
+                self.remove( action )
+                
 

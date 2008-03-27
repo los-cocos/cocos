@@ -132,6 +132,8 @@ import math
 
 from euclid import *
 
+import interfaces
+
 import pyglet
 from pyglet import image
 from pyglet.gl import *
@@ -157,7 +159,7 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             ]
 
 
-class ActionSprite( pyglet.sprite.Sprite ):
+class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.IContainer ):
     '''ActionSprites are sprites that can execute actions.
 
     Example::
@@ -167,74 +169,10 @@ class ActionSprite( pyglet.sprite.Sprite ):
     
     def __init__( self, *args, **kwargs ):
 
-        super( ActionSprite, self ).__init__( *args, **kwargs)
-
-        self.actions = []
-        self.to_remove = []
-        self.scheduled = False
-
-
-
-    def do( self, action ):
-        '''Executes an *action*.
-        When the action finished, it will be removed from the sprite's queue.
-
-        :Parameters:
-            `action` : an `Action` instance
-                Action that will be executed.
-        :rtype: `Action` instance
-        :return: A clone of *action*
-        '''
-        a = copy.deepcopy( action )
+        pyglet.sprite.Sprite.__init__(self, *args, **kwargs)
+        interfaces.IActionTarget.__init__(self)
+        interfaces.IContainer.__init__(self)
         
-        a.target = self
-        a.start()
-        self.actions.append( a )
-
-        if not self.scheduled:
-            self.scheduled = True
-            pyglet.clock.schedule( self.step )
-        return a
-
-    def remove(self, action ):
-        """Removes an action from the queue
-
-        :Parameters:
-            `action` : Action
-                Action to be removed
-        """
-        self.to_remove.append( action )
-
-    def pause(self):
-        pass
-    def resume(self):
-        pass
-        
-    def flush(self):
-        """Removes running actions from the queue"""
-        for action in self.actions:
-            self.to_remove.append( action )
-
-    def step(self, dt):
-        """This method is called every frame.
-
-        :Parameters:
-            `dt` : delta_time
-                The time that elapsed since that last time this functions was called.
-        """
-        for x in self.to_remove:
-            self.actions.remove( x )
-        self.to_remove = []
-
-        if len( self.actions ) == 0:
-            self.scheduled = False
-            pyglet.clock.unschedule( self.step )
-
-        for action in self.actions:
-            action.step(dt)
-            if action.done():
-                self.remove( action )
-                
 
 
 class Action(object):
