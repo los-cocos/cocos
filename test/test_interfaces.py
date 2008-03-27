@@ -8,35 +8,35 @@ from cocos.interfaces import *
 
 def test_add():
     c = IContainer()
-    for i in range(15):
+    for i in range(7):
         c.add(i)
-    expected_result = [(0, 0, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 1, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 2, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 3, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 4, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 5, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 6, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 7, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 8, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 9, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 10, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 11, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 12, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 13, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 14, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255})]
+    expected_result = [(0, 0, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (0, 1, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (0, 2, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (0, 3, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (0, 4, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (0, 5, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (0, 6, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5})]
 
     assert c.children == expected_result
 
 def test_add_z_name():
     c = IContainer()
-    for i in range(15):
+    for i in range(7):
         c.add(i,z=i%3,name="%s" % i)
-    expected_result =[(0, 0, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 3, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 6, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 9, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 12, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 1, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 4, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 7, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 10, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 13, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 2, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 5, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 8, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 11, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 14, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255})]
+    expected_result = [(0, 0, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (0, 3, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (0, 6, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (1, 1, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (1, 4, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (2, 2, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (2, 5, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5})]
 
     assert c.children == expected_result
 
 def test_remove():
     c = IContainer()
-    for i in range(15):
+    for i in range(7):
         c.add(i,z=i%3,name="%s" % i)
     c.remove(3)
-    expected_result = [(0, 0, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 6, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 9, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 12, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 1, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 4, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 7, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 10, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 13, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 2, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 5, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 8, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 11, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 14, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255})]
+    expected_result = [(0, 0, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (0, 6, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (1, 1, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (1, 4, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (2, 2, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (2, 5, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5})]
 
     assert c.children == expected_result
 
 def test_remove_by_name():
     c = IContainer()
-    for i in range(15):
+    for i in range(7):
         c.add(i,z=i%3,name="%s" % i)
-    c.remove_by_name('7')
-    expected_result = [(0, 0, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 3, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 6, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 9, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (0, 12, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 1, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 4, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 10, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (1, 13, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 2, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 5, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 8, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 11, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255}), (2, 14, {'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0, 'scale': 1, 'opacity': 255})]
+    c.remove_by_name('5')
+    expected_result = [(0, 0, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (0, 3, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (0, 6, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (1, 1, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (1, 4, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5}), (2, 2, {'opacity': 255, 'scale': 1.0, 'color': (255, 255, 255), 'position': (0, 0), 'rotation': 0.0, 'anchor_y': 0.5, 'anchor_x': 0.5})]
 
     assert c.children == expected_result
 
@@ -44,7 +44,7 @@ def test_add_unsupported_types():
     try:
         c = IContainer()
         c.supported_classes= (tuple,dict)
-        for i in range(15):
+        for i in range(7):
             c.add(i,z=i%3,name="%s" % i)
     except TypeError, e:
         print 'add unsupported types: OK'
