@@ -38,14 +38,39 @@ class TestLayer(cocos.layer.Layer):
         self.add( sprite1, (x/2, y/2) )
         self.add( sprite3, (x/(4/3.0), y/2) )
 
-        sprite1.do( Rotate( 360 * 8, 8 ) )
+        sprite1.do( Rotate( 360*5,5 ) )
+        sprite2.do( Rotate( -360*5,5 ) )
+        sprite3.do( Rotate( -360*5,5 ) )
 
 if __name__ == "__main__":
-    director.init()
+    director.init( resizable=True )
     main_scene = cocos.scene.Scene()
-    main_scene.add( ColorLayer( 1.0, 0.0, 0.0, 1.0 ), scale=1.2 )
-    main_scene.add( ColorLayer( 0.0, 0.0, 1.0, 1.0 ), rotation=90 )
-    main_scene.add( TestLayer(), rotation=45 )
-    main_scene.do( Rotate( 360, 2 ) )
-    main_scene.do( ScaleTo( 0.5, 1 ) )
+    child1_scene = cocos.scene.Scene()
+    child2_scene = cocos.scene.Scene()
+    child3_scene = cocos.scene.Scene()
+    child4_scene = cocos.scene.Scene()
+
+    child1_scene.add( ColorLayer( 0.0, 0.0, 1.0, 1.0 ) )
+    child1_scene.add( TestLayer() )
+
+    child2_scene.add( ColorLayer( 0.0, 1.0, 0.0, 1.0 ) )
+    child2_scene.add( TestLayer() )
+
+    child3_scene.add( ColorLayer( 1.0,0.0, 0.0, 1.0 ) )
+    child3_scene.add( TestLayer() )
+
+    child4_scene.add( ColorLayer( 1.0,1.0, 1.0, 1.0 ) )
+    child4_scene.add( TestLayer() )
+
+    main_scene.add( child1_scene, scale=0.5, position=(-320,-240) )
+    main_scene.add( child2_scene, scale=0.5, position=(320,240) )
+    main_scene.add( child3_scene, scale=0.5, position=(-320,240) )
+    main_scene.add( child4_scene, scale=0.5, position=(320,-240) )
+
+    child1_scene.do( Rotate(-360,3) )
+    child2_scene.do( Rotate(-360,3) )
+    child3_scene.do( Rotate(-360,3) )
+    child4_scene.do( Rotate(-360,3) )
+    main_scene.do( Rotate( 360, 3) )
+
     director.run (main_scene)
