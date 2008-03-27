@@ -157,11 +157,6 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             ]
 
 
-class ForwardDir: pass
-class BackwardDir: pass
-class PingPongMode: pass
-class RestartMode: pass
-
 class ActionSprite( pyglet.sprite.Sprite ):
     '''ActionSprites are sprites that can execute actions.
 
@@ -191,7 +186,7 @@ class ActionSprite( pyglet.sprite.Sprite ):
         :return: A clone of *action*
         '''
         a = copy.deepcopy( action )
-
+        
         a.target = self
         a.start()
         self.actions.append( a )
@@ -246,6 +241,7 @@ class Action(object):
     def __init__(self, *args, **kwargs):
         self.init(*args, **kwargs)
         self.target = None
+        self.elapsed = None
               
     def init(self):
         """ 
@@ -255,7 +251,8 @@ class Action(object):
 
     def start(self):
         """
-        Gets called as soon as a target is asigned to this instance
+        Before we start executing an action, self.target is assigned and this method is called.
+        it will be called for every excecution of the action.
         """
         pass
                     
@@ -265,10 +262,19 @@ class Action(object):
         since the last call. If there was a pause and resume in the middle, 
         the actual elapsed time may be bigger.
         
-        This function will only be called byt the layer. Not other sprites.
+        This function will only be called by the layer. Not other sprites.
         """
-        pass
-        
+        if self.elapsed is None:
+            self.elapsed = 0
+            
+            
+        self.elapsed += dt
+
+        if self.duration:
+            self.update( min(1, self.elapsed/self.duration ) )
+        else:
+            self.update( 1 )
+                
         
     def __add__(self, action):
         """Is the Sequence Action"""
@@ -283,6 +289,9 @@ class Action(object):
         """Is the Spawn Action"""
         return Spawn(self, action)
 
+    def __reversed__(self):
+        raise Exception("Action %s cannot be reversed"%(self.__class__.__name__))
+    
 
 class IntervalAction( Action ):
     """
@@ -298,9 +307,6 @@ class IntervalAction( Action ):
     subclasses must ensure that instances have a duration attribute.
     """
     
-    def __init__( self, *args, **kwargs ):
-        super( IntervalAction, self ).__init__( *args, **kwargs )
-        self.elapsed = 0
         
     def update(self, t):
         """
@@ -308,16 +314,11 @@ class IntervalAction( Action ):
         `t` is in [0,1]
         If this action takes 5 seconds to execute, `t` will be equal to 0
         at 0 seconds. `t` will be 0.5 at 2.5 seconds and `t` will be 1 at 5sec.
+        
         """
         pass
                     
-    def step(self, dt):
-        self.elapsed += dt
-        if self.duration:
-            self.update( min(1, self.elapsed/self.duration ) )
-        else:
-            self.update( 1 )
-            
+    
     def done(self):
         return self.elapsed >= self.duration
         
@@ -348,8 +349,10 @@ class Rotate( IntervalAction ):
     def update(self, t):
         self.target.rotation = (self.start_angle + self.angle * t ) % 360 
 
-
-class Reverse( IntervalAction ):
+    def __reversed__(self):
+        return Rotate(-self.angle, self.duration)
+    
+def Reverse( action ):
     """Reverses the behaviour of the action
 
     Example::
@@ -357,22 +360,7 @@ class Reverse( IntervalAction ):
         action = Reverse( Rotate( 180, 2 ) )
         sprite.do( action )
     """
-    def init(self, other ):
-        """Init method.
-        
-        :Parameters:
-            `other` : IntervalAction
-                The action that will be reversed
-        """
-        self.other = other
-        self.duration = other.duration
-
-    def start(self):
-        self.other.target = self.target
-        self.other.start()
-        
-    def update(self, t):
-        self.other.update( 1-t ) 
+    return action.__reversed__()
 
 class Speed( IntervalAction ):
     """
@@ -463,6 +451,7 @@ class MoveTo( IntervalAction ):
     def start( self ):
         self.start_position = self.target.position
         self.delta = self.end_position-self.start_position
+        
 
     def update(self,t):
         self.target.position = self.start_position + self.delta * t
@@ -486,13 +475,16 @@ class MoveBy( MoveTo ):
             `duration` : float
                 Duration time in seconds
         """
-        self.delta = Point2( *delta)
+        self.delta = Point2( *delta )
         self.duration = duration
 
     def start( self ):
         self.start_position = self.target.position
         self.end_position = self.start_position + self.delta
-
+        
+    def __reversed__(self):
+        return MoveBy(-self.delta, self.duration)
+        
 class FadeOut( IntervalAction ):
     """FadeOut(duration)
     Fades out an sprite
@@ -513,6 +505,10 @@ class FadeOut( IntervalAction ):
 
     def update( self, t ):
         self.target.opacity = 255 * (1-t)
+        
+    def __reversed__(self):
+        return FadeIn( self.duration )
+    
 
 
 class FadeIn( FadeOut):
@@ -526,7 +522,10 @@ class FadeIn( FadeOut):
     """
     def update( self, t ):
         self.target.opacity = 255 * t
-        
+
+    def __reversed__(self):
+        return FadeOut( self.duration )
+
 class ScaleTo(IntervalAction):
     """Scales the sprite
 
@@ -567,6 +566,9 @@ class ScaleBy(ScaleTo):
         self.start_scale = self.target.scale
         self.delta = self.start_scale*self.end_scale
 
+    def __reversed__(self):
+        return ScaleBy( 1.0/self.end_scale, self.duration )
+
 
 class Blink( IntervalAction ): 
     """Blinks the sprite a Number_of_Times, for Duration seconds
@@ -595,6 +597,9 @@ class Blink( IntervalAction ):
         m =  t % slice
         self.target.visible = (m  >  slice / 2.0)
 
+    def __reversed__(self):
+        return self
+
 
 class Bezier( IntervalAction ):
     """Moves a sprite through a bezier path
@@ -605,7 +610,7 @@ class Bezier( IntervalAction ):
         sprite.do( action )                       # bezier path 'bezier_conf.path1'
                                                   # in 5 seconds
     """
-    def init(self, bezier, duration=5):
+    def init(self, bezier, duration=5, forward=True):
         """Init method
 
         :Parameters:
@@ -616,14 +621,21 @@ class Bezier( IntervalAction ):
         """
         self.duration = duration
         self.bezier = bezier
+        self.forward = forward
 
     def start( self ):
         self.start_position = self.target.position
 
     def update(self,t):
-        p = self.bezier.at( t )
+        if self.forward:
+            p = self.bezier.at( t )
+        else:
+            p = self.bezier.at( 1-t )
         self.target.position = ( self.start_position +Point2( *p ) )
 
+    def __reversed__(self):
+        return Bezier(self.bezier, self.duration, not self.forward)
+    
 class Jump(IntervalAction):
     """Moves a sprite simulating a jump movement.
 
@@ -655,20 +667,37 @@ class Jump(IntervalAction):
     def start( self ):
         self.start_position = self.target.position
 
-    def step(self, dt):
-        y = int( self.y * ( math.sin( ( max(0,min(1, self.get_runtime()/self.duration)) * math.pi * self.jumps ) ) ) )
+    def update(self, t):
+        y = int( self.y * ( math.sin( t * math.pi * self.jumps ) ) ) 
         y = abs(y)
 
-        x = self.x * max(0,min(1,float(self.get_runtime())/self.duration))
+        x = self.x * t
         self.target.position = self.start_position + Point2(x,y)
 
+    def __reversed__(self):
+        return Jump(self.y, -self.x, self.jumps, self.duration)
 
 
+class InstantAction( Action ):
+    """
+    Instant actions are actions that happen just one call.
+    """
+    duration = 0
+    
+    def start(self):
+        """
+        Here we must do out stuff
+        """
+        pass
+    
+    def done(self):
+        return True
+    
+    def update(self, t):
+        pass
 
-
-# -----8<----- not done below this line
-
-class Place( Action ):
+    
+class Place( InstantAction ):
     """Place the sprite in the position x,y.
 
     Example::
@@ -687,12 +716,8 @@ class Place( Action ):
         
     def start(self):
         self.target.position = self.position
-
-    def done(self):
-        return True
-
-
-class Hide( Action ):
+        
+class Hide( InstantAction ):
     """Hides the sprite. To show it again call the `Show` () action
 
     Example::
@@ -703,10 +728,10 @@ class Hide( Action ):
     def start(self):
         self.target.visible = False
 
-    def done(self):
-        return True
+    def __reversed__(self):
+        return Show()
 
-class Show( Action ):
+class Show( InstantAction ):
     """Shows the sprite. To hide it call the `Hide` () action
 
     Example::
@@ -717,172 +742,24 @@ class Show( Action ):
     def start(self):
         self.target.visible = True
 
-    def done(self):
-        return True
+    def __reversed__(self):
+        return Hide()
 
-
-class Spawn(Action):
-    """Spawn a  new action immediately.
-    You can spawn actions using:
-        
-        * the Spanw() class
-        * the overriden *|* operator
-        * call sprite.do() many times
+class ToggleVisibility( InstantAction ):
+    """Toggles the visible attribute of a sprite
 
     Example::
 
-        action = Spawn( action1, action2, action3 )
+        action = ToggleVisibility()
         sprite.do( action )
-
-        or:
-
-        sprite.do( action1 | action2 | action3 )
-
-        or:
-
-        sprite.do( action1 )
-        sprite.do( action2 )
-        sprite.do( action3 )
     """
-    def init(self, *actions):
-        """Init method
-
-        :Parameters:
-            `actions` : list of actions
-                The list of actions that will be spawned
-        """
-        self.actions = actions
-        self.cloned_actions = []
-
-    def done(self):
-        ret = True
-        for i in self.cloned_actions:
-            ret = ret and i.done()
-
-        return ret
-
     def start(self):
-        for a in self.actions:
-            c = self.target.do( a )
-            self.cloned_actions.append( c )
+        self.target.visible = not self.target.visible
 
-
-class Sequence(Action):
-    """Run actions sequentially: One after another
-    You can sequence actions using:
-        
-        * the Sequence() class
-        * the overriden *+* operator
-
-    Example::
-
-        action = Sequence( action1, action2, action3 )
-        sprite.do( action )
-
-        or:
-
-        sprite.do( action1 + action2 + action3 )
-        """
-    def init(self,  *actions, **kwargs ):
-        """Init method
-
-        :Parameters:
-            `actions` : list of actions
-                List of actions to be sequenced
-        """
-        self.actions = [ copy.copy(a) for a in actions]
-        self.direction = ForwardDir
-        self.mode = PingPongMode
-        if kwargs.has_key('dir'):
-            self.direction = kwargs['dir']
-        if kwargs.has_key('mode'):
-            self.mode = kwargs['mode']
-
-
-    def restart( self ):
-        if self.mode == PingPongMode:
-            if self.direction == ForwardDir:
-                self.direction = BackwardDir
-            else:
-                self.direction = ForwardDir
-        self.start()
-
-
-    def instantiate(self):
-        index = self.count
-
-        if self.direction == BackwardDir:
-            index = len( self.actions ) - index - 1
-
-        self.current = self.actions[index]
-        self.current.target = self.target
-        if self.start_count == 1:
-            self.current._start()
-        else:
-            self.current._restart()
+    def __reversed__(self):
+        return self
     
-    def start(self):
-        self.count = 0
-        self.instantiate()
-        
-    def done(self):
-        return ( self.count >= len(self.actions) )
-        
-    def step(self, dt):
-        self.current._step(dt)
-        if self.current.done():
-            self.count += 1
-            if not self.done():
-                self.instantiate()            
-
-
-class Repeat(Action):
-    """Repeats an action. It is is similar to Sequence, but it runs the same action every time
-
-    Example::
-
-        action = Jump( 50,200,3,5)
-        repeat = Repeat( action, times=5 )
-        sprite.do( repeat )
-    """
-    def init(self, action, times=-1):
-        """Init method.
-
-        :Parameters:
-            `action` : `Action` instance
-                The action that will be repeated
-            `times` : integer
-                The number of times that the action will be repeated. -1, which is the default value, means *repeat forever*
-        """
-        self.action = copy.copy( action )
-        self.times = times
-
-    def restart( self ):
-        self.start()
-        
-    def start(self):
-        self.count = 0
-        self.instantiate()
-
-    def instantiate(self):
-        self.action.target = self.target
-        if self.start_count == 1 and self.count == 0:
-            self.action._start()
-        else:
-            self.action._restart()
-        
-    def done(self):
-        return (self.times != -1) and (self.count>=self.times)
-        
-    def step(self, dt):
-        self.action._step(dt)
-        if self.action.done():
-            self.count += 1
-            if not self.done():
-                self.instantiate()            
-
-
-class CallFunc(Action):
+class CallFunc(InstantAction):
     """An action that will call a function.
 
     Example::
@@ -897,16 +774,15 @@ class CallFunc(Action):
         self.func = func
         self.args = args
         self.kwargs = kwargs
-        
-    def done(self):
-        return True
-        
+              
     def start(self):
         self.func(*self.args, **self.kwargs)
         
     def __deepcopy__(self, memo):
         return copy.copy( self )
 
+    def __reversed__(self):
+        return self
 
 class CallFuncS(CallFunc):
     """An action that will call a funtion with the target as the first argument
@@ -922,8 +798,80 @@ class CallFuncS(CallFunc):
     def start(self):
         self.func( self.target, *self.args, **self.kwargs)
 
+class Sequence(IntervalAction):
+    """Run actions sequentially: One after another
+    You can sequence actions using:
         
-class Delay(Action):
+        * the Sequence() class
+        * the overriden *+* operator
+
+    Example::
+
+        action = Sequence( one, two )
+        sprite.do( action )
+
+        or:
+
+        sprite.do( one+two )
+        """
+    def init(self,  one, two, **kwargs ):
+        """Init method
+
+        :Parameters:
+            `actions` : list of actions
+                List of actions to be sequenced
+        """
+        
+        self.one = copy.deepcopy(one)
+        self.two = copy.deepcopy(two)
+        self.actions = [self.one, self.two]
+        
+        self.duration = self.one.duration + self.two.duration
+        self.split = self.one.duration / float(self.duration)
+        
+        self.last = None
+
+    def start(self):
+        self.one.target = self.target
+        self.two.target = self.target
+
+    def __repr__(self):
+        return "( %s + %s [%f, %f])" %( self.one, self.two, self.duration, self.split)
+    
+    def update(self, t):
+        start_t = 0
+        found = None
+        if t >= self.split:
+            found = 1
+            if self.split == 1:
+                new_t = 1
+            else:
+                new_t = (t-self.split) / (1 - self.split )
+        elif t < self.split:
+            found = 0
+            if self.split != 0:
+                new_t = t / self.split
+            else:
+                new_t = 1
+                
+                
+        # now we can execute the action and save the state
+        if self.last is None and found == 1:
+            self.one.start()
+            self.one.update(1)
+            
+        if self.last != found:
+            if self.last is not None:
+                self.actions[self.last].update(1)
+            self.actions[ found ].start()
+            
+        self.actions[ found ].update( new_t )
+        self.last = found
+        
+    def __reversed__(self):
+        return Sequence( Reverse(self.two), Reverse(self.one) )
+
+class Delay(IntervalAction):
     """Delays the action a certain ammount of seconds
    
    Example::
@@ -938,11 +886,11 @@ class Delay(Action):
             `delay` : float
                 Seconds of delay 
         """
-        self.delay = delay
+        self.duration = delay
         
-    def done(self):
-        return ( self.delay <= self.runtime )
-
+    def __reversed__(self):
+        return self
+    
 
 class RandomDelay(Delay):
     """Delays the actions between *min* and *max* seconds
@@ -961,7 +909,111 @@ class RandomDelay(Delay):
             `hi` : float
                 Maximun seconds of delay
         """
-        self.delay = low + (random.random() * (hi - low))
+        self.low = low
+        self.hi = hi
+        
+    def __deepcopy__(self, memo):
+        new = copy.copy(self)
+        new.duration = self.low + (random.random() * (self.hi - self.low))
+        return new
 
 
 
+
+
+class Spawn(IntervalAction):
+    """Spawn a  new action immediately.
+    You can spawn actions using:
+        
+        * the Spanw() class
+        * the overriden *|* operator
+        * call sprite.do() many times
+
+    Example::
+
+        action = Spawn( action1, action2 )
+        sprite.do( action )
+
+        or:
+
+        sprite.do( action1 | action2  )
+
+        or:
+
+        sprite.do( action1 )
+        sprite.do( action2 )
+    """
+    def init(self, one, two):
+        """Init method
+
+        :Parameters:
+            `actions` : list of actions
+                The list of actions that will be spawned
+        """
+        one = copy.deepcopy(one)
+        two = copy.deepcopy(two)
+        if one.duration > two.duration:
+            two = two + Delay( one.duration-two.duration )
+        elif two.duration > one.duration:
+            one = one + Delay( two.duration-one.duration )
+
+        self.duration = one.duration
+        
+        self.actions = [one, two]
+        self.cloned_actions = []
+
+    def done(self):
+        ret = True
+        for i in self.cloned_actions:
+            ret = ret and i.done()
+
+        return ret
+
+    def start(self):
+        for a in self.actions:
+            c = self.target.do( a )
+            self.cloned_actions.append( c )
+            
+
+    def __reversed__(self):
+        return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )
+    
+
+       
+class Repeat(Action):
+    """Repeats an action forever. 
+
+    Example::
+
+        action = Jump( 50,200,3,5)
+        repeat = Repeat( action )
+        sprite.do( repeat )
+        
+    Note::
+        To repeat just a finite amount of time, just do action * times .
+    """
+    def init(self, action):
+        """Init method.
+
+        :Parameters:
+            `action` : `Action` instance
+                The action that will be repeated
+        """
+        self.action = copy.copy( action )
+        self.elapsed = 0
+        
+    def start(self):
+        self.action.target = self.target
+        self.action.start()
+    def step(self, dt):
+        self.action.step(dt)
+        if self.action.done():
+            self.action.elapsed = None
+            self.action.start()
+    
+    def done(self):
+        return False
+            
+
+
+        
