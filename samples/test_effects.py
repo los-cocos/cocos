@@ -39,7 +39,8 @@ class PictureLayer(Layer):
         sprite4 = ActionSprite( img3, x=20, y=280 )
         sprite4.do( Repeat( MoveBy( (500,0), 2 ) ) )
 
-        self.add( sprite1, sprite2, sprite3, sprite4 )
+        for sprite in ( sprite1, sprite2, sprite3, sprite4 ):
+            self.add (sprite)
 
     def on_exit( self ):
         for o in self.objects:
