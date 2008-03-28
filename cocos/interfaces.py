@@ -9,7 +9,7 @@ import bisect, copy
 from pyglet.gl import *
 
 from director import director
-__all__ = ['IContainer']
+__all__ = ['IContainer','IActionTarget']
 
 
 class IContainer( object ):
@@ -29,7 +29,7 @@ class IContainer( object ):
         self.scale = 1.0
         self.rotation = 0.0
         self.anchor_x = 0.5
-        self.ancho_y = 0.5
+        self.anchor_y = 0.5
         self.color = (255,255,255)
         self.opacity = 255
         self.mesh = None
@@ -146,19 +146,22 @@ class IContainer( object ):
         if rotation != 0.0:
             glRotatef( -rotation, 0, 0, 1)
 
+        # Anchor, go back to original position
         if self.anchor_x != 0 or self.anchor_y != 0:
             glTranslatef( -rel_x, -rel_y, 0 )
 
         if position != (0,0):
             glTranslatef( position[0], position[1], 0 )
 
-class IActionTarget:
+class IActionTarget(object):
     def __init__(self):
+
+        super( IActionTarget, self).__init__()
+
         self.actions = []
         self.to_remove = []
         self.scheduled = False
         self.skip_frame = False
-
 
 
     def do( self, action ):
