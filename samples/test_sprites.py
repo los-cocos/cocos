@@ -92,9 +92,9 @@ class SpriteLayer( Layer ):
             director.replace( get_sprite_test( self.index ) )
             return True
 
-    def on_exit( self ):
-        for o in self.objects:
-            o.stop()
+    #def on_exit( self ):
+    #    for o in self.objects:
+    #        o.stop()
 
 class SpriteMoveTo( SpriteLayer ):
     def on_enter( self ):
@@ -102,26 +102,22 @@ class SpriteMoveTo( SpriteLayer ):
         sprite2 = ActionSprite( self.image, x=320, y=200 )
         sprite3 = ActionSprite( self.image, x=320, y=300 )
 
-        self.add( sprite1, sprite2, sprite3 )
+        self.add(sprite1, (320,100))
+        self.add(sprite2, (320,200))
+        self.add(sprite3, (320,300))
 
-        sprite1.do( MoveTo( (620,100), 4, time_func=raro1 ) )
-        sprite2.do( MoveTo( (620,200), 4, time_func=raro2 ) )
         sprite3.do( MoveTo( (620,300), 4 ) )
+        sprite1.do( Accelerate( MoveTo( (620,100), 4) ) )
+        sprite2.do( Accelerate( Accelerate( MoveTo( (620,200), 4) ) ))
+        
 
 
-def raro1( oldt, f ):
-    t = float(oldt) / f
-    return f * (t**2) * (t**2)
-
-def raro2( oldt, f ):
-    t = float(oldt) / f
-    return f * (t**2) * 2
 
 class SpriteMoveBy( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=320, y=100 )
+        sprite = ActionSprite( self.image )
 
-        self.add( sprite )
+        self.add( sprite, (320, 200) )
 
         move = MoveBy( (150,0), 3 )
         sprite.do( move )
@@ -129,52 +125,52 @@ class SpriteMoveBy( SpriteLayer ):
 
 class SpriteRepeatMoveBy( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=120, y=100 )
+        sprite = ActionSprite( self.image )
 
-        self.add( sprite )
+        self.add( sprite, (120,100) )
 
         move = MoveBy( (150,0), 0.5 )
         rot = Rotate( 360, 0.5 )
 
-        sprite.do( Repeat( Sequence( rot + move , rot , move , rot , move , rot) ) )
+        sprite.do( Repeat( Place((120,100)) + rot + move + rot + move + rot + move + rot) ) 
 
 class SpriteScale( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=320, y=240 )
+        sprite = ActionSprite( self.image )
 
-        self.add( sprite )
+        self.add( sprite, (320,200) )
 
-        sprite.do( Scale( 10, 5 ) )
+        sprite.do( ScaleTo( 10, 5 ) )
 
 class SpriteRotate( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=320, y=100 )
+        sprite = ActionSprite( self.image )
 
-        self.add( sprite )
+        self.add( sprite, (320,200) )
 
         sprite.do( Rotate( 360, 2 ) )
 
 class SpriteJump( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=120, y=100 )
+        sprite = ActionSprite( self.image )
 
-        self.add( sprite )
+        self.add( sprite, (120,100) )
 
         sprite.do( Jump(y=100, x=400, jumps=4, duration=3 ) )
 
 class SpriteBezier( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=120, y=100 )
+        sprite = ActionSprite( self.image )
 
-        self.add( sprite )
+        self.add( sprite, (120,100) )
 
         sprite.do( Bezier( foo.curva, 5 ) )
 
 class SpriteSpawn( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=120, y=100 )
+        sprite = ActionSprite( self.image )
 
-        self.add( sprite )
+        self.add( sprite, (120,100) )
 
         jump = Jump(100,400,4,5)
         rotate = Rotate( 720, 5 )
@@ -182,9 +178,9 @@ class SpriteSpawn( SpriteLayer ):
 
 class SpriteSequence( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=120, y=100 )
+        sprite = ActionSprite( self.image)
 
-        self.add( sprite )
+        self.add( sprite, (120,100) )
         
         bz = Bezier( foo.curva, 3 )
         move = MoveBy( (0,-250), 3 )
@@ -194,9 +190,9 @@ class SpriteSequence( SpriteLayer ):
 
 class SpriteDelay( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=120, y=100 )
+        sprite = ActionSprite( self.image)
 
-        self.add( sprite )
+        self.add( sprite, (120,100) )
 
         move = MoveBy( (250,0), 3 )
         jump = Jump(100,-250,4,3)
@@ -205,9 +201,9 @@ class SpriteDelay( SpriteLayer ):
 
 class SpriteBlink( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=320, y=240 )
+        sprite = ActionSprite( self.image )
 
-        self.add( sprite )
+        self.add( sprite, (320,240) )
 
         blink = Blink( 10, 2 )
 
@@ -215,10 +211,11 @@ class SpriteBlink( SpriteLayer ):
 
 class SpriteFadeOut( SpriteLayer ):
     def on_enter( self ):
-        sprite1 = ActionSprite( self.image_sister1, x=200, y=240 )
-        sprite2 = ActionSprite( self.image_sister2, x=440, y=240 )
+        sprite1 = ActionSprite( self.image_sister1)
+        sprite2 = ActionSprite( self.image_sister2)
 
-        self.add( sprite1, sprite2 )
+        self.add( sprite1, (200,240))
+        self.add( sprite2, (440, 240))
 
         fadeout = FadeOut( 2 )
         fadein = FadeIn( 2 )
@@ -229,55 +226,56 @@ class SpriteFadeOut( SpriteLayer ):
 
 class SpriteRepeat( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=120, y=100 )
+        sprite = ActionSprite( self.image)
 
-        self.add( sprite )
+        self.add( sprite, (120,100) )
 
-        jump = Jump(100,400,4,3, mode=RestartMode )
+        jump = Jump(100,400,4,3)
 
-        sprite.do( Repeat( jump ) )
+        sprite.do( Repeat( Place((120,100)) + jump ) )
 
 class SpriteRepeat2( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=120, y=100 )
+        sprite = ActionSprite( self.image)
 
-        self.add( sprite )
+        self.add( sprite, (120, 100) )
         
-        jump = Jump(100,400,4,3, mode=PingPongMode )
+        jump = Jump(100,400,4,3 )
 
-        sprite.do( Repeat( jump ) )
+        sprite.do( Repeat( jump + Reverse( jump ) ) )
 
 
 class SpriteRepeatSeq( SpriteLayer ):
     def on_enter( self ):
         sprite = ActionSprite( self.image, x=120, y=100 )
 
-        self.add( sprite )
+        self.add( sprite, (120,100) )
         
         jump = Jump(100,400,4,2)
         move = MoveBy( (0,100), 1 )
         jump2 = Jump(50,-200,4,2)
 
-        sprite.do( Repeat( jump + move + jump2 , 4 ) )
+        sprite.do( (Place((120, 100)) + jump + move + jump2) * 4 )
 
 
 class SpriteRepeatSeq2( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=120, y=100 )
+        sprite = ActionSprite( self.image)
 
-        self.add( sprite )
+        self.add( sprite, (120, 100) )
         
         jump = Jump(50,200,4,1)
         move = MoveBy( (0,100), 0.5 )
         jump2 = Jump(50,-200,4,1)
-
-        sprite.do( Repeat( Repeat(jump,3) + Repeat(move,3) + Repeat(jump2,3) ) )
+        action = jump*3 + move*3 + jump2*3
+        
+        sprite.do( Repeat( action + Reverse(action) ) )
 
 
 class SpriteTrigger( SpriteLayer ):
     def on_enter( self ):
-        sprite = ActionSprite( self.image, x=120, y=100 )
-        self.add( sprite )
+        sprite = ActionSprite( self.image)
+        self.add( sprite, (120,100) )
         
         move = MoveBy( (100,0), 2 )
 
@@ -286,16 +284,17 @@ class SpriteTrigger( SpriteLayer ):
     def say_hello( self ):
         print "HELLO BABY"
 
-        sprite2 = ActionSprite( self.image_sister1, x=270, y=110 )
-        self.add( sprite2 )
+        sprite2 = ActionSprite( self.image_sister1)
+        self.add( sprite2, (270,110))
 
 
 class SpriteReuseAction( SpriteLayer ):
     def on_enter( self ):
-        sprite1 = ActionSprite( self.image_sister1, x=120, y=250 )
-        sprite2 = ActionSprite( self.image_sister2, x=20, y=100 )
+        sprite1 = ActionSprite( self.image_sister1)
+        sprite2 = ActionSprite( self.image_sister2)
 
-        self.add( sprite1, sprite2 )
+        self.add( sprite1, (120,250))
+        self.add( sprite2, (20,100) )
 
         jump = Jump( 150, 400, 4, 4 )
         sprite1.do( jump )
@@ -304,10 +303,11 @@ class SpriteReuseAction( SpriteLayer ):
 
 class SpriteReuseSequence( SpriteLayer ):
     def on_enter( self ):
-        sprite1 = ActionSprite( self.image_sister1, x=120, y=250 )
-        sprite2 = ActionSprite( self.image_sister2, x=20, y=100 )
+        sprite1 = ActionSprite( self.image_sister1)
+        sprite2 = ActionSprite( self.image_sister2)
 
-        self.add( sprite1, sprite2 )
+        self.add( sprite1, (120, 250))
+        self.add( sprite2, (20, 100) )
 
         jump = Jump(50,200,4,2)
         move = MoveBy( (0,100), 2)
@@ -324,13 +324,14 @@ class SpriteReuseSequence( SpriteLayer ):
 
 class SpriteAlterTime( SpriteLayer ):
     def on_enter( self ):
-        sprite1 = ActionSprite( self.image_sister1, x=20, y=100 )
-        sprite2 = ActionSprite( self.image_sister2, x=20, y=300 )
+        sprite1 = ActionSprite( self.image_sister1 )
+        sprite2 = ActionSprite( self.image_sister2 )
 
-        self.add( sprite1, sprite2 )
+        self.add( sprite1, (20,100))
+        self.add( sprite2, (20, 300))
 
         move1 = MoveBy( (500,0), 3 )
-        move2 = MoveBy( (500,0), 3, time_func=accelerate)
+        move2 = Accelerate( MoveBy( (500,0), 3 ) )
 
         sprite1.do( move1 )
         sprite2.do( move2 )
@@ -338,16 +339,19 @@ class SpriteAlterTime( SpriteLayer ):
 
 class SpriteRepeatAlterTime( SpriteLayer ):
     def on_enter( self ):
-        sprite1 = ActionSprite( self.image_sister1, x=20, y=100 )
-        sprite2 = ActionSprite( self.image_sister2, x=20, y=300 )
+        sprite1 = ActionSprite( self.image_sister1 )
+        sprite2 = ActionSprite( self.image_sister2 )
 
-        self.add( sprite1, sprite2 )
+        pos1 = (20,100)
+        pos2 = (20,300)
+        self.add( sprite1, pos1 )
+        self.add( sprite2, pos2 )
 
-        move1 = MoveBy( (500,0), 3 )
-        move2 = MoveBy( (500,0), 3, time_func=accelerate)
-
-        sprite1.do( Repeat(move1) )
-        sprite2.do( Repeat(move2) )
+        action  = MoveBy( (500,0), 3 )
+        move1 = Accelerate( action )
+        move2 = action
+        sprite1.do( Repeat(move1+Reverse(move1)) )
+        sprite2.do( Repeat(move2+ Reverse(move2)) )
 
 
 # accelerate() is a function that is part of actions.py
@@ -367,20 +371,20 @@ tests = {
  5: ("Test #5 - Jump", "sprite.do( Jump( y, x, jumps, duration) )", SpriteJump),
  6: ("Test #6 - Bezier", "sprite.do( Bezier( bezier_conf, duration) )", SpriteBezier),
  7: ("Test #7 - Spawn", "Run 2 (or more) actions at the same time:\n\nsprite.do( Jump() | Rotate() )\nor:\nsprite.do( Spawn( Jump(), Rotate() ) )\nor:\nsprite.do( Jump() )\nsprite.do( Rotate() )", SpriteSpawn),
- 8: ("Test #8 - Sequence", "Run actions sequentialy:\n\nsprite.do( Bezier() + MoveBy() + Jump() )\nor:\nsprite.do( Sequence( Bezier(), MoveBy(), Jump() ) )", SpriteSequence),
+ 8: ("Test #8 - Sequence", "Run actions sequentialy:\n\nsprite.do( Bezier() + MoveBy() + Jump() )", SpriteSequence),
  9: ("Test #9 - Blink", "Show and hide an sprite\nsprite.do( Blink( times, duration ) )\n\nShow() and Hide() are actions too.", SpriteBlink),
  10: ("Test #10 - FadeIn and FadeOut", "Fades in and out and sprite\nsprite1.do( FadeIn( duration ) )\nsprite2.do( FadeOut(duration)).", SpriteFadeOut),
  11: ("Test #11 - Delay","Delays between actions\nsprite.do(MoveBy() + Delay( seconds ) + Jump() )\n\nRandomDelay() is an action too.", SpriteDelay ),
- 12: ("Test #12 - Repeat", "Run the same action in 'RestartMode'\nsprite.do( Repeat( Jump( mode=RepeatMode) )", SpriteRepeat),
- 13: ("Test #13 - Repeat a-la PingPong", "Run the same action in 'PingPongMode' (default mode)\nsprite.do( Repeat( Jump( mode=PingPongMode) )", SpriteRepeat2),
- 14: ("Test #14 - Repeat a Sequence", "Repeat a sequence 4 times\nsprite.do( Repeat( jump + move + jump2, 4 )", SpriteRepeatSeq),
- 15: ("Test #15 - Repeat a Sequence #2", "Repeat a sequence of duplicate Actions\nsprite.do( Repeat( rot + move + rot + move + rot + move + rot ) )", SpriteRepeatMoveBy ),
- 16: ("Test #16 - Repeat Sequence of Repeats", "Repeat a sequence of repeats\nsprite.do( Repeat( Repeat(jump,3) + Repeat(move,3) + Repeat(jump2,3) )", SpriteRepeatSeq2),
+ 12: ("Test #12 - Repeat", "Run the same action in 'RestartMode'\nsprite.do( Repeat( Place( start_pos ) + Jump() ) )", SpriteRepeat),
+ 13: ("Test #13 - Repeat a-la PingPong", "Run the same action in 'PingPongMode' \nsprite.do( Repeat( action + Reverse(action) )", SpriteRepeat2),
+ 14: ("Test #14 - Repeat a Sequence", "Repeat a sequence 4 times\nsprite.do( ( place + jump + move + jump2)*4 )", SpriteRepeatSeq),
+ 15: ("Test #15 - Repeat a Sequence #2", "Repeat a sequence of duplicate Actions\nsprite.do( Repeat( place + rot + move + rot + move + rot + move + rot ) )", SpriteRepeatMoveBy ),
+ 16: ("Test #16 - Repeat Sequence of Repeats", "Repeat a sequence of repeats\nsprite.do( Repeat( jump*3 + move*3 + jump2*3 )", SpriteRepeatSeq2),
  17: ("Test #17 - Triggers","Call a python function\nsprite.do( move + CallFunc( self.say_hello) )\n\nCallFuncS(), another action, passes the sprite as the 1st parameter", SpriteTrigger ),
  18: ("Test #18 - Reusable Actions","Run the same action in different sprites\njump = Jump(150,400,4,4)\nsprite1.do( jump )\nsprite2.do( jump )", SpriteReuseAction),
  19: ("Test #19 - Reusable Actions #2","Run a sequence of actions in different sprites\nThe other sprites can run other actions in parallel.\nseq=Repeat(action1+action2+action3)\nsprite1.do(seq)\nsprite2.do(seq)\nsprite2.do( Repeat( rotate) )", SpriteReuseSequence),
- 20: ("Test #20 - Alter time", "You can change the speed of time:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = MoveBy( (300,0), 5, time_func=accelerate)\nsprite.do(move)\n\nThe other sprite is doing the same action without altering the time", SpriteAlterTime),
- 21: ("Test #21 - Repeat time altered actions", "Repeat actions that were time-altered:\n\ndef accelerate(t, duration):\n\treturn t * (t/duration)\n\nmove = MoveBy( (300,0), 5, time_func=accelerate)\nsprite.do(Repeat(move))\n\nThe other sprite is doing the same action without altering the time", SpriteRepeatAlterTime),
+ 20: ("Test #20 - Alter time", "You can change the speed of time:\n\nmove = Accelerate( MoveBy( (300,0), 5 )\nsprite.do(move)\n\nThe other sprite is doing the same action without altering the time", SpriteAlterTime),
+ 21: ("Test #21 - Reverse time altered actions", "Reverse actions that were time-altered:\nmove = Accelerate( MoveBy( (300,0), 5 ))\nsprite.do(Repeat(move+Reverse(move)))\n\nThe other sprite is doing the same action without altering the time", SpriteRepeatAlterTime),
 
 }
 

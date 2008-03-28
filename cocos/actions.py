@@ -145,19 +145,21 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'Place',                            # placement action
             'MoveTo','MoveBy',                      # movement actions
             'Jump','Bezier',                    # complex movement actions
-            'Rotate','Scale',                   # object modification
+            'Rotate','ScaleTo',                   # object modification
             'Spawn','Sequence','Repeat',        # queueing actions
             'CallFunc','CallFuncS',             # Calls a function
             'Delay','RandomDelay',              # Delays
             'Hide','Show','Blink',              # Hide or Shows the sprite
             'FadeOut','FadeIn',                 # Fades out the sprite
 
-            'ForwardDir','BackwardDir',         # Movement Directions
-            'RestartMode','PingPongMode',        # Repeat modes
 
-            'accelerate',                       # a function that gives the time acceleration
+            'Accelerate',                       # a function that gives the time acceleration
+            'Reverse',
+            'Speed',
             ]
 
+class SpriteGroup(pyglet.graphics.Group):
+    pass
 
 class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.IContainer ):
     '''ActionSprites are sprites that can execute actions.
@@ -166,15 +168,54 @@ class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.I
     
         sprite = ActionSprite('grossini.png')
     '''
-    
     def __init__( self, *args, **kwargs ):
 
         pyglet.sprite.Sprite.__init__(self, *args, **kwargs)
         interfaces.IActionTarget.__init__(self)
         interfaces.IContainer.__init__(self)
+        self.group = None
         
+    def add( self, child, name='', z=0, position=(0,0), rotation=0.0, scale=1.0, color=(255,255,255), opacity=255, anchor_x=0.5, anchor_y=0.5):  
+        """Adds a child to the container
+
+        :Parameters:
+            `child` : object
+                object to be added
+            `name` : str
+                Name of the child
+            `position` : tuple
+                 this is the lower left corner by default
+            `rotation` : int
+                the rotation (degrees)
+            `scale` : int
+                the zoom factor
+            `opacity` : int
+                the opacity (0=transparent, 255=opaque)
+            `color` : tuple
+                the color to colorize the child (RGB 3-tuple)
+            `anchor_x` : float
+                x-point from where the image will be rotated / scaled. Value goes from 0 to 1
+            `anchor_y` : float
+                y-point from where the image will be rotated / scaled. Value goes from 0 to 1
+        """
+        # child must be a subclass of supported_classes
+        if not isinstance( child, self.supported_classes ):
+            raise TypeError("%s is not istance of: %s" % (type(child), self.supported_classes) )
+
+        properties = {'position' : position,
+                      'rotation' : rotation,
+                      'scale' : scale,
+                      'color' : color,
+                      'opacity' : opacity,
+                      'anchor_x' : anchor_x,
+                      'anchor_y' : anchor_y,
+                      }
+        for k,v in properties.items():
+            setattr(child, k, v)
 
 
+ActionSprite.supported_classes = ActionSprite
+    
 class Action(object):
     def __init__(self, *args, **kwargs):
         self.init(*args, **kwargs)
@@ -221,7 +262,9 @@ class Action(object):
     def __mul__(self, other):
         if not isinstance(other, int):
             raise TypeError("Can only multiply actions by ints")
-        return Repeat( self, other )
+        if other <= 1:
+            return self
+        return  Sequence(self, self*(other-1))
         
     def __or__(self, action):
         """Is the Spawn Action"""
@@ -342,7 +385,7 @@ class Accelerate( IntervalAction ):
         action = Accelerate( Rotate( 180, 2 ), 4 )
         sprite.do( action )
     """
-    def init(self, other, rate ):
+    def init(self, other, rate = 2):
         """Init method.
         
         :Parameters:
@@ -363,6 +406,8 @@ class Accelerate( IntervalAction ):
     def update(self, t):
         self.other.update( t**self.rate ) 
 
+    def __reversed__(self):
+        return Accelerate(Reverse(self.other), 1.0/self.rate)
 
 class MoveTo( IntervalAction ):
     """Moves a sprite to the position x,y. x and y are absolute coordinates.
@@ -937,18 +982,19 @@ class Repeat(Action):
             `action` : `Action` instance
                 The action that will be repeated
         """
-        self.action = copy.copy( action )
+        self.original = action
+        self.action = copy.deepcopy( action )
         self.elapsed = 0
         
     def start(self):
         self.action.target = self.target
         self.action.start()
+        
     def step(self, dt):
         self.action.step(dt)
         if self.action.done():
-            self.action.elapsed = None
-            self.action.start()
-    
+            self.action = copy.deepcopy(self.original)
+            self.start()
     def done(self):
         return False
             
