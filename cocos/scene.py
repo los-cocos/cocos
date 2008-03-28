@@ -79,10 +79,7 @@ class Scene(IContainer, IActionTarget, ITransform):
                 c._prepare()
 
         for z,c,p in self.children:
-            glPushMatrix()
-            self.apply_transformation( **p )
             c.on_draw()
-            glPopMatrix()
 
         glPopMatrix()
 

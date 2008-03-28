@@ -19,10 +19,10 @@ class Square(cocos.layer.Layer):
         self.x = x
         self.y = y
         self.size = size
-        self.color = color
+        self.layer_color = color
                 
     def draw(self):
-        gl.glColor4f(*self.color)
+        gl.glColor4f(*self.layer_color)
         x, y = self.x, self.y
         w = x+self.size; h=y+self.size
         gl.glBegin(gl.GL_QUADS)
@@ -40,5 +40,5 @@ if __name__ == "__main__":
     # Create a scene with all those layers
     sc = cocos.scene.Scene(*layers)
     # You can also add layers to a scene later:
-    sc.add( 5.5, Square((1,0,0,0.5), 150,150, 210 ), "big_one" )
+    sc.add( Square((1,0,0,0.5), 150,150, 210 ), name="big_one" )
     director.run( sc )

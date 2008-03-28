@@ -17,44 +17,29 @@ the event and accepts it.
 __docformat__ = 'restructuredtext'
 
 import pyglet
-from pyglet import gl
+from pyglet.gl import *
 
 from director import *
+from interfaces import *
 
 import bisect
 
 __all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer' ]
 
-class Layer(object):
+#class Layer(object):
+class Layer(IContainer, IActionTarget, ITransform):
     """Class that handles events and other important game's behaviors"""
 
     effects = ()
 
     def __init__( self ):
+
+        super( Layer, self ).__init__()
+
         self.batch = pyglet.graphics.Batch()
         self.scheduled = False
         self.objects = []
 
-    def add( self, o, position=(0,0), rotation=0, scale=1, 
-                      opacity=255, color=(255,255,255) ):
-        """Adds an object to the batch. The batch will draw it.
-
-        :Parameters:
-            `o` : Object that supports the 'batch' property, like Sprites,
-                Labels, `ActionSprite` , etc.
-            `position` : the posiition where to place its anchor
-                 this is the lower left corner by default
-            `rotation` : the rotation (degrees)
-            `opacity` : the opacity (0=transparent, 255=opaque)
-            `color` : the color to colorize the sprite (RGB 3-tuple)
-        """
-        self.objects.append( o )
-        o.batch = self.batch
-        o.set_position( *position )
-        o.rotation = rotation
-        o.scale = scale
-        o.opacity = opacity
-        o.color = color
 
     def set_effect (self, e):
         """
@@ -85,9 +70,14 @@ class Layer(object):
             for e in self.effects:
                 e.show ()
         else:
+
+            glPushMatrix()
+            self.transform()
+
             self.batch.draw()
             self.draw()
 
+            glPopMatrix()
 
     def draw( self ):        
         """Subclasses shall override this method if they want to draw custom objects"""
@@ -183,16 +173,16 @@ class ColorLayer(Layer):
         l = ColorLayer( (0.0, 1.0, 0.0, 1.0 ) )
     """
     def __init__(self, *color):
-        self.color = color
+        self.layer_color = color
         super(ColorLayer, self).__init__()
 
     def draw(self):
-        gl.glColor4f(*self.color)
+        glColor4f(*self.layer_color)
         x, y = director.get_window_size()
-        gl.glBegin(gl.GL_QUADS)
-        gl.glVertex2f( 0, 0 )
-        gl.glVertex2f( 0, y )
-        gl.glVertex2f( x, y )
-        gl.glVertex2f( x, 0 )
-        gl.glEnd()
-        gl.glColor4f(1,1,1,1)    
+        glBegin(GL_QUADS)
+        glVertex2f( 0, 0 )
+        glVertex2f( 0, y )
+        glVertex2f( x, y )
+        glVertex2f( x, 0 )
+        glEnd()
+        glColor4f(1,1,1,1)    

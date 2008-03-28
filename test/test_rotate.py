@@ -29,6 +29,4 @@ if __name__ == "__main__":
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
-    main_scene.color = (255,0,0)
-    main_scene.position=(300,200)
     director.run (main_scene)

@@ -7,10 +7,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.actions import ActionSprite
+from cocos.actions import *
 from cocos.layer import *
 import pyglet
-from cocos.test_actions import *
 
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
@@ -62,10 +61,10 @@ if __name__ == "__main__":
     child4_scene.add( ColorLayer( 1.0,1.0, 1.0, 1.0 ) )
     child4_scene.add( TestLayer() )
 
-    main_scene.add( child1_scene, scale=0.5, position=(-320,-240) )
-    main_scene.add( child2_scene, scale=0.5, position=(320,240) )
-    main_scene.add( child3_scene, scale=0.5, position=(-320,240) )
-    main_scene.add( child4_scene, scale=0.5, position=(320,-240) )
+    main_scene.add( child1_scene, scale=0.5, position=(-160,-120) )
+    main_scene.add( child2_scene, scale=0.5, position=(160,120) )
+    main_scene.add( child3_scene, scale=0.5, position=(-160,120) )
+    main_scene.add( child4_scene, scale=0.5, position=(160,-120) )
 
     child1_scene.do( Rotate(-360,3) )
     child2_scene.do( Rotate(-360,3) )

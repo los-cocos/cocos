@@ -24,8 +24,6 @@ class IContainer( object ):
         self.children = []
         self.children_names = {}
 
-        self.add_children( *children )
-
         self.position = (0,0)
         self.scale = 1.0
         self.rotation = 0.0
@@ -35,7 +33,12 @@ class IContainer( object ):
         self.opacity = 255
         self.mesh = None
 
-    def add( self, child, name='', z=0, position=(0,0), rotation=0.0, scale=1.0, color=(255,255,255), opacity=255, anchor_x=0.5, anchor_y=0.5):  
+        self.batch  = None
+
+        self.add_children( *children )
+
+
+    def add( self, child, position=(0,0), rotation=0.0, scale=1.0, color=(255,255,255), opacity=255, anchor_x=0.5, anchor_y=0.5, name=None, z=0 ):  
         """Adds a child to the container
 
         :Parameters:
@@ -45,9 +48,9 @@ class IContainer( object ):
                 Name of the child
             `position` : tuple
                  this is the lower left corner by default
-            `rotation` : int
+            `rotation` : float 
                 the rotation (degrees)
-            `scale` : int
+            `scale` : float
                 the zoom factor
             `opacity` : int
                 the opacity (0=transparent, 255=opaque)
@@ -62,6 +65,9 @@ class IContainer( object ):
         if not isinstance( child, self.supported_classes ):
             raise TypeError("%s is not istance of: %s" % (type(child), self.supported_classes) )
 
+        if self.batch:
+            child.batch = self.batch
+
         properties = {'position' : position,
                       'rotation' : rotation,
                       'scale' : scale,
@@ -73,6 +79,9 @@ class IContainer( object ):
 
         elem = z, child, properties
         bisect.insort( self.children,  elem )
+
+        for k,v in properties.items():
+            setattr(child, k, v)
 
         if name:
             self.children_names[ name ] = child
@@ -248,7 +257,9 @@ class IActionTarget(object):
 class ITransform( object ):
 
     def __init__( self ):
+
         super( ITransform, self ).__init__()
+
         self.color = (255,255,255)
         self.opacity = 255
         self.position = (0,0)
@@ -256,7 +267,6 @@ class ITransform( object ):
         self.rotation = 0.0
         self.anchor_x = 0.5
         self.anchor_y = 0.5
-
 
     def transform( self ):
         """Apply ModelView transformations"""
@@ -268,8 +278,8 @@ class ITransform( object ):
             glColor4ub( * color )
 
         if self.anchor_x != 0 or self.anchor_y != 0:
-            rel_x = self.anchor_x * x
-            rel_y = self.anchor_x * y
+            rel_x = self.anchor_x * x + self.position[0]
+            rel_y = self.anchor_y * y + self.position[1]
             glTranslatef( rel_x, rel_y, 0 )
 
         if self.scale != 1.0:

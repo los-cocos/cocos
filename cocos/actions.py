@@ -143,9 +143,9 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'Action','IntervalAction',          # Action classes
 
             'Place',                            # placement action
-            'MoveTo','MoveBy',                      # movement actions
+            'MoveTo','MoveBy',                  # movement actions
             'Jump','Bezier',                    # complex movement actions
-            'Rotate','ScaleTo',                   # object modification
+            'Rotate','ScaleTo','ScaleBy',       # object modification
             'Spawn','Sequence','Repeat',        # queueing actions
             'CallFunc','CallFuncS',             # Calls a function
             'Delay','RandomDelay',              # Delays
@@ -685,7 +685,7 @@ class Place( InstantAction ):
 
     Example::
 
-        action = Place( (320,240,0) )
+        action = Place( (320,240) )
         sprite.do( action )
     """
     def init(self, position):

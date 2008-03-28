@@ -10,7 +10,6 @@ from cocos.director import director
 from cocos.actions import ActionSprite
 from cocos.layer import *
 import pyglet
-from cocos.test_actions import *
 
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
