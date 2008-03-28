@@ -15,9 +15,8 @@ from pyglet.gl import *
 from interfaces import *
 from director import director
 from layer import *
-from test_actions import *
 
-class Scene(IContainer, ActionObject):
+class Scene(IContainer, IActionTarget, ITransform):
     """
     """
    
