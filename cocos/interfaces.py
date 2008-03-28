@@ -118,51 +118,6 @@ class IContainer( object ):
             self.remove( child )
 
 
-    def apply_transformation( self, color=(255,255,255), opacity=255, scale=1.0, rotation=0.0, position=(0,0), anchor_x=0.5, anchor_y=0.5 ):
-        """Apply a GL transformation
-
-        :Parameters:
-            `position` : tuple
-                 this is the lower left corner by default
-            `rotation` : int
-                the rotation (degrees)
-            `scale` : int
-                the zoom factor
-            `color` : tuple
-                the color to colorize the child (RGB 3-tuple)
-            `opacity` : int
-                the opacity (0=transparent, 255=opaque)
-            `anchor_x` : float
-                x-point from where the image will be rotated / scaled. Value goes from 0 to 1
-            `anchor_y` : float
-                y-point from where the image will be rotated / scaled. Value goes from 0 to 1
-        """
-
-        x,y = director.get_window_size()
-
-        c = color + (opacity,)
-        if c != (255,255,255,255):
-            glColor4ub( * c )
-
-        # Anchor point for scaling and rotation
-        if self.anchor_x != 0 or self.anchor_y != 0:
-            rel_x = self.anchor_x * x
-            rel_y = self.anchor_x * y
-            glTranslatef( rel_x, rel_y, 0 )
-
-        if scale != 1.0:
-            glScalef( scale, scale, 1)
-
-        if rotation != 0.0:
-            glRotatef( -rotation, 0, 0, 1)
-
-        # Anchor, go back to original position
-        if self.anchor_x != 0 or self.anchor_y != 0:
-            glTranslatef( -rel_x, -rel_y, 0 )
-
-        if position != (0,0):
-            glTranslatef( position[0], position[1], 0 )
-
 class IActionTarget(object):
     def __init__(self):
 
@@ -192,7 +147,7 @@ class IActionTarget(object):
 
         if not self.scheduled:
             self.scheduled = True
-            pyglet.clock.schedule( self.step )
+            pyglet.clock.schedule( self._step )
         return a
 
     def remove_action(self, action ):
@@ -208,13 +163,13 @@ class IActionTarget(object):
         if not self.scheduled:
             return
         self.scheduled = False
-        pyglet.clock.unschedule( self.step )
+        pyglet.clock.unschedule( self._step )
         
     def resume(self):
         if self.scheduled:
             return
         self.scheduled = True
-        pyglet.clock.schedule( self.step )
+        pyglet.clock.schedule( self._step )
         self.skip_frame = True
         
         
@@ -223,7 +178,7 @@ class IActionTarget(object):
         for action in self.actions:
             self.to_remove.append( action )
 
-    def step(self, dt):
+    def _step(self, dt):
         """This method is called every frame.
 
         :Parameters:
@@ -240,7 +195,7 @@ class IActionTarget(object):
         
         if len( self.actions ) == 0:
             self.scheduled = False
-            pyglet.clock.unschedule( self.step )
+            pyglet.clock.unschedule( self._step )
 
         for action in self.actions:
             action.step(dt)

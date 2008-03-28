@@ -37,8 +37,7 @@ class Layer(IContainer, IActionTarget, ITransform):
         super( Layer, self ).__init__()
 
         self.batch = pyglet.graphics.Batch()
-        self.scheduled = False
-        self.objects = []
+        self.scheduled_layer = False
 
 
     def set_effect (self, e):
@@ -105,13 +104,13 @@ class Layer(IContainer, IActionTarget, ITransform):
     # helper functions
     def disable_step( self ):
         """Disables the step callback"""
-        self.scheduled = False
+        self.scheduled_layer = False
         pyglet.clock.unschedule( self.step )
 
     def enable_step( self ):
         """Enables the step callback. It calls the `step()` method every frame"""
-        if not self.scheduled:
-            self.scheduled = True 
+        if not self.scheduled_layer:
+            self.scheduled_layer = True 
             pyglet.clock.schedule( self.step )
 
 #
