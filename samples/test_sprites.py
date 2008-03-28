@@ -98,19 +98,9 @@ class SpriteLayer( Layer ):
 
 class SpriteMoveTo( SpriteLayer ):
     def on_enter( self ):
-        sprite1 = ActionSprite( self.image, x=320, y=100 )
-        sprite2 = ActionSprite( self.image, x=320, y=200 )
         sprite3 = ActionSprite( self.image, x=320, y=300 )
-
-        self.add(sprite1, (320,100))
-        self.add(sprite2, (320,200))
         self.add(sprite3, (320,300))
-
         sprite3.do( MoveTo( (620,300), 4 ) )
-        sprite1.do( Accelerate( MoveTo( (620,100), 4) ) )
-        sprite2.do( Accelerate( Accelerate( MoveTo( (620,200), 4) ) ))
-        
-
 
 
 class SpriteMoveBy( SpriteLayer ):
