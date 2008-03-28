@@ -27,20 +27,22 @@ class PictureLayer(Layer):
         img2 = pyglet.image.load ('grossinis_sister1.png')
         img3 = pyglet.image.load ('grossinis_sister2.png')
 
-        sprite1 = ActionSprite( img0, x=20, y=40 )
-        sprite1.do( Repeat( MoveBy( (500,0), 5 ) ) )
+        sprite1 = ActionSprite( img0 )
+        sprite1.do( Repeat( MoveBy( (500,0), 5 ) + MoveBy( (-500,0), 5 ) ))
 
-        sprite2 = ActionSprite( img1, x=20, y=80 )
-        sprite2.do( Repeat( MoveBy( (500,0), 4 ) ) )
+        sprite2 = ActionSprite( img1 )
+        sprite2.do( Repeat( MoveBy( (500,0), 4 ) + MoveBy( (-500,0), 4 ) ) )
 
-        sprite3 = ActionSprite( img2, x=20, y=180 )
-        sprite3.do( Repeat( MoveBy( (500,0), 3 ) ) )
+        sprite3 = ActionSprite( img2 )
+        sprite3.do( Repeat( MoveBy( (500,0), 3 ) + MoveBy( (-500,0), 3 ) ) )
 
-        sprite4 = ActionSprite( img3, x=20, y=280 )
-        sprite4.do( Repeat( MoveBy( (500,0), 2 ) ) )
+        sprite4 = ActionSprite( img3 )
+        sprite4.do( Repeat( MoveBy( (500,0), 2 ) + MoveBy( (-500,0), 2 ) ) )
 
-        for sprite in ( sprite1, sprite2, sprite3, sprite4 ):
-            self.add (sprite)
+        self.add( sprite1, position=(20,40) )
+        self.add( sprite2, position=(20,120) )
+        self.add( sprite3, position=(20,210) )
+        self.add( sprite4, position=(20,300) )
 
     def on_exit( self ):
         for o in self.objects:
