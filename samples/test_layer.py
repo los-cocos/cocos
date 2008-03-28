@@ -90,20 +90,24 @@ class SpriteLayer ( Layer ):
         self.image_sister2.anchor_x = self.image_sister2.width / 2
         self.image_sister2.anchor_y = self.image_sister2.height / 2
 
-        self.sprite1 = ActionSprite( self.image, x=320, y=240, batch=self.batch )
-        self.sprite2 = ActionSprite( self.image_sister1, x=620, y=100, batch=self.batch )
-        self.sprite3 = ActionSprite( self.image_sister2, x=20, y=100, batch=self.batch )
+        sprite1 = ActionSprite( self.image )
+        sprite2 = ActionSprite( self.image_sister1 )
+        sprite3 = ActionSprite( self.image_sister2 )
 
         ju_right = Jump( y=100, x=600, jumps=4, duration=5 )
         ju_left = Jump( y=100, x=-600, jumps=4, duration=5 )
 
-        sc = Scale( 9, 5 )
+        self.add( sprite1, (320,240) )
+        self.add( sprite2, (620,100) )
+        self.add( sprite3, (20,100) )
+
+        sc = ScaleTo( 9, 5 )
         rot = Rotate( 180, 5 )
 
-        self.sprite1.do( Repeat( sc ) )
-        self.sprite1.do( Repeat( rot ) )
-        self.sprite2.do( Repeat( ju_left ) )
-        self.sprite3.do( Repeat( ju_right ) )
+        sprite1.do( Repeat( sc + Reverse(rot) ) )
+        sprite1.do( Repeat( rot + Reverse(rot) ) )
+        sprite2.do( Repeat( ju_left + Reverse(ju_left) ) )
+        sprite3.do( Repeat( ju_right + Reverse(ju_right) ) )
 
 class MainMenu(Menu):
     def __init__( self ):
