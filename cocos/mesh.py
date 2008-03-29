@@ -4,6 +4,7 @@
 #
 '''Mesh effects'''
 
+import pyglet
 from pyglet import image
 from pyglet.gl import *
 
