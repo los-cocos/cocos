@@ -43,7 +43,7 @@ Assuming the following XML file called "example.xml"::
 
 You may load that resource and examine it::
 
-  >>> r = Resource.load('example.xml')
+  >>> r = load('example.xml')
   >>> r['level1']
 
 XXX TBD
@@ -114,6 +114,7 @@ __version__ = '$Id: resource.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 
 import os
 import math
+import weakref
 import xml.dom
 import xml.dom.minidom
 
@@ -123,6 +124,9 @@ import cocos
 
 class ResourceError(Exception):
     pass
+
+# XXX this should use pyglet.resource to load all resources
+# XXX (though how path extension works isn't clear)
 
 class Resource(dict):
     cache = {}
@@ -144,30 +148,6 @@ class Resource(dict):
         finally:
             dom.unlink()
 
-    NOT_LOADED = 'Not Loaded'
-    @classmethod
-    def load(cls, filename, paths=None):
-        '''Load the resource from the XML in the specified file.
-        '''
-        # make sure we can find files relative to this one
-        dirname = os.path.dirname(filename)
-        if dirname:
-            if paths:
-                paths = list(paths)
-            else:
-                paths = []
-            paths.append(dirname)
-
-        if filename in cls.cache:
-            if cls.cache[filename] is cls.NOT_LOADED:
-                raise ResourceError('Loop in XML files loading "%s"'%filename)
-            return cls.cache[filename]
-
-        cls.cache[filename] = cls.NOT_LOADED
-        obj = cls(filename, paths)
-        cls.cache[filename] = obj
-        return obj
-
     def find_file(self, filename):
         if os.path.isabs(filename):
             return filename
@@ -185,13 +165,11 @@ class Resource(dict):
 
     def requires_factory(self, tag):
         filename = self.find_file(tag.getAttribute('file'))
-        # check opened resource files cache
-
-        resource = Resource.load(filename)
+        resource = load(filename)
 
         ns = tag.getAttribute('namespace')
         if ns:
-            self.namespaces[ns] = resource.file
+            self.namespaces[ns] = resource
         else:
             # copy over all the resources from the require'd file
             # last man standing wins
@@ -224,10 +202,29 @@ class Resource(dict):
             return resources[ref]
         return self[ref]
 
+_cache = weakref.WeakValueDictionary()
+class _NOT_LOADED(object): pass
 def load(filename, paths=None):
     '''Load resource(s) defined in the indicated XML file.
     '''
-    return Resource.load(filename, paths)
+    # make sure we can find files relative to this one
+    dirname = os.path.dirname(filename)
+    if dirname:
+        if paths:
+            paths = list(paths)
+        else:
+            paths = []
+        paths.append(dirname)
+
+    if filename in _cache:
+        if _cache[filename] is _NOT_LOADED:
+            raise ResourceError('Loop in XML files loading "%s"'%filename)
+        return _cache[filename]
+
+    _cache[filename] = _NOT_LOADED
+    obj = Resource(filename, paths)
+    _cache[filename] = obj
+    return obj
 
 #
 # XML PROPERTY PARSING
@@ -445,11 +442,14 @@ class ScrollableLayer(cocos.layer.Layer):
 
     The scrolling is usually managed by a ScrollingManager.
     '''
-    offset_x, offset_y = 0, 0
+    viewport_x, viewport_y = 0, 0
+    def set_viewport(self, x, y, w, h):
+        self.viewport_x, self.viewport_y = x, y
+        self.viewport_w, self.viewport_h = w, h
 
     def on_draw(self):
         pyglet.gl.glPushMatrix()
-        pyglet.gl.glTranslatef(-self.offset_x, -self.offset_y, 0)
+        pyglet.gl.glTranslatef(-self.viewport_x, -self.viewport_y, 0)
         super(ScrollableLayer, self).on_draw()
         pyglet.gl.glPopMatrix()
 
@@ -465,18 +465,24 @@ class MapLayer(ScrollableLayer):
         (x, y, z)       -- offset of map top left from origin in pixels
         cells           -- array [x][y] of Cell instances
     '''
+    def __init__(self):
+        self._sprites = {}
+        super(MapLayer, self).__init__()
 
-    _dirty = True
-    def on_draw(self):
-        if self._dirty:
-            # XXX be smarter about this
-            for col in self.cells:
-                for cell in col:
-                    x, y = cell.origin[:2]
-                    cell._sprite = pyglet.sprite.Sprite(cell.tile.image,
-                        x=x, y=y, batch=self.batch)
-            self._dirty = False
-        super(MapLayer, self).on_draw()
+    def set_viewport(self, x, y, w, h):
+        super(MapLayer, self).set_viewport(x, y, w, h)
+
+        # update the sprites set
+        keep = set()
+        for cell in self.get_in_region(x, y, x+w, y+h):
+            cx, cy = key = cell.origin[:2]
+            keep.add(key)
+            if key not in self._sprites:
+                self._sprites[key] = pyglet.sprite.Sprite(cell.tile.image,
+                    x=cx, y=cy, batch=self.batch)
+        for k in list(self._sprites):
+            if k not in keep:
+                del self._sprites[k]
 
 class RegularTesselationMapLayer(MapLayer):
     '''A class of MapLayer that has a regular array of Cells.
@@ -909,6 +915,10 @@ class ScrollingManager(list):
     def __init__(self, viewport):
         self.viewport = viewport
 
+    def append(self, item):
+        super(ScrollingManager, self).append(item)
+        item.set_viewport(0, 0, self.viewport.width, self.viewport.height)
+
     def set_focus(self, fx, fy):
         '''Determine the focal point of the view based on focus (fx, fy),
         and registered layers.
@@ -964,7 +974,7 @@ class ScrollingManager(list):
 
         # translate the layers to match focus
         for layer in self:
-            layer.offset_x, layer.offset_y = fx-w2, fy-h2
+            layer.set_viewport(fx-w2, fy-h2, self.viewport.width, self.viewport.height)
 
         return map(int, (fx, fy))
 
