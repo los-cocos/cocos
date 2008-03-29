@@ -101,10 +101,10 @@ class SpriteLayer ( Layer ):
         self.add( sprite2, (620,100) )
         self.add( sprite3, (20,100) )
 
-        sc = ScaleTo( 9, 5 )
+        sc = ScaleBy( 9, 5 )
         rot = Rotate( 180, 5 )
 
-        sprite1.do( Repeat( sc + Reverse(rot) ) )
+        sprite1.do( Repeat( sc + Reverse(sc) ) )
         sprite1.do( Repeat( rot + Reverse(rot) ) )
         sprite2.do( Repeat( ju_left + Reverse(ju_left) ) )
         sprite3.do( Repeat( ju_right + Reverse(ju_right) ) )
