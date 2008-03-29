@@ -808,8 +808,8 @@ class Sequence(IntervalAction):
                 List of actions to be sequenced
         """
         
-        if not hasattr(two, "duration") or not hasattr(one, "duration"):
-            raise Exception("You can only sequences with finite duration, not repeats or others like that")
+        if not hasattr(one, "duration") or not hasattr(one, "duration"):
+            raise Exception("You can only sequence actions with finite duration, not repeats or others like that")
         self.one = copy.deepcopy(one)
         self.two = copy.deepcopy(two)
         self.actions = [self.one, self.two]
@@ -966,8 +966,25 @@ class Spawn(IntervalAction):
     def __reversed__(self):
         return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )
     
+class DoAction(InstantAction):
+    """Calls the action when executed.
+    Usefull if you want to sequence actions of infinite duration.
+    
+    Example::
 
-       
+        action = Repeat( dance )
+        sprite.do( go_home + DoAction( dance ) )
+    """
+    def init(self, action):
+        self.action = action
+        
+    def start(self):
+        self.target.do( self.action )
+
+    def __reversed__(self):
+        return self
+    
+    
 class Repeat(Action):
     """Repeats an action forever. 
 
