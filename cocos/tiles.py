@@ -4,8 +4,19 @@
 Tile Maps
 =========
 
-This module provides the Resource class which loads XML resource files
-which may contain scene2d image files, atlases, tile sets and maps.
+Tile maps are made of two components:
+
+tiles
+   Tiles may be stand-alone or part of a TileSet.
+maps
+   MapLayers are made of either rectangular or hexagonal Cells which
+   reference the tiles used to draw the cell.
+
+These may be constructed manually or loaded from XML resource files which
+are used to store the specification of tile sets and tile maps. A given
+resource XML file may define multiple tile sets and maps and may even
+reference other external XML resource files. This would allow a single
+tile set to be used by multiple tile maps.
 
 --------------------------
 The XML File Specification
@@ -58,11 +69,10 @@ If you wish to avoid id clashes you may supply a namespace:
 
     <require file="road-tiles.xml" namespace="road" />
 
-Other tags within <resource> are handled by factories. Standard factories
-exist for:
+Other tags within <resource> are:
 
 <image file="" id="">
-    Loads the file into a scene2d.Image2d object.
+    Loads file with pyglet.image.load.
 
 <imageatlas file="" [id="" size="x,y"]>
     Sets up an image atlas for child <image> tags to use. Child tags are of
@@ -74,7 +84,7 @@ exist for:
     child <image> tags must provide one.
 
 <tileset id="">
-    Sets up a scene2d.TileSet object. Child tags are of the form:
+    Sets up a TileSet object. Child tags are of the form:
 
        <tile id="">
          [<image ...>]
@@ -84,7 +94,7 @@ exist for:
     completely empty).
 
 <rectmap id="" tile_size="" [origin=""]>
-    Sets up a scene2d.RectMap object. Child tags are of the form:
+    Sets up a RectMap object. Child tags are of the form:
 
        <column>
         <cell tile="" />
@@ -331,6 +341,8 @@ def tileset_factory(resource, tag):
     return tileset
 
 class Tile(object):
+    '''Tiles hold an image and some optional properties.
+    '''
     def __init__(self, id, properties, image, offset=None):
         super(Tile, self).__init__()
         self.id = id
@@ -344,7 +356,7 @@ class Tile(object):
                 self.properties)
 
 class TileSet(dict):
-    '''Contains a tile set loaded from a map file and optionally image(s).
+    '''Contains a set of Tile objects referenced by some id.
     '''
     def __init__(self, id, properties):
         self.id = id
@@ -429,6 +441,10 @@ def hex_width(height):
     return int(height / math.sqrt(3)) * 2
 
 class ScrollableLayer(cocos.layer.Layer):
+    '''A Cocos Layer that is scrollable in a Scene.
+
+    The scrolling is usually managed by a ScrollingManager.
+    '''
     offset_x, offset_y = 0, 0
 
     def on_draw(self):
