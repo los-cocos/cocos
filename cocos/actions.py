@@ -157,6 +157,8 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'Accelerate',                       # a function that gives the time acceleration
             'Reverse',
             'Speed',
+
+            'CosWave',
             ]
 
 class SpriteGroup(pyglet.graphics.Group):
@@ -1067,7 +1069,28 @@ class Repeat(Action):
             
     def done(self):
         return False
-            
 
 
-        
+class CosWave( IntervalAction ):
+
+    def start( self ):
+        self.target.mesh.active = True
+
+    def init( self, duration ):
+        self.duration = duration
+
+    def done( self ):
+        r = super(CosWave,self).done()
+        if r:
+            self.target.mesh.active = False
+        return r
+
+    def update( self, t ):
+        for p in range(len(self.target.mesh.vertex_points)/2):
+            x = self.target.mesh.vertex_points[2*p]
+            y = self.target.mesh.vertex_points[2*p+1]
+            scale = abs(math.cos ( float(x)/(y+0.5) + self.elapsed ) ) + 1
+            x = (x-25) * scale + 25
+            y = (y-50) * scale + 50
+            self.target.mesh.vertex_list.vertices[2*p] = 200+int(x)
+            self.target.mesh.vertex_list.vertices[2*p+1] = 200+int(y)

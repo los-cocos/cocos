@@ -27,7 +27,7 @@ import bisect
 __all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer' ]
 
 #class Layer(object):
-class Layer(IContainer, IActionTarget, ITransform):
+class Layer(IContainer, IActionTarget):
     """Class that handles events and other important game's behaviors"""
 
     effects = ()

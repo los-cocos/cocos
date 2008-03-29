@@ -15,3 +15,4 @@ import layer
 import menu
 import path
 import scene
+import mesh

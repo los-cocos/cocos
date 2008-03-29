@@ -16,7 +16,7 @@ from interfaces import *
 from director import director
 from layer import *
 
-class Scene(IContainer, IActionTarget, ITransform):
+class Scene(IContainer, IActionTarget):
     """
     """
    
@@ -50,7 +50,7 @@ class Scene(IContainer, IActionTarget, ITransform):
         """
         Called every time just before the scene is run.
         """        
-        for z,c,p in self.children:
+        for z,c in self.children:
             if isinstance(c,Layer):
                 director.window.push_handlers( c )
             c.on_enter()
@@ -60,7 +60,7 @@ class Scene(IContainer, IActionTarget, ITransform):
         """      
         Called every time just before the scene leaves the stage
         """
-        for z,c,p in self.children:
+        for z,c in self.children:
             c.on_exit()
             if isinstance(c,Layer):
                 director.window.pop_handlers()
@@ -72,14 +72,20 @@ class Scene(IContainer, IActionTarget, ITransform):
         # Apply transformation to current scene
         glPushMatrix()
 
+        if self.mesh.active:
+            self.mesh.before_draw()
+
         self.transform()
 
-        for z,c,p in self.children:
+        for z,c in self.children:
             if isinstance(c,Layer):
                 c._prepare()
 
-        for z,c,p in self.children:
+        for z,c in self.children:
             c.on_draw()
+
+        if self.mesh.active:
+            self.mesh.after_draw()
 
         glPopMatrix()
 

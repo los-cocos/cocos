@@ -9,8 +9,9 @@ import bisect, copy
 from pyglet.gl import *
 
 from director import director
+from mesh import Mesh
 
-__all__ = ['IContainer','IActionTarget','ITransform']
+__all__ = ['IContainer','IActionTarget',]
 
 
 class IContainer( object ):
@@ -31,7 +32,7 @@ class IContainer( object ):
         self.anchor_y = 0.5
         self.color = (255,255,255)
         self.opacity = 255
-        self.mesh = None
+        self.mesh = Mesh()
 
         self.batch  = None
 
@@ -77,7 +78,7 @@ class IContainer( object ):
                       'anchor_y' : anchor_y,
                       }
 
-        elem = z, child, properties
+        elem = z, child 
         bisect.insort( self.children,  elem )
 
         for k,v in properties.items():
@@ -103,7 +104,7 @@ class IContainer( object ):
             `child` : object
                 object to be removed
         """
-        self.children = [ (z,c,p) for (z,c,p) in self.children if c != child ]
+        self.children = [ (z,c) for (z,c) in self.children if c != child ]
 
 
     def remove_by_name( self, name ):
@@ -117,6 +118,31 @@ class IContainer( object ):
             child = self.children_names.pop( name )
             self.remove( child )
 
+    def transform( self ):
+        """Apply ModelView transformations"""
+
+        x,y = director.get_window_size()
+
+        color = tuple(self.color) + (self.opacity,)
+        if color != (255,255,255,255):
+            glColor4ub( * color )
+
+        if self.anchor_x != 0 or self.anchor_y != 0:
+            rel_x = self.anchor_x * x + self.position[0]
+            rel_y = self.anchor_y * y + self.position[1]
+            glTranslatef( rel_x, rel_y, 0 )
+
+        if self.scale != 1.0:
+            glScalef( self.scale, self.scale, 1)
+
+        if self.rotation != 0.0:
+            glRotatef( -self.rotation, 0, 0, 1)
+
+        if self.anchor_x != 0 or self.anchor_y != 0:
+            glTranslatef( -rel_x, -rel_y, 0 )
+
+        if self.position != (0,0):
+            glTranslatef( self.position[0], self.position[1], 0 )
 
 class IActionTarget(object):
     def __init__(self):
@@ -203,48 +229,3 @@ class IActionTarget(object):
                 self.remove_action( action )
                 
     
-#
-# This class / methods should be inside IActionTarget
-# Since ActionTarget works with this attributes,
-# but since pyglet.Sprite has them and cocos Sprite 
-# is a subclass of IActionTarget, we splitted the class in 2
-#
-class ITransform( object ):
-
-    def __init__( self ):
-
-        super( ITransform, self ).__init__()
-
-        self.color = (255,255,255)
-        self.opacity = 255
-        self.position = (0,0)
-        self.scale = 1.0
-        self.rotation = 0.0
-        self.anchor_x = 0.5
-        self.anchor_y = 0.5
-
-    def transform( self ):
-        """Apply ModelView transformations"""
-
-        x,y = director.get_window_size()
-
-        color = tuple(self.color) + (self.opacity,)
-        if color != (255,255,255,255):
-            glColor4ub( * color )
-
-        if self.anchor_x != 0 or self.anchor_y != 0:
-            rel_x = self.anchor_x * x + self.position[0]
-            rel_y = self.anchor_y * y + self.position[1]
-            glTranslatef( rel_x, rel_y, 0 )
-
-        if self.scale != 1.0:
-            glScalef( self.scale, self.scale, 1)
-
-        if self.rotation != 0.0:
-            glRotatef( -self.rotation, 0, 0, 1)
-
-        if self.anchor_x != 0 or self.anchor_y != 0:
-            glTranslatef( -rel_x, -rel_y, 0 )
-
-        if self.position != (0,0):
-            glTranslatef( self.position[0], self.position[1], 0 )
