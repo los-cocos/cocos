@@ -374,6 +374,9 @@ class Speed( IntervalAction ):
         
     def update(self, t):
         self.other.update( t ) 
+        
+    def __reversed__(self):
+        return Speed( Reverse( self.other ), self.speed )
 
 class Accelerate( IntervalAction ):
     """
@@ -547,7 +550,7 @@ class ScaleBy(ScaleTo):
 
     def start( self ):
         self.start_scale = self.target.scale
-        self.delta = self.start_scale*self.end_scale
+        self.delta =  self.start_scale*self.end_scale - self.start_scale
 
     def __reversed__(self):
         return ScaleBy( 1.0/self.end_scale, self.duration )
@@ -805,6 +808,8 @@ class Sequence(IntervalAction):
                 List of actions to be sequenced
         """
         
+        if not hasattr(two, "duration") or not hasattr(one, "duration"):
+            raise Exception("You can only sequences with finite duration, not repeats or others like that")
         self.one = copy.deepcopy(one)
         self.two = copy.deepcopy(two)
         self.actions = [self.one, self.two]
@@ -819,7 +824,7 @@ class Sequence(IntervalAction):
         self.two.target = self.target
 
     def __repr__(self):
-        return "( %s + %s [%f, %f])" %( self.one, self.two, self.duration, self.split)
+        return "( %s + %s )" %( self.one, self.two )
     
     def update(self, t):
         start_t = 0
@@ -995,6 +1000,7 @@ class Repeat(Action):
         if self.action.done():
             self.action = copy.deepcopy(self.original)
             self.start()
+            
     def done(self):
         return False
             
