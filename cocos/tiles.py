@@ -1,0 +1,954 @@
+#!/usr/bin/env python
+
+'''
+Tile Maps
+=========
+
+This module provides the Resource class which loads XML resource files
+which may contain scene2d image files, atlases, tile sets and maps.
+
+--------------------------
+The XML File Specification
+--------------------------
+
+Assuming the following XML file called "example.xml"::
+
+    <?xml version="1.0"?>
+    <resource>
+      <require file="ground-tiles.xml" namespace="ground" />
+     
+      <rectmap id="level1">
+       <column>
+        <cell>
+          <tile ref="ground:grass" />
+        </cell>
+        <cell>
+          <tile ref="ground:house" />
+          <property type="bool" name="secretobjective" value="True" />
+        </cell>
+       </column>
+      </map>
+    </resource>
+
+You may load that resource and examine it::
+
+  >>> r = Resource.load('example.xml')
+  >>> r['level1']
+
+XXX TBD
+
+
+-----------------
+XML file contents
+-----------------
+
+XML resource files must contain a document-level tag <resource>::
+
+    <?xml version="1.0"?>
+    <resource>
+     ...
+    </resource>
+
+You may draw in other resource files by using the <require> tag:
+
+    <require file="road-tiles.xml" />
+
+This will load "road-tiles.xml" into the resource's namespace.
+If you wish to avoid id clashes you may supply a namespace:
+
+    <require file="road-tiles.xml" namespace="road" />
+
+Other tags within <resource> are handled by factories. Standard factories
+exist for:
+
+<image file="" id="">
+    Loads the file into a scene2d.Image2d object.
+
+<imageatlas file="" [id="" size="x,y"]>
+    Sets up an image atlas for child <image> tags to use. Child tags are of
+    the form:
+
+        <image offset="" id="" [size=""]>
+
+    If the <imageatlas> tag does not provide a size attribute then all
+    child <image> tags must provide one.
+
+<tileset id="">
+    Sets up a scene2d.TileSet object. Child tags are of the form:
+
+       <tile id="">
+         [<image ...>]
+       </tile>
+
+    The <image> tag is optional, this tiles may have only properties (or be
+    completely empty).
+
+<rectmap id="" tile_size="" [origin=""]>
+    Sets up a scene2d.RectMap object. Child tags are of the form:
+
+       <column>
+        <cell tile="" />
+       </column>
+
+Most tags may additionally have properties specified as:
+
+   <property [type=""] name="" value="" />
+
+Where type is one of "unicode", "int", "float" or "bool". The property will
+be a unicode string by default if no type is specified.
+
+'''
+
+__docformat__ = 'restructuredtext'
+__version__ = '$Id: resource.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
+
+import os
+import math
+import xml.dom
+import xml.dom.minidom
+
+import pyglet
+
+import cocos
+
+class ResourceError(Exception):
+    pass
+
+class Resource(dict):
+    cache = {}
+    def __init__(self, filename, paths=None):
+        self.filename = filename
+        if paths is None:
+            self.paths = []
+        else:
+            self.paths = paths
+
+        self.namespaces = {}        # map local name to filename
+        dom = xml.dom.minidom.parse(filename)
+        tag = dom.documentElement
+        if tag.tagName != 'resource':
+            raise ResourceError('document is <%s> instead of <resource>'%
+                tag.tagName)
+        try:
+            self.handle(dom.documentElement)
+        finally:
+            dom.unlink()
+
+    NOT_LOADED = 'Not Loaded'
+    @classmethod
+    def load(cls, filename, paths=None):
+        '''Load the resource from the XML in the specified file.
+        '''
+        # make sure we can find files relative to this one
+        dirname = os.path.dirname(filename)
+        if dirname:
+            if paths:
+                paths = list(paths)
+            else:
+                paths = []
+            paths.append(dirname)
+
+        if filename in cls.cache:
+            if cls.cache[filename] is cls.NOT_LOADED:
+                raise ResourceError('Loop in XML files loading "%s"'%filename)
+            return cls.cache[filename]
+
+        cls.cache[filename] = cls.NOT_LOADED
+        obj = cls(filename, paths)
+        cls.cache[filename] = obj
+        return obj
+
+    def find_file(self, filename):
+        if os.path.isabs(filename):
+            return filename
+        if os.path.exists(filename):
+            return filename
+        for path in self.paths:
+            fn = os.path.join(path, filename)
+            if os.path.exists(fn):
+                return fn
+        raise ResourceError('File "%s" not found in any paths'%filename)
+
+    def resource_factory(self, tag):
+        for tag in tag.childNodes:
+            self.handle(tag)
+
+    def requires_factory(self, tag):
+        filename = self.find_file(tag.getAttribute('file'))
+        # check opened resource files cache
+
+        resource = Resource.load(filename)
+
+        ns = tag.getAttribute('namespace')
+        if ns:
+            self.namespaces[ns] = resource.file
+        else:
+            # copy over all the resources from the require'd file
+            # last man standing wins
+            self.update(resource)
+
+    factories = {
+        'resource': resource_factory,
+        'requires': requires_factory,
+    }
+    @classmethod
+    def register_factory(cls, name):
+        def decorate(func):
+            cls.factories[name] = func
+            return func
+        return decorate
+
+    def handle(self, tag):
+        if not hasattr(tag, 'tagName'): return
+        ref = tag.getAttribute('ref')
+        if not ref:
+            return self.factories[tag.tagName](self, tag)
+        return self.get_resource(ref)
+
+    def add_resource(self, id, resource):
+        self[id] = resource
+    def get_resource(self, ref):
+        if ':' in ref:
+            ns, ref = ref.split(':', 1)
+            resources = self.cache[self.namespaces[ns]]
+            return resources[ref]
+        return self[ref]
+
+def load(filename, paths=None):
+    '''Load resource(s) defined in the indicated XML file.
+    '''
+    return Resource.load(filename, paths)
+
+#
+# XML PROPERTY PARSING
+#
+_xml_to_python = {
+    'unicode': unicode,
+    'int': int,
+    'float': float,
+    'bool': bool,
+}
+def _handle_properties(tag):
+    properties = {}
+    for tag in tag.getElementsByTagName('property'):
+        name = tag.getAttribute('name')
+        type = tag.getAttribute('type') or 'unicode'
+        value = tag.getAttribute('value')
+        properties[name] = _xml_to_python[type](value)
+    return properties
+
+#
+# IMAGE and IMAGE ATLAS
+#
+@Resource.register_factory('image')
+def image_factory(resource, tag):
+    filename = resource.find_file(tag.getAttribute('file'))
+    if not filename:
+        raise ResourceError('No file= on <image> tag')
+    # XXX use pyglet.resource
+    image = pyglet.image.load(filename)
+
+    image.properties = _handle_properties(tag)
+
+    if tag.hasAttribute('id'):
+        image.id = tag.getAttribute('id')
+        resource.add_resource(image.id, image)
+
+    return image
+
+@Resource.register_factory('imageatlas')
+def imageatlas_factory(resource, tag):
+    filename = resource.find_file(tag.getAttribute('file'))
+    if not filename:
+        raise ResourceError('No file= on <imageatlas> tag')
+    # XXX use pyglet.resource
+    atlas = pyglet.image.load(filename)
+    atlas.properties = _handle_properties(tag)
+    if tag.hasAttribute('id'):
+        atlas.id = tag.getAttribute('id')
+        resource.add_resource(atlas.id, atlas)
+
+    # figure default size if specified
+    if tag.hasAttribute('size'):
+        d_width, d_height = map(int, tag.getAttribute('size').split('x'))
+    else:
+        d_width = d_height = None
+
+    for child in tag.childNodes:
+        if not hasattr(child, 'tagName'): continue
+        if child.tagName != 'image':
+            raise ValueError, 'invalid child'
+
+        if child.hasAttribute('size'):
+            width, height = map(int, child.getAttribute('size').split('x'))
+        elif d_width is None:
+            raise ValueError, 'atlas or subimage must specify size'
+        else:
+            width, height = d_width, d_height
+
+        x, y = map(int, child.getAttribute('offset').split(','))
+        image = atlas.get_region(x, y, width, height)
+        id = child.getAttribute('id')
+        resource.add_resource(id, image)
+
+    image.properties = _handle_properties(tag)
+
+    if tag.hasAttribute('id'):
+        image.id = tag.getAttribute('id')
+        resource.add_resource(image.id, image)
+        
+    return atlas
+
+
+#
+# TILE SETS
+#
+@Resource.register_factory('tileset')
+def tileset_factory(resource, tag):
+    id = tag.getAttribute('id')
+    properties = _handle_properties(tag)
+    tileset = TileSet(id, properties)
+    resource.add_resource(tileset.id, tileset)
+
+    for child in tag.childNodes:
+        if not hasattr(child, 'tagName'): continue
+        id = child.getAttribute('id')
+        offset = child.getAttribute('offset')
+        if offset:
+            offset = map(int, offset.split(','))
+        else:
+            offset = None
+        properties = _handle_properties(child)
+        image = child.getElementsByTagName('image')
+        if image:
+            image = resource.handle(image[0])
+        else:
+            image = None
+        tile = Tile(id, properties, image, offset)
+        resource.add_resource(id, tile)
+        tileset[id] = tile
+
+    return tileset
+
+class Tile(object):
+    def __init__(self, id, properties, image, offset=None):
+        super(Tile, self).__init__()
+        self.id = id
+        self.properties = properties
+        self.image = image
+        self.offset = offset
+
+    def __repr__(self):
+        return '<%s object at 0x%x id=%r offset=%r properties=%r>'%(
+            self.__class__.__name__, id(self), self.id, self.offset,
+                self.properties)
+
+class TileSet(dict):
+    '''Contains a tile set loaded from a map file and optionally image(s).
+    '''
+    def __init__(self, id, properties):
+        self.id = id
+        self.properties = properties
+
+    # We retain a cache of opened tilesets so that multiple maps may refer to
+    # the same tileset and we don't waste resources by duplicating the
+    # tilesets in memory.
+    tilesets = {}
+
+    tile_id = 0
+    @classmethod
+    def generate_id(cls):
+        cls.tile_id += 1
+        return str(cls.tile_id)
+
+    def add(self, properties, image, id=None):
+        '''Add a new Tile to this TileSet, generating a unique id if
+        necessary.'''
+        if id is None:
+            id = self.generate_id()
+        self[id] = Tile(id, properties, image)
+
+
+#
+# RECT AND HEX MAPS
+#
+@Resource.register_factory('rectmap')
+def rectmap_factory(resource, tag):
+    width, height = map(int, tag.getAttribute('tile_size').split('x'))
+    origin = None
+    if tag.hasAttribute('origin'):
+        origin = map(int, tag.getAttribute('origin').split(','))
+    id = tag.getAttribute('id')
+
+    # now load the columns
+    cells = []
+    for i, column in enumerate(tag.getElementsByTagName('column')):
+        c = []
+        cells.append(c)
+        for j, cell in enumerate(column.getElementsByTagName('cell')):
+            tile = cell.getAttribute('tile')
+            if tile: tile = resource.get_resource(tile)
+            else: tile = None
+            properties = _handle_properties(cell)
+            c.append(RectCell(i, j, width, height, properties, tile))
+
+    m = RectMapLayer(id, width, height, cells, origin)
+    resource.add_resource(id, m)
+
+    return m
+
+@Resource.register_factory('hexmap')
+def hexmap_factory(resource, tag):
+    height = int(tag.getAttribute('tile_height'))
+    width = hex_width(height)
+    origin = None
+    if tag.hasAttribute('origin'):
+        origin = map(int, tag.getAttribute('origin').split(','))
+    id = tag.getAttribute('id')
+
+    # now load the columns
+    cells = []
+    for i, column in enumerate(tag.getElementsByTagName('column')):
+        c = []
+        cells.append(c)
+        for j, cell in enumerate(column.getElementsByTagName('cell')):
+            tile = cell.getAttribute('tile')
+            if tile: tile = resource.get_resource(tile)
+            else: tile = None
+            properties = _handle_properties(tag)
+            c.append(HexCell(i, j, height, properties, tile))
+
+    m = HexMapLayer(id, width, cells, origin)
+    resource.add_resource(id, m)
+
+    return m
+
+def hex_width(height):
+    '''Determine a regular hexagon's width given its height.
+    '''
+    return int(height / math.sqrt(3)) * 2
+
+class ScrollableLayer(cocos.layer.Layer):
+    offset_x, offset_y = 0, 0
+
+    def on_draw(self):
+        pyglet.gl.glPushMatrix()
+        pyglet.gl.glTranslatef(-self.offset_x, -self.offset_y, 0)
+        super(ScrollableLayer, self).on_draw()
+        pyglet.gl.glPopMatrix()
+
+class MapLayer(ScrollableLayer):
+    '''Base class for Maps.
+
+    Both rect and hex maps have the following attributes:
+
+        id              -- identifies the map in XML and Resources
+        (width, height) -- size of map in cells
+        (px_width, px_height)      -- size of map in pixels
+        (tw, th)        -- size of each cell in pixels
+        (x, y, z)       -- offset of map top left from origin in pixels
+        cells           -- array [x][y] of Cell instances
+    '''
+
+    _dirty = True
+    def on_draw(self):
+        if self._dirty:
+            # XXX be smarter about this
+            for col in self.cells:
+                for cell in col:
+                    x, y = cell.origin[:2]
+                    cell._sprite = pyglet.sprite.Sprite(cell.tile.image,
+                        x=x, y=y, batch=self.batch)
+            self._dirty = False
+        super(MapLayer, self).on_draw()
+
+class RegularTesselationMapLayer(MapLayer):
+    '''A class of MapLayer that has a regular array of Cells.
+    '''
+    def get_cell(self, x, y):
+        ''' Return Cell at cell pos=(x,y).
+
+        Return None if out of bounds.'''
+        if x < 0 or y < 0:
+            return None
+        try:
+            return self.cells[x][y]
+        except IndexError:
+            return None
+
+class RectMapLayer(RegularTesselationMapLayer):
+    '''Rectangular map.
+
+    Cells are stored in column-major order with y increasing up,
+    allowing [x][y] addressing:
+    +---+---+---+
+    | d | e | f |
+    +---+---+---+
+    | a | b | c |
+    +---+---+---+
+    Thus cells = [['a', 'd'], ['b', 'e'], ['c', 'f']]
+    and cells[0][1] = 'd'
+    '''
+    def __init__(self, id, tw, th, cells, origin=None):
+        super(RectMapLayer, self).__init__()
+        self.id = id
+        self.tw, self.th = tw, th
+        if origin is None:
+            origin = (0, 0, 0)
+        self.x, self.y, self.z = origin
+        self.cells = cells
+        self.px_width = len(cells) * tw
+        self.px_height = len(cells[0]) * th
+
+    def get_in_region(self, x1, y1, x2, y2):
+        '''Return cells (in [column][row]) that are within the
+        pixel bounds specified by the bottom-left (x1, y1) and top-right
+        (x2, y2) corners.
+
+        '''
+        x1 = max(0, x1 // self.tw)
+        y1 = max(0, y1 // self.th)
+        x2 = min(len(self.cells), x2 // self.tw + 1)
+        y2 = min(len(self.cells[0]), y2 // self.th + 1)
+        return [self.cells[x][y] for x in range(x1, x2) for y in range(y1, y2)]
+ 
+    def get(self, x, y):
+        ''' Return Cell at pixel px=(x,y).
+
+        Return None if out of bounds.'''
+        return self.get_cell(x // self.tw, y // self.th)
+ 
+    UP = (0, 1)
+    DOWN = (0, -1)
+    LEFT = (-1, 0)
+    RIGHT = (1, 0)
+    def get_neighbor(self, cell, direction):
+        '''Get the neighbor Cell in the given direction (dx, dy) which
+        is one of self.UP, self.DOWN, self.LEFT or self.RIGHT.
+
+        Returns None if out of bounds.
+        '''
+        dx, dy = direction
+        return self.get_cell(cell.x + dx, cell.y + dy)
+
+
+class Cell(object):
+    '''Base class for cells from rect and hex maps.
+
+    Common attributes:
+        x, y            -- top-left coordinate
+        width, height   -- dimensions
+        properties      -- arbitrary properties
+        cell            -- cell from the MapLayer's cells
+    '''
+    def __init__(self, x, y, width, height, properties, tile):
+        self.width, self.height = width, height
+        self.x, self.y = x, y
+        self.properties = properties
+        self.tile = tile
+
+    def __repr__(self):
+        return '<%s object at 0x%x (%g, %g) properties=%r tile=%r>'%(
+            self.__class__.__name__, id(self), self.x, self.y,
+                self.properties, self.tile)
+
+class RectCell(Cell):
+    '''A rectangular cell from a MapLayer.
+
+    Read-only attributes:
+        top         -- y extent
+        bottom      -- y extent
+        left        -- x extent
+        right       -- x extent
+        origin      -- (x, y) of bottom-left corner
+        center      -- (x, y)
+        topleft     -- (x, y) of top-left corner
+        topright    -- (x, y) of top-right corner
+        bottomleft  -- (x, y) of bottom-left corner
+        bottomright -- (x, y) of bottom-right corner
+        midtop      -- (x, y) of middle of top side
+        midbottom   -- (x, y) of middle of bottom side
+        midleft     -- (x, y) of middle of left side
+        midright    -- (x, y) of middle of right side
+    '''
+    def get_origin(self):
+        return self.x * self.width, self.y * self.height
+    origin = property(get_origin)
+
+    # ro, side in pixels, y extent
+    def get_top(self):
+        return (self.y + 1) * self.height
+    top = property(get_top)
+
+    # ro, side in pixels, y extent
+    def get_bottom(self):
+        return self.y * self.height
+    bottom = property(get_bottom)
+
+    # ro, in pixels, (x, y)
+    def get_center(self):
+        return (self.x * self.width + self.width // 2,
+            self.y * self.height + self.height // 2)
+    center = property(get_center)
+
+    # ro, mid-point in pixels, (x, y)
+    def get_midtop(self):
+        return (self.x * self.width + self.width // 2,
+            (self.y + 1) * self.height)
+    midtop = property(get_midtop)
+
+    # ro, mid-point in pixels, (x, y)
+    def get_midbottom(self):
+        return (self.x * self.width + self.width // 2, self.y * self.height)
+    midbottom = property(get_midbottom)
+
+    # ro, side in pixels, x extent
+    def get_left(self):
+        return self.x * self.width
+    left = property(get_left)
+
+    # ro, side in pixels, x extent
+    def get_right(self):
+        return (self.x + 1) * self.width
+    right = property(get_right)
+
+    # ro, corner in pixels, (x, y)
+    def get_topleft(self):
+        return (self.x * self.width, (self.y + 1) * self.height)
+    topleft = property(get_topleft)
+
+    # ro, corner in pixels, (x, y)
+    def get_topright(self):
+        return ((self.x + 1) * self.width, (self.y + 1) * self.height)
+    topright = property(get_topright)
+
+    # ro, corner in pixels, (x, y)
+    def get_bottomleft(self):
+        return (self.x * self.height, self.y * self.height)
+    bottomleft = property(get_bottomleft)
+    origin = property(get_bottomleft)
+
+    # ro, corner in pixels, (x, y)
+    def get_bottomright(self):
+        return ((self.x + 1) * self.width, self.y * self.height)
+    bottomright = property(get_bottomright)
+
+    # ro, mid-point in pixels, (x, y)
+    def get_midleft(self):
+        return (self.x * self.width, self.y * self.height + self.height // 2)
+    midleft = property(get_midleft)
+ 
+    # ro, mid-point in pixels, (x, y)
+    def get_midright(self):
+        return ((self.x + 1) * self.width,
+            self.y * self.height + self.height // 2)
+    midright = property(get_midright)
+
+ 
+class HexMapLayer(RegularTesselationMapLayer):
+    '''MapLayer with flat-top, regular hexagonal cells.
+
+    Additional attributes extending MapBase:
+
+        edge_length -- length of an edge in pixels
+
+    Hexmaps store their cells in an offset array, column-major with y
+    increasing up, such that a map:
+          /d\ /h\
+        /b\_/f\_/
+        \_/c\_/g\
+        /a\_/e\_/
+        \_/ \_/ 
+    has cells = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
+    '''
+    def __init__(self, id, th, cells, origin=None):
+        super(HexMapLayer, self).__init__()
+        self.id = id
+        self.th = th
+        if origin is None:
+            origin = (0, 0, 0)
+        self.x, self.y, self.z = origin
+        self.cells = cells
+
+        # figure some convenience values
+        s = self.edge_length = int(th / math.sqrt(3))
+        self.tw = self.edge_length * 2
+
+        # now figure map dimensions
+        width = len(cells); height = len(cells[0])
+        self.px_width = self.tw + (width - 1) * (s + s // 2)
+        self.px_height = height * self.th
+        if not width % 2:
+            self.px_height += (th // 2)
+
+    def get_in_region(self, x1, y1, x2, y2):
+        '''Return cells (in [column][row]) that are within the pixel bounds
+        specified by the bottom-left (x1, y1) and top-right (x2, y2) corners.
+        '''
+        col_width = self.tw // 2 + self.tw // 4
+        x1 = max(0, x1 // col_width)
+        y1 = max(0, y1 // self.th - 1)
+        x2 = min(len(self.cells), x2 // col_width + 1)
+        y2 = min(len(self.cells[0]), y2 // self.th + 1)
+        return [self.cells[x][y] for x in range(x1, x2) for y in range(y1, y2)]
+ 
+    def get(self, x, y):
+        '''Get the Cell at pixel px=(x,y).
+        Return None if out of bounds.'''
+        s = self.edge_length
+        # map is divided into columns of
+        # s/2 (shared), s, s/2(shared), s, s/2 (shared), ...
+        x = x // (s/2 + s)
+        if x % 2:
+            # every second cell is up one
+            y -= self.th // 2
+        y = y // self.th
+        return self.get_cell(x, y)
+
+    UP = 'up'
+    DOWN = 'down'
+    UP_LEFT = 'up left'
+    UP_RIGHT = 'up right'
+    DOWN_LEFT = 'down left'
+    DOWN_RIGHT = 'down right'
+    def get_neighbor(self, cell, direction):
+        '''Get the neighbor HexCell in the given direction which
+        is one of self.UP, self.DOWN, self.UP_LEFT, self.UP_RIGHT,
+        self.DOWN_LEFT or self.DOWN_RIGHT.
+
+        Return None if out of bounds.
+        '''
+        if direction is self.UP:
+            return self.get_cell(cell.x, cell.y + 1)
+        elif direction is self.DOWN:
+            return self.get_cell(cell.x, cell.y - 1)
+        elif direction is self.UP_LEFT:
+            if cell.x % 2:
+                return self.get_cell(cell.x - 1, cell.y + 1)
+            else:
+                return self.get_cell(cell.x - 1, cell.y)
+        elif direction is self.UP_RIGHT:
+            if cell.x % 2:
+                return self.get_cell(cell.x + 1, cell.y + 1)
+            else:
+                return self.get_cell(cell.x + 1, cell.y)
+        elif direction is self.DOWN_LEFT:
+            if cell.x % 2:
+                return self.get_cell(cell.x - 1, cell.y)
+            else:
+                return self.get_cell(cell.x - 1, cell.y - 1)
+        elif direction is self.DOWN_RIGHT:
+            if cell.x % 2:
+                return self.get_cell(cell.x + 1, cell.y)
+            else:
+                return self.get_cell(cell.x + 1, cell.y - 1)
+        else:
+            raise ValueError, 'Unknown direction %r'%direction
+ 
+# Note that we always add below (not subtract) so that we can try to
+# avoid accumulation errors due to rounding ints. We do this so
+# we can each point at the same position as a neighbor's corresponding
+# point.
+class HexCell(Cell):
+    '''A flat-top, regular hexagon cell from a HexMap.
+
+    Read-only attributes:
+        top             -- y extent
+        bottom          -- y extent
+        left            -- (x, y) of left corner
+        right           -- (x, y) of right corner
+        center          -- (x, y)
+        origin          -- (x, y) of bottom-left corner of bounding rect
+        topleft         -- (x, y) of top-left corner
+        topright        -- (x, y) of top-right corner
+        bottomleft      -- (x, y) of bottom-left corner
+        bottomright     -- (x, y) of bottom-right corner
+        midtop          -- (x, y) of middle of top side
+        midbottom       -- (x, y) of middle of bottom side
+        midtopleft      -- (x, y) of middle of left side
+        midtopright     -- (x, y) of middle of right side
+        midbottomleft   -- (x, y) of middle of left side
+        midbottomright  -- (x, y) of middle of right side
+    '''
+    def __init__(self, x, y, height, properties, tile):
+        width = hex_width(height)
+        Cell.__init__(self, x, y, width, height, properties, tile)
+
+    def get_origin(self):
+        x = self.x * (self.width / 2 + self.width // 4)
+        y = self.y * self.height
+        if self.x % 2:
+            y += self.height // 2
+        return (x, y)
+    origin = property(get_origin)
+
+    # ro, side in pixels, y extent
+    def get_top(self):
+        y = self.get_origin()[1]
+        return y + self.height
+    top = property(get_top)
+
+    # ro, side in pixels, y extent
+    def get_bottom(self):
+        return self.get_origin()[1]
+    bottom = property(get_bottom)
+
+    # ro, in pixels, (x, y)
+    def get_center(self):
+        x, y = self.get_origin()
+        return (x + self.width // 2, y + self.height // 2)
+    center = property(get_center)
+
+    # ro, mid-point in pixels, (x, y)
+    def get_midtop(self):
+        x, y = self.get_origin()
+        return (x + self.width // 2, y + self.height)
+    midtop = property(get_midtop)
+
+    # ro, mid-point in pixels, (x, y)
+    def get_midbottom(self):
+        x, y = self.get_origin()
+        return (x + self.width // 2, y)
+    midbottom = property(get_midbottom)
+
+    # ro, side in pixels, x extent
+    def get_left(self):
+        x, y = self.get_origin()
+        return (x, y + self.height // 2)
+    left = property(get_left)
+
+    # ro, side in pixels, x extent
+    def get_right(self):
+        x, y = self.get_origin()
+        return (x + self.width, y + self.height // 2)
+    right = property(get_right)
+
+    # ro, corner in pixels, (x, y)
+    def get_topleft(self):
+        x, y = self.get_origin()
+        return (x + self.width // 4, y + self.height)
+    topleft = property(get_topleft)
+
+    # ro, corner in pixels, (x, y)
+    def get_topright(self):
+        x, y = self.get_origin()
+        return (x + self.width // 2 + self.width // 4, y + self.height)
+    topright = property(get_topright)
+
+    # ro, corner in pixels, (x, y)
+    def get_bottomleft(self):
+        x, y = self.get_origin()
+        return (x + self.width // 4, y)
+    bottomleft = property(get_bottomleft)
+
+    # ro, corner in pixels, (x, y)
+    def get_bottomright(self):
+        x, y = self.get_origin()
+        return (x + self.width // 2 + self.width // 4, y)
+    bottomright = property(get_bottomright)
+
+    # ro, middle of side in pixels, (x, y)
+    def get_midtopleft(self):
+        x, y = self.get_origin()
+        return (x + self.width // 8, y + self.height // 2 + self.height // 4)
+    midtopleft = property(get_midtopleft)
+
+    # ro, middle of side in pixels, (x, y)
+    def get_midtopright(self):
+        x, y = self.get_origin()
+        return (x + self.width // 2 + self.width // 4 + self.width // 8,
+            y + self.height // 2 + self.height // 4)
+    midtopright = property(get_midtopright)
+
+    # ro, middle of side in pixels, (x, y)
+    def get_midbottomleft(self):
+        x, y = self.get_origin()
+        return (x + self.width // 8, y + self.height // 4)
+    midbottomleft = property(get_midbottomleft)
+
+    # ro, middle of side in pixels, (x, y)
+    def get_midbottomright(self):
+        x, y = self.get_origin()
+        return (x + self.width // 2 + self.width // 4 + self.width // 8,
+            y + self.height // 4)
+    midbottomright = property(get_midbottomright)
+
+
+#
+# SCROLLING MANAGEMENT
+#
+class ScrollingManager(list):
+    '''Manages scrolling of Layers in a Cocos Scene.
+
+    Each layer that is added to this manager (via standard list methods)
+    may have pixel dimensions .px_width and .px_height. MapLayers have these
+    attribtues. The manager will limit scrolling to stay within the pixel 
+    boundary of the most limiting layer.
+
+    If a layer has no dimensions it will scroll freely and without bound.
+
+    The manager is initialised with the viewport (usually a Window) which has
+    the pixel dimensions .width and .height which are used during focusing.
+    '''
+    def __init__(self, viewport):
+        self.viewport = viewport
+
+    def set_focus(self, fx, fy):
+        '''Determine the focal point of the view based on focus (fx, fy),
+        and registered layers.
+
+        The focus will always be 
+        '''
+        # enforce int-only positioning of focus
+        fx = int(fx)
+        fy = int(fy)
+
+        # check that any layer has bounds
+        bounded = []
+        for layer in self:
+            if hasattr(layer, 'px_width'):
+                bounded.append(layer)
+        if not bounded:
+            return (fx, fy)
+
+        # figure the bounds min/max
+        m = bounded[0]
+        b_min_x = m.x
+        b_min_y = m.y
+        b_max_x = m.x + m.px_width
+        b_max_y = m.y + m.px_height
+        for m in bounded[1:]:
+            b_min_x = min(b_min_x, m.x)
+            b_min_y = min(b_min_y, m.y)
+            b_max_x = min(b_max_x, m.x + m.px_width)
+            b_max_y = min(b_max_y, m.y + m.px_height)
+
+        # figure the view min/max based on focus
+        w2 = self.viewport.width/2
+        h2 = self.viewport.height/2
+
+        # check for the minimum bound
+        v_min_x = fx - w2
+        v_min_y = fy - h2
+        x_moved = y_moved = False
+        if v_min_x < b_min_x:
+            fx += b_min_x - v_min_x
+            x_moved = True
+        if v_min_y < b_min_y:
+            fy += b_min_y - v_min_y
+            y_moved = True
+
+        # now check the maximum bound - only if we've not already hit a bound
+        v_max_x = fx + w2
+        v_max_y = fy + h2
+        if not x_moved and v_max_x > b_max_x:
+            fx -= v_max_x - b_max_x
+        if not y_moved and v_max_y > b_max_y:
+            fy -= v_max_y - b_max_y
+
+        # translate the layers to match focus
+        for layer in self:
+            layer.offset_x, layer.offset_y = fx-w2, fy-h2
+
+        return map(int, (fx, fy))
+
