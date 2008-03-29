@@ -30,9 +30,10 @@ class TestLayer(cocos.layer.Layer):
         self.sprite2.add( self.sprite3, (0, 102) )
 
         self.sprite.do( Rotate(360,10) ) 
-        #self.sprite2.do( ScaleBy(2,5)+ScaleBy(0.5,5) ) 
+        self.sprite2.do( ScaleBy(2,5)+ScaleBy(0.5,5) ) 
         self.sprite2.do( Rotate(360,10) ) 
-        #self.sprite3.do( Rotate(-360,10) ) 
+        self.sprite3.do( Rotate(360,10) ) 
+        self.sprite3.do( ScaleBy(2,5)+ScaleBy(0.5,5) ) 
         
         
 

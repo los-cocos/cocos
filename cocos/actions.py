@@ -166,11 +166,9 @@ class SpriteGroup(pyglet.graphics.Group):
         
     def set_state(self):
         glPushMatrix()
-        print "push"
         self.sprite.transform()
         
     def unset_state(self):
-        print "pop"
         glPopMatrix()
 
 class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.IContainer ):
@@ -233,8 +231,8 @@ class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.I
         self.children.append( child )
         
     def set_parent(self, parent):
-        self.batch = parent.batch
         self.group = parent.children_group
+        self.batch = parent.batch
         
         self.children_group = SpriteGroup( self )
         for c in self.children:
@@ -250,15 +248,12 @@ class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.I
             glColor4ub( * color )
 
         if self.position != (0,0):
-            print "translate", self.position
             glTranslatef( self.position[0], self.position[1], 0 )
 
         if self.scale != 1.0:
-            print "scale", self.scale
             glScalef( self.scale, self.scale, 1)
 
         if self.rotation != 0.0:
-            print "rotate", self.rotation
             glRotatef( -self.rotation, 0, 0, 1)
 
         
