@@ -6,7 +6,7 @@ from cocos.director import director
 from cocos.layer import Layer, ColorLayer
 from cocos.scene import Scene
 from cocos.transitions import *
-from cocos.actions import ActionSprite, Rotate, Repeat
+from cocos.actions import *
 import pyglet
 from pyglet import gl, font
 
@@ -70,13 +70,13 @@ class GrossiniLayer(Layer):
         image = pyglet.resource.image('grossini.png')
         image.anchor_x = image.width / 2
         image.anchor_y = image.height / 2
-        g = ActionSprite( image, x=320, y=240 )
+        g = ActionSprite( image )
 
-        self.add( g )
+        self.add( g, position=(320,240) )
 
-        rot = Rotate( 180, 5 )
+        rot = Rotate( 360, 4 )
 
-        g.do( Repeat( rot ) )
+        g.do( Repeat( rot + Reverse(rot) ) )
 
 #    def on_exit( self ):
 #        for o in self.objects:
@@ -86,22 +86,23 @@ class GrossiniLayer2(Layer):
     def __init__( self ):
         super( GrossiniLayer2, self ).__init__()
 
-        rot = Rotate( 180, 5 )
+        rot = Rotate( 360, 5 )
 
         image = pyglet.resource.image('grossinis_sister1.png')
         image.anchor_x = image.width / 2
         image.anchor_y = image.height / 2
-        g1 = ActionSprite( image, x=490, y=240 )
+        g1 = ActionSprite( image )
 
         image = pyglet.resource.image('grossinis_sister2.png')
         image.anchor_x = image.width / 2
         image.anchor_y = image.height / 2
-        g2 = ActionSprite( image, x=150, y=240 )
+        g2 = ActionSprite( image )
 
-        self.add( g1, g2 )
+        self.add( g1, position=(490,240) )
+        self.add( g2, position=(140,240) )
 
-        g1.do( Repeat( rot ) )
-        g2.do( Repeat( rot ) )
+        g1.do( Repeat( rot + Reverse(rot) ) )
+        g2.do( Repeat( rot + Reverse(rot) ) )
 
 #    def on_exit( self ):
 #        for o in self.objects:
