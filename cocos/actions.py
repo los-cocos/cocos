@@ -133,6 +133,7 @@ import math
 from euclid import *
 
 import interfaces
+from director import director
 
 import pyglet
 from pyglet import image
@@ -159,7 +160,18 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             ]
 
 class SpriteGroup(pyglet.graphics.Group):
-    pass
+    def __init__(self, sprite):
+        super(SpriteGroup, self).__init__(parent=sprite.group)
+        self.sprite = sprite
+        
+    def set_state(self):
+        glPushMatrix()
+        print "push"
+        self.sprite.transform()
+        
+    def unset_state(self):
+        print "pop"
+        glPopMatrix()
 
 class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.IContainer ):
     '''ActionSprites are sprites that can execute actions.
@@ -174,8 +186,9 @@ class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.I
         interfaces.IActionTarget.__init__(self)
         interfaces.IContainer.__init__(self)
         self.group = None
+        self.children_group = None
         
-    def add( self, child, name='', z=0, position=(0,0), rotation=0.0, scale=1.0, color=(255,255,255), opacity=255, anchor_x=0.5, anchor_y=0.5):  
+    def add( self, child, position=(0,0), rotation=0.0, scale=1.0, color=(255,255,255), opacity=255, anchor_x=0.5, anchor_y=0.5, z=0,name='',):  
         """Adds a child to the container
 
         :Parameters:
@@ -213,7 +226,44 @@ class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.I
         for k,v in properties.items():
             setattr(child, k, v)
 
+        if self.group is None:
+            self.children_group = SpriteGroup( self )
+        child.set_parent( self )
+            
+        self.children.append( child )
+        
+    def set_parent(self, parent):
+        self.batch = parent.batch
+        self.group = parent.children_group
+        
+        self.children_group = SpriteGroup( self )
+        for c in self.children:
+            c.set_parent( self )
+            
+    def transform( self ):
+        """Apply ModelView transformations"""
 
+        x,y = director.get_window_size()
+
+        color = tuple(self.color) + (self.opacity,)
+        if color != (255,255,255,255):
+            glColor4ub( * color )
+
+        if self.position != (0,0):
+            print "translate", self.position
+            glTranslatef( self.position[0], self.position[1], 0 )
+
+        if self.scale != 1.0:
+            print "scale", self.scale
+            glScalef( self.scale, self.scale, 1)
+
+        if self.rotation != 0.0:
+            print "rotate", self.rotation
+            glRotatef( -self.rotation, 0, 0, 1)
+
+        
+
+        
 ActionSprite.supported_classes = ActionSprite
     
 class Action(object):

@@ -202,7 +202,7 @@ class IActionTarget(object):
             if action.done():
                 self.remove_action( action )
                 
-
+    
 #
 # This class / methods should be inside IActionTarget
 # Since ActionTarget works with this attributes,
@@ -228,7 +228,7 @@ class ITransform( object ):
 
         x,y = director.get_window_size()
 
-        color = self.color + (self.opacity,)
+        color = tuple(self.color) + (self.opacity,)
         if color != (255,255,255,255):
             glColor4ub( * color )
 
