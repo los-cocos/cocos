@@ -532,13 +532,13 @@ class RectMapLayer(RegularTesselationMapLayer):
         y1 = max(0, y1 // self.th)
         x2 = min(len(self.cells), x2 // self.tw + 1)
         y2 = min(len(self.cells[0]), y2 // self.th + 1)
-        return [self.cells[x][y] for x in range(x1, x2) for y in range(y1, y2)]
+        return [self.cells[x][y] for x in range(int(x1), int(x2)) for y in range(int(y1), int(y2))]
  
     def get(self, x, y):
         ''' Return Cell at pixel px=(x,y).
 
         Return None if out of bounds.'''
-        return self.get_cell(x // self.tw, y // self.th)
+        return self.get_cell(int(x // self.tw), int(y // self.th))
  
     UP = (0, 1)
     DOWN = (0, -1)
