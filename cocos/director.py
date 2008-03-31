@@ -108,7 +108,17 @@ from pyglet import clock
 from pyglet import media
 from pyglet.gl import *
 
-__all__ = ['director']
+__all__ = ['director', 'DefaultHandler']
+
+class DefaultHandler( object ):
+    def on_key_press( self, symbol, modifiers ):
+        if symbol == pyglet.window.key.F and modifiers == pyglet.window.key.MOD_ACCEL:
+            director.window.set_fullscreen( not director.window.fullscreen )
+            return True
+
+        if symbol == pyglet.window.key.ESCAPE and modifiers == 0:
+            director.pop()
+            return True
 
 class Director(event.EventDispatcher):
     """Class that creates and handle the main Window and manages how
@@ -145,9 +155,11 @@ class Director(event.EventDispatcher):
 
         # init fps
         self.fps_display = clock.ClockDisplay()
-    
-        return self.window
 
+        # default handler
+        self.window.push_handlers( DefaultHandler() )
+
+        return self.window
 
     def run(self, scene):
         """Runs a scene, entering in the Director's main loop.
