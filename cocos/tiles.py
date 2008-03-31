@@ -951,6 +951,7 @@ class ScrollingManager(list):
     '''
     def __init__(self, viewport):
         self.viewport = viewport
+        self.fx = self.fy = 0
 
     def append(self, item):
         super(ScrollingManager, self).append(item)
@@ -1009,10 +1010,23 @@ class ScrollingManager(list):
         if not y_moved and v_max_y > b_max_y:
             fy -= v_max_y - b_max_y
 
+        self.fx, self.fy = map(int, (fx, fy))
+
         # translate the layers to match focus
+        vx, vy = self.fx - w2, self.fy - h2
         for layer in self:
-            layer.set_viewport(fx-w2, fy-h2,
+            layer.set_viewport(vx, vy,
                 self.viewport.width, self.viewport.height)
 
-        return map(int, (fx, fy))
+    def force_focus(self, fx, fy):
+        self.fx, self.fy = map(int, (fx, fy))
+
+        w2 = self.viewport.width/2
+        h2 = self.viewport.height/2
+        vx, vy = self.fx - w2, self.fy - h2
+
+        # translate the layers to match focus
+        for layer in self:
+            layer.set_viewport(vx, vy,
+                self.viewport.width, self.viewport.height)
 
