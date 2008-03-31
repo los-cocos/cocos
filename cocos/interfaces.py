@@ -25,6 +25,10 @@ class IContainer( object ):
         self.children = []
         self.children_names = {}
 
+        self.is_running = False
+
+        self.parent = None
+
         self.position = (0,0)
         self.scale = 1.0
         self.rotation = 0.0
@@ -34,6 +38,7 @@ class IContainer( object ):
         self.opacity = 255
         self.mesh = Mesh()
 
+        # Layers sets it's own batch
         self.batch  = None
 
         self.add_children( *children )
@@ -78,6 +83,8 @@ class IContainer( object ):
                       'anchor_y' : anchor_y,
                       }
 
+        child.parent = self
+
         elem = z, child 
         bisect.insort( self.children,  elem )
 
@@ -86,6 +93,10 @@ class IContainer( object ):
 
         if name:
             self.children_names[ name ] = child
+
+        if self.is_running:
+            if hasattr(child,"on_enter"):
+                child.on_enter()
 
     def add_children( self, *children ):
         """Adds a list of children to the container
@@ -104,9 +115,15 @@ class IContainer( object ):
             `child` : object
                 object to be removed
         """
+        l_old = len(self.children)
         self.children = [ (z,c) for (z,c) in self.children if c != child ]
 
+        if l_old == len(self.children):
+            raise Exception("Child not found: %s" % str(child) )
 
+        if self.is_running:
+            if hasattr(child,"on_exit"):
+                child.on_exit()
 
     def remove_by_name( self, name ):
         """Removes a child from the container given its name
@@ -118,6 +135,39 @@ class IContainer( object ):
         if name in self.children_names:
             child = self.children_names.pop( name )
             self.remove( child )
+        else:
+            raise Exception("Child not found: %s" % name )
+
+    def on_enter( self ):
+        """
+        Called every time just before the scene is run.
+        """ 
+        from layer import Layer
+        self.is_running = True
+
+        for z,c in self.children:
+            if isinstance(c,Layer):
+                director.window.push_handlers( c )
+            if hasattr(c,"on_enter"):
+                c.on_enter()
+            
+        
+    def on_exit( self ):
+        """      
+        Called every time just before the scene leaves the stage
+        """
+        from layer import Layer
+
+        self.is_running = False
+
+        if hasattr(self,"disable_step"):
+            self.disable_step()
+
+        for z,c in self.children:
+            if hasattr(c,"on_exit"):
+                c.on_exit()
+            if isinstance(c,Layer):
+                director.window.pop_handlers()
 
     def transform( self ):
         """Apply ModelView transformations"""

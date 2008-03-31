@@ -76,20 +76,16 @@ class Layer(IContainer, IActionTarget):
             self.batch.draw()
             self.draw()
 
+            for z,c in self.children:
+                if hasattr(c,"on_draw"):
+                    c.on_draw()
+
             glPopMatrix()
 
     def draw( self ):        
         """Subclasses shall override this method if they want to draw custom objects"""
         pass           
 
-    def on_enter( self ):
-        """Called every time the layer enters into the scene"""
-        pass 
-
-    def on_exit( self ):
-        """Called every time the layer quits the scene"""
-        self.disable_step()
-        pass 
 
     def step( self, dt ):
         """Called every frame when it is active.
