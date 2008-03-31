@@ -115,8 +115,7 @@ __version__ = '$Id: resource.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 import os
 import math
 import weakref
-import xml.dom
-import xml.dom.minidom
+from xml.etree import ElementTree
 
 import pyglet
 
@@ -139,15 +138,12 @@ class Resource(dict):
             self.paths = paths
 
         self.namespaces = {}        # map local name to filename
-        dom = xml.dom.minidom.parse(filename)
-        tag = dom.documentElement
-        if tag.tagName != 'resource':
+        tree = ElementTree.parse(filename)
+        root = tree.getroot()
+        if root.tag != 'resource':
             raise ResourceError('document is <%s> instead of <resource>'%
-                tag.tagName)
-        try:
-            self.handle(dom.documentElement)
-        finally:
-            dom.unlink()
+                root.name)
+        self.handle(root)
 
     def find_file(self, filename):
         if os.path.isabs(filename):
@@ -161,14 +157,14 @@ class Resource(dict):
         raise ResourceError('File "%s" not found in any paths'%filename)
 
     def resource_factory(self, tag):
-        for tag in tag.childNodes:
-            self.handle(tag)
+        for child in tag:
+            self.handle(child)
 
     def requires_factory(self, tag):
-        filename = self.find_file(tag.getAttribute('file'))
+        filename = self.find_file(tag.get('file'))
         resource = load(filename)
 
-        ns = tag.getAttribute('namespace')
+        ns = tag.get('namespace')
         if ns:
             self.namespaces[ns] = resource
         else:
@@ -188,10 +184,9 @@ class Resource(dict):
         return decorate
 
     def handle(self, tag):
-        if not hasattr(tag, 'tagName'): return
-        ref = tag.getAttribute('ref')
+        ref = tag.get('ref')
         if not ref:
-            return self.factories[tag.tagName](self, tag)
+            return self.factories[tag.tag](self, tag)
         return self.get_resource(ref)
 
     def add_resource(self, id, resource):
@@ -236,12 +231,19 @@ _xml_to_python = {
     'float': float,
     'bool': bool,
 }
+_python_to_xml = {
+    str: 'unicode',
+    unicode: 'unicode',
+    int: 'int',
+    float: 'float',
+    bool: 'bool',
+}
 def _handle_properties(tag):
     properties = {}
-    for tag in tag.getElementsByTagName('property'):
-        name = tag.getAttribute('name')
-        type = tag.getAttribute('type') or 'unicode'
-        value = tag.getAttribute('value')
+    for tag in tag.getiterator('property'):
+        name = tag.get('name')
+        type = tag.get('type') or 'unicode'
+        value = tag.get('value')
         properties[name] = _xml_to_python[type](value)
     return properties
 
@@ -250,7 +252,7 @@ def _handle_properties(tag):
 #
 @Resource.register_factory('image')
 def image_factory(resource, tag):
-    filename = resource.find_file(tag.getAttribute('file'))
+    filename = resource.find_file(tag.get('file'))
     if not filename:
         raise ResourceError('No file= on <image> tag')
     # XXX use pyglet.resource
@@ -258,52 +260,46 @@ def image_factory(resource, tag):
 
     image.properties = _handle_properties(tag)
 
-    if tag.hasAttribute('id'):
-        image.id = tag.getAttribute('id')
+    if tag.get('id'):
+        image.id = tag.get('id')
         resource.add_resource(image.id, image)
 
     return image
 
 @Resource.register_factory('imageatlas')
 def imageatlas_factory(resource, tag):
-    filename = resource.find_file(tag.getAttribute('file'))
+    filename = resource.find_file(tag.get('file'))
     if not filename:
         raise ResourceError('No file= on <imageatlas> tag')
     # XXX use pyglet.resource
     atlas = pyglet.image.load(filename)
     atlas.properties = _handle_properties(tag)
-    if tag.hasAttribute('id'):
-        atlas.id = tag.getAttribute('id')
+    if tag.get('id'):
+        atlas.id = tag.get('id')
         resource.add_resource(atlas.id, atlas)
 
     # figure default size if specified
-    if tag.hasAttribute('size'):
-        d_width, d_height = map(int, tag.getAttribute('size').split('x'))
+    if tag.get('size'):
+        d_width, d_height = map(int, tag.get('size').split('x'))
     else:
         d_width = d_height = None
 
-    for child in tag.childNodes:
-        if not hasattr(child, 'tagName'): continue
-        if child.tagName != 'image':
+    for child in tag:
+        if child.tag != 'image':
             raise ValueError, 'invalid child'
 
-        if child.hasAttribute('size'):
-            width, height = map(int, child.getAttribute('size').split('x'))
+        if child.get('size'):
+            width, height = map(int, child.get('size').split('x'))
         elif d_width is None:
             raise ValueError, 'atlas or subimage must specify size'
         else:
             width, height = d_width, d_height
 
-        x, y = map(int, child.getAttribute('offset').split(','))
+        x, y = map(int, child.get('offset').split(','))
         image = atlas.get_region(x, y, width, height)
-        id = child.getAttribute('id')
+        id = child.get('id')
         resource.add_resource(id, image)
-
-    image.properties = _handle_properties(tag)
-
-    if tag.hasAttribute('id'):
-        image.id = tag.getAttribute('id')
-        resource.add_resource(image.id, image)
+        image.properties = _handle_properties(child)
 
     return atlas
 
@@ -313,25 +309,22 @@ def imageatlas_factory(resource, tag):
 #
 @Resource.register_factory('tileset')
 def tileset_factory(resource, tag):
-    id = tag.getAttribute('id')
+    id = tag.get('id')
     properties = _handle_properties(tag)
     tileset = TileSet(id, properties)
     resource.add_resource(tileset.id, tileset)
 
-    for child in tag.childNodes:
-        if not hasattr(child, 'tagName'): continue
-        id = child.getAttribute('id')
-        offset = child.getAttribute('offset')
+    for child in tag:
+        id = child.get('id')
+        offset = child.get('offset')
         if offset:
             offset = map(int, offset.split(','))
         else:
             offset = None
         properties = _handle_properties(child)
-        image = child.getElementsByTagName('image')
-        if image:
-            image = resource.handle(image[0])
-        else:
-            image = None
+        image = child.find('image')
+        if image is not None:
+            image = resource.handle(image)
         tile = Tile(id, properties, image, offset)
         resource.add_resource(id, tile)
         tileset[id] = tile
@@ -384,19 +377,19 @@ class TileSet(dict):
 #
 @Resource.register_factory('rectmap')
 def rectmap_factory(resource, tag):
-    width, height = map(int, tag.getAttribute('tile_size').split('x'))
-    origin = None
-    if tag.hasAttribute('origin'):
-        origin = map(int, tag.getAttribute('origin').split(','))
-    id = tag.getAttribute('id')
+    width, height = map(int, tag.get('tile_size').split('x'))
+    origin = tag.get('origin')
+    if origin:
+        origin = map(int, tag.get('origin').split(','))
+    id = tag.get('id')
 
     # now load the columns
     cells = []
-    for i, column in enumerate(tag.getElementsByTagName('column')):
+    for i, column in enumerate(tag.getiterator('column')):
         c = []
         cells.append(c)
-        for j, cell in enumerate(column.getElementsByTagName('cell')):
-            tile = cell.getAttribute('tile')
+        for j, cell in enumerate(column.getiterator('cell')):
+            tile = cell.get('tile')
             if tile: tile = resource.get_resource(tile)
             else: tile = None
             properties = _handle_properties(cell)
@@ -409,20 +402,20 @@ def rectmap_factory(resource, tag):
 
 @Resource.register_factory('hexmap')
 def hexmap_factory(resource, tag):
-    height = int(tag.getAttribute('tile_height'))
+    height = int(tag.get('tile_height'))
     width = hex_width(height)
-    origin = None
-    if tag.hasAttribute('origin'):
-        origin = map(int, tag.getAttribute('origin').split(','))
-    id = tag.getAttribute('id')
+    origin = tag.get('origin')
+    if origin:
+        origin = map(int, tag.get('origin').split(','))
+    id = tag.get('id')
 
     # now load the columns
     cells = []
-    for i, column in enumerate(tag.getElementsByTagName('column')):
+    for i, column in enumerate(tag.getiterator('column')):
         c = []
         cells.append(c)
-        for j, cell in enumerate(column.getElementsByTagName('cell')):
-            tile = cell.getAttribute('tile')
+        for j, cell in enumerate(column.getiterator('cell')):
+            tile = cell.get('tile')
             if tile: tile = resource.get_resource(tile)
             else: tile = None
             properties = _handle_properties(tag)
@@ -536,6 +529,29 @@ class RectMapLayer(RegularTesselationMapLayer):
         self.px_width = len(cells) * tw
         self.px_height = len(cells[0]) * th
 
+    def save_xml(self, tilesets):
+        #filename = raw_input('filename for save? > ')
+        #if not filename.strip():
+        #    print 'Filename blank - save skipped'
+        #    return
+        filename = 'editor-save.xml'
+
+        # generate the XML
+        root = ElementTree.Element('resource')
+        for fn, namespace in tilesets:
+            r = ElementTree.SubElement(root, 'requires', file=fn)
+            if namespace:
+                r.set('namespace', namespace)
+        m = ElementTree.SubElement(root, 'rectmap', id=self.id,
+            tile_size='%dx%d'%(self.tw, self.th),
+            origin='%s,%s,%s'%(self.x, self.y, self.z))
+        for column in self.cells:
+            c = ElementTree.SubElement(m, 'column')
+            for cell in column:
+                cell._as_xml(c)
+        tree = ElementTree.ElementTree(root)
+        tree.write(filename)
+
     def get_in_region(self, x1, y1, x2, y2):
         '''Return cells (in [column][row]) that are within the
         pixel bounds specified by the bottom-left (x1, y1) and top-right
@@ -582,6 +598,13 @@ class Cell(object):
         self.x, self.y = x, y
         self.properties = properties
         self.tile = tile
+
+    def _as_xml(self, parent):
+        c = ElementTree.SubElement(parent, 'cell', tile=self.tile.id)
+        for k in self.properties:
+            v = self.properties[k]
+            ElementTree.SubElement(c, 'property', value=v,
+                type=_python_to_xml[type(v)])
 
     def __repr__(self):
         return '<%s object at 0x%x (%g, %g) properties=%r tile=%r>'%(
