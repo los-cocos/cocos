@@ -27,7 +27,7 @@ Assuming the following XML file called "example.xml"::
     <?xml version="1.0"?>
     <resource>
       <require file="ground-tiles.xml" namespace="ground" />
-     
+
       <rectmap id="level1">
        <column>
         <cell>
@@ -121,6 +121,7 @@ import xml.dom.minidom
 import pyglet
 
 import cocos
+from cocos.director import director
 
 class ResourceError(Exception):
     pass
@@ -303,7 +304,7 @@ def imageatlas_factory(resource, tag):
     if tag.hasAttribute('id'):
         image.id = tag.getAttribute('id')
         resource.add_resource(image.id, image)
-        
+
     return atlas
 
 
@@ -453,6 +454,14 @@ class ScrollableLayer(cocos.layer.Layer):
         super(ScrollableLayer, self).on_draw()
         pyglet.gl.glPopMatrix()
 
+    def get_virtual_coordinates(self, x, y):
+        '''Translate window-space coordinates to pixel coordinates in the
+        layer's space. This will include any transformation from the
+        director and viewport translation.
+        '''
+        x, y = director.get_virtual_coordinates(x, y)
+        return x+self.viewport_x, y+self.viewport_y
+
 class MapLayer(ScrollableLayer):
     '''Base class for Maps.
 
@@ -468,6 +477,11 @@ class MapLayer(ScrollableLayer):
     def __init__(self):
         self._sprites = {}
         super(MapLayer, self).__init__()
+
+    def set_dirty(self):
+        '''Force re-calculation of the sprites to draw for the viewport.
+        '''
+        self._sprites.clear()
 
     def set_viewport(self, x, y, w, h):
         super(MapLayer, self).set_viewport(x, y, w, h)
@@ -533,13 +547,13 @@ class RectMapLayer(RegularTesselationMapLayer):
         x2 = min(len(self.cells), x2 // self.tw + 1)
         y2 = min(len(self.cells[0]), y2 // self.th + 1)
         return [self.cells[x][y] for x in range(int(x1), int(x2)) for y in range(int(y1), int(y2))]
- 
+
     def get(self, x, y):
         ''' Return Cell at pixel px=(x,y).
 
         Return None if out of bounds.'''
         return self.get_cell(int(x // self.tw), int(y // self.th))
- 
+
     UP = (0, 1)
     DOWN = (0, -1)
     LEFT = (-1, 0)
@@ -659,14 +673,14 @@ class RectCell(Cell):
     def get_midleft(self):
         return (self.x * self.width, self.y * self.height + self.height // 2)
     midleft = property(get_midleft)
- 
+
     # ro, mid-point in pixels, (x, y)
     def get_midright(self):
         return ((self.x + 1) * self.width,
             self.y * self.height + self.height // 2)
     midright = property(get_midright)
 
- 
+
 class HexMapLayer(RegularTesselationMapLayer):
     '''MapLayer with flat-top, regular hexagonal cells.
 
@@ -680,7 +694,7 @@ class HexMapLayer(RegularTesselationMapLayer):
         /b\_/f\_/
         \_/c\_/g\
         /a\_/e\_/
-        \_/ \_/ 
+        \_/ \_/
     has cells = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
     '''
     def __init__(self, id, th, cells, origin=None):
@@ -713,7 +727,7 @@ class HexMapLayer(RegularTesselationMapLayer):
         x2 = min(len(self.cells), x2 // col_width + 1)
         y2 = min(len(self.cells[0]), y2 // self.th + 1)
         return [self.cells[x][y] for x in range(x1, x2) for y in range(y1, y2)]
- 
+
     def get(self, x, y):
         '''Get the Cell at pixel px=(x,y).
         Return None if out of bounds.'''
@@ -766,7 +780,7 @@ class HexMapLayer(RegularTesselationMapLayer):
                 return self.get_cell(cell.x + 1, cell.y - 1)
         else:
             raise ValueError, 'Unknown direction %r'%direction
- 
+
 # Note that we always add below (not subtract) so that we can try to
 # avoid accumulation errors due to rounding ints. We do this so
 # we can each point at the same position as a neighbor's corresponding
@@ -904,7 +918,7 @@ class ScrollingManager(list):
 
     Each layer that is added to this manager (via standard list methods)
     may have pixel dimensions .px_width and .px_height. MapLayers have these
-    attribtues. The manager will limit scrolling to stay within the pixel 
+    attribtues. The manager will limit scrolling to stay within the pixel
     boundary of the most limiting layer.
 
     If a layer has no dimensions it will scroll freely and without bound.
@@ -923,7 +937,7 @@ class ScrollingManager(list):
         '''Determine the focal point of the view based on focus (fx, fy),
         and registered layers.
 
-        The focus will always be 
+        The focus will always be
         '''
         # enforce int-only positioning of focus
         fx = int(fx)
@@ -974,7 +988,8 @@ class ScrollingManager(list):
 
         # translate the layers to match focus
         for layer in self:
-            layer.set_viewport(fx-w2, fy-h2, self.viewport.width, self.viewport.height)
+            layer.set_viewport(fx-w2, fy-h2,
+                self.viewport.width, self.viewport.height)
 
         return map(int, (fx, fy))
 
