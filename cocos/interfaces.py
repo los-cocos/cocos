@@ -71,6 +71,11 @@ class IContainer( object ):
         if not isinstance( child, self.supported_classes ):
             raise TypeError("%s is not istance of: %s" % (type(child), self.supported_classes) )
 
+        if name:
+            if name in self.children_names:
+                raise Exception("Name already exists: %s" % name )
+            self.children_names[ name ] = child
+
         if self.batch:
             child.batch = self.batch
 
@@ -91,12 +96,8 @@ class IContainer( object ):
         for k,v in properties.items():
             setattr(child, k, v)
 
-        if name:
-            self.children_names[ name ] = child
-
-        if self.is_running:
-            if hasattr(child,"on_enter"):
-                child.on_enter()
+        if self.is_running and hasattr(child,"on_enter"):
+            child.on_enter()
 
     def add_children( self, *children ):
         """Adds a list of children to the container
@@ -121,9 +122,8 @@ class IContainer( object ):
         if l_old == len(self.children):
             raise Exception("Child not found: %s" % str(child) )
 
-        if self.is_running:
-            if hasattr(child,"on_exit"):
-                child.on_exit()
+        if self.is_running and hasattr(child,"on_exit"):
+            child.on_exit()
 
     def remove_by_name( self, name ):
         """Removes a child from the container given its name
