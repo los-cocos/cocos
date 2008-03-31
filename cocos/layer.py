@@ -88,6 +88,7 @@ class Layer(IContainer, IActionTarget):
 
     def on_exit( self ):
         """Called every time the layer quits the scene"""
+        self.disable_step()
         pass 
 
     def step( self, dt ):

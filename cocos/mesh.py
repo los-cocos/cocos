@@ -20,8 +20,10 @@ class Mesh(object):
     texture = None
     
     def __init__(self, x_quads=4, y_quads=4):
-
         super(Mesh, self).__init__()
+        self.active = False
+
+    def init( self, x_quads=4, y_quards=4 ):
 
         x = director.window.width
         y = director.window.height
@@ -33,7 +35,6 @@ class Mesh(object):
         
         self.grabber = framegrabber.TextureGrabber()
         self.grabber.grab(self.texture)
-        self.active = False
 
         x_step = x / (x_quads)
         y_step = y / (y_quads)

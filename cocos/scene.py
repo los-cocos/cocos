@@ -32,8 +32,10 @@ class Scene(IContainer, IActionTarget):
         """
 
         self.supported_classes = (Layer, Scene)
+        self.is_running = False
 
         super(Scene,self).__init__( *children )
+
 
 
     def end(self, value=None):
@@ -46,10 +48,18 @@ class Scene(IContainer, IActionTarget):
         director.return_value = value
         director.pop()
 
+    def add( self, child, *args, **kwargs ):
+        super( Scene, self).add( child, *args, **kwargs )
+
+        if self.is_running:
+            child.on_enter()
+
     def on_enter( self ):
         """
         Called every time just before the scene is run.
         """        
+        self.is_running = True
+
         for z,c in self.children:
             if isinstance(c,Layer):
                 director.window.push_handlers( c )
@@ -60,10 +70,13 @@ class Scene(IContainer, IActionTarget):
         """      
         Called every time just before the scene leaves the stage
         """
+        self.is_running = False
+
         for z,c in self.children:
             c.on_exit()
             if isinstance(c,Layer):
                 director.window.pop_handlers()
+
 
 
     def on_draw( self ):                

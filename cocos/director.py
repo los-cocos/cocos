@@ -65,7 +65,7 @@ Once a scene is running you can do the following actions:
     * ``director.pop():``
         Will pop out a scene from the queue, and it will replace the running scene.
 
-    * ``director.end( end_value ):``
+    * ``director.scene.end( end_value ):``
         Finishes the current scene with an end value of ``end_value``. The next scene
         to be run will be popped from the queue.
 
@@ -86,7 +86,7 @@ Other functions you can use are:
 The director also has some useful attributes:
 
     * ``director.return_value``: The value returned by the last scene that
-      called ``director.end``. This is useful to use scenes somewhat like
+      called ``director.scene.end``. This is useful to use scenes somewhat like
       function calls: you push a scene to call it, and check the return value
       when the director returns control to you.
 

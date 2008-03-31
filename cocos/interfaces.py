@@ -107,6 +107,7 @@ class IContainer( object ):
         self.children = [ (z,c) for (z,c) in self.children if c != child ]
 
 
+
     def remove_by_name( self, name ):
         """Removes a child from the container given its name
 
