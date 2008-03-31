@@ -76,7 +76,8 @@ class IContainer( object ):
                 raise Exception("Name already exists: %s" % name )
             self.children_names[ name ] = child
 
-        if self.batch:
+        # don't override the batch it child already has one
+        if self.batch and hasattr(child, "batch") and child.batch == None:
             child.batch = self.batch
 
         properties = {'position' : position,
@@ -96,8 +97,17 @@ class IContainer( object ):
         for k,v in properties.items():
             setattr(child, k, v)
 
-        if self.is_running and hasattr(child,"on_enter"):
-            child.on_enter()
+        if self.is_running:
+            from layer import Layer
+
+            # XXX: shall be part of on_enter() but will be fixed after pyweek
+            if isinstance(child,Layer):
+                director.window.push_handlers( child )
+
+            if hasattr(child,"on_enter"):
+                child.on_enter()
+                
+               
 
     def add_children( self, *children ):
         """Adds a list of children to the container
@@ -122,8 +132,15 @@ class IContainer( object ):
         if l_old == len(self.children):
             raise Exception("Child not found: %s" % str(child) )
 
-        if self.is_running and hasattr(child,"on_exit"):
-            child.on_exit()
+        if self.is_running:
+            from layer import Layer
+
+            # XXX: shall be part of on_exit(). Will be fixed after pyweek
+            if isinstance(child,Layer):
+                director.window.push_handlers( child )
+
+            if hasattr(child,"on_exit"):
+                child.on_exit()
 
     def remove_by_name( self, name ):
         """Removes a child from the container given its name
@@ -142,13 +159,11 @@ class IContainer( object ):
         """
         Called every time just before the scene is run.
         """ 
-        from layer import Layer
         self.is_running = True
 
-        # if we implement actions, start them
-        if hasattr(self, "resume"):
-            self.resume()
         for z,c in self.children:
+            from layer import Layer
+
             if isinstance(c,Layer):
                 director.window.push_handlers( c )
             if hasattr(c,"on_enter"):
@@ -159,18 +174,15 @@ class IContainer( object ):
         """      
         Called every time just before the scene leaves the stage
         """
-        from layer import Layer
 
         self.is_running = False
 
-        # if we implement actions, stop them
-        if hasattr(self, "pause"):
-            self.pause()
-            
         if hasattr(self,"disable_step"):
             self.disable_step()
 
         for z,c in self.children:
+            from layer import Layer
+
             if hasattr(c,"on_exit"):
                 c.on_exit()
             if isinstance(c,Layer):
@@ -252,9 +264,9 @@ class IActionTarget(object):
     def resume(self):
         if self.scheduled:
             return
-        if self.actions:
-            self.scheduled = True
-            pyglet.clock.schedule( self._step )
+        self.scheduled = True
+        pyglet.clock.schedule( self._step )
+        self.skip_frame = True
         
         
     def flush(self):
@@ -273,6 +285,9 @@ class IActionTarget(object):
             self.actions.remove( x )
         self.to_remove = []
         
+        if self.skip_frame:
+            self.skip_frame = False
+            return
         
         if len( self.actions ) == 0:
             self.scheduled = False
