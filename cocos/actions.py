@@ -259,6 +259,10 @@ class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.I
             glRotatef( -self.rotation, 0, 0, 1)
 
         
+    def on_exit(self):
+        self.pause()
+    def on_enter(self):
+        self.resume()
 
         
 ActionSprite.supported_classes = ActionSprite

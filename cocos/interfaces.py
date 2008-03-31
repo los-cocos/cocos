@@ -145,6 +145,9 @@ class IContainer( object ):
         from layer import Layer
         self.is_running = True
 
+        # if we implement actions, start them
+        if hasattr(self, "resume"):
+            self.resume()
         for z,c in self.children:
             if isinstance(c,Layer):
                 director.window.push_handlers( c )
@@ -160,6 +163,10 @@ class IContainer( object ):
 
         self.is_running = False
 
+        # if we implement actions, stop them
+        if hasattr(self, "pause"):
+            self.pause()
+            
         if hasattr(self,"disable_step"):
             self.disable_step()
 
@@ -245,9 +252,9 @@ class IActionTarget(object):
     def resume(self):
         if self.scheduled:
             return
-        self.scheduled = True
-        pyglet.clock.schedule( self._step )
-        self.skip_frame = True
+        if self.actions:
+            self.scheduled = True
+            pyglet.clock.schedule( self._step )
         
         
     def flush(self):
@@ -266,9 +273,6 @@ class IActionTarget(object):
             self.actions.remove( x )
         self.to_remove = []
         
-        if self.skip_frame:
-            self.skip_frame = False
-            return
         
         if len( self.actions ) == 0:
             self.scheduled = False

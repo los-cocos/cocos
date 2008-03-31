@@ -115,6 +115,13 @@ class DefaultHandler( object ):
         if symbol == pyglet.window.key.F and modifiers == pyglet.window.key.MOD_ACCEL:
             director.window.set_fullscreen( not director.window.fullscreen )
             return True
+        if symbol == pyglet.window.key.P and modifiers == pyglet.window.key.MOD_ACCEL:
+            import pause
+            pause_sc = pause.get_pause_scene() 
+            if pause:
+                director.push( pause_sc )
+                
+            return True
 
         if symbol == pyglet.window.key.ESCAPE and modifiers == 0:
             director.pop()
