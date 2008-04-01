@@ -262,8 +262,14 @@ class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.I
         
     def on_exit(self):
         self.pause()
+        self.batch = None
+        for c in self.children:
+            c.set_parent( self )
+            
     def on_enter(self):
         self.resume()
+        for c in self.children:
+            c.set_parent( self )
 
         
 ActionSprite.supported_classes = ActionSprite

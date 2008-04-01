@@ -142,6 +142,15 @@ class IContainer( object ):
             if hasattr(child,"on_exit"):
                 child.on_exit()
 
+    def get_children(self):
+        return [ c for (z, c) in self.children ]
+        
+    def __contains__(self, child):
+        for z,c in self.children:
+            if  c==child:
+                return True
+        return False
+        
     def remove_by_name( self, name ):
         """Removes a child from the container given its name
 
@@ -171,6 +180,10 @@ class IContainer( object ):
 
             if isinstance(c,Layer):
                 director.window.push_handlers( c )
+            if hasattr(c, "batch"):
+                if c.batch is None:
+                    c.batch = self.batch
+
             if hasattr(c,"on_enter"):
                 c.on_enter()
             
@@ -291,7 +304,8 @@ class IActionTarget(object):
                 The time that elapsed since that last time this functions was called.
         """
         for x in self.to_remove:
-            self.actions.remove( x )
+            if x in self.actions:
+                self.actions.remove( x )
         self.to_remove = []
         
         if self.skip_frame:
