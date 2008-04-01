@@ -186,7 +186,8 @@ class IContainer( object ):
             from layer import Layer
 
             if isinstance(c,Layer):
-                director.window.push_handlers( c )
+                if not hasattr(c,"dont_push_handlers"):
+                    director.window.push_handlers( c )
 
             if hasattr(c,"on_enter"):
                 c.on_enter()
@@ -212,7 +213,8 @@ class IContainer( object ):
             if hasattr(c,"on_exit"):
                 c.on_exit()
             if isinstance(c,Layer):
-                director.window.pop_handlers()
+                if not hasattr(c,"dont_push_handlers"):
+                    director.window.pop_handlers()
 
     def transform( self ):
         """Apply ModelView transformations"""

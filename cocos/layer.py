@@ -24,7 +24,7 @@ from interfaces import *
 
 import bisect
 
-__all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer' ]
+__all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer', 'DontPushHandlers' ]
 
 #class Layer(object):
 class Layer(IContainer, IActionTarget):
@@ -159,6 +159,11 @@ class MultiplexLayer( Layer ):
         self.layers[ self.enabled_layer ].on_draw()
 
 
+class DontPushHandlers( object ):
+    def __init__( self ):
+        super(DontPushHandlers,self).__init__()
+        self.dont_push_handlers = True
+    
 
 class ColorLayer(Layer):
     """Creates a layer of a certain color.
