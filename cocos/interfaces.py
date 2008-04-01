@@ -161,6 +161,11 @@ class IContainer( object ):
         """ 
         self.is_running = True
 
+        # start actions if self is actiontaget
+        if hasattr(self, "resume"):
+            self.resume()
+            
+        
         for z,c in self.children:
             from layer import Layer
 
@@ -177,6 +182,10 @@ class IContainer( object ):
 
         self.is_running = False
 
+        # stop actions if self is actiontaget
+        if hasattr(self, "pause"):
+            self.pause()
+            
         if hasattr(self,"disable_step"):
             self.disable_step()
 
