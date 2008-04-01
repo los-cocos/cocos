@@ -45,3 +45,8 @@ class PauseLayer(Layer):
         
     def on_draw(self):
         self.text.draw()
+        
+    def on_key_press(self, k, m):
+        if k == pyglet.window.key.P and m == pyglet.window.key.MOD_ACCEL:
+            return True
+            
