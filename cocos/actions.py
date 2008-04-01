@@ -786,10 +786,7 @@ class Jump(IntervalAction):
         self.start_position = self.target.position
 
     def update(self, t):
-        y = int( self.y * ( math.sin( t * math.pi * self.jumps ) ) )
-
-        # <rj> disabled this so I could use negative "jumps"
-        #y = abs(y)
+        y = int( self.y * abs( math.sin( t * math.pi * self.jumps ) ) )
 
         x = self.x * t
         self.target.position = self.start_position + Point2(x,y)
