@@ -548,6 +548,34 @@ class FadeOut( IntervalAction ):
     def __reversed__(self):
         return FadeIn( self.duration )
     
+class FadeTo( IntervalAction ):
+    """FadeTo(alpha, duration)
+    Fades a sprite to a specific alpha value
+   
+    Example::
+
+        action = FadeOut( 2 )
+        sprite.do( action )
+    """
+    def init( self, alpha, duration ):
+        """Init method.
+
+        :Parameters:
+            `alpha` : float
+                0-255 value of opacity
+            `duration` : float
+                Seconds that it will take to fade
+        """
+        self.alpha = alpha
+        self.duration = duration
+
+    def start(self):
+        self.start_alpha = self.target.opacity
+        
+    def update( self, t ):
+        self.target.opacity = self.start_alpha + (
+                    self.alpha - self.start_alpha
+                    ) * t
 
 
 class FadeIn( FadeOut):
