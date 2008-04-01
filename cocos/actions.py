@@ -151,7 +151,7 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'CallFunc','CallFuncS',             # Calls a function
             'Delay','RandomDelay',              # Delays
             'Hide','Show','Blink',              # Hide or Shows the sprite
-            'FadeOut','FadeIn',                 # Fades out the sprite
+            'FadeOut','FadeIn','FadeTo',        # Fades out the sprite
 
 
             'Accelerate',                       # a function that gives the time acceleration
