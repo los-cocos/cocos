@@ -139,7 +139,7 @@ class IContainer( object ):
 
             # XXX: shall be part of on_exit(). Will be fixed after pyweek
             if isinstance(child,Layer):
-                director.window.push_handlers( child )
+                director.window.pop_handlers()
 
             if hasattr(child,"on_exit"):
                 child.on_exit()
