@@ -155,6 +155,7 @@ __all__ = [ 'ActionSprite',                     # Sprite class
 
 
             'Accelerate',                       # a function that gives the time acceleration
+            'AccelDeccel',                       # a function that gives the time acceleration
             'Reverse',
             'Speed',
 
@@ -465,6 +466,48 @@ class Accelerate( IntervalAction ):
     def __reversed__(self):
         return Accelerate(Reverse(self.other), 1.0/self.rate)
 
+class AccelDeccel( IntervalAction ):
+    """
+    Makes an action change the travel speed but retain near normal
+    speed at the beggining and ending.
+    
+    Example::
+        # rotates the sprite 180 degrees in 2 seconds clockwise
+        # it starts slow, gets fast and ends slow
+        action = AccelDeccel( Rotate( 180, 2 ), 4 )
+        sprite.do( action )
+    """
+    def init(self, other, rate = 2):
+        """Init method.
+        
+        :Parameters:
+            `other` : IntervalAction
+                The action that will be affected
+            `rate`: float
+                The acceleration rate. 1 is linear.
+                the new t is t**rate 
+        """
+        self.other = other
+        self.rate = rate
+        self.duration = other.duration
+
+    def start(self):
+        self.other.target = self.target
+        self.other.start()
+        
+    def update(self, t):
+        if t < 0.5:
+            nt = ((t*2)**self.rate)/2 
+        else: 
+            nt =  (((t-0.5)*2)**(1./self.rate))/2+0.5
+        self.other.update( nt )
+        
+
+    def __reversed__(self):
+        return self
+        
+        
+        
 class MoveTo( IntervalAction ):
     """Moves a sprite to the position x,y. x and y are absolute coordinates.
 
