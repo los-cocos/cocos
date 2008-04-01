@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.actions import ActionSprite, AccelDeccel, MoveBy
+from cocos.actions import ActionSprite, AccelDeccel, MoveBy, Reverse, Repeat
 import pyglet
 
 class TestLayer(cocos.layer.Layer):
@@ -22,7 +22,8 @@ class TestLayer(cocos.layer.Layer):
 
         self.sprite = ActionSprite( self.image )
         self.add( self.sprite, (0, y/2) )
-        self.sprite.do( AccelDeccel( MoveBy( (x, 0 ), 4 ) ) )
+        mov = AccelDeccel( MoveBy( (x, 0 ), 4 ) )
+        self.sprite.do( Repeat( mov + Reverse(mov) ))
         
 
 if __name__ == "__main__":

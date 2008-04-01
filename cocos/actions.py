@@ -474,21 +474,17 @@ class AccelDeccel( IntervalAction ):
     Example::
         # rotates the sprite 180 degrees in 2 seconds clockwise
         # it starts slow, gets fast and ends slow
-        action = AccelDeccel( Rotate( 180, 2 ), 4 )
+        action = AccelDeccel( Rotate( 180, 2 ) )
         sprite.do( action )
     """
-    def init(self, other, rate = 2):
+    def init(self, other):
         """Init method.
         
         :Parameters:
             `other` : IntervalAction
                 The action that will be affected
-            `rate`: float
-                The acceleration rate. 1 is linear.
-                the new t is t**rate 
         """
         self.other = other
-        self.rate = rate
         self.duration = other.duration
 
     def start(self):
@@ -496,15 +492,14 @@ class AccelDeccel( IntervalAction ):
         self.other.start()
         
     def update(self, t):
-        if t < 0.5:
-            nt = ((t*2)**self.rate)/2 
-        else: 
-            nt =  (((t-0.5)*2)**(1./self.rate))/2+0.5
+        ft = (t-0.5) * 12
+        nt = 1./( 1. + math.exp(-ft) )
+
         self.other.update( nt )
         
 
     def __reversed__(self):
-        return self
+        return AccelDeccel( Reverse(self.other) )
         
         
         
