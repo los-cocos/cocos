@@ -241,6 +241,9 @@ class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.I
         for c in self.children:
             c.set_parent( self )
             
+    def get_children(self):
+        return self.children[:]
+        
     def transform( self ):
         """Apply ModelView transformations"""
 

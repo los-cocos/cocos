@@ -285,6 +285,8 @@ class IActionTarget(object):
             return
         self.scheduled = False
         pyglet.clock.unschedule( self._step )
+        for c in self.get_children():
+            c.pause()
         
     def resume(self):
         if self.scheduled:
@@ -293,12 +295,16 @@ class IActionTarget(object):
         pyglet.clock.schedule( self._step )
         self.skip_frame = True
         
+        for c in self.get_children():
+            c.resume()        
         
     def flush(self):
         """Removes running actions from the queue"""
         for action in self.actions:
             self.to_remove.append( action )
-
+        for c in self.get_children():
+            c.flush()
+            
     def _step(self, dt):
         """This method is called every frame.
 
