@@ -106,7 +106,8 @@ class IContainer( object ):
 
             if hasattr(child,"on_enter"):
                 child.on_enter()
-                
+            if hasattr(child,"on_added"):
+                child.on_added()    
                
 
     def add_children( self, *children ):
@@ -141,6 +142,11 @@ class IContainer( object ):
 
             if hasattr(child,"on_exit"):
                 child.on_exit()
+                
+            
+        if hasattr(child, "on_removed"):
+            child.on_removed()
+                            
 
     def get_children(self):
         return [ c for (z, c) in self.children ]
@@ -180,9 +186,6 @@ class IContainer( object ):
 
             if isinstance(c,Layer):
                 director.window.push_handlers( c )
-            if hasattr(c, "batch"):
-                if c.batch is None:
-                    c.batch = self.batch
 
             if hasattr(c,"on_enter"):
                 c.on_enter()
