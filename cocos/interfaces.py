@@ -106,8 +106,9 @@ class IContainer( object ):
 
             if hasattr(child,"on_enter"):
                 child.on_enter()
-            if hasattr(child,"on_added"):
-                child.on_added()
+
+        if hasattr(child,"on_added"):
+            child.on_added()    
 
 
     def add_children( self, *children ):
