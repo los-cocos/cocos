@@ -44,7 +44,7 @@ class IContainer( object ):
         self.add_children( *children )
 
 
-    def add( self, child, position=(0,0), rotation=0.0, scale=1.0, color=(255,255,255), opacity=255, anchor_x=0.5, anchor_y=0.5, name=None, z=0 ):  
+    def add( self, child, position=(0,0), rotation=0.0, scale=1.0, color=(255,255,255), opacity=255, anchor_x=0.5, anchor_y=0.5, name=None, z=0 ):
         """Adds a child to the container
 
         :Parameters:
@@ -54,7 +54,7 @@ class IContainer( object ):
                 Name of the child
             `position` : tuple
                  this is the lower left corner by default
-            `rotation` : float 
+            `rotation` : float
                 the rotation (degrees)
             `scale` : float
                 the zoom factor
@@ -91,7 +91,7 @@ class IContainer( object ):
 
         child.parent = self
 
-        elem = z, child 
+        elem = z, child
         bisect.insort( self.children,  elem )
 
         for k,v in properties.items():
@@ -107,8 +107,8 @@ class IContainer( object ):
             if hasattr(child,"on_enter"):
                 child.on_enter()
             if hasattr(child,"on_added"):
-                child.on_added()    
-               
+                child.on_added()
+
 
     def add_children( self, *children ):
         """Adds a list of children to the container
@@ -120,7 +120,7 @@ class IContainer( object ):
         for c in children:
             self.add( c )
 
-    def remove( self, child ): 
+    def remove( self, child ):
         """Removes a child from the container
 
         :Parameters:
@@ -142,21 +142,21 @@ class IContainer( object ):
 
             if hasattr(child,"on_exit"):
                 child.on_exit()
-                
-            
+
+
         if hasattr(child, "on_removed"):
             child.on_removed()
-                            
+
 
     def get_children(self):
         return [ c for (z, c) in self.children ]
-        
+
     def __contains__(self, child):
         for z,c in self.children:
             if  c==child:
                 return True
         return False
-        
+
     def remove_by_name( self, name ):
         """Removes a child from the container given its name
 
@@ -173,14 +173,14 @@ class IContainer( object ):
     def on_enter( self ):
         """
         Called every time just before the scene is run.
-        """ 
+        """
         self.is_running = True
 
         # start actions if self is actiontaget
         if hasattr(self, "resume"):
             self.resume()
-            
-        
+
+
         for z,c in self.children:
             from layer import Layer
 
@@ -189,10 +189,10 @@ class IContainer( object ):
 
             if hasattr(c,"on_enter"):
                 c.on_enter()
-            
-        
+
+
     def on_exit( self ):
-        """      
+        """
         Called every time just before the scene leaves the stage
         """
 
@@ -201,7 +201,7 @@ class IContainer( object ):
         # stop actions if self is actiontaget
         if hasattr(self, "pause"):
             self.pause()
-            
+
         if hasattr(self,"disable_step"):
             self.disable_step()
 
@@ -261,7 +261,7 @@ class IActionTarget(object):
         :return: A clone of *action*
         '''
         a = copy.deepcopy( action )
-        
+
         a.target = self
         a.start()
         self.actions.append( a )
@@ -287,24 +287,28 @@ class IActionTarget(object):
         pyglet.clock.unschedule( self._step )
         for c in self.get_children():
             c.pause()
-        
+
     def resume(self):
         if self.scheduled:
             return
         self.scheduled = True
         pyglet.clock.schedule( self._step )
         self.skip_frame = True
-        
+
         for c in self.get_children():
-            c.resume()        
-        
+            c.resume()
+
     def flush(self):
         """Removes running actions from the queue"""
         for action in self.actions:
             self.to_remove.append( action )
         for c in self.get_children():
             c.flush()
-            
+
+    def actions_running(self):
+        """Determine whether any actions are running."""
+        return bool(set(self.actions) - set(self.to_remove))
+
     def _step(self, dt):
         """This method is called every frame.
 
@@ -316,11 +320,11 @@ class IActionTarget(object):
             if x in self.actions:
                 self.actions.remove( x )
         self.to_remove = []
-        
+
         if self.skip_frame:
             self.skip_frame = False
             return
-        
+
         if len( self.actions ) == 0:
             self.scheduled = False
             pyglet.clock.unschedule( self._step )
@@ -329,5 +333,5 @@ class IActionTarget(object):
             action.step(dt)
             if action.done():
                 self.remove_action( action )
-                
-    
+
+
