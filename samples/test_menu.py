@@ -23,16 +23,30 @@ class MainMenu(Menu):
         super( MainMenu, self ).__init__("GROSSINI'S SISTERS" )
 
         # you can override the font that will be used for the title and the items
-        self.font_title = 'You Are Loved'
-        self.font_items = 'You Are Loved'
+        font_title = {
+            'font_name':'KonQa',
+            'font_size':72,
+            'bold':True,
+            }
+        self.font_title.update( font_title )
 
-        # you can also override the font size and the colors. see menu.py for
-        # more info
+        font_item = {
+            'font_name':'You Are Loved',
+            'font_size': 32,
+            }
+        self.font_item.update( font_item )
+
+        font_item = {
+            'font_name':'You Are Loved',
+            'font_size': 48,
+            }
+        self.font_item_selected.update( font_item )
 
         # example: menus can be vertical aligned and horizontal aligned
         self.menu_valign = CENTER
         self.menu_halign = CENTER
 
+        # then add the items
         self.add_item( MenuItem('New Game', self.on_new_game ) )
         self.add_item( MenuItem('Options', self.on_options ) )
         self.add_item( MenuItem('Scores', self.on_scores ) )
@@ -62,8 +76,25 @@ class OptionMenu(Menu):
     def __init__( self ):
         super( OptionMenu, self ).__init__("GROSSINI'S SISTERS" )
 
-        self.font_title = 'KonQa Black'
-        self.font_items = 'You Are Loved'
+        font_title = {
+            'font_name':'KonQa',
+            'font_size':72,
+            'bold':True,
+            }
+        self.font_title.update( font_title )
+
+        font_item = {
+            'font_name':'You Are Loved',
+            'font_size': 32,
+            }
+        self.font_item.update( font_item )
+
+        font_item = {
+            'font_name':'You Are Loved',
+            'font_size': 48,
+            }
+        self.font_item_selected.update( font_item )
+
         self.menu_valign = BOTTOM
         self.menu_halign = RIGHT
 
@@ -72,12 +103,10 @@ class OptionMenu(Menu):
         self.add_item( MenuItem('OK', self.on_quit) )
         self.build_items()
 
-        self.fullscreen = False
 
     # Callbacks
     def on_fullscreen( self ):
-        self.fullscreen = not self.fullscreen
-        director.window.set_fullscreen( self.fullscreen )
+        director.window.set_fullscreen( not director.window.fullscreen )
 
     def on_quit( self ):
         self.switch_to( 0 )
@@ -89,8 +118,25 @@ class ScoreMenu(Menu):
     def __init__( self ):
         super( ScoreMenu, self ).__init__("GROSSINI'S SISTERS" )
 
-        self.font_title = 'KonQa Black'
-#        self.font_items = 'You Are Loved'
+        font_title = {
+            'font_name':'KonQa',
+            'font_size':72,
+            'bold':True,
+            }
+        self.font_title.update( font_title )
+
+        font_item = {
+            'font_name':'You Are Loved',
+            'font_size': 32,
+            }
+        self.font_item.update( font_item )
+
+        font_item = {
+            'font_name':'You Are Loved',
+            'font_size': 48,
+            }
+        self.font_item_selected.update( font_item )
+
         self.menu_valign = BOTTOM
         self.menu_halign = LEFT
 
@@ -105,6 +151,7 @@ if __name__ == "__main__":
 
     pyglet.resource.path.append('.')
     pyglet.resource.reindex()
+    pyglet.font.add_directory('.')
 
     director.init( resizable=True)
     director.run( Scene(
