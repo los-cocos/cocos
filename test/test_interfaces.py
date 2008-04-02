@@ -44,7 +44,7 @@ def test_remove_by_name():
     for i in range(7):
         c.add(AddMe(i),z=i%3,name="%s" % i)
     c.remove_by_name('5')
-    expected_result = [(0, 0), (0, 3), (0, 6), (1, 1), (1, 4), (2, 2)]
+    expected_result = [(0, 3), (0, 0), (0, 6), (1, 1), (1, 4), (2, 2)]
     assert repr(c.children) == repr(expected_result)
 
 def test_add_unsupported_types():
