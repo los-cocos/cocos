@@ -146,7 +146,8 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'Place',                            # placement action
             'MoveTo','MoveBy',                  # movement actions
             'Jump','Bezier',                    # complex movement actions
-            'Rotate','ScaleTo','ScaleBy',       # object modification
+            'Rotate',"RotateTo", "RotateBy",    # object rotation
+            'ScaleTo','ScaleBy',                # object scale
             'Spawn','Sequence','Repeat',        # queueing actions
             'CallFunc','CallFuncS',             # Calls a function
             'Delay','RandomDelay',              # Delays
@@ -370,7 +371,7 @@ class IntervalAction( Action ):
     def done(self):
         return self.elapsed >= self.duration
 
-class Rotate( IntervalAction ):
+class RotateBy( IntervalAction ):
     """Rotates a sprite clockwise in degrees
 
     Example::
@@ -398,8 +399,48 @@ class Rotate( IntervalAction ):
         self.target.rotation = (self.start_angle + self.angle * t ) % 360
 
     def __reversed__(self):
-        return Rotate(-self.angle, self.duration)
+        return RotateBy(-self.angle, self.duration)
 
+Rotate = RotateBy
+
+
+class RotateTo( IntervalAction ):
+    """Rotates a sprite clockwise in degrees
+
+    Example::
+        # rotates the sprite 180 degrees in 2 seconds
+        action = Rotate( 180, 2 )
+        sprite.do( action )
+    """
+    def init(self, angle, duration ):
+        """Init method.
+
+        :Parameters:
+            `angle` : float
+                Degrees that the sprite will be rotated.
+                Positive degrees rotates the sprite clockwise.
+            `duration` : float
+                Duration time in seconds
+        """
+        self.angle = angle
+        self.duration = duration
+
+    def start( self ):
+        ea = self.angle
+        sa = self.start_angle = self.target.rotation
+        self.angle = ((ea%360) - (sa%360))
+        if self.angle > 180: self.angle = -360+self.angle
+        if self.angle < -180: self.angle = -180+self.angle
+        
+        print ea, "->", self.angle
+        
+    def update(self, t):
+        self.target.rotation = (self.start_angle + self.angle * t ) % 360
+
+    def __reversed__(self):
+        return Rotate(-self.angle, self.duration)
+        
+        
 def Reverse( action ):
     """Reverses the behaviour of the action
 
