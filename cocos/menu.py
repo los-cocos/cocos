@@ -34,6 +34,8 @@ from pyglet.gl import *
 
 from layer import *
 from director import *
+from interfaces import *
+from actions import *
 
 __all__ = [ 'Menu', 'MenuItem', 'ToggleMenuItem', 'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM' ]
 
@@ -174,7 +176,6 @@ class Menu(Layer):
             `item` : a `MenuItem`
                 The MenuItem that will part of the `Menu`
         """
-        item.batch = self.batch
         item.halign = self.menu_halign
         item.valign = self.menu_valign
         self.items.append( item )
@@ -197,7 +198,7 @@ class Menu(Layer):
         self._draw_title()
         self._draw_items()
         self.selected_index = 0
-        self.items[ self.selected_index ].selected = True
+        self.items[ self.selected_index ].is_selected = True
 
 
     #
@@ -224,9 +225,10 @@ class Menu(Layer):
             self.selected_index = 0
 
         if symbol in (key.DOWN, key.UP):
-            self.items[ old_idx ].selected = False
-            self.items[ self.selected_index ].selected = True 
+            self.items[ old_idx ].is_selected = False
+            self.items[ self.selected_index ].is_selected = True 
 #            self.sound.play()
+            self.items[ self.selected_index ].selected()
             return True
 
         return ret
@@ -242,14 +244,15 @@ class Menu(Layer):
         self._y = y
         for idx,i in enumerate( self.items ):
             if i.is_inside_box( x, y):
-                self.items[ self.selected_index ].selected = False
-                i.selected = True
+                self.items[ self.selected_index ].is_selected = False
+                i.is_selected = True
                 self.selected_index = idx
+                i.selected()
 
 #
 # MenuItem
 #
-class MenuItem( object ):
+class MenuItem( IActionTarget, IContainer ):
     """A menu item triggering a function."""
 
     def __init__(self, label, activate_func):
@@ -262,10 +265,12 @@ class MenuItem( object ):
                 The callback function
         """
 
+        super( MenuItem, self).__init__()
+
         self.label = label
         self.activate_func = activate_func
 
-        self.selected = False
+        self.is_selected = False
 
         # Variables that will be set when init_font() is called
         self.text = None
@@ -273,6 +278,13 @@ class MenuItem( object ):
 
         self.halign = None
         self.valign = None
+
+        # default effect when item is selected
+        angle = 5
+        duration = 0.05
+        rot = Accelerate(Rotate( angle, duration ), 2)
+        rot2 = Accelerate(Rotate( -angle*2, duration), 2)
+        self.effect = rot + (rot2 + Reverse(rot2)) * 2 + Reverse(rot)
 
     def get_box( self ):
         """Returns the box that contains the menu item.
@@ -307,12 +319,15 @@ class MenuItem( object ):
         y2 = y1 + height
         return (x1,y1,x2,y2)
 
-
     def draw( self ):
-        if self.selected:
+        glPushMatrix()
+        self.transform()
+
+        if self.is_selected:
             self.text_selected.draw()
         else:
             self.text.draw()
+        glPopMatrix()
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ENTER and self.activate_func:
@@ -337,9 +352,12 @@ class MenuItem( object ):
         if( x >= ax and x <= bx and y >= ay and y <= by ):
             return True
         return False
-        
 
-        
+    def selected( self ):
+        if not self.actions_running():
+            
+            self.do( self.effect )
+
 #
 # Item that can be toggled
 #
