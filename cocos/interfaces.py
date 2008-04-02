@@ -6,6 +6,7 @@
 
 import bisect, copy
 
+import pyglet
 from pyglet.gl import *
 
 from director import director
