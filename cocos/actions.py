@@ -422,17 +422,17 @@ class RotateTo( IntervalAction ):
             `duration` : float
                 Duration time in seconds
         """
-        self.angle = angle
+        self.angle = angle%360
         self.duration = duration
 
     def start( self ):
         ea = self.angle
-        sa = self.start_angle = self.target.rotation
+        sa = self.start_angle = (self.target.rotation%360)
         self.angle = ((ea%360) - (sa%360))
-        if self.angle > 180: self.angle = -360+self.angle
-        if self.angle < -180: self.angle = -180+self.angle
-        
-        print ea, "->", self.angle
+        if self.angle > 180: 
+            self.angle = -360+self.angle
+        if self.angle < -180: 
+            self.angle = 360+self.angle
         
     def update(self, t):
         self.target.rotation = (self.start_angle + self.angle * t ) % 360
