@@ -21,8 +21,8 @@ class TestLayer(cocos.layer.Layer):
         self.image.anchor_y = self.image.height / 2
 
         self.sprite = ActionSprite( self.image )
-        self.add( self.sprite, (x/4, y/4) )
-        self.sprite.do( cocos.actions.RotateTo( 45, 3 ) )
+        self.add( self.sprite, (x/4, y/4), rotation=355 )
+        self.sprite.do( cocos.actions.RotateTo( 5, 3 ) )
        
         self.image = pyglet.resource.image('grossini.png')
         self.image.anchor_x = self.image.width / 2
