@@ -600,7 +600,9 @@ class Cell(object):
         self.tile = tile
 
     def _as_xml(self, parent):
-        c = ElementTree.SubElement(parent, 'cell', tile=self.tile.id)
+        c = ElementTree.SubElement(parent, 'cell')
+        if self.tile:
+            c.set('tile', self.tile.id)
         for k in self.properties:
             v = self.properties[k]
             ElementTree.SubElement(c, 'property', value=v,
