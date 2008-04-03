@@ -37,6 +37,8 @@ from director import *
 from interfaces import *
 from actions import *
 
+import data
+
 __all__ = [ 'Menu', 'MenuItem', 'ToggleMenuItem', 'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM' ]
 
 #
@@ -64,6 +66,8 @@ class Menu(Layer):
      - Finally you shall add the menu to a `Scene`
     """
 
+    optionSound = None
+    selectSound = None
     def __init__( self, title = ''):
         super(Menu, self).__init__()
 
@@ -217,6 +221,8 @@ class Menu(Layer):
             self.on_quit()
             return True
         else:
+            if self.selectSound:
+                self.selectSound.play()
             ret = self.items[self.selected_index].on_key_press(symbol, modifiers)
 
         if self.selected_index< 0:
@@ -225,9 +231,9 @@ class Menu(Layer):
             self.selected_index = 0
 
         if symbol in (key.DOWN, key.UP):
+            if self.optionSound: self.optionSound.play()
             self.items[ old_idx ].is_selected = False
             self.items[ self.selected_index ].is_selected = True 
-#            self.sound.play()
             self.items[ self.selected_index ].selected()
             return True
 
@@ -236,6 +242,8 @@ class Menu(Layer):
     def on_mouse_release( self, x, y, buttons, modifiers ):
         (x,y) = director.get_virtual_coordinates(x,y)
         if self.items[ self.selected_index ].is_inside_box(x,y):
+            if self.selectSound:
+                self.selectSound.play()
             return self.items[ self.selected_index ].on_key_press( key.ENTER, 0 )   # XXX: hack
 
     def on_mouse_motion( self, x, y, dx, dy ):
@@ -244,6 +252,8 @@ class Menu(Layer):
         self._y = y
         for idx,i in enumerate( self.items ):
             if i.is_inside_box( x, y):
+                if not i.is_selected: #Hack to play sound only once
+                    if self.optionSound: self.optionSound.play()
                 self.items[ self.selected_index ].is_selected = False
                 i.is_selected = True
                 self.selected_index = idx
