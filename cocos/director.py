@@ -140,7 +140,7 @@ class Director(event.EventDispatcher):
         """
         
         self.window = window.Window( *args, **kwargs )
-        self.show_FPS = True
+        self.show_FPS = False 
 
         # scene related
         self.scene_stack = []
