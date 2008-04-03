@@ -121,19 +121,24 @@ class Menu(Layer):
             'dpi':96,
         }
 
-        # Sound
-#        self.sound_filename = 'menuchange.wav'
+        self.title_height = 0
 
      
     def _draw_title( self ):
         """ draws the title """
         width, height = director.get_window_size()
 
+        fo = font.load( self.font_title['font_name'], self.font_title['font_size'] )
+        title_height = fo.ascent - fo.descent  
+
         self.font_title['x'] = width // 2
-        self.font_title['y'] = height - 40
+        self.font_title['y'] = height - ( title_height //2 )
         self.font_title['text'] = self.title
         self.font_title['batch'] = self.batch
         self.text = pyglet.text.Label( **self.font_title )
+
+        fo = font.load( self.font_title['font_name'], self.font_title['font_size'] )
+        self.title_height = fo.ascent * 0.9  # descent is not important
 
     def _draw_items( self ):
 
@@ -154,9 +159,9 @@ class Menu(Layer):
         for idx,item in enumerate( self.items ):
 
             if self.menu_valign == CENTER:
-                pos_y = height / 2 + (fo_height * len(self.items) )/2 - (idx * fo_height )
+                pos_y = height / 2 + (fo_height * len(self.items) )/2 - (idx * fo_height ) - self.title_height
             elif self.menu_valign == TOP:
-                pos_y = height - (idx * fo_height )
+                pos_y = height - (idx * fo_height ) - self.title_height
             elif self.menu_valign == BOTTOM:
                 pos_y = 0 + fo_height * len(self.items) - (idx * fo_height )
 
