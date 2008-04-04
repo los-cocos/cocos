@@ -133,6 +133,7 @@ import math
 from euclid import *
 
 import interfaces
+import rect
 from director import director
 
 import pyglet
@@ -244,6 +245,10 @@ class ActionSprite( pyglet.sprite.Sprite, interfaces.IActionTarget, interfaces.I
 
     def get_children(self):
         return self.children[:]
+
+    def get_rect(self):
+        x, y = self.position
+        return rect.Rect(x, y, self.width, self.height)
 
     def transform( self ):
         """Apply ModelView transformations"""

@@ -476,6 +476,10 @@ class MapLayer(ScrollableLayer):
         '''
         self._sprites.clear()
 
+    def get_visible(self):
+        return self.get_in_region(self.viewport_x, self.viewport_y,
+            self.viewport_x + self.viewport_w, self.viewport_y + self.viewport_h)
+
     def set_viewport(self, x, y, w, h):
         super(MapLayer, self).set_viewport(x, y, w, h)
 
