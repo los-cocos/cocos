@@ -37,8 +37,6 @@ from director import *
 from interfaces import *
 from actions import *
 
-import data
-
 __all__ = [ 'Menu', 'MenuItem', 'ToggleMenuItem', 'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM' ]
 
 #
