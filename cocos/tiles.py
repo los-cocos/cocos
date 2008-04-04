@@ -1013,7 +1013,7 @@ class ScrollingManager(list):
         v_max_y = fy + h2
         if not x_moved and v_max_x > b_max_x:
             fx -= v_max_x - b_max_x
-        if not y_moved and v_max_y > b_max_y:
+        if not y_moved and v_max_y < b_max_y:
             fy -= v_max_y - b_max_y
 
         self.fx, self.fy = map(int, (fx, fy))
