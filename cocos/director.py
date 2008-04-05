@@ -112,10 +112,10 @@ __all__ = ['director', 'DefaultHandler']
 
 class DefaultHandler( object ):
     def on_key_press( self, symbol, modifiers ):
-        if symbol == pyglet.window.key.F and modifiers == pyglet.window.key.MOD_ACCEL:
+        if symbol == pyglet.window.key.F and (modifiers & pyglet.window.key.MOD_ACCEL):
             director.window.set_fullscreen( not director.window.fullscreen )
             return True
-        if symbol == pyglet.window.key.P and modifiers == pyglet.window.key.MOD_ACCEL:
+        if symbol == pyglet.window.key.P and (modifiers & pyglet.window.key.MOD_ACCEL):
             import pause
             pause_sc = pause.get_pause_scene() 
             if pause:
@@ -123,7 +123,7 @@ class DefaultHandler( object ):
                 
             return True
 
-        if symbol == pyglet.window.key.ESCAPE and modifiers == 0:
+        if symbol == pyglet.window.key.ESCAPE:
             director.pop()
             return True
 
