@@ -6,7 +6,6 @@
 
 import bisect, copy
 
-import pyglet
 from pyglet.gl import *
 
 from director import director
@@ -102,7 +101,7 @@ class IContainer( object ):
             from layer import Layer
 
             # XXX: shall be part of on_enter() but will be fixed after pyweek
-            if isinstance(child,Layer):
+            if isinstance(child,Layer) and not hasattr(child,"dont_push_handlers"):
                 director.window.push_handlers( child )
 
             if hasattr(child,"on_enter"):
@@ -139,7 +138,7 @@ class IContainer( object ):
             from layer import Layer
 
             # XXX: shall be part of on_exit(). Will be fixed after pyweek
-            if isinstance(child,Layer):
+            if isinstance(child,Layer) and not hasattr(child,"dont_push_handlers"):
                 director.window.pop_handlers()
 
             if hasattr(child,"on_exit"):
