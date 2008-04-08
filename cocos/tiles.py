@@ -475,6 +475,7 @@ class MapLayer(ScrollableLayer):
         '''Force re-calculation of the sprites to draw for the viewport.
         '''
         self._sprites.clear()
+        self.set_viewport(self.viewport_x, self.viewport_y, self.viewport_w, self.viewport_h)
 
     def get_visible(self):
         return self.get_in_region(self.viewport_x, self.viewport_y,
@@ -572,7 +573,7 @@ class RectMapLayer(RegularTesselationMapLayer):
         ''' Return Cell at pixel px=(x,y).
 
         Return None if out of bounds.'''
-        return self.get_cell(int(x // self.tw), int(y // self.th))
+        return self.get_cell(int((x + self.x) // self.tw), int((y + self.y) // self.th))
 
     UP = (0, 1)
     DOWN = (0, -1)
