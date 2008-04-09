@@ -128,7 +128,7 @@ class ResourceError(Exception):
 # XXX this should use pyglet.resource to load all resources
 # XXX (though how path extension works isn't clear)
 
-class Resource(dict):
+class Resource(object):
     cache = {}
     def __init__(self, filename, paths=None):
         self.filename = filename
@@ -137,7 +137,12 @@ class Resource(dict):
         else:
             self.paths = paths
 
-        self.namespaces = {}        # map local name to filename
+        # id to map, tileset, etc.
+        self.contents = {}
+
+        # list of (namespace, Resource) from <requires> tags
+        self.requires = []
+
         tree = ElementTree.parse(filename)
         root = tree.getroot()
         if root.tag != 'resource':
@@ -163,14 +168,7 @@ class Resource(dict):
     def requires_factory(self, tag):
         filename = self.find_file(tag.get('file'))
         resource = load(filename)
-
-        ns = tag.get('namespace')
-        if ns:
-            self.namespaces[ns] = resource
-        else:
-            # copy over all the resources from the require'd file
-            # last man standing wins
-            self.update(resource)
+        self.requires.append((tag.get('namespace', ''), resource))
 
     factories = {
         'resource': resource_factory,
@@ -189,14 +187,43 @@ class Resource(dict):
             return self.factories[tag.tag](self, tag)
         return self.get_resource(ref)
 
-    def add_resource(self, id, resource):
-        self[id] = resource
-    def get_resource(self, ref):
+    def __contains__(self, ref):    
+        return ref in self.contents
+
+    def __getitem__(self, ref):
+        reqns = ''
+        id = ref
         if ':' in ref:
-            ns, ref = ref.split(':', 1)
-            resources = self.cache[self.namespaces[ns]]
-            return resources[ref]
+            reqns, id = ref.split(':', 1)
+        elif id in self.contents:
+            return self.contents[id]
+        for ns, res in self.requires:
+            if ns != reqns: continue
+            if id in res: return res[id]
+        raise KeyError(id)
+
+    def add_resource(self, id, resource):
+        self.contents[id] = resource
+    def get_resource(self, ref):
         return self[ref]
+
+    def save_xml(self):
+        #filename = raw_input('filename for save? > ')
+        #if not filename.strip():
+        #    print 'Filename blank - save skipped'
+        #    return
+        filename = 'editor-save.xml'
+
+        # generate the XML
+        root = ElementTree.Element('resource')
+        for namespace, res in self.requires:
+            r = ElementTree.SubElement(root, 'requires', file=res.filename)
+            if namespace:
+                r.set('namespace', namespace)
+        for element in self.contents.values():
+            element._as_xml(root)
+        tree = ElementTree.ElementTree(root)
+        tree.write(filename)
 
 _cache = weakref.WeakValueDictionary()
 class _NOT_LOADED(object): pass
@@ -534,29 +561,6 @@ class RectMapLayer(RegularTesselationMapLayer):
         self.px_width = len(cells) * tw
         self.px_height = len(cells[0]) * th
 
-    def save_xml(self, tilesets):
-        #filename = raw_input('filename for save? > ')
-        #if not filename.strip():
-        #    print 'Filename blank - save skipped'
-        #    return
-        filename = 'editor-save.xml'
-
-        # generate the XML
-        root = ElementTree.Element('resource')
-        for fn, namespace in tilesets:
-            r = ElementTree.SubElement(root, 'requires', file=fn)
-            if namespace:
-                r.set('namespace', namespace)
-        m = ElementTree.SubElement(root, 'rectmap', id=self.id,
-            tile_size='%dx%d'%(self.tw, self.th),
-            origin='%s,%s,%s'%(self.x, self.y, self.z))
-        for column in self.cells:
-            c = ElementTree.SubElement(m, 'column')
-            for cell in column:
-                cell._as_xml(c)
-        tree = ElementTree.ElementTree(root)
-        tree.write(filename)
-
     def get_in_region(self, x1, y1, x2, y2):
         '''Return cells (in [column][row]) that are within the
         pixel bounds specified by the bottom-left (x1, y1) and top-right
@@ -587,6 +591,15 @@ class RectMapLayer(RegularTesselationMapLayer):
         '''
         dx, dy = direction
         return self.get_cell(cell.x + dx, cell.y + dy)
+
+    def _as_xml(self, root):
+        m = ElementTree.SubElement(root, 'rectmap', id=self.id,
+            tile_size='%dx%d'%(self.tw, self.th),
+            origin='%s,%s,%s'%(self.x, self.y, self.z))
+        for column in self.cells:
+            c = ElementTree.SubElement(m, 'column')
+            for cell in column:
+                cell._as_xml(c)
 
 
 class Cell(object):
