@@ -1281,6 +1281,9 @@ class MeshAction( IntervalAction ):
                x-vertex
             `y` : int
                y-vertex
+
+        :rtype: (int,int)
+        :returns: Returns the current value of x,y
         '''
         idx = self._get_vertex_idx( x,y,2 )
         x = self.target.mesh.vertex_list.vertices[idx]
@@ -1295,6 +1298,9 @@ class MeshAction( IntervalAction ):
                x-vertex
             `y` : int
                y-vertex
+
+        :rtype: (int,int)
+        :returns: Returns the original value of x,y
         '''
         idx = self._get_vertex_idx( i,j,2 )
 
@@ -1376,14 +1382,23 @@ class Liquid( MeshAction ):
 class Lens( MeshAction ):
     '''Liquid simulates the liquid effect
 
-       scene.do( Liquid(x_quads=16, y_quads=16, duration=10) )
+       scene.do( Lens(x_quads=16, y_quads=16, duration=10) )
     '''
 
+    def start( self ):
+        super(Lens,self).start()
+#        glDisable(GL_TEXTURE_2D);
+#        glPolygonMode(GL_FRONT, GL_LINE);
+#        glPolygonMode(GL_BACK, GL_LINE);
+        self.center_x= 319
+        self.center_y= 239
+        self.lens_radius = 200
+
+        self.go_left = True
+
+
     def update( self, t ):
-        center_x= 320
-        center_y= 240
-        center_point = Point2( center_x, center_y)
-        lens_radius = 80
+        center_point = Point2( self.center_x, self.center_y)
 
         for i in range(0, self.x_quads+1):
             for j in range(0, self.y_quads+1):
@@ -1392,19 +1407,36 @@ class Lens( MeshAction ):
                 y = j* self.size_y
                 p = Point2( x,y )
 
-                r = abs(p - center_point)
-                angle = 0
+                vect = center_point - p
+                r = abs(vect)
 
-                xx = 0
-                yy = 0
+                if r < self.lens_radius:
+                    print " old: (%d,%d)" % (x,y),
 
-                if r < lens_radius:
-                    xx = random.randrange(-5,5)
-                    yy = random.randrange(-5,5)
+                    pre_log = r/self.lens_radius
+                    if pre_log == 0:
+                        pre_log = 0.001
+                    l = math.log( pre_log )*0.5
+                    r = math.exp( l ) * self.lens_radius
 
-                xpos = x + xx 
-                ypos = y + yy
-                self.set_vertex( i,j, (xpos,ypos) )
+                    vect.normalize()
+                    new_vect = vect * r
+
+                    x -= new_vect.x
+                    y -= new_vect.y
+
+                    print " new: (%d,%d)" % (x,y)
+
+                self.set_vertex( i,j, (x,y) )
+
+        if self.go_left:
+            self.center_x -= 2.5 
+            if self.center_x < 40:
+                self.go_left = False
+        else:
+            self.center_x += 2.5 
+            if self.center_x > 620:
+                self.go_left = True
 
     def __reversed__(self):
         return Lens( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
