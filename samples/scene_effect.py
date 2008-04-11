@@ -34,10 +34,13 @@ class TestLayer(cocos.layer.Layer):
         image.anchor_y = image.height / 2
         sprite3 = ActionSprite( image )
 
+        sprite4 = ActionSprite( image )
+
 
         self.add( sprite2, (x/4, y/2) )
         self.add( sprite1, (x/2, y/2) )
         self.add( sprite3, (x/(4/3.0), y/2) )
+        self.add( sprite4, (x + 100, y/2) )
 
         sprite1.do( Rotate( 360,1 ) * 10 )
         sprite2.do( Rotate( -360,1 ) * 10 )

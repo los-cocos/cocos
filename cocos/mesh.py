@@ -42,8 +42,13 @@ class Mesh(object):
         x_step = x / (x_quads)
         y_step = y / (y_quads)
 
-        w = float(x)/self.texture.tex_coords[3]
-        h = float(y)/self.texture.tex_coords[7]
+#        w = float(x)/self.texture.tex_coords[3]
+#        h = float(y)/self.texture.tex_coords[7]
+
+        w = float(self.texture.width)
+        h = float(self.texture.height)
+
+        print w,h
 
         vertex_points = []
         texture_points = []
@@ -56,10 +61,9 @@ class Mesh(object):
                 y2 = y1 + y_step
                 
                 vertex_points += [x1, y1, x2, y1, x2, y2, x1, y2]
-#                texture_points += [x1, y1, x2, y1, x2, y2, x1, y2]
                 texture_points += [x1/w, y1/h, x2/w, y1/h, x2/w, y2/h, x1/w, y2/h]
 
-        print vertex_points
+#        print vertex_points
         print texture_points
                 
       
@@ -83,8 +87,6 @@ class Mesh(object):
         glEnable(self.texture.target)
         glBindTexture(self.texture.target, self.texture.id)
         glPushAttrib(GL_COLOR_BUFFER_BIT)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         self.vertex_list.draw(pyglet.gl.GL_QUADS)
 
