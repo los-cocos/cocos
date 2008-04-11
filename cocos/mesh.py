@@ -61,10 +61,7 @@ class Mesh(object):
                 vertex_points += [x1, y1, x2, y1, x2, y2, x1, y2]
                 texture_points += [x1/w, y1/h, x2/w, y1/h, x2/w, y2/h, x1/w, y2/h]
 
-#        print vertex_points
-#        print texture_points
                 
-      
         self.vertex_list = pyglet.graphics.vertex_list(x_quads*y_quads*4, "t2f", "v2i/stream")
         self.vertex_points = vertex_points[:]
         self.vertex_list.vertices = vertex_points

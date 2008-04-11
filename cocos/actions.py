@@ -162,6 +162,7 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'Speed',
 
             'MeshAction','Shaky','Liquid',      # Mesh Actions
+            'QuadMoveBy',
             ]
 
 class SpriteGroup(pyglet.graphics.Group):
@@ -1225,18 +1226,28 @@ class MeshAction( IntervalAction ):
             self.target.mesh.active = False
         return r
 
+    def _get_vertex_idx( self, i, j, k ):
+        if i==0 and j==0:
+            idx = 0
+        elif i==0 and j>0:
+            idx = ( (j-1)*4 + 3 ) * 2
+        elif i>0 and j==0:
+            idx = ((i-1) * 4 * self.y_quads + 1 ) * 2
+        else:
+            idx = ((i-1) * 4 * self.y_quads + (j-1) * 4 + k) * 2
+
+        return idx
 
     def _set_vertex( self, i, j, k, v ):
-        if i < 0 or i >= self.x_quads:
+        if i < 0 or i > self.x_quads:
             return
-
-        if j < 0 or j >= self.y_quads:
+        if j < 0 or j > self.y_quads:
             return
-
         if k< 0 or k >=4:
             return
 
-        idx = (i * 4 * self.y_quads + j * 4 + k) * 2
+        idx = self._get_vertex_idx( i,j,k)
+
         self.target.mesh.vertex_list.vertices[idx] = int(v[0])
         self.target.mesh.vertex_list.vertices[idx+1] = int(v[1])
 
@@ -1257,7 +1268,7 @@ class MeshAction( IntervalAction ):
         self._set_vertex( x, y+1, 1, v)
 
     def get_vertex( self, x, y):
-        '''Get a vertex point value
+        '''Get the current vertex point value
 
         :Parameters:
             `x` : int 
@@ -1265,8 +1276,22 @@ class MeshAction( IntervalAction ):
             `y` : int
                y-vertex
         '''
-        k = 2
-        idx = (x * 4 * self.y_quads + y * 4 + k) * 2
+        idx = self._get_vertex_idx( x,y,2 )
+        x = self.target.mesh.vertex_list.vertices[idx]
+        y = self.target.mesh.vertex_list.vertices[idx+1]
+        return (x,y)
+
+    def get_vertex_orig( self, x, y):
+        '''Get the original vertex point value
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+        '''
+        idx = self._get_vertex_idx( i,j,2 )
+
         x = self.target.mesh.vertex_points[idx]
         y = self.target.mesh.vertex_points[idx+1]
 
@@ -1294,7 +1319,8 @@ class Shaky( MeshAction ):
                     self.target.mesh.vertex_list.vertices[idx] = int(x)
                     self.target.mesh.vertex_list.vertices[idx+1] = int(y)
                 
-
+    def __reversed__(self):
+        return Shaky( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
 
 class Liquid( MeshAction ):
     '''Liquid simulates the liquid effect
@@ -1309,11 +1335,67 @@ class Liquid( MeshAction ):
         self.size_y = y // self.y_quads
 
     def update( self, t ):
-        for i in range(0, self.x_quads-1):
-            for j in range(0, self.y_quads-1):
+        for i in range(1, self.x_quads):
+            for j in range(1, self.y_quads):
                 x = i* self.size_x
                 y = j* self.size_y
-                xpos = (x + (math.sin(self.elapsed*2 + x * .01) * self.size_x)) + self.size_x
-                ypos = (y + (math.sin(self.elapsed*2 + y * .01) * self.size_y)) + self.size_y
+                xpos = (x + (math.sin(self.elapsed*2 + x * .01) * self.size_x))
+                ypos = (y + (math.sin(self.elapsed*2 + y * .01) * self.size_y)) 
                 self.set_vertex( i,j, (xpos,ypos) )
 
+    def __reversed__(self):
+        return Liquid( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+
+class QuadMoveBy( MeshAction ):
+    '''QuadMoveBy moves each vertex of the quad
+
+       scene.do( QuadMoveBy( vertex0, vertex1, vertex2, vertex3, duration) )
+
+       Vertex positions::
+
+            vertex3 --<-- vertex2
+                |            |
+                v            ^
+                |            |
+            vertex0 -->-- vertex1
+       '''
+
+    def init( self, vertex0=(0,0), vertex1=(0,0), vertex2=(0,0), vertex3=(0,0), x_quads=1, y_quads=1, *args, **kw ):
+        '''Initializes the QuadMoveBy
+
+        :Parameters:
+            `vertex0` : (x,y)
+                The bottom-left relative coordinate
+            `vertex1` : (x,y)
+                The bottom-right relative coordinate
+            `vertex2` : (x,y)
+                The top-right relative coordinate
+            `vertex3` : (x,y)
+                The top-left relative coordinate
+        '''
+        super( QuadMoveBy, self).init( x_quads, y_quads, *args, **kw )
+        self.delta0 = Point2( *vertex0 )
+        self.delta1 = Point2( *vertex1 )
+        self.delta2 = Point2( *vertex2 )
+        self.delta3 = Point2( *vertex3 )
+
+    def start( self ):
+        super(QuadMoveBy,self).start()
+        self.start_position0 = self.get_vertex( 0, 0)
+        self.start_position1 = self.get_vertex( 1, 0)
+        self.start_position2 = self.get_vertex( 1, 1)
+        self.start_position3 = self.get_vertex( 0, 1)
+        
+    def update( self, t ):
+        new_pos0 = self.start_position0 + self.delta0 * t
+        new_pos1 = self.start_position1 + self.delta1 * t
+        new_pos2 = self.start_position2 + self.delta2 * t
+        new_pos3 = self.start_position3 + self.delta3 * t
+
+        self.set_vertex( 0,0, new_pos0 )
+        self.set_vertex( 1,0, new_pos1 )
+        self.set_vertex( 1,1, new_pos2 )
+        self.set_vertex( 0,1, new_pos3 )
+
+    def __reversed__(self):
+        return QuadMoveBy(-self.delta0, -self.delta1, -self.delta2, -self.delta3, self.x_quads, self.y_quads, self.duration)
