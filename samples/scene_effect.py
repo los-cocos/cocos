@@ -48,12 +48,15 @@ if __name__ == "__main__":
     main_scene = cocos.scene.Scene()
 
     red = ColorLayer(1.0, 0.0, 0.0, 1.0)
+    blue = ColorLayer(0.0, 0.0, 1.0, 1.0)
+    green = ColorLayer(0.0, 1.0, 0.0, 1.0)
     tl1 = TestLayer()
 
-    main_scene.add( red )
-    main_scene.add( tl1 )
+    main_scene.add( red, z=0 )
+    main_scene.add( blue, z=1, scale=0.75 )
+    main_scene.add( green, z=2, scale=0.5 )
+    main_scene.add( tl1, z=3 )
 
-
-    main_scene.do( CosWave( 8 ) )
+    main_scene.do( CosWave( 8, 8, 8) )
 
     director.run (main_scene)

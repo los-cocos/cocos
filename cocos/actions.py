@@ -1199,26 +1199,37 @@ class Repeat(Action):
         return False
 
 
-class CosWave( IntervalAction ):
+class MeshAction( IntervalAction ):
+    def init( self, duration=5, x_quads=4, y_quads=4):
+        self.duration = duration
+        self.x_quads = x_quads
+        self.y_quads = y_quads
 
     def start( self ):
+        self.target.mesh.init( self.x_quads, self.y_quads )
         self.target.mesh.active = True
 
-    def init( self, duration ):
-        self.duration = duration
-
     def done( self ):
-        r = super(CosWave,self).done()
+        r = super(MeshAction,self).done()
         if r:
             self.target.mesh.active = False
         return r
 
+class CosWave( MeshAction ):
+
     def update( self, t ):
-        for p in range(len(self.target.mesh.vertex_points)/2):
-            x = self.target.mesh.vertex_points[2*p]
-            y = self.target.mesh.vertex_points[2*p+1]
-            scale = abs(math.cos ( float(x)/(y+0.5) + self.elapsed ) ) + 1
-            x = (x-25) * scale + 25
-            y = (y-50) * scale + 50
-            self.target.mesh.vertex_list.vertices[2*p] = 200+int(x)
-            self.target.mesh.vertex_list.vertices[2*p+1] = 200+int(y)
+        rr = random.randrange
+
+        for i in range(0, self.x_quads):
+            for j in range(0, self.y_quads):
+                for k in range(0,4):
+
+                    idx = (i * 4 * self.y_quads + j * 4 + k) * 2
+                    x = self.target.mesh.vertex_points[idx]
+                    y = self.target.mesh.vertex_points[idx+1]
+
+                    x += rr(-6,6)
+                    y += rr(-6,6)
+
+                    self.target.mesh.vertex_list.vertices[idx] = int(x)
+                    self.target.mesh.vertex_list.vertices[idx+1] = int(y)

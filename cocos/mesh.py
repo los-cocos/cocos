@@ -19,17 +19,20 @@ class Mesh(object):
     """
     texture = None
     
-    def __init__(self, x_quads=4, y_quads=4):
+    def __init__(self):
         super(Mesh, self).__init__()
         self.active = False
 
-    def init( self, x_quads=4, y_quards=4 ):
+    def init( self, x_quads=4, y_quads=4 ):
 
         x = director.window.width
         y = director.window.height
 
+        self.x_quads = x_quads
+        self.y_quads = y_quads
+
         if self.texture is None:
-            Mesh.texture = image.Texture.create_for_size(
+            self.texture = image.Texture.create_for_size(
                     GL_TEXTURE_2D, x, 
                     y, GL_RGB)
         
@@ -53,7 +56,11 @@ class Mesh(object):
                 y2 = y1 + y_step
                 
                 vertex_points += [x1, y1, x2, y1, x2, y2, x1, y2]
+#                texture_points += [x1, y1, x2, y1, x2, y2, x1, y2]
                 texture_points += [x1/w, y1/h, x2/w, y1/h, x2/w, y2/h, x1/w, y2/h]
+
+        print vertex_points
+        print texture_points
                 
       
         self.vertex_list = pyglet.graphics.vertex_list(x_quads*y_quads*4, "t2f", "v2i/stream")
@@ -67,15 +74,12 @@ class Mesh(object):
 
 
     def after_draw( self ):
-        # capture after drawing
+        # capture after drawingg
         self.grabber.after_render(self.texture)
-        
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
         self.blit()
 
     def blit(self ):
-
         glEnable(self.texture.target)
         glBindTexture(self.texture.target, self.texture.id)
         glPushAttrib(GL_COLOR_BUFFER_BIT)

@@ -1,8 +1,12 @@
 v0.3.0 - XXX, xxx
   - alpha blending eanabled by default. 
     use director.set_alpha_bleding(True|False) to change.
-  - Actions: Goto renamted to MoveTo and Move renamed to MoveBy
-  - Added compositions and actions to scenes
+  - Actions: Goto renamed to MoveTo and Move renamed to MoveBy
+  - Actions: Scale renamed to ScaleBy. Added ScaleTo
+  - Actions: Rotate renamed to RotateBy. Added RotateTo
+  - Added compositions and actions to scenes and layers
+  - Added setup.py and setup.cfg contributed by David Eyk
+  - Added Mesh effects
     
 v0.2.0 - March, 21th 2008
   - Director: uses the new pyglet 1.1 loop
