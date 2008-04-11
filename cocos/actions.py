@@ -161,7 +161,7 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'Reverse',
             'Speed',
 
-            'CosWave',
+            'MeshAction','Shaky',               # Mesh Actions
             ]
 
 class SpriteGroup(pyglet.graphics.Group):
@@ -1200,7 +1200,17 @@ class Repeat(Action):
 
 
 class MeshAction( IntervalAction ):
-    def init( self, duration=5, x_quads=4, y_quads=4):
+    '''MeshAction is the base class of all Mesh Actions.'''
+    def init( self, x_quads=4, y_quads=4, duration=5):
+        """Initialize the Mesh Action
+        :Parameters:
+            `x_quads` : int 
+                Number of horizontal quads in the mesh
+            `y_quads` : int
+                Number of vertical quads in the mesh
+            `duration` : int 
+                Number of seconds that the action will last
+        """
         self.duration = duration
         self.x_quads = x_quads
         self.y_quads = y_quads
@@ -1215,8 +1225,11 @@ class MeshAction( IntervalAction ):
             self.target.mesh.active = False
         return r
 
-class CosWave( MeshAction ):
+class Shaky( MeshAction ):
+    '''ShakyAction simulates a shaky floor or window.
 
+       scene.do( Shaky(x_quads=4, y_quads=4, duration=10) )
+    '''
     def update( self, t ):
         rr = random.randrange
 
