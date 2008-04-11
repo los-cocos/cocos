@@ -157,11 +157,11 @@ __all__ = [ 'ActionSprite',                     # Sprite class
 
 
             'Accelerate',                       # a function that gives the time acceleration
-            'AccelDeccel',                       # a function that gives the time acceleration
+            'AccelDeccel',                      # a function that gives the time acceleration
             'Reverse',
             'Speed',
 
-            'MeshAction','Shaky',               # Mesh Actions
+            'MeshAction','Shaky','Liquid',      # Mesh Actions
             ]
 
 class SpriteGroup(pyglet.graphics.Group):
@@ -1225,8 +1225,55 @@ class MeshAction( IntervalAction ):
             self.target.mesh.active = False
         return r
 
+
+    def _set_vertex( self, i, j, k, v ):
+        if i < 0 or i >= self.x_quads:
+            return
+
+        if j < 0 or j >= self.y_quads:
+            return
+
+        if k< 0 or k >=4:
+            return
+
+        idx = (i * 4 * self.y_quads + j * 4 + k) * 2
+        self.target.mesh.vertex_list.vertices[idx] = int(v[0])
+        self.target.mesh.vertex_list.vertices[idx+1] = int(v[1])
+
+    def set_vertex( self, x, y, v):
+        '''Set a vertex point is a certain value
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+            `v` : (int, int)
+                tuple value for the vertex
+        '''
+        self._set_vertex( x, y, 2, v)
+        self._set_vertex( x+1, y, 3, v)
+        self._set_vertex( x+1, y+1, 0, v)
+        self._set_vertex( x, y+1, 1, v)
+
+    def get_vertex( self, x, y):
+        '''Get a vertex point value
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+        '''
+        k = 2
+        idx = (x * 4 * self.y_quads + y * 4 + k) * 2
+        x = self.target.mesh.vertex_points[idx]
+        y = self.target.mesh.vertex_points[idx+1]
+
+        return (x,y)
+
 class Shaky( MeshAction ):
-    '''ShakyAction simulates a shaky floor or window.
+    '''Shaky simulates a shaky floor
 
        scene.do( Shaky(x_quads=4, y_quads=4, duration=10) )
     '''
@@ -1246,3 +1293,27 @@ class Shaky( MeshAction ):
 
                     self.target.mesh.vertex_list.vertices[idx] = int(x)
                     self.target.mesh.vertex_list.vertices[idx+1] = int(y)
+                
+
+
+class Liquid( MeshAction ):
+    '''Liquid simulates the liquid effect
+
+       scene.do( Liquid(x_quads=16, y_quads=16, duration=10) )
+    '''
+
+    def start(self):
+        super(Liquid,self).start()
+        x,y = director.get_window_size()
+        self.size_x = x // self.x_quads
+        self.size_y = y // self.y_quads
+
+    def update( self, t ):
+        for i in range(1, self.x_quads-1):
+            for j in range(1, self.y_quads-1):
+                x = i* self.size_x
+                y = j* self.size_y
+                xpos = (x + (math.sin(self.elapsed*4+ x * .01) * 15)) + 20
+                ypos = (y + (math.sin(self.elapsed*4+ y * .01) * 15)) + 20
+                self.set_vertex( i,j, (xpos,ypos) )
+
