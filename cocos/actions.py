@@ -1309,11 +1309,11 @@ class Liquid( MeshAction ):
         self.size_y = y // self.y_quads
 
     def update( self, t ):
-        for i in range(1, self.x_quads-1):
-            for j in range(1, self.y_quads-1):
+        for i in range(0, self.x_quads-1):
+            for j in range(0, self.y_quads-1):
                 x = i* self.size_x
                 y = j* self.size_y
-                xpos = (x + (math.sin(self.elapsed*4+ x * .01) * 15)) + 20
-                ypos = (y + (math.sin(self.elapsed*4+ y * .01) * 15)) + 20
+                xpos = (x + (math.sin(self.elapsed*2 + x * .01) * self.size_x)) + self.size_x
+                ypos = (y + (math.sin(self.elapsed*2 + y * .01) * self.size_y)) + self.size_y
                 self.set_vertex( i,j, (xpos,ypos) )
 
