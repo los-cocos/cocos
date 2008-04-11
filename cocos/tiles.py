@@ -202,6 +202,27 @@ class Resource(object):
             if id in res: return res[id]
         raise KeyError(id)
 
+    def find(self, cls):
+        '''Find all elements of the given class in this resource.
+        '''
+        for k in self.contents:
+            if isinstance(self.contents[k], cls):
+                yield (k, self.contents[k])
+
+    def findall(self, cls, ns=''):
+        '''Find all elements of the given class in this resource and all
+        <require>'ed resources.
+        '''
+        for k in self.contents:
+            if isinstance(self.contents[k], cls):
+                if ns:
+                    yield (ns + ':' + k, self.contents[k])
+                else:
+                    yield (k, self.contents[k])
+        for ns, res in self.requires:
+            for item in res.findall(cls, ns):
+                yield item
+
     def add_resource(self, id, resource):
         self.contents[id] = resource
     def get_resource(self, ref):
@@ -218,6 +239,7 @@ class Resource(object):
         root = ElementTree.Element('resource')
         for namespace, res in self.requires:
             r = ElementTree.SubElement(root, 'requires', file=res.filename)
+            r.tail = '\n'
             if namespace:
                 r.set('namespace', namespace)
         for element in self.contents.values():
@@ -598,6 +620,7 @@ class RectMapLayer(RegularTesselationMapLayer):
             origin='%s,%s,%s'%(self.x, self.y, self.z))
         for column in self.cells:
             c = ElementTree.SubElement(m, 'column')
+            c.tail = '\n'
             for cell in column:
                 cell._as_xml(c)
 

@@ -26,8 +26,8 @@ class Rect(object):
     width = property(lambda self: self._width, set_width)
     def set_height(self, value): self._height = value
     height = property(lambda self: self._height, set_height)
-    def set_pos(self, value): self._x, self._y = value
-    pos = property(lambda self: (self._x, self._y), set_pos)
+    def set_position(self, value): self._x, self._y = value
+    position = property(lambda self: (self._x, self._y), set_position)
     def set_size(self, value): self._width, self._height = value
     size = property(lambda self: (self._width, self._height), set_size)
 
@@ -74,7 +74,7 @@ class Rect(object):
         return (self.x + self.width/2, self.y + self.height/2)
     def set_center(self, center):
         x, y = center
-        self.pos = (x - self.width/2, y - self.height/2)
+        self.position = (x - self.width/2, y - self.height/2)
     center = property(get_center, set_center)
 
     # r/w, in pixels, (x, y)
@@ -82,7 +82,7 @@ class Rect(object):
         return (self.x + self.width/2, self.y + self.height)
     def set_midtop(self, midtop):
         x, y = midtop
-        self.pos = (x - self.width/2, y - self.height)
+        self.position = (x - self.width/2, y - self.height)
     midtop = property(get_midtop, set_midtop)
 
     # r/w, in pixels, (x, y)
@@ -90,7 +90,7 @@ class Rect(object):
         return (self.x + self.width/2, self.y)
     def set_midbottom(self, midbottom):
         x, y = midbottom
-        self.pos = (x - self.width/2, y)
+        self.position = (x - self.width/2, y)
     midbottom = property(get_midbottom, set_midbottom)
 
     # r/w, in pixels, (x, y)
@@ -98,7 +98,7 @@ class Rect(object):
         return (self.x, self.y + self.height/2)
     def set_midleft(self, midleft):
         x, y = midleft
-        self.pos = (x, y - self.height/2)
+        self.position = (x, y - self.height/2)
     midleft = property(get_midleft, set_midleft)
 
     # r/w, in pixels, (x, y)
@@ -106,37 +106,37 @@ class Rect(object):
         return (self.x + self.width, self.y + self.height/2)
     def set_midright(self, midright):
         x, y = midright
-        self.pos = (x - self.width, y - self.height/2)
+        self.position = (x - self.width, y - self.height/2)
     midright = property(get_midright, set_midright)
  
     # r/w, in pixels, (x, y)
     def get_topleft(self):
         return (self.x, self.y + self.height)
-    def set_topleft(self, pos):
-        x, y = pos
-        self.pos = (x, y - self.height)
+    def set_topleft(self, position):
+        x, y = position
+        self.position = (x, y - self.height)
     topleft = property(get_topleft, set_topleft)
  
     # r/w, in pixels, (x, y)
     def get_topright(self):
         return (self.x + self.width, self.y + self.height)
-    def set_topright(self, pos):
-        x, y = pos
-        self.pos = (x - self.width, y - self.height)
+    def set_topright(self, position):
+        x, y = position
+        self.position = (x - self.width, y - self.height)
     topright = property(get_topright, set_topright)
  
     # r/w, in pixels, (x, y)
     def get_bottomright(self):
         return (self.x + self.width, self.y)
-    def set_bottomright(self, pos):
-        x, y = pos
-        self.pos = (x - self.width, y)
+    def set_bottomright(self, position):
+        x, y = position
+        self.position = (x - self.width, y)
     bottomright = property(get_bottomright, set_bottomright)
  
     # r/w, in pixels, (x, y)
     def get_bottomleft(self):
         return (self.x, self.y)
-    def set_bottomleft(self, pos):
-        self.x, self.y = pos
+    def set_bottomleft(self, position):
+        self.x, self.y = position
     bottomleft = property(get_bottomleft, set_bottomleft)
 
