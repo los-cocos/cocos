@@ -56,7 +56,7 @@ if __name__ == "__main__":
     main_scene.add( white, z=3, scale=0.25 )
     main_scene.add( tl1, z=4 )
 
-    move = QuadMoveBy( (320,240), (-630,0), (-320,-240),(630,0), duration=2 )
-    main_scene.do( move + Reverse(move) )
+    e = Shaky( 6, 16, 16, 40 )
+    main_scene.do( e )
 
     director.run (main_scene)

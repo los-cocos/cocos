@@ -162,7 +162,8 @@ __all__ = [ 'ActionSprite',                     # Sprite class
             'Speed',
 
             'MeshAction','Shaky','Liquid',      # Mesh Actions
-            'QuadMoveBy',
+            'ShakyTiles',
+            'QuadMoveBy','Lens',
             ]
 
 class SpriteGroup(pyglet.graphics.Group):
@@ -1220,6 +1221,11 @@ class MeshAction( IntervalAction ):
         self.target.mesh.init( self.x_quads, self.y_quads )
         self.target.mesh.active = True
 
+        x,y = director.get_window_size()
+        self.size_x = x // self.x_quads
+        self.size_y = y // self.y_quads
+
+
     def done( self ):
         r = super(MeshAction,self).done()
         if r:
@@ -1297,11 +1303,16 @@ class MeshAction( IntervalAction ):
 
         return (x,y)
 
-class Shaky( MeshAction ):
-    '''Shaky simulates a shaky floor
+class ShakyTiles( MeshAction ):
+    '''ShakyTiles simulates a shaky floor composed of tiles
 
-       scene.do( Shaky(x_quads=4, y_quads=4, duration=10) )
+       scene.do( ShakyTiles( randrange=6, x_quads=4, y_quads=4, duration=10) )
     '''
+
+    def init( self, randrange=6, *args, **kw ):
+        super(ShakyTiles,self).init(*args,**kw)
+        self.randrange = randrange
+
     def update( self, t ):
         rr = random.randrange
 
@@ -1313,12 +1324,34 @@ class Shaky( MeshAction ):
                     x = self.target.mesh.vertex_points[idx]
                     y = self.target.mesh.vertex_points[idx+1]
 
-                    x += rr(-6,6)
-                    y += rr(-6,6)
+                    x += rr(-self.randrange, self.randrange)
+                    y += rr(-self.randrange, self.randrange)
 
                     self.target.mesh.vertex_list.vertices[idx] = int(x)
                     self.target.mesh.vertex_list.vertices[idx+1] = int(y)
                 
+    def __reversed__(self):
+        return ShakyTiles( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+
+class Shaky( ShakyTiles ):
+    '''Shaky simulates an earthquake
+
+       scene.do( Shaky( randrange=6, x_quads=4, y_quads=4, duration=10) )
+    '''
+
+    def update( self, t ):
+        rr = random.randrange
+        for i in range(0, self.x_quads+1):
+            for j in range(0, self.y_quads+1):
+
+                x = i* self.size_x
+                y = j* self.size_y
+
+                x += rr( -self.randrange, self.randrange )
+                y += rr( -self.randrange, self.randrange )
+
+                self.set_vertex( i,j, (x,y) )
+
     def __reversed__(self):
         return Shaky( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
 
@@ -1327,12 +1360,6 @@ class Liquid( MeshAction ):
 
        scene.do( Liquid(x_quads=16, y_quads=16, duration=10) )
     '''
-
-    def start(self):
-        super(Liquid,self).start()
-        x,y = director.get_window_size()
-        self.size_x = x // self.x_quads
-        self.size_y = y // self.y_quads
 
     def update( self, t ):
         for i in range(1, self.x_quads):
@@ -1345,6 +1372,42 @@ class Liquid( MeshAction ):
 
     def __reversed__(self):
         return Liquid( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+
+class Lens( MeshAction ):
+    '''Liquid simulates the liquid effect
+
+       scene.do( Liquid(x_quads=16, y_quads=16, duration=10) )
+    '''
+
+    def update( self, t ):
+        center_x= 320
+        center_y= 240
+        center_point = Point2( center_x, center_y)
+        lens_radius = 80
+
+        for i in range(0, self.x_quads+1):
+            for j in range(0, self.y_quads+1):
+
+                x = i* self.size_x
+                y = j* self.size_y
+                p = Point2( x,y )
+
+                r = abs(p - center_point)
+                angle = 0
+
+                xx = 0
+                yy = 0
+
+                if r < lens_radius:
+                    xx = random.randrange(-5,5)
+                    yy = random.randrange(-5,5)
+
+                xpos = x + xx 
+                ypos = y + yy
+                self.set_vertex( i,j, (xpos,ypos) )
+
+    def __reversed__(self):
+        return Lens( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
 
 class QuadMoveBy( MeshAction ):
     '''QuadMoveBy moves each vertex of the quad
