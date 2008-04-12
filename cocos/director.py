@@ -111,6 +111,10 @@ from pyglet.gl import *
 __all__ = ['director', 'DefaultHandler']
 
 class DefaultHandler( object ):
+    def __init__(self):
+        super(DefaultHandler,self).__init__()
+        self.wired = False
+
     def on_key_press( self, symbol, modifiers ):
         if symbol == pyglet.window.key.F and (modifiers & pyglet.window.key.MOD_ACCEL):
             director.window.set_fullscreen( not director.window.fullscreen )
@@ -121,6 +125,19 @@ class DefaultHandler( object ):
             if pause:
                 director.push( pause_sc )
                 
+            return True
+
+        if symbol == pyglet.window.key.W and (modifiers & pyglet.window.key.MOD_ACCEL):
+            if self.wired == False:
+                glDisable(GL_TEXTURE_2D);
+                glPolygonMode(GL_FRONT, GL_LINE);
+                glPolygonMode(GL_BACK, GL_LINE);
+                self.wired = True
+            else:
+                glEnable(GL_TEXTURE_2D);
+                glPolygonMode(GL_FRONT, GL_FILL);
+                glPolygonMode(GL_BACK, GL_FILL);
+                self.wired = False 
             return True
 
         if symbol == pyglet.window.key.ESCAPE:
