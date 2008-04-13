@@ -12,7 +12,6 @@ from cocos.sprite import *
 from cocos.layer import *
 import pyglet
 
-from cocos.mesh import *
 
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
@@ -57,6 +56,6 @@ if __name__ == "__main__":
     main_scene.add( white, z=3, scale=0.25 )
     main_scene.add( tl1, z=4 )
 
-    main_scene.do( Liquid( 16, 16, 100) )
+    main_scene.do( Liquid( x_quads=16, y_quads=16, duration=100) )
 
     director.run (main_scene)

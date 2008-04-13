@@ -1,4 +1,6 @@
 v0.3.0 - XXX, xxx
+  - actions are defined in the actions/ folder
+  - ActionSprite and SpriteGroup added in sprite.py
   - Added DefaultHandler:
      ESCAPE: director.pop
      MOD_ACCEL + f: Toggles Fullscreen

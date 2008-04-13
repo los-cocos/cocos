@@ -21,7 +21,7 @@ from base_actions import *
 __all__ = [ 'MeshAction','QuadMoveBy',  # Base classes
 
             'Shaky','ShakyTiles',       # Trembling actions
-            'Liquid',                   # liquid action
+            'Liquid','Sin',             # liquid action
             'Lens','Twist',             # lens & Twist actions
             ]
 
@@ -202,6 +202,39 @@ class Liquid( MeshAction ):
 
     def __reversed__(self):
         return Liquid( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+
+
+class Sin( MeshAction ):
+    '''Sin simulates math.sin effect both in the vertical and horizontal axis
+
+       scene.do( Sin( vertical_sin=True, horizontal_sin=False, x_quads=16, y_quads=16, duration=10) )
+    '''
+
+    def init( self, horizontal_sin=True, vertical_sin=True, *args, **kw ):
+        super(Sin, self).init( *args, **kw )
+        self.horizontal_sin = horizontal_sin
+        self.vertical_sin = vertical_sin
+
+    def update( self, t ):
+        for i in range(0, self.x_quads+1):
+            for j in range(0, self.y_quads+1):
+                x = i* self.size_x
+                y = j* self.size_y
+                if not self.vertical_sin:
+                    xpos = x
+                else:
+                    xpos = (x + (math.sin(self.elapsed*2 + y * .01) * self.size_x))
+
+                if not self.horizontal_sin:
+                    ypos = y
+                else:
+                    ypos = (y + (math.sin(self.elapsed*2 + x * .01) * self.size_y)) 
+
+                self.set_vertex( i,j, (xpos,ypos) )
+
+    def __reversed__(self):
+        return Liquid( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+
 
 class Lens( MeshAction ):
     '''Liquid simulates the liquid effect
