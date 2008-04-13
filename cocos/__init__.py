@@ -12,7 +12,7 @@ import actions
 import director
 import effect
 import layer
+import sprite
 import menu
 import path
 import scene
-import mesh
