@@ -1,0 +1,580 @@
+#
+# An implementation of Cocos' ActionSprite for Pyglet 1.1
+#
+# Based on actions.py from Grossini's Hell:
+#    http://www.pyweek.org/e/Pywiii/
+#
+# Based on actions.py from Pygext:
+#     http://opioid-interactive.com/~shang/projects/pygext/
+#
+
+'''Interval Action
+
+Interval Actions
+================
+
+An interval action is an action that takes place within a certain period of time.
+It has an start time, and a finish time. The finish time is the parameter
+``duration`` plus the start time.
+
+These `IntervalAction` have some interesting properties, like:
+
+  * They can run Forward (default)
+  * They can run Backwards
+  * They can alter the speed of time
+
+For example, if you run an action in a Forward direction and the you run it again in
+a Backward direction, then you are simulation a PingPong movement.
+
+These actions has 3 special parameters:
+
+    ``dir`` : direction
+        It can be `ForwardDir` or `BackwardDir` . Default is: `ForwardDir`
+    ``mode`` : repeat mode
+        It can be `PingPongMode` or `RestartMode` . Default is : `PingPongMode` .
+    ``time_func`` : a function. The format of the function is f( runtime, duration )
+        If you want to alter the speed of time, you should provide your onw time_func or use the `accelerate` function.
+        Default : None. No alter-time function is used.
+
+Available IntervalActions
+=========================
+
+  * `MoveTo`
+  * `MoveBy`
+  * `Jump`
+  * `Bezier`
+  * `Blink`
+  * `RotateTo`
+  * `RotateBy`
+  * `ScaleTo`
+  * `ScaleBy`
+  * `FadeOut`
+  * `FadeIn`
+
+Examples::
+
+    move = MoveBy( (200,0), 5 )  # Moves 200 pixels to the right in 5 seconds.
+
+    move = MoveTo( (320,240), 5) # Moves to the pixel (320,240) in 5 seconds
+
+'''
+
+__docformat__ = 'restructuredtext'
+
+import random
+import copy
+import math
+
+from base_actions import *
+from cocos.euclid import *
+
+__all__ = [
+            'MoveTo','MoveBy',                  # movement actions
+            'Jump','Bezier',                    # complex movement actions
+            'Rotate',"RotateTo", "RotateBy",    # object rotation
+            'ScaleTo','ScaleBy',                # object scale
+            'Delay','RandomDelay',              # Delays
+            'FadeOut','FadeIn','FadeTo',        # Fades in/out action
+            'Blink',                            # Blink action
+
+            'Accelerate','AccelDeccel','Speed', # Time alter actions
+            ]
+
+class RotateBy( IntervalAction ):
+    """Rotates a sprite clockwise in degrees
+
+    Example::
+        # rotates the sprite 180 degrees in 2 seconds
+        action = Rotate( 180, 2 )
+        sprite.do( action )
+    """
+    def init(self, angle, duration ):
+        """Init method.
+
+        :Parameters:
+            `angle` : float
+                Degrees that the sprite will be rotated.
+                Positive degrees rotates the sprite clockwise.
+            `duration` : float
+                Duration time in seconds
+        """
+        self.angle = angle
+        self.duration = duration
+
+    def start( self ):
+        self.start_angle = self.target.rotation
+
+    def update(self, t):
+        self.target.rotation = (self.start_angle + self.angle * t ) % 360
+
+    def __reversed__(self):
+        return RotateBy(-self.angle, self.duration)
+
+Rotate = RotateBy
+
+
+class RotateTo( IntervalAction ):
+    """Rotates a sprite clockwise in degrees
+
+    Example::
+        # rotates the sprite 180 degrees in 2 seconds
+        action = Rotate( 180, 2 )
+        sprite.do( action )
+    """
+    def init(self, angle, duration ):
+        """Init method.
+
+        :Parameters:
+            `angle` : float
+                Degrees that the sprite will be rotated.
+                Positive degrees rotates the sprite clockwise.
+            `duration` : float
+                Duration time in seconds
+        """
+        self.angle = angle%360
+        self.duration = duration
+
+    def start( self ):
+        ea = self.angle
+        sa = self.start_angle = (self.target.rotation%360)
+        self.angle = ((ea%360) - (sa%360))
+        if self.angle > 180: 
+            self.angle = -360+self.angle
+        if self.angle < -180: 
+            self.angle = 360+self.angle
+        
+    def update(self, t):
+        self.target.rotation = (self.start_angle + self.angle * t ) % 360
+
+    def __reversed__(self):
+        return Rotate(-self.angle, self.duration)
+        
+class Speed( IntervalAction ):
+    """
+    Changes the speed of an action, making it take longer (speed>1)
+    or less (speed<1)
+
+    Example::
+        # rotates the sprite 180 degrees in 1 secondclockwise
+        action = Speed( Rotate( 180, 2 ), 2 )
+        sprite.do( action )
+    """
+    def init(self, other, speed ):
+        """Init method.
+
+        :Parameters:
+            `other` : IntervalAction
+                The action that will be affected
+            `speed`: float
+                The speed change. 1 is no change.
+                2 means twice as fast, takes half the time
+                0.5 means half as fast, takes double the time
+        """
+        self.other = other
+        self.speed = speed
+        self.duration = other.duration/speed
+
+    def start(self):
+        self.other.target = self.target
+        self.other.start()
+
+    def update(self, t):
+        self.other.update( t )
+
+    def __reversed__(self):
+        return Speed( Reverse( self.other ), self.speed )
+
+class Accelerate( IntervalAction ):
+    """
+    Changes the acceleration of an action
+
+    Example::
+        # rotates the sprite 180 degrees in 2 seconds clockwise
+        # it starts slow and ends fast
+        action = Accelerate( Rotate( 180, 2 ), 4 )
+        sprite.do( action )
+    """
+    def init(self, other, rate = 2):
+        """Init method.
+
+        :Parameters:
+            `other` : IntervalAction
+                The action that will be affected
+            `rate`: float
+                The acceleration rate. 1 is linear.
+                the new t is t**rate
+        """
+        self.other = other
+        self.rate = rate
+        self.duration = other.duration
+
+    def start(self):
+        self.other.target = self.target
+        self.other.start()
+
+    def update(self, t):
+        self.other.update( t**self.rate )
+
+    def __reversed__(self):
+        return Accelerate(Reverse(self.other), 1.0/self.rate)
+
+class AccelDeccel( IntervalAction ):
+    """
+    Makes an action change the travel speed but retain near normal
+    speed at the beggining and ending.
+
+    Example::
+        # rotates the sprite 180 degrees in 2 seconds clockwise
+        # it starts slow, gets fast and ends slow
+        action = AccelDeccel( Rotate( 180, 2 ) )
+        sprite.do( action )
+    """
+    def init(self, other):
+        """Init method.
+
+        :Parameters:
+            `other` : IntervalAction
+                The action that will be affected
+        """
+        self.other = other
+        self.duration = other.duration
+
+    def start(self):
+        self.other.target = self.target
+        self.other.start()
+
+    def update(self, t):
+        ft = (t-0.5) * 12
+        nt = 1./( 1. + math.exp(-ft) )
+
+        self.other.update( nt )
+
+
+    def __reversed__(self):
+        return AccelDeccel( Reverse(self.other) )
+
+
+
+class MoveTo( IntervalAction ):
+    """Moves a sprite to the position x,y. x and y are absolute coordinates.
+
+    Example::
+        # Move the sprite to coords x=50, y=10 in 8 seconds
+
+        action = MoveTo( (50,10), 8 )
+        sprite.do( action )
+    """
+    def init(self, dst_coords, duration=5):
+        """Init method.
+
+        :Parameters:
+            `dst_coords` : (x,y)
+                Coordinates where the sprite will be placed at the end of the action
+            `duration` : float
+                Duration time in seconds
+        """
+
+        self.end_position = Point2( *dst_coords )
+        self.duration = duration
+
+    def start( self ):
+        self.start_position = self.target.position
+        self.delta = self.end_position-self.start_position
+
+
+    def update(self,t):
+        self.target.position = self.start_position + self.delta * t
+
+class MoveBy( MoveTo ):
+    """Mve a sprite x,y pixels.
+    x and y are relative to the position of the sprite.
+    Duration is is seconds.
+
+    Example::
+        # Move the sprite 50 pixels to the left in 8 seconds
+        action = MoveBy( (-50,0), 8 )
+        sprite.do( action )
+    """
+    def init(self, delta, duration=5):
+        """Init method.
+
+        :Parameters:
+            `delta` : (x,y)
+                Delta coordinates
+            `duration` : float
+                Duration time in seconds
+        """
+        self.delta = Point2( *delta )
+        self.duration = duration
+
+    def start( self ):
+        self.start_position = self.target.position
+        self.end_position = self.start_position + self.delta
+
+    def __reversed__(self):
+        return MoveBy(-self.delta, self.duration)
+
+class FadeOut( IntervalAction ):
+    """FadeOut(duration)
+    Fades out an sprite
+
+    Example::
+
+        action = FadeOut( 2 )
+        sprite.do( action )
+    """
+    def init( self, duration ):
+        """Init method.
+
+        :Parameters:
+            `duration` : float
+                Seconds that it will take to fade
+        """
+        self.duration = duration
+
+    def update( self, t ):
+        self.target.opacity = 255 * (1-t)
+
+    def __reversed__(self):
+        return FadeIn( self.duration )
+
+class FadeTo( IntervalAction ):
+    """FadeTo(alpha, duration)
+    Fades a sprite to a specific alpha value
+
+    Example::
+
+        action = FadeOut( 2 )
+        sprite.do( action )
+    """
+    def init( self, alpha, duration ):
+        """Init method.
+
+        :Parameters:
+            `alpha` : float
+                0-255 value of opacity
+            `duration` : float
+                Seconds that it will take to fade
+        """
+        self.alpha = alpha
+        self.duration = duration
+
+    def start(self):
+        self.start_alpha = self.target.opacity
+
+    def update( self, t ):
+        self.target.opacity = self.start_alpha + (
+                    self.alpha - self.start_alpha
+                    ) * t
+
+
+class FadeIn( FadeOut):
+    """FadeIn(duration)
+    Fades in an sprite
+
+    Example::
+
+        action = FadeIn( 2 )
+        sprite.do( action )
+    """
+    def update( self, t ):
+        self.target.opacity = 255 * t
+
+    def __reversed__(self):
+        return FadeOut( self.duration )
+
+class ScaleTo(IntervalAction):
+    """Scales the sprite
+
+    Example::
+        # scales the sprite to 5x in 2 seconds
+        action = ScaleTo( 5, 2 )
+        sprite.do( action )
+    """
+    def init(self, scale, duration=5 ):
+        """Init method.
+
+        :Parameters:
+            `scale` : float
+                scale factor
+            `duration` : float
+                Duration time in seconds
+        """
+        self.end_scale = scale
+        self.duration = duration
+
+    def start( self ):
+        self.start_scale = self.target.scale
+        self.delta = self.end_scale-self.start_scale
+
+    def update(self, t):
+        self.target.scale = self.start_scale + self.delta * t
+
+class ScaleBy(ScaleTo):
+    """Scales the sprite
+
+    Example::
+        # scales the sprite by 5x in 2 seconds
+        action = ScaleBy( 5, 2 )
+        sprite.do( action )
+    """
+
+    def start( self ):
+        self.start_scale = self.target.scale
+        self.delta =  self.start_scale*self.end_scale - self.start_scale
+
+    def __reversed__(self):
+        return ScaleBy( 1.0/self.end_scale, self.duration )
+
+
+class Blink( IntervalAction ):
+    """Blinks the sprite a Number_of_Times, for Duration seconds
+
+    Example::
+        # Blinks 10 times in 2 seconds
+        action = Blink( 10, 2 )
+        sprite.do( action )
+    """
+
+
+    def init(self, times, duration):
+        """Init method.
+
+        :Parameters:
+            `times` : integer
+                Number of times to blink
+            `duration` : float
+                Duration time in seconds
+        """
+        self.times = times
+        self.duration = duration
+
+    def update(self, t):
+        slice = 1 / float( self.times )
+        m =  t % slice
+        self.target.visible = (m  >  slice / 2.0)
+
+    def __reversed__(self):
+        return self
+
+
+class Bezier( IntervalAction ):
+    """Moves a sprite through a bezier path
+
+    Example::
+
+        action = Bezier( bezier_conf.path1, 5 )   # Moves the sprite using the
+        sprite.do( action )                       # bezier path 'bezier_conf.path1'
+                                                  # in 5 seconds
+    """
+    def init(self, bezier, duration=5, forward=True):
+        """Init method
+
+        :Parameters:
+            `bezier` : bezier_configuration instance
+                A bezier configuration
+            `duration` : float
+                Duration time in seconds
+        """
+        self.duration = duration
+        self.bezier = bezier
+        self.forward = forward
+
+    def start( self ):
+        self.start_position = self.target.position
+
+    def update(self,t):
+        if self.forward:
+            p = self.bezier.at( t )
+        else:
+            p = self.bezier.at( 1-t )
+        self.target.position = ( self.start_position +Point2( *p ) )
+
+    def __reversed__(self):
+        return Bezier(self.bezier, self.duration, not self.forward)
+
+class Jump(IntervalAction):
+    """Moves a sprite simulating a jump movement.
+
+    Example::
+
+        action = Jump(50,200, 5, 6)    # Move the sprite 200 pixels to the right
+        sprite.do( action )            # in 6 seconds, doing 5 jumps
+                                       # of 50 pixels of height
+    """
+
+    def init(self, y=150, x=120, jumps=1, duration=5):
+        """Init method
+
+        :Parameters:
+            `y` : integer
+                Height of jumps
+            `x` : integer
+                horizontal movement relative to the startin position
+            `jumps` : integer
+                quantity of jumps
+            `duration` : float
+                Duration time in seconds
+        """
+        self.y = y
+        self.x = x
+        self.duration = duration
+        self.jumps = jumps
+
+    def start( self ):
+        self.start_position = self.target.position
+
+    def update(self, t):
+        y = int( self.y * abs( math.sin( t * math.pi * self.jumps ) ) )
+
+        x = self.x * t
+        self.target.position = self.start_position + Point2(x,y)
+
+    def __reversed__(self):
+        return Jump(self.y, -self.x, self.jumps, self.duration)
+
+class Delay(IntervalAction):
+    """Delays the action a certain ammount of seconds
+
+   Example::
+
+        action = Delay(2.5)
+        sprite.do( action )
+    """
+    def init(self, delay):
+        """Init method
+
+        :Parameters:
+            `delay` : float
+                Seconds of delay
+        """
+        self.duration = delay
+
+    def __reversed__(self):
+        return self
+
+
+class RandomDelay(Delay):
+    """Delays the actions between *min* and *max* seconds
+
+   Example::
+
+        action = RandomDelay(2.5, 4.5)      # delays the action between 2.5 and 4.5 seconds
+        sprite.do( action )
+    """
+    def init(self, low, hi):
+        """Init method
+
+        :Parameters:
+            `low` : float
+                Minimun seconds of delay
+            `hi` : float
+                Maximun seconds of delay
+        """
+        self.low = low
+        self.hi = hi
+
+    def __deepcopy__(self, memo):
+        new = copy.copy(self)
+        new.duration = self.low + (random.random() * (self.hi - self.low))
+        return new
