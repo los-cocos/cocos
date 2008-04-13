@@ -1,9 +1,10 @@
+#
+# Cocos' pause scene
+#
 from cocos.director import director
 from cocos.layer import Layer, ColorLayer
 from cocos.scene import Scene
 
-
-from cocos.actions import ActionSprite
 
 import pyglet
 

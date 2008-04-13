@@ -49,7 +49,6 @@ if __name__ == "__main__":
     for i in range(32):
         l = ColorLayer(random.random(), random.random(), random.random(), 1.0)
         scale = (32-i)/32.0
-        print i, scale
         main_scene.add( l, z=i, scale=scale )
 
     tl1 = TestLayer()
