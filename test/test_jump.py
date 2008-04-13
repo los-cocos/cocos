@@ -7,7 +7,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.actions import ActionSprite, Jump
+from cocos.actions import Jump
+from cocos.sprite import ActionSprite
 import pyglet
 
 class TestLayer(cocos.layer.Layer):

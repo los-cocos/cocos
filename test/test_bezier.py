@@ -7,7 +7,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.actions import ActionSprite, Bezier
+from cocos.actions import Bezier
+from cocos.sprite import ActionSprite
 import pyglet
 
 from bezier import path

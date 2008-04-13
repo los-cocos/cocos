@@ -7,7 +7,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.actions import ActionSprite, FadeIn
+from cocos.actions import FadeIn
+from cocos.sprite import ActionSprite
+
 import pyglet
 
 class TestLayer(cocos.layer.Layer):

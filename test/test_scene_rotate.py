@@ -7,7 +7,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.actions import *
+from cocos.actions import RotateBy
+from cocos.sprite import ActionSprite
 from cocos.layer import *
 import pyglet
 
@@ -43,5 +44,5 @@ if __name__ == "__main__":
     main_scene = cocos.scene.Scene()
     main_scene.add( ColorLayer( 1.0, 0.0, 0.0, 1.0 ) )
     main_scene.add( TestLayer() )
-    main_scene.do( Rotate( 360, 2 ) )
+    main_scene.do( RotateBy( 360, 2 ) )
     director.run (main_scene)
