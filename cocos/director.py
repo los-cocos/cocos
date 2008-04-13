@@ -119,15 +119,15 @@ class DefaultHandler( object ):
         if symbol == pyglet.window.key.F and (modifiers & pyglet.window.key.MOD_ACCEL):
             director.window.set_fullscreen( not director.window.fullscreen )
             return True
-        if symbol == pyglet.window.key.P and (modifiers & pyglet.window.key.MOD_ACCEL):
+
+        elif symbol == pyglet.window.key.P and (modifiers & pyglet.window.key.MOD_ACCEL):
             import pause
             pause_sc = pause.get_pause_scene() 
             if pause:
                 director.push( pause_sc )
-                
             return True
 
-        if symbol == pyglet.window.key.W and (modifiers & pyglet.window.key.MOD_ACCEL):
+        elif symbol == pyglet.window.key.W and (modifiers & pyglet.window.key.MOD_ACCEL):
             if self.wired == False:
                 glDisable(GL_TEXTURE_2D);
                 glPolygonMode(GL_FRONT, GL_LINE);
@@ -138,6 +138,11 @@ class DefaultHandler( object ):
                 glPolygonMode(GL_FRONT, GL_FILL);
                 glPolygonMode(GL_BACK, GL_FILL);
                 self.wired = False 
+            return True
+    
+        elif symbol == pyglet.window.key.S and (modifiers & pyglet.window.key.MOD_ACCEL):
+            import time
+            pyglet.image.get_buffer_manager().get_color_buffer().save('screenshot-%d.png' % (int( time.time() ) ) )
             return True
 
         if symbol == pyglet.window.key.ESCAPE:
