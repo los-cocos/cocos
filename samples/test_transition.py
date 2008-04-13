@@ -7,6 +7,7 @@ from cocos.layer import Layer, ColorLayer
 from cocos.scene import Scene
 from cocos.transitions import *
 from cocos.actions import *
+from cocos.sprite import ActionSprite
 import pyglet
 from pyglet import gl, font
 
@@ -29,6 +30,7 @@ class ControlLayer(Layer):
         self.text_subtitle = pyglet.text.Label( transition_list[current_transition].__name__,
             font_size=18,
             multiline=True,
+            width=600,
             x=5,
             y=director.get_window_size()[1] - 80,
             halign=font.Text.LEFT,

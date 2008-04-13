@@ -15,6 +15,7 @@ from cocos.actions import *
 from cocos.director import director
 from cocos.layer import Layer 
 from cocos.scene import Scene
+from cocos.sprite import ActionSprite
 
 import foo      # Bezier configurations
 
@@ -41,6 +42,7 @@ class FontLayer( Layer ):
 
         self.text_subtitle = pyglet.text.Label(self.subtitle,
             multiline=True,
+            width=600,
             font_size=16,
             x=5,
             y=director.get_window_size()[1] - 80,

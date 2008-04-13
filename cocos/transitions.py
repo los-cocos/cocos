@@ -4,6 +4,7 @@
 #
 '''Transitions between Scenes'''
 
+import pyglet
 from pyglet import image
 from pyglet.gl import *
 

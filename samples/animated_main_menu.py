@@ -19,6 +19,7 @@ from cocos.menu import *
 from cocos.scene import *
 from cocos.layer import *
 from cocos.actions import *
+from cocos.sprite import ActionSprite
 
 import random; rr = random.randrange
 
@@ -118,8 +119,11 @@ class MainMenu(Menu):
         font.add_directory('.')
 
         # you can override the font that will be used for the title and the items
-        self.font_title = 'KonQa Black'
-        self.font_items = 'You Are Loved'
+        self.font_title['font_name'] = 'You Are Loved'
+        self.font_title['font_size'] = 72
+
+        self.font_item['font_name'] = 'You Are Loved'
+        self.font_item_selected['font_name'] = 'You Are Loved'
 
         # you can also override the font size and the colors. see menu.py for
         # more info
@@ -158,8 +162,12 @@ class OptionMenu(Menu):
     def __init__( self ):
         super( OptionMenu, self ).__init__("GROSSINI'S SISTERS" )
 
-        self.font_title = 'KonQa Black'
-#        self.font_items = 'You Are Loved'
+        self.font_title['font_name'] = 'You Are Loved'
+        self.font_title['font_size'] = 72
+
+        self.font_item['font_name'] = 'You Are Loved'
+        self.font_item_selected['font_name'] = 'You Are Loved'
+
         self.menu_valign = BOTTOM
         self.menu_halign = RIGHT
 
@@ -185,8 +193,11 @@ class ScoreMenu(Menu):
     def __init__( self ):
         super( ScoreMenu, self ).__init__("GROSSINI'S SISTERS" )
 
-        self.font_title = 'KonQa Black'
-#        self.font_items = 'You Are Loved'
+        self.font_title['font_name'] = 'You Are Loved'
+        self.font_title['font_size'] = 72
+        self.font_item['font_name'] = 'You Are Loved'
+        self.font_item_selected['font_name'] = 'You Are Loved'
+
         self.menu_valign = BOTTOM
         self.menu_halign = LEFT
 

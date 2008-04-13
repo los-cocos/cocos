@@ -12,6 +12,7 @@ from cocos.layer import Layer, ColorLayer
 from cocos.scene import Scene
 from cocos.effect import TextureFilterEffect, ColorizeEffect, RepositionEffect
 from cocos.actions import *
+from cocos.sprite import ActionSprite
 
 import pyglet
 from pyglet import font
@@ -83,6 +84,7 @@ class ControlLayer(Layer):
         self.text_subtitle = pyglet.text.Label(effects[current_effect][0],
             font_size=16,
             multiline=True,
+            width=600,
             x=5,
             y=director.get_window_size()[1] - 80,
             halign=font.Text.LEFT,
