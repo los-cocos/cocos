@@ -55,7 +55,7 @@ if __name__ == "__main__":
     tl1 = TestLayer()
     main_scene.add( tl1, z=33 )
 
-    e = Twist( x_quads=32, y_quads=32, duration=100 )
+    e = Sin( x_quads=32, y_quads=32, duration=100 )
     main_scene.do( e )
 
     director.run (main_scene)

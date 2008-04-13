@@ -97,18 +97,24 @@ class SpriteLayer ( Layer ):
 
         ju_right = Jump( y=100, x=600, jumps=4, duration=5 )
         ju_left = Jump( y=100, x=-600, jumps=4, duration=5 )
+        rot1 = Rotate( 180 * 4, duration=5)
 
         self.add( sprite1, (320,240) )
         self.add( sprite2, (620,100) )
         self.add( sprite3, (20,100) )
 
+        sprite1.opacity = 128
+
         sc = ScaleBy( 9, 5 )
         rot = Rotate( 180, 5 )
+        
 
         sprite1.do( Repeat( sc + Reverse(sc) ) )
         sprite1.do( Repeat( rot + Reverse(rot) ) )
         sprite2.do( Repeat( ju_left + Reverse(ju_left) ) )
+        sprite2.do( Repeat( Reverse(rot1) + rot1 ) )
         sprite3.do( Repeat( ju_right + Reverse(ju_right) ) )
+        sprite3.do( Repeat( rot1 + Reverse(rot1) ) )
 
 class MainMenu(Menu):
     def __init__( self ):
@@ -210,8 +216,13 @@ class ScoreMenu(Menu):
 
 if __name__ == "__main__":
     director.init( resizable=True)
-    director.run( Scene( 
+    scene =Scene( 
             FireManager(director.get_window_size()[0], 250),
             SpriteLayer(),
             MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
-            ) )
+            )
+
+    scene.do( Liquid( x_quads=16, y_quads=16, duration=1000) )
+#    scene.do( Shaky( x_quads=16, y_quads=16, duration=1000) )
+
+    director.run( scene )
