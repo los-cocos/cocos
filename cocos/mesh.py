@@ -30,11 +30,12 @@ class Mesh(object):
 
     def init( self, x_quads=4, y_quads=4 ):
 
-        x = director.window.width
-        y = director.window.height
-
+#        director.window.push_handlers( self.on_resize )
+        
         self.x_quads = x_quads
         self.y_quads = y_quads
+        
+        x,y = director.window.width, director.window.height
 
         if self.texture is None:
             self.texture = image.Texture.create_for_size(
@@ -44,28 +45,44 @@ class Mesh(object):
         self.grabber = framegrabber.TextureGrabber()
         self.grabber.grab(self.texture)
 
-        x_step = x / (x_quads)
-        y_step = y / (y_quads)
+        # calculate vertex, textures depending on screen size
+        idx_pts, ver_pts_idx, tex_pts_idx, ver_pts, tex_pts = self._calculate_vertex_points(x,y)
 
-#        w = float(x)/self.texture.tex_coords[3]
-#        h = float(y)/self.texture.tex_coords[7]
+        # Generates a grid of joint quads
+        self.vertex_list_idx = pyglet.graphics.vertex_list_indexed((x_quads+1)*(y_quads+1), 
+                            idx_pts, "t2f", "v2i/stream")
+        self.vertex_points_idx = ver_pts_idx[:]
+        self.vertex_list_idx.vertices = ver_pts_idx
+        self.vertex_list_idx.tex_coords = tex_pts_idx
+ 
+       # Generates a grid of independent quads (think of tiles)
+        self.vertex_list = pyglet.graphics.vertex_list(x_quads*y_quads*4,
+                            "t2f", "v2i/stream")
+        self.vertex_points = ver_pts[:]
+        self.vertex_list.vertices = ver_pts
+        self.vertex_list.tex_coords = tex_pts
+
+
+    def _calculate_vertex_points(self, x, y):        
+        x_step = x / self.x_quads
+        y_step = y / self.y_quads
 
         w = float(self.texture.width)
         h = float(self.texture.height)
 
-        vertex_points = []
+        index_points = []
         vertex_points_idx = []
         texture_points_idx = []
+        vertex_points = []
         texture_points = []
-        index_points = []
 
-        for x in range(0,x_quads+1):
-            for y in range(0,y_quads+1):
+        for x in range(0,self.x_quads+1):
+            for y in range(0,self.y_quads+1):
                 vertex_points_idx += [-1,-1]
                 texture_points_idx += [-1,-1]
 
-        for x in range(0, x_quads):
-            for y in range(0, y_quads):
+        for x in range(0, self.x_quads):
+            for y in range(0, self.y_quads):
                 x1 = x*x_step 
                 x2 = x1 + x_step
                 y1 = y*y_step
@@ -76,10 +93,10 @@ class Mesh(object):
                 #        ^
                 #        |
                 #  a --> b 
-                a = x * (x_quads+1) + y
-                b = (x+1) * (x_quads+1) + y
-                c = (x+1) * (x_quads+1) + (y+1)
-                d = x * (x_quads+1) + (y+1)
+                a = x * (self.x_quads+1) + y
+                b = (x+1) * (self.x_quads+1) + y
+                c = (x+1) * (self.x_quads+1) + (y+1)
+                d = x * (self.x_quads+1) + (y+1)
 
 #                index_points += [ a, b, c, a, c, d]    # triangles 
                 index_points += [ a, b, c, d]           # or quads ?
@@ -87,6 +104,7 @@ class Mesh(object):
                 l1 = ( a*2, b*2, c*2, d*2 )
                 l2 = ( (x1,y1), (x2,y1), (x2,y2), (x1,y2) )
 
+                # Mesh Grid vertex and texture points
                 for i in range( len(l1) ):
                     vertex_points_idx[ l1[i] ] = l2[i][0]
                     vertex_points_idx[ l1[i] + 1 ] = l2[i][1]
@@ -94,26 +112,19 @@ class Mesh(object):
                     texture_points_idx[ l1[i] ] = l2[i][0] / w
                     texture_points_idx[ l1[i] + 1 ] = l2[i][1] / h
 
+                # Mesh Tiles vertex and texture points
                 vertex_points += [x1, y1, x2, y1, x2, y2, x1, y2]
                 texture_points += [x1/w, y1/h, x2/w, y1/h, x2/w, y2/h, x1/w, y2/h]
 
         # Generates a quad for each tile, to perform tiles effect
-        self.vertex_list = pyglet.graphics.vertex_list(x_quads*y_quads*4, "t2f", "v2i/stream")
-        self.vertex_points = vertex_points[:]
-        self.vertex_list.vertices = vertex_points
-        self.vertex_list.tex_coords = texture_points
+        return ( index_points, vertex_points_idx, texture_points_idx, vertex_points, texture_points)
 
         # Generates a grid... must faster, for effects that doesn't split the
         # grid in tiles
-        self.vertex_list_idx = pyglet.graphics.vertex_list_indexed((x_quads+1)*(y_quads+1), index_points, "t2f", "v2i/stream")
-        self.vertex_points_idx = vertex_points_idx[:]
-        self.vertex_list_idx.vertices = vertex_points_idx
-        self.vertex_list_idx.tex_coords = texture_points_idx
-
+        
     def before_draw( self ):
         # capture before drawing
         self.grabber.before_render(self.texture)
-
 
     def after_draw( self ):
         # capture after drawingg
@@ -136,3 +147,47 @@ class Mesh(object):
 
         glPopAttrib()
         glDisable(self.texture.target)
+
+    def on_resize(self, w, h):
+        if not self.active:
+            return
+        
+        if director.window.width > self.texture.width or director.window.height > self.texture.height:
+            self.texture = image.Texture.create_for_size(
+                    GL_TEXTURE_2D, director.window.width, 
+                    director.window.height, GL_RGB)
+            self.grabber = framegrabber.TextureGrabber()
+            self.grabber.grab(self.texture)
+        
+        txz = director._offset_x/float(self.texture.width)
+        tyz = director._offset_y/float(self.texture.height)
+        
+        rx = director.window.width - 2*director._offset_x
+        ry = director.window.height - 2*director._offset_y
+        
+        tx = float(rx)/self.texture.width+txz
+        ty = float(ry)/self.texture.height+tyz
+        
+        xsteps = (tx-txz) / self.x_quads
+        ysteps = (ty-tyz) / self.y_quads
+
+        if self.mesh_mode == GRID_MODE:
+            tex_idx = [] 
+            for x in range(self.x_quads+1):
+                for y in range(self.y_quads+1):
+                    tex_idx += [ txz + x*xsteps, tyz+y*ysteps]
+            self.vertex_list_idx.tex_coords = tex_idx
+
+        elif self.mesh_mode == TILES_MODE:
+            tex = []
+            for x in range(self.x_quads):
+                for y in range(self.y_quads):
+                    ax = txz + x*xsteps
+                    ay = tyz + y*ysteps
+                    bx = txz + (x+1)*xsteps
+                    by = tyz + (y+1)*ysteps
+                    tex += [ ax, ay, bx, ay, bx, by, ax, by]    
+            self.vertex_list.tex_coords = tex       
+        
+        else:
+            raise Exception("Invalid grid mode")

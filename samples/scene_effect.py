@@ -42,7 +42,7 @@ class TestLayer(cocos.layer.Layer):
 
 
 if __name__ == "__main__":
-    director.init( resizable=True )
+    director.init( resizable=True, fullscreen=False )
     director.show_FPS = True
     main_scene = cocos.scene.Scene()
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     tl1 = TestLayer()
     main_scene.add( tl1, z=33 )
 
-    e = Lens( x_quads=32, y_quads=32, duration=100 )
+    e = GridNop( x_quads=32, y_quads=32, duration=10000 )
     main_scene.do( e )
 
     director.run (main_scene)

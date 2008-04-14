@@ -21,11 +21,12 @@ from base_actions import *
 
 __all__ = [ 'MeshAction',               # Base classes
             'MeshTilesAction', 'MeshGridAction',
-            'QuadMoveBy', 
+            'QuadMoveBy',               # Basic class for skews, etc...
 
             'Shaky','ShakyTiles',       # Trembling actions
-            'Liquid','Sin',             # liquid action
-            'Lens','Twist',             # lens & Twist actions
+            'Liquid','Sin',             # Liquid and Sin
+            'Lens',                     # Lens effect (magnifying)
+            'GridNop',                  # Grid None Effect - For testing
             ]
 
 class MeshAction( IntervalAction ):
@@ -61,6 +62,10 @@ class MeshAction( IntervalAction ):
 
     def set_vertex( self, x, y, v):
         raise NotImplementedError("abstract")
+
+    def get_vertex( self, x, y):
+        raise NotImplementedError("abstract")
+
 
 class MeshGridAction( MeshAction ):
     '''A MeshGrid action is an action that does transformations
@@ -159,7 +164,6 @@ class MeshTilesAction( MeshAction ):
                y-vertex
 
         :rtype: (int,int)
-        :returns: Returns the current value of x,y
         '''
         idx = self._get_vertex_idx( x,y,2 )
         x = self.target.mesh.vertex_list.vertices[idx]
@@ -333,54 +337,18 @@ class Lens( MeshGridAction ):
     def __reversed__(self):
         return Lens( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
 
-class Twist( MeshGridAction ):
+class GridNop( MeshGridAction ):
     '''Liquid simulates the liquid effect
 
        scene.do( Twist(x_quads=16, y_quads=16, duration=10) )
     '''
 
-    def start( self ):
-        super(Twist,self).start()
-        self.center_x= 320
-        self.center_y= 240
-        self.radius = 180
-        self.twist_effect = 0.1
-
-        self.go_left = True
-
-
-    def update( self, t ):
-        center_point = Point2( self.center_x, self.center_y)
-
+    def nop_update( self, t ):
         for i in range(0, self.x_quads+1):
             for j in range(0, self.y_quads+1):
-
                 x = i* self.size_x
                 y = j* self.size_y
-                p = Point2( x,y )
-
-                vect = center_point - p
-                r = abs(vect)
-
-                if r < self.radius:
-
-
-                    angle = math.atan2(vect.x, vect.y) + self.radius * self.twist_effect
-
-                    x += (r * math.cos(angle))
-                    y += (r * math.sin(angle))
-
                 self.set_vertex( i,j, (x,y) )
-
-#        if self.go_left:
-#            self.center_x -= 2.5 
-#            if self.center_x < 40:
-#                self.go_left = False
-#        else:
-#            self.center_x += 2.5 
-#            if self.center_x > 620:
-#                self.go_left = True
-
     def __reversed__(self):
         return Twist( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
 
