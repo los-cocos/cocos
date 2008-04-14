@@ -76,25 +76,23 @@ class Mesh(object):
                 #        ^
                 #        |
                 #  a --> b 
-                index_points += [ x*(x_quads+1)+y, (x+1)*(x_quads+1)+(y), (x+1) * (x_quads+1) + (y+1), x*(x_quads+1)+(y+1) ]
+                a = x * (x_quads+1) + y
+                b = (x+1) * (x_quads+1) + y
+                c = (x+1) * (x_quads+1) + (y+1)
+                d = x * (x_quads+1) + (y+1)
 
-                vertex_points_idx[ (x * (x_quads+1) + y) * 2 ] = x1
-                vertex_points_idx[ (x * (x_quads+1) + y) * 2 + 1 ] = y1
-                vertex_points_idx[ ((x+1) * (x_quads+1) + y) * 2 ] = x2
-                vertex_points_idx[ ((x+1) * (x_quads+1) + y) * 2 + 1 ] = y1
-                vertex_points_idx[ ((x+1) * (x_quads+1) + y+1) * 2 ] = x2
-                vertex_points_idx[ ((x+1) * (x_quads+1) + y+1) * 2 + 1 ] = y2
-                vertex_points_idx[ (x * (x_quads+1) + y+1) * 2 ] = x1
-                vertex_points_idx[ (x * (x_quads+1) + y+1) * 2 + 1 ] = y2
+#                index_points += [ a, b, c, a, c, d]    # triangles 
+                index_points += [ a, b, c, d]           # or quads ?
 
-                texture_points_idx[ (x * (x_quads+1) + y) * 2 ] = x1/w
-                texture_points_idx[ (x * (x_quads+1) + y) * 2 + 1 ] = y1/h
-                texture_points_idx[ ((x+1) * (x_quads+1) + y) * 2 ] = x2/w
-                texture_points_idx[ ((x+1) * (x_quads+1) + y) * 2 + 1 ] = y1/h
-                texture_points_idx[ ((x+1) * (x_quads+1) + y+1) * 2 ] = x2/w
-                texture_points_idx[ ((x+1) * (x_quads+1) + y+1) * 2 + 1 ] = y2/h
-                texture_points_idx[ (x * (x_quads+1) + y+1) * 2 ] = x1/w
-                texture_points_idx[ (x * (x_quads+1) + y+1) * 2 + 1 ] = y2/h
+                l1 = ( a*2, b*2, c*2, d*2 )
+                l2 = ( (x1,y1), (x2,y1), (x2,y2), (x1,y2) )
+
+                for i in range( len(l1) ):
+                    vertex_points_idx[ l1[i] ] = l2[i][0]
+                    vertex_points_idx[ l1[i] + 1 ] = l2[i][1]
+
+                    texture_points_idx[ l1[i] ] = l2[i][0] / w
+                    texture_points_idx[ l1[i] + 1 ] = l2[i][1] / h
 
                 vertex_points += [x1, y1, x2, y1, x2, y2, x1, y2]
                 texture_points += [x1/w, y1/h, x2/w, y1/h, x2/w, y2/h, x1/w, y2/h]
@@ -132,6 +130,7 @@ class Mesh(object):
             self.vertex_list.draw(pyglet.gl.GL_QUADS)
         elif self.mesh_mode == GRID_MODE:
             self.vertex_list_idx.draw(pyglet.gl.GL_QUADS)
+#            self.vertex_list_idx.draw(pyglet.gl.GL_TRIANGLES)
         else:
             raise Exception("Invalid Mesh mode")
 
