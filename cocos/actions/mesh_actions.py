@@ -15,16 +15,17 @@ import math
 import random
 
 from cocos.director import director
+from cocos.mesh import TILES_MODE, GRID_MODE
 from cocos.euclid import *
 from base_actions import *
 
-__all__ = [ 'MeshAction','QuadMoveBy',  # Base classes
+__all__ = [ 'MeshAction',               # Base classes
+            'MeshTilesAction', 'MeshGridAction',
+            'QuadMoveBy', 
 
             'Shaky','ShakyTiles',       # Trembling actions
             'Liquid','Sin',             # liquid action
             'Lens','Twist',             # lens & Twist actions
-
-            'SinIdx',                   # DeleteMe
             ]
 
 class MeshAction( IntervalAction ):
@@ -57,6 +58,55 @@ class MeshAction( IntervalAction ):
         if r:
             self.target.mesh.active = False
         return r
+
+    def set_vertex( self, x, y, v):
+        raise NotImplementedError("abstract")
+
+class MeshGridAction( MeshAction ):
+    '''A MeshGrid action is an action that does transformations
+    to a grid.'''
+    def start( self ):
+        super( MeshGridAction, self ).start()
+        self.target.mesh.mesh_mode = GRID_MODE
+
+    def get_vertex( self, x, y):
+        '''Get the current vertex point value
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+
+        :rtype: (int,int)
+        '''
+        idx = (x * (self.x_quads+1) + y) * 2
+        x = self.target.mesh.vertex_list_idx.vertices[idx]
+        y = self.target.mesh.vertex_list_idx.vertices[idx+1]
+        return (x,y)
+
+    def set_vertex( self, x, y, v):
+        '''Set a vertex point is a certain value
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+            `v` : (int, int)
+                tuple value for the vertex
+        '''
+        idx = (x * (self.x_quads+1) + y) * 2
+        self.target.mesh.vertex_list_idx.vertices[idx] = int(v[0])
+        self.target.mesh.vertex_list_idx.vertices[idx+1] = int(v[1])
+
+
+class MeshTilesAction( MeshAction ):
+    '''A MeshTiles action is an action that does transformations
+    to a grid composed of tiles. You can transform each tile individually'''
+    def start( self ):
+        super( MeshTilesAction, self ).start()
+        self.target.mesh.mesh_mode = TILES_MODE
 
     def _get_vertex_idx( self, i, j, k ):
         if i==0 and j==0:
@@ -99,21 +149,6 @@ class MeshAction( IntervalAction ):
         self._set_vertex( x+1, y+1, 0, v)
         self._set_vertex( x, y+1, 1, v)
 
-    def set_vertex_idx( self, x, y, v):
-        '''Set a vertex point is a certain value
-
-        :Parameters:
-            `x` : int 
-               x-vertex
-            `y` : int
-               y-vertex
-            `v` : (int, int)
-                tuple value for the vertex
-        '''
-        idx = (x * (self.x_quads+1) + y) * 2
-        self.target.mesh.vertex_list_idx.vertices[idx] = int(v[0])
-        self.target.mesh.vertex_list_idx.vertices[idx+1] = int(v[1])
-
     def get_vertex( self, x, y):
         '''Get the current vertex point value
 
@@ -131,26 +166,8 @@ class MeshAction( IntervalAction ):
         y = self.target.mesh.vertex_list.vertices[idx+1]
         return (x,y)
 
-    def get_vertex_orig( self, x, y):
-        '''Get the original vertex point value
 
-        :Parameters:
-            `x` : int 
-               x-vertex
-            `y` : int
-               y-vertex
-
-        :rtype: (int,int)
-        :returns: Returns the original value of x,y
-        '''
-        idx = self._get_vertex_idx( i,j,2 )
-
-        x = self.target.mesh.vertex_points[idx]
-        y = self.target.mesh.vertex_points[idx+1]
-
-        return (x,y)
-
-class ShakyTiles( MeshAction ):
+class ShakyTiles( MeshTilesAction ):
     '''ShakyTiles simulates a shaky floor composed of tiles
 
        scene.do( ShakyTiles( randrange=6, x_quads=4, y_quads=4, duration=10) )
@@ -178,13 +195,16 @@ class ShakyTiles( MeshAction ):
                     self.target.mesh.vertex_list.vertices[idx+1] = int(y)
                 
     def __reversed__(self):
-        return ShakyTiles( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+        return ShakyTiles( randrange=self.randrange, x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
 
-class Shaky( ShakyTiles ):
+class Shaky( MeshGridAction):
     '''Shaky simulates an earthquake
 
        scene.do( Shaky( randrange=6, x_quads=4, y_quads=4, duration=10) )
     '''
+    def init( self, randrange=6, *args, **kw ):
+        super(MeshGridAction,self).init(*args,**kw)
+        self.randrange = randrange
 
     def update( self, t ):
         rr = random.randrange
@@ -200,9 +220,9 @@ class Shaky( ShakyTiles ):
                 self.set_vertex( i,j, (x,y) )
 
     def __reversed__(self):
-        return Shaky( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+        return Shaky( randrange=self.randrage, x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
 
-class Liquid( MeshAction ):
+class Liquid( MeshGridAction ):
     '''Liquid simulates the liquid effect
 
        scene.do( Liquid(x_quads=16, y_quads=16, duration=10) )
@@ -221,7 +241,7 @@ class Liquid( MeshAction ):
         return Liquid( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
 
 
-class Sin( MeshAction ):
+class Sin( MeshGridAction ):
     '''Sin simulates math.sin effect both in the vertical and horizontal axis
 
        scene.do( Sin( vertical_sin=True, horizontal_sin=False, x_quads=16, y_quads=16, duration=10) )
@@ -237,56 +257,26 @@ class Sin( MeshAction ):
             for j in range(0, self.y_quads+1):
                 x = i* self.size_x
                 y = j* self.size_y
-                if not self.vertical_sin:
-                    xpos = x
-                else:
-                    xpos = (x + (math.sin(self.elapsed*2 + y * .01) * self.size_x))
 
-                if not self.horizontal_sin:
-                    ypos = y
+                if self.vertical_sin:
+                    xpos = (x + (math.sin(self.elapsed*2 + y * .01) * self.size_x))
                 else:
+                    xpos = x
+
+                if self.horizontal_sin:
                     ypos = (y + (math.sin(self.elapsed*2 + x * .01) * self.size_y)) 
+                else:
+                    ypos = y
 
                 self.set_vertex( i,j, (xpos,ypos) )
 
     def __reversed__(self):
-        return Liquid( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
-
-# Delete Me
-class SinIdx( MeshAction ):
-    '''Sin simulates math.sin effect both in the vertical and horizontal axis
-
-       scene.do( Sin( vertical_sin=True, horizontal_sin=False, x_quads=16, y_quads=16, duration=10) )
-    '''
-
-    def init( self, horizontal_sin=True, vertical_sin=True, *args, **kw ):
-        super(SinIdx, self).init( *args, **kw )
-        self.horizontal_sin = horizontal_sin
-        self.vertical_sin = vertical_sin
-
-    def update( self, t ):
-        for i in range(0, self.x_quads+1):
-            for j in range(0, self.y_quads+1):
-                x = i* self.size_x
-                y = j* self.size_y
-                if not self.vertical_sin:
-                    xpos = x
-                else:
-                    xpos = (x + (math.sin(self.elapsed*2 + y * .01) * self.size_x))
-
-                if not self.horizontal_sin:
-                    ypos = y
-                else:
-                    ypos = (y + (math.sin(self.elapsed*2 + x * .01) * self.size_y)) 
-
-                self.set_vertex_idx( i,j, (xpos,ypos) )
-
-    def __reversed__(self):
-        return Liquid( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+        return Sin( horizontal_sin=self.horizontal_sin, vertical_sin=self.vertical_sin,
+                    x_quads=self.x_quads, y_quads=self.y_quads,
+                    duration=self.duration)
 
 
-
-class Lens( MeshAction ):
+class Lens( MeshGridAction ):
     '''Liquid simulates the liquid effect
 
        scene.do( Lens(x_quads=16, y_quads=16, duration=10) )
@@ -296,7 +286,7 @@ class Lens( MeshAction ):
         super(Lens,self).start()
         self.center_x= 320
         self.center_y= 240
-        self.radius = 80
+        self.radius = 160
         self.lens_effect = 0.1
 
         self.go_left = True
@@ -319,7 +309,7 @@ class Lens( MeshAction ):
 
                     pre_log = r/self.radius
                     if pre_log == 0:
-                        pre_log = 0.00001
+                        pre_log = 0.001
                     l = math.log( pre_log )*self.lens_effect
                     r = math.exp( l ) * self.radius
 
@@ -331,19 +321,19 @@ class Lens( MeshAction ):
 
                 self.set_vertex( i,j, (x,y) )
 
-        if self.go_left:
-            self.center_x -= 2.5 
-            if self.center_x < 40:
-                self.go_left = False
-        else:
-            self.center_x += 2.5 
-            if self.center_x > 620:
-                self.go_left = True
+#        if self.go_left:
+#            self.center_x -= 2.5 
+#            if self.center_x < 40:
+#                self.go_left = False
+#        else:
+#            self.center_x += 2.5 
+#            if self.center_x > 620:
+#                self.go_left = True
 
     def __reversed__(self):
         return Lens( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
 
-class Twist( MeshAction ):
+class Twist( MeshGridAction ):
     '''Liquid simulates the liquid effect
 
        scene.do( Twist(x_quads=16, y_quads=16, duration=10) )
@@ -394,7 +384,7 @@ class Twist( MeshAction ):
     def __reversed__(self):
         return Twist( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
 
-class QuadMoveBy( MeshAction ):
+class QuadMoveBy( MeshGridAction ):
     '''QuadMoveBy moves each vertex of the quad
 
        scene.do( QuadMoveBy( vertex0, vertex1, vertex2, vertex3, duration) )

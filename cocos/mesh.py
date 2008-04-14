@@ -11,7 +11,11 @@ from pyglet.gl import *
 from director import director
 import framegrabber
 
-__all__ = ['Mesh', ]
+__all__ = ['Mesh',
+            'TILES_MODE', 'GRID_MODE', ]
+
+TILES_MODE = "tiles"
+GRID_MODE = "grid"
 
 class Mesh(object):
     """
@@ -22,6 +26,7 @@ class Mesh(object):
     def __init__(self):
         super(Mesh, self).__init__()
         self.active = False
+        self.mesh_mode = "grid"
 
     def init( self, x_quads=4, y_quads=4 ):
 
@@ -94,18 +99,14 @@ class Mesh(object):
                 vertex_points += [x1, y1, x2, y1, x2, y2, x1, y2]
                 texture_points += [x1/w, y1/h, x2/w, y1/h, x2/w, y2/h, x1/w, y2/h]
 
-
-#        print index_points
-#        print vertex_points_idx, len(vertex_points_idx)
-#        print texture_points_idx, len(texture_points_idx)
-#        print texture_points, len(texture_points)
-
+        # Generates a quad for each tile, to perform tiles effect
         self.vertex_list = pyglet.graphics.vertex_list(x_quads*y_quads*4, "t2f", "v2i/stream")
         self.vertex_points = vertex_points[:]
         self.vertex_list.vertices = vertex_points
         self.vertex_list.tex_coords = texture_points
 
-        # optimization: using index vertex list
+        # Generates a grid... must faster, for effects that doesn't split the
+        # grid in tiles
         self.vertex_list_idx = pyglet.graphics.vertex_list_indexed((x_quads+1)*(y_quads+1), index_points, "t2f", "v2i/stream")
         self.vertex_points_idx = vertex_points_idx[:]
         self.vertex_list_idx.vertices = vertex_points_idx
@@ -127,8 +128,12 @@ class Mesh(object):
         glBindTexture(self.texture.target, self.texture.id)
         glPushAttrib(GL_COLOR_BUFFER_BIT)
 
-        self.vertex_list.draw(pyglet.gl.GL_QUADS)
-#        self.vertex_list_idx.draw(pyglet.gl.GL_QUADS)
+        if self.mesh_mode == TILES_MODE: 
+            self.vertex_list.draw(pyglet.gl.GL_QUADS)
+        elif self.mesh_mode == GRID_MODE:
+            self.vertex_list_idx.draw(pyglet.gl.GL_QUADS)
+        else:
+            raise Exception("Invalid Mesh mode")
 
         glPopAttrib()
         glDisable(self.texture.target)
