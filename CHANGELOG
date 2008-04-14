@@ -6,6 +6,7 @@ v0.3.0 - XXX, xxx
      MOD_ACCEL + f: Toggles Fullscreen
      MOD_ACCEL + p: Toggles Pause
      MOD_ACCEL + w: Toggles wireframe mode
+     MOD_ACCEL + s: Takes a screenshot of the current window
   - alpha blending eanabled by default. 
     use director.set_alpha_bleding(True|False) to change.
   - Actions: Goto renamed to MoveTo and Move renamed to MoveBy

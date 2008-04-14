@@ -26,6 +26,7 @@ There is a menu demo in the samples folder.
 
 __docformat__ = 'restructuredtext'
 
+import pyglet
 from pyglet import font
 from pyglet import media
 from pyglet import window

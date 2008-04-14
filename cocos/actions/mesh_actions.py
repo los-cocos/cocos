@@ -23,6 +23,8 @@ __all__ = [ 'MeshAction','QuadMoveBy',  # Base classes
             'Shaky','ShakyTiles',       # Trembling actions
             'Liquid','Sin',             # liquid action
             'Lens','Twist',             # lens & Twist actions
+
+            'SinIdx',                   # DeleteMe
             ]
 
 class MeshAction( IntervalAction ):
@@ -96,6 +98,21 @@ class MeshAction( IntervalAction ):
         self._set_vertex( x+1, y, 3, v)
         self._set_vertex( x+1, y+1, 0, v)
         self._set_vertex( x, y+1, 1, v)
+
+    def set_vertex_idx( self, x, y, v):
+        '''Set a vertex point is a certain value
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+            `v` : (int, int)
+                tuple value for the vertex
+        '''
+        idx = (x * (self.x_quads+1) + y) * 2
+        self.target.mesh.vertex_list_idx.vertices[idx] = int(v[0])
+        self.target.mesh.vertex_list_idx.vertices[idx+1] = int(v[1])
 
     def get_vertex( self, x, y):
         '''Get the current vertex point value
@@ -234,6 +251,39 @@ class Sin( MeshAction ):
 
     def __reversed__(self):
         return Liquid( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+
+# Delete Me
+class SinIdx( MeshAction ):
+    '''Sin simulates math.sin effect both in the vertical and horizontal axis
+
+       scene.do( Sin( vertical_sin=True, horizontal_sin=False, x_quads=16, y_quads=16, duration=10) )
+    '''
+
+    def init( self, horizontal_sin=True, vertical_sin=True, *args, **kw ):
+        super(SinIdx, self).init( *args, **kw )
+        self.horizontal_sin = horizontal_sin
+        self.vertical_sin = vertical_sin
+
+    def update( self, t ):
+        for i in range(0, self.x_quads+1):
+            for j in range(0, self.y_quads+1):
+                x = i* self.size_x
+                y = j* self.size_y
+                if not self.vertical_sin:
+                    xpos = x
+                else:
+                    xpos = (x + (math.sin(self.elapsed*2 + y * .01) * self.size_x))
+
+                if not self.horizontal_sin:
+                    ypos = y
+                else:
+                    ypos = (y + (math.sin(self.elapsed*2 + x * .01) * self.size_y)) 
+
+                self.set_vertex_idx( i,j, (xpos,ypos) )
+
+    def __reversed__(self):
+        return Liquid( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+
 
 
 class Lens( MeshAction ):
