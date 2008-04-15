@@ -171,7 +171,7 @@ class Director(event.EventDispatcher):
 
 
         # save resolution and aspect for resize / fullscreen
-        self.window.on_resize = self.on_resize
+        self.window.on_resize = self.on_resize_window
         self.window.on_draw = self.on_draw
         self._window_original_width = self.window.width
         self._window_original_height = self.window.height
@@ -318,7 +318,7 @@ class Director(event.EventDispatcher):
         return ( int( x_diff * x) - adjust_x,   int( y_diff * y ) - adjust_y )
 
 
-    def on_resize( self, width, height):
+    def on_resize_window( self, width, height):
         """Method that is called every time the main window is resized.
         
         :Parameters:
@@ -342,6 +342,8 @@ class Director(event.EventDispatcher):
         glLoadIdentity()
         glOrtho(0, self._window_original_width, 0, self._window_original_height, -1, 1)
         glMatrixMode(gl.GL_MODELVIEW)
+        
+        self.dispatch_event('on_resize', width, height)
 
         
     #
@@ -365,3 +367,4 @@ Don't instantiate Director(). Just use this singleton."""
 
 Director.register_event_type('on_push')
 Director.register_event_type('on_pop')
+Director.register_event_type('on_resize')

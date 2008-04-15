@@ -25,12 +25,10 @@ class Mesh(object):
     
     def __init__(self):
         super(Mesh, self).__init__()
-        self.active = False
-        self.mesh_mode = "grid"
+        self._active = False
+        self.mesh_mode = GRID_MODE
 
     def init( self, x_quads=4, y_quads=4 ):
-
-#        director.window.push_handlers( self.on_resize )
         
         self.x_quads = x_quads
         self.y_quads = y_quads
@@ -149,6 +147,9 @@ class Mesh(object):
         glDisable(self.texture.target)
 
     def on_resize(self, w, h):
+        '''on_resize handler. Don't return 'True' since this event
+        shall be propagated to all the meshes
+        '''
         if not self.active:
             return
         
@@ -191,3 +192,22 @@ class Mesh(object):
         
         else:
             raise Exception("Invalid grid mode")
+
+    def _set_active(self, bool):
+        if self._active == bool:
+            return
+        self._active = bool
+        if self._active == True:
+            self._handlers = director.push_handlers(self.on_resize)
+        elif self._active == False:
+            director.pop_handlers()
+        else:
+            raise Exception("Invalid value for Mesh.active")
+                                        
+    def _get_active(self):
+        return self._active
+
+    active = property(_get_active, _set_active,
+                      doc='''Determines if the mesh is active or not                 
+                     :type: bool
+                     ''')       
