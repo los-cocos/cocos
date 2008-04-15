@@ -140,20 +140,23 @@ class MultiplexLayer( Layer ):
             raise Exception("Multiplexlayer: Invalid layer number")
 
         # remove
-        director.window.pop_handlers()
-        self.layers[ self.enabled_layer ].on_exit()
+        layer = self.layers[ self.enabled_layer ]
+        director.window.remove_handlers(layer)
+        layer.on_exit()
 
         self.enabled_layer = layer_number
         director.window.push_handlers( self.layers[ self.enabled_layer ] )
         self.layers[ self.enabled_layer ].on_enter()
 
     def on_enter( self ):
-        director.window.push_handlers( self.layers[ self.enabled_layer ] )
-        self.layers[ self.enabled_layer ].on_enter()
+        layer = self.layers[ self.enabled_layer ]
+        director.window.push_handlers( layer )
+        layer.on_enter()
 
     def on_exit( self ):
-        director.window.pop_handlers()
-        self.layers[ self.enabled_layer ].on_exit()
+        layer = self.layers[ self.enabled_layer ]
+        director.window.remove_handlers( layer )
+        layer.on_exit()
 
     def draw( self ):
         self.layers[ self.enabled_layer ].on_draw()

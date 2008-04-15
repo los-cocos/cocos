@@ -140,7 +140,7 @@ class IContainer( object ):
 
             # XXX: shall be part of on_exit(). Will be fixed after pyweek
             if isinstance(child,Layer) and not hasattr(child,"dont_push_handlers"):
-                director.window.pop_handlers()
+                director.window.remove_handlers(child)
 
             if hasattr(child,"on_exit"):
                 child.on_exit()
@@ -215,7 +215,7 @@ class IContainer( object ):
                 c.on_exit()
             if isinstance(c,Layer):
                 if not hasattr(c,"dont_push_handlers"):
-                    director.window.pop_handlers()
+                    director.window.remove_handlers(c)
 
     def transform( self ):
         """Apply ModelView transformations"""
