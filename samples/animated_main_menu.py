@@ -222,7 +222,11 @@ if __name__ == "__main__":
             MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
             )
 
-    scene.do( Liquid( x_quads=16, y_quads=16, duration=1000) )
-#    scene.do( Shaky( x_quads=16, y_quads=16, duration=1000) )
+#    scene.do( ShuffleTiles( x_quads=16, y_quads=16, duration=5) + Liquid(x_quads=16, y_quads=16, duration=500) )
+    scene.do(
+              Liquid(x_quads=16, y_quads=16, duration=8) +             
+              ShuffleTiles( x_quads=16, y_quads=16, duration=5) + 
+              ShakyTiles( x_quads=16, y_quads=16, duration=5)
+              )
 
     director.run( scene )
