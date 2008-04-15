@@ -33,6 +33,7 @@ class Mesh(object):
         self.x_quads = x_quads
         self.y_quads = y_quads
         
+        
         x,y = director.window.width, director.window.height
 
         if self.texture is None:
@@ -62,8 +63,8 @@ class Mesh(object):
 
 
     def _calculate_vertex_points(self, x, y):        
-        x_step = x / self.x_quads
-        y_step = y / self.y_quads
+        self.x_step = x / self.x_quads
+        self.y_step = y / self.y_quads
 
         w = float(self.texture.width)
         h = float(self.texture.height)
@@ -81,10 +82,10 @@ class Mesh(object):
 
         for x in range(0, self.x_quads):
             for y in range(0, self.y_quads):
-                x1 = x*x_step 
-                x2 = x1 + x_step
-                y1 = y*y_step
-                y2 = y1 + y_step
+                x1 = x*self.x_step 
+                x2 = x1 + self.x_step
+                y1 = y* self.y_step
+                y2 = y1 + self.y_step
               
 
                 #  d <-- c

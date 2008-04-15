@@ -36,9 +36,19 @@ class TestLayer(cocos.layer.Layer):
         image.anchor_y = image.height / 2
         sprite3 = ActionSprite( image )
 
-        self.add( sprite2, (x/4, y/2) )
-        self.add( sprite1, (x/2, y/2) )
-        self.add( sprite3, (x/(4/3.0), y/2) )
+        self.add( sprite1, (320, y/2) )
+        self.add( sprite2, (620, y/2) )
+        self.add( sprite3, (20, y/2) )
+
+        ju_right = Jump( y=100, x=600, jumps=4, duration=5 )
+        ju_left = Jump( y=100, x=-600, jumps=4, duration=5 )
+        rot1 = Rotate( 180 * 4, duration=5)
+
+        sprite2.do( Repeat( ju_left + Reverse(ju_left) ) )
+        sprite2.do( Repeat( Reverse(rot1) + rot1 ) )
+        sprite3.do( Repeat( ju_right + Reverse(ju_right) ) )
+        sprite3.do( Repeat( rot1 + Reverse(rot1) ) )
+        
 
 
 if __name__ == "__main__":
@@ -46,15 +56,15 @@ if __name__ == "__main__":
     director.show_FPS = True
     main_scene = cocos.scene.Scene()
 
-    for i in range(32):
+    for i in range(16):
         l = ColorLayer(random.random(), random.random(), random.random(), 1.0)
-        scale = (32-i)/32.0
+        scale = (16-i)/16.0
         main_scene.add( l, z=i, scale=scale )
 
     tl1 = TestLayer()
     main_scene.add( tl1, z=33 )
 
-    e = GridNop( x_quads=32, y_quads=32, duration=10000 )
+    e = ShuffleTiles( x_quads=8, y_quads=8, duration=5 )
     main_scene.do( e )
 
     director.run (main_scene)

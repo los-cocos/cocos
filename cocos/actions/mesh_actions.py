@@ -13,6 +13,7 @@ __docformat__ = 'restructuredtext'
 
 import math
 import random
+rr = random.randrange
 
 from cocos.director import director
 from cocos.mesh import TILES_MODE, GRID_MODE
@@ -23,7 +24,9 @@ __all__ = [ 'MeshAction',               # Base classes
             'MeshTilesAction', 'MeshGridAction',
             'QuadMoveBy',               # Basic class for skews, etc...
 
-            'Shaky','ShakyTiles',       # Trembling actions
+            'ShakyTiles',               # Tiles Actions
+            'ShuffleTiles',
+            'Shaky',                    # Trembling actions
             'Liquid','Sin',             # Liquid and Sin
             'Lens',                     # Lens effect (magnifying)
             'GridNop',                  # Grid None Effect - For testing
@@ -170,6 +173,16 @@ class MeshTilesAction( MeshAction ):
         y = self.target.mesh.vertex_list.vertices[idx+1]
         return (x,y)
 
+# Don't export this class
+class Tile(object):
+    def __init__(self, position=(0,0), start_position=(0,0), delta=(0,0) ):
+        super(Tile,self).__init__()
+        self.position = position
+        self.start_position = start_position
+        self.delta = delta
+
+    def __repr__(self):
+        return "(start_pos: %s  pos: %s   delta:%s)" % (self.start_position, self.position, self.delta)
 
 class ShakyTiles( MeshTilesAction ):
     '''ShakyTiles simulates a shaky floor composed of tiles
@@ -182,8 +195,6 @@ class ShakyTiles( MeshTilesAction ):
         self.randrange = randrange
 
     def update( self, t ):
-        rr = random.randrange
-
         for i in range(0, self.x_quads):
             for j in range(0, self.y_quads):
                 for k in range(0,4):
@@ -201,6 +212,87 @@ class ShakyTiles( MeshTilesAction ):
     def __reversed__(self):
         return ShakyTiles( randrange=self.randrange, x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
 
+class ShuffleTiles( MeshTilesAction ):
+    '''ShuffleTiles moves the tiles randomly across the screen and then put
+    them back into the original place.
+       scene.do( ShuffleTiles( x_quads=4, y_quads=4, duration=10) )
+    '''
+
+    def start(self):
+        super(ShuffleTiles,self).start()
+        self.tiles = {}
+        self.dst_tiles = {}
+        for i in range(self.x_quads):
+            for j in range(self.y_quads):
+                self.tiles[(i,j)] = Tile( position = Point2(i,j), 
+                                          start_position = Point2(i,j), 
+                                          delta= self._get_delta(i,j) )
+
+    def place_tile(self, i, j):
+        t = self.tiles[(i,j)]
+
+        for k in range(0,4):
+            idx = (i * 4 * self.y_quads + j * 4 + k) * 2
+
+            x=0
+            y=0
+            
+            if k==1 or k==2:
+                x = self.target.mesh.x_step
+            if k==2 or k==3:
+                y = self.target.mesh.y_step
+                
+            x += t.position.x * self.target.mesh.x_step
+            y += t.position.y * self.target.mesh.y_step
+            
+            self.target.mesh.vertex_list.vertices[idx] = int(x)
+            self.target.mesh.vertex_list.vertices[idx+1] = int(y)
+        
+    def update( self, t ):
+        if t < 1.0/3:
+            self.phase_shuffle(t/ (1.0/3) )
+        elif t < 2.0/3:
+            self.phase_sleep()
+        else:
+            self.phase_shuffle_back( (t-2.0/3) / (1.0/3) )
+
+    def phase_shuffle(self, t ):
+        for i in range(0, self.x_quads):
+            for j in range(0, self.y_quads):
+                self.tiles[(i,j)].position = self.tiles[(i,j)].start_position + self.tiles[(i,j)].delta * t
+                self.place_tile(i,j)
+   
+    def phase_shuffle_back(self, t):
+        for i in range(0, self.x_quads):
+            for j in range(0, self.y_quads):
+                self.tiles[(i,j)].position = self.tiles[(i,j)].start_position + self.tiles[(i,j)].delta * (1-t)
+                self.place_tile(i,j)
+                
+    def phase_sleep(self):
+        return
+                
+    def __reversed__(self):
+        return ShuffleTiles( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+
+    # private method
+    def _get_delta(self, x, y):
+        a = rr(0, self.x_quads), rr(0, self.y_quads)  
+        if not self.dst_tiles.get(a, False):
+            self.dst_tiles[ a ] = True
+            return Point2(*a)-Point2(x,y)
+        for i in range(a[0], self.x_quads):
+            for j in range(self.y_quads):
+                if not self.dst_tiles.get( (i,j), False):
+                    self.dst_tiles[ (i,j) ] = True
+                    return Point2(i,j)-Point2(x,y)
+        for i in range(a[0]):
+            for j in range(self.y_quads):
+                if not self.dst_tiles.get( (i,j), False):
+                    self.dst_tiles[ (i,j) ] = True
+                    return Point2(i,j)-Point2(x,y)
+        print self.dst_tiles, len(self.dst_tiles), a
+        raise Exception("_get_delta() algorithm needs to be improved!. Blame the authors")
+
 class Shaky( MeshGridAction):
     '''Shaky simulates an earthquake
 
@@ -211,7 +303,6 @@ class Shaky( MeshGridAction):
         self.randrange = randrange
 
     def update( self, t ):
-        rr = random.randrange
         for i in range(0, self.x_quads+1):
             for j in range(0, self.y_quads+1):
 
