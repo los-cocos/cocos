@@ -139,7 +139,10 @@ class DefaultHandler( object ):
                 glPolygonMode(GL_BACK, GL_FILL);
                 self.wired = False 
             return True
-    
+
+        elif symbol == pyglet.window.key.X and (modifiers & pyglet.window.key.MOD_ACCEL):
+            director.show_FPS = not director.show_FPS 
+
         elif symbol == pyglet.window.key.S and (modifiers & pyglet.window.key.MOD_ACCEL):
             import time
             pyglet.image.get_buffer_manager().get_color_buffer().save('screenshot-%d.png' % (int( time.time() ) ) )
