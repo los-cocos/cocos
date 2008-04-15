@@ -15,7 +15,8 @@ v0.3.0 - XXX, xxx
   - Actions: Rotate renamed to RotateBy. Added RotateTo
   - Added compositions and actions to scenes and layers
   - Added setup.py and setup.cfg contributed by David Eyk
-  - Added Mesh effects
+  - Added Mesh effects:
+     Liquid, Sin Shaky, ShakyTiles, ShuffleTiles, QuadMoveBy
     
 v0.2.0 - March, 21th 2008
   - Director: uses the new pyglet 1.1 loop

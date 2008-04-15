@@ -88,7 +88,7 @@ class MeshGridAction( MeshAction ):
 
         :rtype: (int,int)
         '''
-        idx = (x * (self.x_quads+1) + y) * 2
+        idx = (x * (self.y_quads+1) + y) * 2
         x = self.target.mesh.vertex_list_idx.vertices[idx]
         y = self.target.mesh.vertex_list_idx.vertices[idx+1]
         return (x,y)
@@ -104,7 +104,7 @@ class MeshGridAction( MeshAction ):
             `v` : (int, int)
                 tuple value for the vertex
         '''
-        idx = (x * (self.x_quads+1) + y) * 2
+        idx = (x * (self.y_quads+1) + y) * 2
         self.target.mesh.vertex_list_idx.vertices[idx] = int(v[0])
         self.target.mesh.vertex_list_idx.vertices[idx+1] = int(v[1])
 

@@ -26,7 +26,7 @@ if __name__ == "__main__":
         scale = (16-i)/16.0
         main_scene.add( l, z=i, scale=scale )
 
-    e = ShuffleTiles( x_quads=8, y_quads=8, duration=5 )
+    e = ShuffleTiles( x_quads=16, y_quads=8, duration=5 )
     main_scene.do( e )
 
     director.run (main_scene)

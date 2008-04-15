@@ -82,9 +82,9 @@ class Mesh(object):
 
         for x in range(0, self.x_quads):
             for y in range(0, self.y_quads):
-                x1 = x*self.x_step 
+                x1 = x * self.x_step 
                 x2 = x1 + self.x_step
-                y1 = y* self.y_step
+                y1 = y * self.y_step
                 y2 = y1 + self.y_step
               
 
@@ -92,10 +92,10 @@ class Mesh(object):
                 #        ^
                 #        |
                 #  a --> b 
-                a = x * (self.x_quads+1) + y
-                b = (x+1) * (self.x_quads+1) + y
-                c = (x+1) * (self.x_quads+1) + (y+1)
-                d = x * (self.x_quads+1) + (y+1)
+                a = x * (self.y_quads+1) + y
+                b = (x+1) * (self.y_quads+1) + y
+                c = (x+1) * (self.y_quads+1) + (y+1)
+                d = x * (self.y_quads+1) + (y+1)
 
 #                index_points += [ a, b, c, a, c, d]    # triangles 
                 index_points += [ a, b, c, d]           # or quads ?
