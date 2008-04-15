@@ -28,6 +28,6 @@ if __name__ == "__main__":
     main_scene.add( green, z=2, scale=0.5 )
     main_scene.add( white, z=3, scale=0.25 )
 
-    main_scene.do( Shaky( randrange=6, x_quads=8, y_quads=8, duration=5) )
+    main_scene.do( Shaky( randrange=6, x_quads=16, y_quads=8, duration=5) )
 
     director.run (main_scene)
