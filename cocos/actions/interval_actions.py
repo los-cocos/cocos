@@ -1,11 +1,5 @@
 #
-# An implementation of Cocos' ActionSprite for Pyglet 1.1
-#
-# Based on actions.py from Grossini's Hell:
-#    http://www.pyweek.org/e/Pywiii/
-#
-# Based on actions.py from Pygext:
-#     http://opioid-interactive.com/~shang/projects/pygext/
+# Cocos Interval Actions
 #
 
 '''Interval Action

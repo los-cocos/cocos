@@ -55,7 +55,7 @@ class MeshAction( IntervalAction ):
         x,y = director.get_window_size()
         self.size_x = x // self.x_quads
         self.size_y = y // self.y_quads
-
+        
 
     def done( self ):
         r = super(MeshAction,self).done()
@@ -290,7 +290,6 @@ class ShuffleTiles( MeshTilesAction ):
                 if not self.dst_tiles.get( (i,j), False):
                     self.dst_tiles[ (i,j) ] = True
                     return Point2(i,j)-Point2(x,y)
-        print self.dst_tiles, len(self.dst_tiles), a
         raise Exception("_get_delta() algorithm needs to be improved!. Blame the authors")
 
 class Shaky( MeshGridAction):
@@ -299,7 +298,7 @@ class Shaky( MeshGridAction):
        scene.do( Shaky( randrange=6, x_quads=4, y_quads=4, duration=10) )
     '''
     def init( self, randrange=6, *args, **kw ):
-        super(MeshGridAction,self).init(*args,**kw)
+        super(Shaky,self).init(*args,**kw)
         self.randrange = randrange
 
     def update( self, t ):
@@ -324,12 +323,14 @@ class Liquid( MeshGridAction ):
     '''
 
     def update( self, t ):
+        elapsed = t * self.duration
+            
         for i in range(1, self.x_quads):
             for j in range(1, self.y_quads):
                 x = i* self.size_x
                 y = j* self.size_y
-                xpos = (x + (math.sin(self.elapsed*2 + x * .01) * self.size_x))
-                ypos = (y + (math.sin(self.elapsed*2 + y * .01) * self.size_y)) 
+                xpos = (x + (math.sin(elapsed*2 + x * .01) * self.size_x))
+                ypos = (y + (math.sin(elapsed*2 + y * .01) * self.size_y)) 
                 self.set_vertex( i,j, (xpos,ypos) )
 
     def __reversed__(self):
@@ -348,18 +349,20 @@ class Sin( MeshGridAction ):
         self.vertical_sin = vertical_sin
 
     def update( self, t ):
+        elapsed = t * self.duration
+        
         for i in range(0, self.x_quads+1):
             for j in range(0, self.y_quads+1):
                 x = i* self.size_x
                 y = j* self.size_y
 
                 if self.vertical_sin:
-                    xpos = (x + (math.sin(self.elapsed*2 + y * .01) * self.size_x))
+                    xpos = (x + (math.sin(elapsed*2 + y * .01) * self.size_x))
                 else:
                     xpos = x
 
                 if self.horizontal_sin:
-                    ypos = (y + (math.sin(self.elapsed*2 + x * .01) * self.size_y)) 
+                    ypos = (y + (math.sin(elapsed*2 + x * .01) * self.size_y)) 
                 else:
                     ypos = y
 
