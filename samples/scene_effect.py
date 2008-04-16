@@ -64,7 +64,7 @@ if __name__ == "__main__":
     tl1 = TestLayer()
     main_scene.add( tl1, z=33 )
 
-    e = ShuffleTiles( x_quads=8, y_quads=8, duration=5 )
+    e = ShuffleTiles( grid=(8,8), duration=5 )
     main_scene.do( e )
 
     director.run (main_scene)

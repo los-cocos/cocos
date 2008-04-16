@@ -28,11 +28,16 @@ class Mesh(object):
         self._active = False
         self.mesh_mode = GRID_MODE
 
-    def init( self, x_quads=4, y_quads=4 ):
-        
-        self.x_quads = x_quads
-        self.y_quads = y_quads
-        
+    def init( self, grid ):
+        '''Initializes the grid creating both a vertex_list for an independent-tiled grid
+        and creating also a vertex_list_indexed for a "united" (non indepented tile) grid.
+
+        :Parameters:
+            `grid` : euclid.Point2
+                size of a 2D grid
+        '''
+      
+        self.grid = grid
         
         x,y = director.window.width, director.window.height
 
@@ -48,14 +53,14 @@ class Mesh(object):
         idx_pts, ver_pts_idx, tex_pts_idx, ver_pts, tex_pts = self._calculate_vertex_points(x,y)
 
         # Generates a grid of joint quads
-        self.vertex_list_idx = pyglet.graphics.vertex_list_indexed((x_quads+1)*(y_quads+1), 
+        self.vertex_list_idx = pyglet.graphics.vertex_list_indexed((grid.x+1)*(grid.y+1), 
                             idx_pts, "t2f", "v2i/stream")
         self.vertex_points_idx = ver_pts_idx[:]
         self.vertex_list_idx.vertices = ver_pts_idx
         self.vertex_list_idx.tex_coords = tex_pts_idx
  
        # Generates a grid of independent quads (think of tiles)
-        self.vertex_list = pyglet.graphics.vertex_list(x_quads*y_quads*4,
+        self.vertex_list = pyglet.graphics.vertex_list(grid.x*grid.y*4,
                             "t2f", "v2i/stream")
         self.vertex_points = ver_pts[:]
         self.vertex_list.vertices = ver_pts
@@ -63,8 +68,8 @@ class Mesh(object):
 
 
     def _calculate_vertex_points(self, x, y):        
-        self.x_step = x / self.x_quads
-        self.y_step = y / self.y_quads
+        self.x_step = x / self.grid.x
+        self.y_step = y / self.grid.y
 
         w = float(self.texture.width)
         h = float(self.texture.height)
@@ -75,13 +80,13 @@ class Mesh(object):
         vertex_points = []
         texture_points = []
 
-        for x in range(0,self.x_quads+1):
-            for y in range(0,self.y_quads+1):
+        for x in range(0,self.grid.x+1):
+            for y in range(0,self.grid.y+1):
                 vertex_points_idx += [-1,-1]
                 texture_points_idx += [-1,-1]
 
-        for x in range(0, self.x_quads):
-            for y in range(0, self.y_quads):
+        for x in range(0, self.grid.x):
+            for y in range(0, self.grid.y):
                 x1 = x * self.x_step 
                 x2 = x1 + self.x_step
                 y1 = y * self.y_step
@@ -92,10 +97,10 @@ class Mesh(object):
                 #        ^
                 #        |
                 #  a --> b 
-                a = x * (self.y_quads+1) + y
-                b = (x+1) * (self.y_quads+1) + y
-                c = (x+1) * (self.y_quads+1) + (y+1)
-                d = x * (self.y_quads+1) + (y+1)
+                a = x * (self.grid.y+1) + y
+                b = (x+1) * (self.grid.y+1) + y
+                c = (x+1) * (self.grid.y+1) + (y+1)
+                d = x * (self.grid.y+1) + (y+1)
 
 #                index_points += [ a, b, c, a, c, d]    # triangles 
                 index_points += [ a, b, c, d]           # or quads ?
@@ -170,20 +175,20 @@ class Mesh(object):
         tx = float(rx)/self.texture.width+txz
         ty = float(ry)/self.texture.height+tyz
         
-        xsteps = (tx-txz) / self.x_quads
-        ysteps = (ty-tyz) / self.y_quads
+        xsteps = (tx-txz) / self.grid.x
+        ysteps = (ty-tyz) / self.grid.y
 
         if self.mesh_mode == GRID_MODE:
             tex_idx = [] 
-            for x in range(self.x_quads+1):
-                for y in range(self.y_quads+1):
+            for x in range(self.grid.x+1):
+                for y in range(self.grid.y+1):
                     tex_idx += [ txz + x*xsteps, tyz+y*ysteps]
             self.vertex_list_idx.tex_coords = tex_idx
 
         elif self.mesh_mode == TILES_MODE:
             tex = []
-            for x in range(self.x_quads):
-                for y in range(self.y_quads):
+            for x in range(self.grid.x):
+                for y in range(self.grid.y):
                     ax = txz + x*xsteps
                     ay = tyz + y*ysteps
                     bx = txz + (x+1)*xsteps

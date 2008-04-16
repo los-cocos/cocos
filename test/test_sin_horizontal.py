@@ -27,5 +27,5 @@ if __name__ == "__main__":
     main_scene.add( green, z=2, scale=0.5 )
     main_scene.add( white, z=3, scale=0.25 )
 
-    main_scene.do( Sin( horizontal_sin=True, vertical_sin=False, x_quads=16, y_quads=16, duration=20) )
+    main_scene.do( Sin( horizontal_sin=True, vertical_sin=False, grid=(16,16), duration=20) )
     director.run (main_scene)

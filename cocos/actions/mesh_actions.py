@@ -34,27 +34,26 @@ __all__ = [ 'MeshAction',               # Base classes
 
 class MeshAction( IntervalAction ):
     '''MeshAction is the base class of all Mesh Actions.'''
-    def init( self, x_quads=4, y_quads=4, duration=5):
+    def init( self, grid=(4,4), duration=5):
         """Initialize the Mesh Action
         :Parameters:
-            `x_quads` : int 
-                Number of horizontal quads in the mesh
-            `y_quads` : int
-                Number of vertical quads in the mesh
+            `grid` : (int,int)
+                Number of horizontal and vertical quads in the mesh
             `duration` : int 
                 Number of seconds that the action will last
         """
         self.duration = duration
-        self.x_quads = x_quads
-        self.y_quads = y_quads
+        if not isinstance(grid,Point2):
+            grid = Point2( *grid)
+        self.grid = grid
 
     def start( self ):
-        self.target.mesh.init( self.x_quads, self.y_quads )
+        self.target.mesh.init( self.grid )
         self.target.mesh.active = True
 
         x,y = director.get_window_size()
-        self.size_x = x // self.x_quads
-        self.size_y = y // self.y_quads
+        self.size_x = x // self.grid.x
+        self.size_y = y // self.grid.y
         
 
     def done( self ):
@@ -88,7 +87,7 @@ class MeshGridAction( MeshAction ):
 
         :rtype: (int,int)
         '''
-        idx = (x * (self.y_quads+1) + y) * 2
+        idx = (x * (self.grid.y+1) + y) * 2
         x = self.target.mesh.vertex_list_idx.vertices[idx]
         y = self.target.mesh.vertex_list_idx.vertices[idx+1]
         return (x,y)
@@ -104,7 +103,7 @@ class MeshGridAction( MeshAction ):
             `v` : (int, int)
                 tuple value for the vertex
         '''
-        idx = (x * (self.y_quads+1) + y) * 2
+        idx = (x * (self.grid.y+1) + y) * 2
         self.target.mesh.vertex_list_idx.vertices[idx] = int(v[0])
         self.target.mesh.vertex_list_idx.vertices[idx+1] = int(v[1])
 
@@ -122,16 +121,16 @@ class MeshTilesAction( MeshAction ):
         elif i==0 and j>0:
             idx = ( (j-1)*4 + 3 ) * 2
         elif i>0 and j==0:
-            idx = ((i-1) * 4 * self.y_quads + 1 ) * 2
+            idx = ((i-1) * 4 * self.grid.y + 1 ) * 2
         else:
-            idx = ((i-1) * 4 * self.y_quads + (j-1) * 4 + k) * 2
+            idx = ((i-1) * 4 * self.grid.y + (j-1) * 4 + k) * 2
 
         return idx
 
     def _set_vertex( self, i, j, k, v ):
-        if i < 0 or i > self.x_quads:
+        if i < 0 or i > self.grid.x:
             return
-        if j < 0 or j > self.y_quads:
+        if j < 0 or j > self.grid.y:
             return
         if k< 0 or k >=4:
             return
@@ -187,7 +186,7 @@ class Tile(object):
 class ShakyTiles( MeshTilesAction ):
     '''ShakyTiles simulates a shaky floor composed of tiles
 
-       scene.do( ShakyTiles( randrange=6, x_quads=4, y_quads=4, duration=10) )
+       scene.do( ShakyTiles( randrange=6, grid=(4,4), duration=10) )
     '''
 
     def init( self, randrange=6, *args, **kw ):
@@ -195,11 +194,11 @@ class ShakyTiles( MeshTilesAction ):
         self.randrange = randrange
 
     def update( self, t ):
-        for i in range(0, self.x_quads):
-            for j in range(0, self.y_quads):
+        for i in range(0, self.grid.x):
+            for j in range(0, self.grid.y):
                 for k in range(0,4):
 
-                    idx = (i * 4 * self.y_quads + j * 4 + k) * 2
+                    idx = (i * 4 * self.grid.y + j * 4 + k) * 2
                     x = self.target.mesh.vertex_points[idx]
                     y = self.target.mesh.vertex_points[idx+1]
 
@@ -210,20 +209,20 @@ class ShakyTiles( MeshTilesAction ):
                     self.target.mesh.vertex_list.vertices[idx+1] = int(y)
                 
     def __reversed__(self):
-        return ShakyTiles( randrange=self.randrange, x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+        return ShakyTiles( randrange=self.randrange, grid=self.grid, y_quads=self.grid.y, duration=self.duration)
 
 class ShuffleTiles( MeshTilesAction ):
     '''ShuffleTiles moves the tiles randomly across the screen and then put
     them back into the original place.
-       scene.do( ShuffleTiles( x_quads=4, y_quads=4, duration=10) )
+       scene.do( ShuffleTiles( grid=(4,4), duration=10) )
     '''
 
     def start(self):
         super(ShuffleTiles,self).start()
         self.tiles = {}
         self.dst_tiles = {}
-        for i in range(self.x_quads):
-            for j in range(self.y_quads):
+        for i in range(self.grid.x):
+            for j in range(self.grid.y):
                 self.tiles[(i,j)] = Tile( position = Point2(i,j), 
                                           start_position = Point2(i,j), 
                                           delta= self._get_delta(i,j) )
@@ -232,7 +231,7 @@ class ShuffleTiles( MeshTilesAction ):
         t = self.tiles[(i,j)]
 
         for k in range(0,4):
-            idx = (i * 4 * self.y_quads + j * 4 + k) * 2
+            idx = (i * 4 * self.grid.y + j * 4 + k) * 2
 
             x=0
             y=0
@@ -257,14 +256,14 @@ class ShuffleTiles( MeshTilesAction ):
             self.phase_shuffle_back( (t-2.0/3) / (1.0/3) )
 
     def phase_shuffle(self, t ):
-        for i in range(0, self.x_quads):
-            for j in range(0, self.y_quads):
+        for i in range(0, self.grid.x):
+            for j in range(0, self.grid.y):
                 self.tiles[(i,j)].position = self.tiles[(i,j)].start_position + self.tiles[(i,j)].delta * t
                 self.place_tile(i,j)
    
     def phase_shuffle_back(self, t):
-        for i in range(0, self.x_quads):
-            for j in range(0, self.y_quads):
+        for i in range(0, self.grid.x):
+            for j in range(0, self.grid.y):
                 self.tiles[(i,j)].position = self.tiles[(i,j)].start_position + self.tiles[(i,j)].delta * (1-t)
                 self.place_tile(i,j)
                 
@@ -272,21 +271,21 @@ class ShuffleTiles( MeshTilesAction ):
         return
                 
     def __reversed__(self):
-        return ShuffleTiles( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+        return ShuffleTiles( grid=self.grid, duration=self.duration)
 
     # private method
     def _get_delta(self, x, y):
-        a = rr(0, self.x_quads), rr(0, self.y_quads)  
+        a = rr(0, self.grid.x), rr(0, self.grid.y)  
         if not self.dst_tiles.get(a, False):
             self.dst_tiles[ a ] = True
             return Point2(*a)-Point2(x,y)
-        for i in range(a[0], self.x_quads):
-            for j in range(self.y_quads):
+        for i in range(a[0], self.grid.x):
+            for j in range(self.grid.y):
                 if not self.dst_tiles.get( (i,j), False):
                     self.dst_tiles[ (i,j) ] = True
                     return Point2(i,j)-Point2(x,y)
         for i in range(a[0]):
-            for j in range(self.y_quads):
+            for j in range(self.grid.y):
                 if not self.dst_tiles.get( (i,j), False):
                     self.dst_tiles[ (i,j) ] = True
                     return Point2(i,j)-Point2(x,y)
@@ -295,15 +294,15 @@ class ShuffleTiles( MeshTilesAction ):
 class Shaky( MeshGridAction):
     '''Shaky simulates an earthquake
 
-       scene.do( Shaky( randrange=6, x_quads=4, y_quads=4, duration=10) )
+       scene.do( Shaky( randrange=6, grid=(4,4), duration=10) )
     '''
     def init( self, randrange=6, *args, **kw ):
         super(Shaky,self).init(*args,**kw)
         self.randrange = randrange
 
     def update( self, t ):
-        for i in range(0, self.x_quads+1):
-            for j in range(0, self.y_quads+1):
+        for i in range(0, self.grid.x+1):
+            for j in range(0, self.grid.y+1):
 
                 x = i* self.size_x
                 y = j* self.size_y
@@ -314,19 +313,19 @@ class Shaky( MeshGridAction):
                 self.set_vertex( i,j, (x,y) )
 
     def __reversed__(self):
-        return Shaky( randrange=self.randrage, x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+        return Shaky( randrange=self.randrage, grid=self.grid, duration=self.duration)
 
 class Liquid( MeshGridAction ):
     '''Liquid simulates the liquid effect
 
-       scene.do( Liquid(x_quads=16, y_quads=16, duration=10) )
+       scene.do( Liquid( grid=(16,16), duration=10) )
     '''
 
     def update( self, t ):
         elapsed = t * self.duration
             
-        for i in range(1, self.x_quads):
-            for j in range(1, self.y_quads):
+        for i in range(1, self.grid.x):
+            for j in range(1, self.grid.y):
                 x = i* self.size_x
                 y = j* self.size_y
                 xpos = (x + (math.sin(elapsed*2 + x * .01) * self.size_x))
@@ -334,13 +333,13 @@ class Liquid( MeshGridAction ):
                 self.set_vertex( i,j, (xpos,ypos) )
 
     def __reversed__(self):
-        return Liquid( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+        return Liquid( grid=self.grid, duration=self.duration)
 
 
 class Sin( MeshGridAction ):
     '''Sin simulates math.sin effect both in the vertical and horizontal axis
 
-       scene.do( Sin( vertical_sin=True, horizontal_sin=False, x_quads=16, y_quads=16, duration=10) )
+       scene.do( Sin( vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
     '''
 
     def init( self, horizontal_sin=True, vertical_sin=True, *args, **kw ):
@@ -351,8 +350,8 @@ class Sin( MeshGridAction ):
     def update( self, t ):
         elapsed = t * self.duration
         
-        for i in range(0, self.x_quads+1):
-            for j in range(0, self.y_quads+1):
+        for i in range(0, self.grid.x+1):
+            for j in range(0, self.grid.y+1):
                 x = i* self.size_x
                 y = j* self.size_y
 
@@ -370,14 +369,14 @@ class Sin( MeshGridAction ):
 
     def __reversed__(self):
         return Sin( horizontal_sin=self.horizontal_sin, vertical_sin=self.vertical_sin,
-                    x_quads=self.x_quads, y_quads=self.y_quads,
+                    grid=self.grid,
                     duration=self.duration)
 
 
 class Lens( MeshGridAction ):
     '''Liquid simulates the liquid effect
 
-       scene.do( Lens(x_quads=16, y_quads=16, duration=10) )
+       scene.do( Lens(grid=(16,16), duration=10) )
     '''
 
     def start( self ):
@@ -393,8 +392,8 @@ class Lens( MeshGridAction ):
     def update( self, t ):
         center_point = Point2( self.center_x, self.center_y)
 
-        for i in range(0, self.x_quads+1):
-            for j in range(0, self.y_quads+1):
+        for i in range(0, self.grid.x+1):
+            for j in range(0, self.grid.y+1):
 
                 x = i* self.size_x
                 y = j* self.size_y
@@ -429,22 +428,20 @@ class Lens( MeshGridAction ):
 #                self.go_left = True
 
     def __reversed__(self):
-        return Lens( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+        return Lens( grid=self.grid, duration=self.duration)
 
 class GridNop( MeshGridAction ):
-    '''Liquid simulates the liquid effect
-
-       scene.do( Twist(x_quads=16, y_quads=16, duration=10) )
+    '''For testing only
     '''
 
     def nop_update( self, t ):
-        for i in range(0, self.x_quads+1):
-            for j in range(0, self.y_quads+1):
+        for i in range(0, self.grid.x+1):
+            for j in range(0, self.grid.y+1):
                 x = i* self.size_x
                 y = j* self.size_y
                 self.set_vertex( i,j, (x,y) )
     def __reversed__(self):
-        return Twist( x_quads=self.x_quads, y_quads=self.y_quads, duration=self.duration)
+        return GridNop( grid=self.grid, duration=self.duration)
 
 class QuadMoveBy( MeshGridAction ):
     '''QuadMoveBy moves each vertex of the quad
@@ -460,7 +457,7 @@ class QuadMoveBy( MeshGridAction ):
             vertex0 -->-- vertex1
        '''
 
-    def init( self, vertex0=(0,0), vertex1=(0,0), vertex2=(0,0), vertex3=(0,0), x_quads=1, y_quads=1, *args, **kw ):
+    def init( self, vertex0=(0,0), vertex1=(0,0), vertex2=(0,0), vertex3=(0,0), grid=(1,1), *args, **kw ):
         '''Initializes the QuadMoveBy
 
         :Parameters:
@@ -473,7 +470,7 @@ class QuadMoveBy( MeshGridAction ):
             `vertex3` : (x,y)
                 The top-left relative coordinate
         '''
-        super( QuadMoveBy, self).init( x_quads, y_quads, *args, **kw )
+        super( QuadMoveBy, self).init( grid, *args, **kw )
         self.delta0 = Point2( *vertex0 )
         self.delta1 = Point2( *vertex1 )
         self.delta2 = Point2( *vertex2 )
@@ -498,4 +495,4 @@ class QuadMoveBy( MeshGridAction ):
         self.set_vertex( 0,1, new_pos3 )
 
     def __reversed__(self):
-        return QuadMoveBy(-self.delta0, -self.delta1, -self.delta2, -self.delta3, self.x_quads, self.y_quads, self.duration)
+        return QuadMoveBy(-self.delta0, -self.delta1, -self.delta2, -self.delta3, grid=self.grid, duration=self.duration)
