@@ -17,6 +17,7 @@ v0.3.0 - XXX, xxx
   - Added setup.py and setup.cfg contributed by David Eyk
   - Added Mesh effects:
      Liquid, Sin Shaky, ShakyTiles, ShuffleTiles, QuadMoveBy
+     MoveCornerUp, MoveCornerDown, SkewVertical, SkewHorizontal
     
 v0.2.0 - March, 21th 2008
   - Director: uses the new pyglet 1.1 loop

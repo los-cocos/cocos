@@ -102,8 +102,8 @@ class Mesh(object):
                 c = (x+1) * (self.grid.y+1) + (y+1)
                 d = x * (self.grid.y+1) + (y+1)
 
-#                index_points += [ a, b, c, a, c, d]    # triangles 
-                index_points += [ a, b, c, d]           # or quads ?
+                index_points += [ a, b, d, b, c, d]    # triangles 
+#                index_points += [ a, b, c, d]           # or quads ?
 
                 l1 = ( a*2, b*2, c*2, d*2 )
                 l2 = ( (x1,y1), (x2,y1), (x2,y2), (x1,y2) )
@@ -144,8 +144,8 @@ class Mesh(object):
         if self.mesh_mode == TILES_MODE: 
             self.vertex_list.draw(pyglet.gl.GL_QUADS)
         elif self.mesh_mode == GRID_MODE:
-            self.vertex_list_idx.draw(pyglet.gl.GL_QUADS)
-#            self.vertex_list_idx.draw(pyglet.gl.GL_TRIANGLES)
+#            self.vertex_list_idx.draw(pyglet.gl.GL_QUADS)
+            self.vertex_list_idx.draw(pyglet.gl.GL_TRIANGLES)
         else:
             raise Exception("Invalid Mesh mode")
 

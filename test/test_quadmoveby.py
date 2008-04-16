@@ -28,8 +28,10 @@ if __name__ == "__main__":
     main_scene.add( green, z=2, scale=0.5 )
     main_scene.add( white, z=3, scale=0.25 )
 
-    move = QuadMoveBy( (320,240), (-630,0), (-320,-240),(630,0), duration=2 )
+    move = QuadMoveBy( delta0=(320,240), delta1=(-630,0), delta2=(-320,-240), delta3=(630,0), duration=2 )
+#    move = QuadMoveBy( delta0=(640,480), delta1=(-640,480), delta2=(-640,-480), delta3=(640,-480), duration=2 )
 
+#    main_scene.do( move + Reverse(move) )
     main_scene.do( move )
 
     director.run (main_scene)

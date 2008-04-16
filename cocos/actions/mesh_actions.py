@@ -20,18 +20,29 @@ from cocos.mesh import TILES_MODE, GRID_MODE
 from cocos.euclid import *
 from base_actions import *
 
-__all__ = [ 'MeshAction',               # Base classes
+__all__ = [ 'MeshException',            # Mesh Exceptions
+            'MeshAction',               # Base classes
             'MeshTilesAction', 'MeshGridAction',
             'QuadMoveBy',               # Basic class for skews, etc...
 
             'ShakyTiles',               # Tiles Actions
             'ShuffleTiles',
+
+            'MoveCornerUp',             # QuadMoveBy Actions
+            'MoveCornerDown',
+            'SkewHorizontal',
+            'SkewVertical',
+            
             'Shaky',                    # Trembling actions
             'Liquid','Sin',             # Liquid and Sin
             'Lens',                     # Lens effect (magnifying)
+
             'GridNop',                  # Grid None Effect - For testing
             ]
 
+class MeshException( Exception ):
+    pass
+    
 class MeshAction( IntervalAction ):
     '''MeshAction is the base class of all Mesh Actions.'''
     def init( self, grid=(4,4), duration=5):
@@ -251,7 +262,8 @@ class ShuffleTiles( MeshTilesAction ):
         if t < 1.0/3:
             self.phase_shuffle(t/ (1.0/3) )
         elif t < 2.0/3:
-            self.phase_sleep()
+            self.phase_shuffle(1)
+#            self.phase_sleep()
         else:
             self.phase_shuffle_back( (t-2.0/3) / (1.0/3) )
 
@@ -446,7 +458,9 @@ class GridNop( MeshGridAction ):
 class QuadMoveBy( MeshGridAction ):
     '''QuadMoveBy moves each vertex of the quad
 
-       scene.do( QuadMoveBy( vertex0, vertex1, vertex2, vertex3, duration) )
+       scene.do( QuadMoveBy( src0, src1, src2, src3,
+               delta0, delta1, delta2, delta3,
+               grid, duration) )
 
        Vertex positions::
 
@@ -457,37 +471,52 @@ class QuadMoveBy( MeshGridAction ):
             vertex0 -->-- vertex1
        '''
 
-    def init( self, vertex0=(0,0), vertex1=(0,0), vertex2=(0,0), vertex3=(0,0), grid=(1,1), *args, **kw ):
+    def init( self, 
+              src0=(0,0), src1=(-1,-1), src2=(-1,-1), src3=(-1,-1),
+              delta0=(0,0), delta1=(0,0), delta2=(0,0), delta3=(0,0),
+              grid=(1,1),
+              *args, **kw ):
         '''Initializes the QuadMoveBy
 
         :Parameters:
-            `vertex0` : (x,y)
+            `dst0` : (x,y)
                 The bottom-left relative coordinate
-            `vertex1` : (x,y)
+            `dst1` : (x,y)
                 The bottom-right relative coordinate
-            `vertex2` : (x,y)
+            `dst2` : (x,y)
                 The top-right relative coordinate
-            `vertex3` : (x,y)
+            `dst3` : (x,y)
                 The top-left relative coordinate
         '''
-        super( QuadMoveBy, self).init( grid, *args, **kw )
-        self.delta0 = Point2( *vertex0 )
-        self.delta1 = Point2( *vertex1 )
-        self.delta2 = Point2( *vertex2 )
-        self.delta3 = Point2( *vertex3 )
 
-    def start( self ):
-        super(QuadMoveBy,self).start()
-        self.start_position0 = self.get_vertex( 0, 0)
-        self.start_position1 = self.get_vertex( 1, 0)
-        self.start_position2 = self.get_vertex( 1, 1)
-        self.start_position3 = self.get_vertex( 0, 1)
+        if grid != (1,1):
+            raise MeshException("Invalid grid size.")
+
+        super( QuadMoveBy, self).init( grid, *args, **kw )
         
+        x,y = director.get_window_size()
+        
+        if src1 == (-1,-1):
+            src1 = ( x,0 )
+        if src2 == (-1,-1):
+            src2 = (x,y)
+        if src3 == (-1,-1):
+            src3 = (0,y)  
+
+        self.src0 = Point2( *src0 )
+        self.src1 = Point2( *src1 )  
+        self.src2 = Point2( *src2 )
+        self.src3 = Point2( *src3 )
+        self.delta0 = Point2( *delta0 )
+        self.delta1 = Point2( *delta1 )
+        self.delta2 = Point2( *delta2 )
+        self.delta3 = Point2( *delta3 )
+       
     def update( self, t ):
-        new_pos0 = self.start_position0 + self.delta0 * t
-        new_pos1 = self.start_position1 + self.delta1 * t
-        new_pos2 = self.start_position2 + self.delta2 * t
-        new_pos3 = self.start_position3 + self.delta3 * t
+        new_pos0 = self.src0 + self.delta0 * t
+        new_pos1 = self.src1 + self.delta1 * t
+        new_pos2 = self.src2 + self.delta2 * t
+        new_pos3 = self.src3 + self.delta3 * t
 
         self.set_vertex( 0,0, new_pos0 )
         self.set_vertex( 1,0, new_pos1 )
@@ -495,4 +524,34 @@ class QuadMoveBy( MeshGridAction ):
         self.set_vertex( 0,1, new_pos3 )
 
     def __reversed__(self):
-        return QuadMoveBy(-self.delta0, -self.delta1, -self.delta2, -self.delta3, grid=self.grid, duration=self.duration)
+        return QuadMoveBy( self.src0 + self.delta0, self.src1 + self.delta1, self.src2 + self.delta2, self.src3 + self.delta3,
+                           -self.delta0, -self.delta1, -self.delta2, -self.delta3,
+                           self.grid, duration=self.duration )
+    
+class MoveCornerUp( QuadMoveBy ):
+    '''MoveCornerUp moves the bottom-right corner to the upper-left corner in duration time'''
+    def __init__(self, *args, **kw):
+        x,y = director.get_window_size()
+        super(MoveCornerUp, self).__init__( delta1=(-x,y), *args, **kw )
+
+class MoveCornerDown( QuadMoveBy ):
+    '''MoveCornerDown moves the upper-left corner to the bottom-right corner in duration time'''
+    def __init__(self, *args, **kw):
+        x,y = director.get_window_size()
+        super(MoveCornerDown, self).__init__( delta3=(x,-y), *args, **kw )
+
+class SkewHorizontal( QuadMoveBy ):
+    '''SkewHorizontal skews the screen horizontally. default skew: x/3'''
+    def __init__(self, delta=None, *args, **kw):
+        x,y = director.get_window_size()
+        if delta==None:
+            delta=x//3
+        super(SkewHorizontal, self).__init__( delta1=(-delta,0), delta3=(delta,0), *args, **kw )
+
+class SkewVertical( QuadMoveBy ):
+    '''SkewVertical skews the screen vertically. default skew: y/3'''
+    def __init__(self, delta=None, *args, **kw):
+        x,y = director.get_window_size()
+        if delta==None:
+            delta=y//3
+        super(SkewVertical, self).__init__( delta0=(0,delta), delta2=(0,-delta), *args, **kw )
