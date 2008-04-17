@@ -7,6 +7,16 @@
 Mesh Actions
 ============
 
+These are the actions that are performed transforming a grid.
+
+There are 2 kinds of grids::
+
+    `MeshTiles`
+    `MeshGrid`
+
+The `MeshTiles` is a grid that is composed of individual tiles. Each tile can be manipulated individually.
+Each tile has its own vertices. The vertices are not shared among the other tiles.
+The `MeshGrid` is a grid that is composed of a grid with shared vertices.
 '''
 
 __docformat__ = 'restructuredtext'
@@ -38,10 +48,9 @@ __all__ = [ 'MeshException',            # Mesh Exceptions
             'CornerSwap',         
             
             'Shaky',                    # Trembling actions
-            'Liquid','Sin',             # Liquid and Sin
+            'Liquid','Waves',           # Liquid and Waves
             'Lens',                     # Lens effect (magnifying)
 
-            'GridNop',                  # Grid None Effect - For testing
             ]
 
 class MeshException( Exception ):
@@ -53,7 +62,7 @@ class MeshAction( IntervalAction ):
         """Initialize the Mesh Action
         :Parameters:
             `grid` : (int,int)
-                Number of horizontal and vertical quads in the mesh
+                Number of horizontal and vertical quads in the grid
             `duration` : int 
                 Number of seconds that the action will last
         """
@@ -206,6 +215,11 @@ class ShakyTiles( MeshTilesAction ):
     '''
 
     def init( self, randrange=6, *args, **kw ):
+        '''
+        :Parameters:
+            `randrange` : int
+                Number that will be used in random.randrange( -randrange, randrange) to do the effect
+        '''
         super(ShakyTiles,self).init(*args,**kw)
         self.randrange = randrange
 
@@ -225,6 +239,7 @@ class ShakyTiles( MeshTilesAction ):
                     self.target.mesh.vertex_list.vertices[idx+1] = int(y)
                 
     def __reversed__(self):
+        # self
         return ShakyTiles( randrange=self.randrange, grid=self.grid, y_quads=self.grid.y, duration=self.duration)
 
 class ShatteredTiles( MeshTilesAction ):
@@ -234,6 +249,11 @@ class ShatteredTiles( MeshTilesAction ):
     '''
 
     def init( self, randrange=6, *args, **kw ):
+        '''
+        :Parameters:
+            `randrange` : int
+                Number that will be used in random.randrange( -randrange, randrange) to do the effect
+        '''
         super(ShatteredTiles,self).init(*args,**kw)
         self.randrange = randrange
         self._once = False
@@ -256,7 +276,8 @@ class ShatteredTiles( MeshTilesAction ):
             self._once = True
                 
     def __reversed__(self):
-        return ShakyTiles( randrange=self.randrange, grid=self.grid, y_quads=self.grid.y, duration=self.duration)
+        # Reverse(Shattered) == Normal Tiles
+        return ShatteredTiles( randrange=0, grid=self.grid, duration=self.duration)
 
 class ShuffleTiles( MeshTilesAction ):
     '''ShuffleTiles moves the tiles randomly across the screen and then put
@@ -268,12 +289,14 @@ class ShuffleTiles( MeshTilesAction ):
         super(ShuffleTiles,self).start()
         self.tiles = {}
         self.dst_tiles = {}
+        self._once = False
         for i in range(self.grid.x):
             for j in range(self.grid.y):
                 self.tiles[(i,j)] = Tile( position = Point2(i,j), 
                                           start_position = Point2(i,j), 
                                           delta= self._get_delta(i,j) )
 
+        
     def place_tile(self, i, j):
         t = self.tiles[(i,j)]
 
@@ -298,8 +321,11 @@ class ShuffleTiles( MeshTilesAction ):
         if t < 1.0/3:
             self.phase_shuffle(t/ (1.0/3) )
         elif t < 2.0/3:
-            self.phase_shuffle(1)
-#            self.phase_sleep()
+            if self._once is False:
+                self.phase_shuffle(1)
+                self._once = True
+            else:
+                self.phase_sleep()
         else:
             self.phase_shuffle_back( (t-2.0/3) / (1.0/3) )
 
@@ -313,14 +339,8 @@ class ShuffleTiles( MeshTilesAction ):
         for i in range(0, self.grid.x):
             for j in range(0, self.grid.y):
                 self.tiles[(i,j)].position = self.tiles[(i,j)].start_position + self.tiles[(i,j)].delta * (1-t)
-                self.place_tile(i,j)
+                self.place_tile(i,j)                
                 
-    def phase_sleep(self):
-        return
-                
-    def __reversed__(self):
-        return ShuffleTiles( grid=self.grid, duration=self.duration)
-
     # private method
     def _get_delta(self, x, y):
         a = rr(0, self.grid.x), rr(0, self.grid.y)  
@@ -337,7 +357,12 @@ class ShuffleTiles( MeshTilesAction ):
                 if not self.dst_tiles.get( (i,j), False):
                     self.dst_tiles[ (i,j) ] = True
                     return Point2(i,j)-Point2(x,y)
-        raise Exception("_get_delta() algorithm needs to be improved!. Blame the authors")
+        raise MeshException("_get_delta() error")
+
+    def __reversed__(self):
+        # revere is self, since it will perform the same action
+        return ShuffleTiles( grid=self.grid, duration=self.duration)
+
 
 class FadeOutTiles( MeshTilesAction ):
     '''FadeOutTiles fades out each tile following a diagonal path until all the tiles are faded out.
@@ -385,7 +410,8 @@ class FadeOutTiles( MeshTilesAction ):
                         self.target.mesh.vertex_list.vertices[idx+1] = int(vy)
                
     def __reversed__(self):
-        return FadeOutTiles( grid=self.grid, duration=self.duration)
+        raise NotImplementedError('FadeInTiles not implemented yet!')
+#        return FadeOutTiles( grid=self.grid, duration=self.duration)
 
 class Shaky( MeshGridAction):
     '''Shaky simulates an earthquake
@@ -393,6 +419,11 @@ class Shaky( MeshGridAction):
        scene.do( Shaky( randrange=6, grid=(4,4), duration=10) )
     '''
     def init( self, randrange=6, *args, **kw ):
+        '''
+        :Parameters:
+            `randrange` : int
+                Number that will be used in random.randrange( -randrange, randrange) to do the effect
+        '''        
         super(Shaky,self).init(*args,**kw)
         self.randrange = randrange
 
@@ -412,11 +443,16 @@ class Shaky( MeshGridAction):
         return Shaky( randrange=self.randrage, grid=self.grid, duration=self.duration)
 
 class Liquid( MeshGridAction ):
-    '''Liquid simulates the liquid effect
+    '''Liquid simulates a liquid effect using the math.sin() function
 
-       scene.do( Liquid( grid=(16,16), duration=10) )
+       scene.do( Liquid( waves=5, grid=(16,16), duration=10) )
     '''
     def init( self, waves=4, *args, **kw ):
+        '''
+        :Parameters:
+            `waves` : int
+                Number of waves (2 * pi) that the action will perform.
+        '''
         super(Liquid, self).init( *args, **kw )
         self.waves=waves
 
@@ -431,17 +467,27 @@ class Liquid( MeshGridAction ):
                 self.set_vertex( i,j, (xpos,ypos) )
 
     def __reversed__(self):
-        return Liquid( grid=self.grid, duration=self.duration)
+        # almost self
+        return Liquid( waves=self.waves, grid=self.grid, duration=self.duration)
 
 
-class Sin( MeshGridAction ):
-    '''Sin simulates math.sin effect both in the vertical and horizontal axis
+class Waves( MeshGridAction ):
+    '''Waves simulates waves using the math.sin() function both in the vertical and horizontal axis
 
-       scene.do( Sin( vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
+       scene.do( Waves( waves=4, vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
     '''
 
     def init( self, waves=4, horizontal_sin=True, vertical_sin=True, *args, **kw ):
-        super(Sin, self).init( *args, **kw )
+        '''
+        :Parameters:
+            `waves` : int
+                Number of waves (2 * pi) that the action will perform.
+            `horizontal_sin` : bool
+                whether or not in will perform horizontal waves
+            `vertical_sin` : bool
+                whether or not in will perform vertical waves
+        '''
+        super(Waves, self).init( *args, **kw )
         self.horizontal_sin = horizontal_sin
         self.vertical_sin = vertical_sin
         self.waves=waves
@@ -465,7 +511,9 @@ class Sin( MeshGridAction ):
                 self.set_vertex( i,j, (xpos,ypos) )
 
     def __reversed__(self):
-        return Sin( horizontal_sin=self.horizontal_sin, vertical_sin=self.vertical_sin,
+        # almost self
+        return Waves( waves=self.waves, 
+                   horizontal_sin=self.horizontal_sin, vertical_sin=self.vertical_sin,
                     grid=self.grid,
                     duration=self.duration)
 
@@ -526,27 +574,14 @@ class Lens( MeshGridAction ):
 #                self.go_left = True
 
     def __reversed__(self):
-        return Lens( grid=self.grid, duration=self.duration)
-
-class GridNop( MeshGridAction ):
-    '''For testing only
-    '''
-
-    def nop_update( self, t ):
-        for i in range(0, self.grid.x+1):
-            for j in range(0, self.grid.y+1):
-                x = i* self.size_x
-                y = j* self.size_y
-                self.set_vertex( i,j, (x,y) )
-    def __reversed__(self):
-        return GridNop( grid=self.grid, duration=self.duration)
+        raise NotImplementedError('Reverse(Lens) not implemented yet!')
 
 class QuadMoveBy( MeshGridAction ):
     '''QuadMoveBy moves each vertex of the quad
 
        scene.do( QuadMoveBy( src0, src1, src2, src3,
                delta0, delta1, delta2, delta3,
-               grid, duration) )
+               duration) )
 
        Vertex positions::
 
@@ -555,6 +590,8 @@ class QuadMoveBy( MeshGridAction ):
                 v            ^
                 |            |
             vertex0 -->-- vertex1
+        
+        The vertices will move from the origin (src parameters) a relative distance (delta parameters) in duration time.
        '''
 
     def init( self, 
@@ -563,16 +600,24 @@ class QuadMoveBy( MeshGridAction ):
               grid=(1,1),
               *args, **kw ):
         '''Initializes the QuadMoveBy
-
+        
         :Parameters:
-            `dst0` : (x,y)
-                The bottom-left relative coordinate
-            `dst1` : (x,y)
-                The bottom-right relative coordinate
-            `dst2` : (x,y)
-                The top-right relative coordinate
-            `dst3` : (x,y)
-                The top-left relative coordinate
+             `src0` : (int, int)
+                 Initial value for the bottom-left coordinate. Default is (0,0)
+             `src1` : (int, int)
+                 Initial value for the bottom-rifht coordinate. Default is (win_size_x,0)
+             `src2` : (int, int)
+                 Initial value for the upper-right coordinate. Default is (win_size_x, win_size_y)
+             `src3` : (int, int)
+                 Initial value for the upper-left coordinate. Default is (0, win_size_y)
+            `delta0` : (int, int)
+                The bottom-left relative coordinate. Default is (0,0)
+            `delta1` : (int, int)
+                The bottom-right relative coordinate. Default is (0,0)
+            `delta2` : (int, int)
+                The upper-right relative coordinate. Default is (0,0)
+            `delta3` : (int, int)
+                The upper-left relative coordinate. Default is (0,0)
         '''
 
         if grid != (1,1):
