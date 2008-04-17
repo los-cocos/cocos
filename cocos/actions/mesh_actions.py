@@ -32,6 +32,8 @@ __all__ = [ 'MeshException',            # Mesh Exceptions
             'MoveCornerDown',
             'SkewHorizontal',
             'SkewVertical',
+            'Flip','FlipX','FlipY',
+            'CornerSwap',         
             
             'Shaky',                    # Trembling actions
             'Liquid','Sin',             # Liquid and Sin
@@ -386,16 +388,17 @@ class Sin( MeshGridAction ):
 
 
 class Lens( MeshGridAction ):
-    '''Liquid simulates the liquid effect
+    '''Lens simulates the a Lens / Magnifying glass effect
 
        scene.do( Lens(grid=(16,16), duration=10) )
     '''
 
     def start( self ):
         super(Lens,self).start()
-        self.center_x= 320
-        self.center_y= 240
-        self.radius = 160
+        x,y = director.get_window_size()
+        self.center_x = x // 2
+        self.center_y = y // 2
+        self.radius = y // 4
         self.lens_effect = 0.1
 
         self.go_left = True
@@ -539,6 +542,37 @@ class MoveCornerDown( QuadMoveBy ):
     def __init__(self, *args, **kw):
         x,y = director.get_window_size()
         super(MoveCornerDown, self).__init__( delta3=(x,-y), *args, **kw )
+
+class CornerSwap( QuadMoveBy ):
+    '''CornerSwap moves the upper-left corner to the bottom-right corner in vice-versa in duration time.
+    The resulting effect is a reflection + rotation.
+    '''
+    def __init__(self, *args, **kw):
+        x,y = director.get_window_size()
+        super(CornerSwap, self).__init__( delta1=(-x,y), delta3=(x,-y), *args, **kw )
+
+class Flip( QuadMoveBy ):
+    '''Flip moves the upper-left corner to the bottom-left corner and vice-versa, and
+    moves the upper-right corner to the bottom-left corner and vice-versa, flipping the
+    window upside-down, and right-left.
+    '''
+    def __init__(self, *args, **kw):
+        x,y = director.get_window_size()
+        super(Flip, self).__init__( delta0=(x,y), delta1=(-x,y), delta2=(-x,-y), delta3=(x,-y), *args, **kw )
+
+class FlipX( QuadMoveBy ):
+    '''FlipX flips the screen horizontally, moving the left corners to the right, and vice-versa.
+    '''
+    def __init__(self, *args, **kw):
+        x,y = director.get_window_size()
+        super(FlipX, self).__init__( delta0=(x,0), delta1=(-x,0), delta2=(-x,0), delta3=(x,0), *args, **kw )
+
+class FlipY( QuadMoveBy ):
+    '''FlipY flips the screen vertically, moving the upper corners to the bottom, and vice-versa.
+    '''
+    def __init__(self, *args, **kw):
+        x,y = director.get_window_size()
+        super(FlipY, self).__init__( delta0=(0,y), delta1=(0,y), delta2=(0,-y), delta3=(0,-y), *args, **kw )
 
 class SkewHorizontal( QuadMoveBy ):
     '''SkewHorizontal skews the screen horizontally. default skew: x/3'''
