@@ -7,13 +7,14 @@
 import pyglet
 from pyglet import image
 from pyglet.gl import *
-from euclid import Point2
+from euclid import Point2, Point3
 
 from director import director
 import framegrabber
 
 __all__ = ['Mesh',
-            'MeshGrid', 'MeshTiles', ]
+            'MeshGrid', 'MeshTiles', 'Mesh3DGrid',
+            ]
 
 class Mesh(object):
     """
@@ -248,4 +249,74 @@ class MeshTiles(Mesh):
         # Generates a quad for each tile, to perform tiles effect
         return (vertex_points, texture_points)
 
+class Mesh3DGrid(Mesh):
+    '''A Mesh that implements a 3D grid. Each vertex is shared by the attached quads and has 3 dimensions'''
+    def _init( self ):
+        # calculate vertex, textures depending on screen size
+        idx_pts, ver_pts_idx, tex_pts_idx = self._calculate_vertex_points()
+
+        # Generates a grid of joint quads
+        self.vertex_list = pyglet.graphics.vertex_list_indexed( (self.grid.x+1) * (self.grid.y+1), 
+                            idx_pts, "t3f", "v3i/stream","c4B")
+        self.vertex_points = ver_pts_idx[:]
+        self.vertex_list.vertices = ver_pts_idx
+        self.vertex_list.tex_coords = tex_pts_idx
+        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
+ 
+    def _blit(self ):
+        self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
+
+    def _on_resize(self, xsteps, ysteps, txz, tyz):
+        tex_idx = [] 
+        for x in range(self.grid.x+1):
+            for y in range(self.grid.y+1):
+                tex_idx += [ txz + x*xsteps, tyz+y*ysteps, 0]
+        self.vertex_list.tex_coords = tex_idx
+    
+    def _calculate_vertex_points(self):        
+        w = float(self.texture.width)
+        h = float(self.texture.height)
+
+        index_points = []
+        vertex_points_idx = []
+        texture_points_idx = []
+
+        for x in range(0,self.grid.x+1):
+            for y in range(0,self.grid.y+1):
+                vertex_points_idx += [-1,-1,-1]
+                texture_points_idx += [-1,-1,-1]
+
+        for x in range(0, self.grid.x):
+            for y in range(0, self.grid.y):
+                x1 = x * self.x_step 
+                x2 = x1 + self.x_step
+                y1 = y * self.y_step
+                y2 = y1 + self.y_step
+              
+                #  d <-- c
+                #        ^
+                #        |
+                #  a --> b 
+                a = x * (self.grid.y+1) + y
+                b = (x+1) * (self.grid.y+1) + y
+                c = (x+1) * (self.grid.y+1) + (y+1)
+                d = x * (self.grid.y+1) + (y+1)
+
+                # 2 triangles: a-b-d, b-c-d
+                index_points += [ a, b, d, b, c, d]    # triangles 
+
+                l1 = ( a*3, b*3, c*3, d*3 )
+                l2 = ( Point3(x1,y1,0), Point3(x2,y1,0), Point3(x2,y2,0), Point3(x1,y2,0) )
+
+                # Mesh Grid vertex and texture points
+                for i in range( len(l1) ):
+                    vertex_points_idx[ l1[i] ] = l2[i].x
+                    vertex_points_idx[ l1[i] + 1 ] = l2[i].y
+                    vertex_points_idx[ l1[i] + 2 ] = l2[i].z
+
+                    texture_points_idx[ l1[i] ] = l2[i].x / w
+                    texture_points_idx[ l1[i] + 1 ] = l2[i].y / h
+                    texture_points_idx[ l1[i] + 2 ] = 0
+
+        return ( index_points, vertex_points_idx, texture_points_idx )
     

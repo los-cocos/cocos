@@ -25,14 +25,18 @@ import math
 import random
 rr = random.randrange
 
-from cocos.mesh import MeshTiles, MeshGrid
+from pyglet.gl import *
+
+from cocos.mesh import MeshTiles, MeshGrid, Mesh3DGrid
 from cocos.director import director
 from cocos.euclid import *
 from base_actions import *
 
 __all__ = [ 'MeshException',            # Mesh Exceptions
             'MeshAction',               # Base classes
-            'MeshTilesAction', 'MeshGridAction',
+            'MeshTilesAction',
+            'MeshGridAction',
+            'Mesh3DGridAction',
             'QuadMoveBy',               # Basic class for skews, etc...
 
             'ShakyTiles',               # Tiles Actions
@@ -50,6 +54,8 @@ __all__ = [ 'MeshException',            # Mesh Exceptions
             'Shaky',                    # Trembling actions
             'Liquid','Waves',           # Liquid and Waves
             'Lens',                     # Lens effect (magnifying)
+            
+            'Waves3D',
 
             ]
 
@@ -130,6 +136,62 @@ class MeshGridAction( MeshAction ):
         idx = (x * (self.grid.y+1) + y) * 2
         self.target.mesh.vertex_list.vertices[idx] = int(v[0])
         self.target.mesh.vertex_list.vertices[idx+1] = int(v[1])
+
+class Mesh3DGridAction( MeshAction ):
+    '''A Mesh3DGridAction is an action that does transformations
+    to a 3D grid.'''
+    def start( self ):
+        self.target.mesh = Mesh3DGrid()
+        super( Mesh3DGridAction, self ).start()
+
+        width, height = director.get_window_size()
+
+        glViewport(0, 0, width, height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(45, 1.0*width/height, 0.1, 100.0)
+        glMatrixMode(GL_MODELVIEW)
+
+#        glShadeModel(GL_SMOOTH)
+        glClearDepth(1.0)
+        glEnable(GL_DEPTH_TEST)
+#        glDepthFunc(GL_LEQUAL)
+#        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+                
+
+    def get_vertex( self, x, y):
+        '''Get the current vertex point value
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+
+        :rtype: (int,int)
+        '''
+        idx = (x * (self.grid.y+1) + y) * 3
+        x = self.target.mesh.vertex_list.vertices[idx]
+        y = self.target.mesh.vertex_list.vertices[idx+1]
+        z = self.target.mesh.vertex_list.vertices[idx+2]
+        return (x,y,z)
+
+    def set_vertex( self, x, y, v):
+        '''Set a vertex point is a certain value
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+            `v` : (int, int, int)
+                tuple value for the vertex
+        '''
+        idx = (x * (self.grid.y+1) + y) * 3
+        self.target.mesh.vertex_list.vertices[idx] = int(v[0])
+        self.target.mesh.vertex_list.vertices[idx+1] = int(v[1])
+        self.target.mesh.vertex_list.vertices[idx+2] = int(v[2])
+
 
 
 class MeshTilesAction( MeshAction ):
@@ -324,8 +386,6 @@ class ShuffleTiles( MeshTilesAction ):
             if self._once is False:
                 self.phase_shuffle(1)
                 self._once = True
-            else:
-                self.phase_sleep()
         else:
             self.phase_shuffle_back( (t-2.0/3) / (1.0/3) )
 
@@ -470,7 +530,6 @@ class Liquid( MeshGridAction ):
         # almost self
         return Liquid( waves=self.waves, grid=self.grid, duration=self.duration)
 
-
 class Waves( MeshGridAction ):
     '''Waves simulates waves using the math.sin() function both in the vertical and horizontal axis
 
@@ -514,6 +573,40 @@ class Waves( MeshGridAction ):
         # almost self
         return Waves( waves=self.waves, 
                    horizontal_sin=self.horizontal_sin, vertical_sin=self.vertical_sin,
+                    grid=self.grid,
+                    duration=self.duration)
+
+class Waves3D( Mesh3DGridAction ):
+    '''Waves simulates waves using the math.sin() function both in the vertical and horizontal axis
+
+       scene.do( Waves( waves=4, vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
+    '''
+
+    def init( self, waves=4, *args, **kw ):
+        '''
+        :Parameters:
+            `waves` : int
+                Number of waves (2 * pi) that the action will perform.
+        '''
+        super(Waves3D, self).init( *args, **kw )
+        self.waves=waves
+
+    def update( self, t ):
+
+        amplitud = 2
+        for i in range(0, self.grid.x+1):
+            for j in range(0, self.grid.y+1):
+                x = i* self.size_x
+                y = j* self.size_y
+
+                z = (math.sin(t*math.pi*self.waves*2 + y * .01) * amplitud)
+
+#                self.set_vertex( i,j, (x, y, z) )
+        
+
+    def __reversed__(self):
+        # almost self
+        return Waves3D( waves=self.waves, 
                     grid=self.grid,
                     duration=self.duration)
 
