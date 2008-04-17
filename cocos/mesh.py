@@ -70,13 +70,6 @@ class Mesh(object):
         glPopAttrib()
         glDisable(self.texture.target)
 
-
-    def _init(self):
-        raise NotImplementedError('abstract')
-        
-    def _blit(self):
-        raise NotImplementedError('abstract')
- 
     def on_resize(self, w, h):
         '''on_resize handler. Don't return 'True' since this event
         shall be propagated to all the meshes

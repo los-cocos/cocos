@@ -416,16 +416,18 @@ class Liquid( MeshGridAction ):
 
        scene.do( Liquid( grid=(16,16), duration=10) )
     '''
+    def init( self, waves=4, *args, **kw ):
+        super(Liquid, self).init( *args, **kw )
+        self.waves=waves
 
     def update( self, t ):
-        elapsed = t * self.duration
             
         for i in range(1, self.grid.x):
             for j in range(1, self.grid.y):
                 x = i* self.size_x
                 y = j* self.size_y
-                xpos = (x + (math.sin(elapsed*2 + x * .01) * self.size_x))
-                ypos = (y + (math.sin(elapsed*2 + y * .01) * self.size_y)) 
+                xpos = (x + (math.sin(t*math.pi*self.waves*2 + x * .01) * self.size_x))
+                ypos = (y + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.size_y)) 
                 self.set_vertex( i,j, (xpos,ypos) )
 
     def __reversed__(self):
@@ -438,26 +440,25 @@ class Sin( MeshGridAction ):
        scene.do( Sin( vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
     '''
 
-    def init( self, horizontal_sin=True, vertical_sin=True, *args, **kw ):
+    def init( self, waves=4, horizontal_sin=True, vertical_sin=True, *args, **kw ):
         super(Sin, self).init( *args, **kw )
         self.horizontal_sin = horizontal_sin
         self.vertical_sin = vertical_sin
+        self.waves=waves
 
-    def update( self, t ):
-        elapsed = t * self.duration
-        
+    def update( self, t ):        
         for i in range(0, self.grid.x+1):
             for j in range(0, self.grid.y+1):
                 x = i* self.size_x
                 y = j* self.size_y
 
                 if self.vertical_sin:
-                    xpos = (x + (math.sin(elapsed*2 + y * .01) * self.size_x))
+                    xpos = (x + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.size_x))
                 else:
                     xpos = x
 
                 if self.horizontal_sin:
-                    ypos = (y + (math.sin(elapsed*2 + x * .01) * self.size_y)) 
+                    ypos = (y + (math.sin(t*math.pi*self.waves*2 + x * .01) * self.size_y)) 
                 else:
                     ypos = y
 
