@@ -27,6 +27,7 @@ __all__ = [ 'MeshException',            # Mesh Exceptions
 
             'ShakyTiles',               # Tiles Actions
             'ShuffleTiles',
+            'ShatteredTiles',
 
             'MoveCornerUp',             # QuadMoveBy Actions
             'MoveCornerDown',
@@ -220,6 +221,37 @@ class ShakyTiles( MeshTilesAction ):
 
                     self.target.mesh.vertex_list.vertices[idx] = int(x)
                     self.target.mesh.vertex_list.vertices[idx+1] = int(y)
+                
+    def __reversed__(self):
+        return ShakyTiles( randrange=self.randrange, grid=self.grid, y_quads=self.grid.y, duration=self.duration)
+
+class ShatteredTiles( MeshTilesAction ):
+    '''ShatterTiles shatters the tiles according to a random value.
+    It is similar to shakes (see `ShakyTiles`) the tiles just one frame, and then continue with
+    that state for duration time.
+    '''
+
+    def init( self, randrange=6, *args, **kw ):
+        super(ShatteredTiles,self).init(*args,**kw)
+        self.randrange = randrange
+        self._once = False
+
+    def update( self, t ):
+        if not self._once:
+            for i in range(0, self.grid.x):
+                for j in range(0, self.grid.y):
+                    for k in range(0,4):
+    
+                        idx = (i * 4 * self.grid.y + j * 4 + k) * 2
+                        x = self.target.mesh.vertex_points[idx]
+                        y = self.target.mesh.vertex_points[idx+1]
+    
+                        x += rr(-self.randrange, self.randrange)
+                        y += rr(-self.randrange, self.randrange)
+    
+                        self.target.mesh.vertex_list.vertices[idx] = int(x)
+                        self.target.mesh.vertex_list.vertices[idx+1] = int(y)
+            self._once = True
                 
     def __reversed__(self):
         return ShakyTiles( randrange=self.randrange, grid=self.grid, y_quads=self.grid.y, duration=self.duration)
