@@ -28,6 +28,7 @@ __all__ = [ 'MeshException',            # Mesh Exceptions
             'ShakyTiles',               # Tiles Actions
             'ShuffleTiles',
             'ShatteredTiles',
+            'FadeOutTiles',
 
             'MoveCornerUp',             # QuadMoveBy Actions
             'MoveCornerDown',
@@ -336,6 +337,54 @@ class ShuffleTiles( MeshTilesAction ):
                     self.dst_tiles[ (i,j) ] = True
                     return Point2(i,j)-Point2(x,y)
         raise Exception("_get_delta() algorithm needs to be improved!. Blame the authors")
+
+class FadeOutTiles( MeshTilesAction ):
+    '''FadeOutTiles fades out each tile following a diagonal path until all the tiles are faded out.
+       scene.do( FadeOutTiles( grid=(16,16), duration=10) )
+    '''
+
+    def start(self):
+        super(FadeOutTiles,self).start()
+        self.tiles = {}
+        self.dst_tiles = {}
+        for i in range(self.grid.x):
+            for j in range(self.grid.y):
+                self.tiles[(i,j)] = Tile( position = Point2(i,j), 
+                                          start_position = Point2(i,j), 
+                                          delta=Point2(0,-j) )
+
+    def update( self, t ):
+        x,y = t * self.grid
+                
+        # direction right - up
+        for i in range(self.grid.x):
+            for j in range(self.grid.y):
+                if i+j <= x+y+8:
+                    for k in range(0,4):
+                        idx =     (i * 4 * self.grid.y + j * 4 + k) * 2
+                        idx_dst = (i * 4 * self.grid.y + j * 4 + 2) * 2   # k==2 is coord 'c'
+
+                        vx = self.target.mesh.vertex_list.vertices[idx]
+                        vy = self.target.mesh.vertex_list.vertices[idx+1]
+                        
+                        x_dst = self.target.mesh.vertex_points[idx_dst]
+                        y_dst = self.target.mesh.vertex_points[idx_dst+1]
+
+                        if k==1 or k==0:    # coord 'a' or 'b'
+                            vy = 1 + vy + (y_dst - vy) / 16
+                        if k==3 or k==0:    # coord 'a' or 'd'
+                            vx = 1 + vx + (x_dst - vx) / 16
+                             
+                        if vx >= x_dst:
+                            vx = x_dst
+                        if vy >= y_dst:
+                            vy = y_dst
+                                
+                        self.target.mesh.vertex_list.vertices[idx] = int(vx)
+                        self.target.mesh.vertex_list.vertices[idx+1] = int(vy)
+               
+    def __reversed__(self):
+        return FadeOutTiles( grid=self.grid, duration=self.duration)
 
 class Shaky( MeshGridAction):
     '''Shaky simulates an earthquake

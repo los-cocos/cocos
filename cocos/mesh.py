@@ -7,6 +7,7 @@
 import pyglet
 from pyglet import image
 from pyglet.gl import *
+from euclid import Point2
 
 from director import director
 import framegrabber
@@ -30,7 +31,7 @@ class Mesh(object):
 
     def init( self, grid ):
         '''Initializes the grid creating both a vertex_list for an independent-tiled grid
-        and creating also a vertex_list_indexed for a "united" (non indepented tile) grid.
+        and creating also a vertex_list_indexed for a "united" (non independent tile) grid.
 
         :Parameters:
             `grid` : euclid.Point2
@@ -54,17 +55,19 @@ class Mesh(object):
 
         # Generates a grid of joint quads
         self.vertex_list_idx = pyglet.graphics.vertex_list_indexed((grid.x+1)*(grid.y+1), 
-                            idx_pts, "t2f", "v2i/stream")
+                            idx_pts, "t2f", "v2i/stream","c4B")
         self.vertex_points_idx = ver_pts_idx[:]
         self.vertex_list_idx.vertices = ver_pts_idx
         self.vertex_list_idx.tex_coords = tex_pts_idx
+        self.vertex_list_idx.colors = (255,255,255,255) * (grid.x+1) * (grid.y+1)
  
        # Generates a grid of independent quads (think of tiles)
         self.vertex_list = pyglet.graphics.vertex_list(grid.x*grid.y*4,
-                            "t2f", "v2i/stream")
+                            "t2f", "v2i/stream","c4B")
         self.vertex_points = ver_pts[:]
         self.vertex_list.vertices = ver_pts
         self.vertex_list.tex_coords = tex_pts
+        self.vertex_list.colors = (255,255,255,255) * (grid.x) * (grid.y) * 4
 
 
     def _calculate_vertex_points(self, x, y):        
@@ -102,19 +105,20 @@ class Mesh(object):
                 c = (x+1) * (self.grid.y+1) + (y+1)
                 d = x * (self.grid.y+1) + (y+1)
 
+                # 2 triangles: a-b-d, b-c-d
                 index_points += [ a, b, d, b, c, d]    # triangles 
 #                index_points += [ a, b, c, d]           # or quads ?
 
                 l1 = ( a*2, b*2, c*2, d*2 )
-                l2 = ( (x1,y1), (x2,y1), (x2,y2), (x1,y2) )
+                l2 = ( Point2(x1,y1), Point2(x2,y1), Point2(x2,y2), Point2(x1,y2) )
 
                 # Mesh Grid vertex and texture points
                 for i in range( len(l1) ):
-                    vertex_points_idx[ l1[i] ] = l2[i][0]
-                    vertex_points_idx[ l1[i] + 1 ] = l2[i][1]
+                    vertex_points_idx[ l1[i] ] = l2[i].x
+                    vertex_points_idx[ l1[i] + 1 ] = l2[i].y
 
-                    texture_points_idx[ l1[i] ] = l2[i][0] / w
-                    texture_points_idx[ l1[i] + 1 ] = l2[i][1] / h
+                    texture_points_idx[ l1[i] ] = l2[i].x / w
+                    texture_points_idx[ l1[i] + 1 ] = l2[i].y / h
 
                 # Mesh Tiles vertex and texture points
                 vertex_points += [x1, y1, x2, y1, x2, y2, x1, y2]
@@ -131,7 +135,7 @@ class Mesh(object):
         self.grabber.before_render(self.texture)
 
     def after_draw( self ):
-        # capture after drawingg
+        # capture after drawing
         self.grabber.after_render(self.texture)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         self.blit()
