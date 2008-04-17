@@ -15,8 +15,8 @@ import math
 import random
 rr = random.randrange
 
+from cocos.mesh import MeshTiles, MeshGrid
 from cocos.director import director
-from cocos.mesh import TILES_MODE, GRID_MODE
 from cocos.euclid import *
 from base_actions import *
 
@@ -88,8 +88,8 @@ class MeshGridAction( MeshAction ):
     '''A MeshGrid action is an action that does transformations
     to a grid.'''
     def start( self ):
+        self.target.mesh = MeshGrid()
         super( MeshGridAction, self ).start()
-        self.target.mesh.mesh_mode = GRID_MODE
 
     def get_vertex( self, x, y):
         '''Get the current vertex point value
@@ -103,8 +103,8 @@ class MeshGridAction( MeshAction ):
         :rtype: (int,int)
         '''
         idx = (x * (self.grid.y+1) + y) * 2
-        x = self.target.mesh.vertex_list_idx.vertices[idx]
-        y = self.target.mesh.vertex_list_idx.vertices[idx+1]
+        x = self.target.mesh.vertex_list.vertices[idx]
+        y = self.target.mesh.vertex_list.vertices[idx+1]
         return (x,y)
 
     def set_vertex( self, x, y, v):
@@ -119,17 +119,18 @@ class MeshGridAction( MeshAction ):
                 tuple value for the vertex
         '''
         idx = (x * (self.grid.y+1) + y) * 2
-        self.target.mesh.vertex_list_idx.vertices[idx] = int(v[0])
-        self.target.mesh.vertex_list_idx.vertices[idx+1] = int(v[1])
+        self.target.mesh.vertex_list.vertices[idx] = int(v[0])
+        self.target.mesh.vertex_list.vertices[idx+1] = int(v[1])
 
 
 class MeshTilesAction( MeshAction ):
     '''A MeshTiles action is an action that does transformations
     to a grid composed of tiles. You can transform each tile individually'''
     def start( self ):
+        self.target.mesh = MeshTiles()
         super( MeshTilesAction, self ).start()
-        self.target.mesh.mesh_mode = TILES_MODE
-
+        
+ 
     def _get_vertex_idx( self, i, j, k ):
         if i==0 and j==0:
             idx = 0

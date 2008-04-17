@@ -54,7 +54,7 @@ class Scene(IContainer, IActionTarget):
         # Apply transformation to current scene
         glPushMatrix()
 
-        if self.mesh.active:
+        if self.mesh is not None and self.mesh.active:
             self.mesh.before_draw()
 
         self.transform()
@@ -66,7 +66,7 @@ class Scene(IContainer, IActionTarget):
         for z,c in self.children:
             c.on_draw()
 
-        if self.mesh.active:
+        if self.mesh is not None and self.mesh.active:
             self.mesh.after_draw()
 
         glPopMatrix()

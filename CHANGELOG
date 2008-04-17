@@ -19,6 +19,7 @@ v0.3.0 - XXX, xxx
      Liquid, Sin Shaky, ShakyTiles, ShuffleTiles, QuadMoveBy
      MoveCornerUp, MoveCornerDown, SkewVertical, SkewHorizontal
      FlipX, FlipY, Flip, CornerSwap, ShatteredTiles
+     FadeOutTiles
     
 v0.2.0 - March, 21th 2008
   - Director: uses the new pyglet 1.1 loop

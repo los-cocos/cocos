@@ -37,7 +37,7 @@ class IContainer( object ):
         self.anchor_y = 0.5
         self.color = (255,255,255)
         self.opacity = 255
-        self.mesh = Mesh()
+        self.mesh = None
 
         # Layers sets it's own batch
         self.batch  = None
