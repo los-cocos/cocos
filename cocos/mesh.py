@@ -67,7 +67,9 @@ class Mesh(object):
         glEnable(self.texture.target)
         glBindTexture(self.texture.target, self.texture.id)
         glPushAttrib(GL_COLOR_BUFFER_BIT)
-        self._blit()       
+        
+        self._blit()
+               
         glPopAttrib()
         glDisable(self.texture.target)
 
@@ -251,19 +253,42 @@ class MeshTiles(Mesh):
 
 class Mesh3DGrid(Mesh):
     '''A Mesh that implements a 3D grid. Each vertex is shared by the attached quads and has 3 dimensions'''
+
+    def before_draw(self):
+        
+        # set Ortho projection before drawing
+        width,height = director.window.width, director.window.height
+        glLoadIdentity()
+
+        glViewport(0, 0, width, height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(0, width, 0, height, -100, 100)
+        glMatrixMode(GL_MODELVIEW)
+
+        super(Mesh3DGrid,self).before_draw()
+
     def _init( self ):
         # calculate vertex, textures depending on screen size
         idx_pts, ver_pts_idx, tex_pts_idx = self._calculate_vertex_points()
 
         # Generates a grid of joint quads
         self.vertex_list = pyglet.graphics.vertex_list_indexed( (self.grid.x+1) * (self.grid.y+1), 
-                            idx_pts, "t3f", "v3i/stream","c4B")
+                            idx_pts, "t3f", "v3f/stream","c4B")
         self.vertex_points = ver_pts_idx[:]
         self.vertex_list.vertices = ver_pts_idx
         self.vertex_list.tex_coords = tex_pts_idx
         self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
  
     def _blit(self ):
+
+        width, height = director.get_window_size()
+        self._set_3d_projection(width, height)
+
+        # center the image
+        glLoadIdentity()
+        glTranslatef(- width // 2, - height // 2, -240.0)
+        
         self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
 
     def _on_resize(self, xsteps, ysteps, txz, tyz):
@@ -272,6 +297,17 @@ class Mesh3DGrid(Mesh):
             for y in range(self.grid.y+1):
                 tex_idx += [ txz + x*xsteps, tyz+y*ysteps, 0]
         self.vertex_list.tex_coords = tex_idx
+
+        x,y = director.get_window_size()
+        self._set_3d_projection( x,y )
+
+    def _set_3d_projection(self, width, height):
+        glViewport(0, 0, width, height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(90, 1.0*width/height, 0.1, 400.0)
+        glMatrixMode(GL_MODELVIEW)
+
     
     def _calculate_vertex_points(self):        
         w = float(self.texture.width)
@@ -316,7 +352,7 @@ class Mesh3DGrid(Mesh):
 
                     texture_points_idx[ l1[i] ] = l2[i].x / w
                     texture_points_idx[ l1[i] + 1 ] = l2[i].y / h
-                    texture_points_idx[ l1[i] + 2 ] = 0
+                    texture_points_idx[ l1[i] + 2 ] = 0.0
 
         return ( index_points, vertex_points_idx, texture_points_idx )
     

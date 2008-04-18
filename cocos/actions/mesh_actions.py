@@ -593,15 +593,19 @@ class Waves3D( Mesh3DGridAction ):
 
     def update( self, t ):
 
-        amplitud = 2
+        f = t*2
+        if f > 1:
+            f -= 1
+            f = 1 -f  
+        wave_length = 40 * f
         for i in range(0, self.grid.x+1):
             for j in range(0, self.grid.y+1):
                 x = i* self.size_x
                 y = j* self.size_y
 
-                z = (math.sin(t*math.pi*self.waves*2 + y * .01) * amplitud)
+                z = (math.sin(t*math.pi*self.waves*2 + (y+x) * .01) * wave_length)
 
-#                self.set_vertex( i,j, (x, y, z) )
+                self.set_vertex( i,j, (x, y, z) )
         
 
     def __reversed__(self):
