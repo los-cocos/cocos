@@ -9,14 +9,16 @@ Mesh Actions
 
 These are the actions that are performed transforming a grid.
 
-There are 2 kinds of grids::
+There are 3 kinds of grids::
 
-    `MeshTiles`
-    `MeshGrid`
+    `TiledGrid`
+    `Grid`
+    `Grid3D`
 
-The `MeshTiles` is a grid that is composed of individual tiles. Each tile can be manipulated individually.
+The `TiledGrid` is a grid that is composed of individual tiles. Each tile can be manipulated individually.
 Each tile has its own vertices. The vertices are not shared among the other tiles.
-The `MeshGrid` is a grid that is composed of a grid with shared vertices.
+The `Grid` is a grid that is composed of a grid with shared vertices, and the `Grid3D` is like
+`Grid` but it also support z-axis vertices.
 '''
 
 __docformat__ = 'restructuredtext'
@@ -27,16 +29,16 @@ rr = random.randrange
 
 from pyglet.gl import *
 
-from cocos.mesh import MeshTiles, MeshGrid, Mesh3DGrid
+from cocos.mesh import TiledGrid, Grid, Grid3D
 from cocos.director import director
 from cocos.euclid import *
 from base_actions import *
 
 __all__ = [ 'MeshException',            # Mesh Exceptions
             'MeshAction',               # Base classes
-            'MeshTilesAction',
-            'MeshGridAction',
-            'Mesh3DGridAction',
+            'TiledGridAction',
+            'GridAction',
+            'Grid3DAction',
             'QuadMoveBy',               # Basic class for skews, etc...
 
             'ShakyTiles',               # Tiles Actions
@@ -99,12 +101,12 @@ class MeshAction( IntervalAction ):
         raise NotImplementedError("abstract")
 
 
-class MeshGridAction( MeshAction ):
-    '''A MeshGrid action is an action that does transformations
+class GridAction( MeshAction ):
+    '''A GridAction is an action that does transformations
     to a grid.'''
     def start( self ):
-        self.target.mesh = MeshGrid()
-        super( MeshGridAction, self ).start()
+        self.target.mesh = Grid()
+        super( GridAction, self ).start()
 
     def get_vertex( self, x, y):
         '''Get the current vertex point value
@@ -137,12 +139,12 @@ class MeshGridAction( MeshAction ):
         self.target.mesh.vertex_list.vertices[idx] = int(v[0])
         self.target.mesh.vertex_list.vertices[idx+1] = int(v[1])
 
-class Mesh3DGridAction( MeshAction ):
-    '''A Mesh3DGridAction is an action that does transformations
+class Grid3DAction( MeshAction ):
+    '''A Grid3DAction is an action that does transformations
     to a 3D grid.'''
     def start( self ):
-        self.target.mesh = Mesh3DGrid()
-        super( Mesh3DGridAction, self ).start()
+        self.target.mesh = Grid3D()
+        super( Grid3DAction, self ).start()
 
         width, height = director.get_window_size()
 
@@ -194,12 +196,12 @@ class Mesh3DGridAction( MeshAction ):
 
 
 
-class MeshTilesAction( MeshAction ):
-    '''A MeshTiles action is an action that does transformations
+class TiledGridAction( MeshAction ):
+    '''A TiledGrid action is an action that does transformations
     to a grid composed of tiles. You can transform each tile individually'''
     def start( self ):
-        self.target.mesh = MeshTiles()
-        super( MeshTilesAction, self ).start()
+        self.target.mesh = TiledGrid()
+        super( TiledGridAction, self ).start()
         
  
     def _get_vertex_idx( self, i, j, k ):
@@ -270,7 +272,7 @@ class Tile(object):
     def __repr__(self):
         return "(start_pos: %s  pos: %s   delta:%s)" % (self.start_position, self.position, self.delta)
 
-class ShakyTiles( MeshTilesAction ):
+class ShakyTiles( TiledGridAction ):
     '''ShakyTiles simulates a shaky floor composed of tiles
 
        scene.do( ShakyTiles( randrange=6, grid=(4,4), duration=10) )
@@ -304,7 +306,7 @@ class ShakyTiles( MeshTilesAction ):
         # self
         return ShakyTiles( randrange=self.randrange, grid=self.grid, y_quads=self.grid.y, duration=self.duration)
 
-class ShatteredTiles( MeshTilesAction ):
+class ShatteredTiles( TiledGridAction ):
     '''ShatterTiles shatters the tiles according to a random value.
     It is similar to shakes (see `ShakyTiles`) the tiles just one frame, and then continue with
     that state for duration time.
@@ -341,7 +343,7 @@ class ShatteredTiles( MeshTilesAction ):
         # Reverse(Shattered) == Normal Tiles
         return ShatteredTiles( randrange=0, grid=self.grid, duration=self.duration)
 
-class ShuffleTiles( MeshTilesAction ):
+class ShuffleTiles( TiledGridAction ):
     '''ShuffleTiles moves the tiles randomly across the screen and then put
     them back into the original place.
        scene.do( ShuffleTiles( grid=(4,4), duration=10) )
@@ -424,7 +426,7 @@ class ShuffleTiles( MeshTilesAction ):
         return ShuffleTiles( grid=self.grid, duration=self.duration)
 
 
-class FadeOutTiles( MeshTilesAction ):
+class FadeOutTiles( TiledGridAction ):
     '''FadeOutTiles fades out each tile following a diagonal path until all the tiles are faded out.
        scene.do( FadeOutTiles( grid=(16,16), duration=10) )
     '''
@@ -473,7 +475,7 @@ class FadeOutTiles( MeshTilesAction ):
         raise NotImplementedError('FadeInTiles not implemented yet!')
 #        return FadeOutTiles( grid=self.grid, duration=self.duration)
 
-class Shaky( MeshGridAction):
+class Shaky( GridAction):
     '''Shaky simulates an earthquake
 
        scene.do( Shaky( randrange=6, grid=(4,4), duration=10) )
@@ -502,7 +504,7 @@ class Shaky( MeshGridAction):
     def __reversed__(self):
         return Shaky( randrange=self.randrage, grid=self.grid, duration=self.duration)
 
-class Liquid( MeshGridAction ):
+class Liquid( GridAction ):
     '''Liquid simulates a liquid effect using the math.sin() function
 
        scene.do( Liquid( waves=5, grid=(16,16), duration=10) )
@@ -530,7 +532,7 @@ class Liquid( MeshGridAction ):
         # almost self
         return Liquid( waves=self.waves, grid=self.grid, duration=self.duration)
 
-class Waves( MeshGridAction ):
+class Waves( GridAction ):
     '''Waves simulates waves using the math.sin() function both in the vertical and horizontal axis
 
        scene.do( Waves( waves=4, vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
@@ -576,10 +578,10 @@ class Waves( MeshGridAction ):
                     grid=self.grid,
                     duration=self.duration)
 
-class Waves3D( Mesh3DGridAction ):
-    '''Waves simulates waves using the math.sin() function both in the vertical and horizontal axis
+class Waves3D( Grid3DAction ):
+    '''Waves3D simulates waves using the math.sin() function both in the z-axis
 
-       scene.do( Waves( waves=4, vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
+       scene.do( Waves3D( waves=5, grid=(16,16), duration=10) )
     '''
 
     def init( self, waves=4, *args, **kw ):
@@ -615,10 +617,13 @@ class Waves3D( Mesh3DGridAction ):
                     duration=self.duration)
 
 
-class Lens( MeshGridAction ):
-    '''Lens simulates the a Lens / Magnifying glass effect
+class Lens( GridAction ):
+    '''Lens simulates a Lens / Magnifying glass effect
 
        scene.do( Lens(grid=(16,16), duration=10) )
+       
+       WARNING: This effect is not yet complete.
+       Help needed
     '''
 
     def start( self ):
@@ -661,19 +666,10 @@ class Lens( MeshGridAction ):
 
                 self.set_vertex( i,j, (x,y) )
 
-#        if self.go_left:
-#            self.center_x -= 2.5 
-#            if self.center_x < 40:
-#                self.go_left = False
-#        else:
-#            self.center_x += 2.5 
-#            if self.center_x > 620:
-#                self.go_left = True
-
     def __reversed__(self):
         raise NotImplementedError('Reverse(Lens) not implemented yet!')
 
-class QuadMoveBy( MeshGridAction ):
+class QuadMoveBy( GridAction ):
     '''QuadMoveBy moves each vertex of the quad
 
        scene.do( QuadMoveBy( src0, src1, src2, src3,

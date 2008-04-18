@@ -13,7 +13,7 @@ from director import director
 import framegrabber
 
 __all__ = ['Mesh',
-            'MeshGrid', 'MeshTiles', 'Mesh3DGrid',
+            'Grid', 'TiledGrid', 'Grid3D',
             ]
 
 class Mesh(object):
@@ -130,8 +130,15 @@ class Mesh(object):
         raise NotImplementedError('abstract')
   
 
-class MeshGrid(Mesh):
-    '''A Mesh that implements an union grid. Each vertex is shared by the attached quads'''
+class Grid(Mesh):
+    '''A Mesh that implements an union grid. Each vertex is shared by the attached quads
+    
+    The vertex array will be built with::
+
+        self.vertex_list.vertices: x,y (ints)   
+        self.vertex_list.tex_coords: x,y (floats)
+        self.vertex_list.colors: RGBA, with values from 0 - 255
+    '''
     def _init( self ):
         # calculate vertex, textures depending on screen size
         idx_pts, ver_pts_idx, tex_pts_idx = self._calculate_vertex_points()
@@ -199,10 +206,16 @@ class MeshGrid(Mesh):
 
         return ( index_points, vertex_points_idx, texture_points_idx )
 
-class MeshTiles(Mesh):
+class TiledGrid(Mesh):
     '''A Mesh that is implemented with the union of several tiles.
     The vertex are not shared between the different tiles. Each tile has it's own
     4 vertex.
+
+    The vertex array will be built with::
+
+        self.vertex_list.vertices: x,y (ints)   
+        self.vertex_list.tex_coords: x,y (floats)
+        self.vertex_list.colors: RGBA, with values from 0 - 255
     '''
     def _init( self ):
         # calculate vertex, textures depending on screen size
@@ -251,11 +264,16 @@ class MeshTiles(Mesh):
         # Generates a quad for each tile, to perform tiles effect
         return (vertex_points, texture_points)
 
-class Mesh3DGrid(Mesh):
-    '''A Mesh that implements a 3D grid. Each vertex is shared by the attached quads and has 3 dimensions'''
+class Grid3D(Mesh):
+    '''A Mesh that implements a 3D grid. Each vertex has 3 dimensions.
+    The vertex array will be built with::
 
-    def before_draw(self):
-        
+        self.vertex_list.vertices: x,y,z (floats)   
+        self.vertex_list.tex_coords: x,y,z (floats)
+        self.vertex_list.colors: RGBA, with values from 0 - 255
+    '''
+
+    def before_draw(self):       
         # set Ortho projection before drawing
         width,height = director.window.width, director.window.height
         glLoadIdentity()
@@ -266,7 +284,7 @@ class Mesh3DGrid(Mesh):
         glOrtho(0, width, 0, height, -100, 100)
         glMatrixMode(GL_MODELVIEW)
 
-        super(Mesh3DGrid,self).before_draw()
+        super(Grid3D,self).before_draw()
 
     def _init( self ):
         # calculate vertex, textures depending on screen size
@@ -281,7 +299,6 @@ class Mesh3DGrid(Mesh):
         self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
  
     def _blit(self ):
-
         width, height = director.get_window_size()
         self._set_3d_projection(width, height)
 
