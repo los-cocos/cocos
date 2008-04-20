@@ -69,5 +69,5 @@ if __name__ == "__main__":
 
     main_scene.add( SpriteLayer(), z=4 )
 
-    main_scene.do( Waves3D( waves=16, amplitude=40, grid=(16,16), duration=10) )
+    main_scene.do( AccelAmplitude(Waves3D( waves=16, amplitude=80, grid=(16,16), duration=10), rate=4.0 ) )
     director.run (main_scene)

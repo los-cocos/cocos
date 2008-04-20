@@ -424,8 +424,8 @@ class ToggleMenuItem( MultipleMenuItem ):
         :Parameters:
             `label` : string
                 Item's label
-            `value` : int
-                Default value: 0 is OFF, 1 is ON
+            `value` : Bool
+                Default value: False is OFF, True is ON
             `toggle_func` : function
                 Callback function
         """

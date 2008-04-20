@@ -2,9 +2,9 @@
 # Cocos Mesh Actions
 #
 
-'''Mesh Actions
+'''Grid Actions
 
-Mesh Actions
+Grid Actions
 ============
 
 These are the actions that are performed transforming a grid.
@@ -34,8 +34,8 @@ from cocos.director import director
 from cocos.euclid import *
 from base_actions import *
 
-__all__ = [ 'MeshException',            # Mesh Exceptions
-            'MeshAction',               # Base classes
+__all__ = [ 'GridException',            # Mesh Exceptions
+            'GridBaseAction',               # Base classes
             'TiledGridAction',
             'GridAction',
             'Grid3DAction',
@@ -57,15 +57,19 @@ __all__ = [ 'MeshException',            # Mesh Exceptions
             'Liquid','Waves',           # Liquid and Waves
             'Lens',                     # Lens effect (magnifying)
             
-            'Waves3D',
+            'Waves3D',                  # Waves in z-axis
+            
+            'AccelAmplitude',           # Amplitude modifiers
+            'DeccelAmplitude',
+            'AccelDeccelAmplitude',
 
             ]
 
-class MeshException( Exception ):
+class GridException( Exception ):
     pass
     
-class MeshAction( IntervalAction ):
-    '''MeshAction is the base class of all Mesh Actions.'''
+class GridBaseAction( IntervalAction ):
+    '''GridBaseAction is the base class of all Mesh Actions.'''
     def init( self, grid=(4,4), duration=5):
         """Initialize the Mesh Action
         :Parameters:
@@ -89,7 +93,7 @@ class MeshAction( IntervalAction ):
         
 
     def done( self ):
-        r = super(MeshAction,self).done()
+        r = super(GridBaseAction,self).done()
         if r:
             self.target.mesh.active = False
         return r
@@ -101,7 +105,7 @@ class MeshAction( IntervalAction ):
         raise NotImplementedError("abstract")
 
 
-class GridAction( MeshAction ):
+class GridAction( GridBaseAction ):
     '''A GridAction is an action that does transformations
     to a grid.'''
     def start( self ):
@@ -139,27 +143,12 @@ class GridAction( MeshAction ):
         self.target.mesh.vertex_list.vertices[idx] = int(v[0])
         self.target.mesh.vertex_list.vertices[idx+1] = int(v[1])
 
-class Grid3DAction( MeshAction ):
+class Grid3DAction( GridBaseAction ):
     '''A Grid3DAction is an action that does transformations
     to a 3D grid.'''
     def start( self ):
         self.target.mesh = Grid3D()
-        super( Grid3DAction, self ).start()
-
-        width, height = director.get_window_size()
-
-        glViewport(0, 0, width, height)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluPerspective(45, 1.0*width/height, 0.1, 100.0)
-        glMatrixMode(GL_MODELVIEW)
-
-#        glShadeModel(GL_SMOOTH)
-        glClearDepth(1.0)
-        glEnable(GL_DEPTH_TEST)
-#        glDepthFunc(GL_LEQUAL)
-#        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
-                
+        super( Grid3DAction, self ).start()                
 
     def get_vertex( self, x, y):
         '''Get the current vertex point value
@@ -196,7 +185,7 @@ class Grid3DAction( MeshAction ):
 
 
 
-class TiledGridAction( MeshAction ):
+class TiledGridAction( GridBaseAction ):
     '''A TiledGrid action is an action that does transformations
     to a grid composed of tiles. You can transform each tile individually'''
     def start( self ):
@@ -419,7 +408,7 @@ class ShuffleTiles( TiledGridAction ):
                 if not self.dst_tiles.get( (i,j), False):
                     self.dst_tiles[ (i,j) ] = True
                     return Point2(i,j)-Point2(x,y)
-        raise MeshException("_get_delta() error")
+        raise GridException("_get_delta() error")
 
     def __reversed__(self):
         # revere is self, since it will perform the same action
@@ -581,38 +570,36 @@ class Waves( GridAction ):
 class Waves3D( Grid3DAction ):
     '''Waves3D simulates waves using the math.sin() function both in the z-axis
 
-       scene.do( Waves3D( waves=5, grid=(16,16), duration=10) )
+       scene.do( Waves3D( waves=5, amplitude=40, grid=(16,16), duration=10) )
     '''
 
-    def init( self, waves=4, *args, **kw ):
+    def init( self, waves=4, amplitude=20, *args, **kw ):
         '''
         :Parameters:
             `waves` : int
                 Number of waves (2 * pi) that the action will perform.
+            `amplitude`: int
+                Wave amplitude (height). Default is 20
         '''
         super(Waves3D, self).init( *args, **kw )
         self.waves=waves
+        self.amplitude=amplitude
 
     def update( self, t ):
-
-        f = t*2
-        if f > 1:
-            f -= 1
-            f = 1 -f  
-        wave_length = 40 * f
         for i in range(0, self.grid.x+1):
             for j in range(0, self.grid.y+1):
                 x = i* self.size_x
                 y = j* self.size_y
 
-                z = (math.sin(t*math.pi*self.waves*2 + (y+x) * .01) * wave_length)
+                z = (math.sin(t*math.pi*self.waves*2 + (y+x) * .01) * self.amplitude )
 
                 self.set_vertex( i,j, (x, y, z) )
         
 
     def __reversed__(self):
         # almost self
-        return Waves3D( waves=self.waves, 
+        return Waves3D( waves=self.waves,
+                    amplitude=self.amplitude, 
                     grid=self.grid,
                     duration=self.duration)
 
@@ -714,7 +701,7 @@ class QuadMoveBy( GridAction ):
         '''
 
         if grid != (1,1):
-            raise MeshException("Invalid grid size.")
+            raise GridException("Invalid grid size.")
 
         super( QuadMoveBy, self).init( grid, *args, **kw )
         
@@ -810,3 +797,104 @@ class SkewVertical( QuadMoveBy ):
         if delta==None:
             delta=y//3
         super(SkewVertical, self).__init__( delta0=(0,delta), delta2=(0,-delta), *args, **kw )
+
+class AccelDeccelAmplitude( IntervalAction ):
+    """
+    Increases and Decreases the amplitude of Wave
+    
+    Example::
+        # when t=0 and t=1 the amplitude will be 0
+        # when t=0.5 (half time), the amplitude will be 40
+        action = IncDecAmplitude( Wave3D( waves=4, amplitude=40, duration=6) )
+        scene.do( action )
+    """
+    def init(self, other, rate=1.0 ):
+        """Init method.
+
+        :Parameters:
+            `other` : `IntervalAction`
+                The action that will be affected
+            `rate`: float
+                The acceleration rate. 1 is linear (default value)
+        """
+        if not hasattr(other,'amplitude'):
+            raise GridAction("Invalid Composition: IncAmplitude needs an action with amplitude")
+
+        self.other = other
+        self.rate = rate
+        self.duration = other.duration
+        self.amplitude = self.other.amplitude
+
+    def start(self):
+        self.other.target = self.target
+        self.other.start()
+
+    def update(self, t):
+        f = t*2
+        if f > 1:
+            f -= 1
+            f = 1 -f  
+
+        self.other.amplitude = self.amplitude * (f**self.rate)
+        self.other.update( t )
+
+    def __reversed__(self):
+        return AccelDeccelAmplitude( Reverse(self.other) )
+
+class AccelAmplitude( IntervalAction ):
+    """
+    Increases the waves amplitude from 0 to self.amplitude
+    
+    Example::
+        # when t=0 the amplitude will be 0
+        # when t=1 the amplitude will be 40
+        action = IncAmplitude( Wave3D( waves=4, amplitude=40, duration=6), rate=1.0 )
+        scene.do( action )
+    """
+    def init(self, other, rate=1 ):
+        """Init method.
+
+        :Parameters:
+            `other` : `IntervalAction`
+                The action that will be affected
+            `rate`: float
+                The acceleration rate. 1 is linear (default value)
+        """
+        if not hasattr(other,'amplitude'):
+            raise GridAction("Invalid Composition: IncAmplitude needs an action with amplitude")
+        
+        self.other = other
+        self.duration = other.duration
+        self.amplitude = self.other.amplitude
+        self.rate = rate
+
+    def start(self):
+        self.other.target = self.target
+        self.other.start()
+
+    def update(self, t):
+        self.other.amplitude = self.amplitude * (t ** self.rate)
+        self.other.update( t )
+
+    def __reversed__(self):
+        self.other.amplitude = self.amplitude
+        return DeccelAmplitude( Reverse(self.other), rate=self.rate )
+
+class DeccelAmplitude( AccelAmplitude ):
+    """
+    Decreases the waves amplitude from self.amplitude to 0
+    
+    Example::
+        # when t=1 the amplitude will be 0
+        # when t=0 the amplitude will be 40
+        action = DeccelAmplitude( Wave3D( waves=4, amplitude=40, duration=6), rate=1.0 )
+        scene.do( action )
+    """
+
+    def update(self, t):
+        self.other.amplitude = self.amplitude * ((1-t) ** self.rate)
+        self.other.update( t )
+
+    def __reversed__(self):
+        self.other.amplitude = self.amplitude
+        return AccelAmplitude( Reverse(self.other), rate=self.rate )
