@@ -58,6 +58,7 @@ __all__ = [ 'GridException',            # Mesh Exceptions
             'Lens',                     # Lens effect (magnifying)
             
             'Waves3D',                  # Waves in z-axis
+            'FlipX3D',
             
             'AccelAmplitude',           # Amplitude modifiers
             'DeccelAmplitude',
@@ -162,9 +163,13 @@ class Grid3DAction( GridBaseAction ):
         :rtype: (int,int)
         '''
         idx = (x * (self.grid.y+1) + y) * 3
-        x = self.target.mesh.vertex_list.vertices[idx]
-        y = self.target.mesh.vertex_list.vertices[idx+1]
-        z = self.target.mesh.vertex_list.vertices[idx+2]
+#        x = self.target.mesh.vertex_list.vertices[idx]
+#        y = self.target.mesh.vertex_list.vertices[idx+1]
+#        z = self.target.mesh.vertex_list.vertices[idx+2]
+        x = self.target.mesh.vertex_points[idx]
+        y = self.target.mesh.vertex_points[idx+1]
+        z = self.target.mesh.vertex_points[idx+2]
+
         return (x,y,z)
 
     def set_vertex( self, x, y, v):
@@ -583,6 +588,7 @@ class Waves3D( Grid3DAction ):
         '''
         super(Waves3D, self).init( *args, **kw )
         self.waves=waves
+        self.amplitude_rate = 1.0         # can be modified by other actions
         self.amplitude=amplitude
 
     def update( self, t ):
@@ -591,7 +597,7 @@ class Waves3D( Grid3DAction ):
                 x = i* self.size_x
                 y = j* self.size_y
 
-                z = (math.sin(t*math.pi*self.waves*2 + (y+x) * .01) * self.amplitude )
+                z = (math.sin(t*math.pi*self.waves*2 + (y+x) * .01) * self.amplitude * self.amplitude_rate )
 
                 self.set_vertex( i,j, (x, y, z) )
         
@@ -603,6 +609,44 @@ class Waves3D( Grid3DAction ):
                     grid=self.grid,
                     duration=self.duration)
 
+class FlipX3D( Grid3DAction ):
+    '''FlipX3D flips the screen using the Y-axis'''
+
+    def init(self, grid=(1,1), *args, **kw):
+        if grid != (1,1):
+            raise GridException("Invalid grid size.")
+        super(FlipX3D,self).init(grid=grid,*args,**kw)
+
+    def update( self, t ):
+        angle = math.pi * t     # 180 degrees
+        mz = math.sin( angle )
+        angle = angle / 2.0     # x calculates degrees from 0 to 90
+        mx = math.cos( angle )
+
+        x,y,z = self.get_vertex(1,1)
+
+        diff_x = x - x * mx
+        diff_z = abs( (x * mz) // 4.0 )
+ 
+        # bottom-left
+        x,y,z = self.get_vertex(0,0)
+        self.set_vertex(0,0,(diff_x,y,z+diff_z))
+
+        # upper-left
+        x,y,z = self.get_vertex(0,1)
+        self.set_vertex(0,1,(diff_x,y,z+diff_z))
+
+        # bottom-right
+        x,y,z = self.get_vertex(1,0)
+        self.set_vertex(1,0,(x-diff_x,y,z-diff_z))
+
+        # upper-right
+        x,y,z = self.get_vertex(1,1)
+        self.set_vertex(1,1,(x-diff_x,y,z-diff_z))
+
+
+    def __reversed__(self):
+        raise NotImplementedError('Reverse(FlipY3d) not implemented yet')
 
 class Lens( GridAction ):
     '''Lens simulates a Lens / Magnifying glass effect
@@ -823,7 +867,6 @@ class AccelDeccelAmplitude( IntervalAction ):
         self.other = other
         self.rate = rate
         self.duration = other.duration
-        self.amplitude = self.other.amplitude
 
     def start(self):
         self.other.target = self.target
@@ -835,7 +878,7 @@ class AccelDeccelAmplitude( IntervalAction ):
             f -= 1
             f = 1 -f  
 
-        self.other.amplitude = self.amplitude * (f**self.rate)
+        self.other.amplitude_rate = f**self.rate
         self.other.update( t )
 
     def __reversed__(self):
@@ -865,7 +908,6 @@ class AccelAmplitude( IntervalAction ):
         
         self.other = other
         self.duration = other.duration
-        self.amplitude = self.other.amplitude
         self.rate = rate
 
     def start(self):
@@ -873,11 +915,10 @@ class AccelAmplitude( IntervalAction ):
         self.other.start()
 
     def update(self, t):
-        self.other.amplitude = self.amplitude * (t ** self.rate)
+        self.other.amplitude_rate = (t ** self.rate)
         self.other.update( t )
 
     def __reversed__(self):
-        self.other.amplitude = self.amplitude
         return DeccelAmplitude( Reverse(self.other), rate=self.rate )
 
 class DeccelAmplitude( AccelAmplitude ):
@@ -892,9 +933,8 @@ class DeccelAmplitude( AccelAmplitude ):
     """
 
     def update(self, t):
-        self.other.amplitude = self.amplitude * ((1-t) ** self.rate)
+        self.other.amplitude_rate = ((1-t) ** self.rate)
         self.other.update( t )
 
     def __reversed__(self):
-        self.other.amplitude = self.amplitude
         return AccelAmplitude( Reverse(self.other), rate=self.rate )

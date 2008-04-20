@@ -13,15 +13,20 @@ v0.3.0 - XXX, xxx
   - alpha blending enabled by default. 
     use director.set_alpha_bleding(True|False) to change.
   - Actions: Goto renamed to MoveTo and Move renamed to MoveBy
-  - Actions: Scale renamed to ScaleBy. Added ScaleTo
-  - Actions: Rotate renamed to RotateBy. Added RotateTo
+     Scale renamed to ScaleBy. Added ScaleTo
+     Rotate renamed to RotateBy. Added RotateTo
+  - Actions: Added IntervalAction decorators:
+     Accelerate, AccelDeccel
+  - Actions:Added a new base class: InstantAction 
   - Added compositions and actions to scenes and layers
   - Added setup.py and setup.cfg contributed by David Eyk
-  - Added Mesh effects:
+  - Actions: Added Mesh effects:
      Liquid, Sin Shaky, ShakyTiles, ShuffleTiles, QuadMoveBy
      MoveCornerUp, MoveCornerDown, SkewVertical, SkewHorizontal
-     FlipX, FlipY, Flip, CornerSwap, ShatteredTiles
-     FadeOutTiles, Waves3D
+     FlipX, FlipY, Flip, CornerSwap, ShatteredTiles,
+     FadeOutTiles, Waves3D, FlipX3D
+   - Actions: Added Waves decorators: AccelAmplitude, DeccelAmplitude,
+       AccelDeccelAmplitude.
     
 v0.2.0 - March, 21th 2008
   - Director: uses the new pyglet 1.1 loop

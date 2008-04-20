@@ -330,7 +330,7 @@ class Grid3D(Mesh):
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(90, 1.0*width/height, 0.1, 400.0)
+        gluPerspective(90, 1.0*width/height, 0.1, 1000.0)
         glMatrixMode(GL_MODELVIEW)
 
     
