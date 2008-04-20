@@ -299,13 +299,19 @@ class Grid3D(Mesh):
         self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
  
     def _blit(self ):
-        width, height = director.get_window_size()
-        self._set_3d_projection(width, height)
+        self._set_3d_projection()
 
         # center the image
         glLoadIdentity()
-        glTranslatef(- width // 2, - height // 2, -240.0)
+
+        width, height = director.get_window_size()
+#        glTranslatef(- width // 2, - height // 2, -240.0)
+        gluLookAt( width // 2, height // 2, 240.0,   # eye
+                   width // 2, height // 2, 0.0,   # center
+                   0.0, 1.0, 0.0    # up
+                   )
         
+     
         self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
 
     def _on_resize(self, xsteps, ysteps, txz, tyz):
@@ -315,10 +321,12 @@ class Grid3D(Mesh):
                 tex_idx += [ txz + x*xsteps, tyz+y*ysteps, 0]
         self.vertex_list.tex_coords = tex_idx
 
-        x,y = director.get_window_size()
-        self._set_3d_projection( x,y )
+        self._set_3d_projection()
 
-    def _set_3d_projection(self, width, height):
+    def _set_3d_projection(self):
+        width, height = director.window.width, director.window.height
+#        width, height = director.get_window_size()
+
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
