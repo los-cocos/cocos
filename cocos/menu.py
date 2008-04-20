@@ -38,7 +38,9 @@ from director import *
 from interfaces import *
 from actions import *
 
-__all__ = [ 'Menu', 'MenuItem', 'ToggleMenuItem', 'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM' ]
+__all__ = [ 'Menu', 'MenuItem', 'ToggleMenuItem', 
+    'MultipleMenuItem',
+    'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM' ]
 
 #
 # Class Menu
@@ -373,9 +375,44 @@ class MenuItem( IActionTarget, IContainer ):
             self.do( self.effect )
 
 #
-# Item that can be toggled
+# Item that can be toggled between N states
 #
-class ToggleMenuItem( MenuItem ):
+class MultipleMenuItem( MenuItem ):
+    """A menu item for switching between multiple values.
+    
+    toggle_func will be called for switching when selected, and
+    get_value_func should be a function returning the value as a
+    string"""
+
+    def __init__(self, label, toggle_func, get_value_func):
+        """Creates a Toggle Menu Item
+
+        :Parameters:
+            `label` : string
+                Item's label
+            `toggle_func` : function
+                Callback function
+            `get_value_func` : function
+                This function returns the item's
+                actual value as a String
+        """
+        self.toggle_label = label
+        self.toggle_func = toggle_func
+        self.get_value_func = get_value_func
+        self.value = get_value_func()
+        super( MultipleMenuItem, self).__init__( self._get_label(), None )
+
+    def _get_label(self):
+        return self.toggle_label+': '+self.get_value_func()
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol in ( key.LEFT, key.RIGHT, key.ENTER):
+            self.toggle_func( )
+            self.text.text = self._get_label()
+            self.text_selected.text = self._get_label()
+            return True
+
+class ToggleMenuItem( MultipleMenuItem ):
     """A menu item for a boolean toggle option.
     
     When selected, ``self.value`` is toggled, the callback function is
@@ -387,23 +424,16 @@ class ToggleMenuItem( MenuItem ):
         :Parameters:
             `label` : string
                 Item's label
-            `value` : Boolean
-                Item's default value: True or False
+            `value` : int
+                Default value: 0 is OFF, 1 is ON
             `toggle_func` : function
                 Callback function
         """
-        self.toggle_label = label
-        self.value = value
-        self.toggle_func = toggle_func
-        super(ToggleMenuItem, self).__init__( self._get_label(), None )
-
-    def _get_label(self):
-        return self.toggle_label + (self.value and ': ON' or ': OFF')
-
-    def on_key_press(self, symbol, modifiers):
-        if symbol in ( key.LEFT, key.RIGHT, key.ENTER):
-            self.value = not self.value
-            self.text.text = self._get_label()
-            self.text_selected.text = self._get_label()
-            self.toggle_func( self.value )
-            return True
+        self.__value = value
+        
+        def switch_value():
+            self.__value=not self.__value
+            toggle_func(self.__value)
+    
+        super(ToggleMenuItem, self).__init__( label, switch_value, 
+                lambda :['OFF','ON'][int(self.__value)] )          
