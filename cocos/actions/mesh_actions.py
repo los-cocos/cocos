@@ -59,6 +59,7 @@ __all__ = [ 'GridException',            # Mesh Exceptions
             
             'Waves3D',                  # Waves in z-axis
             'FlipX3D',
+            'FlipY3D',
             
             'AccelAmplitude',           # Amplitude modifiers
             'DeccelAmplitude',
@@ -643,6 +644,42 @@ class FlipX3D( Grid3DAction ):
         # upper-right
         x,y,z = self.get_vertex(1,1)
         self.set_vertex(1,1,(x-diff_x,y,z-diff_z))
+
+class FlipY3D( Grid3DAction ):
+    '''FlipY3D flips the screen using the X-axis'''
+
+    def init(self, grid=(1,1), *args, **kw):
+        if grid != (1,1):
+            raise GridException("Invalid grid size.")
+        super(FlipY3D,self).init(grid=grid,*args,**kw)
+
+    def update( self, t ):
+        angle = math.pi * t     # 180 degrees
+        mz = math.sin( angle )
+        angle = angle / 2.0     # x calculates degrees from 0 to 90
+        my = math.cos( angle )
+
+        x,y,z = self.get_vertex(1,1)
+
+        diff_y = y - y * my
+        diff_z = abs( (y * mz) // 4.0 )
+ 
+        # bottom-left
+        x,y,z = self.get_vertex(0,0)
+        self.set_vertex(0,0,(x,diff_y,z+diff_z))
+
+        # upper-left
+        x,y,z = self.get_vertex(0,1)
+        self.set_vertex(0,1,(x,y-diff_y,z-diff_z))
+
+        # bottom-right
+        x,y,z = self.get_vertex(1,0)
+        self.set_vertex(1,0,(x,diff_y,z+diff_z))
+
+        # upper-right
+        x,y,z = self.get_vertex(1,1)
+        self.set_vertex(1,1,(x,y-diff_y,z-diff_z))
+
 
 
     def __reversed__(self):

@@ -17,6 +17,8 @@ class SpriteLayer ( Layer ):
     def __init__( self ):
         super( SpriteLayer, self ).__init__()
 
+        x,y = director.get_window_size()
+
         self.image = pyglet.resource.image('grossini.png')
         self.image.anchor_x = self.image.width / 2
         self.image.anchor_y = self.image.height / 2
@@ -54,5 +56,5 @@ if __name__ == "__main__":
 
     main_scene.add( SpriteLayer(), z=4 )
 
-    main_scene.do( FlipX3D( grid=(1,1), duration=2) )
+    main_scene.do( FlipY3D( grid=(1,1), duration=2) )
     director.run (main_scene)
