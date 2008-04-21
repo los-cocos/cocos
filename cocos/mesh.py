@@ -311,7 +311,6 @@ class Grid3D(Mesh):
                    0.0, 1.0, 0.0    # up
                    )
         
-     
         self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
 
     def _on_resize(self, xsteps, ysteps, txz, tyz):

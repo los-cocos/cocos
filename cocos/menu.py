@@ -345,15 +345,15 @@ class MenuItem( CocosNode ):
 #        print 'MenuItem: transform'
 
     def on_draw( self ):
-#        glPushMatrix()
-#        self.transform()
+        glPushMatrix()
+        self.transform()
 
         if self.is_selected:
             self.text_selected.draw()
         else:
             self.text.draw()
 
-#        glPopMatrix()
+        glPopMatrix()
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ENTER and self.activate_func:
@@ -410,6 +410,7 @@ class MultipleMenuItem( MenuItem ):
         self.get_value_func = get_value_func
         self.value = get_value_func()
         super( MultipleMenuItem, self).__init__( self._get_label(), None )
+
 
     def _get_label(self):
         return self.toggle_label+': '+self.get_value_func()

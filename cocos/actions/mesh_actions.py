@@ -92,8 +92,10 @@ class GridBaseAction( IntervalAction ):
         x,y = director.get_window_size()
         self.size_x = x // self.grid.x
         self.size_y = y // self.grid.y
+
         
     def stop( self ):
+        self.target.mesh.vertex_list.delete()
         self.target.mesh.active = False
 
     def set_vertex( self, x, y, v):
@@ -597,7 +599,6 @@ class Waves3D( Grid3DAction ):
                 z = (math.sin(t*math.pi*self.waves*2 + (y+x) * .01) * self.amplitude * self.amplitude_rate )
 
                 self.set_vertex( i,j, (x, y, z) )
-        
 
     def __reversed__(self):
         # almost self
@@ -709,7 +710,6 @@ class Lens3D( Grid3DAction ):
         self._once = False
         
     def update( self, t ):
-
         if not self._once:
             for i in range(0, self.grid.x+1):
                 for j in range(0, self.grid.y+1):

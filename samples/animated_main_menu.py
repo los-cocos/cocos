@@ -210,19 +210,31 @@ if __name__ == "__main__":
             MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
             )
 
-    lens = Lens3D( radius=240, center=(320,240), grid=(32,24), duration=7)
-    waves3d = Waves3D( grid=(16,12), duration=5)
+    lens = Lens3D( radius=240, center=(320,240), grid=(32,24), duration=5)
+    waves3d = AccelDeccelAmplitude( Waves3D( waves=18, amplitude=80, grid=(20,20), duration=15), rate=4.0 )
     flipx =  FlipX3D(duration=1)
     flipy = FlipY3D(duration=1)
+    flip = Flip(duration=1)
+    liquid = Liquid( grid=(16,12), duration=8)
+    shuffle = ShuffleTiles( grid=(16,12), duration=5)
+    shakyt = ShakyTiles( grid=(16,12), duration=5)
+    shaky = Shaky( grid=(16,12), duration=5)
+    corners = CornerSwap( duration=1)
+    waves = Waves( grid=(32,24), duration=5)
 
 #    scene.do( ShuffleTiles( grid(16,16), duration=5) + Liquid( grid=(16,16), duration=500) )
     scene.do(
-              Delay(3) +
+              Delay(2) +
+              liquid +
+              flipx + 
+              shakyt +
+              flip +
               lens +
-#              waves3d + 
-              Liquid( grid=(16,12), duration=8) +
-              ShuffleTiles( grid=(16,12), duration=5) + 
-              ShakyTiles( grid=(16,12), duration=5)
+              flipy + 
+              waves3d +
+              shaky +
+              corners +
+              waves
               )
 
     director.run( scene )
