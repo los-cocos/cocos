@@ -327,7 +327,7 @@ class CocosNode(object):
     def on_draw(self, *args, **kwargs):
         pass
                 
-    def do( self, action ):
+    def do( self, action, target=None ):
         '''Executes an *action*.
         When the action finished, it will be removed from the sprite's queue.
 
@@ -339,7 +339,11 @@ class CocosNode(object):
         '''
         a = copy.deepcopy( action )
 
-        a.target = self
+        if target is None:
+            a.target = self
+        else:
+            a.target = target
+            
         a.start()
         self.actions.append( a )
 
@@ -409,6 +413,7 @@ class CocosNode(object):
         for action in self.actions:
             action.step(dt)
             if action.done():
+                action.stop()
                 self.remove_action( action )
         
 
