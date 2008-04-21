@@ -56,5 +56,5 @@ if __name__ == "__main__":
 
     main_scene.add( SpriteLayer(), z=4 )
 
-    main_scene.do( FlipY3D( grid=(1,1), duration=2) )
+    main_scene.do( FlipY3D(duration=2) )
     director.run (main_scene)

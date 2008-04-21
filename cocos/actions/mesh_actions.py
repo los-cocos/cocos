@@ -60,6 +60,7 @@ __all__ = [ 'GridException',            # Mesh Exceptions
             'Waves3D',                  # Waves in z-axis
             'FlipX3D',
             'FlipY3D',
+            'Lens3D',
             
             'AccelAmplitude',           # Amplitude modifiers
             'DeccelAmplitude',
@@ -685,6 +686,54 @@ class FlipY3D( Grid3DAction ):
     def __reversed__(self):
         raise NotImplementedError('Reverse(FlipY3d) not implemented yet')
 
+class Lens3D( Grid3DAction ):
+    '''Lens simulates a Lens / Magnifying glass effect
+
+       scene.do( Lens3D(grid=(16,16), center=(320,240), radius=150, duration=10) )
+    '''
+
+    def init(self, center=(-1,-1), radius=160, *args, **kw):
+
+        super(Lens3D,self).init( *args, **kw)
+        
+        x,y = director.get_window_size()
+        if center==(-1,-1):
+            center=(x//2, y//2)
+        self.center = Point2( center[0]+1, center[1]+1 )
+        self.radius = radius
+        self.lens_effect = 0.7
+        
+    def update( self, t ):
+
+        for i in range(0, self.grid.x+1):
+            for j in range(0, self.grid.y+1):
+
+                x,y,z = self.get_vertex(i,j)
+                
+                p = Point2( x,y )
+                vect = self.center - p
+                r = abs(vect)
+                
+                if r < self.radius:
+
+                    r = self.radius - r
+                    pre_log = r/self.radius
+                    if pre_log == 0:
+                        pre_log = 0.001
+                    l = math.log( pre_log )*self.lens_effect
+                    r = math.exp( l ) * self.radius
+
+                    vect.normalize()
+                    new_vect = vect * r
+
+                    z += abs(new_vect) * 0.6
+                    self.set_vertex( i,j, (x,y,z) )
+
+    def __reversed__(self):
+        # self
+        return Lends3D( radius=self.radius, center=self.center, grid=self.grid, duration=self.duration )
+    
+
 class Lens( GridAction ):
     '''Lens simulates a Lens / Magnifying glass effect
 
@@ -700,7 +749,7 @@ class Lens( GridAction ):
         self.center_x = x // 2
         self.center_y = y // 2
         self.radius = y // 4
-        self.lens_effect = 0.1
+        self.lens_effect = 0.05
 
         self.go_left = True
 
