@@ -122,6 +122,7 @@ class Menu(Layer):
         }
 
         self.title_height = 0
+        self._items_z = 0
 
      
     def _draw_title( self ):
@@ -176,7 +177,7 @@ class Menu(Layer):
             self.font_item_selected['text'] = item.label
             item._init_font_sel( **self.font_item_selected )
 
-    def add( self, item, *args, **kw ):
+    def add( self, item, z=-1, *args, **kw ):
         """Adds an item to the menu.
 
         The order of the list important since the
@@ -186,12 +187,14 @@ class Menu(Layer):
             `item` : a `MenuItem`
                 The MenuItem that will part of the `Menu`
         """
+        if z==-1:
+            z=self._items_z
+            self._items_z += 1
         item.halign = self.menu_halign
         item.valign = self.menu_valign
-        super(Menu,self).add( item, *args, **kw )
+        super(Menu,self).add( item, z=z, *args, **kw )
 
     def on_draw( self ):
-        super( Menu, self).on_draw()
         self.text.draw()
 
     def build_items( self ):
@@ -337,8 +340,11 @@ class MenuItem( CocosNode ):
         y2 = y1 + height
         return (x1,y1,x2,y2)
 
+#    def transform( self ):
+#        super(MenuItem, self).transform()
+#        print 'MenuItem: transform'
+
     def on_draw( self ):
-        super( MenuItem, self).on_draw()
 #        glPushMatrix()
 #        self.transform()
 
@@ -346,6 +352,7 @@ class MenuItem( CocosNode ):
             self.text_selected.draw()
         else:
             self.text.draw()
+
 #        glPopMatrix()
 
     def on_key_press(self, symbol, modifiers):

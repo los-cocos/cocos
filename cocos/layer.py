@@ -82,9 +82,6 @@ class MultiplexLayer( Layer ):
         self.layers = layers 
         self.enabled_layer = 0
 
-        for l in self.layers:
-            l.switch_to = self.switch_to
-
         self.add( self.layers[ self.enabled_layer ] )
 
     def switch_to( self, layer_number ):

@@ -14,12 +14,15 @@ class KeyDisplay(cocos.layer.Layer):
 
         super( KeyDisplay, self ).__init__()
 
-        self.text = pyglet.text.Label("", x=100, y=280, batch=self.batch)
+        self.text = pyglet.text.Label("", x=100, y=280 )
 
         # To keep track of which keys are pressed:
         self.keys_pressed = set()
         self.update_text()
-        
+
+    def on_draw( self ):
+        self.text.draw()
+
     def on_key_press (self, key, modifiers):
         """This function is called when a key is pressed.
         
@@ -55,7 +58,7 @@ class MouseDisplay(cocos.layer.Layer):
 
         self.x = 100
         self.y = 240
-        self.text = pyglet.text.Label('No mouse events yet', font_size=18, x=self.x, y=self.y, batch=self.batch)
+        self.text = pyglet.text.Label('No mouse events yet', font_size=18, x=self.x, y=self.y )
         
 
     def on_mouse_motion (self, x, y, dx, dy):
@@ -83,6 +86,9 @@ class MouseDisplay(cocos.layer.Layer):
         self.text.text = text
         self.text.x = self.x
         self.text.y = self.y
+
+    def on_draw( self ):
+        self.text.draw()
 
 if __name__ == "__main__":
     director.init(resizable=True)

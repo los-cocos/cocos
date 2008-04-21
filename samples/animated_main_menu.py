@@ -146,10 +146,10 @@ class MainMenu(Menu):
            
 
     def on_scores( self ):
-        self.switch_to( 2 )
+        self.parent.switch_to( 2 )
 
     def on_options( self ):
-        self.switch_to( 1 )
+        self.parent.switch_to( 1 )
 
     def on_quit( self ):
         pyglet.app.exit()
@@ -178,7 +178,7 @@ class OptionMenu(Menu):
         director.window.set_fullscreen( not director.window.fullscreen )
 
     def on_quit( self ):
-        self.switch_to( 0 )
+        self.parent.switch_to( 0 )
 
     def on_show_fps( self, value ):
         director.show_FPS = value
@@ -199,7 +199,7 @@ class ScoreMenu(Menu):
         self.build_items()
 
     def on_quit( self ):
-        self.switch_to( 0 )
+        self.parent.switch_to( 0 )
 
 
 if __name__ == "__main__":

@@ -15,9 +15,10 @@ class HelloWorld(cocos.layer.Layer):
         super( HelloWorld, self ).__init__()
 
         # see pyglet documentation for help on this lines
-        self.text = pyglet.text.Label('Hello, World!', font_name='', font_size=32, x=100, y=240, batch=self.batch)
+        self.text = pyglet.text.Label('Hello, World!', font_name='', font_size=32, x=100, y=240 )
 
-        
+    def on_draw( self ):
+        self.text.draw()
 
 if __name__ == "__main__":
     # director init takes the same arguments as pyglet.window

@@ -1,9 +1,6 @@
 #
-# Los Cocos: Multi-Menu Example
+# Cocos
 # http://code.google.com/p/los-cocos/
-#
-# Particle Engine done by Phil Hassey
-# http://www.imitationpickles.org
 #
 
 import sys
@@ -31,7 +28,7 @@ class MainMenu(Menu):
 
     # Callbacks
     def on_new_game( self ):
-        self.switch_to( 1 )
+        self.parent.switch_to( 1 )
 
     def on_quit( self ):
         pyglet.app.exit()
@@ -50,7 +47,7 @@ class OptionMenu(Menu):
         pass
 
     def on_quit( self ):
-        self.switch_to( 0 )
+        self.parent.switch_to( 0 )
 
 if __name__ == "__main__":
     director.init( resizable=True)
