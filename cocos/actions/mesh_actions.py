@@ -55,7 +55,6 @@ __all__ = [ 'GridException',            # Mesh Exceptions
             
             'Shaky',                    # Trembling actions
             'Liquid','Waves',           # Liquid and Waves
-            'Lens',                     # Lens effect (magnifying)
             
             'Waves3D',                  # Waves in z-axis
             'FlipX3D',
@@ -689,11 +688,19 @@ class FlipY3D( Grid3DAction ):
 class Lens3D( Grid3DAction ):
     '''Lens simulates a Lens / Magnifying glass effect
 
-       scene.do( Lens3D(grid=(16,16), center=(320,240), radius=150, duration=10) )
+       scene.do( Lens3D(center=(320,240), radius=150, grid=(16,16), duration=10) )
     '''
 
-    def init(self, center=(-1,-1), radius=160, *args, **kw):
-
+    def init(self, center=(-1,-1), radius=160, lens_effect=0.7, *args, **kw):
+        '''
+        :Parameters:
+            `center` : (int,int)
+                Center of the lens. Default: (win_size_width /2, win_size_height /2 )
+            `radius` : int
+                Radius of the lens.
+            `lens_effect` : float
+                How strong is the lens effect. Default: 0.7. 0 is no effect at all, 1 is a very strong lens effect.
+        '''
         super(Lens3D,self).init( *args, **kw)
         
         x,y = director.get_window_size()
@@ -701,90 +708,41 @@ class Lens3D( Grid3DAction ):
             center=(x//2, y//2)
         self.center = Point2( center[0]+1, center[1]+1 )
         self.radius = radius
-        self.lens_effect = 0.7
+        self.lens_effect = lens_effect
+        
+        self._once = False
         
     def update( self, t ):
 
-        for i in range(0, self.grid.x+1):
-            for j in range(0, self.grid.y+1):
+        if not self._once:
+            for i in range(0, self.grid.x+1):
+                for j in range(0, self.grid.y+1):
+        
+                    x,y,z = self.get_vertex(i,j)
+                    
+                    p = Point2( x,y )
+                    vect = self.center - p
+                    r = abs(vect)
+                    
+                    if r < self.radius:
+        
+                        r = self.radius - r
+                        pre_log = r/self.radius
+                        if pre_log == 0:
+                            pre_log = 0.001
+                        l = math.log( pre_log )*self.lens_effect
+                        new_r = math.exp( l ) * self.radius
+        
+                        vect.normalize()
+                        new_vect = vect * new_r
 
-                x,y,z = self.get_vertex(i,j)
-                
-                p = Point2( x,y )
-                vect = self.center - p
-                r = abs(vect)
-                
-                if r < self.radius:
-
-                    r = self.radius - r
-                    pre_log = r/self.radius
-                    if pre_log == 0:
-                        pre_log = 0.001
-                    l = math.log( pre_log )*self.lens_effect
-                    r = math.exp( l ) * self.radius
-
-                    vect.normalize()
-                    new_vect = vect * r
-
-                    z += abs(new_vect) * 0.6
-                    self.set_vertex( i,j, (x,y,z) )
+                        z += abs(new_vect) * self.lens_effect    # magic vrbl        
+                        self.set_vertex( i,j, (x,y,z) )
+            self._once = True
 
     def __reversed__(self):
         # self
-        return Lends3D( radius=self.radius, center=self.center, grid=self.grid, duration=self.duration )
-    
-
-class Lens( GridAction ):
-    '''Lens simulates a Lens / Magnifying glass effect
-
-       scene.do( Lens(grid=(16,16), duration=10) )
-       
-       WARNING: This effect is not yet complete.
-       Help needed
-    '''
-
-    def start( self ):
-        super(Lens,self).start()
-        x,y = director.get_window_size()
-        self.center_x = x // 2
-        self.center_y = y // 2
-        self.radius = y // 4
-        self.lens_effect = 0.05
-
-        self.go_left = True
-
-
-    def update( self, t ):
-        center_point = Point2( self.center_x, self.center_y)
-
-        for i in range(0, self.grid.x+1):
-            for j in range(0, self.grid.y+1):
-
-                x = i* self.size_x
-                y = j* self.size_y
-                p = Point2( x,y )
-
-                vect = center_point - p
-                r = abs(vect)
-
-                if r < self.radius:
-
-                    pre_log = r/self.radius
-                    if pre_log == 0:
-                        pre_log = 0.001
-                    l = math.log( pre_log )*self.lens_effect
-                    r = math.exp( l ) * self.radius
-
-                    vect.normalize()
-                    new_vect = vect * r
-
-                    x -= new_vect.x
-                    y -= new_vect.y
-
-                self.set_vertex( i,j, (x,y) )
-
-    def __reversed__(self):
-        raise NotImplementedError('Reverse(Lens) not implemented yet!')
+        return Lens3D( lens_effect=self.lens_effect, radius=self.radius, center=self.center, grid=self.grid, duration=self.duration )
 
 class QuadMoveBy( GridAction ):
     '''QuadMoveBy moves each vertex of the quad

@@ -222,11 +222,16 @@ if __name__ == "__main__":
             MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
             )
 
+    lens = Lens3D( radius=240, center=(320,240), grid=(32,32), duration=5)
+    waves3d = Waves3D( grid=(16,16), duration=5)
+
 #    scene.do( ShuffleTiles( grid(16,16), duration=5) + Liquid( grid=(16,16), duration=500) )
     scene.do(
+              Delay(3) + 
               Liquid( grid=(16,16), duration=8) +             
               ShuffleTiles( grid=(16,16), duration=5) + 
               ShakyTiles( grid=(16,16), duration=5)
               )
+
 
     director.run( scene )

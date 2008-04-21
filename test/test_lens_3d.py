@@ -69,7 +69,9 @@ if __name__ == "__main__":
     tl1 = TestLayer()
     main_scene.add( tl1, z=33 )
 
-    e = Lens3D( radius=240, grid=(32,32), duration=100 )
+
+    # important:  maintain the aspect ratio in the grid
+    e = Lens3D( lens_effect=0.9, radius=240, grid=(64,48), duration=100 )
     main_scene.do( e )
 
     director.run (main_scene)
