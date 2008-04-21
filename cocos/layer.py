@@ -109,17 +109,25 @@ class QuadNode(cocosnode.CocosNode):
         super(QuadNode, self).__init__()
 
         self.batch = pyglet.graphics.Batch()
+        self.color = color
         
+    def on_enter(self):
+        super(QuadNode, self).on_exit()
         x, y = director.get_window_size()
         
-        vertex_list = self.batch.add(4, pyglet.gl.GL_QUADS, None,
+        self.vertex_list = self.batch.add(4, pyglet.gl.GL_QUADS, None,
             ('v2i', (0, 0, 0, y, x, y, x, 0)),
-            ('c4B', color*4)
+            ('c4B', self.color*4)
         )
-
-
+    
+    def on_exit(self):
+        super(QuadNode, self).on_exit()
+        self.vertex_list.delete()
+        
     def on_draw(self):
         self.batch.draw()
+        
+    
 
 class ColorLayer(Layer):
     """Creates a layer of a certain color.
