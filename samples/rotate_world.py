@@ -18,29 +18,21 @@ class TestLayer(cocos.layer.Layer):
         
         x,y = director.get_window_size()
         
-        image = pyglet.resource.image('grossini.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        sprite1 = ActionSprite( image )
+        sprite1 = ActionSprite( 'grossini.png' )
+        sprite2 = ActionSprite( 'grossinis_sister1.png' )
+        sprite3 = ActionSprite( 'grossinis_sister2.png' )
 
-        image = pyglet.resource.image('grossinis_sister1.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        sprite2 = ActionSprite( image )
+        sprite1.position = (x/4, y/2 )
+        sprite2.position = (x/2, y/2 )
+        sprite3.position = (x/4/(3.0), y/2 )
 
-        image = pyglet.resource.image('grossinis_sister2.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        sprite3 = ActionSprite( image )
+        self.add( sprite2 )
+        self.add( sprite1 )
+        self.add( sprite3 )
 
-
-        self.add( sprite2, (x/4, y/2) )
-        self.add( sprite1, (x/2, y/2) )
-        self.add( sprite3, (x/(4/3.0), y/2) )
-
-        sprite1.do( Rotate( 360,1 ) * 10 )
-        sprite2.do( Rotate( -360,1 ) * 10 )
-        sprite3.do( Rotate( -360,1 ) * 10 )
+        sprite1.do( Rotate( 360,1 ) * 16 )
+        sprite2.do( Rotate( -360,1 ) * 16 )
+        sprite3.do( Rotate( -360,1 ) * 16 )
 
 if __name__ == "__main__":
     director.init( resizable=True )
@@ -48,20 +40,24 @@ if __name__ == "__main__":
     child1_scene = cocos.scene.Scene()
     child2_scene = cocos.scene.Scene()
 
-    red = ColorLayer(1.0, 0.0, 0.0, 1.0)
-    blue = ColorLayer(0.0, 0.0, 1.0, 1.0)
+    red = ColorLayer(255,0,0,255)
+    blue = ColorLayer(0,0,255,255)
 
     tl1 = TestLayer()
     tl2 = TestLayer()
 
     child1_scene.add( red )
     child1_scene.add( tl1 )
+    child1_scene.scale = 0.5
+    child1_scene.position = (-160,-120)
 
     child2_scene.add( blue )
     child2_scene.add( tl2 )
+    child2_scene.scale = 0.5
+    child2_scene.position = (160,120)
 
-    main_scene.add( child1_scene, scale=0.5, position=(-160,-120) )
-    main_scene.add( child2_scene, scale=0.5, position=(160,120) )
+    main_scene.add( child1_scene )
+    main_scene.add( child2_scene )
 
     red.do( Rotate(-360,2) *5 )
     blue.do( Rotate(-360,2) *5 )

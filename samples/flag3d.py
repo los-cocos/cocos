@@ -53,11 +53,13 @@ class Flag3D( cocos.layer.Layer ):
 
 
     def on_enter(self):
+        super(Flag3D,self).on_enter()
+
         # the layer is on "stage"
         self.elapsed = 0
 
         # call the "step" method every frame
-        self.enable_step()
+        self.schedule(self.step)
 
 
     def on_resize( self, width, height ):
@@ -74,7 +76,9 @@ class Flag3D( cocos.layer.Layer ):
         glDepthFunc(GL_LEQUAL)
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
 
-    def draw( self ):
+    def on_draw( self ):
+        super(Flag3D,self).on_draw()
+
         glLoadIdentity()
 
         # center the image

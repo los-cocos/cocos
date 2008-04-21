@@ -18,25 +18,17 @@ class TestLayer(cocos.layer.Layer):
         
         x,y = director.get_window_size()
         
-        image = pyglet.resource.image('grossini.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        sprite1 = ActionSprite( image )
+        sprite1 = ActionSprite( 'grossini.png' )
+        sprite2 = ActionSprite( 'grossinis_sister1.png' )
+        sprite3 = ActionSprite( 'grossinis_sister2.png' )
 
-        image = pyglet.resource.image('grossinis_sister1.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        sprite2 = ActionSprite( image )
+        sprite1.position = (x/4, y/2 )
+        sprite2.position = (x/2, y/2 )
+        sprite3.position = (x/4/(3.0), y/2 )
 
-        image = pyglet.resource.image('grossinis_sister2.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        sprite3 = ActionSprite( image )
-
-
-        self.add( sprite2, (x/4, y/2) )
-        self.add( sprite1, (x/2, y/2) )
-        self.add( sprite3, (x/(4/3.0), y/2) )
+        self.add( sprite2 )
+        self.add( sprite1 )
+        self.add( sprite3 )
 
         sprite1.do( Rotate( 360,1 ) * 16 )
         sprite2.do( Rotate( -360,1 ) * 16 )
@@ -50,22 +42,30 @@ if __name__ == "__main__":
     child3_scene = cocos.scene.Scene()
     child4_scene = cocos.scene.Scene()
 
-    child1_scene.add( ColorLayer( 0.0, 0.0, 1.0, 1.0 ) )
+    child1_scene.add( ColorLayer( 0,0,255,255 ) )
     child1_scene.add( TestLayer() )
+    child1_scene.scale = 1.5
+    child1_scene.position = (-160,-120)
 
-    child2_scene.add( ColorLayer( 0.0, 1.0, 0.0, 1.0 ) )
+    child2_scene.add( ColorLayer( 0,255,0,255) )
     child2_scene.add( TestLayer() )
+    child2_scene.scale = 1.5
+    child2_scene.position = (160,120)
 
-    child3_scene.add( ColorLayer( 1.0,0.0, 0.0, 1.0 ) )
+    child3_scene.add( ColorLayer( 255,0,0,255) )
     child3_scene.add( TestLayer() )
+    child3_scene.scale = 1.5
+    child3_scene.position = (-160,120)
 
-    child4_scene.add( ColorLayer( 1.0,1.0, 1.0, 1.0 ) )
+    child4_scene.add( ColorLayer( 255,255,255,255) )
     child4_scene.add( TestLayer() )
+    child3_scene.scale = 1.5
+    child3_scene.position = (160,-120)
 
-    main_scene.add( child1_scene, scale=1.5, position=(-160,-120) )
-    main_scene.add( child2_scene, scale=1.5, position=(160,120) )
-    main_scene.add( child3_scene, scale=1.5, position=(-160,120) )
-    main_scene.add( child4_scene, scale=1.5, position=(160,-120) )
+    main_scene.add( child1_scene )
+    main_scene.add( child2_scene )
+    main_scene.add( child3_scene )
+    main_scene.add( child4_scene )
 
     rot = Rotate(-360,2)
     sleep = Delay(2)

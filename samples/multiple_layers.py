@@ -21,7 +21,9 @@ class Square(cocos.layer.Layer):
         self.size = size
         self.layer_color = color
                 
-    def draw(self):
+    def on_draw(self):
+        super(Square,self).on_draw()
+
         gl.glColor4f(*self.layer_color)
         x, y = self.x, self.y
         w = x+self.size; h=y+self.size
