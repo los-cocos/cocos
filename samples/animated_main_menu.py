@@ -46,7 +46,7 @@ class FireManager( Layer ):
             self.vertex_list.vertices[n*8:(n+1)*8] = [0, 0, 0, 0, 0, 0, 0, 0]
             self.vertex_list.colors[n*16:(n+1)*16] = [0,0,0,0,] * 4
 
-        self.enable_step()
+        self.schedule( self.step )
 
     def step(self,dt):
         w,h = self.fimg.width,self.fimg.height
@@ -70,7 +70,9 @@ class FireManager( Layer ):
             x-=ww/2
             verts[n*8:(n+1)*8] = map(int,[x,y,x+ww,y,x+ww,y+hh,x,y+hh])
             clrs[n*16:(n+1)*16] = [r,g,b,255] * 4
-    
+
+    def on_draw( self ):
+        self.batch.draw()
   
     
 
@@ -79,29 +81,21 @@ class SpriteLayer ( Layer ):
     def __init__( self ):
         super( SpriteLayer, self ).__init__()
 
-        self.image = pyglet.resource.image('grossini.png')
-        self.image.anchor_x = self.image.width / 2
-        self.image.anchor_y = self.image.height / 2
+        sprite1 = ActionSprite('grossini.png' )
+        sprite2 = ActionSprite('grossinis_sister1.png')
+        sprite3 = ActionSprite('grossinis_sister2.png')
 
-        self.image_sister1 = pyglet.resource.image('grossinis_sister1.png')
-        self.image_sister1.anchor_x = self.image_sister1.width / 2
-        self.image_sister1.anchor_y = self.image_sister1.height / 2
+        sprite1.position = (320,240)
+        sprite2.position = (620,100)
+        sprite3.position = (20,100)
 
-        self.image_sister2 = pyglet.resource.image('grossinis_sister2.png')
-        self.image_sister2.anchor_x = self.image_sister2.width / 2
-        self.image_sister2.anchor_y = self.image_sister2.height / 2
-
-        sprite1 = ActionSprite( self.image )
-        sprite2 = ActionSprite( self.image_sister1 )
-        sprite3 = ActionSprite( self.image_sister2 )
+        self.add( sprite1 )
+        self.add( sprite2 )
+        self.add( sprite3 )
 
         ju_right = Jump( y=100, x=600, jumps=4, duration=5 )
         ju_left = Jump( y=100, x=-600, jumps=4, duration=5 )
         rot1 = Rotate( 180 * 4, duration=5)
-
-        self.add( sprite1, (320,240) )
-        self.add( sprite2, (620,100) )
-        self.add( sprite3, (20,100) )
 
         sprite1.opacity = 128
 
@@ -219,19 +213,21 @@ if __name__ == "__main__":
     scene =Scene( 
             FireManager(director.get_window_size()[0], 250),
             SpriteLayer(),
-            MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
+#            MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
             )
 
     lens = Lens3D( radius=240, center=(320,240), grid=(32,32), duration=5)
     waves3d = Waves3D( grid=(16,16), duration=5)
+    flipx =  FlipX3D(duration=1)
+    flipy = FlipY3D(duration=1)
 
 #    scene.do( ShuffleTiles( grid(16,16), duration=5) + Liquid( grid=(16,16), duration=500) )
     scene.do(
-              Delay(3) + 
-              Liquid( grid=(16,16), duration=8) +             
+              Delay(3) +
+              lens +
+              Liquid( grid=(16,10), duration=8) +
               ShuffleTiles( grid=(16,16), duration=5) + 
               ShakyTiles( grid=(16,16), duration=5)
               )
-
 
     director.run( scene )

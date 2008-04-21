@@ -16,7 +16,7 @@ import copy
 __all__ = [ 
             'Action',                           # Base Class
             'IntervalAction', 'InstantAction',  # Important Base classes 
-            'Sequence','Spawn','Repeat',        # Basic behaviours
+            'Sequence','Spawn','Repeat',        # Basic behaviors
             'Reverse', "Delay"
             ]
 
@@ -39,14 +39,14 @@ class Action(object):
     def start(self):
         """
         Before we start executing an action, self.target is assigned and this method is called.
-        it will be called for every excecution of the action.
+        it will be called for every execution of the action.
         """
         pass
 
     def stop(self):
         """
         After we finish executing an action this method is called.
-        it will be called for every excecution of the action.
+        it will be called for every execution of the action.
         """
         pass
         
@@ -120,7 +120,7 @@ class IntervalAction( Action ):
         return self._elapsed >= self.duration
 
 def Reverse( action ):
-    """Reverses the behaviour of the action
+    """Reverses the behavior of the action
 
     Example::
         # rotates the sprite 180 degrees in 2 seconds counter clockwise
@@ -233,7 +233,7 @@ class Sequence(IntervalAction):
         return Sequence( Reverse(self.two), Reverse(self.one) )
 
 class Delay(IntervalAction):
-    """Delays the action a certain ammount of seconds
+    """Delays the action a certain amount of seconds
 
    Example::
 

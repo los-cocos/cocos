@@ -93,12 +93,8 @@ class GridBaseAction( IntervalAction ):
         self.size_x = x // self.grid.x
         self.size_y = y // self.grid.y
         
-
-    def done( self ):
-        r = super(GridBaseAction,self).done()
-        if r:
-            self.target.mesh.active = False
-        return r
+    def stop( self ):
+        self.target.mesh.active = False
 
     def set_vertex( self, x, y, v):
         raise NotImplementedError("abstract")
