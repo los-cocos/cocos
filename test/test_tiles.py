@@ -33,10 +33,7 @@ if __name__ == "__main__":
     director.init(width=600, height=300)
 
     car_layer = tiles.ScrollableLayer()
-    car = pyglet.image.load('car.png')
-    car.anchor_x = car.width//2
-    car.anchor_y = car.height//2
-    car = CarSprite(car)
+    car = CarSprite('car.png')
     pyglet.clock.schedule(car.update)
     car_layer.add(car)
 

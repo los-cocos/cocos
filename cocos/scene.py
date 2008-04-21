@@ -12,7 +12,6 @@ __all__ = ['Scene']
 
 from pyglet.gl import *
 
-from interfaces import *
 from director import director
 import layer
 import cocosnode

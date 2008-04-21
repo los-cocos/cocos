@@ -213,7 +213,7 @@ if __name__ == "__main__":
     scene =Scene( 
             FireManager(director.get_window_size()[0], 250),
             SpriteLayer(),
-#            MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
+            MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
             )
 
     lens = Lens3D( radius=240, center=(320,240), grid=(32,32), duration=5)

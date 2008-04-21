@@ -24,10 +24,10 @@ class MainMenu(Menu):
         self.menu_halign = CENTER
 
         # then add the items
-        self.add_item( MenuItem('Item 1', self.on_quit ) )
-        self.add_item( MenuItem('Item 2', self.on_quit ) )
-        self.add_item( MenuItem('Item 3', self.on_quit ) )
-        self.add_item( MenuItem('Item 4', self.on_quit ) )
+        self.add( MenuItem('Item 1', self.on_quit ) )
+        self.add( MenuItem('Item 2', self.on_quit ) )
+        self.add( MenuItem('Item 3', self.on_quit ) )
+        self.add( MenuItem('Item 4', self.on_quit ) )
 
         # after adding all the items just call build_items()
         self.build_items()

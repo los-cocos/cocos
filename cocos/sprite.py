@@ -22,7 +22,6 @@ And now tell the sprite to execute it::
 
 __docformat__ = 'restructuredtext'
 
-import interfaces
 import rect
 from director import director
 import cocosnode

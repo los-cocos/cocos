@@ -21,10 +21,11 @@ if __name__ == "__main__":
     director.show_FPS = True
     main_scene = cocos.scene.Scene()
 
-    for i in range(16):
-        l = ColorLayer(random.random(), random.random(), random.random(), 1.0)
-        scale = (16-i)/16.0
-        main_scene.add( l, z=i, scale=scale )
+    rr = random.randrange
+    for i in range(32):
+        l = ColorLayer(rr(0,255),rr(0,255), rr(0,255),255)
+        l.scale = (32-i)/32.0
+        main_scene.add( l, z=i )
 
     e = FadeOutTiles( grid=(16,16), duration=2 )
     main_scene.do( e )

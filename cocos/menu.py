@@ -35,7 +35,7 @@ from pyglet.gl import *
 
 from layer import *
 from director import *
-from interfaces import *
+from cocosnode import *
 from actions import *
 
 __all__ = [ 'Menu', 'MenuItem', 'ToggleMenuItem', 
@@ -75,7 +75,6 @@ class Menu(Layer):
         #
         # Items and Title
         #
-        self.items = []
         self.title = title
         self.title_text = None
 
@@ -135,7 +134,6 @@ class Menu(Layer):
         self.font_title['x'] = width // 2
         self.font_title['y'] = height - ( title_height //2 )
         self.font_title['text'] = self.title
-        self.font_title['batch'] = self.batch
         self.text = pyglet.text.Label( **self.font_title )
 
         fo = font.load( self.font_title['font_name'], self.font_title['font_size'] )
@@ -157,14 +155,16 @@ class Menu(Layer):
         else:
             raise Exception("Invalid halign value for menu")
 
-        for idx,item in enumerate( self.items ):
+        for idx,i in enumerate( self.children):
+
+            item = i[1]
 
             if self.menu_valign == CENTER:
-                pos_y = height / 2 + (fo_height * len(self.items) )/2 - (idx * fo_height ) - self.title_height
+                pos_y = height / 2 + (fo_height * len(self.children) )/2 - (idx * fo_height ) - self.title_height
             elif self.menu_valign == TOP:
                 pos_y = height - (idx * fo_height ) - self.title_height
             elif self.menu_valign == BOTTOM:
-                pos_y = 0 + fo_height * len(self.items) - (idx * fo_height )
+                pos_y = 0 + fo_height * len(self.children) - (idx * fo_height )
 
             self.font_item['x'] = pos_x
             self.font_item['y'] = pos_y
@@ -176,7 +176,7 @@ class Menu(Layer):
             self.font_item_selected['text'] = item.label
             item._init_font_sel( **self.font_item_selected )
 
-    def add_item( self, item ):
+    def add( self, item, *args, **kw ):
         """Adds an item to the menu.
 
         The order of the list important since the
@@ -188,11 +188,11 @@ class Menu(Layer):
         """
         item.halign = self.menu_halign
         item.valign = self.menu_valign
-        self.items.append( item )
+        super(Menu,self).add( item, *args, **kw )
 
-    def draw( self ):
-        for i in self.items:
-            i.draw()
+    def on_draw( self ):
+        super( Menu, self).on_draw()
+        self.text.draw()
 
     def build_items( self ):
         """Initializes all the menu items
@@ -208,7 +208,7 @@ class Menu(Layer):
         self._draw_title()
         self._draw_items()
         self.selected_index = 0
-        self.items[ self.selected_index ].is_selected = True
+        self.children[ self.selected_index ][1].is_selected = True
 
 
     #
@@ -229,46 +229,47 @@ class Menu(Layer):
         else:
             if self.selectSound:
                 self.selectSound.play()
-            ret = self.items[self.selected_index].on_key_press(symbol, modifiers)
+            ret = self.children[self.selected_index][1].on_key_press(symbol, modifiers)
 
         if self.selected_index< 0:
-            self.selected_index= len( self.items ) -1
-        elif self.selected_index > len( self.items ) - 1:
+            self.selected_index= len( self.children) -1
+        elif self.selected_index > len( self.children) - 1:
             self.selected_index = 0
 
         if symbol in (key.DOWN, key.UP):
             if self.optionSound: self.optionSound.play()
-            self.items[ old_idx ].is_selected = False
-            self.items[ self.selected_index ].is_selected = True 
-            self.items[ self.selected_index ].selected()
+            self.children[ old_idx ][1].is_selected = False
+            self.children[ self.selected_index ][1].is_selected = True 
+            self.children[ self.selected_index ][1].selected()
             return True
 
         return ret
 
     def on_mouse_release( self, x, y, buttons, modifiers ):
         (x,y) = director.get_virtual_coordinates(x,y)
-        if self.items[ self.selected_index ].is_inside_box(x,y):
+        if self.children[ self.selected_index ][1].is_inside_box(x,y):
             if self.selectSound:
                 self.selectSound.play()
-            return self.items[ self.selected_index ].on_key_press( key.ENTER, 0 )   # XXX: hack
+            return self.children[ self.selected_index ][1].on_key_press( key.ENTER, 0 )   # XXX: hack
 
     def on_mouse_motion( self, x, y, dx, dy ):
         (x,y) = director.get_virtual_coordinates(x,y)
         self._x = x
         self._y = y
-        for idx,i in enumerate( self.items ):
-            if i.is_inside_box( x, y):
-                if not i.is_selected: #Hack to play sound only once
+        for idx,i in enumerate( self.children):
+            item = i[1]
+            if item.is_inside_box( x, y):
+                if not item.is_selected: #Hack to play sound only once
                     if self.optionSound: self.optionSound.play()
-                self.items[ self.selected_index ].is_selected = False
-                i.is_selected = True
+                self.children[ self.selected_index ][1].is_selected = False
+                item.is_selected = True
                 self.selected_index = idx
-                i.selected()
+                item.selected()
 
 #
 # MenuItem
 #
-class MenuItem( IActionTarget, IContainer ):
+class MenuItem( CocosNode ):
     """A menu item triggering a function."""
 
     def __init__(self, label, activate_func):
@@ -298,6 +299,7 @@ class MenuItem( IActionTarget, IContainer ):
         # default effect when item is selected
         angle = 5
         duration = 0.05
+
         rot = Accelerate(Rotate( angle, duration ), 2)
         rot2 = Accelerate(Rotate( -angle*2, duration), 2)
         self.effect = rot + (rot2 + Reverse(rot2)) * 2 + Reverse(rot)
@@ -335,15 +337,16 @@ class MenuItem( IActionTarget, IContainer ):
         y2 = y1 + height
         return (x1,y1,x2,y2)
 
-    def draw( self ):
-        glPushMatrix()
-        self.transform()
+    def on_draw( self ):
+        super( MenuItem, self).on_draw()
+#        glPushMatrix()
+#        self.transform()
 
         if self.is_selected:
             self.text_selected.draw()
         else:
             self.text.draw()
-        glPopMatrix()
+#        glPopMatrix()
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ENTER and self.activate_func:
@@ -371,7 +374,6 @@ class MenuItem( IActionTarget, IContainer ):
 
     def selected( self ):
         if not self.actions_running():
-            
             self.do( self.effect )
 
 #
