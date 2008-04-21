@@ -10,9 +10,8 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from pyglet import image
+import pyglet
 from pyglet.gl import *
-from pyglet import font
 
 from cocos.director import *
 from cocos.menu import *
@@ -35,7 +34,7 @@ class FireManager( Layer ):
         self.view_width = view_width
         self.goodies = []
         self.batch = pyglet.graphics.Batch()
-        self.fimg = pyglet.image.load('fire.jpg')
+        self.fimg = pyglet.resource.image('fire.jpg')
         self.group = pyglet.sprite.SpriteGroup(self.fimg.texture,
             blend_src=GL_SRC_ALPHA, blend_dest=GL_ONE)
         self.vertex_list = self.batch.add(4*num, GL_QUADS, self.group,
@@ -73,8 +72,7 @@ class FireManager( Layer ):
 
     def on_draw( self ):
         self.batch.draw()
-  
-    
+
 
 class SpriteLayer ( Layer ):
 
@@ -116,7 +114,7 @@ class MainMenu(Menu):
         # call superclass with the title
         super( MainMenu, self ).__init__("GROSSINI'S SISTERS" )
 
-        font.add_directory('.')
+        pyglet.font.add_directory('.')
 
         # you can override the font that will be used for the title and the items
         self.font_title['font_name'] = 'You Are Loved'
@@ -132,10 +130,10 @@ class MainMenu(Menu):
         self.menu_valign = CENTER
         self.menu_halign = CENTER
 
-        self.add_item( MenuItem('New Game', self.on_new_game ) )
-        self.add_item( MenuItem('Options', self.on_options ) )
-        self.add_item( MenuItem('Scores', self.on_scores ) )
-        self.add_item( MenuItem('Quit', self.on_quit ) )
+        self.add( MenuItem('New Game', self.on_new_game ) )
+        self.add( MenuItem('Options', self.on_options ) )
+        self.add( MenuItem('Scores', self.on_scores ) )
+        self.add( MenuItem('Quit', self.on_quit ) )
 
         # after adding all the items just call build_items()
         self.build_items()
@@ -154,8 +152,7 @@ class MainMenu(Menu):
         self.switch_to( 1 )
 
     def on_quit( self ):
-        print "on_quit()"
-        sys.exit()
+        pyglet.app.exit()
 
 
 class OptionMenu(Menu):
@@ -171,17 +168,14 @@ class OptionMenu(Menu):
         self.menu_valign = BOTTOM
         self.menu_halign = RIGHT
 
-        self.add_item( MenuItem('Fullscreen', self.on_fullscreen) )
-        self.add_item( ToggleMenuItem('Show FPS', True, self.on_show_fps) )
-        self.add_item( MenuItem('OK', self.on_quit) )
+        self.add( MenuItem('Fullscreen', self.on_fullscreen) )
+        self.add( ToggleMenuItem('Show FPS', True, self.on_show_fps) )
+        self.add( MenuItem('OK', self.on_quit) )
         self.build_items()
-
-        self.fullscreen = False
 
     # Callbacks
     def on_fullscreen( self ):
-        self.fullscreen = not self.fullscreen
-        director.window.set_fullscreen( self.fullscreen )
+        director.window.set_fullscreen( not director.window.fullscreen )
 
     def on_quit( self ):
         self.switch_to( 0 )
@@ -201,7 +195,7 @@ class ScoreMenu(Menu):
         self.menu_valign = BOTTOM
         self.menu_halign = LEFT
 
-        self.add_item( MenuItem('Go Back', self.on_quit) )
+        self.add( MenuItem('Go Back', self.on_quit) )
         self.build_items()
 
     def on_quit( self ):
@@ -216,8 +210,8 @@ if __name__ == "__main__":
             MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
             )
 
-    lens = Lens3D( radius=240, center=(320,240), grid=(32,32), duration=5)
-    waves3d = Waves3D( grid=(16,16), duration=5)
+    lens = Lens3D( radius=240, center=(320,240), grid=(32,24), duration=7)
+    waves3d = Waves3D( grid=(16,12), duration=5)
     flipx =  FlipX3D(duration=1)
     flipy = FlipY3D(duration=1)
 
@@ -225,9 +219,10 @@ if __name__ == "__main__":
     scene.do(
               Delay(3) +
               lens +
-              Liquid( grid=(16,10), duration=8) +
-              ShuffleTiles( grid=(16,16), duration=5) + 
-              ShakyTiles( grid=(16,16), duration=5)
+#              waves3d + 
+              Liquid( grid=(16,12), duration=8) +
+              ShuffleTiles( grid=(16,12), duration=5) + 
+              ShakyTiles( grid=(16,12), duration=5)
               )
 
     director.run( scene )

@@ -24,7 +24,7 @@ import cocosnode
 import scene
 import bisect
 
-__all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer', 'DontPushHandlers' ]
+__all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer'  ]
 
 class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
     """Class that handles events and other important game's behaviors"""
@@ -85,6 +85,8 @@ class MultiplexLayer( Layer ):
         for l in self.layers:
             l.switch_to = self.switch_to
 
+        self.add( self.layers[ self.enabled_layer ] )
+
     def switch_to( self, layer_number ):
         """Switches to another Layer that belongs to the Multiplexor.
 
@@ -98,33 +100,12 @@ class MultiplexLayer( Layer ):
             raise Exception("Multiplexlayer: Invalid layer number")
 
         # remove
-        layer = self.layers[ self.enabled_layer ]
-        director.window.remove_handlers(layer)
-        layer.on_exit()
+        self.remove( self.layers[ self.enabled_layer ] )
 
         self.enabled_layer = layer_number
-        director.window.push_handlers( self.layers[ self.enabled_layer ] )
-        self.layers[ self.enabled_layer ].on_enter()
-
-    def on_enter( self ):
-        layer = self.layers[ self.enabled_layer ]
-        director.window.push_handlers( layer )
-        layer.on_enter()
-
-    def on_exit( self ):
-        layer = self.layers[ self.enabled_layer ]
-        director.window.remove_handlers( layer )
-        layer.on_exit()
-
-    def draw( self ):
-        self.layers[ self.enabled_layer ].on_draw()
+        self.add( self.layers[ self.enabled_layer ] )
 
 
-class DontPushHandlers( object ):
-    def __init__( self ):
-        super(DontPushHandlers,self).__init__()
-        self.dont_push_handlers = True
-    
 
 class QuadNode(cocosnode.CocosNode):
     def __init__(self, color):

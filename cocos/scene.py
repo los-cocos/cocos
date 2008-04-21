@@ -25,7 +25,7 @@ class EventHandlerMixin(object):
         
         if (    scene._handlers_enabled and 
                 scene.is_running and 
-                isinstance(child, layer) 
+                isinstance(child, layer.Layer) 
                 ):
             child.push_handlers()
             
@@ -38,7 +38,7 @@ class EventHandlerMixin(object):
         
         if (    scene._handlers_enabled and 
                 scene.is_running and 
-                isinstance(child, layer) 
+                isinstance(child, layer.Layer) 
                 ):
             child.remove_handlers()
             
