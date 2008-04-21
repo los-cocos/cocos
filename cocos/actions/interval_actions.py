@@ -527,25 +527,6 @@ class Jump(IntervalAction):
     def __reversed__(self):
         return Jump(self.y, -self.x, self.jumps, self.duration)
 
-class Delay(IntervalAction):
-    """Delays the action a certain ammount of seconds
-
-   Example::
-
-        action = Delay(2.5)
-        sprite.do( action )
-    """
-    def init(self, delay):
-        """Init method
-
-        :Parameters:
-            `delay` : float
-                Seconds of delay
-        """
-        self.duration = delay
-
-    def __reversed__(self):
-        return self
 
 
 class RandomDelay(Delay):

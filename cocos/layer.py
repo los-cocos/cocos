@@ -20,95 +20,52 @@ import pyglet
 from pyglet.gl import *
 
 from director import *
-from interfaces import *
-
+import cocosnode
+import scene
 import bisect
 
 __all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer', 'DontPushHandlers' ]
 
-#class Layer(object):
-class Layer(IContainer, IActionTarget):
+class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
     """Class that handles events and other important game's behaviors"""
 
-    effects = ()
-
+    is_event_handler = False #! if true, the event handlers of this layer will be registered. defaults to false.
+    
     def __init__( self ):
-
         super( Layer, self ).__init__()
-
-        self.batch = pyglet.graphics.Batch()
         self.scheduled_layer = False
-
-
-    def set_effect (self, e):
-        """
-        Apply effect e to this layer. if e is None, current effect (if any)
-        is removed
-
-        :Parameters:
-            `e` : `Effect` instance
-                The effect that will be applied to the layer
-        """
-        if e is None:
-            del self.effects
-        else:
-            self.effects = (e,)
-
-    def _prepare( self ):
-        """Prepares the layer fo the effects"""
-        if self.effects:
-            for e in self.effects:
-                e.prepare (self)
-
-    def on_draw( self ):
-        """Draws every object that is in the batch.
-        It then calls ``self.draw()``. Subclassess shall override ``self.draw``
-        to draw custom objects."""
-
-        if self.effects:
-            for e in self.effects:
-                e.show ()
-        else:
-
-            glPushMatrix()
-            self.transform()
-
-            self.batch.draw()
-            self.draw()
-
-            for z,c in self.children:
-                if hasattr(c,"on_draw"):
-                    c.on_draw()
-
-            glPopMatrix()
-
-    def draw( self ):        
-        """Subclasses shall override this method if they want to draw custom objects"""
-        pass           
-
-
-    def step( self, dt ):
-        """Called every frame when it is active.
-        By default ``step`` is disabled.
-        See `enable_step` and `disable_step`
+    
+    def push_handlers(self):
+        if self.is_event_handler:
+            director.window.push_handlers( self )
+        for child in self.get_children():
+            if isinstance(child, Layer):
+                child.push_handlers()
+                
+    def remove_handlers(self):
+        if self.is_event_handler:
+            director.window.remove_handlers( self )
+        for child in self.get_children():
+            if isinstance(child, Layer):
+                child.remove_handlers()
+           
+    def on_enter(self):
+        super(Layer, self).on_enter()
         
-        :Parameters:
-            `dt` : float
-                Time that elapsed since the last time ``step`` was called.
-        """
-        pass
-
-    # helper functions
-    def disable_step( self ):
-        """Disables the step callback"""
-        self.scheduled_layer = False
-        pyglet.clock.unschedule( self.step )
-
-    def enable_step( self ):
-        """Enables the step callback. It calls the `step()` method every frame"""
-        if not self.scheduled_layer:
-            self.scheduled_layer = True 
-            pyglet.clock.schedule( self.step )
+        scn = self.get(scene.Scene)
+        if not scene: return
+        
+        if scn._handlers_enabled:
+            director.window.push_handlers( self )
+        
+    def on_exit(self):
+        super(Layer, self).on_exit()
+        
+        scn = self.get(scene.Scene)
+        if not scene: return
+        
+        if scn._handlers_enabled:
+            director.window.remove_handlers( self )
 
 #
 # MultiplexLayer
@@ -118,6 +75,7 @@ class MultiplexLayer( Layer ):
      This is useful, for example, when you have 3 or 4 menus, but you want to
      show one at the time"""
 
+    
     def __init__( self, *layers ):
         super( MultiplexLayer, self ).__init__()
 
@@ -168,25 +126,33 @@ class DontPushHandlers( object ):
         self.dont_push_handlers = True
     
 
+class QuadNode(cocosnode.CocosNode):
+    def __init__(self, color):
+        super(QuadNode, self).__init__()
+
+        self.batch = pyglet.graphics.Batch()
+        
+        x, y = director.get_window_size()
+        
+        vertex_list = self.batch.add(4, pyglet.gl.GL_QUADS, None,
+            ('v2i', (0, 0, 0, y, x, y, x, 0)),
+            ('c4B', color*4)
+        )
+
+
+    def on_draw(self):
+        self.batch.draw()
+
 class ColorLayer(Layer):
     """Creates a layer of a certain color.
     The color shall be specified in the format (r,g,b,a).
     
     For example, to create green layer::
     
-        l = ColorLayer( (0.0, 1.0, 0.0, 1.0 ) )
+        l = ColorLayer(0, 255, 0, 0 )
     """
     def __init__(self, *color):
-        self.layer_color = color
         super(ColorLayer, self).__init__()
-
-    def draw(self):
-        glColor4f(*self.layer_color)
-        x, y = director.get_window_size()
-        glBegin(GL_QUADS)
-        glVertex2f( 0, 0 )
-        glVertex2f( 0, y )
-        glVertex2f( x, y )
-        glVertex2f( x, 0 )
-        glEnd()
-        glColor4f(1,1,1,1)    
+        self.add( QuadNode(color) )
+        
+        

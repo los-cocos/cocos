@@ -10,10 +10,14 @@ from cocos.director import director
 from cocos.sprite import ActionSprite
 import pyglet
         
-        
+class PrintKey(cocos.layer.Layer):
+    is_event_handler = True
+    def on_key_press (self, key, modifiers):
+        print "Key Pressed:", key, modifiers
 
 if __name__ == "__main__":
     director.init()
-    test_layer = cocos.layer.ColorLayer(255,0,0,255)
-    main_scene = cocos.scene.Scene (test_layer)
+    bg_layer = cocos.layer.ColorLayer(255,0,0,255)
+    test_layer = PrintKey()
+    main_scene = cocos.scene.Scene (bg_layer, test_layer)
     director.run (main_scene)

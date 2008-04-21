@@ -17,15 +17,18 @@ __all__ = [
             'Action',                           # Base Class
             'IntervalAction', 'InstantAction',  # Important Base classes 
             'Sequence','Spawn','Repeat',        # Basic behaviours
-            'Reverse',
+            'Reverse', "Delay"
             ]
+
+
+
 
 
 class Action(object):
     def __init__(self, *args, **kwargs):
         self.init(*args, **kwargs)
         self.target = None
-        self.elapsed = None
+        self._elapsed = None
 
     def init(self):
         """
@@ -40,6 +43,13 @@ class Action(object):
         """
         pass
 
+    def stop(self):
+        """
+        After we finish executing an action this method is called.
+        it will be called for every excecution of the action.
+        """
+        pass
+        
     def step(self, dt):
         """
         Gets called every frame. `dt` is the number of seconds that elapsed
@@ -48,16 +58,17 @@ class Action(object):
 
         This function will only be called by the layer. Not other sprites.
         """
-        if self.elapsed is None:
-            self.elapsed = 0
+        if self._elapsed is None:
+            self._elapsed = 0
 
 
-        self.elapsed += dt
+        self._elapsed += dt
 
         if self.duration:
-            self.update( min(1, self.elapsed/self.duration ) )
+            self.update( min(1, self._elapsed/self.duration ) )
         else:
             self.update( 1 )
+            self.stop()
 
 
     def __add__(self, action):
@@ -106,7 +117,7 @@ class IntervalAction( Action ):
 
 
     def done(self):
-        return self.elapsed >= self.duration
+        return self._elapsed >= self.duration
 
 def Reverse( action ):
     """Reverses the behaviour of the action
@@ -160,18 +171,22 @@ class Sequence(IntervalAction):
                 List of actions to be sequenced
         """
 
-        if not hasattr(one, "duration") or not hasattr(one, "duration"):
-            raise Exception("You can only sequence actions with finite duration, not repeats or others like that")
         self.one = copy.deepcopy(one)
         self.two = copy.deepcopy(two)
         self.actions = [self.one, self.two]
 
+        if not hasattr(self.one, "duration") or not hasattr(self.two, "duration"):
+            raise Exception("You can only sequence actions with finite duration, not repeats or others like that")
+        
         self.duration = self.one.duration + self.two.duration
         self.split = self.one.duration / float(self.duration)
 
         self.last = None
 
     def start(self):
+        self.duration = self.one.duration + self.two.duration
+        self.split = self.one.duration / float(self.duration)
+
         self.one.target = self.target
         self.two.target = self.target
 
@@ -199,18 +214,44 @@ class Sequence(IntervalAction):
         if self.last is None and found == 1:
             self.one.start()
             self.one.update(1)
+            self.one.stop()
 
         if self.last != found:
             if self.last is not None:
                 self.actions[self.last].update(1)
+                self.actions[self.last].stop()
+                
             self.actions[ found ].start()
 
         self.actions[ found ].update( new_t )
         self.last = found
 
+    def stop(self):
+        self.two.stop()
+        
     def __reversed__(self):
         return Sequence( Reverse(self.two), Reverse(self.one) )
 
+class Delay(IntervalAction):
+    """Delays the action a certain ammount of seconds
+
+   Example::
+
+        action = Delay(2.5)
+        sprite.do( action )
+    """
+    def init(self, delay):
+        """Init method
+
+        :Parameters:
+            `delay` : float
+                Seconds of delay
+        """
+        self.duration = delay
+
+    def __reversed__(self):
+        return self
+        
 class Spawn(IntervalAction):
     """Spawn a  new action immediately.
     You can spawn actions using:
@@ -289,7 +330,6 @@ class Repeat(Action):
         """
         self.original = action
         self.action = copy.deepcopy( action )
-        self.elapsed = 0
 
     def start(self):
         self.action.target = self.target

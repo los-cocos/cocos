@@ -18,13 +18,9 @@ class TestLayer(cocos.layer.Layer):
         super( TestLayer, self ).__init__()
         
         x,y = director.get_window_size()
-        
-        self.image = pyglet.resource.image('grossini.png')
-        self.image.anchor_x = self.image.width / 2
-        self.image.anchor_y = self.image.height / 2
 
-        self.sprite = ActionSprite( self.image )
-        self.add( self.sprite, (x/4,y/4))
+        self.sprite = ActionSprite('grossini.png', (x/4, y/4) )
+        self.add( self.sprite )
         self.sprite.do( Bezier( path, 5 ) )
         
 

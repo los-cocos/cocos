@@ -17,17 +17,13 @@ class TestLayer(cocos.layer.Layer):
         super( TestLayer, self ).__init__()
         
         x,y = director.get_window_size()
-        
-        self.image = pyglet.resource.image('grossini.png')
-        self.image.anchor_x = self.image.width / 2
-        self.image.anchor_y = self.image.height / 2
 
-        self.sprite = ActionSprite( self.image )
-        self.add( self.sprite, (0,y/2) )
-        self.sprite2 = ActionSprite( self.image )
-        self.add( self.sprite2, (0,y/4) )
-        self.sprite3 = ActionSprite( self.image )
-        self.add( self.sprite3, (0,y/4*3) )
+        self.sprite = ActionSprite( 'grossini.png', (0, y/2) )
+        self.add( self.sprite )
+        self.sprite2 = ActionSprite('grossini.png', (0, y/4) )
+        self.add( self.sprite2 )
+        self.sprite3 = ActionSprite( 'grossini.png', (0, y/4*3) )
+        self.add( self.sprite3 )        
         
         self.sprite.do( Delay(3) + MoveBy( (x, 0) )  )
         self.sprite2.do( RandomDelay(2,4) + MoveBy( (x, 0) )  )

@@ -20,11 +20,13 @@ if __name__ == "__main__":
     director.init( resizable=True, fullscreen=False )
     director.show_FPS = True
     main_scene = cocos.scene.Scene()
-
+    
+    def cr(): return int(random.random()*255)
     for i in range(16):
-        l = ColorLayer(random.random(), random.random(), random.random(), 1.0)
+        l = ColorLayer(cr(), cr(), cr(), 255)
         scale = (16-i)/16.0
-        main_scene.add( l, z=i, scale=scale )
+        l.scale = scale
+        main_scene.add( l, z=i )
 
     e = ShuffleTiles( grid=(16,8), duration=5 )
     main_scene.do( e )

@@ -14,29 +14,84 @@ from pyglet.gl import *
 
 from interfaces import *
 from director import director
-from layer import *
+import layer
+import cocosnode
 
-class Scene(IContainer, IActionTarget):
+class EventHandlerMixin(object):
+    def add(self, child, *args, **kwargs):
+        super(Scene, self).add(child, *args, **kwargs)
+        
+        scene = self.get(Scene)
+        if not scene: return
+        
+        if (    scene._handlers_enabled and 
+                scene.is_running and 
+                isinstance(child, layer) 
+                ):
+            child.push_handlers()
+            
+            
+    def remove(self, child):
+        super(Scene, self).remove(child)
+        
+        scene = self.get(Scene)
+        if not scene: return
+        
+        if (    scene._handlers_enabled and 
+                scene.is_running and 
+                isinstance(child, layer) 
+                ):
+            child.remove_handlers()
+            
+    
+            
+ 
+class Scene(cocosnode.CocosNode, EventHandlerMixin):
     """
     """
    
-#    supported_classes = (Layer, Scene) 
-
     def __init__(self, *children):
         """
         Creates a Scene with layers and / or scenes.
         
+        Responsabilities:
+            Control the dispatching of events to its layers
+            
         :Parameters:
             `children` : list of `Layer` or `Scene`
                 Layers or Scenes that will be part of the scene.
+                They are automatically asigned a z-level from 0 to
+                num_children.
         """
 
-        self.supported_classes = (Layer, Scene)
-
-        super(Scene,self).__init__( *children )
-
-
-
+        super(Scene,self).__init__()
+        self._handlers_enabled = False
+        for i, c in enumerate(children):
+            self.add( c, z=i )
+            
+    
+            
+    def push_all_handlers(self):
+        for child in self.get_children():
+            if isinstance(child, layer.Layer):
+                child.push_handlers()
+            
+    def remove_all_handlers(self):
+        for child in self.get_children():
+            if isinstance(child, layer.Layer):
+                child.remove_handlers()
+    
+    def enable_handlers(self, value=True):
+        """
+        This function makes the scene elegible for receiving events
+        """
+        if value and not self._handlers_enabled and self.is_running:
+            self.push_all_handlers()
+        elif not value and self._handlers_enabled and self.is_running:
+            self.remove_all_handlers()
+        self._handlers_enabled = value
+        
+        
     def end(self, value=None):
         """Ends the current scene setting director.return_value with `value`
         
@@ -47,26 +102,3 @@ class Scene(IContainer, IActionTarget):
         director.return_value = value
         director.pop()
 
-
-    def on_draw( self ):                
-        """Called every time the scene can be drawn."""
-
-        # Apply transformation to current scene
-        glPushMatrix()
-
-        if self.mesh is not None and self.mesh.active:
-            self.mesh.before_draw()
-
-        self.transform()
-
-        for z,c in self.children:
-            if isinstance(c,Layer):
-                c._prepare()
-
-        for z,c in self.children:
-            c.on_draw()
-
-        if self.mesh is not None and self.mesh.active:
-            self.mesh.after_draw()
-
-        glPopMatrix()

@@ -220,7 +220,7 @@ class Director(event.EventDispatcher):
             pyglet.app.exit()
 
         # draw all the objects
-        self.scene.on_draw()
+        self.scene.visit()
 
         # finally show the FPS
         if self.show_FPS:
@@ -268,10 +268,12 @@ class Director(event.EventDispatcher):
 
         if self.scene is not None:
             self.scene.on_exit()
-
+            self.scene.enable_handlers( False )
+            
         old = self.scene
         
         self.scene = scene
+        self.scene.enable_handlers( True )
         scene.on_enter()
 
         return old

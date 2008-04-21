@@ -7,24 +7,21 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.actions import ActionSprite, Rotate, Reverse, MoveBy
+from cocos.actions import Rotate, Reverse, MoveBy, Delay
 import pyglet
+from cocos.sprite import ActionSprite
 
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
         
         x,y = director.get_window_size()
-        
-        self.image = pyglet.resource.image('grossini.png')
-        self.image.anchor_x = self.image.width / 2
-        self.image.anchor_y = self.image.height / 2
 
-        self.sprite = ActionSprite( self.image )
-        self.add( self.sprite, (x/2, y/2) )
+        self.sprite = ActionSprite( 'grossini.png', (x/2, y/2) )
+        self.add( self.sprite )
         
-        self.sprite2 = ActionSprite( self.image )
-        self.add( self.sprite2, (x/2, y/4) )
+        self.sprite2 = ActionSprite( 'grossini.png', (x/2, y/4) )
+        self.add( self.sprite2 )
 
         seq = Rotate( 360, 10 ) | MoveBy((x/2,0))
         self.sprite.do( seq )

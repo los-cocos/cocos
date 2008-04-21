@@ -10,10 +10,14 @@ from cocos.director import director
 from cocos.sprite import ActionSprite
 import pyglet
         
-        
 
 if __name__ == "__main__":
     director.init()
-    test_layer = cocos.layer.ColorLayer(255,0,0,255)
-    main_scene = cocos.scene.Scene (test_layer)
+    bg_layer = cocos.layer.ColorLayer(255,0,0,255)
+    translate_layer = cocos.layer.Layer()
+    x, y = director.get_window_size()
+    translate_layer.x = x/2
+    translate_layer.y = y/2
+    translate_layer.add( bg_layer )
+    main_scene = cocos.scene.Scene (translate_layer)
     director.run (main_scene)
