@@ -139,7 +139,7 @@ class ActionSprite( BatchableNode, pyglet.sprite.Sprite):
             `color` : tuple
                 the color to colorize the child (RGB 3-tuple). Defaults to (255,255,255).
             `anchor` : (float, float)
-                (x,y)-point from where the image will be positiones, rotated and scaled in pixels. For example (image.width/2, image.height/2) is the center (default).
+                (x,y)-point from where the image will be positions, rotated and scaled in pixels. For example (image.width/2, image.height/2) is the center (default).
             
     '''
     

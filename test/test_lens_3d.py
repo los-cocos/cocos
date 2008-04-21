@@ -21,32 +21,24 @@ class TestLayer(cocos.layer.Layer):
         
         x,y = director.get_window_size()
         
-        image = pyglet.resource.image('grossini.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        sprite1 = ActionSprite( image )
+        sprite1 = ActionSprite( 'grossini.png' )
+        sprite2 = ActionSprite( 'grossinis_sister1.png')
+        sprite3 = ActionSprite( 'grossinis_sister2.png')
 
-        image = pyglet.resource.image('grossinis_sister1.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        sprite2 = ActionSprite( image )
+        sprite1.position = (320,240)
+        sprite2.position = (620,100)
+        sprite3.position = (20,100)
 
-        image = pyglet.resource.image('grossinis_sister2.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        sprite3 = ActionSprite( image )
+        self.add( sprite1 )
+        self.add( sprite2 )
+        self.add( sprite3 )
 
         ju_right = Jump( y=100, x=600, jumps=4, duration=5 )
         ju_left = Jump( y=100, x=-600, jumps=4, duration=5 )
         rot1 = Rotate( 180 * 4, duration=5)
 
-        self.add( sprite1, (320,240) )
-        self.add( sprite2, (620,100) )
-        self.add( sprite3, (20,100) )
-
         sc = ScaleBy( 9, 5 )
         rot = Rotate( 180, 5 )
-        
 
 #        sprite1.do( Repeat( sc + Reverse(sc) ) )
 #        sprite1.do( Repeat( rot + Reverse(rot) ) )
@@ -58,13 +50,13 @@ class TestLayer(cocos.layer.Layer):
 
 if __name__ == "__main__":
     director.init( resizable=True )
-    director.show_FPS = True
     main_scene = cocos.scene.Scene()
 
+    rr = random.randrange
     for i in range(32):
-        l = ColorLayer(random.random(), random.random(), random.random(), 1.0)
-        scale = (32-i)/32.0
-        main_scene.add( l, z=i, scale=scale )
+        l = ColorLayer(rr(0,255),rr(0,255), rr(0,255),255)
+        l.scale = (32-i)/32.0
+        main_scene.add( l, z=i )
 
     tl1 = TestLayer()
     main_scene.add( tl1, z=33 )

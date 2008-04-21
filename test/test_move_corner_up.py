@@ -19,10 +19,12 @@ if __name__ == "__main__":
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 
+    rr = random.randrange
+
     for i in range(8):
-        l = ColorLayer(random.random(), random.random(), random.random(), 1.0)
-        scale = (8-i)/8.0
-        main_scene.add( l, z=i, scale=scale )
+        l = ColorLayer(rr(0,255), rr(0,255), rr(0,255), 255)
+        l.scale = (8-i)/8.0
+        main_scene.add( l, z=i )
 
     e = MoveCornerUp( duration=1 )
     main_scene.do( e )

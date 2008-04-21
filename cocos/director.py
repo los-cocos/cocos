@@ -142,6 +142,7 @@ class DefaultHandler( object ):
 
         elif symbol == pyglet.window.key.X and (modifiers & pyglet.window.key.MOD_ACCEL):
             director.show_FPS = not director.show_FPS 
+            return True
 
         elif symbol == pyglet.window.key.S and (modifiers & pyglet.window.key.MOD_ACCEL):
             import time

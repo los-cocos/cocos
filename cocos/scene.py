@@ -19,7 +19,7 @@ import cocosnode
 
 class EventHandlerMixin(object):
     def add(self, child, *args, **kwargs):
-        super(Scene, self).add(child, *args, **kwargs)
+        super(EventHandlerMixin, self).add(child, *args, **kwargs)
         
         scene = self.get(Scene)
         if not scene: return
@@ -32,7 +32,7 @@ class EventHandlerMixin(object):
             
             
     def remove(self, child):
-        super(Scene, self).remove(child)
+        super(EventHandlerMixin, self).remove(child)
         
         scene = self.get(Scene)
         if not scene: return
@@ -54,13 +54,13 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         """
         Creates a Scene with layers and / or scenes.
         
-        Responsabilities:
+        Responsibilities:
             Control the dispatching of events to its layers
             
         :Parameters:
             `children` : list of `Layer` or `Scene`
                 Layers or Scenes that will be part of the scene.
-                They are automatically asigned a z-level from 0 to
+                They are automatically assigned a z-level from 0 to
                 num_children.
         """
 

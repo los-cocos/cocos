@@ -3,7 +3,7 @@
 # http://code.google.com/p/los-cocos/
 #
 """
-CocosNode: the basic ellement of cocos
+CocosNode: the basic element of cocos
 """
 
 import bisect, copy
@@ -34,7 +34,7 @@ class CocosNode(object):
         self.anchor_y = 0.5
         self.color = (255,255,255)
         self.opacity = 255
-        self.mesh = Mesh()
+        self.mesh = None
 
         # actions stuff
         self.actions = []
@@ -65,7 +65,7 @@ class CocosNode(object):
                 The number of seconds to wait between each call.
                 
         This function is a wrapper to pyglet.clock.schedule_interval.
-        It has the additional benefit that all calllbacks are paussed and
+        It has the additional benefit that all calllbacks are paused and
         resumed when the node leaves or enters a scene.
         
         You should not have to schedule things using pyglet by yourself.
@@ -93,7 +93,7 @@ class CocosNode(object):
                 The function to call each frame.
                 
         This function is a wrapper to pyglet.clock.schedule.
-        It has the additional benefit that all calllbacks are paussed and
+        It has the additional benefit that all calllbacks are paused and
         resumed when the node leaves or enters a scene.
         
         You should not have to schedule things using pyglet by yourself.
@@ -116,7 +116,7 @@ class CocosNode(object):
                 The function to remove from the schedule.
         
         This function is a wrapper to pyglet.clock.unschedule.
-        It has the additional benefit that all calllbacks are paussed and
+        It has the additional benefit that all calllbacks are paused and
         resumed when the node leaves or enters a scene.
         
         You should not unschedule things using pyglet that where scheduled
@@ -188,13 +188,13 @@ class CocosNode(object):
             `child` : object
                 object to be added
             `z`: float
-                the z index wrt self
+                the z index of self
             `name` : str
                 Name of the child
         """
         # child must be a subclass of supported_classes
         #if not isinstance( child, self.supported_classes ):
-        #    raise TypeError("%s is not istance of: %s" % (type(child), self.supported_classes) )
+        #    raise TypeError("%s is not instance of: %s" % (type(child), self.supported_classes) )
 
         if name:
             if name in self.children_names:
@@ -294,6 +294,10 @@ class CocosNode(object):
     
     def visit(self):
         position = 0
+        
+        if self.mesh and self.mesh.active:
+            self.mesh.before_draw()
+            
         # we visit all nodes that should be drawn before ourselves
         if self.children and self.children[0][0] < 0:
             glPushMatrix()
@@ -308,7 +312,7 @@ class CocosNode(object):
         # we draw ourselves
         self.on_draw()
         
-        # we visit al the remaining nodes, that are over ourselves
+        # we visit all the remaining nodes, that are over ourselves
         if position < len(self.children):
             glPushMatrix()
             self.transform()
@@ -316,6 +320,9 @@ class CocosNode(object):
                 c.visit()
             glPopMatrix()
         
+        if self.mesh and self.mesh.active:
+            self.mesh.after_draw()
+
         
     def on_draw(self, *args, **kwargs):
         pass

@@ -20,10 +20,11 @@ if __name__ == "__main__":
 
     red = ColorLayer(255, 0, 0, 255)
     blue = ColorLayer(0, 0, 255, 255)
-    blue.scale = 0.75
     green = ColorLayer(0, 255, 0, 255)
-    green.scale = 0.5
     white = ColorLayer(255, 255, 255, 255)
+
+    blue.scale = 0.75
+    green.scale = 0.5
     white.scale = 0.25
 
     main_scene.add( red, z=0 )

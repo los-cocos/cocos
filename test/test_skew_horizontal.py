@@ -15,14 +15,16 @@ import random
 
 from cocos.mesh import *
 
+rr = random.randrange
+
 if __name__ == "__main__":
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 
     for i in range(8):
-        l = ColorLayer(random.random(), random.random(), random.random(), 1.0)
-        scale = (8-i)/8.0
-        main_scene.add( l, z=i, scale=scale )
+        l = ColorLayer(rr(0,255), rr(0,255), rr(0,255), 255)
+        l.scale = (8-i)/8.0
+        main_scene.add( l, z=i )
 
     e = SkewHorizontal( duration=1 )
     main_scene.do( e )

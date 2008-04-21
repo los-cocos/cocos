@@ -15,15 +15,15 @@ import random
 
 from cocos.mesh import *
 
+rr = random.randrange
 
 if __name__ == "__main__":
     director.init( resizable=True, fullscreen=False )
     director.show_FPS = True
     main_scene = cocos.scene.Scene()
     
-    def cr(): return int(random.random()*255)
     for i in range(16):
-        l = ColorLayer(cr(), cr(), cr(), 255)
+        l = ColorLayer(rr(0,255), rr(0,255), rr(0,255), 255)
         scale = (16-i)/16.0
         l.scale = scale
         main_scene.add( l, z=i )

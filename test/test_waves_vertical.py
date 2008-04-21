@@ -14,18 +14,21 @@ import pyglet
 
 if __name__ == "__main__":
     director.init( resizable=True )
-    director.show_FPS = True
     main_scene = cocos.scene.Scene()
 
-    red = ColorLayer(1.0, 0.0, 0.0, 1.0)
-    blue = ColorLayer(0.0, 0.0, 1.0, 1.0)
-    green = ColorLayer(0.0, 1.0, 0.0, 1.0)
-    white = ColorLayer(1.0, 1.0, 1.0, 1.0)
+    white = ColorLayer(255,255,255,255)
+    red = ColorLayer(255,0,0,255)
+    blue = ColorLayer(0,0,255,255)
+    green = ColorLayer(0,255,0,255)
 
-    main_scene.add( red, z=0 )
-    main_scene.add( blue, z=1, scale=0.75 )
-    main_scene.add( green, z=2, scale=0.5 )
-    main_scene.add( white, z=3, scale=0.25 )
+    red.scale = 0.75
+    blue.scale = 0.5
+    green.scale = 0.25
+
+    main_scene.add( white, z=0 )
+    main_scene.add( red, z=1 )
+    main_scene.add( blue, z=2 )
+    main_scene.add( green, z=3 )
 
     main_scene.do( Waves( horizontal_sin=False, vertical_sin=True, waves=10, grid=(16,16), duration=20) )
     director.run (main_scene)
