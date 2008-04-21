@@ -703,21 +703,21 @@ class Lens3D( Grid3DAction ):
         x,y = director.get_window_size()
         if center==(-1,-1):
             center=(x//2, y//2)
-        self.center = Point2( center[0]+1, center[1]+1 )
+        self.position = Point2( center[0]+1, center[1]+1 )
         self.radius = radius
         self.lens_effect = lens_effect
-        
-        self._once = False
+       
+        self._last_position = self.position
         
     def update( self, t ):
-        if not self._once:
+        if self._last_position != self.position:
             for i in range(0, self.grid.x+1):
                 for j in range(0, self.grid.y+1):
         
                     x,y,z = self.get_vertex(i,j)
                     
                     p = Point2( x,y )
-                    vect = self.center - p
+                    vect = self.position - p
                     r = abs(vect)
                     
                     if r < self.radius:
@@ -733,12 +733,12 @@ class Lens3D( Grid3DAction ):
                         new_vect = vect * new_r
 
                         z += abs(new_vect) * self.lens_effect    # magic vrbl        
-                        self.set_vertex( i,j, (x,y,z) )
-            self._once = True
+                    self.set_vertex( i,j, (x,y,z) )
+            self._last_position = self.position
 
     def __reversed__(self):
         # self
-        return Lens3D( lens_effect=self.lens_effect, radius=self.radius, center=self.center, grid=self.grid, duration=self.duration )
+        return Lens3D( lens_effect=self.lens_effect, radius=self.radius, center=self.position, grid=self.grid, duration=self.duration )
 
 class QuadMoveBy( GridAction ):
     '''QuadMoveBy moves each vertex of the quad
