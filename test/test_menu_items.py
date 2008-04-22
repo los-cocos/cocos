@@ -26,11 +26,11 @@ class MainMenu(Menu):
         super( MainMenu, self ).__init__("Test Menu Items")
 
         # then add the items
-        self.add( ToggleMenuItem('ToggleMenuItem', False, 
+        self.add( ToggleMenuItem('ToggleMenuItem: ', False, 
                         lambda x:printf('switch to:',x) ) )
                         
         resolutions = ['800x600', '1024x768', '320x200', '640x480']
-        self.add( MultipleMenuItem('MultipleMenuItem',
+        self.add( MultipleMenuItem('MultipleMenuItem: ',
                         #value switch function:
                         lambda:setslice(resolutions,0,len(resolutions),
                                         resolutions[1:]+[resolutions[0]]),

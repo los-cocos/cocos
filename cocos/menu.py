@@ -413,7 +413,7 @@ class MultipleMenuItem( MenuItem ):
 
 
     def _get_label(self):
-        return self.toggle_label+': '+self.get_value_func()
+        return self.toggle_label+self.get_value_func()
 
     def on_key_press(self, symbol, modifiers):
         if symbol in ( key.LEFT, key.RIGHT, key.ENTER):
