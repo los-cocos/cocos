@@ -12,7 +12,7 @@ import pyglet
 from pyglet.gl import *
 
 from director import director
-from mesh import Mesh
+from grid import Grid
 
 import weakref
 
@@ -34,7 +34,7 @@ class CocosNode(object):
         self.anchor_y = 0.5
         self.color = (255,255,255)
         self.opacity = 255
-        self.mesh = None
+        self.grid = None
 
         # actions stuff
         self.actions = []
@@ -295,8 +295,8 @@ class CocosNode(object):
     def visit(self):
         position = 0
         
-        if self.mesh and self.mesh.active:
-            self.mesh.before_draw()
+        if self.grid and self.grid.active:
+            self.grid.before_draw()
             
         # we visit all nodes that should be drawn before ourselves
         if self.children and self.children[0][0] < 0:
@@ -320,8 +320,8 @@ class CocosNode(object):
                 c.visit()
             glPopMatrix()
         
-        if self.mesh and self.mesh.active:
-            self.mesh.after_draw()
+        if self.grid and self.grid.active:
+            self.grid.after_draw()
 
         
     def on_draw(self, *args, **kwargs):

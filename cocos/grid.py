@@ -1,8 +1,8 @@
 #
-# Los Cocos: An extension for Pyglet
+# Cocos
 # http://code.google.com/p/los-cocos/
 #
-'''Mesh effects'''
+'''Grid effects'''
 
 import pyglet
 from pyglet import image
@@ -12,18 +12,18 @@ from euclid import Point2, Point3
 from director import director
 import framegrabber
 
-__all__ = ['Mesh',
+__all__ = ['GridBase',
             'Grid', 'TiledGrid', 'Grid3D',
             ]
 
-class Mesh(object):
+class GridBase(object):
     """
     A Scene that takes two scenes and makes a transition between them
     """
     texture = None
     
     def __init__(self):
-        super(Mesh, self).__init__()
+        super(GridBase, self).__init__()
         self._active = False
 
     def init( self, grid ):
@@ -75,7 +75,7 @@ class Mesh(object):
 
     def on_resize(self, w, h):
         '''on_resize handler. Don't return 'True' since this event
-        shall be propagated to all the meshes
+        shall be propagated to all the grids
         '''
         if not self.active:
             return
@@ -111,13 +111,13 @@ class Mesh(object):
         elif self._active == False:
             director.pop_handlers()
         else:
-            raise Exception("Invalid value for Mesh.active")
+            raise Exception("Invalid value for GridBase.active")
                                         
     def _get_active(self):
         return self._active
 
     active = property(_get_active, _set_active,
-                      doc='''Determines if the mesh is active or not                 
+                      doc='''Determines whether the grid is active or not                 
                      :type: bool
                      ''')       
     def _init(self):
@@ -130,8 +130,8 @@ class Mesh(object):
         raise NotImplementedError('abstract')
   
 
-class Grid(Mesh):
-    '''A Mesh that implements an union grid. Each vertex is shared by the attached quads
+class Grid(GridBase):
+    '''`Grid` is a 2D grid implementation.
     
     The vertex array will be built with::
 
@@ -196,7 +196,7 @@ class Grid(Mesh):
                 l1 = ( a*2, b*2, c*2, d*2 )
                 l2 = ( Point2(x1,y1), Point2(x2,y1), Point2(x2,y2), Point2(x1,y2) )
 
-                # Mesh Grid vertex and texture points
+                # building the vertex and texture points
                 for i in range( len(l1) ):
                     vertex_points_idx[ l1[i] ] = l2[i].x
                     vertex_points_idx[ l1[i] + 1 ] = l2[i].y
@@ -206,10 +206,9 @@ class Grid(Mesh):
 
         return ( index_points, vertex_points_idx, texture_points_idx )
 
-class TiledGrid(Mesh):
-    '''A Mesh that is implemented with the union of several tiles.
-    The vertex are not shared between the different tiles. Each tile has it's own
-    4 vertex.
+class TiledGrid(GridBase):
+    '''`TiledGrid` is a 2D grid implementation. It differs from `Grid` in that
+    the tiles can be separated from the grid. 
 
     The vertex array will be built with::
 
@@ -257,15 +256,16 @@ class TiledGrid(Mesh):
                 y1 = y * self.y_step
                 y2 = y1 + self.y_step
               
-                # Mesh Tiles vertex and texture points
+                # Building the tiles' vertex and texture points
                 vertex_points += [x1, y1, x2, y1, x2, y2, x1, y2]
                 texture_points += [x1/w, y1/h, x2/w, y1/h, x2/w, y2/h, x1/w, y2/h]
 
         # Generates a quad for each tile, to perform tiles effect
         return (vertex_points, texture_points)
 
-class Grid3D(Mesh):
-    '''A Mesh that implements a 3D grid. Each vertex has 3 dimensions.
+class Grid3D(GridBase):
+    '''`Grid3D` is a 3D grid implementation. Each vertex has 3 dimensions: x,y,z
+    
     The vertex array will be built with::
 
         self.vertex_list.vertices: x,y,z (floats)   
@@ -368,7 +368,7 @@ class Grid3D(Mesh):
                 l1 = ( a*3, b*3, c*3, d*3 )
                 l2 = ( Point3(x1,y1,0), Point3(x2,y1,0), Point3(x2,y2,0), Point3(x1,y2,0) )
 
-                # Mesh Grid vertex and texture points
+                #  building the vertex and texture points
                 for i in range( len(l1) ):
                     vertex_points_idx[ l1[i] ] = l2[i].x
                     vertex_points_idx[ l1[i] + 1 ] = l2[i].y
