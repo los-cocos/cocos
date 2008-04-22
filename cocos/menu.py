@@ -454,7 +454,8 @@ class EntryMenuItem(MenuItem):
     When selected, ``self.value`` is toggled, the callback function is
     called with ``self.value`` as argument."""
 
-    value = property(lambda self: u''.join(self._value))
+    value = property(lambda self: u''.join(self._value),
+                     lambda self, v: setattr(self, '_value', list(v)))
 
     def __init__(self, label, value, set_func):
         """Creates an Entry Menu Item
@@ -472,9 +473,6 @@ class EntryMenuItem(MenuItem):
         self._label = label
         super(EntryMenuItem, self).__init__( "%s %s" %(label,value), None)
 
-    def on_mouse_release( self, x, y, buttons, modifiers ):
-        self.selected = True
-   
     def on_text( self, text ):
         self._value.append(text)
         self._calculate_value()
