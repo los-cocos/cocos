@@ -28,8 +28,6 @@ __docformat__ = 'restructuredtext'
 
 import pyglet
 from pyglet import font
-from pyglet import media
-from pyglet import window
 from pyglet.window import key
 from pyglet.gl import *
 
@@ -39,7 +37,7 @@ from cocosnode import *
 from actions import *
 
 __all__ = [ 'Menu', 'MenuItem', 'ToggleMenuItem', 
-    'MultipleMenuItem',
+    'MultipleMenuItem', 'EntryMenuItem',
     'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM' ]
 
 #
@@ -214,6 +212,8 @@ class Menu(Layer):
         self.children[ self.selected_index ][1].is_selected = True
 
 
+    def on_text( self, text ):
+        return self.children[self.selected_index][1].on_text(text)
     #
     # Called everytime a key is pressed
     # return True to avoid passing the event to another handler
@@ -340,10 +340,6 @@ class MenuItem( CocosNode ):
         y2 = y1 + height
         return (x1,y1,x2,y2)
 
-#    def transform( self ):
-#        super(MenuItem, self).transform()
-#        print 'MenuItem: transform'
-
     def on_draw( self ):
         glPushMatrix()
         self.transform()
@@ -359,6 +355,9 @@ class MenuItem( CocosNode ):
         if symbol == key.ENTER and self.activate_func:
             self.activate_func()
             return True
+
+    def on_text( self, text ):
+        return True
 
     def _init_font_unsel( self, **kwargs):
         # Unselected option
@@ -381,7 +380,8 @@ class MenuItem( CocosNode ):
 
     def selected( self ):
         if not self.actions_running():
-            self.do( self.effect )
+            pass
+#            self.do( self.effect )
 
 #
 # Item that can be toggled between N states
@@ -447,3 +447,50 @@ class ToggleMenuItem( MultipleMenuItem ):
     
         super(ToggleMenuItem, self).__init__( label, switch_value, 
                 lambda :['OFF','ON'][int(self.__value)] )          
+
+class EntryMenuItem(MenuItem):
+    """A menu item for entering a value.
+
+    When selected, ``self.value`` is toggled, the callback function is
+    called with ``self.value`` as argument."""
+
+    value = property(lambda self: u''.join(self._value))
+
+    def __init__(self, label, value, set_func):
+        """Creates an Entry Menu Item
+
+        :Parameters:
+            `label` : string
+                Item's label
+            `value` : String
+                Default value: any string
+            `set_func` : function
+                Callback function taking one argument.
+        """
+        self.set_func = set_func
+        self._value = list(value)
+        self._label = label
+        super(EntryMenuItem, self).__init__( "%s %s" %(label,value), None)
+
+    def on_mouse_release( self, x, y, buttons, modifiers ):
+        self.selected = True
+   
+    def on_text( self, text ):
+        self._value.append(text)
+        self._calculate_value()
+        return True
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == key.BACKSPACE:
+            try:
+                self._value.pop()
+            except IndexError:
+                pass
+            self._calculate_value()
+            return True
+
+    def _calculate_value( self ):
+        new_text = u"%s %s" % (self._label, self.value)
+        self.text.text = new_text
+        self.text_selected.text = new_text
+        self.set_func(self.value)

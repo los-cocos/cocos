@@ -1,6 +1,7 @@
 v0.3.0 - XXX, xxx
   - Menu: Added MultipleMenuItem, an item that supports multiple possible
     values. Contributed by Alejandro Weil (tenuki)
+  - Menu: Added EntryMenuItem, based on patch by David Eyk    
   - actions are defined in the actions/ folder
   - ActionSprite and SpriteGroup added in sprite.py
   - Added DefaultHandler:
