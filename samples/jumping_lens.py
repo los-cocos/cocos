@@ -40,7 +40,7 @@ if __name__ == "__main__":
     #  radius: 150 pixels
     #  lens_effect: 0.7, a strong "lens". 0 means no effect at all. 1 means very strong
     #  center: center of the lens
-    #  grid=(20,16): create a grid of 20 tiles x 16 tiles. Bigger grids will
+    #  grid=(20,16): create a grid of 20 tiles x 16 tiles. More tiles will
     #     look better but the performance will decraese
     #  duration=10: 10 seconds
     lens = Lens3D( radius=150, lens_effect=0.7, center=(150,150), grid=(20,16), duration=50)
