@@ -7,13 +7,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.sprite import *
 from cocos.actions import *
 from cocos.layer import *
-import pyglet
 import random
 
-from cocos.mesh import *
 
 rr = random.randrange
 

@@ -10,10 +10,7 @@ from cocos.director import director
 from cocos.sprite import *
 from cocos.actions import *
 from cocos.layer import *
-import pyglet
 import random
-
-from cocos.mesh import *
 
 if __name__ == "__main__":
     director.init( resizable=True )

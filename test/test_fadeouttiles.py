@@ -9,11 +9,7 @@ import cocos
 from cocos.director import director
 from cocos.actions import *
 from cocos.layer import *
-from cocos.sprite import ActionSprite
-import pyglet
 import random
-
-from cocos.mesh import *
 
 
 if __name__ == "__main__":

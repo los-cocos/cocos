@@ -9,9 +9,6 @@ import cocos
 from cocos.director import director
 from cocos.actions import *
 from cocos.layer import *
-import pyglet
-
-from cocos.mesh import *
 
 if __name__ == "__main__":
     director.init( resizable=True )

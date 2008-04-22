@@ -10,10 +10,8 @@ from cocos.director import director
 from cocos.sprite import *
 from cocos.actions import *
 from cocos.layer import *
-import pyglet
 import random
 
-from cocos.mesh import *
 
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
