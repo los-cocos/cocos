@@ -213,10 +213,11 @@ if __name__ == "__main__":
     lens = Lens3D( radius=240, center=(320,240), grid=(32,24), duration=5)
     waves3d = AccelDeccelAmplitude( Waves3D( waves=18, amplitude=80, grid=(20,20), duration=15), rate=4.0 )
     flipx =  FlipX3D(duration=1)
-    flipy = FlipY3D(duration=1)
+    flipx_reuse = FlipX3D(duration=1, reuse_grid=True)
+    flipy_reuse = FlipY3D(duration=1, reuse_grid=True)
     flip = Flip(duration=1)
     liquid = Liquid( grid=(16,12), duration=8)
-    shuffle = ShuffleTiles( grid=(16,12), duration=5)
+    shuffle = ShuffleTiles( grid=(16,12), duration=1)
     shakyt = ShakyTiles( grid=(16,12), duration=5)
     corners = CornerSwap( duration=1)
     waves = AccelAmplitude(Waves( waves=8, amplitude=50, grid=(32,24), duration=5), rate=2.0)  
@@ -229,16 +230,16 @@ if __name__ == "__main__":
               Delay(1) +
               quadmove + Delay(1) +
               Reverse(quadmove) +
-              shuffle +
+              shuffle + Delay(4) + Reverse(shuffle) +
               liquid + Delay(2) +
               flipx + Delay(2) +
-              Reverse(flipx) +
+              flipy_reuse + Delay(2) +
+              flipx_reuse + Delay(2) + 
+              flipy_reuse + Delay(2) +
               shakyt + Delay(2) +
               flip+ Delay(2) +
               Reverse(flip) +
               lens +
-              flipy + Delay(2) + 
-              Reverse(flipy) +
               waves3d +
               corners + Delay(2) +
               Reverse(corners) +

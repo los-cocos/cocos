@@ -48,13 +48,7 @@ class Waves3D( Grid3DAction ):
 
                 self.set_vertex( i,j, (x, y, z) )
 
-    def __reversed__(self):
-        # almost self
-        return Waves3D( waves=self.waves,
-                    amplitude=self.amplitude, 
-                    grid=self.grid,
-                    duration=self.duration)
-
+ 
 class FlipX3D( Grid3DAction ):
     '''FlipX3D flips the screen using the Y-axis'''
 
@@ -106,8 +100,6 @@ class FlipX3D( Grid3DAction ):
         x,y,z = self.get_original_vertex(*d)
         self.set_vertex(d[0],d[1],(x-diff_x,y,z-diff_z))
     
-    def __reversed__(self):
-        return FlipX3D(grid=self.grid, duration=self.duration, reuse_grid=True)
 
 class FlipY3D( Grid3DAction ):
     '''FlipY3D flips the screen using the X-axis'''
@@ -159,9 +151,6 @@ class FlipY3D( Grid3DAction ):
         # upper-right
         x,y,z = self.get_original_vertex(*d)
         self.set_vertex(d[0],d[1],(x,y-diff_y,z-diff_z))
-
-    def __reversed__(self):
-        return FlipY3D(grid=self.grid, duration=self.duration, reuse_grid=True)
 
 
 class Lens3D( Grid3DAction ):
@@ -220,8 +209,3 @@ class Lens3D( Grid3DAction ):
                     # since we want to 'fix' possible moved vertex
                     self.set_vertex( i,j, (x,y,z) )
             self._last_position = self.position
-
-    def __reversed__(self):
-        # self
-        return Lens3D( lens_effect=self.lens_effect, radius=self.radius, center=self.position, grid=self.grid, duration=self.duration )
-

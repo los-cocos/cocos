@@ -49,8 +49,6 @@ if __name__ == "__main__":
     main_scene.add( green, z=3 )
     main_scene.add( SpriteLayer(), z=4 )
 
-    waves = Waves( amplitude=80, waves=2, grid=(16,12), duration=2 )
-    shaky = Shaky( randrange=20, grid=(16,12), duration=4, reuse_grid=True)
-
-    main_scene.do( waves + Delay(2) + shaky )
+    flip = FlipX3D( duration=2)
+    main_scene.do( flip + ReverseTime(flip) )
     director.run (main_scene)

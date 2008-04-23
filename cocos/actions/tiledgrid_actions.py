@@ -60,9 +60,6 @@ class ShakyTiles( TiledGridAction ):
                     self.target.grid.vertex_list.vertices[idx] = int(x)
                     self.target.grid.vertex_list.vertices[idx+1] = int(y)
                 
-    def __reversed__(self):
-        # self
-        return ShakyTiles( randrange=self.randrange, grid=self.grid, y_quads=self.grid.y, duration=self.duration)
 
 class ShatteredTiles( TiledGridAction ):
     '''ShatterTiles shatters the tiles according to a random value.
@@ -97,9 +94,6 @@ class ShatteredTiles( TiledGridAction ):
                         self.target.grid.vertex_list.vertices[idx+1] = int(y)
             self._once = True
                 
-    def __reversed__(self):
-        # Reverse(Shattered) == Normal Tiles
-        return ShatteredTiles( randrange=0, grid=self.grid, duration=self.duration)
 
 class ShuffleTiles( TiledGridAction ):
     '''ShuffleTiles moves the tiles randomly across the screen and then put
@@ -139,27 +133,11 @@ class ShuffleTiles( TiledGridAction ):
             self.target.grid.vertex_list.vertices[idx] = int(x)
             self.target.grid.vertex_list.vertices[idx+1] = int(y)
         
-    def update( self, t ):
-        if t < 1.0/3:
-            self.phase_shuffle(t/ (1.0/3) )
-        elif t < 2.0/3:
-            if self._once is False:
-                self.phase_shuffle(1)
-                self._once = True
-        else:
-            self.phase_shuffle_back( (t-2.0/3) / (1.0/3) )
-
-    def phase_shuffle(self, t ):
+    def update(self, t ):
         for i in range(0, self.grid.x):
             for j in range(0, self.grid.y):
                 self.tiles[(i,j)].position = self.tiles[(i,j)].start_position + self.tiles[(i,j)].delta * t
-                self.place_tile(i,j)
-   
-    def phase_shuffle_back(self, t):
-        for i in range(0, self.grid.x):
-            for j in range(0, self.grid.y):
-                self.tiles[(i,j)].position = self.tiles[(i,j)].start_position + self.tiles[(i,j)].delta * (1-t)
-                self.place_tile(i,j)                
+                self.place_tile(i,j)   
                 
     # private method
     def _get_delta(self, x, y):
@@ -178,10 +156,6 @@ class ShuffleTiles( TiledGridAction ):
                     self.dst_tiles[ (i,j) ] = True
                     return Point2(i,j)-Point2(x,y)
         raise GridException("_get_delta() error")
-
-    def __reversed__(self):
-        # revere is self, since it will perform the same action
-        return ShuffleTiles( grid=self.grid, duration=self.duration)
 
 
 class FadeOutTiles( TiledGridAction ):
@@ -228,7 +202,3 @@ class FadeOutTiles( TiledGridAction ):
                                 
                         self.target.grid.vertex_list.vertices[idx] = int(vx)
                         self.target.grid.vertex_list.vertices[idx+1] = int(vy)
-               
-    def __reversed__(self):
-        raise NotImplementedError('FadeInTiles not implemented yet!')
-#        return FadeOutTiles( grid=self.grid, duration=self.duration)

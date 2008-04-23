@@ -43,7 +43,8 @@ __all__ = [ 'GridException',            # Grid Exceptions
             'DeccelAmplitude',
             'AccelDeccelAmplitude',
             
-            'StopGrid'
+            'StopGrid',
+            'ReverseTime',
             ]
 
 class GridException( Exception ):
@@ -109,7 +110,10 @@ class GridBaseAction( IntervalAction ):
     
     def get_grid(self):
         return NotImplementedError('abstract')
-    
+
+    def __reversed__(self):
+        return ReverseTime(self)
+ 
 class GridAction( GridBaseAction ):
     '''A GridAction is an action that does transformations
     to a grid.'''
@@ -163,6 +167,7 @@ class GridAction( GridBaseAction ):
         idx = (x * (self.grid.y+1) + y) * 2
         self.target.grid.vertex_list.vertices[idx] = int(v[0])
         self.target.grid.vertex_list.vertices[idx+1] = int(v[1])
+
 
 class Grid3DAction( GridBaseAction ):
     '''A Grid3DAction is an action that does transformations
@@ -222,7 +227,6 @@ class Grid3DAction( GridBaseAction ):
         self.target.grid.vertex_list.vertices[idx] = int(v[0])
         self.target.grid.vertex_list.vertices[idx+1] = int(v[1])
         self.target.grid.vertex_list.vertices[idx+2] = int(v[2])
-
 
 
 class TiledGridAction( GridBaseAction ):
@@ -385,6 +389,7 @@ class AccelAmplitude( IntervalAction ):
     def __reversed__(self):
         return DeccelAmplitude( Reverse(self.other), rate=self.rate )
 
+
 class DeccelAmplitude( AccelAmplitude ):
     """
     Decreases the waves amplitude from self.amplitude to 0
@@ -403,7 +408,35 @@ class DeccelAmplitude( AccelAmplitude ):
     def __reversed__(self):
         return AccelAmplitude( Reverse(self.other), rate=self.rate )
 
+
 class StopGrid( InstantAction ):
+    """StopGrid disables the current grid.
+    Every grid action, after finishing, leaves the screen with a certain grid figure.
+    This figure will be displayed until StopGrid or another Grid action is executed
+    """
     def update(self, t):
         if self.target.grid and self.target.grid.active:
             self.target.grid.active = False
+
+ 
+class ReverseTime( IntervalAction ):
+    """ReverseTime executes an action in reverse order, from time=duration to time=0
+    """
+    def init(self, other, *args, **kwargs):
+        super(ReverseTime, self).init(*args, **kwargs)
+        self.other = other
+        self.duration = self.other.duration
+        
+    def start(self):
+        self.other.target = self.target
+        super(ReverseTime, self).start()
+        self.other.start()
+        
+    def stop(self):
+        super(ReverseTime,self).stop()
+    
+    def update(self, t):
+        self.other.update(1-t)
+    
+    def __reversed__(self):
+        return self.other

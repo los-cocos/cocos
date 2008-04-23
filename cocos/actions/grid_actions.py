@@ -53,9 +53,6 @@ class Shaky( GridAction):
 
                 self.set_vertex( i,j, (x,y) )
 
-    def __reversed__(self):
-        return Shaky( randrange=self.randrage, grid=self.grid, duration=self.duration)
-
 class Liquid( GridAction ):
     '''Liquid simulates a liquid effect using the math.sin() function
 
@@ -83,10 +80,6 @@ class Liquid( GridAction ):
                 ypos = (y + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.amplitude * self.amplitude_rate)) 
                 self.set_vertex( i,j, (xpos,ypos) )
 
-    def __reversed__(self):
-        # almost self
-        return Liquid( waves=self.waves, amplitude=self.amplitude, 
-                       grid=self.grid, duration=self.duration)
 
 class Waves( GridAction ):
     '''Waves simulates waves using the math.sin() function both in the vertical and horizontal axis
@@ -129,12 +122,6 @@ class Waves( GridAction ):
 
                 self.set_vertex( i,j, (xpos,ypos) )
 
-    def __reversed__(self):
-        # almost self
-        return Waves( waves=self.waves, amplitude=self.amplitude,
-                   horizontal_sin=self.horizontal_sin, vertical_sin=self.vertical_sin,
-                    grid=self.grid,
-                    duration=self.duration)
 
 class QuadMoveBy( GridAction ):
     '''QuadMoveBy moves each vertex of the grid. The size of the grid is (1,1)
@@ -214,11 +201,7 @@ class QuadMoveBy( GridAction ):
         self.set_vertex( 1,1, new_pos2 )
         self.set_vertex( 0,1, new_pos3 )
 
-    def __reversed__(self):
-        return QuadMoveBy( self.src0 + self.delta0, self.src1 + self.delta1, self.src2 + self.delta2, self.src3 + self.delta3,
-                           -self.delta0, -self.delta1, -self.delta2, -self.delta3,
-                           self.grid, duration=self.duration )
-    
+
 class MoveCornerUp( QuadMoveBy ):
     '''MoveCornerUp moves the bottom-right corner to the upper-left corner in duration time'''
     def __init__(self, *args, **kw):
