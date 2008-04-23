@@ -17,7 +17,7 @@ __all__ = [
             'Action',                           # Base Class
             'IntervalAction', 'InstantAction',  # Important Base classes 
             'Sequence','Spawn','Repeat',        # Basic behaviors
-            'Reverse', "Delay"
+            'Reverse','ReverseTime',            # Reverse
             ]
 
 
@@ -232,26 +232,6 @@ class Sequence(IntervalAction):
     def __reversed__(self):
         return Sequence( Reverse(self.two), Reverse(self.one) )
 
-class Delay(IntervalAction):
-    """Delays the action a certain amount of seconds
-
-   Example::
-
-        action = Delay(2.5)
-        sprite.do( action )
-    """
-    def init(self, delay):
-        """Init method
-
-        :Parameters:
-            `delay` : float
-                Seconds of delay
-        """
-        self.duration = delay
-
-    def __reversed__(self):
-        return self
-        
 class Spawn(IntervalAction):
     """Spawn a  new action immediately.
     You can spawn actions using:
@@ -343,3 +323,32 @@ class Repeat(Action):
 
     def done(self):
         return False
+
+
+class ReverseTime( IntervalAction ):
+    """ReverseTime executes an action in reverse order, from time=duration to time=0
+
+    Example::
+
+        # Executes an reverre-in-time FlipX3D action
+        action = ReverseTime( FlipX3D( duration=2) )
+        scene.do( action )
+    """
+    def init(self, other, *args, **kwargs):
+        super(ReverseTime, self).init(*args, **kwargs)
+        self.other = other
+        self.duration = self.other.duration
+        
+    def start(self):
+        self.other.target = self.target
+        super(ReverseTime, self).start()
+        self.other.start()
+        
+    def stop(self):
+        super(ReverseTime,self).stop()
+    
+    def update(self, t):
+        self.other.update(1-t)
+    
+    def __reversed__(self):
+        return self.other

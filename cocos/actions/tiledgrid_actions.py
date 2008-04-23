@@ -48,17 +48,13 @@ class ShakyTiles( TiledGridAction ):
     def update( self, t ):
         for i in range(0, self.grid.x):
             for j in range(0, self.grid.y):
-                for k in range(0,4):
-
-                    idx = (i * 4 * self.grid.y + j * 4 + k) * 2
-                    x = self.target.grid.vertex_points[idx]
-                    y = self.target.grid.vertex_points[idx+1]
-
-                    x += rr(-self.randrange, self.randrange)
-                    y += rr(-self.randrange, self.randrange)
-
-                    self.target.grid.vertex_list.vertices[idx] = int(x)
-                    self.target.grid.vertex_list.vertices[idx+1] = int(y)
+                    coords = self.get_original_tile(i,j)   
+                    for k in range(0,len(coords),2):
+                        x = rr(-self.randrange, self.randrange)
+                        y = rr(-self.randrange, self.randrange)
+                        coords[k] += x
+                        coords[k+1] += y
+                    self.set_tile(i,j,coords)
                 
 
 class ShatteredTiles( TiledGridAction ):
@@ -81,17 +77,13 @@ class ShatteredTiles( TiledGridAction ):
         if not self._once:
             for i in range(0, self.grid.x):
                 for j in range(0, self.grid.y):
-                    for k in range(0,4):
-    
-                        idx = (i * 4 * self.grid.y + j * 4 + k) * 2
-                        x = self.target.grid.vertex_points[idx]
-                        y = self.target.grid.vertex_points[idx+1]
-    
-                        x += rr(-self.randrange, self.randrange)
-                        y += rr(-self.randrange, self.randrange)
-    
-                        self.target.grid.vertex_list.vertices[idx] = int(x)
-                        self.target.grid.vertex_list.vertices[idx+1] = int(y)
+                    coords = self.get_original_tile(i,j)   
+                    for k in range(0,len(coords),2):
+                        x = rr(-self.randrange, self.randrange)
+                        y = rr(-self.randrange, self.randrange)
+                        coords[k] += x
+                        coords[k+1] += y
+                    self.set_tile(i,j,coords)
             self._once = True
                 
 
@@ -101,7 +93,19 @@ class ShuffleTiles( TiledGridAction ):
        scene.do( ShuffleTiles( grid=(4,4), duration=10) )
     '''
 
+    def init(self, seed=-1, *args, **kw):
+        '''
+        :Parameters:
+            `seed` : float
+                Seed for the random in the shuffle.
+        '''
+        super(ShuffleTiles,self).init(*args, **kw)
+        self.seed = seed
+        
     def start(self):
+        if self.seed != -1:
+            random.seed( self.seed )
+
         super(ShuffleTiles,self).start()
         self.tiles = {}
         self.dst_tiles = {}
@@ -111,33 +115,21 @@ class ShuffleTiles( TiledGridAction ):
                 self.tiles[(i,j)] = Tile( position = Point2(i,j), 
                                           start_position = Point2(i,j), 
                                           delta= self._get_delta(i,j) )
-
-        
+ 
     def place_tile(self, i, j):
         t = self.tiles[(i,j)]
+        coords = self.get_original_tile(i,j)
 
-        for k in range(0,4):
-            idx = (i * 4 * self.grid.y + j * 4 + k) * 2
-
-            x=0
-            y=0
-            
-            if k==1 or k==2:
-                x = self.target.grid.x_step
-            if k==2 or k==3:
-                y = self.target.grid.y_step
-                
-            x += t.position.x * self.target.grid.x_step
-            y += t.position.y * self.target.grid.y_step
-            
-            self.target.grid.vertex_list.vertices[idx] = int(x)
-            self.target.grid.vertex_list.vertices[idx+1] = int(y)
+        for k in range(0,len(coords),2):                      
+            coords[k] += int( t.position.x * self.target.grid.x_step )
+            coords[k+1] += int( t.position.y * self.target.grid.y_step )
+        self.set_tile(i,j,coords)
         
     def update(self, t ):
         for i in range(0, self.grid.x):
             for j in range(0, self.grid.y):
-                self.tiles[(i,j)].position = self.tiles[(i,j)].start_position + self.tiles[(i,j)].delta * t
-                self.place_tile(i,j)   
+                self.tiles[(i,j)].position = self.tiles[(i,j)].delta * t
+                self.place_tile(i,j)
                 
     # private method
     def _get_delta(self, x, y):
@@ -202,3 +194,5 @@ class FadeOutTiles( TiledGridAction ):
                                 
                         self.target.grid.vertex_list.vertices[idx] = int(vx)
                         self.target.grid.vertex_list.vertices[idx+1] = int(vy)
+    def __reversed__(self):
+        raise GridException("FadeOutTiles has no reverse")

@@ -44,7 +44,6 @@ __all__ = [ 'GridException',            # Grid Exceptions
             'AccelDeccelAmplitude',
             
             'StopGrid',
-            'ReverseTime',
             ]
 
 class GridException( Exception ):
@@ -235,50 +234,32 @@ class TiledGridAction( GridBaseAction ):
 
     def get_grid(self):
         return TiledGrid()
- 
-    def _get_vertex_idx( self, i, j, k ):
-        if i==0 and j==0:
-            idx = 0
-        elif i==0 and j>0:
-            idx = ( (j-1)*4 + 3 ) * 2
-        elif i>0 and j==0:
-            idx = ((i-1) * 4 * self.grid.y + 1 ) * 2
-        else:
-            idx = ((i-1) * 4 * self.grid.y + (j-1) * 4 + k) * 2
+    
+    def set_vertex(self, i,j ):
+        raise GridException("Use set_tile() instead")
 
-        return idx
+    def get_vertex(self, i, j):
+        raise GridException("Use get_tile() instead")
+    
+    def get_original_vertex(self, i, j):
+        raise GridException("Use get_original_tile() instead")
 
-    def _set_vertex( self, i, j, k, v ):
-        if i < 0 or i > self.grid.x:
-            return
-        if j < 0 or j > self.grid.y:
-            return
-        if k< 0 or k >=4:
-            return
-
-        idx = self._get_vertex_idx( i,j,k)
-
-        self.target.grid.vertex_list.vertices[idx] = int(v[0])
-        self.target.grid.vertex_list.vertices[idx+1] = int(v[1])
-
-    def set_vertex( self, x, y, v):
-        '''Set a vertex point is a certain value
+    def set_tile(self, x, y, coords):
+        '''Set the 4 tile coordinates
 
         :Parameters:
             `x` : int 
                x-vertex
             `y` : int
                y-vertex
-            `v` : (int, int)
-                tuple value for the vertex
+            `coords` : [ int, int, int, int, int, int, int, int ]
+                The 4 coordinates
         '''
-        self._set_vertex( x, y, 2, v)
-        self._set_vertex( x+1, y, 3, v)
-        self._set_vertex( x+1, y+1, 0, v)
-        self._set_vertex( x, y+1, 1, v)
-
-    def get_vertex( self, x, y):
-        '''Get the current vertex coordinate
+        idx = (self.grid.y * x + y) * 4 * 2        
+        self.target.grid.vertex_list.vertices[idx:idx+8] = coords
+    
+    def get_original_tile(self, x, y):
+        '''Get the 4-original tile coordinates
 
         :Parameters:
             `x` : int 
@@ -286,29 +267,11 @@ class TiledGridAction( GridBaseAction ):
             `y` : int
                y-vertex
 
-        :rtype: (int,int)
+        :rtype: [ int, int, int, int, int, int, int, int ]
         '''
-        idx = self._get_vertex_idx( x,y,2 )
-        x = self.target.grid.vertex_list.vertices[idx]
-        y = self.target.grid.vertex_list.vertices[idx+1]
-        return (x,y)
-
-    def get_original_vertex( self, x, y):
-        '''Get the original vertex coordinate
-
-        :Parameters:
-            `x` : int 
-               x-vertex
-            `y` : int
-               y-vertex
-
-        :rtype: (int,int)
-        '''
-        idx = self._get_vertex_idx( x,y,2 )
-        x = self.target.grid.vertex_points[idx]
-        y = self.target.grid.vertex_points[idx+1]
-        return (x,y)
-
+        idx = (self.grid.y * x + y) * 4 * 2        
+        return self.target.grid.vertex_points[idx:idx+8]
+        
 
 class AccelDeccelAmplitude( IntervalAction ):
     """
@@ -417,26 +380,3 @@ class StopGrid( InstantAction ):
     def update(self, t):
         if self.target.grid and self.target.grid.active:
             self.target.grid.active = False
-
- 
-class ReverseTime( IntervalAction ):
-    """ReverseTime executes an action in reverse order, from time=duration to time=0
-    """
-    def init(self, other, *args, **kwargs):
-        super(ReverseTime, self).init(*args, **kwargs)
-        self.other = other
-        self.duration = self.other.duration
-        
-    def start(self):
-        self.other.target = self.target
-        super(ReverseTime, self).start()
-        self.other.start()
-        
-    def stop(self):
-        super(ReverseTime,self).stop()
-    
-    def update(self, t):
-        self.other.update(1-t)
-    
-    def __reversed__(self):
-        return self.other
