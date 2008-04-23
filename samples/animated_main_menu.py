@@ -211,7 +211,7 @@ if __name__ == "__main__":
             )
 
     lens = Lens3D( radius=240, center=(320,240), grid=(32,24), duration=5)
-    waves3d = AccelDeccelAmplitude( Waves3D( waves=18, amplitude=80, grid=(20,20), duration=15), rate=4.0 )
+    waves3d = AccelDeccelAmplitude( Waves3D( waves=18, amplitude=80, grid=(32,24), duration=15, reuse_grid=True), rate=4.0 )
     flipx =  FlipX3D(duration=1)
     flipx_reuse = FlipX3D(duration=1, reuse_grid=True)
     flipy_reuse = FlipY3D(duration=1, reuse_grid=True)

@@ -41,10 +41,9 @@ class Waves3D( Grid3DAction ):
     def update( self, t ):
         for i in range(0, self.grid.x+1):
             for j in range(0, self.grid.y+1):
-                x = i* self.size_x
-                y = j* self.size_y
+                x,y,z = self.get_original_vertex(i,j)
 
-                z = (math.sin(t*math.pi*self.waves*2 + (y+x) * .01) * self.amplitude * self.amplitude_rate )
+                z += (math.sin(t*math.pi*self.waves*2 + (y+x) * .01) * self.amplitude * self.amplitude_rate )
 
                 self.set_vertex( i,j, (x, y, z) )
 
