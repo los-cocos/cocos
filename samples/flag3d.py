@@ -1,4 +1,7 @@
 #
+# Cocos:
+# http://code.google.com/p/los-cocos/
+#
 # An example of how to generate a 3D scene using Cocos
 #
 
@@ -43,7 +46,7 @@ class Flag3D( cocos.layer.Layer ):
         # Generates an indexed vertex array with texture, vertex and color
         # http://www.glprogramming.com/red/chapter02.html#name6
         self.vertex_list = pyglet.graphics.vertex_list_indexed( (self.grid_size.x+1) * (self.grid_size.y+1), 
-                            idx_pts, "t3f", "v3f/stream","c4B")
+                            idx_pts, "t2f", "v3f/stream","c4B")
         self.vertex_list.vertices = ver_pts_idx     # vertex points
         self.vertex_list.tex_coords = tex_pts_idx   # texels
         self.vertex_list.colors = (255,255,255,255) * (self.grid_size.x+1) * (self.grid_size.y+1) # colors 
@@ -126,7 +129,7 @@ class Flag3D( cocos.layer.Layer ):
         for x in range(0,self.grid_size.x+1):
             for y in range(0,self.grid_size.y+1):
                 vertex_points_idx += [-1,-1,-1]
-                texture_points_idx += [-1,-1,-1]
+                texture_points_idx += [-1,-1]
 
         # since we are using vertex_list_indexed we must calculate
         # the index points
@@ -154,15 +157,18 @@ class Flag3D( cocos.layer.Layer ):
                 l1 = ( a*3, b*3, c*3, d*3 )
                 l2 = ( Point3(x1,y1,0), Point3(x2,y1,0), Point3(x2,y2,0), Point3(x1,y2,0) )
 
-                # populate the vertex_list and the textex_list
+                # populate the vertex list
                 for i in range( len(l1) ):
                     vertex_points_idx[ l1[i] ] = l2[i].x
                     vertex_points_idx[ l1[i] + 1 ] = l2[i].y
                     vertex_points_idx[ l1[i] + 2 ] = l2[i].z
 
-                    texture_points_idx[ l1[i] ] = l2[i].x / w
-                    texture_points_idx[ l1[i] + 1 ] = l2[i].y / h
-                    texture_points_idx[ l1[i] + 2 ] = 0.0
+                tex1 = ( a*2, b*2, c*2, d*2 )
+                tex2 = ( Point2(x1,y1), Point2(x2,y1), Point2(x2,y2), Point2(x1,y2) )
+                # populate the texel list
+                for i in range( len(l1) ):
+                    texture_points_idx[ tex1[i] ] = tex2[i].x / w
+                    texture_points_idx[ tex1[i] + 1 ] = tex2[i].y / h
 
         return ( index_points, vertex_points_idx, texture_points_idx )
 
