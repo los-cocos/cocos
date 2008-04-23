@@ -143,7 +143,7 @@ class Waves( GridAction ):
                     duration=self.duration)
 
 class QuadMoveBy( GridAction ):
-    '''QuadMoveBy moves each vertex of the quad
+    '''QuadMoveBy moves each vertex of the grid. The size of the grid is (1,1)
 
        scene.do( QuadMoveBy( src0, src1, src2, src3,
                delta0, delta1, delta2, delta3,
@@ -171,7 +171,7 @@ class QuadMoveBy( GridAction ):
              `src0` : (int, int)
                  Initial value for the bottom-left coordinate. Default is (0,0)
              `src1` : (int, int)
-                 Initial value for the bottom-rifht coordinate. Default is (win_size_x,0)
+                 Initial value for the bottom-right coordinate. Default is (win_size_x,0)
              `src2` : (int, int)
                  Initial value for the upper-right coordinate. Default is (win_size_x, win_size_y)
              `src3` : (int, int)
