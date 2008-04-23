@@ -19,7 +19,7 @@ def set_pause_scene_generator(generator):
     
 def default_pause_scene():
     return PauseScene(
-        director.scene, ColorLayer(0.1,0.1,0.1,0.8), PauseLayer()
+        director.scene, ColorLayer(25,25,25,205), PauseLayer()
         )
 set_pause_scene_generator( default_pause_scene )
 
@@ -29,7 +29,7 @@ class PauseScene(Scene):
         self.bg = background_scene
         
     def on_draw(self):
-        self.bg.on_draw()
+        self.bg.visit()
         super(PauseScene, self).on_draw()
         
 class PauseLayer(Layer):
