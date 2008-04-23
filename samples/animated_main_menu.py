@@ -212,44 +212,38 @@ if __name__ == "__main__":
 
     lens = Lens3D( radius=240, center=(320,240), grid=(32,24), duration=5)
     waves3d = AccelDeccelAmplitude( Waves3D( waves=18, amplitude=80, grid=(20,20), duration=15), rate=4.0 )
-    waves3d2 = Waves3D( waves=5, amplitude=20, grid=(16,12), duration=5)
-    lens_reuse = Lens3D( radius=200, center=(320,240), grid=(16,12), duration=3, reuse_grid=True)
     flipx =  FlipX3D(duration=1)
     flipy = FlipY3D(duration=1)
     flip = Flip(duration=1)
     liquid = Liquid( grid=(16,12), duration=8)
     shuffle = ShuffleTiles( grid=(16,12), duration=5)
     shakyt = ShakyTiles( grid=(16,12), duration=5)
-    shaky = Shaky( grid=(16,12), duration=5)
     corners = CornerSwap( duration=1)
-    waves = Waves( grid=(32,24), duration=5)
-    shattered = ShatteredTiles( grid=(16,12), duration=1 )
-    shuffle_reuse = ShuffleTiles( grid=(16,12), duration=5, reuse_grid=True)    
+    waves = AccelAmplitude(Waves( waves=8, amplitude=50, grid=(32,24), duration=5), rate=2.0)  
+    shaky = Shaky( randrange=10, grid=(32,24), duration=5, reuse_grid=True)
     quadmove = QuadMoveBy( delta0=(320,240), delta1=(-630,0), delta2=(-320,-240), delta3=(630,0), duration=2 )
     fadeout = FadeOutTiles( grid=(16,12), duration=2)
-    cornerup = MoveCornerUp( duration=2)
-
+    cornerup = MoveCornerUp( duration=1)
+    shatter = ShatteredTiles( randrange=16, grid=(32,24), duration=4)
     scene.do(
-              Delay(3) +
+              Delay(1) +
               quadmove + Delay(1) +
               Reverse(quadmove) +
               shuffle +
               liquid + Delay(2) +
-              flipx + Delay(4) +
+              flipx + Delay(2) +
               Reverse(flipx) +
-              shakyt + Delay(4) +
-              flip+ Delay(4) +
+              shakyt + Delay(2) +
+              flip+ Delay(2) +
               Reverse(flip) +
               lens +
-              flipy + Delay(4) + 
+              flipy + Delay(2) + 
               Reverse(flipy) +
               waves3d +
-              waves3d2 + Delay(2) + lens_reuse +
-              shaky+ Delay(4) +
-              corners + Delay(4) +
+              corners + Delay(2) +
               Reverse(corners) +
-              waves + Delay(4) +
-              shattered + Delay(3) + shuffle_reuse +
+              shatter +
+              waves + Delay(2) + shaky +
               cornerup + Delay(1) +
               Reverse(cornerup) + Delay(1) +
               fadeout + Delay(2) +              

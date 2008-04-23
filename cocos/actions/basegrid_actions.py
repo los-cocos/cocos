@@ -78,12 +78,14 @@ class GridBaseAction( IntervalAction ):
                     and type(new_grid) == type(self.target.grid):
                 # since we are reusing the grid,
                 # we must "cheat" the action that the original vertex coords are
-                # the ones that we are inhereting.
+                # the ones that were inhereted.
                 self.target.grid.vertex_points = self.target.grid.vertex_list.vertices[:]
             else:
                 # condition are not met
+                if not self.target.grid:
+                    raise GridException("Cannot reuse grid. There weren't a previous grid")
                 raise GridException("Cannot reuse grid. class grid or grid size did not match: %s vs %s and %s vs %s"
-                                    % ( str(self.grid), str(self.target.grid), type(new_grid), type(self.target.grid) ) )
+                                    % ( str(self.grid), str(self.target.grid.grid), type(new_grid), type(self.target.grid) ) )
         else:
             # Not reusing the grid
             if self.target.grid and self.target.grid.active:

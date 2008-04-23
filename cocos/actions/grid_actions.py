@@ -47,10 +47,7 @@ class Shaky( GridAction):
     def update( self, t ):
         for i in range(0, self.grid.x+1):
             for j in range(0, self.grid.y+1):
-
-                x = i* self.size_x
-                y = j* self.size_y
-
+                x,y = self.get_original_vertex(i,j)
                 x += rr( -self.randrange, self.randrange )
                 y += rr( -self.randrange, self.randrange )
 
@@ -81,8 +78,7 @@ class Liquid( GridAction ):
             
         for i in range(1, self.grid.x):
             for j in range(1, self.grid.y):
-                x = i* self.size_x
-                y = j* self.size_y
+                x,y = self.get_original_vertex(i,j)
                 xpos = (x + (math.sin(t*math.pi*self.waves*2 + x * .01) * self.amplitude * self.amplitude_rate))
                 ypos = (y + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.amplitude * self.amplitude_rate)) 
                 self.set_vertex( i,j, (xpos,ypos) )
@@ -120,9 +116,7 @@ class Waves( GridAction ):
     def update( self, t ):        
         for i in range(0, self.grid.x+1):
             for j in range(0, self.grid.y+1):
-                x = i* self.size_x
-                y = j* self.size_y
-
+                x,y = self.get_original_vertex(i,j)
                 if self.vertical_sin:
                     xpos = (x + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.amplitude * self.amplitude_rate))
                 else:
