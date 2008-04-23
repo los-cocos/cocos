@@ -217,33 +217,33 @@ if __name__ == "__main__":
     flipy_reuse = FlipY3D(duration=1, reuse_grid=True)
     flip = Flip(duration=1)
     liquid = Liquid( grid=(16,12), duration=8)
-    shuffle = ShuffleTiles( grid=(16,12), duration=1)
-    shakyt = ShakyTiles( grid=(16,12), duration=5)
+    shakyt = ShakyTiles( grid=(16,12), duration=3)
     corners = CornerSwap( duration=1)
     waves = AccelAmplitude(Waves( waves=8, amplitude=50, grid=(32,24), duration=5), rate=2.0)  
     shaky = Shaky( randrange=10, grid=(32,24), duration=5, reuse_grid=True)
     quadmove = QuadMoveBy( delta0=(320,240), delta1=(-630,0), delta2=(-320,-240), delta3=(630,0), duration=2 )
     fadeout = FadeOutTiles( grid=(16,12), duration=2)
     cornerup = MoveCornerUp( duration=1)
-    shatter = ShatteredTiles( randrange=16, grid=(32,24), duration=4)
+    shatter = ShatteredTiles( randrange=16, grid=(16,12), duration=4 )
+    shuffle_reuse = ShuffleTiles( grid=(16,12), duration=1, reuse_grid=True )
+    shuffle = ShuffleTiles( grid=(16,12), duration=1 )
+
     scene.do(
               Delay(1) +
               quadmove + Delay(1) +
               Reverse(quadmove) +
-              shuffle + Delay(4) + Reverse(shuffle) +
               liquid + Delay(2) +
+              shakyt + Delay(2) +
+              shuffle_reuse + Delay(4) +  Reverse(shuffle) + Delay(3) +
               flipx + Delay(2) +
               flipy_reuse + Delay(2) +
               flipx_reuse + Delay(2) + 
               flipy_reuse + Delay(2) +
-              shakyt + Delay(2) +
+              shatter +
               flip+ Delay(2) +
               Reverse(flip) +
-              lens +
-              waves3d +
-              corners + Delay(2) +
-              Reverse(corners) +
-              shatter +
+              lens + waves3d +
+              corners + Delay(2) + Reverse(corners) +
               waves + Delay(2) + shaky +
               cornerup + Delay(1) +
               Reverse(cornerup) + Delay(1) +

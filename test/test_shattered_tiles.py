@@ -49,6 +49,6 @@ if __name__ == "__main__":
     main_scene.add( green, z=3 )
     main_scene.add( SpriteLayer(), z=4 )
 
-    a = ShatteredTiles( randrange=6, duration=10, grid=(16,16) )
+    a = ShatteredTiles( randrange=6, duration=10, grid=(8,6) )
     main_scene.do( a )
     director.run (main_scene)
