@@ -42,7 +42,8 @@ __all__ = [ 'GridException',            # Grid Exceptions
             'AccelAmplitude',           # Amplitude modifiers
             'DeccelAmplitude',
             'AccelDeccelAmplitude',
-
+            
+            'DoAndPause'
             ]
 
 class GridException( Exception ):
@@ -328,3 +329,35 @@ class DeccelAmplitude( AccelAmplitude ):
 
     def __reversed__(self):
         return AccelAmplitude( Reverse(self.other), rate=self.rate )
+
+class DoAndPause( IntervalAction ):
+    '''Executes a grid action and then wait for duration seconds before ending it.
+
+    XXX: finish the documentation
+    ''' 
+    
+    def init(self, other, duration, *args, **kwargs):
+        super(DoAndPause, self).init( *args, **kwargs)
+        self.other = other
+        self.orig_duration = duration
+        self.duration = duration + self.other.duration
+        self.duration_rate = self.duration / float( self.other.duration)
+
+    def start(self):
+        super(DoAndPause,self).start()
+
+        self.other.target = self.target
+        self.other.start()
+        
+    def update(self, t):
+        new_t = self.duration_rate * t
+        if new_t > 1:
+            new_t = 1
+        self.other.update( new_t )
+
+    def stop(self):
+        super(DoAndPause,self).stop()
+        self.other.stop()
+        
+    def __reverse__(self):
+        return DoAndPause( Reverse(other), duration=self.orig_duration)

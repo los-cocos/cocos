@@ -221,20 +221,29 @@ if __name__ == "__main__":
     shaky = Shaky( grid=(16,12), duration=5)
     corners = CornerSwap( duration=1)
     waves = Waves( grid=(32,24), duration=5)
+    shattered = ShatteredTiles( grid=(32,24), duration=1 )
+    quadmove = QuadMoveBy( delta0=(320,240), delta1=(-630,0), delta2=(-320,-240), delta3=(630,0), duration=2 )
+
 
 #    scene.do( ShuffleTiles( grid(16,16), duration=5) + Liquid( grid=(16,16), duration=500) )
     scene.do(
-              Delay(2) +
-              liquid +
-              flipx + 
-              shakyt +
-              flip +
+              Delay(3) +
+              DoAndPause( quadmove, duration=1) +
+              Reverse(quadmove) +
+              shuffle +
+              DoAndPause(liquid, duration=4) +
+              DoAndPause(flipx, duration=4) + 
+              DoAndPause(shakyt, duration=4) +
+              DoAndPause(flip, duration=4) +
+              Reverse(flip) +
               lens +
-              flipy + 
+              DoAndPause(flipy, duration=4) + 
               waves3d +
-              shaky +
-              corners +
-              waves
+              DoAndPause(shaky, duration=4) +
+              DoAndPause(corners, duration=4) +
+              Reverse(corners) +
+              DoAndPause(waves, duration=4) +
+              DoAndPause(shattered, duration=4)
               )
 
     director.run( scene )
