@@ -169,7 +169,7 @@ class OptionMenu(Menu):
         self.menu_halign = RIGHT
 
         self.add( MenuItem('Fullscreen', self.on_fullscreen) )
-        self.add( ToggleMenuItem('Show FPS', True, self.on_show_fps) )
+        self.add( ToggleMenuItem('Show FPS: ', True, self.on_show_fps) )
         self.add( MenuItem('OK', self.on_quit) )
         self.build_items()
 
@@ -223,27 +223,29 @@ if __name__ == "__main__":
     waves = Waves( grid=(32,24), duration=5)
     shattered = ShatteredTiles( grid=(32,24), duration=1 )
     quadmove = QuadMoveBy( delta0=(320,240), delta1=(-630,0), delta2=(-320,-240), delta3=(630,0), duration=2 )
-
+    fadeout = FadeOutTiles( grid=(16,12), duration=2)
 
 #    scene.do( ShuffleTiles( grid(16,16), duration=5) + Liquid( grid=(16,16), duration=500) )
     scene.do(
               Delay(3) +
-              DoAndPause( quadmove, duration=1) +
+              quadmove + Delay(1) +
               Reverse(quadmove) +
               shuffle +
-              DoAndPause(liquid, duration=4) +
-              DoAndPause(flipx, duration=4) + 
-              DoAndPause(shakyt, duration=4) +
-              DoAndPause(flip, duration=4) +
+              liquid + Delay(4) +
+              flipx + Delay(4) +
+              shakyt + Delay(4) +
+              flip+ Delay(4) +
               Reverse(flip) +
               lens +
-              DoAndPause(flipy, duration=4) + 
+              flipy + Delay(4) + 
               waves3d +
-              DoAndPause(shaky, duration=4) +
-              DoAndPause(corners, duration=4) +
+              shaky+ Delay(4) +
+              corners + Delay(4) +
               Reverse(corners) +
-              DoAndPause(waves, duration=4) +
-              DoAndPause(shattered, duration=4)
+              waves + Delay(4) +
+              shattered + Delay(4) +
+              fadeout + Delay(2) +              
+              StopGrid()
               )
 
     director.run( scene )

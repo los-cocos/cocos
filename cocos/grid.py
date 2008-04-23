@@ -109,6 +109,7 @@ class GridBase(object):
         if self._active == True:
             self._handlers = director.push_handlers(self.on_resize)
         elif self._active == False:
+            self.vertex_list.delete()
             director.pop_handlers()
         else:
             raise Exception("Invalid value for GridBase.active")

@@ -43,7 +43,7 @@ __all__ = [ 'GridException',            # Grid Exceptions
             'DeccelAmplitude',
             'AccelDeccelAmplitude',
             
-            'DoAndPause'
+            'StopGrid'
             ]
 
 class GridException( Exception ):
@@ -51,48 +51,71 @@ class GridException( Exception ):
     
 class GridBaseAction( IntervalAction ):
     '''GridBaseAction is the base class of all Grid Actions.'''
-    def init( self, grid=(4,4), duration=5):
+    def init( self, grid=(4,4), duration=5, reuse_grid=False):
         """Initialize the Grid Action
         :Parameters:
             `grid` : (int,int)
                 Number of horizontal and vertical quads in the grid
             `duration` : int 
                 Number of seconds that the action will last
+            `reuse_grid` : bool
+                If there is an active grid of the same size and class, it will be reused.
         """
         self.duration = duration
         if not isinstance(grid,Point2):
             grid = Point2( *grid)
         self.grid = grid
+        self.reuse_grid = reuse_grid
 
-    def start( self ):
-        self.target.grid.init( self.grid )
-        self.target.grid.active = True
+    def start( self ):        
+        new_grid = self.get_grid()
+        
+        if self.target.grid and self.target.grid.active:
+            if self.reuse_grid and \
+                self.grid == self.target.grid.grid and \
+                type(new_grid) == type(self.target.grid):
+                
+                # reuse grid,
+                new_grid = self.target.grid
+            else:
+                # deactive the old grid to release card memory
+                self.target.grid.active = False
+
+        self.target.grid = new_grid
+        
+        if not self.target.grid.active:
+            # this means we are not reusing the grid
+            self.target.grid.init( self.grid )
+            self.target.grid.active = True
 
         x,y = director.get_window_size()
         self.size_x = x // self.grid.x
         self.size_y = y // self.grid.y
-
-        
-    def stop( self ):
-        self.target.grid.vertex_list.delete()
-        self.target.grid.active = False
+      
+#    def stop( self ):
+#        self.target.grid.active = False
 
     def set_vertex( self, x, y, v):
         raise NotImplementedError("abstract")
 
     def get_vertex( self, x, y):
         raise NotImplementedError("abstract")
-
-
+    
+    def get_original_vertex(self, x, y):
+        raise NotImplementedError("abstract")
+    
+    def get_grid(self):
+        return NotImplementedError('abstract')
+    
 class GridAction( GridBaseAction ):
     '''A GridAction is an action that does transformations
     to a grid.'''
-    def start( self ):
-        self.target.grid = Grid()
-        super( GridAction, self ).start()
 
+    def get_grid(self):
+        return Grid()
+    
     def get_vertex( self, x, y):
-        '''Get the current vertex point value
+        '''Get the current vertex coordinate
 
         :Parameters:
             `x` : int 
@@ -106,9 +129,25 @@ class GridAction( GridBaseAction ):
         x = self.target.grid.vertex_list.vertices[idx]
         y = self.target.grid.vertex_list.vertices[idx+1]
         return (x,y)
+    
+    def get_original_vertex( self, x, y):
+        '''Get the original vertex coordinate
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+
+        :rtype: (int,int)
+        '''
+        idx = (x * (self.grid.y+1) + y) * 2
+        x = self.target.grid.vertex_points[idx]
+        y = self.target.grid.vertex_points[idx+1]
+        return (x,y)
 
     def set_vertex( self, x, y, v):
-        '''Set a vertex point is a certain value
+        '''Set a vertex with a certain coordinate
 
         :Parameters:
             `x` : int 
@@ -125,12 +164,12 @@ class GridAction( GridBaseAction ):
 class Grid3DAction( GridBaseAction ):
     '''A Grid3DAction is an action that does transformations
     to a 3D grid.'''
-    def start( self ):
-        self.target.grid = Grid3D()
-        super( Grid3DAction, self ).start()                
 
+    def get_grid(self):
+        return Grid3D()
+    
     def get_vertex( self, x, y):
-        '''Get the current vertex point value
+        '''Get the current vertex coordinate
 
         :Parameters:
             `x` : int 
@@ -141,14 +180,29 @@ class Grid3DAction( GridBaseAction ):
         :rtype: (int,int)
         '''
         idx = (x * (self.grid.y+1) + y) * 3
-#        x = self.target.grid.vertex_list.vertices[idx]
-#        y = self.target.grid.vertex_list.vertices[idx+1]
-#        z = self.target.grid.vertex_list.vertices[idx+2]
+        x = self.target.grid.vertex_list.vertices[idx]
+        y = self.target.grid.vertex_list.vertices[idx+1]
+        z = self.target.grid.vertex_list.vertices[idx+2]
+        return (x,y,z)
+
+    def get_original_vertex( self, x, y):
+        '''Get the original vertex coordinate
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+
+        :rtype: (int,int)
+        '''
+        idx = (x * (self.grid.y+1) + y) * 3
         x = self.target.grid.vertex_points[idx]
         y = self.target.grid.vertex_points[idx+1]
         z = self.target.grid.vertex_points[idx+2]
 
         return (x,y,z)
+
 
     def set_vertex( self, x, y, v):
         '''Set a vertex point is a certain value
@@ -171,10 +225,9 @@ class Grid3DAction( GridBaseAction ):
 class TiledGridAction( GridBaseAction ):
     '''A TiledGrid action is an action that does transformations
     to a grid composed of tiles. You can transform each tile individually'''
-    def start( self ):
-        self.target.grid = TiledGrid()
-        super( TiledGridAction, self ).start()
-        
+
+    def get_grid(self):
+        return TiledGrid()
  
     def _get_vertex_idx( self, i, j, k ):
         if i==0 and j==0:
@@ -218,7 +271,7 @@ class TiledGridAction( GridBaseAction ):
         self._set_vertex( x, y+1, 1, v)
 
     def get_vertex( self, x, y):
-        '''Get the current vertex point value
+        '''Get the current vertex coordinate
 
         :Parameters:
             `x` : int 
@@ -232,6 +285,23 @@ class TiledGridAction( GridBaseAction ):
         x = self.target.grid.vertex_list.vertices[idx]
         y = self.target.grid.vertex_list.vertices[idx+1]
         return (x,y)
+
+    def get_original_vertex( self, x, y):
+        '''Get the original vertex coordinate
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+
+        :rtype: (int,int)
+        '''
+        idx = self._get_vertex_idx( x,y,2 )
+        x = self.target.grid.vertex_points[idx]
+        y = self.target.grid.vertex_points[idx+1]
+        return (x,y)
+
 
 class AccelDeccelAmplitude( IntervalAction ):
     """
@@ -330,34 +400,7 @@ class DeccelAmplitude( AccelAmplitude ):
     def __reversed__(self):
         return AccelAmplitude( Reverse(self.other), rate=self.rate )
 
-class DoAndPause( IntervalAction ):
-    '''Executes a grid action and then wait for duration seconds before ending it.
-
-    XXX: finish the documentation
-    ''' 
-    
-    def init(self, other, duration, *args, **kwargs):
-        super(DoAndPause, self).init( *args, **kwargs)
-        self.other = other
-        self.orig_duration = duration
-        self.duration = duration + self.other.duration
-        self.duration_rate = self.duration / float( self.other.duration)
-
-    def start(self):
-        super(DoAndPause,self).start()
-
-        self.other.target = self.target
-        self.other.start()
-        
+class StopGrid( InstantAction ):
     def update(self, t):
-        new_t = self.duration_rate * t
-        if new_t > 1:
-            new_t = 1
-        self.other.update( new_t )
-
-    def stop(self):
-        super(DoAndPause,self).stop()
-        self.other.stop()
-        
-    def __reverse__(self):
-        return DoAndPause( Reverse(other), duration=self.orig_duration)
+        if self.target.grid and self.target.grid.active:
+            self.target.grid.active = False

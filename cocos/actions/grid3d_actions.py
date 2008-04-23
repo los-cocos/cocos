@@ -68,25 +68,25 @@ class FlipX3D( Grid3DAction ):
         angle = angle / 2.0     # x calculates degrees from 0 to 90
         mx = math.cos( angle )
 
-        x,y,z = self.get_vertex(1,1)
+        x,y,z = self.get_original_vertex(1,1)
 
         diff_x = x - x * mx
         diff_z = abs( (x * mz) // 4.0 )
  
         # bottom-left
-        x,y,z = self.get_vertex(0,0)
+        x,y,z = self.get_original_vertex(0,0)
         self.set_vertex(0,0,(diff_x,y,z+diff_z))
 
         # upper-left
-        x,y,z = self.get_vertex(0,1)
+        x,y,z = self.get_original_vertex(0,1)
         self.set_vertex(0,1,(diff_x,y,z+diff_z))
 
         # bottom-right
-        x,y,z = self.get_vertex(1,0)
+        x,y,z = self.get_original_vertex(1,0)
         self.set_vertex(1,0,(x-diff_x,y,z-diff_z))
 
         # upper-right
-        x,y,z = self.get_vertex(1,1)
+        x,y,z = self.get_original_vertex(1,1)
         self.set_vertex(1,1,(x-diff_x,y,z-diff_z))
 
 class FlipY3D( Grid3DAction ):
@@ -103,25 +103,25 @@ class FlipY3D( Grid3DAction ):
         angle = angle / 2.0     # x calculates degrees from 0 to 90
         my = math.cos( angle )
 
-        x,y,z = self.get_vertex(1,1)
+        x,y,z = self.get_original_vertex(1,1)
 
         diff_y = y - y * my
         diff_z = abs( (y * mz) // 4.0 )
  
         # bottom-left
-        x,y,z = self.get_vertex(0,0)
+        x,y,z = self.get_original_vertex(0,0)
         self.set_vertex(0,0,(x,diff_y,z+diff_z))
 
         # upper-left
-        x,y,z = self.get_vertex(0,1)
+        x,y,z = self.get_original_vertex(0,1)
         self.set_vertex(0,1,(x,y-diff_y,z-diff_z))
 
         # bottom-right
-        x,y,z = self.get_vertex(1,0)
+        x,y,z = self.get_original_vertex(1,0)
         self.set_vertex(1,0,(x,diff_y,z+diff_z))
 
         # upper-right
-        x,y,z = self.get_vertex(1,1)
+        x,y,z = self.get_original_vertex(1,1)
         self.set_vertex(1,1,(x,y-diff_y,z-diff_z))
 
 
@@ -161,7 +161,7 @@ class Lens3D( Grid3DAction ):
             for i in range(0, self.grid.x+1):
                 for j in range(0, self.grid.y+1):
         
-                    x,y,z = self.get_vertex(i,j)
+                    x,y,z = self.get_original_vertex(i,j)
                     
                     p = Point2( x,y )
                     vect = self.position - p

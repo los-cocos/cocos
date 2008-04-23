@@ -1,3 +1,7 @@
+#
+# Cocos: 
+# http://code.google.com/p/los-cocos/
+#
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -49,5 +53,5 @@ if __name__ == "__main__":
     main_scene.add( green, z=3 )
     main_scene.add( SpriteLayer(), z=4 )
 
-    main_scene.do( DoAndPause( FlipX3D(duration=2), duration=4)  )
+    main_scene.do( FlipX3D(duration=2) + Delay(2) + StopGrid() )
     director.run (main_scene)
