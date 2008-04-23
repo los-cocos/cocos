@@ -60,6 +60,7 @@ class GridBaseAction( IntervalAction ):
                 Number of seconds that the action will last
             `reuse_grid` : bool
                 If there is an active grid of the same size and class, it will be reused.
+                If the conditions are not met, an exception is raised.
         """
         self.duration = duration
         if not isinstance(grid,Point2):
@@ -69,22 +70,25 @@ class GridBaseAction( IntervalAction ):
 
     def start( self ):        
         new_grid = self.get_grid()
-        
-        if self.target.grid and self.target.grid.active:
-            if self.reuse_grid and \
-                self.grid == self.target.grid.grid and \
-                type(new_grid) == type(self.target.grid):
-                
-                # reuse grid,
-                new_grid = self.target.grid
-            else:
-                # deactive the old grid to release card memory
-                self.target.grid.active = False
 
-        self.target.grid = new_grid
-        
-        if not self.target.grid.active:
-            # this means we are not reusing the grid
+        if self.reuse_grid:
+            # Reusing the grid 
+            if self.target.grid and self.target.grid.active \
+                    and self.grid == self.target.grid.grid \
+                    and type(new_grid) == type(self.target.grid):
+                # since we are reusing the grid,
+                # we must "cheat" the action that the original vertex coords are
+                # the ones that we are inhereting.
+                self.target.grid.vertex_points = self.target.grid.vertex_list.vertices[:]
+            else:
+                # condition are not met
+                raise GridException("Cannot reuse grid. class grid or grid size did not match: %s vs %s and %s vs %s"
+                                    % ( str(self.grid), str(self.target.grid), type(new_grid), type(self.target.grid) ) )
+        else:
+            # Not reusing the grid
+            if self.target.grid and self.target.grid.active:
+                self.target.grid.active = False
+            self.target.grid = new_grid
             self.target.grid.init( self.grid )
             self.target.grid.active = True
 
@@ -92,9 +96,6 @@ class GridBaseAction( IntervalAction ):
         self.size_x = x // self.grid.x
         self.size_y = y // self.grid.y
       
-#    def stop( self ):
-#        self.target.grid.active = False
-
     def set_vertex( self, x, y, v):
         raise NotImplementedError("abstract")
 

@@ -16,6 +16,7 @@ __all__ = [
            'FlipX3D',
            'FlipY3D',
            'Lens3D',
+           
            ]
 
 class Waves3D( Grid3DAction ):
@@ -68,26 +69,45 @@ class FlipX3D( Grid3DAction ):
         angle = angle / 2.0     # x calculates degrees from 0 to 90
         mx = math.cos( angle )
 
-        x,y,z = self.get_original_vertex(1,1)
+        x0,y,z = self.get_original_vertex(1,1)
+        x1,y,z = self.get_original_vertex(0,0)
+        
+        if x0 > x1:
+            # Normal Grid
+            a = (0,0)
+            b = (0,1)
+            c = (1,0)
+            d = (1,1)
+            x = x0
+        else:
+            # Reversed Grid
+            c = (0,0)
+            d = (0,1)
+            a = (1,0)
+            b = (1,1)
+            x = x1
 
         diff_x = x - x * mx
         diff_z = abs( (x * mz) // 4.0 )
  
         # bottom-left
-        x,y,z = self.get_original_vertex(0,0)
-        self.set_vertex(0,0,(diff_x,y,z+diff_z))
+        x,y,z = self.get_original_vertex(*a)
+        self.set_vertex(a[0],a[1],(diff_x,y,z+diff_z))
 
         # upper-left
-        x,y,z = self.get_original_vertex(0,1)
-        self.set_vertex(0,1,(diff_x,y,z+diff_z))
+        x,y,z = self.get_original_vertex(*b)
+        self.set_vertex(b[0],b[1],(diff_x,y,z+diff_z))
 
         # bottom-right
-        x,y,z = self.get_original_vertex(1,0)
-        self.set_vertex(1,0,(x-diff_x,y,z-diff_z))
+        x,y,z = self.get_original_vertex(*c)
+        self.set_vertex(c[0],c[1],(x-diff_x,y,z-diff_z))
 
         # upper-right
-        x,y,z = self.get_original_vertex(1,1)
-        self.set_vertex(1,1,(x-diff_x,y,z-diff_z))
+        x,y,z = self.get_original_vertex(*d)
+        self.set_vertex(d[0],d[1],(x-diff_x,y,z-diff_z))
+    
+    def __reversed__(self):
+        return FlipX3D(grid=self.grid, duration=self.duration, reuse_grid=True)
 
 class FlipY3D( Grid3DAction ):
     '''FlipY3D flips the screen using the X-axis'''
@@ -103,31 +123,46 @@ class FlipY3D( Grid3DAction ):
         angle = angle / 2.0     # x calculates degrees from 0 to 90
         my = math.cos( angle )
 
-        x,y,z = self.get_original_vertex(1,1)
+        x,y0,z = self.get_original_vertex(1,1)
+        x,y1,z = self.get_original_vertex(0,0)
+        
+        if y0 > y1:
+            # Normal Grid
+            a = (0,0)
+            b = (0,1)
+            c = (1,0)
+            d = (1,1)
+            y = y0
+        else:
+            # Reversed Grid
+            b = (0,0)
+            a = (0,1)
+            d = (1,0)
+            c = (1,1)
+            y = y1
 
         diff_y = y - y * my
         diff_z = abs( (y * mz) // 4.0 )
  
         # bottom-left
-        x,y,z = self.get_original_vertex(0,0)
-        self.set_vertex(0,0,(x,diff_y,z+diff_z))
+        x,y,z = self.get_original_vertex(*a)
+        self.set_vertex(a[0],a[1],(x,diff_y,z+diff_z))
 
         # upper-left
-        x,y,z = self.get_original_vertex(0,1)
-        self.set_vertex(0,1,(x,y-diff_y,z-diff_z))
+        x,y,z = self.get_original_vertex(*b)
+        self.set_vertex(b[0],b[1],(x,y-diff_y,z-diff_z))
 
         # bottom-right
-        x,y,z = self.get_original_vertex(1,0)
-        self.set_vertex(1,0,(x,diff_y,z+diff_z))
+        x,y,z = self.get_original_vertex(*c)
+        self.set_vertex(c[0],c[1],(x,diff_y,z+diff_z))
 
         # upper-right
-        x,y,z = self.get_original_vertex(1,1)
-        self.set_vertex(1,1,(x,y-diff_y,z-diff_z))
-
-
+        x,y,z = self.get_original_vertex(*d)
+        self.set_vertex(d[0],d[1],(x,y-diff_y,z-diff_z))
 
     def __reversed__(self):
-        raise NotImplementedError('Reverse(FlipY3d) not implemented yet')
+        return FlipY3D(grid=self.grid, duration=self.duration, reuse_grid=True)
+
 
 class Lens3D( Grid3DAction ):
     '''Lens simulates a Lens / Magnifying glass effect
