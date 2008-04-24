@@ -66,8 +66,12 @@ class GridBase(object):
         # blit
         glEnable(self.texture.target)
         glBindTexture(self.texture.target, self.texture.id)
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, self.texture.width, self.texture.height , 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 )
 
+        # XXX: horrible hack. in some configurations this is need (like
+        # linux+nvidia). pyglet bug ??? or cocos ???
+        self.texture.image_data
+
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, self.texture.width, self.texture.height , 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 )
         glPushAttrib(GL_COLOR_BUFFER_BIT)
 
         self._blit()
