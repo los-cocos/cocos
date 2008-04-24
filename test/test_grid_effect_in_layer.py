@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 
 from cocos.director import director
-from cocos.actions import Waves3D
+from cocos.actions import Flip, Waves3D
 from cocos.sprite import ActionSprite
 from cocos.layer import Layer, ColorLayer
 from cocos.scene import Scene
@@ -34,7 +34,7 @@ class SpriteLayer ( Layer ):
         self.add( sprite3 )
 
 if __name__ == "__main__":
-    print 'you shall see waving sprites and a red background'
+    print 'you shall see an scaled red background and fliping sprites. the background always must be seen (scaled)'
     director.init( resizable=True )
     main_scene = Scene()
 
@@ -42,8 +42,10 @@ if __name__ == "__main__":
 
     sprite = SpriteLayer()
 
+    red.scale = 0.75
+
     main_scene.add( red, z=0 )
     main_scene.add( sprite, z=1 )
 
-    sprite.do( Waves3D( waves=16, amplitude=40, grid=(16,16), duration=10) )
+    sprite.do( Waves3D(duration=4) + Flip(duration=4) )
     director.run (main_scene)

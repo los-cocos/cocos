@@ -66,6 +66,7 @@ class GridBase(object):
         # blit
         glEnable(self.texture.target)
         glBindTexture(self.texture.target, self.texture.id)
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, self.texture.width, self.texture.height , 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 )
 
         glPushAttrib(GL_COLOR_BUFFER_BIT)
 
@@ -275,19 +276,6 @@ class Grid3D(GridBase):
         self.vertex_list.colors: RGBA, with values from 0 - 255
     '''
 
-    def before_draw(self):       
-        # set Ortho projection before drawing
-        width,height = director.window.width, director.window.height
-        glLoadIdentity()
-
-        glViewport(0, 0, width, height)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, width, 0, height, -100, 100)
-        glMatrixMode(GL_MODELVIEW)
-
-        super(Grid3D,self).before_draw()
-
     def _init( self ):
         # calculate vertex, textures depending on screen size
         idx_pts, ver_pts_idx, tex_pts_idx = self._calculate_vertex_points()
@@ -298,22 +286,32 @@ class Grid3D(GridBase):
         self.vertex_points = ver_pts_idx[:]
         self.vertex_list.vertices = ver_pts_idx
         self.vertex_list.tex_coords = tex_pts_idx
-#        self.vertex_list.colors = (255,255,255,128) * (self.grid.x+1) * (self.grid.y+1)
+#        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
  
     def _blit(self ):
+
+        # go to 3D
         self._set_3d_projection()
 
         # center the image
         glLoadIdentity()
-
         width, height = director.get_window_size()
-#        glTranslatef(- width // 2, - height // 2, -240.0)
         gluLookAt( width // 2, height // 2, 240.0,   # eye
                    width // 2, height // 2, 0.0,   # center
                    0.0, 1.0, 0.0    # up
                    )
-        
+       
+       # blit
         self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
+
+        # go back to 2D
+        glLoadIdentity()
+        glViewport(0, 0, width, height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(0, width, 0, height, -100, 100)
+        glMatrixMode(GL_MODELVIEW)
+
 
     def _on_resize(self, xsteps, ysteps, txz, tyz):
         tex_idx = [] 
