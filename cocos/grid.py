@@ -25,6 +25,7 @@ class GridBase(object):
     def __init__(self):
         super(GridBase, self).__init__()
         self._active = False
+        self.reuse_grid = 0     #! Number of times that this grid will be reused
 
     def init( self, grid ):
         '''Initializes the grid creating both a vertex_list for an independent-tiled grid
@@ -61,13 +62,13 @@ class GridBase(object):
     def after_draw( self ):
         # capture after drawing
         self.grabber.after_render(self.texture)
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # blit
         glEnable(self.texture.target)
         glBindTexture(self.texture.target, self.texture.id)
+
         glPushAttrib(GL_COLOR_BUFFER_BIT)
-        
+
         self._blit()
                
         glPopAttrib()
@@ -146,11 +147,11 @@ class Grid(GridBase):
 
         # Generates a grid of joint quads
         self.vertex_list = pyglet.graphics.vertex_list_indexed( (self.grid.x+1) * (self.grid.y+1), 
-                            idx_pts, "t2f", "v2i/stream","c4B")
+                            idx_pts, "t2f", "v2i/stream")
         self.vertex_points = ver_pts_idx[:]
         self.vertex_list.vertices = ver_pts_idx
         self.vertex_list.tex_coords = tex_pts_idx
-        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
+#        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
  
     def _blit(self ):
         self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
@@ -223,11 +224,11 @@ class TiledGrid(GridBase):
 
        # Generates a grid of independent quads (think of tiles)
         self.vertex_list = pyglet.graphics.vertex_list(self.grid.x * self.grid.y * 4,
-                            "t2f", "v2i/stream","c4B")
+                            "t2f", "v2i/stream")
         self.vertex_points = ver_pts[:]
         self.vertex_list.vertices = ver_pts
         self.vertex_list.tex_coords = tex_pts
-        self.vertex_list.colors = (255,255,255,255) * self.grid.x * self.grid.y * 4  
+#        self.vertex_list.colors = (255,255,255,255) * self.grid.x * self.grid.y * 4  
 
     def _blit(self):
         self.vertex_list.draw(pyglet.gl.GL_QUADS)
@@ -293,11 +294,11 @@ class Grid3D(GridBase):
 
         # Generates a grid of joint quads
         self.vertex_list = pyglet.graphics.vertex_list_indexed( (self.grid.x+1) * (self.grid.y+1), 
-                            idx_pts, "t2f", "v3f/stream","c4B")
+                            idx_pts, "t2f", "v3f/stream")
         self.vertex_points = ver_pts_idx[:]
         self.vertex_list.vertices = ver_pts_idx
         self.vertex_list.tex_coords = tex_pts_idx
-        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
+#        self.vertex_list.colors = (255,255,255,128) * (self.grid.x+1) * (self.grid.y+1)
  
     def _blit(self ):
         self._set_3d_projection()

@@ -204,28 +204,29 @@ class ScoreMenu(Menu):
 
 if __name__ == "__main__":
     director.init( resizable=True)
+
+    menu = MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
+    
     scene =Scene( 
             FireManager(director.get_window_size()[0], 250),
             SpriteLayer(),
-            MultiplexLayer( MainMenu(), OptionMenu(), ScoreMenu() )
+            menu,
             )
 
     lens = Lens3D( radius=240, center=(320,240), grid=(32,24), duration=5)
-    waves3d = AccelDeccelAmplitude( Waves3D( waves=18, amplitude=80, grid=(32,24), duration=15, reuse_grid=True), rate=4.0 )
+    waves3d = AccelDeccelAmplitude( Waves3D( waves=18, amplitude=80, grid=(32,24), duration=15), rate=4.0 )
     flipx =  FlipX3D(duration=1)
-    flipx_reuse = FlipX3D(duration=1, reuse_grid=True)
-    flipy_reuse = FlipY3D(duration=1, reuse_grid=True)
+    flipy = FlipY3D(duration=1)
     flip = Flip(duration=1)
     liquid = Liquid( grid=(16,12), duration=8)
     shakyt = ShakyTiles( grid=(16,12), duration=3)
     corners = CornerSwap( duration=1)
     waves = AccelAmplitude(Waves( waves=8, amplitude=50, grid=(32,24), duration=5), rate=2.0)  
-    shaky = Shaky( randrange=10, grid=(32,24), duration=5, reuse_grid=True)
+    shaky = Shaky( randrange=10, grid=(32,24), duration=5)
     quadmove = QuadMoveBy( delta0=(320,240), delta1=(-630,0), delta2=(-320,-240), delta3=(630,0), duration=2 )
     fadeout = FadeOutTiles( grid=(16,12), duration=2)
     cornerup = MoveCornerUp( duration=1)
     shatter = ShatteredTiles( randrange=16, grid=(16,12), duration=4 )
-    shuffle_reuse = ShuffleTiles( grid=(16,12), duration=1, reuse_grid=True )
     shuffle = ShuffleTiles( grid=(16,12), duration=1 )
 
     scene.do(
@@ -234,17 +235,18 @@ if __name__ == "__main__":
               Reverse(quadmove) +
               liquid + Delay(2) +
               shakyt + Delay(2) +
-              shuffle_reuse + Delay(4) +  Reverse(shuffle) + Delay(3) +
-              flipx + Delay(2) +
-              flipy_reuse + Delay(2) +
-              flipx_reuse + Delay(2) + 
-              flipy_reuse + Delay(2) +
+              ReuseGrid() +
+              shuffle + Delay(4) +  Reverse(shuffle) + Delay(3) +
+              flipx + Delay(2) + ReuseGrid() +
+              flipy + Delay(2) + ReuseGrid() +
+              flipx + Delay(2) + ReuseGrid() +
+              flipy + Delay(2) +
               shatter +
               flip+ Delay(2) +
               Reverse(flip) +
-              lens + waves3d +
+              lens + ReuseGrid() + waves3d +
               corners + Delay(2) + Reverse(corners) +
-              waves + Delay(2) + shaky +
+              waves + Delay(2) + ReuseGrid() + shaky +
               cornerup + Delay(1) +
               Reverse(cornerup) + Delay(1) +
               fadeout + Delay(2) +              

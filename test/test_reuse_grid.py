@@ -50,7 +50,7 @@ if __name__ == "__main__":
     main_scene.add( SpriteLayer(), z=4 )
 
     waves = Waves( amplitude=80, waves=2, grid=(16,12), duration=2 )
-    shaky = Shaky( randrange=20, grid=(16,12), duration=4, reuse_grid=True)
+    shaky = Shaky( randrange=20, grid=(16,12), duration=4 )
 
-    main_scene.do( waves + Delay(2) + shaky )
+    main_scene.do( waves + ReuseGrid() + shaky )
     director.run (main_scene)

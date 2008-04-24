@@ -44,6 +44,7 @@ __all__ = [ 'GridException',            # Grid Exceptions
             'AccelDeccelAmplitude',
             
             'StopGrid',
+            'ReuseGrid',
             ]
 
 class GridException( Exception ):
@@ -51,39 +52,35 @@ class GridException( Exception ):
     
 class GridBaseAction( IntervalAction ):
     '''GridBaseAction is the base class of all Grid Actions.'''
-    def init( self, grid=(4,4), duration=5, reuse_grid=False):
+    def init( self, grid=(4,4), duration=5):
         """Initialize the Grid Action
         :Parameters:
             `grid` : (int,int)
                 Number of horizontal and vertical quads in the grid
             `duration` : int 
                 Number of seconds that the action will last
-            `reuse_grid` : bool
-                If there is an active grid of the same size and class, it will be reused.
-                If the conditions are not met, an exception is raised.
         """
         self.duration = duration
         if not isinstance(grid,Point2):
             grid = Point2( *grid)
         self.grid = grid
-        self.reuse_grid = reuse_grid
 
     def start( self ):        
         new_grid = self.get_grid()
 
-        if self.reuse_grid:
+        if self.target.grid and self.target.grid.reuse_grid > 0:                
             # Reusing the grid 
-            if self.target.grid and self.target.grid.active \
+            if self.target.grid.active \
                     and self.grid == self.target.grid.grid \
                     and type(new_grid) == type(self.target.grid):
                 # since we are reusing the grid,
                 # we must "cheat" the action that the original vertex coords are
                 # the ones that were inhereted.
                 self.target.grid.vertex_points = self.target.grid.vertex_list.vertices[:]
+                self.target.grid.reuse_grid -= 1
+                self.target.grid.reuse_grid = max(0, self.target.grid.reuse_grid)
             else:
                 # condition are not met
-                if not self.target.grid:
-                    raise GridException("Cannot reuse grid. There weren't a previous grid")
                 raise GridException("Cannot reuse grid. class grid or grid size did not match: %s vs %s and %s vs %s"
                                     % ( str(self.grid), str(self.target.grid.grid), type(new_grid), type(self.target.grid) ) )
         else:
@@ -375,8 +372,32 @@ class DeccelAmplitude( AccelAmplitude ):
 class StopGrid( InstantAction ):
     """StopGrid disables the current grid.
     Every grid action, after finishing, leaves the screen with a certain grid figure.
-    This figure will be displayed until StopGrid or another Grid action is executed
+    This figure will be displayed until StopGrid or another Grid action is executed.
+    
+    Example::
+    
+        scene.do( Waves3D( duration=2) + StopGrid() )
     """
     def update(self, t):
         if self.target.grid and self.target.grid.active:
             self.target.grid.active = False
+
+class ReuseGrid( InstantAction ):
+    """ReuseGrid will reuse the current grid for the next grid action.
+    
+    Example::
+    
+        scene.do( Waves3D( duration=2) + ReuseGrid() + Lens3D(duration=2) )
+    """
+    def init(self, reuse_times=1):
+        '''
+        :Parameters:
+            `reuse_times` : int
+                Number of times that the current grid will be reused by Grid actions. Default: 1
+        '''
+        self.reuse_times = reuse_times
+    def start(self):
+        if self.target.grid and self.target.grid.active:
+            self.target.grid.reuse_grid += self.reuse_times
+        else:
+            raise GridException("ReuseGrid must be used when a grid is still active")
