@@ -69,9 +69,12 @@ class GridBase(object):
 
         # XXX: horrible hack. in some configurations this is need (like
         # linux+nvidia). pyglet bug ??? or cocos ???
-        self.texture.image_data
+#        self.texture.image_data
 
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, self.texture.width, self.texture.height , 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 )
+        # this fixes issue #41 but it doesn't work in linux+nvidia. the current
+        # hack slows down the system a lot. disabling both (fix + hack) until
+        # this is fixed properly
+#        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, self.texture.width, self.texture.height , 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 )
         glPushAttrib(GL_COLOR_BUFFER_BIT)
 
         self._blit()
