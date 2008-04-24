@@ -151,7 +151,7 @@ class CocosNode(object):
                 ):
             pyglet.clock.unschedule(f)  
         for arg in self.scheduled_calls:
-            pyglet.clock.schedule(*args)  
+            pyglet.clock.unschedule(arg[0])  
 
     def _get_parent(self):
         if self._parent is None: return None
