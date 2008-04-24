@@ -43,7 +43,7 @@ class GridBase(object):
         if self.texture is None:
             self.texture = image.Texture.create_for_size(
                     GL_TEXTURE_2D, x, 
-                    y, GL_RGB)
+                    y, GL_RGBA)
         
         self.grabber = framegrabber.TextureGrabber()
         self.grabber.grab(self.texture)
@@ -67,14 +67,6 @@ class GridBase(object):
         glEnable(self.texture.target)
         glBindTexture(self.texture.target, self.texture.id)
 
-        # XXX: horrible hack. in some configurations this is need (like
-        # linux+nvidia). pyglet bug ??? or cocos ???
-#        self.texture.image_data
-
-        # this fixes issue #41 but it doesn't work in linux+nvidia. the current
-        # hack slows down the system a lot. disabling both (fix + hack) until
-        # this is fixed properly
-#        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, self.texture.width, self.texture.height , 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 )
         glPushAttrib(GL_COLOR_BUFFER_BIT)
 
         self._blit()
@@ -92,7 +84,7 @@ class GridBase(object):
         if director.window.width > self.texture.width or director.window.height > self.texture.height:
             self.texture = image.Texture.create_for_size(
                     GL_TEXTURE_2D, director.window.width, 
-                    director.window.height, GL_RGB)
+                    director.window.height, GL_RGBA)
             self.grabber = framegrabber.TextureGrabber()
             self.grabber.grab(self.texture)
         
