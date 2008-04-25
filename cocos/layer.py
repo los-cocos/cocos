@@ -18,13 +18,15 @@ __docformat__ = 'restructuredtext'
 
 import pyglet
 from pyglet.gl import *
+from pyglet.window import key
 
 from director import *
 import cocosnode
 import scene
 import bisect
+import sys
 
-__all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer'  ]
+__all__ = [ 'Layer', 'MultiplexLayer', 'ColorLayer', 'InterpreterLayer' ]
 
 class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
     """Class that handles events and other important game's behaviors"""
@@ -140,5 +142,74 @@ class ColorLayer(Layer):
     def __init__(self, *color):
         super(ColorLayer, self).__init__()
         self.add( QuadNode(color) )
-        
-        
+
+class InterpreterLayer(Layer):
+    """Creates a python interpreter that uses the sames globals() and locals() variables as sefl.
+    This is useful to debug and test new features.
+
+    Example::
+
+        scene.add( InterpreterLayer() )        
+
+        or you can activate it with CTRL +'i' ( COMMAND + i in Mac)
+    """
+    def __init__(self):
+        super(Layer,self).__init__()
+        self.cmd = ''
+        self.ignore_text = False
+        self.local_vrbl = locals()
+        self.global_vrbl = globals()
+
+        self._cmd = pyglet.text.Label('>>> ',x=0,y=5)
+        w,h = director.get_window_size()
+        self._output = pyglet.text.Label('', valign=pyglet.font.Text.BOTTOM,x=0,y=20,multiline=True,width=w)
+
+    def on_text(self, text):
+        if not self.ignore_text:
+            self.cmd += text
+        else:
+            self.ignore_text = False
+        return True
+
+    def on_draw( self ):
+        self._cmd.text = '>>> ' + self.cmd
+        self._cmd.draw()
+        self._output.draw()
+
+    def on_key_press( self, symbol, m):
+        if symbol == key.BACKSPACE:
+            if self.cmd:
+                self.cmd = self.cmd[:-1]
+            return True
+        elif symbol == key.ENTER:
+            old_stdout = sys.stdout
+            sys.stdout = FileStream()
+            try:
+                obj = compile( '%s' % self.cmd, '<string>','single')
+                self._output.text +='%s\n' % self.cmd
+                exec obj in self.global_vrbl, self.local_vrbl
+                self._output.text += '%s\n' % sys.stdout._data
+            except Exception,e:
+                self._output.text += '%s\n' % str(e)
+
+            # have a small output
+            self._output.text = self._output.text[-1000:]
+            self.cmd =''
+            self.ignore_text = True
+            sys.stdout = old_stdout
+
+            return True
+
+class FileStream( object ):
+    def __init__(self):
+        super(FileStream,self).__init__()
+        self._data = ''
+
+    def write( self, d ):
+        self._data = '%s%s' % ( self._data, d )
+
+    def get_data(self):
+        return self._data
+
+    def flush( self ):
+        self._data = ''

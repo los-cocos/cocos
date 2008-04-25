@@ -114,6 +114,7 @@ class DefaultHandler( object ):
     def __init__(self):
         super(DefaultHandler,self).__init__()
         self.wired = False
+        self.with_interpreter = False
 
     def on_key_press( self, symbol, modifiers ):
         if symbol == pyglet.window.key.F and (modifiers & pyglet.window.key.MOD_ACCEL):
@@ -142,6 +143,17 @@ class DefaultHandler( object ):
 
         elif symbol == pyglet.window.key.X and (modifiers & pyglet.window.key.MOD_ACCEL):
             director.show_FPS = not director.show_FPS 
+            return True
+
+        elif symbol == pyglet.window.key.I and (modifiers & pyglet.window.key.MOD_ACCEL):
+            from layer import InterpreterLayer
+
+            if self.with_interpreter == False:
+                director.scene.add( InterpreterLayer(), name='python_interpreter', z=100)
+                self.with_interpreter= True
+            else:
+                director.scene.remove_by_name( name='python_interpreter')
+                self.with_interpreter= False
             return True
 
         elif symbol == pyglet.window.key.S and (modifiers & pyglet.window.key.MOD_ACCEL):
