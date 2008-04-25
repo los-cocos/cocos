@@ -242,6 +242,18 @@ class CocosNode(object):
             self.remove( child )
         else:
             raise Exception("Child not found: %s" % name )
+
+    def get_by_name( self, name ):
+        """Gets a child from the container given its name
+
+        :Parameters:
+            `name` : string
+                name of the reference to be get
+        """
+        if name in self.children_names:
+            return self.children_names[ name ]
+        else:
+            raise Exception("Child not found: %s" % name )
             
     def on_enter( self ):
         """

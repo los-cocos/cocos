@@ -18,12 +18,13 @@ class TestLayer(cocos.layer.Layer):
         x,y = director.get_window_size()
         
         self.sprite = ActionSprite( 'grossini.png', (x/2, y/2) )
-        self.add( self.sprite )
+        self.add( self.sprite, name='sprite' )
         self.sprite.do( MoveBy( (x/2,y/2), 10 ) )
         
 
 if __name__ == "__main__":
     director.init()
     test_layer = TestLayer ()
-    main_scene = cocos.scene.Scene (test_layer)
+    main_scene = cocos.scene.Scene()
+    main_scene.add(test_layer, name='test_layer')
     director.run (main_scene)

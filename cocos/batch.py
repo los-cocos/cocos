@@ -16,6 +16,8 @@ from pyglet.graphics import OrderedGroup
 from pyglet import image
 from pyglet.gl import *
 
+__all__ = ['BatchNode','BatchableNode','NodeGroup' ]
+
 
 def ensure_batcheable(node):
     if not isinstance(node, BatchableNode):

@@ -254,6 +254,7 @@ class Spawn(IntervalAction):
         sprite.do( action1 )
         sprite.do( action2 )
     """
+
     def init(self, one, two):
         """Init method
 
@@ -261,6 +262,8 @@ class Spawn(IntervalAction):
             `actions` : list of actions
                 The list of actions that will be spawned
         """
+        from cocos.actions.interval_actions import Delay
+
         one = copy.deepcopy(one)
         two = copy.deepcopy(two)
         if one.duration > two.duration:
