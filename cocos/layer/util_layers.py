@@ -17,37 +17,13 @@ the event and accepts it.
 __docformat__ = 'restructuredtext'
 
 import pyglet
+from pyglet.gl import *
 
 from cocos.director import *
 from base_layers import Layer
 import cocos.cocosnode
 
-__all__ = ['ColorLayer']
-
-class QuadNode(cocos.cocosnode.CocosNode):
-    def __init__(self, color):
-        super(QuadNode, self).__init__()
-
-        self.batch = pyglet.graphics.Batch()
-        self.color = color
-        
-    def on_enter(self):
-        super(QuadNode, self).on_exit()
-        x, y = director.get_window_size()
-        
-        self.vertex_list = self.batch.add(4, pyglet.gl.GL_QUADS, None,
-            ('v2i', (0, 0, 0, y, x, y, x, 0)),
-            ('c4B', self.color*4)
-        )
-    
-    def on_exit(self):
-        super(QuadNode, self).on_exit()
-        self.vertex_list.delete()
-        
-    def on_draw(self):
-        self.batch.draw()
-        
-    
+__all__ = ['ColorLayer']    
 
 
 class ColorLayer(Layer):
@@ -60,4 +36,30 @@ class ColorLayer(Layer):
     """
     def __init__(self, *color):
         super(ColorLayer, self).__init__()
-        self.add( QuadNode(color) )
+        self.batch = pyglet.graphics.Batch()
+        self.color = color
+        
+    def on_enter(self):
+        super(ColorLayer, self).on_exit()
+        x, y = director.get_window_size()
+        
+        self.vertex_list = self.batch.add(4, pyglet.gl.GL_QUADS, None,
+            ('v2i', (0, 0, 0, y, x, y, x, 0)),
+            ('c4B', self.color*4)
+        )
+    
+    def on_exit(self):
+        super(ColorLayer, self).on_exit()
+        self.vertex_list.delete()
+   
+       
+    def on_draw(self):
+        super(ColorLayer, self).on_draw()
+        glPushMatrix()
+        self.transform()
+        glTranslatef( 
+                -self.children_anchor_x, 
+                -self.children_anchor_y,
+                 0 )
+        self.batch.draw()
+        glPopMatrix()
