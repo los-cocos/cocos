@@ -3,5 +3,5 @@
 # http://code.google.com/p/los-cocos/
 #
 
-from scene import *
+import pause
 
