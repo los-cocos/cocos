@@ -12,9 +12,9 @@ __all__ = ['Scene']
 
 from pyglet.gl import *
 
-from director import director
-import layer
-import cocosnode
+import cocos
+from cocos.director import director
+import cocos.cocosnode as cocosnode
 
 class EventHandlerMixin(object):
     def add(self, child, *args, **kwargs):
@@ -25,7 +25,7 @@ class EventHandlerMixin(object):
         
         if (    scene._handlers_enabled and 
                 scene.is_running and 
-                isinstance(child, layer.Layer) 
+                isinstance(child, cocos.layer.Layer) 
                 ):
             child.push_handlers()
             
@@ -38,7 +38,7 @@ class EventHandlerMixin(object):
         
         if (    scene._handlers_enabled and 
                 scene.is_running and 
-                isinstance(child, layer.Layer) 
+                isinstance(child, cocos.layer.Layer) 
                 ):
             child.remove_handlers()
             
@@ -72,12 +72,12 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
             
     def push_all_handlers(self):
         for child in self.get_children():
-            if isinstance(child, layer.Layer):
+            if isinstance(child, cocos.layer.Layer):
                 child.push_handlers()
             
     def remove_all_handlers(self):
         for child in self.get_children():
-            if isinstance(child, layer.Layer):
+            if isinstance(child, cocos.layer.Layer):
                 child.remove_handlers()
     
     def enable_handlers(self, value=True):
