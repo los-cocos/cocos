@@ -30,8 +30,10 @@ class CocosNode(object):
         self.x, self.y = (0,0)
         self.scale = 1.0
         self.rotation = 0.0
-        self.anchor_x = 0.5
-        self.anchor_y = 0.5
+        self.children_anchor_x = 0
+        self.children_anchor_y = 0
+        self.transform_anchor_x = 0
+        self.transform_anchor_y = 0
         self.color = (255,255,255)
         self.opacity = 255
         self.grid = None
@@ -47,8 +49,45 @@ class CocosNode(object):
         self.scheduled_interval_calls = []
         self.is_running = False
         
-        
+    
+    def make_property(attr):
+        def set_attr():
+            def inner(self, value):
+                setattr(self, "children_"+attr,value)
+                setattr(self, "transform_"+attr,value)
+            return inner
+        def get_attr():
+            def inner(self, value):
+                if getattr(self,"children_"+attr) != getattr(self, "transform_"+attr):
+                    raise Exception("no consistent value for "+attr)
+                return getattr(self,"children_"+attr)
+            return inner
+        return property(
+            get_attr(),
+            set_attr(),
+            doc="""a property to get fast access to [transform_|children_]"""+attr )
 
+    anchor = make_property("anchor")
+    anchor_x = make_property("anchor_x")
+    anchor_y = make_property("anchor_y")
+    
+    def make_property(attr):
+        def set_attr():
+            def inner(self, value):
+                setattr(self, attr+"_x",value[0])
+                setattr(self, attr+"_y",value[1])
+            return inner
+        def get_attr(self):
+            return getattr(self,attr+"_x"),  getattr(self,attr+"_y")
+        return property(
+            get_attr,
+            set_attr(),
+            doc="a property to get fast access to "+attr+"_[x|y]" )
+
+    children_anchor = make_property("children_anchor")
+    transform_anchor = make_property("transform_anchor")
+
+        
     def schedule_interval(self, callback, interval, *args, **kwargs):
         """
         Schedule a function to be called every `interval` seconds.
@@ -294,16 +333,40 @@ class CocosNode(object):
         color = tuple(self.color) + (self.opacity,)
         if color != (255,255,255,255):
             glColor4ub( * color )
-
-        if self.position != (0,0):
+            
+        if self.transform_anchor != (0,0):
+            glTranslatef( 
+                self.position[0] + self.transform_anchor_x, 
+                self.position[1] + self.transform_anchor_y,
+                 0 )
+        elif self.position != (0,0):
             glTranslatef( self.position[0], self.position[1], 0 )
 
+            
         if self.scale != 1.0:
             glScalef( self.scale, self.scale, 1)
 
         if self.rotation != 0.0:
             glRotatef( -self.rotation, 0, 0, 1)
     
+        if self.transform_anchor != (0,0):
+            if self.transform_anchor == self.children_anchor:
+                glTranslatef( 
+                    self.transform_anchor_x, 
+                    self.transform_anchor_y,
+                     0 )
+            else:
+                glTranslatef( 
+                    self.children_anchor_x - self.transform_anchor_x, 
+                    self.children_anchor_y - self.transform_anchor_y,
+                     0 )            
+        elif self.children_anchor != (0,0):
+            glTranslatef( 
+                self.children_anchor_x, 
+                self.children_anchor_y,
+                 0 )
+    
+
     def visit(self):
         position = 0
         
