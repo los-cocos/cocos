@@ -65,10 +65,8 @@ class PythonInterpreterLayer(Layer):
         self.history = ['']
         self.history_pos = 0
 
-#        assert self.cfg['auto'] is False, 'not implemented yet'
-
-    def on_enter(self):
-        super(PythonInterpreterLayer, self).on_enter()
+#    def on_enter(self):
+#        super(PythonInterpreterLayer, self).on_enter()
 
         vw,vh = cocos.director.director.get_window_size()
 
@@ -95,8 +93,6 @@ class PythonInterpreterLayer(Layer):
         self.start_of_line = len(self.document.text)
 
     def on_resize(self, vw, vh):
-        self.viewport_width, self.viewport_height = vw, vh
-
         self.layout.begin_update()
         self.layout.height = vh
         self.layout.x = 2
@@ -105,13 +101,12 @@ class PythonInterpreterLayer(Layer):
         self.layout.end_update()
         self.caret.position = len(self.document.text)
 
-    def on_exit(self):
-        self.content = self.document.text
-        self.document = None
-        self.title_label = None
-        self.layout = None
-        self.batch = None
-        self.caret = None
+#    def on_exit(self):
+#        self.content = self.document.text
+#        self.document = None
+#        self.layout = None
+#        self.batch = None
+#        self.caret = None
 
     doing_more = False
     def on_key_press(self, symbol, modifiers):

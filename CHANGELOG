@@ -1,4 +1,7 @@
 v0.3.0 - XXX, xxx
+  - Scenes: Added the cocos/scenes directory. Pause and transitions are there
+  - Layer: splitted in 3 files inside the cocos/layer directory
+  - Layer: added the PythonInterpreterLayer()
   - Menu: Added MultipleMenuItem, an item that supports multiple possible
     values. Contributed by Alejandro Weil (tenuki)
   - Menu: Added EntryMenuItem, based on patch by David Eyk    
@@ -11,11 +14,14 @@ v0.3.0 - XXX, xxx
      MOD_ACCEL + w: Toggles wireframe mode
      MOD_ACCEL + s: Takes a screenshot of the current window
      MOD_ACCEL + x: Toggles FPS
+     MOD_ACCEL + i: Toggles the python interpreter
   - alpha blending enabled by default. 
     use director.set_alpha_bleding(True|False) to change.
   - Actions: Goto renamed to MoveTo and Move renamed to MoveBy
      Scale renamed to ScaleBy. Added ScaleTo
      Rotate renamed to RotateBy. Added RotateTo
+  - Actions: Jump renamted to JumpBy. Added JumpTo.
+    Changed the JumpBy/To API. JumpBy( (x,y), height, number_of_jumps, duration)
   - Actions: Added IntervalAction decorators:
      Accelerate, AccelDeccel
   - Actions:Added a new base class: InstantAction 
