@@ -64,7 +64,8 @@ from cocos.euclid import *
 
 __all__ = [
             'MoveTo','MoveBy',                  # movement actions
-            'Jump','Bezier',                    # complex movement actions
+            'Jump', 'JumpTo', 'JumpBy',
+            'Bezier',                    # complex movement actions
             'Rotate',"RotateTo", "RotateBy",    # object rotation
             'ScaleTo','ScaleBy',                # object scale
             'Delay','RandomDelay',              # Delays
@@ -527,6 +528,65 @@ class Jump(IntervalAction):
     def __reversed__(self):
         return Jump(self.y, -self.x, self.jumps, self.duration)
 
+class JumpBy(IntervalAction):
+    """Moves a sprite simulating a jump movement.
+
+    Example::
+
+        # Move the sprite 200 pixels to the right and up
+        action = Jump((100,100),200, 5, 6)    
+        sprite.do( action )            # in 6 seconds, doing 5 jumps
+                                       # of 200 pixels of height
+    """
+
+    def init(self, position=(0,0), height=100, jumps=1, duration=5):
+        """Init method
+
+        :Parameters:
+            `position` : integer x integer tuple
+                horizontal and vertical movement relative to the 
+                starting position
+            `height` : integer
+                Height of jumps
+            `jumps` : integer
+                quantity of jumps
+            `duration` : float
+                Duration time in seconds
+        """
+        self.position = position
+        self.height = height
+        self.duration = duration
+        self.jumps = jumps
+
+    def start( self ):
+        self.start_position = self.target.position
+        self.delta = Vector2(*self.position)
+        
+    def update(self, t):
+        y = int( self.height * abs( math.sin( t * math.pi * self.jumps ) ) )
+        y += self.delta[1] * t
+        x = self.delta[0] * t
+        self.target.position = self.start_position + Point2(x,y)
+        
+
+    def __reversed__(self):
+        return Jump(self.y, -self.x, self.jumps, self.duration)
+        
+class JumpTo(JumpBy):
+    """Moves a sprite simulating a jump movement.
+
+    Example::
+
+        action = Jump(50,200, 5, 6)    # Move the sprite 200 pixels to the right
+        sprite.do( action )            # in 6 seconds, doing 5 jumps
+                                       # of 50 pixels of height
+    """
+
+
+    def start( self ):
+        self.start_position = self.target.position
+        self.delta = Vector2(*self.position)-self.start_position
+          
 
 class Delay(IntervalAction):
     """Delays the action a certain amount of seconds
