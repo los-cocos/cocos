@@ -22,9 +22,9 @@ class TestLayer(cocos.layer.Layer):
         sprite2 = ActionSprite( 'grossinis_sister1.png' )
         sprite3 = ActionSprite( 'grossinis_sister2.png' )
 
-        sprite1.position = (x/4, y/2 )
-        sprite2.position = (x/2, y/2 )
-        sprite3.position = (x/4/(3.0), y/2 )
+        sprite1.position = (x/2, y/2 )
+        sprite2.position = (x/4, y/2 )
+        sprite3.position = (3*x/4.0, y/2 )
 
         self.add( sprite2 )
         self.add( sprite1 )
@@ -37,6 +37,8 @@ class TestLayer(cocos.layer.Layer):
 if __name__ == "__main__":
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
+    main_scene.transform_anchor = (320,240)
+
     child1_scene = cocos.scene.Scene()
     child2_scene = cocos.scene.Scene()
     child3_scene = cocos.scene.Scene()
@@ -46,21 +48,25 @@ if __name__ == "__main__":
     child1_scene.add( TestLayer() )
     child1_scene.scale = 1.5
     child1_scene.position = (-160,-120)
+    child1_scene.transform_anchor = (320,240)
 
     child2_scene.add( ColorLayer( 0,255,0,255) )
     child2_scene.add( TestLayer() )
     child2_scene.scale = 1.5
     child2_scene.position = (160,120)
+    child2_scene.transform_anchor = (320,240)
 
     child3_scene.add( ColorLayer( 255,0,0,255) )
     child3_scene.add( TestLayer() )
     child3_scene.scale = 1.5
     child3_scene.position = (-160,120)
+    child3_scene.transform_anchor = (320,240)
 
     child4_scene.add( ColorLayer( 255,255,255,255) )
     child4_scene.add( TestLayer() )
-    child3_scene.scale = 1.5
-    child3_scene.position = (160,-120)
+    child4_scene.scale = 1.5
+    child4_scene.position = (160,-120)
+    child4_scene.transform_anchor = (320,240)
 
     main_scene.add( child1_scene )
     main_scene.add( child2_scene )

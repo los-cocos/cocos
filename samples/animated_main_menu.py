@@ -91,8 +91,8 @@ class SpriteLayer ( Layer ):
         self.add( sprite2 )
         self.add( sprite3 )
 
-        ju_right = Jump( y=100, x=600, jumps=4, duration=5 )
-        ju_left = Jump( y=100, x=-600, jumps=4, duration=5 )
+        ju_right = JumpBy( (600,0), height=100, jumps=4, duration=5 )
+        ju_left = JumpBy( (-600,0), height=100, jumps=4, duration=5 )
         rot1 = Rotate( 180 * 4, duration=5)
 
         sprite1.opacity = 128
