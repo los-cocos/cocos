@@ -146,10 +146,10 @@ class DefaultHandler( object ):
             return True
 
         elif symbol == pyglet.window.key.I and (modifiers & pyglet.window.key.MOD_ACCEL):
-            from layer import InterpreterLayer
+            from layer import PythonInterpreterLayer
 
             if self.with_interpreter == False:
-                director.scene.add( InterpreterLayer(), name='python_interpreter', z=100)
+                director.scene.add( PythonInterpreterLayer(), name='python_interpreter', z=100)
                 self.with_interpreter= True
             else:
                 director.scene.remove_by_name( name='python_interpreter')

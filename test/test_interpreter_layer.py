@@ -11,7 +11,7 @@ import pyglet
         
 
 if __name__ == "__main__":
-    director.init()
-    interpreter_layer = cocos.layer.InterpreterLayer()
+    director.init( resizable=True )
+    interpreter_layer = cocos.layer.PythonInterpreterLayer()
     main_scene = cocos.scene.Scene(interpreter_layer)
     director.run(main_scene)
