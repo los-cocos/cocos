@@ -30,7 +30,10 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
     def __init__( self ):
         super( Layer, self ).__init__()
         self.scheduled_layer = False
-    
+        x,y = director.get_window_size()
+        self.transform_anchor_x = x/2
+        self.transform_anchor_y = y/2
+        
     def push_handlers(self):
         if self.is_event_handler:
             director.window.push_handlers( self )
