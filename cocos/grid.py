@@ -147,11 +147,11 @@ class Grid(GridBase):
 
         # Generates a grid of joint quads
         self.vertex_list = pyglet.graphics.vertex_list_indexed( (self.grid.x+1) * (self.grid.y+1), 
-                            idx_pts, "t2f", "v2i/stream")
+                            idx_pts, "t2f", "v2i/stream","c4B")
         self.vertex_points = ver_pts_idx[:]
         self.vertex_list.vertices = ver_pts_idx
         self.vertex_list.tex_coords = tex_pts_idx
-#        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
+        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
  
     def _blit(self ):
         self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
@@ -224,11 +224,11 @@ class TiledGrid(GridBase):
 
        # Generates a grid of independent quads (think of tiles)
         self.vertex_list = pyglet.graphics.vertex_list(self.grid.x * self.grid.y * 4,
-                            "t2f", "v2i/stream")
+                            "t2f", "v2i/stream","c4B")
         self.vertex_points = ver_pts[:]
         self.vertex_list.vertices = ver_pts
         self.vertex_list.tex_coords = tex_pts
-#        self.vertex_list.colors = (255,255,255,255) * self.grid.x * self.grid.y * 4  
+        self.vertex_list.colors = (255,255,255,255) * self.grid.x * self.grid.y * 4  
 
     def _blit(self):
         self.vertex_list.draw(pyglet.gl.GL_QUADS)
@@ -281,11 +281,11 @@ class Grid3D(GridBase):
 
         # Generates a grid of joint quads
         self.vertex_list = pyglet.graphics.vertex_list_indexed( (self.grid.x+1) * (self.grid.y+1), 
-                            idx_pts, "t2f", "v3f/stream")
+                            idx_pts, "t2f", "v3f/stream","c4B")
         self.vertex_points = ver_pts_idx[:]
         self.vertex_list.vertices = ver_pts_idx
         self.vertex_list.tex_coords = tex_pts_idx
-#        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
+        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
  
     def _blit(self ):
 

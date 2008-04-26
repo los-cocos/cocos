@@ -380,8 +380,7 @@ class MenuItem( CocosNode ):
 
     def selected( self ):
         if not self.actions_running():
-            pass
-#            self.do( self.effect )
+            self.do( self.effect )
 
 #
 # Item that can be toggled between N states

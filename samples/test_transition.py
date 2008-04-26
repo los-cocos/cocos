@@ -24,8 +24,7 @@ class ControlLayer(Layer):
             x=5,
             y=director.get_window_size()[1],
             halign=font.Text.LEFT,
-            valign=font.Text.TOP,
-            batch=self.batch)
+            valign=font.Text.TOP )
 
         self.text_subtitle = pyglet.text.Label( transition_list[current_transition].__name__,
             font_size=18,
@@ -34,17 +33,19 @@ class ControlLayer(Layer):
             x=5,
             y=director.get_window_size()[1] - 80,
             halign=font.Text.LEFT,
-            valign=font.Text.TOP,
-            batch=self.batch )
+            valign=font.Text.TOP )
 
         self.text_help = pyglet.text.Label("Press LEFT / RIGHT for prev/next test, ENTER to restart demo",
             font_size=16,
             x=director.get_window_size()[0] /2,
             y=20,
             halign=font.Text.CENTER,
-            valign=font.Text.CENTER,
-            batch=self.batch )
+            valign=font.Text.CENTER)
 
+    def on_draw( self ):
+        self.text_title.draw()
+        self.text_subtitle.draw()
+        self.text_help.draw()
 
     def on_key_press( self, k , m ):
         global current_transition, control_p
@@ -69,14 +70,11 @@ class GrossiniLayer(Layer):
     def __init__( self ):
         super( GrossiniLayer, self ).__init__()
 
-        image = pyglet.resource.image('grossini.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        g = ActionSprite( image )
+        g = ActionSprite( 'grossini.png')
+        g.position = (320,240)
+        self.add( g )
 
-        self.add( g, position=(320,240) )
-
-        rot = Rotate( 360, 4 )
+        rot = RotateTo( 360, 4 )
 
         g.do( Repeat( rot + Reverse(rot) ) )
 
@@ -89,19 +87,11 @@ class GrossiniLayer2(Layer):
         super( GrossiniLayer2, self ).__init__()
 
         rot = Rotate( 360, 5 )
+        g1 = ActionSprite( 'grossinis_sister1.png' )
+        g1.position = (490,240)
 
-        image = pyglet.resource.image('grossinis_sister1.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        g1 = ActionSprite( image )
-
-        image = pyglet.resource.image('grossinis_sister2.png')
-        image.anchor_x = image.width / 2
-        image.anchor_y = image.height / 2
-        g2 = ActionSprite( image )
-
-        self.add( g1, position=(490,240) )
-        self.add( g2, position=(140,240) )
+        g2 = ActionSprite( 'grossinis_sister2.png' )
+        g2.position = (140,240)
 
         g1.do( Repeat( rot + Reverse(rot) ) )
         g2.do( Repeat( rot + Reverse(rot) ) )
@@ -132,8 +122,8 @@ if __name__ == "__main__":
 
     g = GrossiniLayer()
     g2 = GrossiniLayer2()
-    c2 = ColorLayer(0.5,0.1,0.1,1)
-    c1 = ColorLayer(0,1,1,1)
+    c2 = ColorLayer(128,16,16,255)
+    c1 = ColorLayer(0,255,255,255)
     control = ControlLayer()
     controlScene1 = Scene(c2, g, control)
     controlScene2 = Scene(c1, g2, control)

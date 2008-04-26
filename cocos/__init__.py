@@ -10,7 +10,6 @@ version = __version__
 
 import actions
 import director
-import effect
 import layer
 import sprite
 import menu

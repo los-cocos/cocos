@@ -534,7 +534,7 @@ class JumpBy(IntervalAction):
     Example::
 
         # Move the sprite 200 pixels to the right and up
-        action = Jump((100,100),200, 5, 6)    
+        action = JumpBy((100,100),200, 5, 6)    
         sprite.do( action )            # in 6 seconds, doing 5 jumps
                                        # of 200 pixels of height
     """
@@ -570,7 +570,7 @@ class JumpBy(IntervalAction):
         
 
     def __reversed__(self):
-        return Jump(self.y, -self.x, self.jumps, self.duration)
+        return JumpBy( (-self.position[0],-self.position[1]), self.height, self.jumps, self.duration)
         
 class JumpTo(JumpBy):
     """Moves a sprite simulating a jump movement.
