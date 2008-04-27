@@ -20,11 +20,11 @@ class MainMenu(Menu):
         # call superclass with the title
         super( MainMenu, self ).__init__("MultiplexLayer")
 
-        self.add( MenuItem('Options', self.on_new_game ) )
-        self.add( MenuItem('Quit', self.on_quit ) )
+        l = []
+        l.append( MenuItem('Options', self.on_new_game ) )
+        l.append( MenuItem('Quit', self.on_quit ) )
 
-        # after adding all the items just call build_items()
-        self.build_items()
+        self.create_menu( l )
 
     # Callbacks
     def on_new_game( self ):
@@ -38,9 +38,11 @@ class OptionMenu(Menu):
     def __init__( self ):
         super( OptionMenu, self ).__init__("MultiplexLayer")
 
-        self.add( MenuItem('Fullscreen', self.on_fullscreen) )
-        self.add( MenuItem('OK', self.on_quit) )
-        self.build_items()
+        l = []
+        l.append( MenuItem('Fullscreen', self.on_fullscreen) )
+        l.append( MenuItem('OK', self.on_quit) )
+
+        self.create_menu( l )
 
     # Callbacks
     def on_fullscreen( self ):

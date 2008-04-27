@@ -66,8 +66,7 @@ class Menu(Layer):
 
      - create a subclass
      - override __init__ to set all style attributes, 
-       then add items using `add_item()`,
-       and then call `build_items()`
+       and then call `create_menu()`
      - Finally you shall add the menu to a `Scene`
     """
 
@@ -138,7 +137,7 @@ class Menu(Layer):
         self.title_label.y = height - self.title_label.content_height //2
 
         fo = font.load( self.font_title['font_name'], self.font_title['font_size'] )
-        self.title_height = self.title_label.content_height * 0
+        self.title_height = self.title_label.content_height
 
     def _generate_items( self ):
 
@@ -161,7 +160,7 @@ class Menu(Layer):
             item = i[1]
 
             if self.menu_valign == CENTER:
-                pos_y = height / 2 + (fo_height * len(self.children) )/2 - (idx * fo_height ) - self.title_height
+                pos_y = height / 2 + (fo_height * len(self.children) )/2 - (idx * fo_height ) - self.title_height * 0.2
             elif self.menu_valign == TOP:
                 pos_y = height - (idx * fo_height ) - self.title_height
             elif self.menu_valign == BOTTOM:
@@ -213,10 +212,17 @@ class Menu(Layer):
         self.children[ self.selected_index ][1].on_key_press( key.ENTER, 0 )
 
     def create_menu( self, items, selected_effect=None, unselected_effect=None, activated_effect=None ):
-        """Adds an item to the menu.
+        """Creates the menu
 
         The order of the list important since the
         first one will be shown first.
+
+        Example::
+    
+            l = []
+            l.append( MenuItem('Options', self.on_new_game ) )
+            l.append( MenuItem('Quit', self.on_quit ) )
+            self.create_menu( l, zoom_in(), zoom_out() )
 
         :Parameters:
             `items` : list
@@ -230,8 +236,8 @@ class Menu(Layer):
         """
         z=0
         for i in items:
-            # calling super.add()
-            self.add( i, z=z, name='menuitem_%d' % z )
+            # calling super.add(). Z is important to mantain order
+            self.add( i, z=z )
 
             i.activated_effect = activated_effect
             i.selected_effect = selected_effect
@@ -246,30 +252,32 @@ class Menu(Layer):
         self.title_label.draw()
 
     def on_text( self, text ):
+        if text=='\r':
+            return
         return self.children[self.selected_index][1].on_text(text)
 
     def on_key_press(self, symbol, modifiers):
-        if symbol == key.DOWN:
-            new_idx = self.selected_index + 1
-        elif symbol == key.UP:
-            new_idx = self.selected_index - 1
-        elif symbol == key.ESCAPE:
+        if symbol == key.ESCAPE:
             self.on_quit()
             return True
         elif symbol in (key.ENTER, key.NUM_ENTER):
             self._activate_item()
             return True
-        else:
-            # send the menu item the rest of the keys
-            return self.children[self.selected_index][1].on_key_press(symbol, modifiers)
+        elif symbol in (key.DOWN, key.UP):
+            if symbol == key.DOWN:
+                new_idx = self.selected_index + 1
+            elif symbol == key.UP:
+                new_idx = self.selected_index - 1
 
-        if symbol in (key.DOWN, key.UP):
             if new_idx < 0:
                 new_idx = len(self.children) -1
             elif new_idx > len(self.children) -1:
                 new_idx = 0
             self._select_item( new_idx )
             return True
+        else:
+            # send the menu item the rest of the keys
+            return self.children[self.selected_index][1].on_key_press(symbol, modifiers)
 
     def on_mouse_release( self, x, y, buttons, modifiers ):
         (x,y) = director.get_virtual_coordinates(x,y)
@@ -492,8 +500,6 @@ class EntryMenuItem(MenuItem):
         super(EntryMenuItem, self).__init__( "%s %s" %(label,value), None)
 
     def on_text( self, text ):
-        if text=='\r':
-            return
         self._value.append(text)
         self._calculate_value()
         return True

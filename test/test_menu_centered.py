@@ -29,6 +29,9 @@ class MainMenu(Menu):
             ( MenuItem('Item 2', self.on_quit ) ),
             ( MenuItem('Item 3', self.on_quit ) ),
             ( MenuItem('Item 4', self.on_quit ) ),
+            ( MenuItem('Item 5', self.on_quit ) ),
+            ( MenuItem('Item 6', self.on_quit ) ),
+            ( MenuItem('Item 7', self.on_quit ) ),
 
         ]
 

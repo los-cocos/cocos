@@ -23,7 +23,6 @@ class MainMenu(Menu):
         l.append( EntryMenuItem('Name:', 'default', self.on_name) )
         l.append( MenuItem('Quit', self.on_quit ) )
 
-        # after adding all the items just call build_items()
         self.create_menu( l )
 
     def on_name( self, value ):
