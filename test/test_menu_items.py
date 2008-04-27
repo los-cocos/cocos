@@ -26,21 +26,21 @@ class MainMenu(Menu):
         super( MainMenu, self ).__init__("Test Menu Items")
 
         # then add the items
-        self.add( ToggleMenuItem('ToggleMenuItem: ', False, 
-                        lambda x:printf('switch to:',x) ) )
+        item1= ToggleMenuItem('ToggleMenuItem: ', False, 
+                        lambda x:printf('switch to:',x) )
                         
         resolutions = ['800x600', '1024x768', '320x200', '640x480']
-        self.add( MultipleMenuItem('MultipleMenuItem: ',
+        item2= MultipleMenuItem('MultipleMenuItem: ',
                         #value switch function:
                         lambda:setslice(resolutions,0,len(resolutions),
                                         resolutions[1:]+[resolutions[0]]),
                         #current value access function:
-                        lambda:resolutions[0]) )
+                        lambda:resolutions[0])
 
-        self.add( MenuItem('MenuItem', self.on_quit ) )
+        item3 = MenuItem('MenuItem', self.on_quit )
 
-        # after adding all the items just call build_items()
-        self.build_items()
+        self.create_menu( [item1,item2,item3] )
+
 
     def on_quit( self ):
         pyglet.app.exit()

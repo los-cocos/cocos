@@ -19,11 +19,12 @@ class MainMenu(Menu):
     def __init__( self ):
         super( MainMenu, self ).__init__("EntryMenuItem")
 
-        self.add( EntryMenuItem('Name:', 'default', self.on_name) )
-        self.add( MenuItem('Quit', self.on_quit ) )
+        l = []
+        l.append( EntryMenuItem('Name:', 'default', self.on_name) )
+        l.append( MenuItem('Quit', self.on_quit ) )
 
         # after adding all the items just call build_items()
-        self.build_items()
+        self.create_menu( l )
 
     def on_name( self, value ):
         print value

@@ -36,9 +36,15 @@ from director import *
 from cocosnode import *
 from actions import *
 
-__all__ = [ 'Menu', 'MenuItem', 'ToggleMenuItem', 
+__all__ = [ 'Menu',                                 # menu class
+
+    'MenuItem', 'ToggleMenuItem',                   # menu items classes
     'MultipleMenuItem', 'EntryMenuItem',
-    'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM' ]
+
+    'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM',     # menu aligment
+
+    'shake', 'shake_back','zoom_in','zoom_out'      # Some useful actions for the menu items
+    ]
 
 #
 # Class Menu
@@ -65,8 +71,8 @@ class Menu(Layer):
      - Finally you shall add the menu to a `Scene`
     """
 
-    optionSound = None
-    selectSound = None
+    select_sound = None
+    activate_sound = None
     def __init__( self, title = ''):
         super(Menu, self).__init__()
 
@@ -110,7 +116,7 @@ class Menu(Layer):
         }
         self.font_item_selected = {
             'font_name':'Arial',
-            'font_size':48,
+            'font_size':42,
             'bold':False,
             'italic':False,
             'valign':'center',
@@ -120,25 +126,21 @@ class Menu(Layer):
         }
 
         self.title_height = 0
-        self._items_z = 0
 
      
-    def _draw_title( self ):
+    def _generate_title( self ):
         """ draws the title """
         width, height = director.get_window_size()
 
-        fo = font.load( self.font_title['font_name'], self.font_title['font_size'] )
-        title_height = fo.ascent - fo.descent  
-
         self.font_title['x'] = width // 2
-        self.font_title['y'] = height - ( title_height //2 )
         self.font_title['text'] = self.title
-        self.text = pyglet.text.Label( **self.font_title )
+        self.title_label = pyglet.text.Label( **self.font_title )
+        self.title_label.y = height - self.title_label.content_height //2
 
         fo = font.load( self.font_title['font_name'], self.font_title['font_size'] )
-        self.title_height = fo.ascent * 0.9  # descent is not important
+        self.title_height = self.title_label.content_height * 0
 
-    def _draw_items( self ):
+    def _generate_items( self ):
 
         width, height = director.get_window_size()
 
@@ -146,7 +148,7 @@ class Menu(Layer):
         fo_height = int( (fo.ascent - fo.descent) * 0.9 )
 
         if self.menu_halign == CENTER:
-            pos_x = width / 2
+            pos_x = width // 2
         elif self.menu_halign == RIGHT:
             pos_x = width - 2
         elif self.menu_halign == LEFT:
@@ -165,6 +167,8 @@ class Menu(Layer):
             elif self.menu_valign == BOTTOM:
                 pos_y = 0 + fo_height * len(self.children) - (idx * fo_height )
 
+            item.transform_anchor = (pos_x, pos_y)
+
             self.font_item['x'] = pos_x
             self.font_item['y'] = pos_y
             self.font_item['text'] = item.label
@@ -175,85 +179,102 @@ class Menu(Layer):
             self.font_item_selected['text'] = item.label
             item._init_font_sel( **self.font_item_selected )
 
-    def add( self, item, z=-1, *args, **kw ):
+    def _build_items( self ):
+        self.font_item_selected['halign'] = self.menu_halign
+        self.font_item_selected['valign'] = 'center'
+
+        self.font_item['halign'] = self.menu_halign
+        self.font_item['valign'] = 'center'
+
+        self._generate_title()
+        self._generate_items()
+        self.selected_index = 0
+        self.children[ self.selected_index ][1].is_selected = True
+
+    def _select_item(self, new_idx):
+        if new_idx == self.selected_index:
+            return
+
+        if self.select_sound:
+            self.select_sound.play()
+
+        self.children[ self.selected_index][1].is_selected = False
+        self.children[ self.selected_index][1].on_unselected()
+
+        self.children[ new_idx ][1].is_selected = True 
+        self.children[ new_idx ][1].on_selected()
+
+        self.selected_index = new_idx
+
+    def _activate_item( self ):
+        if self.activate_sound:
+            self.activate_sound.play()
+        self.children[ self.selected_index][1].on_activated()
+        self.children[ self.selected_index ][1].on_key_press( key.ENTER, 0 )
+
+    def create_menu( self, items, selected_effect=None, unselected_effect=None, activated_effect=None ):
         """Adds an item to the menu.
 
         The order of the list important since the
         first one will be shown first.
 
         :Parameters:
-            `item` : a `MenuItem`
-                The MenuItem that will part of the `Menu`
+            `items` : list
+                list of `MenuItem` that will be part of the `Menu`
+            `selected_effect` : callback
+                This action will be executed when the `MenuItem` is selected
+            `unselected_effect` : callback
+                This action will be executed when the `MenuItem` is unselected
+            `activated_effect` : callback
+                this action will executed when the `MenuItem` is activated (pressing Enter or by clicking on it)
         """
-        if z==-1:
-            z=self._items_z
-            self._items_z += 1
-        item.halign = self.menu_halign
-        item.valign = self.menu_valign
-        super(Menu,self).add( item, z=z, *args, **kw )
+        z=0
+        for i in items:
+            # calling super.add()
+            self.add( i, z=z, name='menuitem_%d' % z )
+
+            i.activated_effect = activated_effect
+            i.selected_effect = selected_effect
+            i.unselected_effect = unselected_effect
+            i.halign = self.menu_halign
+            i.valign = self.menu_valign
+            z += 1
+
+        self._build_items()
 
     def on_draw( self ):
-        self.text.draw()
-
-    def build_items( self ):
-        """Initializes all the menu items
-
-        Call this method after you've added all the menu items."""
-
-        self.font_item_selected['halign'] = self.menu_halign
-        self.font_item_selected['valign'] = self.menu_valign
-
-        self.font_item['halign'] = self.menu_halign
-        self.font_item['valign'] = self.menu_valign
-
-        self._draw_title()
-        self._draw_items()
-        self.selected_index = 0
-        self.children[ self.selected_index ][1].is_selected = True
-
+        self.title_label.draw()
 
     def on_text( self, text ):
         return self.children[self.selected_index][1].on_text(text)
-    #
-    # Called everytime a key is pressed
-    # return True to avoid passing the event to another handler
-    #
+
     def on_key_press(self, symbol, modifiers):
-
-        old_idx = self.selected_index
-
         if symbol == key.DOWN:
-            self.selected_index += 1
+            new_idx = self.selected_index + 1
         elif symbol == key.UP:
-            self.selected_index -= 1
+            new_idx = self.selected_index - 1
         elif symbol == key.ESCAPE:
             self.on_quit()
             return True
+        elif symbol in (key.ENTER, key.NUM_ENTER):
+            self._activate_item()
+            return True
         else:
-            if self.selectSound:
-                self.selectSound.play()
-            ret = self.children[self.selected_index][1].on_key_press(symbol, modifiers)
-
-        if self.selected_index< 0:
-            self.selected_index= len( self.children) -1
-        elif self.selected_index > len( self.children) - 1:
-            self.selected_index = 0
+            # send the menu item the rest of the keys
+            return self.children[self.selected_index][1].on_key_press(symbol, modifiers)
 
         if symbol in (key.DOWN, key.UP):
-            if self.optionSound: self.optionSound.play()
-            self.children[ old_idx ][1].is_selected = False
-            self.children[ self.selected_index ][1].is_selected = True 
-            self.children[ self.selected_index ][1].selected()
+            if new_idx < 0:
+                new_idx = len(self.children) -1
+            elif new_idx > len(self.children) -1:
+                new_idx = 0
+            self._select_item( new_idx )
             return True
-
-        return ret
 
     def on_mouse_release( self, x, y, buttons, modifiers ):
         (x,y) = director.get_virtual_coordinates(x,y)
         if self.children[ self.selected_index ][1].is_inside_box(x,y):
-            if self.selectSound:
-                self.selectSound.play()
-            return self.children[ self.selected_index ][1].on_key_press( key.ENTER, 0 )   # XXX: hack
+            self._activate_item()
 
     def on_mouse_motion( self, x, y, dx, dy ):
         (x,y) = director.get_virtual_coordinates(x,y)
@@ -262,18 +283,15 @@ class Menu(Layer):
         for idx,i in enumerate( self.children):
             item = i[1]
             if item.is_inside_box( x, y):
-                if not item.is_selected: #Hack to play sound only once
-                    if self.optionSound: self.optionSound.play()
-                self.children[ self.selected_index ][1].is_selected = False
-                item.is_selected = True
-                self.selected_index = idx
-                item.selected()
+                self._select_item( idx )
+                break
 
-#
-# MenuItem
-#
 class MenuItem( CocosNode ):
     """A menu item triggering a function."""
+
+    selected_effect = None
+    unselected_effect = None
+    activated_effect = None
 
     def __init__(self, label, activate_func):
         """Creates a new menu item
@@ -298,14 +316,6 @@ class MenuItem( CocosNode ):
 
         self.halign = None
         self.valign = None
-
-        # default effect when item is selected
-        angle = 5
-        duration = 0.05
-
-        rot = Accelerate(Rotate( angle, duration ), 2)
-        rot2 = Accelerate(Rotate( -angle*2, duration), 2)
-        self.effect = rot + (rot2 + Reverse(rot2)) * 2 + Reverse(rot)
 
     def get_box( self ):
         """Returns the box that contains the menu item.
@@ -378,13 +388,22 @@ class MenuItem( CocosNode ):
             return True
         return False
 
-    def selected( self ):
-        if not self.actions_running():
-            self.do( self.effect )
+    def on_selected( self ):
+        if self.selected_effect:
+            self.flush()
+            self.do( self.selected_effect )
 
-#
-# Item that can be toggled between N states
-#
+    def on_unselected( self ):
+        if self.unselected_effect:
+            self.flush()
+            self.do( self.unselected_effect )
+
+    def on_activated( self ):
+        if self.activated_effect:
+            self.flush()
+            self.do( self.activated_effect )
+
+
 class MultipleMenuItem( MenuItem ):
     """A menu item for switching between multiple values.
     
@@ -473,6 +492,8 @@ class EntryMenuItem(MenuItem):
         super(EntryMenuItem, self).__init__( "%s %s" %(label,value), None)
 
     def on_text( self, text ):
+        if text=='\r':
+            return
         self._value.append(text)
         self._calculate_value()
         return True
@@ -491,3 +512,24 @@ class EntryMenuItem(MenuItem):
         self.text.text = new_text
         self.text_selected.text = new_text
         self.set_func(self.value)
+
+
+def shake():
+    '''Action that performs a slight rotation and then goes back to the original rotation
+    position.
+    '''
+    angle = 05
+    duration = 0.05
+
+    rot = Accelerate(RotateBy( angle, duration ), 2)
+    rot2 = Accelerate(RotateBy( -angle*2, duration), 2)
+    return rot + (rot2 + Reverse(rot2)) * 2 + Reverse(rot)
+
+def shake_back():
+    return RotateTo(0,0.1)
+
+def zoom_in():
+    return ScaleTo( 1.5, duration=0.2 )
+
+def zoom_out():
+    return ScaleTo( 1.0, duration=0.2 )

@@ -130,13 +130,14 @@ class MainMenu(Menu):
         self.menu_valign = CENTER
         self.menu_halign = CENTER
 
-        self.add( MenuItem('New Game', self.on_new_game ) )
-        self.add( MenuItem('Options', self.on_options ) )
-        self.add( MenuItem('Scores', self.on_scores ) )
-        self.add( MenuItem('Quit', self.on_quit ) )
+        items = []
 
-        # after adding all the items just call build_items()
-        self.build_items()
+        items.append( MenuItem('New Game', self.on_new_game ) )
+        items.append( MenuItem('Options', self.on_options ) )
+        items.append( MenuItem('Scores', self.on_scores ) )
+        items.append( MenuItem('Quit', self.on_quit ) )
+
+        self.create_menu( items, zoom_in(), zoom_out() )
 
 
     # Callbacks
@@ -168,10 +169,11 @@ class OptionMenu(Menu):
         self.menu_valign = BOTTOM
         self.menu_halign = RIGHT
 
-        self.add( MenuItem('Fullscreen', self.on_fullscreen) )
-        self.add( ToggleMenuItem('Show FPS: ', True, self.on_show_fps) )
-        self.add( MenuItem('OK', self.on_quit) )
-        self.build_items()
+        items = []
+        items.append( MenuItem('Fullscreen', self.on_fullscreen) )
+        items.append( ToggleMenuItem('Show FPS: ', True, self.on_show_fps) )
+        items.append( MenuItem('OK', self.on_quit) )
+        self.create_menu( items, shake(), shake_back() )
 
     # Callbacks
     def on_fullscreen( self ):
@@ -195,8 +197,7 @@ class ScoreMenu(Menu):
         self.menu_valign = BOTTOM
         self.menu_halign = LEFT
 
-        self.add( MenuItem('Go Back', self.on_quit) )
-        self.build_items()
+        self.create_menu( [MenuItem('Go Back', self.on_quit)] )
 
     def on_quit( self ):
         self.parent.switch_to( 0 )

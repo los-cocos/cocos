@@ -24,13 +24,15 @@ class MainMenu(Menu):
         self.menu_halign = LEFT
 
         # then add the items
-        self.add( MenuItem('Item 1', self.on_quit ) )
-        self.add( MenuItem('Item 2', self.on_quit ) )
-        self.add( MenuItem('Item 3', self.on_quit ) )
-        self.add( MenuItem('Item 4', self.on_quit ) )
+        items = [
+            ( MenuItem('Item 1', self.on_quit ) ), 
+            ( MenuItem('Item 2', self.on_quit ) ),
+            ( MenuItem('Item 3', self.on_quit ) ),
+            ( MenuItem('Item 4', self.on_quit ) ),
 
-        # after adding all the items just call build_items()
-        self.build_items()
+        ]
+
+        self.create_menu( items, selected_effect=zoom_in(), unselected_effect=zoom_out())
 
     def on_quit( self ):
         pyglet.app.exit()
