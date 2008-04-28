@@ -5,6 +5,7 @@ v0.3.0 - XXX, xxx
   - Menu: Added MultipleMenuItem, an item that supports multiple possible
     values. Contributed by Alejandro Weil (tenuki)
   - Menu: Added EntryMenuItem, based on patch by David Eyk    
+  - Menu: changed API. instead of 'add() and build_items()' use 'create_menu()'
   - actions are defined in the actions/ folder
   - ActionSprite and SpriteGroup added in sprite.py
   - Added DefaultHandler:
@@ -31,7 +32,7 @@ v0.3.0 - XXX, xxx
      Liquid, Sin Shaky, ShakyTiles, ShuffleTiles, QuadMoveBy
      MoveCornerUp, MoveCornerDown, SkewVertical, SkewHorizontal
      FlipX, FlipY, Flip, CornerSwap, ShatteredTiles,
-     FadeOutTiles, Waves3D, FlipX3D, FlipY3D, Lens3D
+     FadeOutTiles, Waves3D, FlipX3D, FlipY3D, Lens3D, CameraRotate
    - Actions: Added Waves decorators: AccelAmplitude, DeccelAmplitude,
        AccelDeccelAmplitude.
     

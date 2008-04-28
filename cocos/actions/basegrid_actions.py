@@ -54,6 +54,7 @@ class GridBaseAction( IntervalAction ):
     '''GridBaseAction is the base class of all Grid Actions.'''
     def init( self, grid=(4,4), duration=5):
         """Initialize the Grid Action
+
         :Parameters:
             `grid` : (int,int)
                 Number of horizontal and vertical quads in the grid

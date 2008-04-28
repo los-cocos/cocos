@@ -9,3 +9,4 @@ from basegrid_actions import *
 from grid_actions import *
 from tiledgrid_actions import *
 from grid3d_actions import *
+from camera_actions import *

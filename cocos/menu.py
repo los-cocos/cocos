@@ -128,7 +128,6 @@ class Menu(Layer):
 
      
     def _generate_title( self ):
-        """ draws the title """
         width, height = director.get_window_size()
 
         self.font_title['x'] = width // 2
@@ -140,7 +139,6 @@ class Menu(Layer):
         self.title_height = self.title_label.content_height
 
     def _generate_items( self ):
-
         width, height = director.get_window_size()
 
         fo = font.load( self.font_item['font_name'], self.font_item['font_size'] )
@@ -156,7 +154,6 @@ class Menu(Layer):
             raise Exception("Invalid halign value for menu")
 
         for idx,i in enumerate( self.children):
-
             item = i[1]
 
             if self.menu_valign == CENTER:
@@ -171,12 +168,12 @@ class Menu(Layer):
             self.font_item['x'] = pos_x
             self.font_item['y'] = pos_y
             self.font_item['text'] = item.label
-            item._init_font_unsel( **self.font_item )
+            item.text = pyglet.text.Label( **self.font_item )
 
             self.font_item_selected['x'] = pos_x
             self.font_item_selected['y'] = pos_y
             self.font_item_selected['text'] = item.label
-            item._init_font_sel( **self.font_item_selected )
+            item.text_selected = pyglet.text.Label( **self.font_item_selected )
 
     def _build_items( self ):
         self.font_item_selected['halign'] = self.menu_halign
@@ -376,14 +373,6 @@ class MenuItem( CocosNode ):
 
     def on_text( self, text ):
         return True
-
-    def _init_font_unsel( self, **kwargs):
-        # Unselected option
-        self.text = pyglet.text.Label( **kwargs )
-
-    def _init_font_sel( self, **kwargs ):
-        # Selected option
-        self.text_selected = pyglet.text.Label( **kwargs )
 
     def is_inside_box( self, x, y ):
         """Returns whether the point (x,y) is inside the menu item.

@@ -286,31 +286,25 @@ class Grid3D(GridBase):
         self.vertex_list.vertices = ver_pts_idx
         self.vertex_list.tex_coords = tex_pts_idx
         self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
+
+        # camera default value
+        width, height = director.get_window_size()
+        self.camera_eye = Point3( width /2, height /2, 415.0 )
+        self.camera_center = Point3( width /2, height /2, 0.0 )
+        self.camera_up = Point3( 0.0, 1.0, 0.0)
  
     def _blit(self ):
-
         # go to 3D
         self._set_3d_projection()
 
         # center the image
-        glLoadIdentity()
-        width, height = director.get_window_size()
-        gluLookAt( width // 2, height // 2, 240.0,   # eye
-                   width // 2, height // 2, 0.0,   # center
-                   0.0, 1.0, 0.0    # up
-                   )
-       
-       # blit
+        self._set_camera()
+
+        # blit
         self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
 
         # go back to 2D
-        glLoadIdentity()
-        glViewport(0, 0, width, height)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, width, 0, height, -100, 100)
-        glMatrixMode(GL_MODELVIEW)
-
+        self._set_2d_projection()
 
     def _on_resize(self, xsteps, ysteps, txz, tyz):
         tex_idx = [] 
@@ -328,10 +322,25 @@ class Grid3D(GridBase):
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(90, 1.0*width/height, 0.1, 1000.0)
+        gluPerspective(60, 1.0*width/height, 0.1, 1000.0)
         glMatrixMode(GL_MODELVIEW)
 
-    
+    def _set_camera( self ):
+        glLoadIdentity()
+        gluLookAt( self.camera_eye.x, self.camera_eye.y, self.camera_eye.z,             # camera eye
+                   self.camera_center.x, self.camera_center.y, self.camera_center.z,    # camera center
+                   self.camera_up.x, self.camera_up.y, self.camera_up.z                 # camera up vector
+                   )
+   
+    def _set_2d_projection(self):
+        width, height = director.get_window_size()
+        glLoadIdentity()
+        glViewport(0, 0, width, height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(0, width, 0, height, -100, 100)
+        glMatrixMode(GL_MODELVIEW)
+
     def _calculate_vertex_points(self):        
         w = float(self.texture.width)
         h = float(self.texture.height)
