@@ -37,7 +37,7 @@ class ColorLayer(Layer):
     def __init__(self, *color):
         super(ColorLayer, self).__init__()
         self.batch = pyglet.graphics.Batch()
-        self.color = color
+        self.acolor = color
         
     def on_enter(self):
         super(ColorLayer, self).on_exit()
@@ -45,7 +45,7 @@ class ColorLayer(Layer):
         
         self.vertex_list = self.batch.add(4, pyglet.gl.GL_QUADS, None,
             ('v2i', (0, 0, 0, y, x, y, x, 0)),
-            ('c4B', self.color*4)
+            ('c4B', self.acolor*4)
         )
     
     def on_exit(self):
