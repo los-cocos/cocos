@@ -322,7 +322,7 @@ class Grid3D(GridBase):
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(60, 1.0*width/height, 0.1, 1000.0)
+        gluPerspective(60, 1.0*width/height, 0.1, 2000.0)
         glMatrixMode(GL_MODELVIEW)
 
     def _set_camera( self ):

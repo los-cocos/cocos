@@ -59,11 +59,13 @@ if __name__ == "__main__":
     tl1 = TestLayer()
     main_scene.add( tl1, z=33 )
 
+    # set a 3d grid with a grid3d action
+#    e = Waves3D( amplitude=25, waves=15, grid=(32,24), duration=4)
+    e = Lens3D( radius=200, grid=(32,24), duration=4)
 
-    # important:  maintain the aspect ratio in the grid
-#    e = Lens3D( lens_effect=0.7, radius=240, grid=(64,48), duration=1 )
-    e = Waves3D( amplitude=30, waves=15, grid=(32,24), duration=4)
-    rot = RotateCamera( direction=0, degrees=360, duration=2)
+    # use the remaining grid and move it's camera
+    rot = OrbitCamera( radius=1, delta_radius=2, angle_x=0, delta_x=-90, angle_z=0, delta_z=180, duration=2 )
+
     main_scene.do( e )
     main_scene.do( rot + Reverse( rot ) )
 

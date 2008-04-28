@@ -32,7 +32,7 @@ v0.3.0 - XXX, xxx
      Liquid, Sin Shaky, ShakyTiles, ShuffleTiles, QuadMoveBy
      MoveCornerUp, MoveCornerDown, SkewVertical, SkewHorizontal
      FlipX, FlipY, Flip, CornerSwap, ShatteredTiles,
-     FadeOutTiles, Waves3D, FlipX3D, FlipY3D, Lens3D, CameraRotate
+     FadeOutTiles, Waves3D, FlipX3D, FlipY3D, Lens3D, CameraOrbit
    - Actions: Added Waves decorators: AccelAmplitude, DeccelAmplitude,
        AccelDeccelAmplitude.
     
