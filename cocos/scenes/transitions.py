@@ -9,9 +9,9 @@ from pyglet import image
 from pyglet.gl import *
 
 from math import *
-import scene
-from director import director
-import framegrabber
+import cocos.scene as scene
+from cocos.director import director
+import cocos.framegrabber as framegrabber
 
 __all__ = ['TransitionScene',
             'Quad2DTransition',
@@ -53,25 +53,8 @@ class TransitionScene(scene.Scene):
         self.dt = 0.0
         self.duration = duration
 
-        self.scheduled = False
-        
         super(TransitionScene, self).__init__()
-
-    # helper functions
-    def disable_step( self ):
-        """Disables the step callback"""
-        self.scheduled = False
-        pyglet.clock.unschedule( self.step )
-
-    def enable_step( self ):
-        """Enables the step callback. It calls the `step` method every frame"""
-        if not self.scheduled:
-            self.scheduled = True 
-            pyglet.clock.schedule( self.step )
         
-    def step( self, dt ):
-        pass
-
 class Quad2DTransition(TransitionScene):
     """
     Slides out one scene while sliding in onother.
@@ -79,27 +62,26 @@ class Quad2DTransition(TransitionScene):
 
     def __init__( self, *args, **kwargs ):
         super(Quad2DTransition, self ).__init__( *args, **kwargs)
-        self.enable_step()
+        self.schedule( self.step )
 
     def step(self, dt):
         self.dt += dt
         if self.dt >= self.duration:
-            self.disable_step()
+            self.unschedule(self.step)
             director.replace( self.in_scene )
 
     def on_draw( self ):
         # draw scene one
         self.out_grabber.before_render(self.out_texture)
-        self.out_scene.on_draw()
+        self.out_scene.visit()
         self.out_grabber.after_render(self.out_texture)
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # draw scene two
         self.in_grabber.before_render(self.in_texture)
-        self.in_scene.on_draw()
+        self.in_scene.visit()
         self.in_grabber.after_render(self.in_texture)
-        
     
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         self.draw_scenes()
@@ -273,5 +255,3 @@ class ShrinkAndGrow(Quad2DTransition):
         cx = director.get_window_size()[0]/4*3
         cy = director.get_window_size()[1]/2
         return ((x-cx)*(dt)+cx, (y-cy)*(dt)+cy)
-       
-

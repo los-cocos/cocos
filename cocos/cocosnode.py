@@ -169,7 +169,7 @@ class CocosNode(object):
         self.scheduled_interval_calls = [ 
                 c for c in self.scheduled_interval_calls if c[0] != callback 
                 ]
-        if total_len != len(
+        if total_len == len(
                 self.scheduled_calls + self.scheduled_interval_calls
                 ):
             raise Exception("Call not scheduled")

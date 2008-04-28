@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from cocos.director import director
 from cocos.layer import Layer, ColorLayer
 from cocos.scene import Scene
-from cocos.transitions import *
+from cocos.scenes.transitions import *
 from cocos.actions import *
 from cocos.sprite import ActionSprite
 import pyglet
@@ -78,10 +78,6 @@ class GrossiniLayer(Layer):
 
         g.do( Repeat( rot + Reverse(rot) ) )
 
-#    def on_exit( self ):
-#        for o in self.objects:
-#            o.stop()
-
 class GrossiniLayer2(Layer):
     def __init__( self ):
         super( GrossiniLayer2, self ).__init__()
@@ -96,9 +92,9 @@ class GrossiniLayer2(Layer):
         g1.do( Repeat( rot + Reverse(rot) ) )
         g2.do( Repeat( rot + Reverse(rot) ) )
 
-#    def on_exit( self ):
-#        for o in self.objects:
-#            o.stop()
+        self.add( g1 )
+        self.add( g2 )
+
 
 if __name__ == "__main__":
     director.init(resizable=True)
@@ -124,12 +120,12 @@ if __name__ == "__main__":
     g2 = GrossiniLayer2()
     c2 = ColorLayer(128,16,16,255)
     c1 = ColorLayer(0,255,255,255)
-    control = ControlLayer()
-    controlScene1 = Scene(c2, g, control)
-    controlScene2 = Scene(c1, g2, control)
+    control1 = ControlLayer()
+    control2 = ControlLayer()
+    controlScene1 = Scene( c2, g, control1 )
+    controlScene2 = Scene( c1, g2, control2 )
+
     control_p = 0
     control_list = [controlScene1, controlScene2]
     
-    
     director.run( controlScene1 )
-    
