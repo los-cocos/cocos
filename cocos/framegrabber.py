@@ -8,6 +8,8 @@ It is mostly used for internal implementation of cocos, you normally shouldn't
 need it. If you are curious, check implementation of effects to see an example.
 """
 
+__docformat__ = 'restructuredtext'
+
 from gl_pbuffer import Pbuffer
 from gl_framebuffer_object import FramebufferObject
 from pyglet.gl import *

@@ -43,26 +43,28 @@ class ActionSprite( BatchableNode, pyglet.sprite.Sprite):
     Example::
 
         sprite = ActionSprite('grossini.png')
-        
-    :Parameters:
-            `image_name` : string or image
-                name of the image resource or a pyglet image.
-            `position` : tuple
-                 position of the anchor. Defaults to (0,0)
-            `rotation` : float
-                the rotation (degrees). Defaults to 0.
-            `scale` : float
-                the zoom factor. Defaults to 1.
-            `opacity` : int
-                the opacity (0=transparent, 255=opaque). Defaults to 255.
-            `color` : tuple
-                the color to colorize the child (RGB 3-tuple). Defaults to (255,255,255).
-            `anchor` : (float, float)
-                (x,y)-point from where the image will be positions, rotated and scaled in pixels. For example (image.width/2, image.height/2) is the center (default).
-            
     '''
     
     def __init__( self, image, position=(0,0), rotation=0, scale=1, opacity = 255, color=(255,255,255), anchor = None ):
+        '''Initialize the sprite
+
+        :Parameters:
+                `image` : string or image
+                    name of the image resource or a pyglet image.
+                `position` : tuple
+                    position of the anchor. Defaults to (0,0)
+                `rotation` : float
+                    the rotation (degrees). Defaults to 0.
+                `scale` : float
+                    the zoom factor. Defaults to 1.
+                `opacity` : int
+                    the opacity (0=transparent, 255=opaque). Defaults to 255.
+                `color` : tuple
+                    the color to colorize the child (RGB 3-tuple). Defaults to (255,255,255).
+                `anchor` : (float, float)
+                    (x,y)-point from where the image will be positions, rotated and scaled in pixels. For example (image.width/2, image.height/2) is the center (default).
+        '''
+            
         if isinstance(image, str):
             image = pyglet.resource.image(image)
         

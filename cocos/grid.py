@@ -4,6 +4,8 @@
 #
 '''Grid effects'''
 
+__docformat__ = 'restructuredtext'
+
 import pyglet
 from pyglet import image
 from pyglet.gl import *

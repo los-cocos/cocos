@@ -2,7 +2,7 @@
 # Cocos:
 # http://code.google.com/p/los-cocos/
 #
-'''Implementation of `TiledAction` actions
+'''Implementation of `TiledGridAction` actions
 '''
 __docformat__ = 'restructuredtext'
 
@@ -90,6 +90,9 @@ class ShatteredTiles( TiledGridAction ):
 class ShuffleTiles( TiledGridAction ):
     '''ShuffleTiles moves the tiles randomly across the screen and then put
     them back into the original place.
+
+    Example::
+
        scene.do( ShuffleTiles( grid=(4,4), duration=10) )
     '''
 

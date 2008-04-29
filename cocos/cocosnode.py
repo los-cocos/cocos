@@ -6,6 +6,8 @@
 CocosNode: the basic element of cocos
 """
 
+__docformat__ = 'restructuredtext'
+
 import bisect, copy
 
 import pyglet
@@ -99,7 +101,7 @@ class CocosNode(object):
         The callback function prototype is the same as for `schedule`.
 
         :Parameters:
-            `func` : function
+            `callback` : function
                 The function to call when the timer lapses.
             `interval` : float
                 The number of seconds to wait between each call.
@@ -129,7 +131,7 @@ class CocosNode(object):
                 pass
 
         :Parameters:
-            `func` : function
+            `callback` : function
                 The function to call each frame.
                 
         This function is a wrapper to pyglet.clock.schedule.
@@ -152,7 +154,7 @@ class CocosNode(object):
         are removed.  If the function was not scheduled, no error is raised.
 
         :Parameters:
-            `func` : function
+            `callback` : function
                 The function to remove from the schedule.
         
         This function is a wrapper to pyglet.clock.unschedule.
@@ -227,7 +229,7 @@ class CocosNode(object):
         :Parameters:
             `child` : object
                 object to be added
-            `z`: float
+            `z` : float
                 the z index of self
             `name` : str
                 Name of the child

@@ -40,7 +40,7 @@ class Shaky( GridAction):
         :Parameters:
             `randrange` : int
                 Number that will be used in random.randrange( -randrange, randrange) to do the effect
-        '''        
+        '''
         super(Shaky,self).init(*args,**kw)
         self.randrange = randrange
 
@@ -63,7 +63,7 @@ class Liquid( GridAction ):
         :Parameters:
             `waves` : int
                 Number of waves (2 * pi) that the action will perform. Default is 4
-            `amplitude`: int
+            `amplitude` : int
                 Wave amplitude (height). Default is 20
         '''
         super(Liquid, self).init( *args, **kw )
@@ -84,17 +84,20 @@ class Liquid( GridAction ):
 class Waves( GridAction ):
     '''Waves simulates waves using the math.sin() function both in the vertical and horizontal axis
 
-       scene.do( Waves( waves=4, vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
+        Example::
+
+            scene.do( Waves( waves=4, vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
     '''
 
     def init( self, waves=4, amplitude=20, horizontal_sin=True, vertical_sin=True, *args, **kw ):
-        '''
+        '''Initializes the Waves actions
+
         :Parameters:
             `waves` : int
                 Number of waves (2 * pi) that the action will perform. Default is 4
-            `amplitude`: int
+            `amplitude` : int
                 Wave amplitude (height). Default is 20
-             `horizontal_sin` : bool
+            `horizontal_sin` : bool
                 whether or not in will perform horizontal waves. Default is True
             `vertical_sin` : bool
                 whether or not in will perform vertical waves. Default is True
@@ -149,14 +152,14 @@ class QuadMoveBy( GridAction ):
         '''Initializes the QuadMoveBy
         
         :Parameters:
-             `src0` : (int, int)
-                 Initial value for the bottom-left coordinate. Default is (0,0)
-             `src1` : (int, int)
-                 Initial value for the bottom-right coordinate. Default is (win_size_x,0)
-             `src2` : (int, int)
-                 Initial value for the upper-right coordinate. Default is (win_size_x, win_size_y)
-             `src3` : (int, int)
-                 Initial value for the upper-left coordinate. Default is (0, win_size_y)
+            `src0` : (int, int)
+                Initial value for the bottom-left coordinate. Default is (0,0)
+            `src1` : (int, int)
+                Initial value for the bottom-right coordinate. Default is (win_size_x,0)
+            `src2` : (int, int)
+                Initial value for the upper-right coordinate. Default is (win_size_x, win_size_y)
+            `src3` : (int, int)
+                Initial value for the upper-left coordinate. Default is (0, win_size_y)
             `delta0` : (int, int)
                 The bottom-left relative coordinate. Default is (0,0)
             `delta1` : (int, int)

@@ -1,3 +1,11 @@
+#
+# Cocos:
+# http://code.google.com/p/los-cocos/
+#
+'''Text cocos nodes
+'''
+__docformat__ = 'restructuredtext'
+
 from director import director
 import cocosnode
 from batch import *

@@ -30,7 +30,7 @@ class Waves3D( Grid3DAction ):
         :Parameters:
             `waves` : int
                 Number of waves (2 * pi) that the action will perform. Default is 4
-            `amplitude`: int
+            `amplitude` : int
                 Wave amplitude (height). Default is 20
         '''
         super(Waves3D, self).init( *args, **kw )

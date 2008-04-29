@@ -276,6 +276,7 @@ class AccelDeccelAmplitude( IntervalAction ):
     Increases and Decreases the amplitude of Wave
     
     Example::
+
         # when t=0 and t=1 the amplitude will be 0
         # when t=0.5 (half time), the amplitude will be 40
         action = IncDecAmplitude( Wave3D( waves=4, amplitude=40, duration=6) )
@@ -287,7 +288,7 @@ class AccelDeccelAmplitude( IntervalAction ):
         :Parameters:
             `other` : `IntervalAction`
                 The action that will be affected
-            `rate`: float
+            `rate` : float
                 The acceleration rate. 1 is linear (default value)
         """
         if not hasattr(other,'amplitude'):
@@ -318,6 +319,7 @@ class AccelAmplitude( IntervalAction ):
     Increases the waves amplitude from 0 to self.amplitude
     
     Example::
+
         # when t=0 the amplitude will be 0
         # when t=1 the amplitude will be 40
         action = IncAmplitude( Wave3D( waves=4, amplitude=40, duration=6), rate=1.0 )
@@ -329,7 +331,7 @@ class AccelAmplitude( IntervalAction ):
         :Parameters:
             `other` : `IntervalAction`
                 The action that will be affected
-            `rate`: float
+            `rate` : float
                 The acceleration rate. 1 is linear (default value)
         """
         if not hasattr(other,'amplitude'):
@@ -356,6 +358,7 @@ class DeccelAmplitude( AccelAmplitude ):
     Decreases the waves amplitude from self.amplitude to 0
     
     Example::
+
         # when t=1 the amplitude will be 0
         # when t=0 the amplitude will be 40
         action = DeccelAmplitude( Wave3D( waves=4, amplitude=40, duration=6), rate=1.0 )

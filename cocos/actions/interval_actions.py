@@ -13,29 +13,27 @@ It has an start time, and a finish time. The finish time is the parameter
 
 These `IntervalAction` have some interesting properties, like:
 
-  * They can run Forward (default)
-  * They can run Backwards
-  * They can alter the speed of time
+  * They can run normally (default)
+  * They can run reversed with the `Reverse` action
+  * They can run with the time altered with the `Accelerate`, `AccelDeccel` or
+    `Speed`.
+    actions.
 
-For example, if you run an action in a Forward direction and the you run it again in
-a Backward direction, then you are simulation a PingPong movement.
+For example, you can simulate a Ping Pong effect running the action normally and then running
+it again in Reverse mode.
 
-These actions has 3 special parameters:
+Example::
 
-    ``dir`` : direction
-        It can be `ForwardDir` or `BackwardDir` . Default is: `ForwardDir`
-    ``mode`` : repeat mode
-        It can be `PingPongMode` or `RestartMode` . Default is : `PingPongMode` .
-    ``time_func`` : a function. The format of the function is f( runtime, duration )
-        If you want to alter the speed of time, you should provide your onw time_func or use the `accelerate` function.
-        Default : None. No alter-time function is used.
+    ping_pong_action = action + Reverse( action )
+
 
 Available IntervalActions
 =========================
 
   * `MoveTo`
   * `MoveBy`
-  * `Jump`
+  * `JumpTo`
+  * `JumpBy`
   * `Bezier`
   * `Blink`
   * `RotateTo`
@@ -44,13 +42,30 @@ Available IntervalActions
   * `ScaleBy`
   * `FadeOut`
   * `FadeIn`
+  * `FadeTo`
+  * `Delay`
+  * `RandomDelay`
+
+
+Modifier actions
+================
+
+  * `Accelerate`
+  * `AccelDeccel`
+  * `Speed`
+
 
 Examples::
 
-    move = MoveBy( (200,0), 5 )  # Moves 200 pixels to the right in 5 seconds.
+    move = MoveBy( (200,0), duration=5 )  # Moves 200 pixels to the right in 5 seconds.
 
-    move = MoveTo( (320,240), 5) # Moves to the pixel (320,240) in 5 seconds
+    move = MoveTo( (320,240), duration=5) # Moves to the pixel (320,240) in 5 seconds
 
+    jump = JumpBy( (320,0), 100, 5, duration=5) # Jumps to the right 320 pixels
+                                                # doing 5 jumps of 100 pixels
+                                                # of height in 5 seconds
+
+    accel_move = Accelerate(move)               # accelerates action move
 '''
 
 __docformat__ = 'restructuredtext'
@@ -79,6 +94,7 @@ class RotateBy( IntervalAction ):
     """Rotates a sprite clockwise in degrees
 
     Example::
+
         # rotates the sprite 180 degrees in 2 seconds
         action = Rotate( 180, 2 )
         sprite.do( action )
@@ -112,6 +128,7 @@ class RotateTo( IntervalAction ):
     """Rotates a sprite clockwise in degrees
 
     Example::
+
         # rotates the sprite 180 degrees in 2 seconds
         action = Rotate( 180, 2 )
         sprite.do( action )
@@ -142,7 +159,7 @@ class RotateTo( IntervalAction ):
         self.target.rotation = (self.start_angle + self.angle * t ) % 360
 
     def __reversed__(self):
-        return Rotate(-self.angle, self.duration)
+        return RotateTo(-self.angle, self.duration)
         
 class Speed( IntervalAction ):
     """
@@ -150,6 +167,7 @@ class Speed( IntervalAction ):
     or less (speed<1)
 
     Example::
+
         # rotates the sprite 180 degrees in 1 secondclockwise
         action = Speed( Rotate( 180, 2 ), 2 )
         sprite.do( action )
@@ -160,7 +178,7 @@ class Speed( IntervalAction ):
         :Parameters:
             `other` : IntervalAction
                 The action that will be affected
-            `speed`: float
+            `speed` : float
                 The speed change. 1 is no change.
                 2 means twice as fast, takes half the time
                 0.5 means half as fast, takes double the time
@@ -184,6 +202,7 @@ class Accelerate( IntervalAction ):
     Changes the acceleration of an action
 
     Example::
+
         # rotates the sprite 180 degrees in 2 seconds clockwise
         # it starts slow and ends fast
         action = Accelerate( Rotate( 180, 2 ), 4 )
@@ -195,7 +214,7 @@ class Accelerate( IntervalAction ):
         :Parameters:
             `other` : IntervalAction
                 The action that will be affected
-            `rate`: float
+            `rate` : float
                 The acceleration rate. 1 is linear.
                 the new t is t**rate
         """
@@ -219,6 +238,7 @@ class AccelDeccel( IntervalAction ):
     speed at the beggining and ending.
 
     Example::
+
         # rotates the sprite 180 degrees in 2 seconds clockwise
         # it starts slow, gets fast and ends slow
         action = AccelDeccel( Rotate( 180, 2 ) )
@@ -254,6 +274,7 @@ class MoveTo( IntervalAction ):
     """Moves a sprite to the position x,y. x and y are absolute coordinates.
 
     Example::
+
         # Move the sprite to coords x=50, y=10 in 8 seconds
 
         action = MoveTo( (50,10), 8 )
@@ -286,6 +307,7 @@ class MoveBy( MoveTo ):
     Duration is is seconds.
 
     Example::
+
         # Move the sprite 50 pixels to the left in 8 seconds
         action = MoveBy( (-50,0), 8 )
         sprite.do( action )
@@ -382,6 +404,7 @@ class ScaleTo(IntervalAction):
     """Scales the sprite
 
     Example::
+
         # scales the sprite to 5x in 2 seconds
         action = ScaleTo( 5, 2 )
         sprite.do( action )
@@ -409,6 +432,7 @@ class ScaleBy(ScaleTo):
     """Scales the sprite
 
     Example::
+
         # scales the sprite by 5x in 2 seconds
         action = ScaleBy( 5, 2 )
         sprite.do( action )
@@ -426,6 +450,7 @@ class Blink( IntervalAction ):
     """Blinks the sprite a Number_of_Times, for Duration seconds
 
     Example::
+
         # Blinks 10 times in 2 seconds
         action = Blink( 10, 2 )
         sprite.do( action )
@@ -511,6 +536,9 @@ class Jump(IntervalAction):
             `duration` : float
                 Duration time in seconds
         """
+
+        print 'WARNING: Deprecated "Jump" action. Consider using JumpBy instead'
+
         self.y = y
         self.x = x
         self.duration = duration
@@ -568,16 +596,15 @@ class JumpBy(IntervalAction):
         x = self.delta[0] * t
         self.target.position = self.start_position + Point2(x,y)
         
-
     def __reversed__(self):
         return JumpBy( (-self.position[0],-self.position[1]), self.height, self.jumps, self.duration)
-        
+
 class JumpTo(JumpBy):
     """Moves a sprite simulating a jump movement.
 
     Example::
 
-        action = Jump(50,200, 5, 6)    # Move the sprite 200 pixels to the right
+        action = JumpTo(50,200, 5, 6)  # Move the sprite 200 pixels to the right
         sprite.do( action )            # in 6 seconds, doing 5 jumps
                                        # of 50 pixels of height
     """

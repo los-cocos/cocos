@@ -123,6 +123,7 @@ def Reverse( action ):
     """Reverses the behavior of the action
 
     Example::
+
         # rotates the sprite 180 degrees in 2 seconds counter clockwise
         action = Reverse( Rotate( 180, 2 ) )
         sprite.do( action )
@@ -156,19 +157,21 @@ class Sequence(IntervalAction):
 
     Example::
 
-        action = Sequence( one, two )
+        action = Sequence( one, Sequence( two, three) )
         sprite.do( action )
 
         or:
 
-        sprite.do( one+two )
+        sprite.do( one + two + three )
         """
     def init(self,  one, two, **kwargs ):
         """Init method
 
         :Parameters:
-            `actions` : list of actions
-                List of actions to be sequenced
+            `one` : `Action`
+                The first action to execute
+            `two` : `Action`
+                The second action to execute
         """
 
         self.one = copy.deepcopy(one)
@@ -236,31 +239,34 @@ class Spawn(IntervalAction):
     """Spawn a  new action immediately.
     You can spawn actions using:
 
-        * the Spanw() class
+        * the Spawn() class
         * the overriden *|* operator
         * call sprite.do() many times
 
     Example::
 
-        action = Spawn( action1, action2 )
+        action = Spawn( action1, Spawn( action2, action3 ) )
         sprite.do( action )
 
         or:
 
-        sprite.do( action1 | action2  )
+        sprite.do( action1 | action2 | action3 )
 
         or:
 
         sprite.do( action1 )
         sprite.do( action2 )
+        sprite.do( action3 )
     """
 
     def init(self, one, two):
         """Init method
 
         :Parameters:
-            `actions` : list of actions
-                The list of actions that will be spawned
+            `one` : `Action`
+                The first action to execute in parallel
+            `two` : `Action`
+                The second action to execute in parallel
         """
         from cocos.actions.interval_actions import Delay
 
@@ -301,8 +307,7 @@ class Repeat(Action):
         repeat = Repeat( action )
         sprite.do( repeat )
 
-    Note::
-        To repeat just a finite amount of time, just do action * times .
+    Note: To repeat just a finite amount of time, just do action * times .
     """
     def init(self, action):
         """Init method.
