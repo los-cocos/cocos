@@ -25,6 +25,7 @@ def TextureGrabber():
     # Why this isn't done on module import? Because we need an initialized
     # GL Context to query availability of extensions
     global _best_grabber
+
     if _best_grabber is not None:
         return _best_grabber()
     # Preferred method: framebuffer object

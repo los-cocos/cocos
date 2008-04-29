@@ -72,11 +72,11 @@ class GrossiniLayer(Layer):
 
         g = ActionSprite( 'grossini.png')
         g.position = (320,240)
-        self.add( g )
 
-        rot = RotateTo( 360, 4 )
-
+        rot = RotateBy( 360, 4 )
         g.do( Repeat( rot + Reverse(rot) ) )
+
+        self.add( g )
 
 class GrossiniLayer2(Layer):
     def __init__( self ):
@@ -101,18 +101,22 @@ if __name__ == "__main__":
 #    director.window.set_fullscreen(True)
 
     transition_list = [
-        SlideLRTransition,
-        SlideRLTransition,
-        GrowTransition,
-        FadeTransition,
-        ShrinkAndGrow,
-        SlideBTTransition,
-        SlideTBTransition,
-        MoveInTTransition,
-        MoveInBTransition,
+        RotoZoomTransition,
+        JumpZoomTransition,
         MoveInLTransition,
         MoveInRTransition,
+        MoveInBTransition,
+        MoveInTTransition,
+        SlideInLTransition,
+        SlideInRTransition,
+        SlideInBTransition,
+        SlideInTTransition,
+        FlipXTransition,
+        FlipYTransition,
+        ShuffleTransition,
+        ShrinkAndGrowTransition,
         CornerMoveTransition,
+        EnvelopeTransition,
         ]
     current_transition = 0
 

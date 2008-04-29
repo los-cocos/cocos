@@ -228,6 +228,7 @@ if __name__ == "__main__":
     cornerdown = MoveCornerDown( duration=1)
     shatter = ShatteredTiles( randrange=16, grid=(16,12), duration=4 )
     shuffle = ShuffleTiles( grid=(16,12), duration=1 )
+    orbit = OrbitCamera( radius=1, delta_radius=2, angle_x=0, delta_x=-90, angle_z=0, delta_z=180, duration=4 )
 
 #    firelayer.do(
 #    spritelayer.do(
@@ -247,7 +248,7 @@ if __name__ == "__main__":
               shatter +
               flip+ Delay(2) +
               Reverse(flip) +
-              lens + ReuseGrid() + waves3d +
+              lens + ReuseGrid() + ( (orbit+Reverse(orbit)) | waves3d) +
               corners + Delay(2) + Reverse(corners) +
               waves + Delay(2) + ReuseGrid() + shaky +
               cornerup + Delay(1) +

@@ -37,6 +37,7 @@ class CocosNode(object):
         self.color = (255,255,255)
         self.opacity = 255
         self.grid = None
+        self.visible = True
 
         # actions stuff
         self.actions = []
@@ -368,6 +369,10 @@ class CocosNode(object):
     
 
     def visit(self):
+
+        if not self.visible:
+            return
+
         position = 0
         
         if self.grid and self.grid.active:
