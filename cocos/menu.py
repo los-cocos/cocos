@@ -1,27 +1,23 @@
 #
-# Menu class for pyglet
+# Cocos
+# http://code.google.com/p/los-cocos
 #
 # Ideas borrowed from:
 #    pygext: http://opioid-interactive.com/~shang/projects/pygext/
 #    pyglet astraea: http://www.pyglet.org
 #    Grossini's Hell: http://www.pyweek.org/e/Pywiii/ 
-# 
 #
-"""A menu layer for los-cocos.
+"""A `Layer` that implements a simple menu
 
 Menu
 ====
 
-This module provides a Menu class, which is a layer you can use in cocos
-apps. Menus can contain regular items (which trigger a function when selected)
-or toggle items (which toggle a flag when selected).
+This module provides a Menu class. Menus can contain regular items 
+(which trigger a function when selected), toggle items (which toggle a flag when selected),
+or entry items (which lets you enter alphanumeric data).
 
-When you need a menu, you can define a class inheriting `Menu`, and setting
-some attributes which control the menu appearance. Then you add `MenuItem` s to
-it, prepare it, and use it as you would use any layer.
-
-There is a menu demo in the samples folder.
-
+To use a menu in your code, just subclass `Menu` and add the menu to an `Scene` or
+another `Layer`.
 """
 
 __docformat__ = 'restructuredtext'
@@ -67,7 +63,7 @@ class Menu(Layer):
      - create a subclass
      - override __init__ to set all style attributes, 
        and then call `create_menu()`
-     - Finally you shall add the menu to a `Scene`
+     - Finally you shall add the menu to an `Scene` or another `Layer`
     """
 
     select_sound = None
@@ -224,11 +220,11 @@ class Menu(Layer):
         :Parameters:
             `items` : list
                 list of `MenuItem` that will be part of the `Menu`
-            `selected_effect` : callback
+            `selected_effect` : function
                 This action will be executed when the `MenuItem` is selected
-            `unselected_effect` : callback
+            `unselected_effect` : function
                 This action will be executed when the `MenuItem` is unselected
-            `activated_effect` : callback
+            `activated_effect` : function
                 this action will executed when the `MenuItem` is activated (pressing Enter or by clicking on it)
         """
         z=0
@@ -292,8 +288,8 @@ class Menu(Layer):
                 break
 
 class MenuItem( CocosNode ):
-    """A menu item triggering a function."""
-
+    """A regular menu item. It triggers a function when it is activated"""
+    
     selected_effect = None
     unselected_effect = None
     activated_effect = None
@@ -326,7 +322,7 @@ class MenuItem( CocosNode ):
         """Returns the box that contains the menu item.
 
         :rtype: (x1,x2,y1,y2)
-        :returns: returns a tuple (a rectangle) that sets the boundaries of the menu item."""
+        """
 
         width = self.text.content_width
         height = self.text.content_height
@@ -378,7 +374,6 @@ class MenuItem( CocosNode ):
         """Returns whether the point (x,y) is inside the menu item.
 
         :rtype: Boolean
-        :Returns: Whether or not the point (x,y) is inside the menu item
         """
         (ax,ay,bx,by) = self.get_box()
         if( x >= ax and x <= bx and y >= ay and y <= by ):
@@ -510,7 +505,7 @@ class EntryMenuItem(MenuItem):
 
 
 def shake():
-    '''Action that performs a slight rotation and then goes back to the original rotation
+    '''Predefined action that performs a slight rotation and then goes back to the original rotation
     position.
     '''
     angle = 05
@@ -521,10 +516,13 @@ def shake():
     return rot + (rot2 + Reverse(rot2)) * 2 + Reverse(rot)
 
 def shake_back():
+    '''Predefined action that rotates to 0 degrees in 0.1 seconds'''
     return RotateTo(0,0.1)
 
 def zoom_in():
+    '''Predefined action that scales to 1.5 factor in 0.2 seconds'''
     return ScaleTo( 1.5, duration=0.2 )
 
 def zoom_out():
+    '''Predefined action that scales to 1.0 factor in 0.2 seconds'''
     return ScaleTo( 1.0, duration=0.2 )

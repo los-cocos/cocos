@@ -1,7 +1,7 @@
 #
-# ActionSprite
+# Cocos
+# http://code.google.com/p/los-cocos/
 #
-
 '''Action Sprite
 
 Animating a sprite

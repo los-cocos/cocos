@@ -217,7 +217,7 @@ if __name__ == "__main__":
     flipx =  FlipX3D(duration=1)
     flipy = FlipY3D(duration=1)
     flip = Flip(duration=1)
-    liquid = Liquid( grid=(16,12), duration=8)
+    liquid = Liquid( grid=(16,12), duration=4)
     shakyt = ShakyTiles( grid=(16,12), duration=3)
     corners = CornerSwap( duration=1)
     waves = AccelAmplitude(Waves( waves=8, amplitude=50, grid=(32,24), duration=5), rate=2.0)  
@@ -229,6 +229,7 @@ if __name__ == "__main__":
     shatter = ShatteredTiles( randrange=16, grid=(16,12), duration=4 )
     shuffle = ShuffleTiles( grid=(16,12), duration=1 )
     orbit = OrbitCamera( radius=1, delta_radius=2, angle_x=0, delta_x=-90, angle_z=0, delta_z=180, duration=4 )
+    turnoff = TurnOffTiles( grid=(16,12), duration=2 )
 
 #    firelayer.do(
 #    spritelayer.do(
@@ -240,7 +241,7 @@ if __name__ == "__main__":
               liquid + Delay(2) +
               shakyt + Delay(2) +
               ReuseGrid() +
-              shuffle + Delay(4) +  Reverse(shuffle) + Delay(3) +
+              shuffle + Delay(4) + ReuseGrid() + turnoff + Reverse(turnoff) + Delay(1) +
               flipx + Delay(2) + ReuseGrid() +
               flipy + Delay(2) + ReuseGrid() +
               flipx + Delay(2) + ReuseGrid() +

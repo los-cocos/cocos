@@ -1,5 +1,5 @@
 #
-# Los Cocos: Sprite Test
+# Cocos
 # http://code.google.com/p/los-cocos/
 #
 

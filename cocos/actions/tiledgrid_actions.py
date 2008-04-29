@@ -116,11 +116,15 @@ class ShuffleTiles( TiledGridAction ):
         super(ShuffleTiles,self).start()
 
         self.tiles = {}
-        self.dst_tiles = {}
         self._once = False
 
         if self.seed != -1:
             random.seed( self.seed )
+
+        # random positions
+        self.nr_of_tiles = self.grid.x * self.grid.y
+        self.tiles_order = range(self.nr_of_tiles )
+        random.shuffle( self.tiles_order )
 
         for i in range(self.grid.x):
             for j in range(self.grid.y):
@@ -144,22 +148,10 @@ class ShuffleTiles( TiledGridAction ):
                 self.place_tile(i,j)
                 
     # private method
-    def _get_delta(self, x, y):
-        a = rr(0, self.grid.x), rr(0, self.grid.y)  
-        if not self.dst_tiles.get(a, False):
-            self.dst_tiles[ a ] = True
-            return Point2(*a)-Point2(x,y)
-        for i in range(a[0], self.grid.x):
-            for j in range(self.grid.y):
-                if not self.dst_tiles.get( (i,j), False):
-                    self.dst_tiles[ (i,j) ] = True
-                    return Point2(i,j)-Point2(x,y)
-        for i in range(a[0]):
-            for j in range(self.grid.y):
-                if not self.dst_tiles.get( (i,j), False):
-                    self.dst_tiles[ (i,j) ] = True
-                    return Point2(i,j)-Point2(x,y)
-        raise GridException("_get_delta() error")
+    def _get_delta(self, x, y):      
+        idx = x * self.grid.y + y
+        i,j = divmod( self.tiles_order[idx], self.grid.y )
+        return Point2(i,j)-Point2(x,y)
 
 
 class FadeOutTiles( TiledGridAction ):
@@ -173,7 +165,6 @@ class FadeOutTiles( TiledGridAction ):
     def start(self):
         super(FadeOutTiles,self).start()
         self.tiles = {}
-        self.dst_tiles = {}
         for i in range(self.grid.x):
             for j in range(self.grid.y):
                 self.tiles[(i,j)] = Tile( position = Point2(i,j), 

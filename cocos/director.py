@@ -1,6 +1,6 @@
 #
-# Los Cocos: An extension for Pyglet
-# http://code.google.com/p/los-cocos/
+# Cocos
+# http://code.google.com/p/los-cocos
 #
 '''Singleton that handles the logic behind the Scenes
 

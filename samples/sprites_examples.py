@@ -1,5 +1,5 @@
 #
-# Los Cocos: Sprite Test
+# Cocos
 # http://code.google.com/p/los-cocos/
 #
 
@@ -381,6 +381,6 @@ tests = {
 }
 
 if __name__ == "__main__":
-    director.init( resizable=True, caption='Los Cocos - Sprite test' )
+    director.init( resizable=True, caption='Cocos - Sprite demo' )
 #    director.window.set_fullscreen(True)
     director.run( get_sprite_test( 1 ) )

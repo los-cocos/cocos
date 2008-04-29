@@ -1,6 +1,6 @@
 #
-# Los Cocos: An extension for Pyglet
-# http://code.google.com/p/los-cocos/
+# Cocos
+# http://code.google.com/p/los-cocos
 #
 """
 CocosNode: the basic element of cocos

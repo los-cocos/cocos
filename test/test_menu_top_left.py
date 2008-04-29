@@ -1,5 +1,5 @@
 #
-# Los Cocos: Multi-Menu Example
+# Cocos
 # http://code.google.com/p/los-cocos/
 #
 

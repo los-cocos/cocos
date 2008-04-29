@@ -1,5 +1,5 @@
 #
-# Los Cocos: An extension for Pyglet
+# Cocos:
 # http://code.google.com/p/los-cocos/
 #
 '''Transitions between Scenes'''
@@ -12,7 +12,7 @@ from cocos.actions import *
 import cocos.scene as scene
 from cocos.director import director
 
-__all__ = ['TransformScene',
+__all__ = [ 'TransitionScene',
             'RotoZoomTransition','JumpZoomTransition',
 
             'MoveInLTransition','MoveInRTransition',
@@ -31,13 +31,13 @@ __all__ = ['TransformScene',
             'EnvelopeTransition',
             ]
 
-class TransformScene(scene.Scene):
-    """
+class TransitionScene(scene.Scene):
+    """TransitionScene
     A Scene that takes two scenes and makes a transition between them
     """
     
     def __init__(self, out_scene, in_scene, duration=2):
-        super(TransformScene, self).__init__()
+        super(TransitionScene, self).__init__()
 
         self.in_scene = in_scene
         self.out_scene = out_scene
@@ -73,8 +73,8 @@ class TransformScene(scene.Scene):
         self.in_scene.visible = False
         self.out_scene.visible = False
         
-class RotoZoomTransition(TransformScene):
-    '''Rotate and zoom out the retiring scene, and then rotate and zoom in the incoming 
+class RotoZoomTransition(TransitionScene):
+    '''Rotate and zoom out the outgoing scene, and then rotate and zoom in the incoming 
     '''
 
     def __init__( self, *args, **kwargs ):
@@ -95,8 +95,8 @@ class RotoZoomTransition(TransformScene):
         self.out_scene.do(  rotozoom ) 
         self.in_scene.do( Reverse(rotozoom) )
 
-class JumpZoomTransition(TransformScene):
-    '''Zoom out and jump the retiring scene, and then jump and zoom in the incoming 
+class JumpZoomTransition(TransitionScene):
+    '''Zoom out and jump the outgoing scene, and then jump and zoom in the incoming 
     '''
 
     def __init__( self, *args, **kwargs ):
@@ -121,7 +121,7 @@ class JumpZoomTransition(TransformScene):
         self.in_scene.do( delay + jumpzoomin )
 
 
-class MoveInLTransition(TransformScene):
+class MoveInLTransition(TransitionScene):
     '''Move in from to the left the incoming scene.
     '''
     def __init__( self, *args, **kwargs ):
@@ -134,7 +134,7 @@ class MoveInLTransition(TransformScene):
         self.in_scene.do( (Accelerate(move,0.5) ) )
 
 
-class MoveInRTransition(TransformScene):
+class MoveInRTransition(TransitionScene):
     '''Move in from to the right the incoming scene.
     '''
     def __init__( self, *args, **kwargs ):
@@ -147,7 +147,7 @@ class MoveInRTransition(TransformScene):
         self.in_scene.do( Accelerate(move,0.5) )
 
 
-class MoveInTTransition(TransformScene):
+class MoveInTTransition(TransitionScene):
     '''Move in from to the top the incoming scene.
     '''
     def __init__( self, *args, **kwargs ):
@@ -160,7 +160,7 @@ class MoveInTTransition(TransformScene):
         self.in_scene.do( Accelerate(move,0.5) )
 
 
-class MoveInBTransition(TransformScene):
+class MoveInBTransition(TransitionScene):
     '''Move in from to the bottom the incoming scene.
     '''
     def __init__( self, *args, **kwargs ):
@@ -172,7 +172,7 @@ class MoveInBTransition(TransformScene):
         move = MoveTo( (0,0), duration=self.duration)
         self.in_scene.do( Accelerate(move,0.5) )
 
-class SlideInLTransition(TransformScene):
+class SlideInLTransition(TransitionScene):
     '''Slide in the incoming scene from the left border.
     '''
     def __init__( self, *args, **kwargs ):
@@ -186,7 +186,7 @@ class SlideInLTransition(TransformScene):
         self.out_scene.do( Accelerate(move,0.5) )
 
 
-class SlideInRTransition(TransformScene):
+class SlideInRTransition(TransitionScene):
     '''Slide in the incoming scene from the right border.
     '''
     def __init__( self, *args, **kwargs ):
@@ -200,7 +200,7 @@ class SlideInRTransition(TransformScene):
         self.out_scene.do( Accelerate(move,0.5) )
 
 
-class SlideInTTransition(TransformScene):
+class SlideInTTransition(TransitionScene):
     '''Slide in the incoming scene from the top border.
     '''
     def __init__( self, *args, **kwargs ):
@@ -214,7 +214,7 @@ class SlideInTTransition(TransformScene):
         self.out_scene.do( Accelerate(move,0.5) )
 
 
-class SlideInBTransition(TransformScene):
+class SlideInBTransition(TransitionScene):
     '''Slide in the incoming scene from the bottom border.
     '''
     def __init__( self, *args, **kwargs ):
@@ -228,7 +228,7 @@ class SlideInBTransition(TransformScene):
         self.out_scene.do( Accelerate(move,0.5) )
 
 
-class FlipX3DTransition(TransformScene):
+class FlipX3DTransition(TransitionScene):
     '''Flips the screen horizontally.
     The front face is the outgoing scene and the back face is the incoming scene.
     '''
@@ -247,7 +247,7 @@ class FlipX3DTransition(TransformScene):
         self.do( flip + StopGrid() )
 
 
-class FlipY3DTransition(TransformScene):
+class FlipY3DTransition(TransitionScene):
     '''Flips the screen vertically.
     The front face is the outgoing scene and the back face is the incoming scene.
     '''
@@ -265,7 +265,7 @@ class FlipY3DTransition(TransformScene):
             CallFunc( self.hide_out_show_in ) + flipback90 
         self.do( flip + StopGrid() )
 
-class FlipAngular3DTransition(TransformScene):
+class FlipAngular3DTransition(TransitionScene):
     '''Flips the screen half horizontally and half vertically.
     The front face is the outgoing scene and the back face is the incoming scene.
     '''
@@ -284,7 +284,7 @@ class FlipAngular3DTransition(TransformScene):
         self.do( flip + StopGrid() )
 
 
-class ShuffleTilesTransition(TransformScene):
+class ShuffleTilesTransition(TransitionScene):
     '''Shuffle the outgoing scene, and then reorder the tiles with the incoming scene.
     '''
     def __init__( self, *args, **kwargs ):
@@ -300,7 +300,7 @@ class ShuffleTilesTransition(TransformScene):
         self.do( shuffle + CallFunc(self.hide_out_show_in) + Reverse(shuffle) + StopGrid() )
 
 
-class ShrinkAndGrowTransition(TransformScene):
+class ShrinkAndGrowTransition(TransitionScene):
     '''Shrink the outgoing scene while grow the incoming scene
     '''
     def __init__( self, *args, **kwargs ):
@@ -321,7 +321,7 @@ class ShrinkAndGrowTransition(TransformScene):
         self.out_scene.do( Accelerate(scale_out,0.5) )
 
 
-class CornerMoveTransition(TransformScene):
+class CornerMoveTransition(TransitionScene):
     '''Move the bottom-right corner of the incoming scene to the top-left corner
     '''
     def __init__( self, *args, **kwargs ):
@@ -330,7 +330,7 @@ class CornerMoveTransition(TransformScene):
         self.in_scene.do( Reverse(MoveCornerDown( duration=self.duration ) ) + StopGrid() )
 
 
-class EnvelopeTransition(TransformScene):
+class EnvelopeTransition(TransitionScene):
     '''Shrink the outgoing scene and then grow the incoming scene
     '''
     def __init__( self, *args, **kwargs ):
@@ -343,7 +343,7 @@ class EnvelopeTransition(TransformScene):
         self.do( move + CallFunc(self.hide_out_show_in) + Reverse(move) + StopGrid() )
 
 
-class CurtainTransition(TransformScene):
+class CurtainTransition(TransitionScene):
     '''Fade the tiles of the outgoing scene from the left-bottom corner the to top-right corner.
     '''
     def __init__( self, *args, **kwargs ):
@@ -362,7 +362,7 @@ class CurtainTransition(TransformScene):
         self.add( self.in_scene, z=0, name="in" )
         self.add( self.out_scene, z=1, name="out" )
 
-class TurnOffTilesTransition(TransformScene):
+class TurnOffTilesTransition(TransitionScene):
     '''Turn off the tiles of the outgoing scene in random order
     '''
     def __init__( self, *args, **kwargs ):

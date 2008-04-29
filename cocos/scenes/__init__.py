@@ -1,5 +1,5 @@
 #
-# Los Cocos: An extension for Pyglet
+# Cocos
 # http://code.google.com/p/los-cocos/
 #
 

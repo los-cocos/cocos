@@ -24,7 +24,7 @@ if __name__ == "__main__":
         l.scale = scale
         main_scene.add( l, z=i )
 
-    e = ShuffleTiles( grid=(16,8), duration=2 )
-    main_scene.do( e )
+    e = ShuffleTiles( grid=(16,8), duration=2, seed=2 )
+    main_scene.do( e + Reverse(e) )
 
     director.run (main_scene)

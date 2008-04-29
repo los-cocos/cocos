@@ -1,4 +1,10 @@
+#
+# Cocos
+# http://code.google.com/p/los-cocos
+#
 """A thin wrapper for OpenGL framebuffer objets. For implementation use only"""
+
+__docformat__ = 'restructuredtext'
 
 from ctypes import c_int, byref
 from pyglet.gl import *

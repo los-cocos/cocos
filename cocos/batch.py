@@ -1,3 +1,7 @@
+#
+# Cocos
+# http://code.google.com/p/los-cocos
+#
 """Batch
 
 Batches
@@ -6,6 +10,8 @@ Batches
 Batches allow you to optimize the number of gl calls using pygllets batch
 
 """
+
+__docformat__ = 'restructuredtext'
 
 from director import director
 import cocosnode

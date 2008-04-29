@@ -1,10 +1,9 @@
 """
-Los Cocos: An extension for Pyglet 
-
+Cocos:
 http://code.google.com/p/los-cocos/
 """
 
-__version__ = "0.3.0-alpha1"
+__version__ = "0.3.0-beta1"
 __author__ = "Cocos Team"
 version = __version__
 

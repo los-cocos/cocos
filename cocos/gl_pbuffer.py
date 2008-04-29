@@ -1,3 +1,7 @@
+#
+# Cocos
+# http://code.google.com/p/los-cocos
+#
 """A thin wrapper for OpenGL pbuffer objets. For implementation use only"""
 import ctypes, sys
 

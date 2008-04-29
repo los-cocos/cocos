@@ -1,5 +1,5 @@
 #
-# Los Cocos: Game Logic Example
+# Cocos
 # http://code.google.com/p/los-cocos/
 #
 
