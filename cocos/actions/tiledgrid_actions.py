@@ -17,6 +17,7 @@ __all__ = [
            'ShatteredTiles',
            'ShuffleTiles',
            'FadeOutTiles',
+           'TurnOffTiles',
            ]
 
 # Don't export this class
@@ -33,6 +34,8 @@ class Tile(object):
 class ShakyTiles( TiledGridAction ):
     '''ShakyTiles simulates a shaky floor composed of tiles
 
+    Example::
+    
        scene.do( ShakyTiles( randrange=6, grid=(4,4), duration=10) )
     '''
 
@@ -61,6 +64,10 @@ class ShatteredTiles( TiledGridAction ):
     '''ShatterTiles shatters the tiles according to a random value.
     It is similar to shakes (see `ShakyTiles`) the tiles just one frame, and then continue with
     that state for duration time.
+    
+    Example::
+    
+        scene.do( ShatteredTiles( randrange=12 ) )
     '''
 
     def init( self, randrange=6, *args, **kw ):
@@ -88,12 +95,12 @@ class ShatteredTiles( TiledGridAction ):
                 
 
 class ShuffleTiles( TiledGridAction ):
-    '''ShuffleTiles moves the tiles randomly across the screen and then put
-    them back into the original place.
+    '''ShuffleTiles moves the tiles randomly across the screen.
+    To put them back use: Reverse( ShuffleTiles() ) with the same seed parameter.
 
     Example::
 
-       scene.do( ShuffleTiles( grid=(4,4), duration=10) )
+       scene.do( ShuffleTiles( grid=(4,4), seed=1, duration=10) )
     '''
 
     def init(self, seed=-1, *args, **kw):
@@ -106,13 +113,15 @@ class ShuffleTiles( TiledGridAction ):
         self.seed = seed
         
     def start(self):
-        if self.seed != -1:
-            random.seed( self.seed )
-
         super(ShuffleTiles,self).start()
+
         self.tiles = {}
         self.dst_tiles = {}
         self._once = False
+
+        if self.seed != -1:
+            random.seed( self.seed )
+
         for i in range(self.grid.x):
             for j in range(self.grid.y):
                 self.tiles[(i,j)] = Tile( position = Point2(i,j), 
@@ -155,7 +164,10 @@ class ShuffleTiles( TiledGridAction ):
 
 class FadeOutTiles( TiledGridAction ):
     '''FadeOutTiles fades out each tile following a diagonal path until all the tiles are faded out.
-       scene.do( FadeOutTiles( grid=(16,16), duration=10) )
+    
+    Example::
+    
+       scene.do( FadeOutTiles( grid=(16,12), duration=10) )
     '''
 
     def start(self):
@@ -199,3 +211,45 @@ class FadeOutTiles( TiledGridAction ):
                         self.target.grid.vertex_list.vertices[idx+1] = int(vy)
     def __reversed__(self):
         raise GridException("FadeOutTiles has no reverse")
+    
+class TurnOffTiles( TiledGridAction ):
+    '''TurnOffTiles turns off each in random order
+    
+    Example::
+    
+       scene.do( TurnOffTiles( grid=(16,12), seed=1, duration=10) )
+    '''
+
+    def init(self, seed=-1, *args, **kw):
+        super(TurnOffTiles,self).init( *args, **kw )    
+        self.seed = seed
+        
+    def start(self):
+        super(TurnOffTiles,self).start()
+
+        if self.seed != -1:
+            random.seed( self.seed )
+
+        self.nr_of_tiles = self.grid.x * self.grid.y
+        self.tiles_order = range(self.nr_of_tiles )
+        random.shuffle( self.tiles_order )
+        
+    def update( self, t ):
+        l = int( t * self.nr_of_tiles )
+        for i in xrange( self.nr_of_tiles):
+            t = self.tiles_order[i]
+            if i < l:
+                self.turn_off_tile(t)
+            else:
+                self.turn_on_tile(t)
+
+    def get_tile_pos(self, idx):
+        return divmod(idx, self.grid.y)
+    
+    def turn_on_tile(self, t):
+        x,y = self.get_tile_pos(t)
+        self.set_tile(x,y, self.get_original_tile(x,y) )
+
+    def turn_off_tile(self,t):
+        x,y = self.get_tile_pos(t)
+        self.set_tile(x,y,[0,0,0,0,0,0,0,0] )

@@ -22,7 +22,7 @@ if __name__ == "__main__":
         l.scale = (32-i)/32.0
         main_scene.add( l, z=i )
 
-    e = FadeOutTiles( grid=(16,12), duration=2 )
-    main_scene.do( e )
+    e = TurnOffTiles( grid=(16,12), duration=2 )
+    main_scene.do( e + Reverse(e) )
 
     director.run (main_scene)

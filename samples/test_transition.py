@@ -115,11 +115,12 @@ if __name__ == "__main__":
         FlipX3DTransition,
         FlipY3DTransition,
         FlipAngular3DTransition,
-        ShuffleTransition,
+        ShuffleTilesTransition,
         ShrinkAndGrowTransition,
         CornerMoveTransition,
         EnvelopeTransition,
         CurtainTransition,
+        TurnOffTilesTransition,
 
         # QuadTransition
         FadeTransition,

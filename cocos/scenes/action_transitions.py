@@ -21,11 +21,14 @@ __all__ = ['TransformScene',
             'SlideInBTransition','SlideInTTransition',
 
             'FlipX3DTransition', 'FlipY3DTransition','FlipAngular3DTransition',
-            'ShuffleTransition',
+
+            'ShuffleTilesTransition',
+            'TurnOffTilesTransition',
+            'CurtainTransition',
+
             'ShrinkAndGrowTransition',
             'CornerMoveTransition',
             'EnvelopeTransition',
-            'CurtainTransition',
             ]
 
 class TransformScene(scene.Scene):
@@ -281,11 +284,11 @@ class FlipAngular3DTransition(TransformScene):
         self.do( flip + StopGrid() )
 
 
-class ShuffleTransition(TransformScene):
+class ShuffleTilesTransition(TransformScene):
     '''Shuffle the outgoing scene, and then reorder the tiles with the incoming scene.
     '''
     def __init__( self, *args, **kwargs ):
-        super(ShuffleTransition, self ).__init__( *args, **kwargs)
+        super(ShuffleTilesTransition, self ).__init__( *args, **kwargs)
 
         width, height = director.get_window_size()
         aspect = width / float(height)
@@ -341,7 +344,7 @@ class EnvelopeTransition(TransformScene):
 
 
 class CurtainTransition(TransformScene):
-    '''Fades the tiles of the outgoing scene from the left-bottom corner the to top-right corner.
+    '''Fade the tiles of the outgoing scene from the left-bottom corner the to top-right corner.
     '''
     def __init__( self, *args, **kwargs ):
         super(CurtainTransition, self ).__init__( *args, **kwargs)
@@ -358,3 +361,23 @@ class CurtainTransition(TransformScene):
         # don't call super. overriding order
         self.add( self.in_scene, z=0, name="in" )
         self.add( self.out_scene, z=1, name="out" )
+
+class TurnOffTilesTransition(TransformScene):
+    '''Turn off the tiles of the outgoing scene in random order
+    '''
+    def __init__( self, *args, **kwargs ):
+        super(TurnOffTilesTransition, self ).__init__( *args, **kwargs)
+
+        width, height = director.get_window_size()
+        aspect = width / float(height)
+        x,y = int(12*aspect), 12
+
+        a = TurnOffTiles( grid=(x,y), duration=self.duration )
+#        a = Accelerate( a)
+        self.out_scene.do( a + StopGrid() )
+
+    def start(self):
+        # don't call super. overriding order
+        self.add( self.in_scene, z=0, name="in" )
+        self.add( self.out_scene, z=1, name="out" )
+

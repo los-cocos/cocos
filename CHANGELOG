@@ -1,4 +1,7 @@
 v0.3.0 - XXX, xxx
+  - Transitions: Added CurtainTransition, FlipX3DTransition, FlipY3DTransition,
+     FlipAngular3DTransition, TurnOffTilesTransition, RotoZoomTransition, JumpZoomTransition
+     EnvelopeTransition
   - Scenes: Added the cocos/scenes directory. Pause and transitions are there
   - Layer: splitted in 3 files inside the cocos/layer directory
   - Layer: added the PythonInterpreterLayer()
