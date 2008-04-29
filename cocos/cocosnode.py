@@ -333,6 +333,7 @@ class CocosNode(object):
 
         color = tuple(self.color) + (self.opacity,)
         if color != (255,255,255,255):
+            color = [ int(c) for c in color ]
             glColor4ub( * color )
             
         if self.transform_anchor != (0,0):
@@ -366,7 +367,7 @@ class CocosNode(object):
                 self.children_anchor_x, 
                 self.children_anchor_y,
                  0 )
-    
+
 
     def visit(self):
 

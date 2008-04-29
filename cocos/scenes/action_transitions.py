@@ -18,11 +18,12 @@ __all__ = ['TransformScene',
             'SlideInLTransition','SlideInRTransition',
             'SlideInBTransition','SlideInTTransition',
 
-            'FlipXTransition', 'FlipYTransition',
+            'FlipXTransition', 'FlipYTransition','FlipAngularTransition',
             'ShuffleTransition',
             'ShrinkAndGrowTransition',
             'CornerMoveTransition',
             'EnvelopeTransition',
+            'CurtainTransition',
             ]
 
 class TransformScene(scene.Scene):
@@ -59,8 +60,12 @@ class TransformScene(scene.Scene):
         self.remove( self.in_scene )
         self.remove( self.out_scene )
 
-    def flip_over( self ):
+    def hide_out_show_in( self ):
         self.in_scene.visible = True
+        self.out_scene.visible = False
+
+    def hide_all( self ):
+        self.in_scene.visible = False
         self.out_scene.visible = False
         
 class RotoZoomTransition(TransformScene):
@@ -121,7 +126,7 @@ class MoveInLTransition(TransformScene):
 
         self.in_scene.position=(-width,0)
         move = MoveTo( (0,0), duration=self.duration)
-        self.in_scene.do( move )
+        self.in_scene.do( (Accelerate(move,0.5) ) )
 
 
 class MoveInRTransition(TransformScene):
@@ -132,7 +137,7 @@ class MoveInRTransition(TransformScene):
 
         self.in_scene.position=(width,0)
         move = MoveTo( (0,0), duration=self.duration)
-        self.in_scene.do( move )
+        self.in_scene.do( Accelerate(move,0.5) )
 
 
 class MoveInTTransition(TransformScene):
@@ -143,7 +148,7 @@ class MoveInTTransition(TransformScene):
 
         self.in_scene.position=(0,height)
         move = MoveTo( (0,0), duration=self.duration)
-        self.in_scene.do( move )
+        self.in_scene.do( Accelerate(move,0.5) )
 
 
 class MoveInBTransition(TransformScene):
@@ -154,7 +159,7 @@ class MoveInBTransition(TransformScene):
 
         self.in_scene.position=(0,-height)
         move = MoveTo( (0,0), duration=self.duration)
-        self.in_scene.do( move )
+        self.in_scene.do( Accelerate(move,0.5) )
 
 class SlideInLTransition(TransformScene):
     def __init__( self, *args, **kwargs ):
@@ -164,8 +169,8 @@ class SlideInLTransition(TransformScene):
 
         self.in_scene.position=(-width,0)
         move = MoveBy( (width,0), duration=self.duration)
-        self.in_scene.do( move )
-        self.out_scene.do( move )
+        self.in_scene.do( Accelerate(move,0.5) )
+        self.out_scene.do( Accelerate(move,0.5) )
 
 
 class SlideInRTransition(TransformScene):
@@ -176,8 +181,8 @@ class SlideInRTransition(TransformScene):
 
         self.in_scene.position=(width,0)
         move = MoveBy( (-width,0), duration=self.duration)
-        self.in_scene.do( move )
-        self.out_scene.do( move )
+        self.in_scene.do( Accelerate(move,0.5) )
+        self.out_scene.do( Accelerate(move,0.5) )
 
 
 class SlideInTTransition(TransformScene):
@@ -188,8 +193,8 @@ class SlideInTTransition(TransformScene):
 
         self.in_scene.position=(0,height)
         move = MoveBy( (0,-height), duration=self.duration)
-        self.in_scene.do( move )
-        self.out_scene.do( move )
+        self.in_scene.do( Accelerate(move,0.5) )
+        self.out_scene.do( Accelerate(move,0.5) )
 
 
 class SlideInBTransition(TransformScene):
@@ -200,8 +205,8 @@ class SlideInBTransition(TransformScene):
 
         self.in_scene.position=(0,-height)
         move = MoveBy( (0,height), duration=self.duration)
-        self.in_scene.do( move )
-        self.out_scene.do( move )
+        self.in_scene.do( Accelerate(move,0.5) )
+        self.out_scene.do( Accelerate(move,0.5) )
 
 
 class FlipXTransition(TransformScene):
@@ -210,12 +215,14 @@ class FlipXTransition(TransformScene):
 
         width, height = director.get_window_size()
 
-        turnongrid = Waves3D( amplitude=0, duration=0, grid=(16,12), waves=2 )
+        turnongrid = Waves3D( amplitude=0, duration=0, grid=(1,1), waves=2 )
         flip90 = OrbitCamera( angle_x=0,  delta_z=90, duration = self.duration / 2.0 )
         flipback90 = OrbitCamera( angle_x=0, angle_z=90, delta_z=90, duration = self.duration / 2.0 )
 
         self.in_scene.visible = False
-        self.do( turnongrid + flip90 + CallFunc( self.flip_over ) + flipback90 + StopGrid() )
+        flip = turnongrid + flip90 + CallFunc(self.hide_all) + FlipX3D(duration=0) + \
+            CallFunc( self.hide_out_show_in ) + flipback90 
+        self.do( flip + StopGrid() )
 
 
 class FlipYTransition(TransformScene):
@@ -224,12 +231,29 @@ class FlipYTransition(TransformScene):
 
         width, height = director.get_window_size()
 
-        turnongrid = Waves3D( amplitude=0, duration=0, grid=(16,12), waves=2 )
+        turnongrid = Waves3D( amplitude=0, duration=0, grid=(1,1), waves=2 )
         flip90 = OrbitCamera( angle_x=90, delta_z=-90, duration = self.duration / 2.0 )
         flipback90 = OrbitCamera( angle_x=90, angle_z=90, delta_z=90, duration = self.duration / 2.0 )
 
         self.in_scene.visible = False
-        self.do( turnongrid + flip90 + CallFunc( self.flip_over ) + flipback90 + StopGrid() )
+        flip = turnongrid + flip90 + CallFunc(self.hide_all) + FlipX3D(duration=0) + \
+            CallFunc( self.hide_out_show_in ) + flipback90 
+        self.do( flip + StopGrid() )
+
+class FlipAngularTransition(TransformScene):
+    def __init__( self, *args, **kwargs ):
+        super(FlipAngularTransition, self ).__init__( *args, **kwargs)
+
+        width, height = director.get_window_size()
+
+        turnongrid = Waves3D( amplitude=0, duration=0, grid=(1,1), waves=2 )
+        flip90 = OrbitCamera( angle_x=45,  delta_z=90, duration = self.duration / 2.0 )
+        flipback90 = OrbitCamera( angle_x=45, angle_z=90, delta_z=90, duration = self.duration / 2.0 )
+
+        self.in_scene.visible = False
+        flip = turnongrid + flip90 + CallFunc(self.hide_all) + FlipX3D(duration=0) + \
+            CallFunc( self.hide_out_show_in ) + flipback90 
+        self.do( flip + StopGrid() )
 
 
 class ShuffleTransition(TransformScene):
@@ -237,11 +261,13 @@ class ShuffleTransition(TransformScene):
         super(ShuffleTransition, self ).__init__( *args, **kwargs)
 
         width, height = director.get_window_size()
+        aspect = width / float(height)
+        x,y = int(12*aspect), 12
 
-        shuffle = ShuffleTiles( grid=(16,12), duration=self.duration/2.0, seed=15 )
+        shuffle = ShuffleTiles( grid=(x,y), duration=self.duration/2.0, seed=15 )
         self.in_scene.visible = False
 
-        self.do( shuffle + CallFunc(self.flip_over) + Reverse(shuffle) + StopGrid() )
+        self.do( shuffle + CallFunc(self.hide_out_show_in) + Reverse(shuffle) + StopGrid() )
 
 
 class ShrinkAndGrowTransition(TransformScene):
@@ -259,8 +285,8 @@ class ShrinkAndGrowTransition(TransformScene):
         scale_out = ScaleTo( 0.01, duration=self.duration )
         scale_in = ScaleTo( 1.0, duration=self.duration )
 
-        self.in_scene.do( Accelerate(scale_in) )
-        self.out_scene.do( Accelerate(scale_out) )
+        self.in_scene.do( Accelerate(scale_in,0.5) )
+        self.out_scene.do( Accelerate(scale_out,0.5) )
 
 
 class CornerMoveTransition(TransformScene):
@@ -277,4 +303,23 @@ class EnvelopeTransition(TransformScene):
         self.in_scene.visible = False
 
         move = QuadMoveBy( delta0=(320,240), delta1=(-630,0), delta2=(-320,-240), delta3=(630,0), duration=self.duration / 2.0 )
-        self.do( move + CallFunc(self.flip_over) + Reverse(move) + StopGrid() )
+#        move = Accelerate( move )
+        self.do( move + CallFunc(self.hide_out_show_in) + Reverse(move) + StopGrid() )
+
+
+class CurtainTransition(TransformScene):
+    def __init__( self, *args, **kwargs ):
+        super(CurtainTransition, self ).__init__( *args, **kwargs)
+
+        width, height = director.get_window_size()
+        aspect = width / float(height)
+        x,y = int(12*aspect), 12
+
+        a = FadeOutTiles( grid=(x,y), duration=self.duration )
+#        a = Accelerate( a)
+        self.out_scene.do( a + StopGrid() )
+
+    def start(self):
+        # don't call super. overriding order
+        self.add( self.in_scene, z=0, name="in" )
+        self.add( self.out_scene, z=1, name="out" )

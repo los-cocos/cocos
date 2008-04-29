@@ -248,7 +248,7 @@ if __name__ == "__main__":
               shatter +
               flip+ Delay(2) +
               Reverse(flip) +
-              lens + ReuseGrid() + ( (orbit+Reverse(orbit)) | waves3d) +
+              lens + ReuseGrid() + ( (orbit+Reverse(orbit)) | waves3d) + Delay(1) +
               corners + Delay(2) + Reverse(corners) +
               waves + Delay(2) + ReuseGrid() + shaky +
               cornerup + Delay(1) +

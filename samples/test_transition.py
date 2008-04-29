@@ -101,6 +101,7 @@ if __name__ == "__main__":
 #    director.window.set_fullscreen(True)
 
     transition_list = [
+        # ActionTransitions
         RotoZoomTransition,
         JumpZoomTransition,
         MoveInLTransition,
@@ -113,10 +114,15 @@ if __name__ == "__main__":
         SlideInTTransition,
         FlipXTransition,
         FlipYTransition,
+        FlipAngularTransition,
         ShuffleTransition,
         ShrinkAndGrowTransition,
         CornerMoveTransition,
         EnvelopeTransition,
+        CurtainTransition,
+
+        # QuadTransition
+        FadeTransition,
         ]
     current_transition = 0
 
