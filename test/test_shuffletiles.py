@@ -5,24 +5,26 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
 
+import pyglet
 import cocos
 from cocos.director import director
 from cocos.actions import *
 from cocos.layer import *
-import random
 
-rr = random.randrange
+class BackgroundLayer( cocos.layer.Layer ):
+    def __init__(self):
+        super( BackgroundLayer, self ).__init__()
+        self.img = pyglet.resource.image('background_image.png')
+
+    def on_draw( self ):
+        self.img.blit(0,0)
 
 if __name__ == "__main__":
     director.init( resizable=True, fullscreen=False )
     director.show_FPS = True
     main_scene = cocos.scene.Scene()
     
-    for i in range(16):
-        l = ColorLayer(rr(0,255), rr(0,255), rr(0,255), 255)
-        scale = (16-i)/16.0
-        l.scale = scale
-        main_scene.add( l, z=i )
+    main_scene.add( BackgroundLayer(), z=0 )
 
     e = ShuffleTiles( grid=(16,8), duration=2, seed=2 )
     main_scene.do( e + Reverse(e) )

@@ -30,24 +30,19 @@ class SpriteLayer ( Layer ):
         self.add( sprite2)
         self.add( sprite3)
 
+class BackgroundLayer( cocos.layer.Layer ):
+    def __init__(self):
+        super( BackgroundLayer, self ).__init__()
+        self.img = pyglet.resource.image('background_image.png')
+
+    def on_draw( self ):
+        self.img.blit(0,0)
+
 if __name__ == "__main__":
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 
-    white = ColorLayer(255,255,255,255)
-    red = ColorLayer(255,0,0,255)
-    blue = ColorLayer(0,0,255,255)
-    green = ColorLayer(0,255,0,255)
-
-    red.scale = 0.75
-    blue.scale = 0.5
-    green.scale = 0.25
-
-    main_scene.add( white, z=0 )
-    main_scene.add( red, z=1 )
-    main_scene.add( blue, z=2 )
-    main_scene.add( green, z=3 )
-    main_scene.add( SpriteLayer(), z=4 )
+    main_scene.add( BackgroundLayer(), z=0 )
 
     main_scene.do( FlipY(duration=2) )
     director.run (main_scene)
