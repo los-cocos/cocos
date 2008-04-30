@@ -203,7 +203,7 @@ class CocosNode(object):
         
     parent = property(_get_parent, _set_parent)
         
-    def get(self, klass):
+    def get_ancestor(self, klass):
         """
         Walks the nodes tree upwards until it finds a node of the class `klass`
         or returns None
@@ -212,7 +212,7 @@ class CocosNode(object):
             return self
         parent = self.parent
         if parent:
-            return parent.get( klass )
+            return parent.get_ancestor( klass )
             
     def _get_position(self):
         return (self.x, self.y)
@@ -248,14 +248,25 @@ class CocosNode(object):
         if self.is_running:
             child.on_enter()
         return self
-        
-    def remove( self, child ):
-        """Removes a child from the container
+    
+    def remove( self, obj ):
+        """Removes a child from the container given its name or object
 
         :Parameters:
-            `child` : object
-                object to be removed
+            `name` : string or object
+                name of the reference to be removed
+                or object to be removed
         """
+        if isinstance(obj, str):
+            if obj in self.children_names:
+                child = self.children_names.pop( obj )
+                self._remove( child )
+            else:
+                raise Exception("Child not found: %s" % obj )
+        else:
+            self._remove(obj)
+
+    def _remove( self, child ):
         l_old = len(self.children)
         self.children = [ (z,c) for (z,c) in self.children if c != child ]
 
@@ -271,20 +282,7 @@ class CocosNode(object):
     def __contains__(self, child):
         return  c in self.get_children()
 
-    def remove_by_name( self, name ):
-        """Removes a child from the container given its name
-
-        :Parameters:
-            `name` : string
-                name of the reference to be removed
-        """
-        if name in self.children_names:
-            child = self.children_names.pop( name )
-            self.remove( child )
-        else:
-            raise Exception("Child not found: %s" % name )
-
-    def get_by_name( self, name ):
+    def get( self, name ):
         """Gets a child from the container given its name
 
         :Parameters:

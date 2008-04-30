@@ -51,7 +51,7 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
     def on_enter(self):
         super(Layer, self).on_enter()
         
-        scn = self.get(scene.Scene)
+        scn = self.get_ancestor(scene.Scene)
         if not scene: return
         
         if scn._handlers_enabled:
@@ -60,7 +60,7 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
     def on_exit(self):
         super(Layer, self).on_exit()
         
-        scn = self.get(scene.Scene)
+        scn = self.get_ancestor(scene.Scene)
         if not scene: return
         
         if scn._handlers_enabled:
