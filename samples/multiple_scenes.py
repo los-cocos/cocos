@@ -48,26 +48,27 @@ if __name__ == "__main__":
     child3_scene = cocos.scene.Scene()
     child4_scene = cocos.scene.Scene()
 
+    sprites = TestLayer()
     child1_scene.add( ColorLayer( 0,0,255,255 ) )
-    child1_scene.add( TestLayer() )
+    child1_scene.add( sprites )
     child1_scene.scale = 1.5
     child1_scene.position = (-160,-120)
     child1_scene.transform_anchor = (320,240)
 
     child2_scene.add( ColorLayer( 0,255,0,255) )
-    child2_scene.add( TestLayer() )
+    child2_scene.add( sprites )
     child2_scene.scale = 1.5
     child2_scene.position = (160,120)
     child2_scene.transform_anchor = (320,240)
 
     child3_scene.add( ColorLayer( 255,0,0,255) )
-    child3_scene.add( TestLayer() )
+    child3_scene.add( sprites )
     child3_scene.scale = 1.5
     child3_scene.position = (-160,120)
     child3_scene.transform_anchor = (320,240)
 
     child4_scene.add( ColorLayer( 255,255,255,255) )
-    child4_scene.add( TestLayer() )
+    child4_scene.add( sprites )
     child4_scene.scale = 1.5
     child4_scene.position = (160,-120)
     child4_scene.transform_anchor = (320,240)

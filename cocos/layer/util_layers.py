@@ -37,22 +37,24 @@ class ColorLayer(Layer):
     def __init__(self, *color):
         super(ColorLayer, self).__init__()
         self.batch = pyglet.graphics.Batch()
-        self.acolor = color
+        self._rgb = color[:3]
+        self._opacity = color[3]
         
     def on_enter(self):
-        super(ColorLayer, self).on_exit()
+        super(ColorLayer, self).on_enter()
         x, y = director.get_window_size()
         
-        self.vertex_list = self.batch.add(4, pyglet.gl.GL_QUADS, None,
+        self._vertex_list = self.batch.add(4, pyglet.gl.GL_QUADS, None,
             ('v2i', (0, 0, 0, y, x, y, x, 0)),
-            ('c4B', self.acolor*4)
-        )
-    
+            'c4B')
+
+        self._update_color()
+
     def on_exit(self):
         super(ColorLayer, self).on_exit()
-        self.vertex_list.delete()
-   
-       
+        self._vertex_list.delete()
+        self._vertex_list = None
+
     def on_draw(self):
         super(ColorLayer, self).on_draw()
         glPushMatrix()
@@ -63,3 +65,24 @@ class ColorLayer(Layer):
                  0 )
         self.batch.draw()
         glPopMatrix()
+
+    def _update_color(self):
+        r, g, b = self._rgb
+        self._vertex_list.colors[:] = [r, g, b, int(self._opacity)] * 4
+
+    def _set_opacity(self, opacity):
+        self._opacity = opacity
+        self._update_color()
+
+    opacity = property(lambda self: self._opacity, _set_opacity,
+                       doc='''Blend opacity.
+
+    This property sets the alpha component of the colour of the layer's
+    vertices.  This allows the layer to be drawn with fractional opacity,
+    blending with the background.
+
+    An opacity of 255 (the default) has no effect.  An opacity of 128 will
+    make the sprite appear translucent.
+
+    :type: int
+    ''')

@@ -11,6 +11,7 @@ import pyglet
 from cocos.actions import *
 import cocos.scene as scene
 from cocos.director import director
+from cocos.layer import ColorLayer
 
 __all__ = [ 'TransitionScene',
             'RotoZoomTransition','JumpZoomTransition',
@@ -29,6 +30,8 @@ __all__ = [ 'TransitionScene',
             'ShrinkAndGrowTransition',
             'CornerMoveTransition',
             'EnvelopeTransition',
+
+            'FadeTransition',
             ]
 
 class TransitionScene(scene.Scene):
@@ -381,3 +384,22 @@ class TurnOffTilesTransition(TransitionScene):
         self.add( self.in_scene, z=0, name="in" )
         self.add( self.out_scene, z=1, name="out" )
 
+
+class FadeTransition(TransitionScene):
+    '''Fade out the outgoing scene and then fade in the incoming scene.'''
+    def __init__( self, *args, **kwargs ):
+        super(FadeTransition, self ).__init__( *args, **kwargs)
+
+        self.fadelayer = ColorLayer(0,0,0,0)
+
+        self.in_scene.visible = False
+        self.add( self.fadelayer, z=2 )
+
+
+    def on_enter( self ):
+        super( FadeTransition, self).on_enter()
+        self.fadelayer.do( FadeIn( duration=self.duration/2.0) + CallFunc( self.hide_out_show_in) + FadeOut( duration=self.duration /2.0 ) )
+
+    def on_exit( self ):
+        super( FadeTransition, self).on_exit()
+        self.remove( self.fadelayer )

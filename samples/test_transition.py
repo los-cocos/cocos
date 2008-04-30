@@ -39,7 +39,7 @@ class ControlLayer(Layer):
             halign=font.Text.LEFT,
             valign=font.Text.TOP )
 
-        self.text_help = pyglet.text.Label("Press LEFT / RIGHT for prev/next test, ENTER to restart demo",
+        self.text_help = pyglet.text.Label("Press LEFT / RIGHT for prev/next test, ENTER to restart test",
             font_size=16,
             x=director.get_window_size()[0] /2,
             y=20,
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         EnvelopeTransition,
         CurtainTransition,
         TurnOffTilesTransition,
-
+        FadeTransition,
         ]
     current_transition = 0
 
