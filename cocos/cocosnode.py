@@ -61,6 +61,7 @@ class CocosNode(object):
         self.children_anchor_y = 0
         self.transform_anchor_x = 0
         self.transform_anchor_y = 0
+        self.visible = True
         self.grid = None
         
         # actions stuff
@@ -204,7 +205,8 @@ class CocosNode(object):
            
     def resume_scheduler(self):
         """
-        Time will continue/start passing for this node.
+        Time will continue/start passing for this node and callbacks 
+        will be called.
         """
         for c, i, a, k in self.scheduled_interval_calls:
             pyglet.clock.schedule_interval(c, i, *a, **k)  
@@ -213,8 +215,8 @@ class CocosNode(object):
             
     def pause_scheduler(self):
         """
-        Time will stop passing for this node.
-
+        Time will stop passing for this node and callbacks will 
+        not be called
         """
         for f in set(
                 [ x[0] for x in self.scheduled_interval_calls ] +
@@ -358,7 +360,11 @@ class CocosNode(object):
                     
                      
     def transform( self ):
-        """Apply ModelView transformations"""
+        """
+        Apply ModelView transformations
+        you will most likely want to wrap calls to this function with
+        glPushMatrix/glPopMatrix
+        """
         x,y = director.get_window_size()
 
             
