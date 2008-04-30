@@ -22,6 +22,31 @@ import weakref
 __all__ = ['CocosNode']
 
 class CocosNode(object):
+    """
+    Cocosnode is the main element. Any this thats gets drawn or contains things that get drawn is a cocosnode. The most popular cocosnodes are scenes, layers and sprites.
+    
+    The main features of a cocosnode are:
+        - They can contain other cocos nodes (add, get, remove, etc)
+        - They can schedule periodic callback (schedule, schedule_interval, etc)
+        - They can execute actions (do, pause, stop, etc)
+        
+    Some cocosnodes provide extra functionality for them or their children.
+    
+    Subclassing a cocosnode usually means (one/all) of:
+        - overriding __init__ to initialize resources and schedule calbacks
+        - create callbacks to handle the advancement of time
+        - overriding on_draw to render the node
+        
+    @ivar position: an int (x, y) tuple specifying the position of its anchor relative to its parent.
+    @ivar x: x-part of position
+    @ivar y: y-part of position
+    @ivar scale: a float, alters the scale of this node and its children
+    @ivar rotation: a float, in degrees, alters the rotation of this node and its children
+    @ivar anchor: sets children_anchor and transforms_anchor in one step
+    @ivar children_anchor: offset from (0,0) from where children will have its (0,0) coordinate
+    @ivar transform_anchor: offset from (0,0) from where rotation and scale will be applied
+    
+    """
     def __init__(self):
         # composition stuff
         self.children = []
@@ -37,8 +62,7 @@ class CocosNode(object):
         self.transform_anchor_x = 0
         self.transform_anchor_y = 0
         self.grid = None
-        self.visible = True
-
+        
         # actions stuff
         self.actions = []
         self.to_remove = []
@@ -87,7 +111,7 @@ class CocosNode(object):
 
     children_anchor = make_property("children_anchor")
     transform_anchor = make_property("transform_anchor")
-
+    del make_property
         
     def schedule_interval(self, callback, interval, *args, **kwargs):
         """
@@ -179,12 +203,19 @@ class CocosNode(object):
             pyglet.clock.unschedule( callback )
            
     def resume_scheduler(self):
+        """
+        Time will continue/start passing for this node.
+        """
         for c, i, a, k in self.scheduled_interval_calls:
             pyglet.clock.schedule_interval(c, i, *a, **k)  
         for c, a, k in self.scheduled_calls:
             pyglet.clock.schedule(c, *a, **k)  
             
     def pause_scheduler(self):
+        """
+        Time will stop passing for this node.
+
+        """
         for f in set(
                 [ x[0] for x in self.scheduled_interval_calls ] +
                 [ x[0] for x in self.scheduled_calls ]
@@ -425,6 +456,19 @@ class CocosNode(object):
 
         
     def on_draw(self, *args, **kwargs):
+        """
+        This is the function you will have to override if you want your
+        subclassed to draw something on screen.
+        
+        You *must* respect the position, scale, rotation and anchor attributes. 
+        If you want opengl to do the scaling for you, you can:
+        ::
+            def on_draw(self):
+                glPushMatrix()
+                self.transform()
+                # ... draw ..
+                glPopMatrix()
+        """
         pass
                 
     def do( self, action, target=None ):
@@ -462,12 +506,18 @@ class CocosNode(object):
         self.to_remove.append( action )
 
     def pause(self):
+        """
+        Suspends the execution of actions.
+        """
         if not self.scheduled:
             return
         self.scheduled = False
         pyglet.clock.unschedule( self._step )
 
     def resume(self):
+        """
+        Resumes the execution of actions.
+        """        
         if self.scheduled:
             return
         self.scheduled = True
@@ -475,12 +525,16 @@ class CocosNode(object):
         self.skip_frame = True
 
     def stop(self):
-        """Removes running actions from the queue"""
+        """
+        Removes all actions from the running action list
+        """
         for action in self.actions:
             self.to_remove.append( action )
 
-    def actions_running(self):
-        """Determine whether any actions are running."""
+    def are_actions_running(self):
+        """
+        Determine whether any actions are running.
+        """
         return bool(set(self.actions) - set(self.to_remove))
 
     def _step(self, dt):
