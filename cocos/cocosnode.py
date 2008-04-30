@@ -36,8 +36,6 @@ class CocosNode(object):
         self.children_anchor_y = 0
         self.transform_anchor_x = 0
         self.transform_anchor_y = 0
-        self.color = (255,255,255)
-        self.opacity = 255
         self.grid = None
         self.visible = True
 
@@ -249,6 +247,7 @@ class CocosNode(object):
         bisect.insort( self.children,  elem )
         if self.is_running:
             child.on_enter()
+        return self
         
     def remove( self, child ):
         """Removes a child from the container
@@ -333,10 +332,6 @@ class CocosNode(object):
         """Apply ModelView transformations"""
         x,y = director.get_window_size()
 
-        color = tuple(self.color) + (self.opacity,)
-        if color != (255,255,255,255):
-            color = [ int(c) for c in color ]
-            glColor4ub( * color )
             
         if self.transform_anchor != (0,0):
             glTranslatef( 

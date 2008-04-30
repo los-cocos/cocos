@@ -1,0 +1,26 @@
+# This code is so you can run the samples without installing the package
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+#
+
+
+import cocos
+from cocos.director import director
+from cocos.sprite import ActionSprite
+import pyglet
+
+
+if __name__ == "__main__":
+    director.init()
+    x,y = director.get_window_size()
+
+    main_scene = (
+        cocos.scene.Scene()
+            .add( cocos.layer.ColorLayer( 255,255,0,255) )
+            .add( cocos.layer.Layer() 
+                .add( ActionSprite('grossini.png', (x/2, y/2))
+            )
+        )
+    )
+    director.run (main_scene)
