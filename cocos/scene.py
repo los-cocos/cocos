@@ -74,7 +74,7 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
             
     def on_enter(self):
         for c in self.get_children():
-            c.walk( lambda node: setattr(node, "parent", self ) )
+            c.parent = self
         super(Scene, self).on_enter()
         
             

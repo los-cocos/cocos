@@ -382,17 +382,17 @@ class MenuItem( CocosNode ):
 
     def on_selected( self ):
         if self.selected_effect:
-            self.flush()
+            self.stop()
             self.do( self.selected_effect )
 
     def on_unselected( self ):
         if self.unselected_effect:
-            self.flush()
+            self.stop()
             self.do( self.unselected_effect )
 
     def on_activated( self ):
         if self.activated_effect:
-            self.flush()
+            self.stop()
             self.do( self.activated_effect )
 
 
