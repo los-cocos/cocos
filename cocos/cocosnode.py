@@ -371,6 +371,30 @@ class CocosNode(object):
                  0 )
 
 
+    def walk(self, callback, collect=None):
+        """
+        Executes callback on all the subtree starting at self.
+        returns a list of all return values that are not none
+        
+        :Parameters:
+            `callback` : callable, takes a cocosnode as argument
+
+        :rtype: list
+        :return: the list of not-none return values
+        
+        """
+        if collect is None:
+            collect = []
+            
+        r = callback(self)
+        if r is not None:
+            collect.append( r )
+            
+        for node in self.get_children():
+            node.walk(callback, collect)
+            
+        return collect
+        
     def visit(self):
 
         if not self.visible:

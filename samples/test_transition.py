@@ -135,7 +135,7 @@ if __name__ == "__main__":
     c1 = ColorLayer(0,255,255,255)
     control1 = ControlLayer()
     control2 = ControlLayer()
-    controlScene1 = Scene( c2, g, control1 )
+    controlScene1 = Scene( c2, g, control2 )
     controlScene2 = Scene( c1, g2, control2 )
 
     control_p = 0

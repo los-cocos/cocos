@@ -66,8 +66,17 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         self._handlers_enabled = False
         for i, c in enumerate(children):
             self.add( c, z=i )
+        
+        x,y = director.get_window_size()
+        
+        self.transform_anchor_x = x/2
+        self.transform_anchor_y = y/2
             
-    
+    def on_enter(self):
+        for c in self.get_children():
+            c.walk( lambda node: setattr(node, "parent", self ) )
+        super(Scene, self).on_enter()
+        
             
     def push_all_handlers(self):
         for child in self.get_children():
