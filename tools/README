@@ -8,3 +8,10 @@ Run:
 
  press 'n' to create a new path
  press 's' to save your changes to the foo.py file
+
+
+
+Documentation generation
+------------------------
+
+Tools were copied from pyglet ( pyglet/tools/* )
