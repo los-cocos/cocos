@@ -71,7 +71,12 @@ class FireManager( Layer ):
             clrs[n*16:(n+1)*16] = [r,g,b,255] * 4
 
     def on_draw( self ):
+        glPushMatrix()
+        self.transform()
+
         self.batch.draw()
+
+        glPopMatrix()
 
 
 class SpriteLayer ( Layer ):
@@ -257,5 +262,7 @@ if __name__ == "__main__":
               fadeout + Delay(2) +              
               StopGrid()
               )
+
+    firelayer.do( Delay(4) + DoAction( Repeat( RotateBy(360, 10) ) ) )
 
     director.run( scene )

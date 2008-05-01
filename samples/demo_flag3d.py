@@ -51,18 +51,18 @@ class Flag3D( cocos.layer.Layer ):
         self.vertex_list.tex_coords = tex_pts_idx   # texels
         self.vertex_list.colors = (255,255,255,255) * (self.grid_size.x+1) * (self.grid_size.y+1) # colors 
 
-        # hook on resize to override the 2D projection with a 3D projection
-        director.push_handlers(self.on_resize)
+        # call the "step" method every frame when the layer is active
+        self.schedule(self.step)
 
 
     def on_enter(self):
         super(Flag3D,self).on_enter()
 
+        # hook on resize to override the 2D projection with a 3D projection
+        director.push_handlers(self.on_resize)
+
         # the layer is on "stage"
         self.elapsed = 0
-
-        # call the "step" method every frame
-        self.schedule(self.step)
 
 
     def on_resize( self, width, height ):
