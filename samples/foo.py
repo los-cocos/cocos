@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 import cocos
 from cocos.path import Bezier
 
@@ -7,3 +11,7 @@ new = Bezier( (100,100), (200,200), (108, 268), (438,27) )
 new174332 = Bezier( (100,100), (200,200), (108, 268), (438,27) )
 new228555 = Bezier( (100,100), (422,291), (353, 255), (438,27) )
 circulo= Bezier( (7,7), (0,1), (630, 237), (630,-234) )
+
+
+if __name__ == '__main__':
+    print 'this file is part of demo_sprites.py'
