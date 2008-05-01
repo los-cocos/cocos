@@ -12,7 +12,7 @@ import pyglet
 from cocos.director import director
 from cocos.scene import Scene
 from cocos.layer import Layer
-from cocos.actions import Jump, Lens3D, Reverse
+from cocos.actions import JumpBy, Lens3D, Reverse
 
 # create a layer with an image
 class BackgroundLayer( Layer ):
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     #   3 jumps
     #   of height 170 pixels
     #  in 4 seconds
-    jump = Jump(170,360,3,4 )
+    jump = JumpBy((360,0),170,3,4 )
 
     # do and get the cloned action of lens'
     action = scene.do( lens )

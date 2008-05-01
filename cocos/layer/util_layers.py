@@ -36,7 +36,7 @@ class ColorLayer(Layer):
     """
     def __init__(self, *color):
         super(ColorLayer, self).__init__()
-        self.batch = pyglet.graphics.Batch()
+        self._batch = pyglet.graphics.Batch()
         self._rgb = color[:3]
         self._opacity = color[3]
         
@@ -44,7 +44,7 @@ class ColorLayer(Layer):
         super(ColorLayer, self).on_enter()
         x, y = director.get_window_size()
         
-        self._vertex_list = self.batch.add(4, pyglet.gl.GL_QUADS, None,
+        self._vertex_list = self._batch.add(4, pyglet.gl.GL_QUADS, None,
             ('v2i', (0, 0, 0, y, x, y, x, 0)),
             'c4B')
 
@@ -63,7 +63,7 @@ class ColorLayer(Layer):
                 -self.children_anchor_x, 
                 -self.children_anchor_y,
                  0 )
-        self.batch.draw()
+        self._batch.draw()
         glPopMatrix()
 
     def _update_color(self):
@@ -85,4 +85,20 @@ class ColorLayer(Layer):
     make the sprite appear translucent.
 
     :type: int
+    ''')
+
+    def _set_color(self, rgb):
+        self._rgb = map(int, rgb)
+        self._update_color()
+
+    color = property(lambda self: self._rgb, _set_color,
+                       doc='''Blend color.
+
+    This property sets the color of the layer's vertices. This allows the
+    layer to be drawn with a color tint.
+    
+    The color is specified as an RGB tuple of integers ``(red, green, blue)``.
+    Each color component must be in the range 0 (dark) to 255 (saturated).
+    
+    :type: (int, int, int)
     ''')

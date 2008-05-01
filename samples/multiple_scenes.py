@@ -34,9 +34,9 @@ class TestLayer(cocos.layer.Layer):
         self.add( sprite1 )
         self.add( sprite3 )
 
-        sprite1.do( Rotate( 360,1 ) * 16 )
-        sprite2.do( Rotate( -360,1 ) * 16 )
-        sprite3.do( Rotate( -360,1 ) * 16 )
+        sprite1.do( RotateBy( 360,1 ) * 16 )
+        sprite2.do( RotateBy( -360,1 ) * 16 )
+        sprite3.do( RotateBy( -360,1 ) * 16 )
 
 if __name__ == "__main__":
     director.init( resizable=True )
@@ -49,6 +49,8 @@ if __name__ == "__main__":
     child4_scene = cocos.scene.Scene()
 
     sprites = TestLayer()
+    sprites.transform_anchor = 320,240
+
     child1_scene.add( ColorLayer( 0,0,255,255 ) )
     child1_scene.add( sprites )
     child1_scene.scale = 1.5
@@ -78,7 +80,9 @@ if __name__ == "__main__":
     main_scene.add( child3_scene )
     main_scene.add( child4_scene )
 
-    rot = Rotate(-360,2)
+    rot = RotateBy(-360,2)
+    rot2 = RotateBy(360,4)
+
     sleep = Delay(2)
 
     sleep2 = Delay(2)
@@ -94,5 +98,7 @@ if __name__ == "__main__":
     child4_scene.do( sc1 + sleep + rot + sleep + rot + rot)
 
     main_scene.do( sleep + Reverse(rot) *2 + rot * 2 + sleep)
+
+    sprites.do( Delay(4) + rot2 * 3 )
 
     director.run (main_scene)

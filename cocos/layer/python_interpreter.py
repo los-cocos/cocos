@@ -4,6 +4,9 @@
 # http://code.google.com/p/bruce-tpt/
 #
 #
+
+__docformat__ = 'restructuredtext'
+
 import sys
 import os
 import code
@@ -40,14 +43,14 @@ class MyInterpreter(code.InteractiveInterpreter):
         sys.stdout = old_stdout
         return more
 
-class PythonInterpreterLayer(Layer):
-    '''Runs an interactive Python interpreter.
+class PythonInterpreterLayer(ColorLayer):
+    '''Runs an interactive Python interpreter as a child `Layer` of the current `Scene`.
     '''
 
     cfg = {'code.font_name':'Courier New',
             'code.font_size':12,
             'code.color':(255,255,255,255),
-            'caret.color':(255,255,255)
+            'caret.color':(255,255,255),
             }
 
     name = 'py'
@@ -57,7 +60,7 @@ class PythonInterpreterLayer(Layer):
     doing_more = False
 
     def __init__(self):
-        super(PythonInterpreterLayer, self).__init__()
+        super(PythonInterpreterLayer, self).__init__( 32,32,32,192 )
 
         self.content = self.prompt
         self.interpreter = MyInterpreter(locals(), self._write)
@@ -67,10 +70,9 @@ class PythonInterpreterLayer(Layer):
         self.history = ['']
         self.history_pos = 0
 
-        self.add( ColorLayer(32,32,32,192), z=-1, name="color_layer")
 
-#    def on_enter(self):
-#        super(PythonInterpreterLayer, self).on_enter()
+    def on_enter(self):
+        super(PythonInterpreterLayer, self).on_enter()
 
         vw,vh = cocos.director.director.get_window_size()
 
@@ -105,12 +107,13 @@ class PythonInterpreterLayer(Layer):
         self.layout.end_update()
         self.caret.position = len(self.document.text)
 
-#    def on_exit(self):
-#        self.content = self.document.text
-#        self.document = None
-#        self.layout = None
-#        self.batch = None
-#        self.caret = None
+    def on_exit(self):
+        super(PythonInterpreterLayer, self).on_exit()
+        self.content = self.document.text
+        self.document = None
+        self.layout = None
+        self.batch = None
+        self.caret = None
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.TAB:
@@ -208,4 +211,5 @@ class PythonInterpreterLayer(Layer):
             self.caret.position = len(self.document.text)
 
     def on_draw(self):
+        super( PythonInterpreterLayer, self).on_draw()
         self.batch.draw()
