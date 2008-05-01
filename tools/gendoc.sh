@@ -3,7 +3,8 @@
 
 TOOLS=`dirname $0`
 BASE=$TOOLS/..
-EPYDOC=$TOOLS/epydoc
+PYGLETBASE=~/src/pyglet-svn/
+EPYDOC=$PYGLETBASE/tools/epydoc
 PYTHONPATH=$EPYDOC:$BASE:$PYTHONPATH
 export PYTHONPATH
 
@@ -28,7 +29,7 @@ function html_api() {
     mkdir -p $DOC_HTML_API
     $EPYDOC/scripts/epydoc \
         --config=$TOOLS/epydoc.config \
-        --css=$TOOLS/epydoc_pyglet.css \
+        --css=$TOOLS/epydoc_cocos.css \
         -v --debug
 }
 

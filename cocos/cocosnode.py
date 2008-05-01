@@ -286,7 +286,7 @@ class CocosNode(object):
         """Removes a child from the container given its name or object
 
         :Parameters:
-            `name` : string or object
+            `obj` : string or object
                 name of the reference to be removed
                 or object to be removed
         """
@@ -407,7 +407,10 @@ class CocosNode(object):
         returns a list of all return values that are not none
         
         :Parameters:
-            `callback` : callable, takes a cocosnode as argument
+            `callback` : function
+                callable, takes a cocosnode as argument
+            `collect` : list
+                list of visited nodes
 
         :rtype: list
         :return: the list of not-none return values
@@ -467,8 +470,8 @@ class CocosNode(object):
         subclassed to draw something on screen.
         
         You *must* respect the position, scale, rotation and anchor attributes. 
-        If you want opengl to do the scaling for you, you can:
-        ::
+        If you want opengl to do the scaling for you, you can::
+        
             def on_draw(self):
                 glPushMatrix()
                 self.transform()
