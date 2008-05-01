@@ -152,7 +152,7 @@ class DefaultHandler( object ):
                 director.scene.add( PythonInterpreterLayer(), name='python_interpreter', z=100)
                 self.with_interpreter= True
             else:
-                director.scene.remove_by_name( name='python_interpreter')
+                director.scene.remove('python_interpreter')
                 self.with_interpreter= False
             return True
 

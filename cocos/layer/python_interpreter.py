@@ -15,6 +15,7 @@ from pyglet.text import caret, document, layout
 
 import cocos
 from base_layers import Layer
+from util_layers import ColorLayer
 
 __all__ = ['PythonInterpreterLayer']
 
@@ -45,14 +46,15 @@ class PythonInterpreterLayer(Layer):
 
     cfg = {'code.font_name':'Courier New',
             'code.font_size':12,
-            'code.color':(200,200,200,255),
-            'caret.color':(200,200,200)
+            'code.color':(255,255,255,255),
+            'caret.color':(255,255,255)
             }
 
     name = 'py'
 
     prompt = ">>> "
     prompt_more = "... "
+    doing_more = False
 
     def __init__(self):
         super(PythonInterpreterLayer, self).__init__()
@@ -64,6 +66,8 @@ class PythonInterpreterLayer(Layer):
 
         self.history = ['']
         self.history_pos = 0
+
+        self.add( ColorLayer(32,32,32,192), z=-1, name="color_layer")
 
 #    def on_enter(self):
 #        super(PythonInterpreterLayer, self).on_enter()
@@ -108,7 +112,6 @@ class PythonInterpreterLayer(Layer):
 #        self.batch = None
 #        self.caret = None
 
-    doing_more = False
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.TAB:
             return self.caret.on_text('\t')
