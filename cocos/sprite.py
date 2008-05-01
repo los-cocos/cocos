@@ -69,8 +69,15 @@ class ActionSprite( BatchableNode, pyglet.sprite.Sprite):
             image = pyglet.resource.image(image)
         
         if anchor is None:
-            image.anchor_x = image.width / 2
-            image.anchor_y = image.height / 2
+            if isinstance(image, pyglet.image.Animation):
+                xa = image.frames[0].image.width / 2
+                ya = image.frames[0].image.height / 2
+                for img in image.frames:
+                    img.image.anchor_x = xa
+                    img.image.anchor_y = ya
+            else:
+                image.anchor_x = image.width / 2
+                image.anchor_y = image.height / 2
         else:
             image.anchor = anchor
             
