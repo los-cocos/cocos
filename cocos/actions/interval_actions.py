@@ -93,6 +93,7 @@ __all__ = [
 
 class RotateBy( IntervalAction ):
     """Rotates a `CocosNode` object clockwise a number of degrees
+    by modiying it's rotation attribute.
 
     Example::
 
@@ -110,8 +111,8 @@ class RotateBy( IntervalAction ):
             `duration` : float
                 Duration time in seconds
         """
-        self.angle = angle
-        self.duration = duration
+        self.angle = angle          #: Quantity of degrees to rotate
+        self.duration = duration    #: Duration in seconds
 
     def start( self ):
         self.start_angle = self.target.rotation
@@ -126,8 +127,9 @@ Rotate = RotateBy
 
 
 class RotateTo( IntervalAction ):
-    """Rotates a `CocosNode` object to a certain angle. The direction
-     will be decided by the shortest angle.
+    """Rotates a `CocosNode` object to a certain angle by modifying it's
+    rotation attribute.
+    The direction will be decided by the shortest angle.
 
     Example::
 
@@ -144,8 +146,8 @@ class RotateTo( IntervalAction ):
             `duration` : float
                 Duration time in seconds
         """
-        self.angle = angle%360
-        self.duration = duration
+        self.angle = angle%360      #: Destination angle in degrees
+        self.duration = duration    #: Duration in seconds
 
     def start( self ):
         ea = self.angle
@@ -272,7 +274,8 @@ class AccelDeccel( IntervalAction ):
 
 
 class MoveTo( IntervalAction ):
-    """Moves a `CocosNode` object to the position x,y. x and y are absolute coordinates.
+    """Moves a `CocosNode` object to the position x,y. x and y are absolute coordinates
+    by modifying it's position attribute.
 
     Example::
 
@@ -303,7 +306,8 @@ class MoveTo( IntervalAction ):
         self.target.position = self.start_position + self.delta * t
 
 class MoveBy( MoveTo ):
-    """Moves a `CocosNode` object x,y pixels.
+    """Moves a `CocosNode` object x,y pixels by modifying it's 
+    position attribute.
     x and y are relative to the position of the object.
     Duration is is seconds.
 
@@ -333,8 +337,7 @@ class MoveBy( MoveTo ):
         return MoveBy(-self.delta, self.duration)
 
 class FadeOut( IntervalAction ):
-    """FadeOut(duration)
-    Fades out a `CocosNode` object
+    """Fades out a `CocosNode` object by modifying it's opacity attribute.
 
     Example::
 
@@ -357,8 +360,7 @@ class FadeOut( IntervalAction ):
         return FadeIn( self.duration )
 
 class FadeTo( IntervalAction ):
-    """FadeTo(alpha, duration)
-    Fades a `CocosNode` object to a specific alpha value
+    """Fades a `CocosNode` object to a specific alpha value by modifying it's opacity attribute.
 
     Example::
 
@@ -387,8 +389,7 @@ class FadeTo( IntervalAction ):
 
 
 class FadeIn( FadeOut):
-    """FadeIn(duration)
-    Fades in a `CocosNode` object
+    """Fades in a `CocosNode` object by modifying it's opacity attribute.
 
     Example::
 
@@ -402,7 +403,7 @@ class FadeIn( FadeOut):
         return FadeOut( self.duration )
 
 class ScaleTo(IntervalAction):
-    """Scales a `CocosNode` object to a zoom factor.
+    """Scales a `CocosNode` object to a zoom factor by modifying it's scale attribute.
 
     Example::
 
@@ -431,7 +432,7 @@ class ScaleTo(IntervalAction):
 
 
 class ScaleBy(ScaleTo):
-    """Scales a `CocosNode` object a zoom factor
+    """Scales a `CocosNode` object a zoom factor by modifying it's scale attribute.
 
     Example::
 
@@ -449,8 +450,8 @@ class ScaleBy(ScaleTo):
 
 
 class Blink( IntervalAction ):
-    """Blinks a `CocosNode` object a Number_of_Times, for Duration seconds
-
+    """Blinks a `CocosNode` object by modifying it's visible attribute
+    
     Example::
 
         # Blinks 10 times in 2 seconds
@@ -481,7 +482,7 @@ class Blink( IntervalAction ):
 
 
 class Bezier( IntervalAction ):
-    """Moves a `CocosNode` object through a bezier path
+    """Moves a `CocosNode` object through a bezier path by modifying it's position attribute.
 
     Example::
 
@@ -516,7 +517,7 @@ class Bezier( IntervalAction ):
         return Bezier(self.bezier, self.duration, not self.forward)
 
 class Jump(IntervalAction):
-    """Moves a `CocosNode` object simulating a jump movement.
+    """Moves a `CocosNode` object simulating a jump movement by modifying it's position attribute.
 
     Example::
 
@@ -559,7 +560,7 @@ class Jump(IntervalAction):
         return Jump(self.y, -self.x, self.jumps, self.duration)
 
 class JumpBy(IntervalAction):
-    """Moves a `CocosNode` object simulating a jump movement.
+    """Moves a `CocosNode` object simulating a jump movement by modifying it's position attribute.
 
     Example::
 
@@ -602,7 +603,8 @@ class JumpBy(IntervalAction):
         return JumpBy( (-self.position[0],-self.position[1]), self.height, self.jumps, self.duration)
 
 class JumpTo(JumpBy):
-    """Moves a `CocosNode` object to a position simulating a jump movement.
+    """Moves a `CocosNode` object to a position simulating a jump movement by modifying
+    it's position attribute.
 
     Example::
 

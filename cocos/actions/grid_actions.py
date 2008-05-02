@@ -69,6 +69,8 @@ class Liquid( GridAction ):
         super(Liquid, self).init( *args, **kw )
         self.waves=waves
         self.amplitude=amplitude
+        #: amplitude rate. Default: 1.0
+        #: This value is modified by other actions like `AccelAmplitude`.
         self.amplitude_rate = 1.0
 
     def update( self, t ):
@@ -107,7 +109,9 @@ class Waves( GridAction ):
         self.vertical_sin = vertical_sin
         self.waves=waves
         self.amplitude=amplitude
-        self.amplitude_rate = 1
+        #: amplitude rate. Default: 1.0
+        #: This value is modified by other actions like `AccelAmplitude`.
+        self.amplitude_rate = 1.0
 
     def update( self, t ):        
         for i in range(0, self.grid.x+1):

@@ -28,9 +28,10 @@ __all__ = [
 
 
 class Action(object):
+    '''Mother of all actions'''
     def __init__(self, *args, **kwargs):
         self.init(*args, **kwargs)
-        self.target = None
+        self.target = None              #: `CocosNode` object that is the target of the action
         self._elapsed = None
 
     def init(self):
@@ -59,8 +60,8 @@ class Action(object):
         since the last call. If there was a pause and resume in the middle,
         the actual elapsed time may be bigger.
 
-        This function will only be called by the `Layer`, but the actions will
-        be updated with the `update` method.
+        This function will only be called by the `Layer`, but interval actions will
+        be updated with the `IntervalAction.update` method.
         """
         if self._elapsed is None:
             self._elapsed = 0
@@ -102,20 +103,18 @@ class IntervalAction( Action ):
     Action. Interval Actions are the ones that have a fixed duration,
     so we can make them go forward or backwards in time.
 
-    For example: `MoveTo` , `MoveBy` , `Rotate` are Interval Actions.
-    `CallFunc` is not.
+    For example: `MoveTo` , `MoveBy` , `RotateBy` are Interval Actions, while
+    `Place`, `Show` and `CallFunc` aren't.
 
-    subclasses must ensure that instances have a duration attribute.
+    Subclasses must ensure that instances have a duration attribute.
     """
 
 
     def update(self, t):
-        """
-        Gets called on every frame.
+        """Gets called on every frame.
         `t` is in [0,1]
         If this action takes 5 seconds to execute, `t` will be equal to 0
         at 0 seconds. `t` will be 0.5 at 2.5 seconds and `t` will be 1 at 5sec.
-
         """
         pass
 

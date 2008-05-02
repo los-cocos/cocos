@@ -34,8 +34,13 @@ class Waves3D( Grid3DAction ):
                 Wave amplitude (height). Default is 20
         '''
         super(Waves3D, self).init( *args, **kw )
+
+        #: Total number of waves to perform
         self.waves=waves
-        self.amplitude_rate = 1.0         # can be modified by other actions
+  
+        #: amplitude rate. Default: 1.0
+        #: This value is modified by other actions like `AccelAmplitude`.
+        self.amplitude_rate = 1.0
         self.amplitude=amplitude
 
     def update( self, t ):
@@ -173,8 +178,15 @@ class Lens3D( Grid3DAction ):
         x,y = director.get_window_size()
         if center==(-1,-1):
             center=(x//2, y//2)
-        self.position = Point2( center[0]+1, center[1]+1 )
+            
+        #: position of the center of the len. Type: (int,int)
+        #: This value can be modified by other actions, like `JumpBy` to simulate a jumping lens
+        self.position = Point2( center[0]+1, center[1]+1 )  
+
+        #: radius of the lens. Type: float
         self.radius = radius
+
+        #: lens effect factor. Type: float        
         self.lens_effect = lens_effect
        
         self._last_position = (-1000,-1000)          # dirty vrbl

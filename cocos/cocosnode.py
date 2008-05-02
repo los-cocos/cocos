@@ -1,6 +1,6 @@
 #
-# Cocos
-# http://code.google.com/p/los-cocos
+# cocos2d
+# http://cocos2d.org
 #
 """
 CocosNode: the basic element of cocos
@@ -23,7 +23,8 @@ __all__ = ['CocosNode']
 
 class CocosNode(object):
     """
-    Cocosnode is the main element. Any this thats gets drawn or contains things that get drawn is a cocosnode. The most popular cocosnodes are scenes, layers and sprites.
+    Cocosnode is the main element. Anything thats gets drawn or contains things that get drawn is a cocosnode.
+    The most popular cocosnodes are scenes, layers and sprites.
     
     The main features of a cocosnode are:
         - They can contain other cocos nodes (add, get, remove, etc)
@@ -39,26 +40,67 @@ class CocosNode(object):
     """
     def __init__(self):
         # composition stuff
-        self.children = []              #: list of children. each item is (int, child-reference) where int is the z-order
-        self.children_names = {}        #: dictionary that maps children names with children references
+
+        #: list of children. each item is (int, child-reference) where int is the z-order
+        self.children = []
+
+        #: dictionary that maps children names with children references
+        self.children_names = {}
+
         self._parent = None
         
         # drawing stuff
-        self.x = 0                      #: x-position of the object relative to its parent's children_anchor_x value 
-        self.y = 0                      #: y-position of the object relative to its parent's children_anchor_y value
-        self.scale = 1.0                #: a float, alters the scale of this node and its children. Default: 1.0
-        self.rotation = 0.0             #: a float, in degrees, alters the rotation of this node and its children. Default: 0.0
-        self.children_anchor_x = 0      #: offset from (x,0) from where children will have its (0,0) coordinate
-        self.children_anchor_y = 0      #: offset from (x,y) from where children will have its (0,0) coordinate
-        self.transform_anchor_x = 0     #: offset from (x,0) from where rotation and scale will be applied
-        self.transform_anchor_y = 0     #: offset from (0,y) from where rotation and scale will be applied
-        self.visible = True             #: whether of not the object is visible. Default: True
-        self.grid = None                #: the grid object for the grid actions.
+
+        #: x-position of the object relative to its parent's children_anchor_x value. 
+        #: Default: 0
+        self.x = 0
+
+        #: y-position of the object relative to its parent's children_anchor_y value.
+        #: Default: 0
+        self.y = 0
+
+        #: a float, alters the scale of this node and its children.
+        #: Default: 1.0
+        self.scale = 1.0
+
+        #: a float, in degrees, alters the rotation of this node and its children.
+        #: Default: 0.0
+        self.rotation = 0.0
+
+        #: offset from (x,0) from where children will have its (0,0) coordinate.
+        #: Default: 0
+        self.children_anchor_x = 0
+
+        #: offset from (x,y) from where children will have its (0,0) coordinate.
+        #: Default: 0
+        self.children_anchor_y = 0
+
+        #: offset from (x,0) from where rotation and scale will be applied.
+        #: Default: 0
+        self.transform_anchor_x = 0
+
+        #: offset from (0,y) from where rotation and scale will be applied.
+        #: Default: 0
+        self.transform_anchor_y = 0
+
+        #: whether of not the object is visible.
+        #: Default: True
+        self.visible = True
+
+        #: the grid object for the grid actions.
+        #: This can be a `Grid` a `Grid3D` or a `TiledGrid` object depending
+        #: on the action.
+        self.grid = None
         
         # actions stuff
-        self.actions = []               #: list of actions that are running
-        self.to_remove = []             #: list of actions to be removed
-        self.skip_frame = False         #: whether or not the next frame will be skipped
+        #: list of `Action` objects that are running
+        self.actions = []
+
+        #: list of `Action` objects to be removed
+        self.to_remove = []
+
+        #: whether or not the next frame will be skipped
+        self.skip_frame = False
         
         # schedule stuff
         self.scheduled = False          # deprecated, soon to be removed
@@ -87,8 +129,16 @@ class CocosNode(object):
             :type: (int,int)
             """+attr )
 
+    #: Anchor point of the object.
+    #: Children will be added at this point
+    #: and transformations like scaling and rotation will use this point
+    #: as the center
     anchor = make_property("anchor")
+
+    #: Anchor x value for transformations and adding children
     anchor_x = make_property("anchor_x")
+
+    #: Anchor y value for transformations and adding children
     anchor_y = make_property("anchor_y")
     
     def make_property(attr):
@@ -107,7 +157,13 @@ class CocosNode(object):
             :type: (int,int)
             ''')
 
+    #: Children anchor point.
+    #: Children will be added relative to this point
     children_anchor = make_property("children_anchor")
+
+    #: Transformation achor point.
+    #: Transformations like scaling and rotation
+    #: will use this point as it's center
     transform_anchor = make_property("transform_anchor")
     del make_property
         

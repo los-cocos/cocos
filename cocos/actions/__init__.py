@@ -1,6 +1,6 @@
 #
-# Cocos:
-# http://code.google.com/p/los-cocos/
+# cocos2d
+# http://cocos2d.org
 #
 from base_actions import *
 from interval_actions import *
