@@ -62,17 +62,17 @@ class OrbitCamera( Camera3DAction ):
             `delta_radius` : float
                 Radius of the orbit. Default: best distance for the current fov
             `angle_z` : float
-                The zenith angle of the spherical coordinate in degress. Default: 0
+                The zenith angle of the spherical coordinate in degrees. Default: 0
             `delta_z` : float
                 Relative movement of the zenith angle. Default: 0
             `angle_x` : float
-                The tita angle of the spherical coordinate in degress. Default: 0
+                The azimuth angle of the spherical coordinate in degrees. Default: 0
             `delta_x` : float
-                Relative movement of the tita angle. Default: 0
+                Relative movement of the azimuth angle. Default: 0
                 
 
         For more information on spherical coordinates, read this:
-            http://en.wikipedia.org/wiki/Polar_coordinates#Spherical_coordinates
+            http://en.wikipedia.org/wiki/Spherical_coordinates
 
         '''
         super( OrbitCamera, self ).init( *args, **kw )
@@ -93,7 +93,7 @@ class OrbitCamera( Camera3DAction ):
         z_angle = self.rad_z + self.rad_delta_z * t
         x_angle = self.rad_x + self.rad_delta_x * t
 
-        # using spherical coordinates, ofcourse
+        # using spherical coordinates
         p = Point3( math.sin(z_angle) * math.cos(x_angle),
                     math.sin(z_angle) * math.sin(x_angle),
                     math.cos(z_angle) )

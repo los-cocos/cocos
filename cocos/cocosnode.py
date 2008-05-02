@@ -35,45 +35,36 @@ class CocosNode(object):
     Subclassing a cocosnode usually means (one/all) of:
         - overriding __init__ to initialize resources and schedule calbacks
         - create callbacks to handle the advancement of time
-        - overriding on_draw to render the node
-        
-    @ivar position: an int (x, y) tuple specifying the position of its anchor relative to its parent.
-    @ivar x: x-part of position
-    @ivar y: y-part of position
-    @ivar scale: a float, alters the scale of this node and its children
-    @ivar rotation: a float, in degrees, alters the rotation of this node and its children
-    @ivar anchor: sets children_anchor and transforms_anchor in one step
-    @ivar children_anchor: offset from (0,0) from where children will have its (0,0) coordinate
-    @ivar transform_anchor: offset from (0,0) from where rotation and scale will be applied
-    
+        - overriding on_draw to render the node    
     """
     def __init__(self):
         # composition stuff
-        self.children = []
-        self.children_names = {}
+        self.children = []              #: list of children. each item is (int, child-reference) where int is the z-order
+        self.children_names = {}        #: dictionary that maps children names with children references
         self._parent = None
         
         # drawing stuff
-        self.x, self.y = (0,0)
-        self.scale = 1.0
-        self.rotation = 0.0
-        self.children_anchor_x = 0
-        self.children_anchor_y = 0
-        self.transform_anchor_x = 0
-        self.transform_anchor_y = 0
-        self.visible = True
-        self.grid = None
+        self.x = 0                      #: x-position of the object relative to its parent's children_anchor_x value 
+        self.y = 0                      #: y-position of the object relative to its parent's children_anchor_y value
+        self.scale = 1.0                #: a float, alters the scale of this node and its children. Default: 1.0
+        self.rotation = 0.0             #: a float, in degrees, alters the rotation of this node and its children. Default: 0.0
+        self.children_anchor_x = 0      #: offset from (x,0) from where children will have its (0,0) coordinate
+        self.children_anchor_y = 0      #: offset from (x,y) from where children will have its (0,0) coordinate
+        self.transform_anchor_x = 0     #: offset from (x,0) from where rotation and scale will be applied
+        self.transform_anchor_y = 0     #: offset from (0,y) from where rotation and scale will be applied
+        self.visible = True             #: whether of not the object is visible. Default: True
+        self.grid = None                #: the grid object for the grid actions.
         
         # actions stuff
-        self.actions = []
-        self.to_remove = []
-        self.skip_frame = False
+        self.actions = []               #: list of actions that are running
+        self.to_remove = []             #: list of actions to be removed
+        self.skip_frame = False         #: whether or not the next frame will be skipped
         
         # schedule stuff
-        self.scheduled = False # deprecated, soon to be removed
-        self.scheduled_calls = []
-        self.scheduled_interval_calls = []
-        self.is_running = False
+        self.scheduled = False          # deprecated, soon to be removed
+        self.scheduled_calls = []       #: list of scheduled callbacks  
+        self.scheduled_interval_calls = []  #: list of scheduled interval callbacks
+        self.is_running = False         #: whether of not the object is running
         
     
     def make_property(attr):
@@ -91,7 +82,10 @@ class CocosNode(object):
         return property(
             get_attr(),
             set_attr(),
-            doc="""a property to get fast access to [transform_|children_]"""+attr )
+            doc="""a property to get fast access to [transform_|children_]
+            
+            :type: (int,int)
+            """+attr )
 
     anchor = make_property("anchor")
     anchor_x = make_property("anchor_x")
@@ -108,7 +102,10 @@ class CocosNode(object):
         return property(
             get_attr,
             set_attr(),
-            doc="a property to get fast access to "+attr+"_[x|y]" )
+            doc='''a property to get fast access to "+attr+"_[x|y]
+            
+            :type: (int,int)
+            ''')
 
     children_anchor = make_property("children_anchor")
     transform_anchor = make_property("transform_anchor")
@@ -234,7 +231,10 @@ class CocosNode(object):
         if parent is None: self._parent = None
         else: self._parent = weakref.ref(parent)
         
-    parent = property(_get_parent, _set_parent)
+    parent = property(_get_parent, _set_parent, doc='''The parent of this object.
+    
+    :type: object
+    ''')
         
     def get_ancestor(self, klass):
         """
@@ -252,7 +252,11 @@ class CocosNode(object):
     def _set_position(self, (x,y)):
         self.x, self.y = x,y
         
-    position = property(_get_position, _set_position, doc="Get an (x,y) tuple")
+    position = property(_get_position, _set_position,
+                        doc='''The (x, y) coordinates of the object.
+
+    :type: (int, int)
+    ''')
         
     def add(self, child, z=0, name=None ):
         """Adds a child to the container

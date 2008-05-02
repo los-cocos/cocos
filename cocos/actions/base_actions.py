@@ -2,10 +2,13 @@
 # Base Actions
 #
 
-'''Classes to manipulate sprites.
+'''Base actions
 
 Base Actions
 ============
+
+These actions are the 'mother' of all actions.
+They are the building blocks.
 
 '''
 
@@ -32,21 +35,21 @@ class Action(object):
 
     def init(self):
         """
-        Gets called at initialization time, before a target it defined
+        Gets called at initialization time, before a target is defined
         """
         pass
 
     def start(self):
         """
         Before we start executing an action, self.target is assigned and this method is called.
-        it will be called for every execution of the action.
+        It will be called for every execution of the action.
         """
         pass
 
     def stop(self):
         """
         After we finish executing an action this method is called.
-        it will be called for every execution of the action.
+        It will be called for every execution of the action.
         """
         pass
         
@@ -56,7 +59,8 @@ class Action(object):
         since the last call. If there was a pause and resume in the middle,
         the actual elapsed time may be bigger.
 
-        This function will only be called by the layer. Not other sprites.
+        This function will only be called by the `Layer`, but the actions will
+        be updated with the `update` method.
         """
         if self._elapsed is None:
             self._elapsed = 0
@@ -125,7 +129,7 @@ def Reverse( action ):
     Example::
 
         # rotates the sprite 180 degrees in 2 seconds counter clockwise
-        action = Reverse( Rotate( 180, 2 ) )
+        action = Reverse( RotateBy( 180, 2 ) )
         sprite.do( action )
     """
     return action.__reversed__()
@@ -303,7 +307,7 @@ class Repeat(Action):
 
     Example::
 
-        action = Jump( 50,200,3,5)
+        action = JumpBy( (200,0), 50,3,5)
         repeat = Repeat( action )
         sprite.do( repeat )
 
@@ -338,7 +342,7 @@ class ReverseTime( IntervalAction ):
 
     Example::
 
-        # Executes an reverre-in-time FlipX3D action
+        # Executes an reverse-time FlipX3D action
         action = ReverseTime( FlipX3D( duration=2) )
         scene.do( action )
     """

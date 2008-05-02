@@ -7,7 +7,30 @@ Actions, Transformations and Effects
 Actions
 -------
 
-Actions are....
+Actions are like orders given to any `CocosNode` object.
+These actions usually modify some the object's attributes like `position`,
+`rotation`, `scale`, etc. If these attributes are modified during a period of time,
+they are `IntervalAction`, otherwise they are `InstantActions`.
+
+For example, the `MoveBy` actions modifies the `position` attribute during a period
+of time, hence, it is an `IntervalAction`.
+
+Example::
+
+	# Move a sprite 50 pixels to the right, and 100 pixel to the top in 2 seconds.
+	sprite.do( MoveBy( (50,100), duration=2 ) )
+	
+`InvertalAction` has some interesting properties:
+
+	- The can be accelerated using the time-altered actions
+		- `Accelerate`
+		- `AccelDecell`
+		- `Speed`
+	- They can be executed backwards in time with the `ReverseTime` action.
+	  The starting point will be ending point, and vice-versa.
+	- All the relative actions (the ones ending in 'By') have a `Reverse` action
+	  that executes the action in the opposite direction.
+
 
 
 Basic actions
@@ -20,6 +43,7 @@ Basic actions are the ones that modifies basic attributes like:
 	- `MoveTo`
 	- `JumpBy`
 	- `JumpTo`
+	- `Bezier`
 	- `Place`
 
  - scale
@@ -100,6 +124,7 @@ Modifiers
  - Time modifiers
 	- `Accelerate`
 	- `AccelDeccel`
+	- `Speed`
 	- `Reverse`
 	- `ReverseTime`
 
@@ -115,6 +140,8 @@ Exmaple::
 Special Actions
 ---------------
 
+  - `Delay`
+  - `RandomDelay`
   - `CallFunc`
   - `CallFuncS`
   - `DoAction`

@@ -1,4 +1,6 @@
 #
+# cocos2d
+# http://cocos2d.org
 # Cocos Interval Actions
 #
 
@@ -13,14 +15,13 @@ It has an start time, and a finish time. The finish time is the parameter
 
 These `IntervalAction` have some interesting properties, like:
 
-  * They can run normally (default)
-  * They can run reversed with the `Reverse` action
-  * They can run with the time altered with the `Accelerate`, `AccelDeccel` or
-    `Speed`.
-    actions.
+  - They can run normally (default)
+  - They can run reversed with the `Reverse` and `ReverseTime` actions.
+  - They can run with the time altered with the `Accelerate`, `AccelDeccel` and
+    `Speed` actions.
 
-For example, you can simulate a Ping Pong effect running the action normally and then running
-it again in Reverse mode.
+For example, you can simulate a Ping Pong effect running the action normally and
+then running it again in Reverse mode.
 
 Example::
 
@@ -91,12 +92,12 @@ __all__ = [
             ]
 
 class RotateBy( IntervalAction ):
-    """Rotates a sprite clockwise in degrees
+    """Rotates a `CocosNode` object clockwise a number of degrees
 
     Example::
 
         # rotates the sprite 180 degrees in 2 seconds
-        action = Rotate( 180, 2 )
+        action = RotateBy( 180, 2 )
         sprite.do( action )
     """
     def init(self, angle, duration ):
@@ -125,12 +126,13 @@ Rotate = RotateBy
 
 
 class RotateTo( IntervalAction ):
-    """Rotates a sprite clockwise in degrees
+    """Rotates a `CocosNode` object to a certain angle. The direction
+     will be decided by the shortest angle.
 
     Example::
 
-        # rotates the sprite 180 degrees in 2 seconds
-        action = Rotate( 180, 2 )
+        # rotates the sprite to angle 180 in 2 seconds
+        action = RotateTo( 180, 2 )
         sprite.do( action )
     """
     def init(self, angle, duration ):
@@ -138,8 +140,7 @@ class RotateTo( IntervalAction ):
 
         :Parameters:
             `angle` : float
-                Degrees that the sprite will be rotated.
-                Positive degrees rotates the sprite clockwise.
+                Destination angle in degrees.
             `duration` : float
                 Duration time in seconds
         """
@@ -235,13 +236,13 @@ class Accelerate( IntervalAction ):
 class AccelDeccel( IntervalAction ):
     """
     Makes an action change the travel speed but retain near normal
-    speed at the beggining and ending.
+    speed at the beginning and ending.
 
     Example::
 
         # rotates the sprite 180 degrees in 2 seconds clockwise
         # it starts slow, gets fast and ends slow
-        action = AccelDeccel( Rotate( 180, 2 ) )
+        action = AccelDeccel( RotateBy( 180, 2 ) )
         sprite.do( action )
     """
     def init(self, other):
@@ -271,7 +272,7 @@ class AccelDeccel( IntervalAction ):
 
 
 class MoveTo( IntervalAction ):
-    """Moves a sprite to the position x,y. x and y are absolute coordinates.
+    """Moves a `CocosNode` object to the position x,y. x and y are absolute coordinates.
 
     Example::
 
@@ -302,8 +303,8 @@ class MoveTo( IntervalAction ):
         self.target.position = self.start_position + self.delta * t
 
 class MoveBy( MoveTo ):
-    """Mve a sprite x,y pixels.
-    x and y are relative to the position of the sprite.
+    """Moves a `CocosNode` object x,y pixels.
+    x and y are relative to the position of the object.
     Duration is is seconds.
 
     Example::
@@ -333,7 +334,7 @@ class MoveBy( MoveTo ):
 
 class FadeOut( IntervalAction ):
     """FadeOut(duration)
-    Fades out an sprite
+    Fades out a `CocosNode` object
 
     Example::
 
@@ -357,7 +358,7 @@ class FadeOut( IntervalAction ):
 
 class FadeTo( IntervalAction ):
     """FadeTo(alpha, duration)
-    Fades a sprite to a specific alpha value
+    Fades a `CocosNode` object to a specific alpha value
 
     Example::
 
@@ -387,7 +388,7 @@ class FadeTo( IntervalAction ):
 
 class FadeIn( FadeOut):
     """FadeIn(duration)
-    Fades in an sprite
+    Fades in a `CocosNode` object
 
     Example::
 
@@ -401,7 +402,7 @@ class FadeIn( FadeOut):
         return FadeOut( self.duration )
 
 class ScaleTo(IntervalAction):
-    """Scales the sprite
+    """Scales a `CocosNode` object to a zoom factor.
 
     Example::
 
@@ -428,8 +429,9 @@ class ScaleTo(IntervalAction):
     def update(self, t):
         self.target.scale = self.start_scale + self.delta * t
 
+
 class ScaleBy(ScaleTo):
-    """Scales the sprite
+    """Scales a `CocosNode` object a zoom factor
 
     Example::
 
@@ -447,7 +449,7 @@ class ScaleBy(ScaleTo):
 
 
 class Blink( IntervalAction ):
-    """Blinks the sprite a Number_of_Times, for Duration seconds
+    """Blinks a `CocosNode` object a Number_of_Times, for Duration seconds
 
     Example::
 
@@ -479,7 +481,7 @@ class Blink( IntervalAction ):
 
 
 class Bezier( IntervalAction ):
-    """Moves a sprite through a bezier path
+    """Moves a `CocosNode` object through a bezier path
 
     Example::
 
@@ -514,7 +516,7 @@ class Bezier( IntervalAction ):
         return Bezier(self.bezier, self.duration, not self.forward)
 
 class Jump(IntervalAction):
-    """Moves a sprite simulating a jump movement.
+    """Moves a `CocosNode` object simulating a jump movement.
 
     Example::
 
@@ -557,7 +559,7 @@ class Jump(IntervalAction):
         return Jump(self.y, -self.x, self.jumps, self.duration)
 
 class JumpBy(IntervalAction):
-    """Moves a sprite simulating a jump movement.
+    """Moves a `CocosNode` object simulating a jump movement.
 
     Example::
 
@@ -600,7 +602,7 @@ class JumpBy(IntervalAction):
         return JumpBy( (-self.position[0],-self.position[1]), self.height, self.jumps, self.duration)
 
 class JumpTo(JumpBy):
-    """Moves a sprite simulating a jump movement.
+    """Moves a `CocosNode` object to a position simulating a jump movement.
 
     Example::
 
