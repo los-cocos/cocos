@@ -7,16 +7,25 @@
 __docformat__ = 'restructuredtext'
 
 import math
+import random
+
 from cocos.director import director
 from cocos.euclid import *
 from basegrid_actions import *
 
+rr = random.randrange
+
+
 __all__ = [
-           'Waves3D',
+           'Waves3D',   # 3d actions that modifies the z-coordinate
            'FlipX3D',
            'FlipY3D',
            'Lens3D',
-           
+           'Shaky3D',
+
+           'Liquid',    # 3d actions that don't modify the z-coordinate
+           'Waves',
+
            ]
 
 class Waves3D( Grid3DAction ):
@@ -220,3 +229,105 @@ class Lens3D( Grid3DAction ):
                     # since we want to 'fix' possible moved vertex
                     self.set_vertex( i,j, (x,y,z) )
             self._last_position = self.position
+
+class Shaky3D( Grid3DAction):
+    '''Shaky simulates an earthquake modifying randomly the x,y and z coordinates
+
+       scene.do( Shaky3D( randrange=6, grid=(4,4), duration=10) )
+    '''
+    def init( self, randrange=6, *args, **kw ):
+        '''
+        :Parameters:
+            `randrange` : int
+                Number that will be used in random.randrange( -randrange, randrange) to do the effect
+        '''
+        super(Shaky3D,self).init(*args,**kw)
+        self.randrange = randrange
+
+    def update( self, t ):
+        for i in range(0, self.grid.x+1):
+            for j in range(0, self.grid.y+1):
+                x,y,z = self.get_original_vertex(i,j)
+                x += rr( -self.randrange, self.randrange )
+                y += rr( -self.randrange, self.randrange )
+                z += rr( -self.randrange, self.randrange )
+
+                self.set_vertex( i,j, (x,y,z) )
+
+class Liquid( Grid3DAction ):
+    '''Simulates a liquid effect using the math.sin() function modifying the x and y coordinates.
+        The z coordinate is not modified.
+
+       scene.do( Liquid( waves=5, amplitude=40, grid=(16,16), duration=10) )
+    '''
+    def init( self, waves=4, amplitude=20, *args, **kw ):
+        '''
+        :Parameters:
+            `waves` : int
+                Number of waves (2 * pi) that the action will perform. Default is 4
+            `amplitude` : int
+                Wave amplitude (height). Default is 20
+        '''
+        super(Liquid, self).init( *args, **kw )
+        self.waves=waves
+        self.amplitude=amplitude
+        #: amplitude rate. Default: 1.0
+        #: This value is modified by other actions like `AccelAmplitude`.
+        self.amplitude_rate = 1.0
+
+    def update( self, t ):
+            
+        for i in range(1, self.grid.x):
+            for j in range(1, self.grid.y):
+                x,y,z = self.get_original_vertex(i,j)
+                xpos = (x + (math.sin(t*math.pi*self.waves*2 + x * .01) * self.amplitude * self.amplitude_rate))
+                ypos = (y + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.amplitude * self.amplitude_rate)) 
+                self.set_vertex( i,j, (xpos,ypos,z) )
+
+
+class Waves( Grid3DAction ):
+    '''Simulates waves using the math.sin() function both in the vertical and horizontal axis.
+    The z coordinate is not modified.
+
+        Example::
+
+            scene.do( Waves( waves=4, vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
+    '''
+
+    def init( self, waves=4, amplitude=20, horizontal_sin=True, vertical_sin=True, *args, **kw ):
+        '''Initializes the Waves actions
+
+        :Parameters:
+            `waves` : int
+                Number of waves (2 * pi) that the action will perform. Default is 4
+            `amplitude` : int
+                Wave amplitude (height). Default is 20
+            `horizontal_sin` : bool
+                whether or not in will perform horizontal waves. Default is True
+            `vertical_sin` : bool
+                whether or not in will perform vertical waves. Default is True
+        '''
+        super(Waves, self).init( *args, **kw )
+        self.horizontal_sin = horizontal_sin
+        self.vertical_sin = vertical_sin
+        self.waves=waves
+        self.amplitude=amplitude
+        #: amplitude rate. Default: 1.0
+        #: This value is modified by other actions like `AccelAmplitude`.
+        self.amplitude_rate = 1.0
+
+    def update( self, t ):        
+        for i in range(0, self.grid.x+1):
+            for j in range(0, self.grid.y+1):
+                x,y,z = self.get_original_vertex(i,j)
+                if self.vertical_sin:
+                    xpos = (x + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.amplitude * self.amplitude_rate))
+                else:
+                    xpos = x
+
+                if self.horizontal_sin:
+                    ypos = (y + (math.sin(t*math.pi*self.waves*2 + x * .01) * self.amplitude * self.amplitude_rate)) 
+                else:
+                    ypos = y
+
+                self.set_vertex( i,j, (xpos,ypos,z) )

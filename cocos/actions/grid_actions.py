@@ -2,24 +2,20 @@
 # Cocos:
 # http://code.google.com/p/los-cocos/
 #
-'''Implementation of `GridAction` actions
+'''Implementation of QuadMoveBy actions
+
+These actions modifies the x and y coordinates of fixed-size grid of (1,1).
+The z-coordinate is not modified.
 '''
 __docformat__ = 'restructuredtext'
 
 import math
-import random
 
 from cocos.director import director
 from cocos.euclid import *
 from basegrid_actions import *
 
-rr = random.randrange
-
-
-__all__ = [ 'Shaky',
-           'Liquid',
-           'Waves',
-           'QuadMoveBy',
+__all__ = ['QuadMoveBy',
            'MoveCornerUp',
            'MoveCornerDown',
            'CornerSwap',
@@ -30,107 +26,8 @@ __all__ = [ 'Shaky',
            'SkewVertical',
            ]
 
-class Shaky( GridAction):
-    '''Shaky simulates an earthquake
 
-       scene.do( Shaky( randrange=6, grid=(4,4), duration=10) )
-    '''
-    def init( self, randrange=6, *args, **kw ):
-        '''
-        :Parameters:
-            `randrange` : int
-                Number that will be used in random.randrange( -randrange, randrange) to do the effect
-        '''
-        super(Shaky,self).init(*args,**kw)
-        self.randrange = randrange
-
-    def update( self, t ):
-        for i in range(0, self.grid.x+1):
-            for j in range(0, self.grid.y+1):
-                x,y = self.get_original_vertex(i,j)
-                x += rr( -self.randrange, self.randrange )
-                y += rr( -self.randrange, self.randrange )
-
-                self.set_vertex( i,j, (x,y) )
-
-class Liquid( GridAction ):
-    '''Liquid simulates a liquid effect using the math.sin() function
-
-       scene.do( Liquid( waves=5, amplitude=40, grid=(16,16), duration=10) )
-    '''
-    def init( self, waves=4, amplitude=20, *args, **kw ):
-        '''
-        :Parameters:
-            `waves` : int
-                Number of waves (2 * pi) that the action will perform. Default is 4
-            `amplitude` : int
-                Wave amplitude (height). Default is 20
-        '''
-        super(Liquid, self).init( *args, **kw )
-        self.waves=waves
-        self.amplitude=amplitude
-        #: amplitude rate. Default: 1.0
-        #: This value is modified by other actions like `AccelAmplitude`.
-        self.amplitude_rate = 1.0
-
-    def update( self, t ):
-            
-        for i in range(1, self.grid.x):
-            for j in range(1, self.grid.y):
-                x,y = self.get_original_vertex(i,j)
-                xpos = (x + (math.sin(t*math.pi*self.waves*2 + x * .01) * self.amplitude * self.amplitude_rate))
-                ypos = (y + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.amplitude * self.amplitude_rate)) 
-                self.set_vertex( i,j, (xpos,ypos) )
-
-
-class Waves( GridAction ):
-    '''Waves simulates waves using the math.sin() function both in the vertical and horizontal axis
-
-        Example::
-
-            scene.do( Waves( waves=4, vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
-    '''
-
-    def init( self, waves=4, amplitude=20, horizontal_sin=True, vertical_sin=True, *args, **kw ):
-        '''Initializes the Waves actions
-
-        :Parameters:
-            `waves` : int
-                Number of waves (2 * pi) that the action will perform. Default is 4
-            `amplitude` : int
-                Wave amplitude (height). Default is 20
-            `horizontal_sin` : bool
-                whether or not in will perform horizontal waves. Default is True
-            `vertical_sin` : bool
-                whether or not in will perform vertical waves. Default is True
-        '''
-        super(Waves, self).init( *args, **kw )
-        self.horizontal_sin = horizontal_sin
-        self.vertical_sin = vertical_sin
-        self.waves=waves
-        self.amplitude=amplitude
-        #: amplitude rate. Default: 1.0
-        #: This value is modified by other actions like `AccelAmplitude`.
-        self.amplitude_rate = 1.0
-
-    def update( self, t ):        
-        for i in range(0, self.grid.x+1):
-            for j in range(0, self.grid.y+1):
-                x,y = self.get_original_vertex(i,j)
-                if self.vertical_sin:
-                    xpos = (x + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.amplitude * self.amplitude_rate))
-                else:
-                    xpos = x
-
-                if self.horizontal_sin:
-                    ypos = (y + (math.sin(t*math.pi*self.waves*2 + x * .01) * self.amplitude * self.amplitude_rate)) 
-                else:
-                    ypos = y
-
-                self.set_vertex( i,j, (xpos,ypos) )
-
-
-class QuadMoveBy( GridAction ):
+class QuadMoveBy( Grid3DAction ):
     '''QuadMoveBy moves each vertex of the grid. The size of the grid is (1,1)
 
        scene.do( QuadMoveBy( src0, src1, src2, src3,
@@ -188,14 +85,14 @@ class QuadMoveBy( GridAction ):
         if src3 == (-1,-1):
             src3 = (0,y)  
 
-        self.src0 = Point2( *src0 )
-        self.src1 = Point2( *src1 )  
-        self.src2 = Point2( *src2 )
-        self.src3 = Point2( *src3 )
-        self.delta0 = Point2( *delta0 )
-        self.delta1 = Point2( *delta1 )
-        self.delta2 = Point2( *delta2 )
-        self.delta3 = Point2( *delta3 )
+        self.src0 = Point3( src0[0], src0[1], 0 )
+        self.src1 = Point3( src1[0], src1[1], 0 )  
+        self.src2 = Point3( src2[0], src2[1], 0 )
+        self.src3 = Point3( src3[0], src3[1], 0)
+        self.delta0 = Point3( delta0[0], delta0[1], 0)
+        self.delta1 = Point3( delta1[0], delta1[1], 0) 
+        self.delta2 = Point3( delta2[0], delta2[1], 0)
+        self.delta3 = Point3( delta3[0], delta3[1], 0)
        
     def update( self, t ):
         new_pos0 = self.src0 + self.delta0 * t

@@ -4,6 +4,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+
 import pyglet
 import cocos
 from cocos.director import director
@@ -20,15 +21,9 @@ class BackgroundLayer( cocos.layer.Layer ):
 
 if __name__ == "__main__":
     director.init( resizable=True )
-    director.show_FPS = True
     main_scene = cocos.scene.Scene()
 
     main_scene.add( BackgroundLayer(), z=0 )
 
-    move = QuadMoveBy( delta0=(320,240), delta1=(-630,0), delta2=(-320,-240), delta3=(630,0), duration=2 )
-#    move = QuadMoveBy( delta0=(640,480), delta1=(-640,480), delta2=(-640,-480), delta3=(640,-480), duration=2 )
-
-    main_scene.do( move + Reverse(move) )
-#    main_scene.do( move )
-
+    main_scene.do( Shaky3D( randrange=6, grid=(16,8), duration=5) )
     director.run (main_scene)

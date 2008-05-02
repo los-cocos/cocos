@@ -7,28 +7,32 @@
 Grid Actions
 ============
 
-There are 3 kinds of grids::
+There are 2 kinds of grids:
 
-    `Grid`
-    `TiledGrid`
-    `Grid3D`
+  - `Grid3D` : A 3D grid with x,y and z coordinates
+  - `TiledGrid` : A 2D grid with x,y coordinates, composed
+     with independent tiles
 
-Hence, there are 3 kinds of grid actions::
 
-    `GridAction`
-    `TiledGridAction`
-    `Grid3DAction`
+Hence, there are 2 kinds of grid actions:
 
-The `Grid` is a 2D grid. If you move 1 vertex, the surrounding tiles will be altered.
-The `TiledGrid` is a 2D grid that is composed of individual tiles. Each tile can be manipulated individually.These tiles can be separated from the grid.
-The `Grid3D` is like the `Grid` with the difference that it also supports z-axis vertex.
+  - `Grid3DAction`
+  - `TiledGridAction`
+
+The `Grid3DAction` can modify any of vertex of the grid in any direction (x,y or z).
+The `TiledGridAction` can modify any tile of the grid without modifying the adjacent tiles.
+
+To understand visually the difference between these 2 kinds of grids, try these examples:
+
+  - run `test/test_shakytiles_8_x_16.py` to see a `TiledGridAction` example 
+  - run `test/test_shaky3d.py` to see the `Grid3DAction` counterpart
 '''
 
 __docformat__ = 'restructuredtext'
 
 from pyglet.gl import *
 
-from cocos.grid import TiledGrid, Grid, Grid3D
+from cocos.grid import TiledGrid, Grid3D
 from cocos.director import director
 from cocos.euclid import *
 from base_actions import *
@@ -36,7 +40,6 @@ from base_actions import *
 __all__ = [ 'GridException',            # Grid Exceptions
             'GridBaseAction',               # Base classes
             'TiledGridAction',
-            'GridAction',
             'Grid3DAction',
             
             'AccelAmplitude',           # Amplitude modifiers
@@ -96,78 +99,12 @@ class GridBaseAction( IntervalAction ):
         self.size_x = x // self.grid.x
         self.size_y = y // self.grid.y
       
-    def set_vertex( self, x, y, v):
-        raise NotImplementedError("abstract")
-
-    def get_vertex( self, x, y):
-        raise NotImplementedError("abstract")
-    
-    def get_original_vertex(self, x, y):
-        raise NotImplementedError("abstract")
-    
-    def get_grid(self):
-        return NotImplementedError('abstract')
-
     def __reversed__(self):
         return ReverseTime(self)
  
-class GridAction( GridBaseAction ):
-    '''A GridAction is an action that does transformations
-    to a grid.'''
-
-    def get_grid(self):
-        return Grid()
-    
-    def get_vertex( self, x, y):
-        '''Get the current vertex coordinate
-
-        :Parameters:
-            `x` : int 
-               x-vertex
-            `y` : int
-               y-vertex
-
-        :rtype: (int,int)
-        '''
-        idx = (x * (self.grid.y+1) + y) * 2
-        x = self.target.grid.vertex_list.vertices[idx]
-        y = self.target.grid.vertex_list.vertices[idx+1]
-        return (x,y)
-    
-    def get_original_vertex( self, x, y):
-        '''Get the original vertex coordinate
-
-        :Parameters:
-            `x` : int 
-               x-vertex
-            `y` : int
-               y-vertex
-
-        :rtype: (int,int)
-        '''
-        idx = (x * (self.grid.y+1) + y) * 2
-        x = self.target.grid.vertex_points[idx]
-        y = self.target.grid.vertex_points[idx+1]
-        return (x,y)
-
-    def set_vertex( self, x, y, v):
-        '''Set a vertex with a certain coordinate
-
-        :Parameters:
-            `x` : int 
-               x-vertex
-            `y` : int
-               y-vertex
-            `v` : (int, int)
-                tuple value for the vertex
-        '''
-        idx = (x * (self.grid.y+1) + y) * 2
-        self.target.grid.vertex_list.vertices[idx] = int(v[0])
-        self.target.grid.vertex_list.vertices[idx+1] = int(v[1])
-
-
+ 
 class Grid3DAction( GridBaseAction ):
-    '''A Grid3DAction is an action that does transformations
+    '''Is an action that does transformations
     to a 3D grid.'''
 
     def get_grid(self):
@@ -227,7 +164,7 @@ class Grid3DAction( GridBaseAction ):
 
 
 class TiledGridAction( GridBaseAction ):
-    '''A TiledGrid action is an action that does transformations
+    '''Is an action that does transformations
     to a grid composed of tiles. You can transform each tile individually'''
 
     def get_grid(self):

@@ -14,7 +14,6 @@ import pyglet
 from pyglet.gl import *
 
 from director import director
-from grid import Grid
 
 import weakref
 

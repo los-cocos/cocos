@@ -15,7 +15,7 @@ from director import director
 import framegrabber
 
 __all__ = ['GridBase',
-            'Grid', 'TiledGrid', 'Grid3D',
+          'TiledGrid', 'Grid3D',
             ]
 
 class GridBase(object):
@@ -133,82 +133,6 @@ class GridBase(object):
     def _on_resize(self):
         raise NotImplementedError('abstract')
   
-
-class Grid(GridBase):
-    '''`Grid` is a 2D grid implementation.
-    
-    The vertex array will be built with::
-
-        self.vertex_list.vertices: x,y (ints)   
-        self.vertex_list.tex_coords: x,y (floats)
-        self.vertex_list.colors: RGBA, with values from 0 - 255
-    '''
-    def _init( self ):
-        # calculate vertex, textures depending on screen size
-        idx_pts, ver_pts_idx, tex_pts_idx = self._calculate_vertex_points()
-
-        # Generates a grid of joint quads
-        self.vertex_list = pyglet.graphics.vertex_list_indexed( (self.grid.x+1) * (self.grid.y+1), 
-                            idx_pts, "t2f", "v2i/stream","c4B")
-        self.vertex_points = ver_pts_idx[:]
-        self.vertex_list.vertices = ver_pts_idx
-        self.vertex_list.tex_coords = tex_pts_idx
-        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
- 
-    def _blit(self ):
-        self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
-
-    def _on_resize(self, xsteps, ysteps, txz, tyz):
-        tex_idx = [] 
-        for x in range(self.grid.x+1):
-            for y in range(self.grid.y+1):
-                tex_idx += [ txz + x*xsteps, tyz+y*ysteps]
-        self.vertex_list.tex_coords = tex_idx
-    
-    def _calculate_vertex_points(self):        
-        w = float(self.texture.width)
-        h = float(self.texture.height)
-
-        index_points = []
-        vertex_points_idx = []
-        texture_points_idx = []
-
-        for x in range(0,self.grid.x+1):
-            for y in range(0,self.grid.y+1):
-                vertex_points_idx += [-1,-1]
-                texture_points_idx += [-1,-1]
-
-        for x in range(0, self.grid.x):
-            for y in range(0, self.grid.y):
-                x1 = x * self.x_step 
-                x2 = x1 + self.x_step
-                y1 = y * self.y_step
-                y2 = y1 + self.y_step
-              
-                #  d <-- c
-                #        ^
-                #        |
-                #  a --> b 
-                a = x * (self.grid.y+1) + y
-                b = (x+1) * (self.grid.y+1) + y
-                c = (x+1) * (self.grid.y+1) + (y+1)
-                d = x * (self.grid.y+1) + (y+1)
-
-                # 2 triangles: a-b-d, b-c-d
-                index_points += [ a, b, d, b, c, d]    # triangles 
-
-                l1 = ( a*2, b*2, c*2, d*2 )
-                l2 = ( Point2(x1,y1), Point2(x2,y1), Point2(x2,y2), Point2(x1,y2) )
-
-                # building the vertex and texture points
-                for i in range( len(l1) ):
-                    vertex_points_idx[ l1[i] ] = l2[i].x
-                    vertex_points_idx[ l1[i] + 1 ] = l2[i].y
-
-                    texture_points_idx[ l1[i] ] = l2[i].x / w
-                    texture_points_idx[ l1[i] + 1 ] = l2[i].y / h
-
-        return ( index_points, vertex_points_idx, texture_points_idx )
 
 class TiledGrid(GridBase):
     '''`TiledGrid` is a 2D grid implementation. It differs from `Grid` in that

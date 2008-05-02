@@ -226,7 +226,7 @@ if __name__ == "__main__":
     shakyt = ShakyTiles( grid=(16,12), duration=3)
     corners = CornerSwap( duration=1)
     waves = AccelAmplitude(Waves( waves=8, amplitude=50, grid=(32,24), duration=5), rate=2.0)  
-    shaky = Shaky( randrange=10, grid=(32,24), duration=5)
+    shaky = Shaky3D( randrange=10, grid=(32,24), duration=5)
     quadmove = QuadMoveBy( delta0=(320,240), delta1=(-630,0), delta2=(-320,-240), delta3=(630,0), duration=2 )
     fadeout = FadeOutTiles( grid=(16,12), duration=2)
     cornerup = MoveCornerUp( duration=1)
