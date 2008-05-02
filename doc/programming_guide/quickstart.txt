@@ -1,4 +1,4 @@
-Writing a Cocos2d application
+Writing a cocos2d application
 =============================
 
 Getting started with a new library or framework can be daunting, especially
@@ -38,9 +38,12 @@ to set the font, position and alignment of the label::
     label = cocos.text.Label('Hello, world', 
                               font_name='Times New Roman', 
                               font_size=36,
-                              x=100, y=320,
                               halign='center', valign='center')
 
+The label position will be the center of the screen::
+
+	label.position = 320,240
+	
 Since `Label` is a subclass of `CocosNode` it can be added
 as a child. All `CocosNode` objects know how to render itself, perform actions
 and transformations.
@@ -70,16 +73,105 @@ A shorter way to write the last 3 statements is this::
     #cocos.director.director.run( cocos.scene.Scene( HelloWorld() ) )
 
 
-Another Example #2
-------------------
+Hello Actions
+-------------
 
-FIXME: add example #2
+.. figure:: hello_world_actions.py.png
+
+This example is very similar to example #1, with the difference that it introduces
+us to the world of actions.
+An action is like an order. You can tell **any** `CocosNode` object to execute an 
+action.
+You can find the entire program in the `samples/hello_world_actions.py` file.
 
 
-Another Example #3
-------------------
+Like in our previous example, we import the cocos package::
 
-FIXME: add example #3
+	import cocos
+
+If you're going to use several actions, you can import all 
+the available actions into the namespace with this import::
+
+	from cocos.actions import *
+
+We subclass `ColorLayer` to have a background color, and then 
+we call super() with a blueish color::
+
+	class HelloWorld(cocos.layer.ColorLayer):
+	    def __init__(self):
+	        # blueish color
+	        super( HelloWorld, self ).__init__( 64,64,224,255)
+
+As in the previous example, we create and add a label::
+
+    label = cocos.text.Label('Hello, World!',
+        font_name='Times New Roman',
+        font_size=32,
+        halign='center', valign='center')
+
+    # set the label in the center of the screen
+    label.position = 320,240
+    self.add( label )
+
+In this example we also create and add an sprite as a child. In cocos2d
+sprites are `ActionSprite` objects::
+        
+    sprite = cocos.sprite.ActionSprite('grossini.png')
+
+We place the sprite in the center of the screen. Default position is (0,0)::
+        
+    sprite.position = 320,240
+
+We set the scale attribute to 3. This means that our sprite will be 3 times bigger.
+The default scale attribute is 1::
+        
+    sprite.scale = 3
+
+We add the sprite as a child but on top of the label by setting the z-value to 1, since
+the default z-value is 0::
+
+    self.add( sprite, z=1 )
+
+We create a `ScaleBy` action. It will scale 3 times the object in 2 seconds::
+
+    scale = ScaleBy(3, duration=2)
+
+We tell the label to:
+ 1. scale 3 times in 2 seconds
+ 2. then to scale back 3 times in 2 seconds
+ 3. and we repeat these 2 actions forever
+
+Notice that the '+' operator is the `Sequence` action::
+       
+	label.do( Repeat( scale + Reverse( scale) ) )
+
+And we tell the sprite to do the same actions but starting with the 'scale back' action::
+        
+	sprite.do( Repeat( Reverse(scale) + scale ) )
+
+Then we initialize the director, like in the previous example::
+ 
+    cocos.director.director.init()
+    hello_layer = HelloWorld ()
+
+And... we tell the `Layer` (yes, all `CocosNode` objects can execute actions) to
+execute a `RotateBy` action of 360 degrees in 10 seconds::
+
+    hello_layer.do( RotateBy(360, duration=10) )
+
+Finally we start the execution::
+
+    # A scene that contains the layer hello_layer
+    main_scene = cocos.scene.Scene (hello_layer)
+
+    # And now, start the application, starting with main_scene
+    cocos.director.director.run (main_scene)
+
+
+Handling Events
+---------------
+
+FIXME: add an example that handle events
 
 
 

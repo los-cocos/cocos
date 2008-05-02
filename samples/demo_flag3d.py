@@ -1,8 +1,10 @@
 #
-# Cocos:
-# http://code.google.com/p/los-cocos/
+# cocos2d:
+# http://cocos2d.org
 #
-# An example of how to generate a 3D scene using Cocos
+# An example of how to generate a 3D scene manually
+# Of course, the easiest way is to execute an Waves3D action,
+# this example is to show the 'internals' of generating a 3D effect.
 #
 
 import sys

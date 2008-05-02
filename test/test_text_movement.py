@@ -1,6 +1,6 @@
 #
-# cocos2d
-# http://cocos2d.org
+# Cocos
+# http://code.google.com/p/los-cocos/
 #
 # This code is so you can run the samples without installing the package
 import sys
@@ -16,13 +16,19 @@ class HelloWorld(cocos.layer.Layer):
 
         # a cocos.text.Label is a wrapper of pyglet.text.Label
         # with the benefit of being a cocosnode
-        label = cocos.text.Label('Hello, World!',
+        self.label = cocos.text.Label('Hi',
             font_name='Times New Roman',
             font_size=32,
+            x=320, y=240,
             halign='center', valign='center')
 
-        label.position = 320,240
-        self.add( label )
+        self.add( self.label )
+
+    def on_mouse_motion( self, x, y, dx, dy ):
+        self.label.element.text = '%d,%d' % (x,y)
+        self.label.element.x = x
+        self.label.element.y = y
+
 
 if __name__ == "__main__":
     # director init takes the same arguments as pyglet.window

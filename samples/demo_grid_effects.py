@@ -1,6 +1,6 @@
 #
-# Cocos: Multi-Menu Example
-# http://code.google.com/p/los-cocos/
+# cocos2d
+# http://cocos2d.org
 #
 # Particle Engine done by Phil Hassey
 # http://www.imitationpickles.org

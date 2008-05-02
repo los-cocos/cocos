@@ -14,14 +14,13 @@ class KeyDisplay(cocos.layer.Layer):
 
         super( KeyDisplay, self ).__init__()
 
-        self.text = pyglet.text.Label("", x=100, y=280 )
+        self.text = cocos.text.Label("", x=100, y=280 )
 
         # To keep track of which keys are pressed:
         self.keys_pressed = set()
         self.update_text()
+        self.add(self.text) 
 
-    def on_draw( self ):
-        self.text.draw()
 
     def on_key_press (self, key, modifiers):
         """This function is called when a key is pressed.
@@ -50,16 +49,16 @@ class KeyDisplay(cocos.layer.Layer):
         key_names = [pyglet.window.key.symbol_string (k) for k in self.keys_pressed]
         text = 'Keys: '+','.join (key_names)
         # Update self.text
-        self.text.text = text
+        self.text.element.text = text
 
 class MouseDisplay(cocos.layer.Layer):
     def __init__(self):
         super( MouseDisplay, self ).__init__()
 
-        self.x = 100
-        self.y = 240
-        self.text = pyglet.text.Label('No mouse events yet', font_size=18, x=self.x, y=self.y )
-        
+        self.posx = 100
+        self.posy = 240
+        self.text = cocos.text.Label('No mouse events yet', font_size=18, x=self.posx, y=self.posy )
+        self.add( self.text )
 
     def on_mouse_motion (self, x, y, dx, dy):
         """This function is called when the mouse is moved over the app.
@@ -78,17 +77,15 @@ class MouseDisplay(cocos.layer.Layer):
         'modifiers' is a bitwise or of pyglet.window.key modifier constants
            (values like 'SHIFT', 'OPTION', 'ALT')
         """
-        self.x, self.y = director.get_virtual_coordinates (x, y)
+        self.posx, self.posy = director.get_virtual_coordinates (x, y)
         self.update_text (x,y)
 
     def update_text (self, x, y):
         text = 'Mouse @ %d,%d' % (x, y)
-        self.text.text = text
-        self.text.x = self.x
-        self.text.y = self.y
+        self.text.element.text = text
+        self.text.element.x = self.posx
+        self.text.element.y = self.posy
 
-    def on_draw( self ):
-        self.text.draw()
 
 if __name__ == "__main__":
     director.init(resizable=True)
