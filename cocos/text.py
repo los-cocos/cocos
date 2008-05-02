@@ -40,7 +40,13 @@ class TextElement(cocosnode.CocosNode):
         glPopMatrix()
         
 class Label(TextElement):
+    '''CocosNode Label element. It is a wrapper of pyglet.text.Label with the benefits
+    of being of a CocosNode
+    '''
     klass = pyglet.text.Label
     
 class HTMLLabel(TextElement):
+    '''CocosNode HTMLLabel element. It is a wrapper of pyglet.text.HTMLLabel with the benefits
+    of being of a CocosNode
+    '''
     klass = pyglet.text.HTMLLabel

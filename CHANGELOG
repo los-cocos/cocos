@@ -6,6 +6,7 @@ v0.3.0 - XXX, xxx
   - Layer: splitted in 3 files inside the cocos/layer directory
   - Layer: added the PythonInterpreterLayer()
   - Layer: ColorLayer supports changing the opacity & color property in runtime
+  - Layer: added CameraLayer and MapLayer (tiles support)
   - Menu: Added MultipleMenuItem, an item that supports multiple possible
     values. Contributed by Alejandro Weil (tenuki)
   - Menu: Added EntryMenuItem, based on patch by David Eyk    
