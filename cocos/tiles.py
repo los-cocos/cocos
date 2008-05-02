@@ -486,14 +486,21 @@ class ScrollableLayer(cocos.layer.Layer):
     The scrolling is usually managed by a ScrollingManager.
     '''
     viewport_x, viewport_y = 0, 0
+
+    def __init__(self):
+        super(ScrollableLayer,self).__init__()
+        self.batch = pyglet.graphics.Batch()
+
     def set_viewport(self, x, y, w, h):
         self.viewport_x, self.viewport_y = x, y
         self.viewport_w, self.viewport_h = w, h
 
     def on_draw(self):
-        pyglet.gl.glPushMatrix()
-        pyglet.gl.glTranslatef(-self.viewport_x, -self.viewport_y, 0)
         super(ScrollableLayer, self).on_draw()
+        pyglet.gl.glPushMatrix()
+        self.transform()
+        pyglet.gl.glTranslatef(-self.viewport_x, -self.viewport_y, 0)
+        self.batch.draw()
         pyglet.gl.glPopMatrix()
 
     def get_virtual_coordinates(self, x, y):
