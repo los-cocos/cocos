@@ -1,0 +1,123 @@
+Actions, Transformations and Effects
+====================================
+
+.. contents::
+	:local:
+	
+Actions
+-------
+
+Actions are....
+
+
+Basic actions
+-------------
+
+Basic actions are the ones that modifies basic attributes like:
+
+ - position
+	- `MoveBy`
+	- `MoveTo`
+	- `JumpBy`
+	- `JumpTo`
+	- `Place`
+
+ - scale
+ 	- `ScaleBy`
+ 	- `ScaleTo`
+
+ - rotation
+ 	- `RotateBy`
+ 	- `RotateTo`
+
+ - visible
+ 	- `Show`
+ 	- `Hide`
+ 	- `Blink`
+ 	- `ToggleVisibility`
+
+ - opacity
+ 	- `FadeIn`
+ 	- `FadeOut`
+ 	- `FadeTo`
+ 	
+
+Example::
+
+	bla bla bla
+  
+
+Effects
+-------
+
+ - TiledGrid actions
+	- `ShatteredTiles`
+	- `ShakyTiles`
+	- `ShuffleTiles`
+ 	- `TurnOffTiles`
+ 	- `FadeOutTiles`
+
+ - Grid actions
+	- `Liquid`
+ 	- `Waves`
+ 	- `Shaky`
+ 	- `QuadMoveBy`
+ 	- `Flip`
+ 	- `FlipX`
+ 	- `FlipY`
+ 	- `SkewHorizontal`
+ 	- `SkewVertical`
+ 	- `MoveCornerUp`
+ 	- `MoveCornerDown`
+ 	- `CornerSwap`
+
+ - Grid3D actions
+ 	- `Lens3D`
+ 	- `FlipX3D`
+ 	- `FlipY3D`
+ 	- `Waves3D`
+
+Example::
+	
+	bla, bla, bla
+	
+
+Composition
+-----------
+
+ - `Sequence`
+ - `Spawn`
+ - `Repeat`
+ 
+Example::
+
+	bla, bla, bla
+
+	
+Modifiers
+---------
+
+ - Time modifiers
+	- `Accelerate`
+	- `AccelDeccel`
+	- `Reverse`
+	- `ReverseTime`
+
+ - Amplitude modifiers
+	- `AccelAmplitude`
+	- `AccelDeccelAmplitude`
+   
+Exmaple::
+	
+	bla, bla, bla
+	
+
+Special Actions
+---------------
+
+  - `CallFunc`
+  - `CallFuncS`
+  - `DoAction`
+  - `StopGrid`
+  - `ReuseGrid`
+  - `OrbitCamera`

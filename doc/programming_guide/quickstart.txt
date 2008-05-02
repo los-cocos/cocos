@@ -192,7 +192,7 @@ applications you'll need to work with OpenGL directly.  The canonical
 references for OpenGL are `The OpenGL Programming Guide`_ and 
 `The OpenGL Shading Language`_.
 
-Since Cocos2d uses pyglet you shall also check `pyglet Programming Guide`_ 
+Since cocos2d uses pyglet you shall also check `pyglet Programming Guide`_ 
 and `pyglet API Reference`_ 
 
 There are numerous examples of cocos2d applications in the ``samples/``
