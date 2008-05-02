@@ -1,0 +1,17 @@
+Installation
+============
+
+XXX finish this section
+
+How to use cocos2d in your project::
+
+	cp -r cocos $PROJECT_HOME
+
+or::
+
+	export PYTHONPATH=$PYTHONPATH:/path/to/cocos
+
+or::
+
+	import sys
+	sys.path.insert(0, PATH_TO_COCOS))

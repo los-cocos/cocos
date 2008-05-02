@@ -1,0 +1,25 @@
+Introduction
+============
+
+Cocos2d is a framework for building games, demos, and other
+graphical/interactive applications. It is built over `pyglet`_ .
+It provides some conventions and classes to help you structure a 
+"scene based application".
+
+A cocos2d application consists of several `Scenes`, and a workflow
+connecting the different scenes. It provides you a `Director`
+(a singleton) which handles that workflow between `Scenes`.
+Each `Scene` is composed of an arbitrary number of `Layers`;
+`Layers` take care about drawing to the screen (using the pyglet and OpenGL APIs),
+handle events and in general contain all of the game/application logic.
+
+Cocos2d simplifies the game development in these areas:
+ * Defining a workflow for your game
+ * Composing `Scenes` and `Scene` components
+ * Creating special effects & transitions in and between scenes
+ * Managing `Sprites`
+ * Basic `Menus`
+ * and more
+
+
+.. _pyglet: http://pyglet.org/

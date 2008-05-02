@@ -1,14 +1,16 @@
-========================
-Cocos Programming Guide
-========================
+=========================
+Cocos2d Programming Guide
+=========================
 :breadcrumb: Programming Guide
 
-The Cocos Programming Guide provides in-depth documentation for writing
-applications that use Cocos.  Many topics described here reference the Cocos 
+.. figure:: coco.png
+
+The Cocos2d Programming Guide provides in-depth documentation for writing
+applications that use Cocos2d.  Many topics described here reference the Cocos2d 
 API reference, provided separately.
 
-If this is your first time reading about Cocos, we suggest you start at
-`Writing a Cocos application`.
+If this is your first time reading about Cocos2d, we suggest you start at
+`Writing a Cocos2d application`.
 
 .. contents:: Sections
     :depth: 1
@@ -16,4 +18,7 @@ If this is your first time reading about Cocos, we suggest you start at
 .. contents:: Table of contents
     :depth: 3
 
+.. include:: introduction.txt
+.. include:: installation.txt
 .. include:: quickstart.txt
+.. include:: basic_concepts.txt

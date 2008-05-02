@@ -1,0 +1,103 @@
+Basic Concepts
+==============
+
+There are some basic concepts introduced in this library that you will
+need to know when developing a cocos2d application:
+
+.. contents::
+    :local:
+
+Scenes
+------
+
+An scene is a more or less an independent piece of the app workflow.
+Some people may call them "screens" or "stages". Your app can have
+many scenes, but only one of them is active at a given time.
+
+For example, you could have a game with the following scenes:
+Intro, Menu, Level 1, Cutscene 1, Level 2, Winning cutscene,
+losing cutscene, High scores screen.
+You can define every of one of these scenes more or less as separate apps;
+there is a bit of glue between them containing the logic for connecting
+scenes (the intro goes to the menu when interrupted or finishing,
+Level 1 can lead you to the cutscene 1 if finished or to the losing
+cutscene if you lose, etc.).
+
+.. image:: scenes.png
+
+A cocos2d `Scene` is composed of one or more `Layers`, all of them piled up.
+`Layers` give the scene an appearance and behavior; the normal use case is to
+just make instances of `Scene` with the layers that you want. 
+
+There is also a family of Scene classes called `Transitions`, which allow you to
+make transitions between two scenes (fade out/in, slide from a side, etc).
+
+Director
+--------
+
+
+The `Director` is the component which takes care about going back and forth
+between `Scenes`.
+
+The `Director` is a shared (singleton) object. It knows which scene is currently
+active, and it handles a stack of `Scenes` to allow things like "scene calls"
+(pausing a `Scene` and putting it on hold while other enters, and then returning
+to the original). Is the one who will actually change the `Scene`, after a
+`Layer` has asked for push, replacement or end of the current scene.
+
+Layers
+------
+
+A `Layer` has as size the whole drawable area (window or screen), and knows how to
+draw itself. It can be semi transparent (having holes and/or partial
+transparency in some/all places), allowing to see other `Layers` behind it.
+`Layers` are the ones defining appearance and behavior, so most of your programming
+time will be spent coding `Layer` subclasses that do what you need. 
+
+.. image:: layers.png
+
+The `Layer` is where you define event handlers. Events are propagated to `Layers`
+(from front to back) until some layer catches the event and accepts it.
+
+Even if any serious app will require you to define some `Layer` classes, cocos2d
+provides a library of useful predefined `Layer` (a simple menu, solid color,
+a multiplexor between other `Layers`, and a `Layer` to add animated
+sprites/particle effects)
+
+
+XXX: deprecated in 0.3
+Besides that, you can apply an "effect" to a `Layer`;
+effects transform the appearance of the whole layer.
+There are some classes to allow you to more or less easily define new effects.
+Cocos2d bring a couple of ready-to-use effects (colorization i.e. changing color
+or transparency of a layer, and repositioning i.e. moving or resizing a layers).
+Effects can be dynamically enabled/disabled/reconfigured; this allow to redefine
+the given effects to create effects as "flickering" or "shaking", and apply these
+effects to your layers.
+
+Sprites
+-------
+
+A Cocos2d' sprite is like any other computer sprite.
+It is a 2D image that can be moved, rotated, scaled, etc.
+
+These sprites supports actions. An Action is "something" that the sprite can do,
+and an sprite can do multiple actions at the same time.
+Also, 2 or more different sprites can run the same action at the same time.
+There are different kind of actions. There are 3 actions categories:
+
+ * Actions that lets you transform the sprite's properties (position, rotation, transparency...)
+ * Actions that combines other actions
+ * Actions that do something else
+
+There is another way to categorize the actions:
+
+ * Interval Actions
+ * Non-Interval Actions
+
+The _Interval_ _Actions_ are the ones that take place in a certain period of
+time and they have certain properties like:
+
+ * They can run forward in time
+ * They can run backwards in time
+ * They can be accelerated
