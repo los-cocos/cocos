@@ -26,6 +26,5 @@ if __name__ == "__main__":
 
     main_scene.add( BackgroundLayer(), z=0 )
 
-    a = ShatteredTiles( randrange=6, duration=10, grid=(8,6) )
-    main_scene.do( a )
+    main_scene.do( ShakyTiles3D( randrange=6, grid=(8,16), duration=5) )
     director.run (main_scene)

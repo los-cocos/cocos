@@ -15,7 +15,8 @@ from director import director
 import framegrabber
 
 __all__ = ['GridBase',
-          'TiledGrid', 'Grid3D',
+           'Grid3D',
+           'TiledGrid3D',
             ]
 
 class GridBase(object):
@@ -53,6 +54,12 @@ class GridBase(object):
         self.x_step = x / self.grid.x
         self.y_step = y / self.grid.y
 
+        # camera default value
+        width, height = director.get_window_size()
+        self.camera_eye = Point3( width /2, height /2, 415.0 )
+        self.camera_center = Point3( width /2, height /2, 0.0 )
+        self.camera_up = Point3( 0.0, 1.0, 0.0)
+
         self._init()
 
         
@@ -71,7 +78,16 @@ class GridBase(object):
 
         glPushAttrib(GL_COLOR_BUFFER_BIT)
 
+        # go to 3D
+        self._set_3d_projection()
+
+        # center the image
+        self._set_camera()
+
         self._blit()
+        
+        # go back to 2D
+        self._set_2d_projection()
                
         glPopAttrib()
         glDisable(self.texture.target)
@@ -132,114 +148,6 @@ class GridBase(object):
 
     def _on_resize(self):
         raise NotImplementedError('abstract')
-  
-
-class TiledGrid(GridBase):
-    '''`TiledGrid` is a 2D grid implementation. It differs from `Grid` in that
-    the tiles can be separated from the grid. 
-
-    The vertex array will be built with::
-
-        self.vertex_list.vertices: x,y (ints)   
-        self.vertex_list.tex_coords: x,y (floats)
-        self.vertex_list.colors: RGBA, with values from 0 - 255
-    '''
-    def _init( self ):
-        # calculate vertex, textures depending on screen size
-        ver_pts, tex_pts = self._calculate_vertex_points()
-
-       # Generates a grid of independent quads (think of tiles)
-        self.vertex_list = pyglet.graphics.vertex_list(self.grid.x * self.grid.y * 4,
-                            "t2f", "v2i/stream","c4B")
-        self.vertex_points = ver_pts[:]
-        self.vertex_list.vertices = ver_pts
-        self.vertex_list.tex_coords = tex_pts
-        self.vertex_list.colors = (255,255,255,255) * self.grid.x * self.grid.y * 4  
-
-    def _blit(self):
-        self.vertex_list.draw(pyglet.gl.GL_QUADS)
-
-    def _on_resize(self, xsteps, ysteps, txz, tyz):
-        tex = []
-        for x in range(self.grid.x):
-            for y in range(self.grid.y):
-                ax = txz + x*xsteps
-                ay = tyz + y*ysteps
-                bx = txz + (x+1)*xsteps
-                by = tyz + (y+1)*ysteps
-                tex += [ ax, ay, bx, ay, bx, by, ax, by]    
-        self.vertex_list.tex_coords = tex     
-        
-    def _calculate_vertex_points(self):
-        w = float(self.texture.width)
-        h = float(self.texture.height)
-
-        vertex_points = []
-        texture_points = []
-
-        for x in range(0, self.grid.x):
-            for y in range(0, self.grid.y):
-                x1 = x * self.x_step 
-                x2 = x1 + self.x_step
-                y1 = y * self.y_step
-                y2 = y1 + self.y_step
-              
-                # Building the tiles' vertex and texture points
-                vertex_points += [x1, y1, x2, y1, x2, y2, x1, y2]
-                texture_points += [x1/w, y1/h, x2/w, y1/h, x2/w, y2/h, x1/w, y2/h]
-
-        # Generates a quad for each tile, to perform tiles effect
-        return (vertex_points, texture_points)
-
-class Grid3D(GridBase):
-    '''`Grid3D` is a 3D grid implementation. Each vertex has 3 dimensions: x,y,z
-    
-    The vertex array will be built with::
-
-        self.vertex_list.vertices: x,y,z (floats)   
-        self.vertex_list.tex_coords: x,y,z (floats)
-        self.vertex_list.colors: RGBA, with values from 0 - 255
-    '''
-
-    def _init( self ):
-        # calculate vertex, textures depending on screen size
-        idx_pts, ver_pts_idx, tex_pts_idx = self._calculate_vertex_points()
-
-        # Generates a grid of joint quads
-        self.vertex_list = pyglet.graphics.vertex_list_indexed( (self.grid.x+1) * (self.grid.y+1), 
-                            idx_pts, "t2f", "v3f/stream","c4B")
-        self.vertex_points = ver_pts_idx[:]
-        self.vertex_list.vertices = ver_pts_idx
-        self.vertex_list.tex_coords = tex_pts_idx
-        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
-
-        # camera default value
-        width, height = director.get_window_size()
-        self.camera_eye = Point3( width /2, height /2, 415.0 )
-        self.camera_center = Point3( width /2, height /2, 0.0 )
-        self.camera_up = Point3( 0.0, 1.0, 0.0)
- 
-    def _blit(self ):
-        # go to 3D
-        self._set_3d_projection()
-
-        # center the image
-        self._set_camera()
-
-        # blit
-        self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
-
-        # go back to 2D
-        self._set_2d_projection()
-
-    def _on_resize(self, xsteps, ysteps, txz, tyz):
-        tex_idx = [] 
-        for x in range(self.grid.x+1):
-            for y in range(self.grid.y+1):
-                tex_idx += [ txz + x*xsteps, tyz+y*ysteps]
-        self.vertex_list.tex_coords = tex_idx
-
-        self._set_3d_projection()
 
     def _set_3d_projection(self):
         width, height = director.window.width, director.window.height
@@ -266,6 +174,42 @@ class Grid3D(GridBase):
         glLoadIdentity()
         glOrtho(0, width, 0, height, -100, 100)
         glMatrixMode(GL_MODELVIEW)
+  
+
+class Grid3D(GridBase):
+    '''`Grid3D` is a 3D grid implementation. Each vertex has 3 dimensions: x,y,z
+    
+    The vertex array will be built with::
+
+        self.vertex_list.vertices: x,y,z (floats)   
+        self.vertex_list.tex_coords: x,y,z (floats)
+        self.vertex_list.colors: RGBA, with values from 0 - 255
+    '''
+
+    def _init( self ):
+        # calculate vertex, textures depending on screen size
+        idx_pts, ver_pts_idx, tex_pts_idx = self._calculate_vertex_points()
+
+        # Generates a grid of joint quads
+        self.vertex_list = pyglet.graphics.vertex_list_indexed( (self.grid.x+1) * (self.grid.y+1), 
+                            idx_pts, "t2f", "v3f/stream","c4B")
+        self.vertex_points = ver_pts_idx[:]
+        self.vertex_list.vertices = ver_pts_idx
+        self.vertex_list.tex_coords = tex_pts_idx
+        self.vertex_list.colors = (255,255,255,255) * (self.grid.x+1) * (self.grid.y+1)
+ 
+    def _blit(self ):
+        self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
+
+    def _on_resize(self, xsteps, ysteps, txz, tyz):
+        tex_idx = [] 
+        for x in range(self.grid.x+1):
+            for y in range(self.grid.y+1):
+                tex_idx += [ txz + x*xsteps, tyz+y*ysteps]
+        self.vertex_list.tex_coords = tex_idx
+
+        self._set_3d_projection()
+
 
     def _calculate_vertex_points(self):        
         w = float(self.texture.width)
@@ -317,3 +261,64 @@ class Grid3D(GridBase):
                     texture_points_idx[ tex1[i] + 1 ] = tex2[i].y / h
  
         return ( index_points, vertex_points_idx, texture_points_idx )
+
+class TiledGrid3D(GridBase):
+    '''`TiledGrid` is a 2D grid implementation. It differs from `Grid` in that
+    the tiles can be separated from the grid. 
+
+    The vertex array will be built with::
+
+        self.vertex_list.vertices: x,y (ints)   
+        self.vertex_list.tex_coords: x,y (floats)
+        self.vertex_list.colors: RGBA, with values from 0 - 255
+    '''
+    def _init( self ):
+        # calculate vertex, textures depending on screen size
+        ver_pts, tex_pts = self._calculate_vertex_points()
+
+       # Generates a grid of independent quads (think of tiles)
+        self.vertex_list = pyglet.graphics.vertex_list(self.grid.x * self.grid.y * 4,
+                            "t2f", "v3f/stream","c4B")
+        self.vertex_points = ver_pts[:]
+        self.vertex_list.vertices = ver_pts
+        self.vertex_list.tex_coords = tex_pts
+        self.vertex_list.colors = (255,255,255,255) * self.grid.x * self.grid.y * 4  
+
+    def _blit(self ):
+        self.vertex_list.draw(pyglet.gl.GL_QUADS)
+
+    def _on_resize(self, xsteps, ysteps, txz, tyz):
+        tex = [] 
+
+        for x in range(self.grid.x):
+            for y in range(self.grid.y):
+                ax = txz + x*xsteps
+                ay = tyz + y*ysteps
+                bx = txz + (x+1)*xsteps
+                by = tyz + (y+1)*ysteps
+                tex += [ ax, ay, bx, ay, bx, by, ax, by]    
+        self.vertex_list.tex_coords = tex     
+
+        self._set_3d_projection()
+
+        
+    def _calculate_vertex_points(self):
+        w = float(self.texture.width)
+        h = float(self.texture.height)
+
+        vertex_points = []
+        texture_points = []
+
+        for x in range(0, self.grid.x):
+            for y in range(0, self.grid.y):
+                x1 = x * self.x_step 
+                x2 = x1 + self.x_step
+                y1 = y * self.y_step
+                y2 = y1 + self.y_step
+              
+                # Building the tiles' vertex and texture points
+                vertex_points += [x1, y1, 0, x2, y1, 0, x2, y2, 0, x1, y2, 0 ]
+                texture_points += [x1/w, y1/h, x2/w, y1/h, x2/w, y2/h, x1/w, y2/h]
+
+        # Generates a quad for each tile, to perform tiles effect
+        return (vertex_points, texture_points)

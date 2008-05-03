@@ -12,12 +12,14 @@ from basegrid_actions import *
 
 rr = random.randrange
 
-__all__ = [
-           'ShakyTiles',
-           'ShatteredTiles',
+__all__ = [ 'FadeOutTiles',             # actions that don't modify the z coordinate
            'ShuffleTiles',
-           'FadeOutTiles',
            'TurnOffTiles',
+
+           'ShakyTiles3D',              # actions that modify the z coordinate
+           'ShatteredTiles3D',
+           'WavesTiles3D',
+           'JumpTiles3D',
            ]
 
 # Don't export this class
@@ -31,12 +33,12 @@ class Tile(object):
     def __repr__(self):
         return "(start_pos: %s  pos: %s   delta:%s)" % (self.start_position, self.position, self.delta)
 
-class ShakyTiles( TiledGridAction ):
-    '''ShakyTiles simulates a shaky floor composed of tiles
+class ShakyTiles3D( TiledGrid3DAction ):
+    '''Simulates a shaky floor composed of tiles
 
     Example::
     
-       scene.do( ShakyTiles( randrange=6, grid=(4,4), duration=10) )
+       scene.do( ShakyTiles3D( randrange=6, grid=(4,4), duration=10) )
     '''
 
     def init( self, randrange=6, *args, **kw ):
@@ -45,29 +47,31 @@ class ShakyTiles( TiledGridAction ):
             `randrange` : int
                 Number that will be used in random.randrange( -randrange, randrange) to do the effect
         '''
-        super(ShakyTiles,self).init(*args,**kw)
+        super(ShakyTiles3D,self).init(*args,**kw)
         self.randrange = randrange
 
     def update( self, t ):
         for i in range(0, self.grid.x):
             for j in range(0, self.grid.y):
                     coords = self.get_original_tile(i,j)   
-                    for k in range(0,len(coords),2):
+                    for k in range(0,len(coords),3):
                         x = rr(-self.randrange, self.randrange)
                         y = rr(-self.randrange, self.randrange)
+                        z = rr(-self.randrange, self.randrange)
                         coords[k] += x
                         coords[k+1] += y
+                        coords[k+2] += z
                     self.set_tile(i,j,coords)
                 
 
-class ShatteredTiles( TiledGridAction ):
+class ShatteredTiles3D( TiledGrid3DAction ):
     '''ShatterTiles shatters the tiles according to a random value.
     It is similar to shakes (see `ShakyTiles`) the tiles just one frame, and then continue with
     that state for duration time.
     
     Example::
     
-        scene.do( ShatteredTiles( randrange=12 ) )
+        scene.do( ShatteredTiles3D( randrange=12 ) )
     '''
 
     def init( self, randrange=6, *args, **kw ):
@@ -76,7 +80,7 @@ class ShatteredTiles( TiledGridAction ):
             `randrange` : int
                 Number that will be used in random.randrange( -randrange, randrange) to do the effect
         '''
-        super(ShatteredTiles,self).init(*args,**kw)
+        super(ShatteredTiles3D,self).init(*args,**kw)
         self.randrange = randrange
         self._once = False
 
@@ -85,16 +89,18 @@ class ShatteredTiles( TiledGridAction ):
             for i in range(0, self.grid.x):
                 for j in range(0, self.grid.y):
                     coords = self.get_original_tile(i,j)   
-                    for k in range(0,len(coords),2):
+                    for k in range(0,len(coords),3):
                         x = rr(-self.randrange, self.randrange)
                         y = rr(-self.randrange, self.randrange)
+                        z = rr(-self.randrange, self.randrange)
                         coords[k] += x
                         coords[k+1] += y
+                        coords[k+2] += z
                     self.set_tile(i,j,coords)
             self._once = True
                 
 
-class ShuffleTiles( TiledGridAction ):
+class ShuffleTiles( TiledGrid3DAction ):
     '''ShuffleTiles moves the tiles randomly across the screen.
     To put them back use: Reverse( ShuffleTiles() ) with the same seed parameter.
 
@@ -136,7 +142,7 @@ class ShuffleTiles( TiledGridAction ):
         t = self.tiles[(i,j)]
         coords = self.get_original_tile(i,j)
 
-        for k in range(0,len(coords),2):                      
+        for k in range(0,len(coords),3):                      
             coords[k] += int( t.position.x * self.target.grid.x_step )
             coords[k+1] += int( t.position.y * self.target.grid.y_step )
         self.set_tile(i,j,coords)
@@ -154,7 +160,7 @@ class ShuffleTiles( TiledGridAction ):
         return Point2(i,j)-Point2(x,y)
 
 
-class FadeOutTiles( TiledGridAction ):
+class FadeOutTiles( TiledGrid3DAction ):
     '''FadeOutTiles fades out each tile following a diagonal path until all the tiles are faded out.
     
     Example::
@@ -179,8 +185,8 @@ class FadeOutTiles( TiledGridAction ):
             for j in range(self.grid.y):
                 if i+j <= x+y+8:
                     for k in range(0,4):
-                        idx =     (i * 4 * self.grid.y + j * 4 + k) * 2
-                        idx_dst = (i * 4 * self.grid.y + j * 4 + 2) * 2   # k==2 is coord 'c'
+                        idx =     (i * 4 * self.grid.y + j * 4 + k) * 3
+                        idx_dst = (i * 4 * self.grid.y + j * 4 + 2) * 3   # k==2 is coord 'c'
 
                         vx = self.target.grid.vertex_list.vertices[idx]
                         vy = self.target.grid.vertex_list.vertices[idx+1]
@@ -203,7 +209,7 @@ class FadeOutTiles( TiledGridAction ):
     def __reversed__(self):
         raise GridException("FadeOutTiles has no reverse")
     
-class TurnOffTiles( TiledGridAction ):
+class TurnOffTiles( TiledGrid3DAction ):
     '''TurnOffTiles turns off each in random order
     
     Example::
@@ -243,4 +249,86 @@ class TurnOffTiles( TiledGridAction ):
 
     def turn_off_tile(self,t):
         x,y = self.get_tile_pos(t)
-        self.set_tile(x,y,[0,0,0,0,0,0,0,0] )
+        self.set_tile(x,y,[0,0,0,0,0,0,0,0,0,0,0,0] )
+
+class WavesTiles3D( TiledGrid3DAction ):
+    '''Simulates waves using the math.sin() function in the z-axis of each tile
+
+       scene.do( WavesTiles3D( waves=5, amplitude=120, grid=(16,16), duration=10) )
+    '''
+
+    def init( self, waves=4, amplitude=120, *args, **kw ):
+        '''
+        :Parameters:
+            `waves` : int
+                Number of waves (2 * pi) that the action will perform. Default is 4
+            `amplitude` : int
+                Wave amplitude (height). Default is 20
+        '''
+        super(WavesTiles3D, self).init( *args, **kw )
+
+        #: Total number of waves to perform
+        self.waves=waves
+  
+        #: amplitude rate. Default: 1.0
+        #: This value is modified by other actions like `AccelAmplitude`.
+        self.amplitude_rate = 1.0
+        self.amplitude=amplitude
+
+    def update( self, t ):
+        for i in range(0, self.grid.x):
+            for j in range(0, self.grid.y):
+                coords = self.get_original_tile(i,j)
+
+                x = coords[0]
+                y = coords[1]
+
+                z = (math.sin(t*math.pi*self.waves*2 + (y+x) * .01) * self.amplitude * self.amplitude_rate )
+
+                for k in range( 0,len(coords),3 ):
+                    coords[k+2] += z
+
+                self.set_tile( i,j, coords )
+
+
+class JumpTiles3D( TiledGrid3DAction ):
+    '''Odd tiles will perform a jump in the z-axis using the sine function,
+    while the par tiles will perform a jump using sine+pi function
+
+       scene.do( JumpTiles3D( jumps=5, amplitude=40, grid=(16,16), duration=10) )
+    '''
+
+    def init( self, jumps=4, amplitude=20, *args, **kw ):
+        '''
+        :Parameters:
+            `jumps` : int
+                Number of jumps(2 * pi) that the action will perform. Default is 4
+            `amplitude` : int
+                Wave amplitude (height). Default is 20
+        '''
+        super(JumpTiles3D, self).init( *args, **kw )
+
+        #: Total number of jumps to perform
+        self.jumps=jumps
+  
+        #: amplitude rate. Default: 1.0
+        #: This value is modified by other actions like `AccelAmplitude`.
+        self.amplitude_rate = 1.0
+        self.amplitude=amplitude
+
+    def update( self, t ):
+
+        sinz = (math.sin(t*math.pi*self.jumps*2 + (0) * .01) * self.amplitude * self.amplitude_rate )
+        sinz2= (math.sin(math.pi+t*math.pi*self.jumps*2 + (0) * .01) * self.amplitude * self.amplitude_rate )
+
+        for i in range(0, self.grid.x):
+            for j in range(0, self.grid.y):
+                coords = self.get_original_tile(i,j)
+
+                for k in range( 0,len(coords),3 ):
+                    if (i+j) % 2 == 0:
+                        coords[k+2] += sinz
+                    else:
+                        coords[k+2] += sinz2
+
+                self.set_tile( i,j, coords )

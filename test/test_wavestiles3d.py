@@ -5,11 +5,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
 
-import pyglet
 import cocos
 from cocos.director import director
 from cocos.actions import *
 from cocos.layer import *
+import pyglet
 
 class BackgroundLayer( cocos.layer.Layer ):
     def __init__(self):
@@ -25,5 +25,5 @@ if __name__ == "__main__":
 
     main_scene.add( BackgroundLayer(), z=0 )
 
-    main_scene.do( Shaky( randrange=6, grid=(16,8), duration=5) )
+    main_scene.do( WavesTiles3D( waves=8, amplitude=70, grid=(16,16), duration=10) )
     director.run (main_scene)

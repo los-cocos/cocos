@@ -29,7 +29,7 @@ __all__ = [
            ]
 
 class Waves3D( Grid3DAction ):
-    '''Waves3D simulates waves using the math.sin() function both in the z-axis
+    '''Simulates waves using the math.sin() function in the z-axis
 
        scene.do( Waves3D( waves=5, amplitude=40, grid=(16,16), duration=10) )
     '''

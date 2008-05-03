@@ -34,10 +34,11 @@ v0.3.0 - XXX, xxx
   - Added compositions and actions to scenes and layers
   - Added setup.py and setup.cfg contributed by David Eyk
   - Actions: Added Mesh effects:
-     Liquid, Sin Shaky, ShakyTiles, ShuffleTiles, QuadMoveBy
+     Liquid, Sin Shaky3D, ShakyTiles3D, ShuffleTiles, QuadMoveBy
      MoveCornerUp, MoveCornerDown, SkewVertical, SkewHorizontal
-     FlipX, FlipY, Flip, CornerSwap, ShatteredTiles,
+     FlipX, FlipY, Flip, CornerSwap, ShatteredTiles3D,
      FadeOutTiles, Waves3D, FlipX3D, FlipY3D, Lens3D, CameraOrbit
+     JumpTiles3D, WavesTiles3D
    - Actions: Added Waves decorators: AccelAmplitude, DeccelAmplitude,
        AccelDeccelAmplitude.
     

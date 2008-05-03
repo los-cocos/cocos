@@ -10,21 +10,21 @@ Grid Actions
 There are 2 kinds of grids:
 
   - `Grid3D` : A 3D grid with x,y and z coordinates
-  - `TiledGrid` : A 2D grid with x,y coordinates, composed
+  - `TiledGrid3D` : A 3D grid with x,y and z coordinates, composed
      with independent tiles
 
 
 Hence, there are 2 kinds of grid actions:
 
   - `Grid3DAction`
-  - `TiledGridAction`
+  - `TiledGrid3DAction`
 
 The `Grid3DAction` can modify any of vertex of the grid in any direction (x,y or z).
-The `TiledGridAction` can modify any tile of the grid without modifying the adjacent tiles.
+The `TiledGrid3DAction` can modify any tile of the grid without modifying the adjacent tiles.
 
 To understand visually the difference between these 2 kinds of grids, try these examples:
 
-  - run `test/test_shakytiles_8_x_16.py` to see a `TiledGridAction` example 
+  - run `test/test_shakytiles3d.py` to see a `TiledGrid3DAction` example 
   - run `test/test_shaky3d.py` to see the `Grid3DAction` counterpart
 '''
 
@@ -32,15 +32,15 @@ __docformat__ = 'restructuredtext'
 
 from pyglet.gl import *
 
-from cocos.grid import TiledGrid, Grid3D
+from cocos.grid import Grid3D, TiledGrid3D
 from cocos.director import director
 from cocos.euclid import *
 from base_actions import *
 
 __all__ = [ 'GridException',            # Grid Exceptions
             'GridBaseAction',               # Base classes
-            'TiledGridAction',
             'Grid3DAction',
+            'TiledGrid3DAction',
             
             'AccelAmplitude',           # Amplitude modifiers
             'DeccelAmplitude',
@@ -163,12 +163,12 @@ class Grid3DAction( GridBaseAction ):
         self.target.grid.vertex_list.vertices[idx+2] = int(v[2])
 
 
-class TiledGridAction( GridBaseAction ):
+class TiledGrid3DAction( GridBaseAction ):
     '''Is an action that does transformations
     to a grid composed of tiles. You can transform each tile individually'''
 
     def get_grid(self):
-        return TiledGrid()
+        return TiledGrid3D()
     
     def set_vertex(self, i,j ):
         raise GridException("Use set_tile() instead")
@@ -184,28 +184,29 @@ class TiledGridAction( GridBaseAction ):
 
         :Parameters:
             `x` : int 
-               x-vertex
-            `y` : int
-               y-vertex
-            `coords` : [ int, int, int, int, int, int, int, int ]
-                The 4 coordinates
+                x coodinate of the tile
+            `y` : int 
+                y coordinate of the tile
+            `coords` : [ float, float, float, float, float, float, float, float, float, float, float, float ]
+                The 4 coordinates in the format (x0, y0, z0, x1, y1, z1,...)
         '''
-        idx = (self.grid.y * x + y) * 4 * 2        
-        self.target.grid.vertex_list.vertices[idx:idx+8] = coords
+        idx = (self.grid.y * x + y) * 4 * 3
+        self.target.grid.vertex_list.vertices[idx:idx+12] = coords
     
     def get_original_tile(self, x, y):
-        '''Get the 4-original tile coordinates
+        '''Get the 4-original tile coordinates.
 
         :Parameters:
-            `x` : int 
-               x-vertex
+            `x` : int
+                x coordinate of the tile
             `y` : int
-               y-vertex
+                y coordinate of the tile
 
-        :rtype: [ int, int, int, int, int, int, int, int ]
+        :rtype: [ float, float, float, float, float, float, float, float, float, float, float, float ]
+        :returns: The coordinates with the following order: x0, y0, z0, x1, y1, z1,...
         '''
-        idx = (self.grid.y * x + y) * 4 * 2        
-        return self.target.grid.vertex_points[idx:idx+8]
+        idx = (self.grid.y * x + y) * 4 * 3
+        return self.target.grid.vertex_points[idx:idx+12]
         
 
 class AccelDeccelAmplitude( IntervalAction ):

@@ -197,6 +197,7 @@ class Director(event.EventDispatcher):
         
         # opengl settings
         self.set_alpha_blending()
+        self.set_z_coordinate()
 
         # init fps
         self.fps_display = clock.ClockDisplay()
@@ -370,14 +371,26 @@ class Director(event.EventDispatcher):
     def set_alpha_blending( self, on=True ):
         """
         Enables/Disables alpha blending in OpenGL 
-        using the GL_ONE_MINUS_SRC_ALPHA algorithm."""
+        using the GL_ONE_MINUS_SRC_ALPHA algorithm.
+        On by default.
+        """
         if on:
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         else:
             glDisable(GL_BLEND)
-        
-        
+
+    def set_z_coordinate( sefl, on=True ):
+        '''Enables z test. On by default
+        '''
+        if on:
+            glClearDepth(1.0)
+            glEnable(GL_DEPTH_TEST)
+            glDepthFunc(GL_LEQUAL)
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+        else:
+            glDisable( GL_DEPTH_TEST )
+
 
 director = Director()
 """The singleton; check `cocos.director.Director` for details on usage.
