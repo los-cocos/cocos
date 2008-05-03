@@ -225,7 +225,6 @@ class Director(event.EventDispatcher):
         
         # opengl settings
         self.set_alpha_blending()
-        self.set_z_coordinate()
 
         # init fps
         self.fps_display = clock.ClockDisplay()
@@ -408,7 +407,7 @@ class Director(event.EventDispatcher):
         else:
             glDisable(GL_BLEND)
 
-    def set_z_coordinate( sefl, on=True ):
+    def set_depth_test( sefl, on=True ):
         '''Enables z test. On by default
         '''
         if on:

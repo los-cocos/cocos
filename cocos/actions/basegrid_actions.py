@@ -52,8 +52,8 @@ The `TiledGrid3DAction` can modify any tile of the grid without modifying the ad
 
 To understand visually the difference between these 2 kinds of grids, try these examples:
 
-  - run `test/test_shakytiles3d.py` to see a `TiledGrid3DAction` example 
-  - run `test/test_shaky3d.py` to see the `Grid3DAction` counterpart
+  - run ``test/test_shakytiles3d.py`` to see a `TiledGrid3DAction` example 
+  - run ``test/test_shaky3d.py`` to see the `Grid3DAction` counterpart
 '''
 
 __docformat__ = 'restructuredtext'

@@ -82,8 +82,8 @@ class TransitionScene(scene.Scene):
         
     def start(self):
         '''Adds the incoming scene with z=1 and the outgoing scene with z=0'''
-        self.add( self.in_scene, z=1, name="in" )
-        self.add( self.out_scene, z=0, name="out" )
+        self.add( self.in_scene, z=1)
+        self.add( self.out_scene, z=0)
 
     def step(self, dt):
         self.dt += dt
@@ -431,8 +431,8 @@ class CurtainTransition(TransitionScene):
 
     def start(self):
         # don't call super. overriding order
-        self.add( self.in_scene, z=0, name="in" )
-        self.add( self.out_scene, z=1, name="out" )
+        self.add( self.in_scene, z=0)
+        self.add( self.out_scene, z=1)
 
 class TurnOffTilesTransition(TransitionScene):
     '''Turn off the tiles of the outgoing scene in random order
@@ -450,8 +450,8 @@ class TurnOffTilesTransition(TransitionScene):
 
     def start(self):
         # don't call super. overriding order
-        self.add( self.in_scene, z=0, name="in" )
-        self.add( self.out_scene, z=1, name="out" )
+        self.add( self.in_scene, z=0)
+        self.add( self.out_scene, z=1)
 
 
 class FadeTransition(TransitionScene):

@@ -41,8 +41,8 @@ version = __version__
 import actions
 import director
 import layer
-import sprite
 import menu
+import sprite
 import path
 import scene
 import grid

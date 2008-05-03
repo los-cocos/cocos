@@ -30,7 +30,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Implementation of `TiledGridAction` actions
+'''Implementation of TiledGrid3DAction actions
 '''
 __docformat__ = 'restructuredtext'
 
@@ -94,7 +94,7 @@ class ShakyTiles3D( TiledGrid3DAction ):
 
 class ShatteredTiles3D( TiledGrid3DAction ):
     '''ShatterTiles shatters the tiles according to a random value.
-    It is similar to shakes (see `ShakyTiles`) the tiles just one frame, and then continue with
+    It is similar to shakes (see `ShakyTiles3D`) the tiles just one frame, and then continue with
     that state for duration time.
     
     Example::

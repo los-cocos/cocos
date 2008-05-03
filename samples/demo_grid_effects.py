@@ -210,6 +210,7 @@ class ScoreMenu(Menu):
 
 if __name__ == "__main__":
     director.init( resizable=True)
+    director.set_depth_test()
 
     firelayer = FireManager(director.get_window_size()[0], 250)
     spritelayer = SpriteLayer()

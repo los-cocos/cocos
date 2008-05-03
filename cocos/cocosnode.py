@@ -115,7 +115,7 @@ class CocosNode(object):
         self.visible = True
 
         #: the grid object for the grid actions.
-        #: This can be a `Grid` a `Grid3D` or a `TiledGrid` object depending
+        #: This can be a `Grid3D` or a `TiledGrid3D` object depending
         #: on the action.
         self.grid = None
         

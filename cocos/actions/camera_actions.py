@@ -83,7 +83,7 @@ class Camera3DAction( IntervalAction ):
 
 class OrbitCamera( Camera3DAction ):
     '''Orbits the camera around the center of the screen using spherical coordinates
-    It doesn't transform a `Grid`, but it needs that a `Grid` is active to work, otherwise
+    It doesn't transform a grid, but it needs that a grid is active to work, otherwise
     it will raise an exception.
     '''
     def init( self, radius=1, delta_radius=0, angle_z=0, delta_z=0, angle_x=0, delta_x=0, *args, **kw ):

@@ -291,12 +291,12 @@ class Grid3D(GridBase):
         return ( index_points, vertex_points_idx, texture_points_idx )
 
 class TiledGrid3D(GridBase):
-    '''`TiledGrid` is a 2D grid implementation. It differs from `Grid` in that
+    '''`TiledGrid3D` is a 3D grid implementation. It differs from `Grid3D` in that
     the tiles can be separated from the grid. 
 
     The vertex array will be built with::
 
-        self.vertex_list.vertices: x,y (ints)   
+        self.vertex_list.vertices: x,y,z (floats)   
         self.vertex_list.tex_coords: x,y (floats)
         self.vertex_list.colors: RGBA, with values from 0 - 255
     '''
