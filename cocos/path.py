@@ -1,7 +1,3 @@
-#
-# Cocos
-# http://code.google.com/p/los-cocos
-#
 class Path:
     def at(self, t):
         pass

@@ -1,7 +1,3 @@
-#
-# Cocos
-# http://code.google.com/p/los-cocos
-#
 class Rect(object):
     '''Define a rectangular area.
 

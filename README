@@ -1,12 +1,12 @@
-Cocos: A framework for building games
-http://code.google.com/p/los-cocos/
+cocos2d: A framework for building games
+http://cocos2d.org
 
 version: 0.3.0
 This version works OK with pyglet 1.1b1 (or newer)
 If you want to use pyglet 1.0, use cocos v0.1.x instead.
 
 
-LEARNING COCOS:
+LEARNING COCOS2D:
  * read the programming guide:
    * http://code.google.com/p/los-cocos/wiki/ProgrammingGuide
    

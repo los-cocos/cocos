@@ -1,4 +1,5 @@
 v0.3.0 - XXX, xxx
+  - Renamted to project to cocos2d
   - Transitions: Added CurtainTransition, FlipX3DTransition, FlipY3DTransition,
      FlipAngular3DTransition, TurnOffTilesTransition, RotoZoomTransition, JumpZoomTransition
      EnvelopeTransition

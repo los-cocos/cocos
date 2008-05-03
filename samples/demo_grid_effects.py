@@ -234,6 +234,8 @@ if __name__ == "__main__":
     shatter = ShatteredTiles3D( randrange=16, grid=(16,12), duration=4 )
     shuffle = ShuffleTiles( grid=(16,12), duration=1 )
     orbit = OrbitCamera( radius=1, delta_radius=2, angle_x=0, delta_x=-90, angle_z=0, delta_z=180, duration=4 )
+    jumptiles = JumpTiles3D( jumps=2, duration=4, amplitude=80, grid=(8,6) )
+    wavestiles = WavesTiles3D( waves=2, amplitude=60, duration=4, grid=(8,6) )
     turnoff = TurnOffTiles( grid=(16,12), duration=2 )
 
 #    firelayer.do(
@@ -257,6 +259,8 @@ if __name__ == "__main__":
               lens + ReuseGrid() + ( (orbit+Reverse(orbit)) | waves3d) + Delay(1) +
               corners + Delay(2) + Reverse(corners) +
               waves + Delay(2) + ReuseGrid() + shaky +
+              jumptiles + Delay(1) +
+              wavestiles + Delay(1) +
               cornerup + Delay(1) +
               Reverse(cornerdown) + Delay(1) +
               fadeout + Delay(2) +              
