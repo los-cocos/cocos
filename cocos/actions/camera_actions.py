@@ -35,8 +35,8 @@ class Camera3DAction( IntervalAction ):
 
     def start( self ):        
         super(Camera3DAction, self).start()
-        if not (self.target.grid and self.target.grid.active and isinstance(self.target.grid,Grid3D)):
-            raise CameraException("An active Grid3D is needed to run a Camera3DAction")
+        if not (self.target.grid and self.target.grid.active):
+            raise CameraException("An active Grid is needed to run a Camera3DAction")
 
         self.camera_eye_orig =  self.target.grid.camera_eye
         self.camera_center_orig = self.target.grid.camera_center

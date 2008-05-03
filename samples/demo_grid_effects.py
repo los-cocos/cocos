@@ -263,6 +263,8 @@ if __name__ == "__main__":
               StopGrid()
               )
 
+    scene.do( Delay(5) +  OrbitCamera( delta_z=-360*2, duration=10*4 ) )
+
     firelayer.do( Delay(4) + DoAction( Repeat( RotateBy(360, 10) ) ) )
 
     director.run( scene )
