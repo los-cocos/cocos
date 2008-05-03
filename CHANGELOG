@@ -39,7 +39,7 @@ v0.3.0 - XXX, xxx
      MoveCornerUp, MoveCornerDown, SkewVertical, SkewHorizontal
      FlipX, FlipY, Flip, CornerSwap, ShatteredTiles3D,
      FadeOutTiles, Waves3D, FlipX3D, FlipY3D, Lens3D, CameraOrbit
-     JumpTiles3D, WavesTiles3D
+     JumpTiles3D, WavesTiles3D, Twirl
    - Actions: Added Waves decorators: AccelAmplitude, DeccelAmplitude,
        AccelDeccelAmplitude.
     

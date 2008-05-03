@@ -53,6 +53,7 @@ __all__ = [
 
            'Liquid',    # 3d actions that don't modify the z-coordinate
            'Waves',
+           'Twirl',
 
            ]
 
@@ -270,6 +271,8 @@ class Shaky3D( Grid3DAction):
                 Number that will be used in random.randrange( -randrange, randrange) to do the effect
         '''
         super(Shaky3D,self).init(*args,**kw)
+
+        #: random range of the shaky effect
         self.randrange = randrange
 
     def update( self, t ):
@@ -297,8 +300,13 @@ class Liquid( Grid3DAction ):
                 Wave amplitude (height). Default is 20
         '''
         super(Liquid, self).init( *args, **kw )
+
+        #: total number of waves
         self.waves=waves
+
+        #: amplitude of the waves
         self.amplitude=amplitude
+
         #: amplitude rate. Default: 1.0
         #: This value is modified by other actions like `AccelAmplitude`.
         self.amplitude_rate = 1.0
@@ -336,10 +344,19 @@ class Waves( Grid3DAction ):
                 whether or not in will perform vertical waves. Default is True
         '''
         super(Waves, self).init( *args, **kw )
+
+        #: whether or not it will do horizontal waves
         self.horizontal_sin = horizontal_sin
+
+        #: whether or not it will do vertical waves
         self.vertical_sin = vertical_sin
+
+        #: total number of wave
         self.waves=waves
+
+        #: amplitude of the waves
         self.amplitude=amplitude
+
         #: amplitude rate. Default: 1.0
         #: This value is modified by other actions like `AccelAmplitude`.
         self.amplitude_rate = 1.0
@@ -359,3 +376,61 @@ class Waves( Grid3DAction ):
                     ypos = y
 
                 self.set_vertex( i,j, (xpos,ypos,z) )
+
+class Twirl( Grid3DAction ):
+    '''Simulates a twirl effect modifying the x and y coordinates.
+        The z coordinate is not modified.
+
+       scene.do( Twirl( center=(320,240), twirls=5, amplitude=1, grid=(16,12), duration=10) )
+    '''
+    def init( self, center=(-1,-1), twirls=4, amplitude=1, *args, **kw ):
+        '''
+        :Parameters:
+            `twirls` : int
+                Number of twirls (2 * pi) that the action will perform. Default is 4
+            `amplitude` : flaot
+                Twirl amplitude. Default is 1
+            `center` : (int,int)
+                Center of the twirl in x,y coordinates. Default: center of the screen
+        '''
+        super(Twirl, self).init( *args, **kw )
+
+        x,y = director.get_window_size()
+        if center==(-1,-1):
+            center=(x//2, y//2)
+            
+        #: position of the center of the Twril. Type: (int,int)
+        #: This value can be modified by other actions, like `JumpBy` to simulate a jumping Twirl
+        self.position = Point2( center[0]+1, center[1]+1 )  
+
+        #: total number of twirls 
+        self.twirls = twirls
+
+        #: amplitude of the twirls
+        self.amplitude=amplitude
+
+        #: amplitude rate. Default: 1.0
+        #: This value is modified by other actions like `AccelAmplitude`.
+        self.amplitude_rate = 1.0
+
+    def update( self, t ):
+            
+        cx = self.position.x
+        cy = self.position.x
+
+        for i in range(0, self.grid.x+1):
+            for j in range(0, self.grid.y+1):
+                x,y,z = self.get_original_vertex(i,j)
+
+                r = math.sqrt( (i-self.grid.x/2.0) ** 2 + (j-self.grid.y/2.0) ** 2 )
+
+                amplitude = 0.1 * self.amplitude * self.amplitude_rate
+
+                a = r * math.cos( math.pi/2.0 + t * math.pi * self.twirls * 2 ) * amplitude
+
+                dx = math.sin(a) * (y-cy) + math.cos(a) * (x-cx)
+                dy = math.cos(a) * (y-cy) - math.sin(a) * (x-cx)
+
+                self.set_vertex( i,j, (cx+dx, cy+dy,z) )
+
+

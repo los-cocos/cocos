@@ -217,6 +217,8 @@ if __name__ == "__main__":
     
     scene =Scene( firelayer, spritelayer, menulayer )
 
+    twirl_normal = Twirl( center=(320,240), grid=(16,12), duration=15, twirls=6, amplitude=6 )
+    twirl = AccelDeccelAmplitude( twirl_normal, rate=4.0 )
     lens = Lens3D( radius=240, center=(320,240), grid=(32,24), duration=5)
     waves3d = AccelDeccelAmplitude( Waves3D( waves=18, amplitude=80, grid=(32,24), duration=15), rate=4.0 )
     flipx =  FlipX3D(duration=1)
@@ -243,8 +245,7 @@ if __name__ == "__main__":
 #    menulayer.do(
     scene.do(
               Delay(3) +
-              quadmove + Delay(1) +
-              Reverse(quadmove) +
+              twirl +
               liquid + Delay(2) +
               shakyt + Delay(2) +
               ReuseGrid() +
@@ -264,10 +265,12 @@ if __name__ == "__main__":
               cornerup + Delay(1) +
               Reverse(cornerdown) + Delay(1) +
               fadeout + Delay(2) +              
+              quadmove + Delay(1) +
+              Reverse(quadmove) +
               StopGrid()
               )
 
-    scene.do( Delay(5) +  OrbitCamera( delta_z=-360*2, duration=10*4 ) )
+    scene.do( Delay(10) +  OrbitCamera( delta_z=-360*2, duration=10*4 ) )
 
     firelayer.do( Delay(4) + DoAction( Repeat( RotateBy(360, 10) ) ) )
 
