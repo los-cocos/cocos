@@ -97,21 +97,20 @@ class ActionSprite( BatchableNode, pyglet.sprite.Sprite):
         if isinstance(image, str):
             image = pyglet.resource.image(image)
         
-        if anchor is None:
-            if isinstance(image, pyglet.image.Animation):
-                xa = image.frames[0].image.width / 2
-                ya = image.frames[0].image.height / 2
-                for img in image.frames:
-                    img.image.anchor_x = xa
-                    img.image.anchor_y = ya
-            else:
-                image.anchor_x = image.width / 2
-                image.anchor_y = image.height / 2
-        else:
-            image.anchor = anchor
-            
+        
         pyglet.sprite.Sprite.__init__(self, image)
         cocosnode.CocosNode.__init__(self)
+        
+        if anchor is None:
+            if isinstance(self.image, pyglet.image.Animation):
+                anchor = (image.frames[0].image.width / 2, 
+                    image.frames[0].image.height / 2)
+            else:
+                anchor = image.width / 2, image.height / 2
+        
+        
+        self.anchor = anchor
+            
 
         #: group.
         #: XXX what is this?
@@ -136,7 +135,42 @@ class ActionSprite( BatchableNode, pyglet.sprite.Sprite):
         #: color of the sprite in R,G,B format where 0,0,0 is black and 255,255,255 is white
         self.color = color
         
+        
+    def _set_anchor_x(self, value):
+        if isinstance(self.image, pyglet.image.Animation):
+            for img in self.image.frames:
+                img.image.anchor_x = value
+            self._texture.anchor_x = value
+        else:
+            self.image.anchor_x = value
+        self._update_position()
 
+    def _get_anchor_x(self, value):
+        if isinstance(self.image, pyglet.image.Animation):
+            return self.image.frames[0].image.anchor_x
+        else:
+            return self.image.anchor_x
+    transform_anchor_x = property(_get_anchor_x, _set_anchor_x)
+    
+    def _set_anchor_y(self, value):
+        if isinstance(self.image, pyglet.image.Animation):
+            for img in self.image.frames:
+                img.image.anchor_y = value
+            self._texture.anchor_y = value
+        else:
+            self.image.anchor_y = value
+        self._update_position()
+        
+    def _get_anchor_y(self, value):
+        if isinstance(self._image, pyglet.image.Animation):
+            return self._image.frames[0].image.anchor_y
+        else:
+            return self._image.anchor_y
+    transform_anchor_y = property(_get_anchor_y, _set_anchor_y)
+    
+            
+
+    
     def on_draw(self):
         self._group.set_state()
         if self._vertex_list is not None:
