@@ -209,7 +209,7 @@ class ScoreMenu(Menu):
 
 
 if __name__ == "__main__":
-    director.init( resizable=True)
+    director.init( resizable=True, width=800, height=600)
     director.set_depth_test()
 
     firelayer = FireManager(director.get_window_size()[0], 250)
@@ -237,8 +237,8 @@ if __name__ == "__main__":
     shatter = ShatteredTiles3D( randrange=16, grid=(16,12), duration=4 )
     shuffle = ShuffleTiles( grid=(16,12), duration=1 )
     orbit = OrbitCamera( radius=1, delta_radius=2, angle_x=0, delta_x=-90, angle_z=0, delta_z=180, duration=4 )
-    jumptiles = JumpTiles3D( jumps=2, duration=4, amplitude=80, grid=(8,6) )
-    wavestiles = WavesTiles3D( waves=2, amplitude=60, duration=4, grid=(8,6) )
+    jumptiles = JumpTiles3D( jumps=2, duration=4, amplitude=80, grid=(16,12) )
+    wavestiles = WavesTiles3D( waves=3, amplitude=60, duration=8, grid=(16,12) )
     turnoff = TurnOffTiles( grid=(16,12), duration=2 )
 
 #    firelayer.do(
@@ -251,13 +251,13 @@ if __name__ == "__main__":
               shakyt + Delay(2) +
               ReuseGrid() +
               shuffle + Delay(4) + ReuseGrid() + turnoff + Reverse(turnoff) + Delay(1) +
+              shatter +
+              flip+ Delay(2) +
+              Reverse(flip) +
               flipx + Delay(2) + ReuseGrid() +
               flipy + Delay(2) + ReuseGrid() +
               flipx + Delay(2) + ReuseGrid() +
               flipy + Delay(2) +
-              shatter +
-              flip+ Delay(2) +
-              Reverse(flip) +
               lens + ReuseGrid() + ( (orbit+Reverse(orbit)) | waves3d) + Delay(1) +
               corners + Delay(2) + Reverse(corners) +
               waves + Delay(2) + ReuseGrid() + shaky +
@@ -271,7 +271,7 @@ if __name__ == "__main__":
               StopGrid()
               )
 
-    scene.do( Delay(10) +  OrbitCamera( delta_z=-360*2, duration=10*4 ) )
+    scene.do( Delay(10) +  OrbitCamera( delta_z=-360*2, duration=10*3 ) )
 
     firelayer.do( Delay(4) + DoAction( Repeat( RotateBy(360, 10) ) ) )
 

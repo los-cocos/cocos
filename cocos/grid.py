@@ -84,12 +84,20 @@ class GridBase(object):
 
         # camera default value
         width, height = director.get_window_size()
-        self.camera_eye = Point3( width /2, height /2, 415.0 )
+        self.camera_eye = Point3( width /2, height /2, self.get_z_eye() )
         self.camera_center = Point3( width /2, height /2, 0.0 )
         self.camera_up = Point3( 0.0, 1.0, 0.0)
 
         self._init()
 
+    def get_z_eye( self ):
+        '''Returns the best distance for the camera for the current window size
+
+        cocos2d uses a Filed Of View (fov) of 60
+        '''
+        width, height = director.get_window_size()
+        eye_z = height / 1.1566
+        return eye_z
         
     def before_draw( self ):
         # capture before drawing
@@ -184,7 +192,7 @@ class GridBase(object):
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(60, 1.0*width/height, 0.1, 2000.0)
+        gluPerspective(60, 1.0*width/height, 0.1, 2500.0)
         glMatrixMode(GL_MODELVIEW)
 
     def _set_camera( self ):

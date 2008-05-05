@@ -111,8 +111,6 @@ class OrbitCamera( Camera3DAction ):
         super( OrbitCamera, self ).init( *args, **kw )
 
         width, height = director.get_window_size()
-        if radius==-1:
-            radius=415
 
         self.radius = radius
         self.delta_radius = delta_radius
@@ -121,8 +119,14 @@ class OrbitCamera( Camera3DAction ):
         self.rad_delta_x= math.radians( delta_x )
         self.rad_delta_z = math.radians( delta_z )
 
+    def start( self ):
+        super( OrbitCamera, self).start()
+
+        if self.radius == -1:
+            self.radius = self.target.grid.get_z_eye()
+
     def update( self, t ):
-        r = (self.radius + self.delta_radius * t) * 415
+        r = (self.radius + self.delta_radius * t) * self.target.grid.get_z_eye()
         z_angle = self.rad_z + self.rad_delta_z * t
         x_angle = self.rad_x + self.rad_delta_x * t
 
