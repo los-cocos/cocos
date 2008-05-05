@@ -1,20 +1,22 @@
-How to install Cocos
---------------------
+How to install cocos2d
+----------------------
 
-We didn't have time to code and test a setup.py so,
-here are the steps to install cocos in your
-machine:
+0) If you want to build and .egg, use the setup.py that comes
+with the distribution, and install that egg using easy_install
 
+or:
 
 1) Copy "cocos" to your project
 
 $ cp -r cocos $PROJECT_HOME
 
+or:
 
 2) Or include cocos in your PYTHONPATH
 
 $ export PYTHONPATH=$PYTHONPATH:/path/to/cocos
 
+or:
 
 3) Or insert cocos in sys.path
 

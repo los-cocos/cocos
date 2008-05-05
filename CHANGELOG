@@ -1,20 +1,26 @@
-v0.3.0 - XXX, xxx
-  - Renamted to project to cocos2d
-  - Transitions: Added CurtainTransition, FlipX3DTransition, FlipY3DTransition,
-     FlipAngular3DTransition, TurnOffTilesTransition, RotoZoomTransition, JumpZoomTransition
-     EnvelopeTransition
-  - Scenes: Added the cocos/scenes directory. Pause and transitions are there
-  - Layer: splitted in 3 files inside the cocos/layer directory
-  - Layer: added the PythonInterpreterLayer()
-  - Layer: ColorLayer supports changing the opacity & color property in runtime
-  - Layer: added CameraLayer and MapLayer (tiles support)
-  - Menu: Added MultipleMenuItem, an item that supports multiple possible
-    values. Contributed by Alejandro Weil (tenuki)
-  - Menu: Added EntryMenuItem, based on patch by David Eyk    
-  - Menu: changed API. instead of 'add() and build_items()' use 'create_menu()'
-  - actions are defined in the actions/ folder
-  - ActionSprite and SpriteGroup added in sprite.py
-  - Added DefaultHandler:
+v0.3.0beta0 - May 5th, 2008
+  - Actions: actions are defined in the actions/ folder
+  - Actions: Goto renamed to MoveTo and Move renamed to MoveBy
+     Scale renamed to ScaleBy. Added ScaleTo
+     Rotate renamed to RotateBy. Added RotateTo
+  - Actions: Jump renamted to JumpBy. Added JumpTo.
+    Changed the JumpBy/To API. JumpBy( (x,y), height, number_of_jumps, duration)
+  - Actions: Added IntervalAction decorators:
+     Accelerate, AccelDeccel, Speed, ReverseTime
+  - Actions:Added a new base class: InstantAction 
+  - Added compositions and actions to scenes and layers
+  - Added setup.py and setup.cfg contributed by David Eyk
+  - Actions: Added grid (mesh distortion) effects:
+     Liquid, Waves, Shaky3D, ShakyTiles3D, ShuffleTiles, QuadMoveBy,
+     MoveCornerUp, MoveCornerDown, SkewVertical, SkewHorizontal,
+     FlipX, FlipY, Flip, CornerSwap, ShatteredTiles3D,
+     FadeOutTiles, Waves3D, FlipX3D, FlipY3D, Lens3D,
+     JumpTiles3D, WavesTiles3D, Twirl
+  - Actions: Added Waves decorators: AccelAmplitude, DeccelAmplitude,
+       AccelDeccelAmplitude.
+  - Actions: Added camera effects: CameraOrbit
+  - Cocos: Renamted to project to cocos2d
+  - Director: Added DefaultHandler:
      ESCAPE: director.pop
      MOD_ACCEL + f: Toggles Fullscreen
      MOD_ACCEL + p: Toggles Pause
@@ -22,26 +28,32 @@ v0.3.0 - XXX, xxx
      MOD_ACCEL + s: Takes a screenshot of the current window
      MOD_ACCEL + x: Toggles FPS
      MOD_ACCEL + i: Toggles the python interpreter
-  - alpha blending enabled by default. 
+  - Director: alpha blending enabled by default. 
     use director.set_alpha_bleding(True|False) to change.
-  - Actions: Goto renamed to MoveTo and Move renamed to MoveBy
-     Scale renamed to ScaleBy. Added ScaleTo
-     Rotate renamed to RotateBy. Added RotateTo
-  - Actions: Jump renamted to JumpBy. Added JumpTo.
-    Changed the JumpBy/To API. JumpBy( (x,y), height, number_of_jumps, duration)
-  - Actions: Added IntervalAction decorators:
-     Accelerate, AccelDeccel
-  - Actions:Added a new base class: InstantAction 
-  - Added compositions and actions to scenes and layers
-  - Added setup.py and setup.cfg contributed by David Eyk
-  - Actions: Added Mesh effects:
-     Liquid, Sin Shaky3D, ShakyTiles3D, ShuffleTiles, QuadMoveBy
-     MoveCornerUp, MoveCornerDown, SkewVertical, SkewHorizontal
-     FlipX, FlipY, Flip, CornerSwap, ShatteredTiles3D,
-     FadeOutTiles, Waves3D, FlipX3D, FlipY3D, Lens3D, CameraOrbit
-     JumpTiles3D, WavesTiles3D, Twirl
-   - Actions: Added Waves decorators: AccelAmplitude, DeccelAmplitude,
-       AccelDeccelAmplitude.
+  - Documentation: using pyglet's documentation tools
+  - Documentation: started the programming guide in restructured text format
+    (not finished yet)
+  - Documentation: added lots of docstrings to generate API reference guide
+    (not finished yet)
+  - Transitions: Added CurtainTransition, FlipX3DTransition, FlipY3DTransition,
+     FlipAngular3DTransition, TurnOffTilesTransition, RotoZoomTransition, JumpZoomTransition
+     EnvelopeTransition
+  - Layer: (Tiles support): added ScrollableLayer, MapLayer, RectMapLayer,
+    HexMapLayer and more (by Richard Jones)
+  - Layer: splitted in 3 files inside the cocos/layer directory
+  - Layer: added the PythonInterpreterLayer()
+  - Layer: ColorLayer supports changing the opacity & color property in runtime
+  - Menu: Added MultipleMenuItem, an item that supports multiple possible
+    values. Contributed by Alejandro Weil (tenuki)
+  - Menu: Added EntryMenuItem, based on patch by David Eyk    
+  - Menu: changed API. instead of 'add() and build_items()' use 'create_menu()'
+  - Menu: Added support for actions when an item is selected and/or activated
+  - Samples: added new samples that shows some features of cocos:
+      demo_grid_effects, demo_transitions, demo_sprites, demo_flag3d.
+  - Samples: added hello_world_effects sample
+  - Scenes: Added the cocos/scenes directory. Pause and transitions are there
+  - Sprites: ActionSprite and SpriteGroup added in sprite.py
+  - Tests: added lots of 'unit tests' tests
     
 v0.2.0 - March, 21th 2008
   - Director: uses the new pyglet 1.1 loop

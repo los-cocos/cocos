@@ -6,9 +6,9 @@ $Rev: 1016 $
 $Date: 2008-04-05 16:22:08 -0500 (Sat, 05 Apr 2008) $
 """
 
-__author__ = "PyAr Team"
+__author__ = "cocos2d Team"
 __version__ = "0.3.0-beta"
-__date__ = "2008-04-10"
+__date__ = "2008-05-05"
 
 try:
     import setuptools

@@ -209,7 +209,7 @@ class ScoreMenu(Menu):
 
 
 if __name__ == "__main__":
-    director.init( resizable=True, width=800, height=600)
+    director.init( resizable=True, width=640, height=480)
     director.set_depth_test()
 
     firelayer = FireManager(director.get_window_size()[0], 250)

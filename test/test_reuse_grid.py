@@ -27,7 +27,7 @@ if __name__ == "__main__":
     main_scene.add( BackgroundLayer(), z=0 )
 
     waves = Waves( amplitude=80, waves=2, grid=(16,12), duration=2 )
-    shaky = Shaky( randrange=20, grid=(16,12), duration=4 )
+    shaky = Shaky3D( randrange=20, grid=(16,12), duration=4 )
 
     main_scene.do( waves + ReuseGrid() + shaky )
     director.run (main_scene)

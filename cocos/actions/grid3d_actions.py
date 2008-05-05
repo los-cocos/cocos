@@ -82,8 +82,8 @@ class Waves3D( Grid3DAction ):
         self.amplitude=amplitude
 
     def update( self, t ):
-        for i in range(0, self.grid.x+1):
-            for j in range(0, self.grid.y+1):
+        for i in xrange(0, self.grid.x+1):
+            for j in xrange(0, self.grid.y+1):
                 x,y,z = self.get_original_vertex(i,j)
 
                 z += (math.sin(t*math.pi*self.waves*2 + (y+x) * .01) * self.amplitude * self.amplitude_rate )
@@ -231,8 +231,8 @@ class Lens3D( Grid3DAction ):
         
     def update( self, t ):
         if self.position != self._last_position:
-            for i in range(0, self.grid.x+1):
-                for j in range(0, self.grid.y+1):
+            for i in xrange(0, self.grid.x+1):
+                for j in xrange(0, self.grid.y+1):
         
                     x,y,z = self.get_original_vertex(i,j)
                     
@@ -276,8 +276,8 @@ class Shaky3D( Grid3DAction):
         self.randrange = randrange
 
     def update( self, t ):
-        for i in range(0, self.grid.x+1):
-            for j in range(0, self.grid.y+1):
+        for i in xrange(0, self.grid.x+1):
+            for j in xrange(0, self.grid.y+1):
                 x,y,z = self.get_original_vertex(i,j)
                 x += rr( -self.randrange, self.randrange )
                 y += rr( -self.randrange, self.randrange )
@@ -313,8 +313,8 @@ class Liquid( Grid3DAction ):
 
     def update( self, t ):
             
-        for i in range(1, self.grid.x):
-            for j in range(1, self.grid.y):
+        for i in xrange(1, self.grid.x):
+            for j in xrange(1, self.grid.y):
                 x,y,z = self.get_original_vertex(i,j)
                 xpos = (x + (math.sin(t*math.pi*self.waves*2 + x * .01) * self.amplitude * self.amplitude_rate))
                 ypos = (y + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.amplitude * self.amplitude_rate)) 
@@ -362,8 +362,8 @@ class Waves( Grid3DAction ):
         self.amplitude_rate = 1.0
 
     def update( self, t ):        
-        for i in range(0, self.grid.x+1):
-            for j in range(0, self.grid.y+1):
+        for i in xrange(0, self.grid.x+1):
+            for j in xrange(0, self.grid.y+1):
                 x,y,z = self.get_original_vertex(i,j)
                 if self.vertical_sin:
                     xpos = (x + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.amplitude * self.amplitude_rate))
@@ -418,8 +418,8 @@ class Twirl( Grid3DAction ):
         cx = self.position.x
         cy = self.position.x
 
-        for i in range(0, self.grid.x+1):
-            for j in range(0, self.grid.y+1):
+        for i in xrange(0, self.grid.x+1):
+            for j in xrange(0, self.grid.y+1):
                 x,y,z = self.get_original_vertex(i,j)
 
                 r = math.sqrt( (i-self.grid.x/2.0) ** 2 + (j-self.grid.y/2.0) ** 2 )

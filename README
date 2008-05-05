@@ -8,10 +8,10 @@ If you want to use pyglet 1.0, use cocos v0.1.x instead.
 
 LEARNING COCOS2D:
  * read the programming guide:
-   * http://code.google.com/p/los-cocos/wiki/ProgrammingGuide
+    * coming soon at: http://cocos2d.org
    
  * download and read the API reference:
-    * http://code.google.com/p/los-cocos/downloads/list
+    * coming soon at: http://cocos2d.org
 
  * run the test (they are very interesting )
    $ cd test

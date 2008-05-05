@@ -135,26 +135,28 @@ class GridBase(object):
         if not self.active:
             return
         
-        if director.window.width > self.texture.width or director.window.height > self.texture.height:
-            self.texture = image.Texture.create_for_size(
-                    GL_TEXTURE_2D, director.window.width, 
-                    director.window.height, GL_RGBA)
-            self.grabber = framegrabber.TextureGrabber()
-            self.grabber.grab(self.texture)
+        self._set_3d_projection()
         
-        txz = director._offset_x/float(self.texture.width)
-        tyz = director._offset_y/float(self.texture.height)
-        
-        rx = director.window.width - 2*director._offset_x
-        ry = director.window.height - 2*director._offset_y
-        
-        tx = float(rx)/self.texture.width+txz
-        ty = float(ry)/self.texture.height+tyz
-        
-        xsteps = (tx-txz) / self.grid.x
-        ysteps = (ty-tyz) / self.grid.y
-
-        self._on_resize( xsteps, ysteps, txz, tyz)
+#        if director.window.width > self.texture.width or director.window.height > self.texture.height:
+#            self.texture = image.Texture.create_for_size(
+#                    GL_TEXTURE_2D, director.window.width, 
+#                    director.window.height, GL_RGBA)
+#            self.grabber = framegrabber.TextureGrabber()
+#            self.grabber.grab(self.texture)
+#        
+#        txz = director._offset_x/float(self.texture.width)
+#        tyz = director._offset_y/float(self.texture.height)
+#        
+#        rx = director.window.width - 2*director._offset_x
+#        ry = director.window.height - 2*director._offset_y
+#        
+#        tx = float(rx)/self.texture.width+txz
+#        ty = float(ry)/self.texture.height+tyz
+#        
+#        xsteps = (tx-txz) / self.grid.x
+#        ysteps = (ty-tyz) / self.grid.y
+#
+#        self._on_resize( xsteps, ysteps, txz, tyz)
 
 
     def _set_active(self, bool):
@@ -192,7 +194,7 @@ class GridBase(object):
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(60, 1.0*width/height, 0.1, 2500.0)
+        gluPerspective(60, 1.0*width/height, 0.1, 3000.0)
         glMatrixMode(GL_MODELVIEW)
 
     def _set_camera( self ):
@@ -203,6 +205,7 @@ class GridBase(object):
                    )
    
     def _set_2d_projection(self):
+#        width, height = director.window.width, director.window.height
         width, height = director.get_window_size()
         glLoadIdentity()
         glViewport(0, 0, width, height)
@@ -237,16 +240,6 @@ class Grid3D(GridBase):
     def _blit(self ):
         self.vertex_list.draw(pyglet.gl.GL_TRIANGLES)
 
-    def _on_resize(self, xsteps, ysteps, txz, tyz):
-        tex_idx = [] 
-        for x in range(self.grid.x+1):
-            for y in range(self.grid.y+1):
-                tex_idx += [ txz + x*xsteps, tyz+y*ysteps]
-        self.vertex_list.tex_coords = tex_idx
-
-        self._set_3d_projection()
-
-
     def _calculate_vertex_points(self):        
         w = float(self.texture.width)
         h = float(self.texture.height)
@@ -255,13 +248,13 @@ class Grid3D(GridBase):
         vertex_points_idx = []
         texture_points_idx = []
 
-        for x in range(0,self.grid.x+1):
-            for y in range(0,self.grid.y+1):
+        for x in xrange(0,self.grid.x+1):
+            for y in xrange(0,self.grid.y+1):
                 vertex_points_idx += [-1,-1,-1]
                 texture_points_idx += [-1,-1]
 
-        for x in range(0, self.grid.x):
-            for y in range(0, self.grid.y):
+        for x in xrange(0, self.grid.x):
+            for y in xrange(0, self.grid.y):
                 x1 = x * self.x_step 
                 x2 = x1 + self.x_step
                 y1 = y * self.y_step
@@ -283,7 +276,7 @@ class Grid3D(GridBase):
                 l2 = ( Point3(x1,y1,0), Point3(x2,y1,0), Point3(x2,y2,0), Point3(x1,y2,0) )
 
                 #  building the vertex
-                for i in range( len(l1) ):
+                for i in xrange( len(l1) ):
                     vertex_points_idx[ l1[i] ] = l2[i].x
                     vertex_points_idx[ l1[i] + 1 ] = l2[i].y
                     vertex_points_idx[ l1[i] + 2 ] = l2[i].z
@@ -292,7 +285,7 @@ class Grid3D(GridBase):
                 tex1 = ( a*2, b*2, c*2, d*2 )
                 tex2 = ( Point2(x1,y1), Point2(x2,y1), Point2(x2,y2), Point2(x1,y2) )
 
-                for i in range( len(tex1)):
+                for i in xrange( len(tex1)):
                     texture_points_idx[ tex1[i] ] = tex2[i].x / w
                     texture_points_idx[ tex1[i] + 1 ] = tex2[i].y / h
  
@@ -322,21 +315,6 @@ class TiledGrid3D(GridBase):
 
     def _blit(self ):
         self.vertex_list.draw(pyglet.gl.GL_QUADS)
-
-    def _on_resize(self, xsteps, ysteps, txz, tyz):
-        tex = [] 
-
-        for x in range(self.grid.x):
-            for y in range(self.grid.y):
-                ax = txz + x*xsteps
-                ay = tyz + y*ysteps
-                bx = txz + (x+1)*xsteps
-                by = tyz + (y+1)*ysteps
-                tex += [ ax, ay, bx, ay, bx, by, ax, by]    
-        self.vertex_list.tex_coords = tex     
-
-        self._set_3d_projection()
-
         
     def _calculate_vertex_points(self):
         w = float(self.texture.width)
@@ -345,8 +323,8 @@ class TiledGrid3D(GridBase):
         vertex_points = []
         texture_points = []
 
-        for x in range(0, self.grid.x):
-            for y in range(0, self.grid.y):
+        for x in xrange(0, self.grid.x):
+            for y in xrange(0, self.grid.y):
                 x1 = x * self.x_step 
                 x2 = x1 + self.x_step
                 y1 = y * self.y_step

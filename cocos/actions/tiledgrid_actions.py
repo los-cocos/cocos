@@ -79,10 +79,10 @@ class ShakyTiles3D( TiledGrid3DAction ):
         self.randrange = randrange
 
     def update( self, t ):
-        for i in range(0, self.grid.x):
-            for j in range(0, self.grid.y):
+        for i in xrange(0, self.grid.x):
+            for j in xrange(0, self.grid.y):
                     coords = self.get_original_tile(i,j)   
-                    for k in range(0,len(coords),3):
+                    for k in xrange(0,len(coords),3):
                         x = rr(-self.randrange, self.randrange)
                         y = rr(-self.randrange, self.randrange)
                         z = rr(-self.randrange, self.randrange)
@@ -114,10 +114,10 @@ class ShatteredTiles3D( TiledGrid3DAction ):
 
     def update( self, t ):
         if not self._once:
-            for i in range(0, self.grid.x):
-                for j in range(0, self.grid.y):
+            for i in xrange(0, self.grid.x):
+                for j in xrange(0, self.grid.y):
                     coords = self.get_original_tile(i,j)   
-                    for k in range(0,len(coords),3):
+                    for k in xrange(0,len(coords),3):
                         x = rr(-self.randrange, self.randrange)
                         y = rr(-self.randrange, self.randrange)
                         z = rr(-self.randrange, self.randrange)
@@ -160,8 +160,8 @@ class ShuffleTiles( TiledGrid3DAction ):
         self.tiles_order = range(self.nr_of_tiles )
         random.shuffle( self.tiles_order )
 
-        for i in range(self.grid.x):
-            for j in range(self.grid.y):
+        for i in xrange(self.grid.x):
+            for j in xrange(self.grid.y):
                 self.tiles[(i,j)] = Tile( position = Point2(i,j), 
                                           start_position = Point2(i,j), 
                                           delta= self._get_delta(i,j) )
@@ -170,14 +170,14 @@ class ShuffleTiles( TiledGrid3DAction ):
         t = self.tiles[(i,j)]
         coords = self.get_original_tile(i,j)
 
-        for k in range(0,len(coords),3):                      
+        for k in xrange(0,len(coords),3):                      
             coords[k] += int( t.position.x * self.target.grid.x_step )
             coords[k+1] += int( t.position.y * self.target.grid.y_step )
         self.set_tile(i,j,coords)
         
     def update(self, t ):
-        for i in range(0, self.grid.x):
-            for j in range(0, self.grid.y):
+        for i in xrange(0, self.grid.x):
+            for j in xrange(0, self.grid.y):
                 self.tiles[(i,j)].position = self.tiles[(i,j)].delta * t
                 self.place_tile(i,j)
                 
@@ -199,8 +199,8 @@ class FadeOutTiles( TiledGrid3DAction ):
     def start(self):
         super(FadeOutTiles,self).start()
         self.tiles = {}
-        for i in range(self.grid.x):
-            for j in range(self.grid.y):
+        for i in xrange(self.grid.x):
+            for j in xrange(self.grid.y):
                 self.tiles[(i,j)] = Tile( position = Point2(i,j), 
                                           start_position = Point2(i,j), 
                                           delta=Point2(0,-j) )
@@ -209,10 +209,10 @@ class FadeOutTiles( TiledGrid3DAction ):
         x,y = t * self.grid
                 
         # direction right - up
-        for i in range(self.grid.x):
-            for j in range(self.grid.y):
+        for i in xrange(self.grid.x):
+            for j in xrange(self.grid.y):
                 if i+j <= x+y+8:
-                    for k in range(0,4):
+                    for k in xrange(0,4):
                         idx =     (i * 4 * self.grid.y + j * 4 + k) * 3
                         idx_dst = (i * 4 * self.grid.y + j * 4 + 2) * 3   # k==2 is coord 'c'
 
@@ -304,8 +304,8 @@ class WavesTiles3D( TiledGrid3DAction ):
         self.amplitude=amplitude
 
     def update( self, t ):
-        for i in range(0, self.grid.x):
-            for j in range(0, self.grid.y):
+        for i in xrange(0, self.grid.x):
+            for j in xrange(0, self.grid.y):
                 coords = self.get_original_tile(i,j)
 
                 x = coords[0]
@@ -313,7 +313,7 @@ class WavesTiles3D( TiledGrid3DAction ):
 
                 z = (math.sin(t*math.pi*self.waves*2 + (y+x) * .01) * self.amplitude * self.amplitude_rate )
 
-                for k in range( 0,len(coords),3 ):
+                for k in xrange( 0,len(coords),3 ):
                     coords[k+2] += z
 
                 self.set_tile( i,j, coords )
@@ -349,11 +349,11 @@ class JumpTiles3D( TiledGrid3DAction ):
         sinz = (math.sin(t*math.pi*self.jumps*2 + (0) * .01) * self.amplitude * self.amplitude_rate )
         sinz2= (math.sin(math.pi+t*math.pi*self.jumps*2 + (0) * .01) * self.amplitude * self.amplitude_rate )
 
-        for i in range(0, self.grid.x):
-            for j in range(0, self.grid.y):
+        for i in xrange(0, self.grid.x):
+            for j in xrange(0, self.grid.y):
                 coords = self.get_original_tile(i,j)
 
-                for k in range( 0,len(coords),3 ):
+                for k in xrange( 0,len(coords),3 ):
                     if (i+j) % 2 == 0:
                         coords[k+2] += sinz
                     else:
