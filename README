@@ -1,31 +1,53 @@
-cocos2d: A framework for building games
+cocos2d: A framework for building 2D games
 http://cocos2d.org
 
-version: 0.3.0
-This version works OK with pyglet 1.1b1 (or newer)
-If you want to use pyglet 1.0, use cocos v0.1.x instead.
+version: 0.3.0beta0
 
 
-LEARNING COCOS2D:
+Requirements
+------------
+
+ * python 2.4 with ctypes or python 2.5
+ * pyglet 1.1b1 or newer (http://www.pyglet.org)
+   ( If you want to use pyglet 1.0, use cocos v0.1.x instead. )
+
+
+Installing
+----------
+
+   Read INSTALL file
+
+
+Learning cocos2d
+----------------
+
  * read the programming guide:
-    * coming soon at: http://cocos2d.org
+    * coming soon to: http://cocos2d.org
    
  * download and read the API reference:
-    * coming soon at: http://cocos2d.org
+    * coming soon to: http://cocos2d.org
 
- * run the test (they are very interesting )
+ * run ( and read ) the samples:
+   $ cd samples
+   $ python RUN_ALL_THE_SAMPLES.py
+
+ * run ( and read ) the test:
    $ cd test
    $ python test_*.py
      ( and read the tests source code )
 
- * run the samples:
-   $ cd samples
-   $ python RUN_ALL_THE_SAMPLES.py
-     ( and read the samples source code )      
 
-    
+Beta release
+-------------
+
+This is a beta release. The API is subject to change.
+Documentation is incomplete, and refers in places to
+deprecated methods.  
+
+
 Do you have any doubt ?
 http://groups.google.com/group/cocos-discuss
+
 
 Did you find any bug ?
 http://code.google.com/p/los-cocos/issues/list

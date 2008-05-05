@@ -3,13 +3,13 @@ v0.3.0beta0 - May 5th, 2008
   - Actions: Goto renamed to MoveTo and Move renamed to MoveBy
      Scale renamed to ScaleBy. Added ScaleTo
      Rotate renamed to RotateBy. Added RotateTo
-  - Actions: Jump renamted to JumpBy. Added JumpTo.
+  - Actions: Jump renamed to JumpBy. Added JumpTo.
     Changed the JumpBy/To API. JumpBy( (x,y), height, number_of_jumps, duration)
   - Actions: Added IntervalAction decorators:
      Accelerate, AccelDeccel, Speed, ReverseTime
-  - Actions:Added a new base class: InstantAction 
-  - Added compositions and actions to scenes and layers
-  - Added setup.py and setup.cfg contributed by David Eyk
+  - Actions: time can be modified in a whole sequence. eg: Accelerate( sequence )
+  - Actions: Added a new base class: InstantAction 
+  - Actions: every cocosnode support actions. eg: sprites, layers, scenes, etc.
   - Actions: Added grid (mesh distortion) effects:
      Liquid, Waves, Shaky3D, ShakyTiles3D, ShuffleTiles, QuadMoveBy,
      MoveCornerUp, MoveCornerDown, SkewVertical, SkewHorizontal,
@@ -19,7 +19,7 @@ v0.3.0beta0 - May 5th, 2008
   - Actions: Added Waves decorators: AccelAmplitude, DeccelAmplitude,
        AccelDeccelAmplitude.
   - Actions: Added camera effects: CameraOrbit
-  - Cocos: Renamted to project to cocos2d
+  - Cocos: Renamed project to cocos2d
   - Director: Added DefaultHandler:
      ESCAPE: director.pop
      MOD_ACCEL + f: Toggles Fullscreen
@@ -39,10 +39,12 @@ v0.3.0beta0 - May 5th, 2008
      FlipAngular3DTransition, TurnOffTilesTransition, RotoZoomTransition, JumpZoomTransition
      EnvelopeTransition
   - Layer: (Tiles support): added ScrollableLayer, MapLayer, RectMapLayer,
-    HexMapLayer and more (by Richard Jones)
+    HexMapLayer and more
   - Layer: splitted in 3 files inside the cocos/layer directory
   - Layer: added the PythonInterpreterLayer()
   - Layer: ColorLayer supports changing the opacity & color property in runtime
+  - License: using BSD license now
+  - Install: Added setup.py and setup.cfg contributed by David Eyk
   - Menu: Added MultipleMenuItem, an item that supports multiple possible
     values. Contributed by Alejandro Weil (tenuki)
   - Menu: Added EntryMenuItem, based on patch by David Eyk    

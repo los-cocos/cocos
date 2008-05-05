@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-"""setup -- setuptools setup file for los-cocos.
+"""setup -- setuptools setup file for cocos2d.
 
 $Author: eykd $
 $Rev: 1016 $
 $Date: 2008-04-05 16:22:08 -0500 (Sat, 05 Apr 2008) $
 """
 
-__author__ = "cocos2d Team"
-__version__ = "0.3.0-beta"
+__author__ = "cocos2d team"
+__version__ = "0.3.0-beta0"
 __date__ = "2008-05-05"
 
 try:
@@ -18,9 +18,9 @@ except ImportError:
 
 from setuptools import setup, find_packages
 
-__description__ = """cocos2d: A framework for building games
+__description__ = """cocos2d: A framework for building 2D games
 
-cocos2d is a framework for building games, demos, and other graphical/interactive applications. It is built over pyglet. It provides some conventions and classes to help you structure a "scene based application".
+cocos2d is a framework for building 2D games, demos, and other graphical/interactive applications. It is built over pyglet. It provides some conventions and classes to help you structure a "scene based application".
 
 A cocos2d application consists of several scenes, and a workflow connecting the different scenes. It provides you with a "director" (a singleton) which handles that workflow between scenes. Each scene is composed of an arbitrary number of layers; layers take care of drawing to the screen (using the pyglet and OpenGL APIs), handling events and in general contain all of the game/application logic.
 

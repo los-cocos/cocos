@@ -34,8 +34,8 @@
 http://cocos2d.org
 '''
 
-__version__ = "0.3.0-beta1"
-__author__ = "Cocos Team"
+__version__ = "0.3.0-beta0"
+__author__ = "cocos2d team"
 version = __version__
 
 import actions
