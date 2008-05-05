@@ -65,10 +65,9 @@ def TextureGrabber():
     except:
         pass
     # Fallback: GL generic grabber
-    print "Warning: using fallback texture grabber. Effects will treat " \
-          "layer transparency as black"
-    _best_grabber = GenericGrabber
-    return _best_grabber()
+    raise Exception("ERROR: GPU doesn't support Frame Buffers Objects. Can't continue")
+#    _best_grabber = GenericGrabber
+#    return _best_grabber()
 
 class GenericGrabber(object):
     """A simple render-to-texture mechanism. Destroys the current GL display;
