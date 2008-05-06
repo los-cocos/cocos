@@ -282,6 +282,8 @@ class TurnOffTiles( TiledGrid3DAction ):
 class WavesTiles3D( TiledGrid3DAction ):
     '''Simulates waves using the math.sin() function in the z-axis of each tile
 
+    Example::
+    
        scene.do( WavesTiles3D( waves=5, amplitude=120, grid=(16,16), duration=10) )
     '''
 
@@ -321,8 +323,10 @@ class WavesTiles3D( TiledGrid3DAction ):
 
 class JumpTiles3D( TiledGrid3DAction ):
     '''Odd tiles will perform a jump in the z-axis using the sine function,
-    while the par tiles will perform a jump using sine+pi function
+    while the even tiles will perform a jump using sine+pi function
 
+    Example::
+    
        scene.do( JumpTiles3D( jumps=5, amplitude=40, grid=(16,16), duration=10) )
     '''
 

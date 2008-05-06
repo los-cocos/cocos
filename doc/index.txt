@@ -1,7 +1,9 @@
-Cocos Documentation Index
--------------------------
+===========================
+cocos2d Documentation Index
+===========================
 
-Cocos documentation:
+
+cocos2d documentation:
 
   * `Programming Guide <programming_guide/index.html>`_
   * `API Reference <api/index.html>`_

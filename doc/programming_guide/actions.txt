@@ -10,7 +10,7 @@ Actions
 Actions are like orders given to any `CocosNode` object.
 These actions usually modify some the object's attributes like `position`,
 `rotation`, `scale`, etc. If these attributes are modified during a period of time,
-they are `IntervalAction`, otherwise they are `InstantActions`.
+they are `IntervalAction` actions, otherwise they are `InstantAction` actions.
 
 For example, the `MoveBy` actions modifies the `position` attribute during a period
 of time, hence, it is an `IntervalAction`.
@@ -24,7 +24,7 @@ Example::
 
 	- The can be accelerated using the time-altered actions
 		- `Accelerate`
-		- `AccelDecell`
+		- `AccelDeccel`
 		- `Speed`
 	- They can be executed backwards in time with the `ReverseTime` action.
 	  The starting point will be ending point, and vice-versa.
@@ -68,20 +68,56 @@ Basic actions are the ones that modifies basic attributes like:
 
 Example::
 
-	bla bla bla
+	XXX: finish this part
   
 
 Effects
 -------
 
- - TiledGrid actions
-	- `ShatteredTiles`
-	- `ShakyTiles`
+There are 2 kind of grids: ``tiled`` grids and ``non-tiled`` grids. The difference is that
+the ``tiled`` grid is composed of individual tiles while the ``non-tiled`` grid is
+composed of vertex.
+
+.. image:: tiled_and_nontiled_grid.png
+
+The grids has 2 dimensions: ``rows`` and ``columns``, but each vertex of the grid has
+3 dimension: ``x``, ``y`` and ``z``. So you can create 2d or 3d effects by transforming
+a ``tiled-grid-3D`` or a ``grid-3D`` grid.
+
+
+How they work
+^^^^^^^^^^^^^
+
+Each frame the screen is rendered into a texture. This texture is transformed into a ``vertex array``
+and this ``vertex array`` (the grid!) is transformed by the grid effects.
+Finally the ``vertex array`` is rendered into the screen.
+
+For more information about the internals refer to:
+ - `TiledGrid3D` and `TiledGrid3DAction` for ``tiled`` grids
+ - `Grid3D` and `Grid3DAction` for ``non-tiled`` grids
+
+
+Index of grid effects
+^^^^^^^^^^^^^^^^^^^^^
+
+ - TiledGrid3D actions
+	- `ShatteredTiles3D`
+	- `ShakyTiles3D`
+ 	- `JumpTiles3D`
+ 	- `WavesTiles3D`
 	- `ShuffleTiles`
  	- `TurnOffTiles`
  	- `FadeOutTiles`
 
- - Grid actions
+ - Grid3D actions
+ 	- `Lens3D`
+ 	- `FlipX3D`
+ 	- `FlipY3D`
+ 	- `Waves3D`
+ 	- `Shaky3D`
+	- `Liquid`
+ 	- `Waves`
+	- `Twirl`
  	- `QuadMoveBy`
  	- `Flip`
  	- `FlipX`
@@ -92,19 +128,12 @@ Effects
  	- `MoveCornerDown`
  	- `CornerSwap`
 
- - Grid3D actions
- 	- `Lens3D`
- 	- `FlipX3D`
- 	- `FlipY3D`
- 	- `Waves3D`
- 	- `Shaky3D`
-	- `Liquid`
- 	- `Waves`
-
 
 Example::
 	
-	bla, bla, bla
+	scene.do( Twirl( grid=(16,12), duration=4) )
+	layer1.do( Lens3D( grid=(32,24), duration=5 )
+	layer2.do( Waves( grid=(16,12), duration=4) + Liquid( grid=(16,12), duration=5 ) )
 	
 
 Composition
@@ -116,7 +145,7 @@ Composition
  
 Example::
 
-	bla, bla, bla
+	XXX: finish this part
 
 	
 Modifiers
@@ -135,7 +164,7 @@ Modifiers
    
 Exmaple::
 	
-	bla, bla, bla
+	XXX: finish this part
 	
 
 Special Actions
@@ -149,3 +178,8 @@ Special Actions
   - `StopGrid`
   - `ReuseGrid`
   - `OrbitCamera`
+ 
+ Example::
+ 
+ 	XXX: finish this part
+ 	

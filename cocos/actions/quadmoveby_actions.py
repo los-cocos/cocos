@@ -58,19 +58,23 @@ __all__ = ['QuadMoveBy',
 class QuadMoveBy( Grid3DAction ):
     '''QuadMoveBy moves each vertex of the grid. The size of the grid is (1,1)
 
+    Vertex positions::
+
+        vertex3 --<-- vertex2
+            |            |
+            v            ^
+            |            |
+        vertex0 -->-- vertex1
+        
+        The vertices will move from the origin (src parameters) a relative distance (delta parameters) in duration time.
+
+    Example::
+
        scene.do( QuadMoveBy( src0, src1, src2, src3,
                delta0, delta1, delta2, delta3,
                duration) )
 
-       Vertex positions::
 
-            vertex3 --<-- vertex2
-                |            |
-                v            ^
-                |            |
-            vertex0 -->-- vertex1
-        
-        The vertices will move from the origin (src parameters) a relative distance (delta parameters) in duration time.
        '''
 
     def init( self, 

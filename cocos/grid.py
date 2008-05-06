@@ -30,7 +30,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Grid effects'''
+'''Grid data structure'''
 
 __docformat__ = 'restructuredtext'
 
@@ -66,7 +66,8 @@ class GridBase(object):
             `grid` : euclid.Point2
                 size of a 2D grid
         '''
-      
+ 
+        #: size of the grid. (rows, columns)
         self.grid = grid
         
         x,y = director.window.width, director.window.height
@@ -79,13 +80,22 @@ class GridBase(object):
         self.grabber = framegrabber.TextureGrabber()
         self.grabber.grab(self.texture)
 
+        #: x pixels between each vertex (float)
         self.x_step = x / self.grid.x
+        #: y pixels between each vertex (float)
         self.y_step = y / self.grid.y
 
         # camera default value
         width, height = director.get_window_size()
+        
+        #: tuple (x,y,z) that says where is the eye of the camera.
+        #: used by ``gluLookAt()``
         self.camera_eye = Point3( width /2, height /2, self.get_z_eye() )
+        #: tuple (x,y,z) that says where is pointing to the camera.
+        #: used by ``gluLookAt()``
         self.camera_center = Point3( width /2, height /2, 0.0 )
+        #: tuple (x,y,z) that says the up vector for the camera.
+        #: used by ``gluLookAt()``
         self.camera_up = Point3( 0.0, 1.0, 0.0)
 
         self._init()
@@ -218,7 +228,7 @@ class GridBase(object):
 class Grid3D(GridBase):
     '''`Grid3D` is a 3D grid implementation. Each vertex has 3 dimensions: x,y,z
     
-    The vertex array will be built with::
+    The vindexed ertex array will be built with::
 
         self.vertex_list.vertices: x,y,z (floats)   
         self.vertex_list.tex_coords: x,y,z (floats)
@@ -229,9 +239,18 @@ class Grid3D(GridBase):
         # calculate vertex, textures depending on screen size
         idx_pts, ver_pts_idx, tex_pts_idx = self._calculate_vertex_points()
 
-        # Generates a grid of joint quads
+        #: indexed vertex array that can be transformed.
+        #: it has these attributes:
+        #:
+        #:    - vertices
+        #:    - colors
+        #:    - tex_coords
+        #:
+        #: for more information refer to pyglet's documentation: pyglet.graphics.vertex_list_indexed
         self.vertex_list = pyglet.graphics.vertex_list_indexed( (self.grid.x+1) * (self.grid.y+1), 
                             idx_pts, "t2f", "v3f/stream","c4B")
+        
+        #: original vertex array of the grid. (read-only)
         self.vertex_points = ver_pts_idx[:]
         self.vertex_list.vertices = ver_pts_idx
         self.vertex_list.tex_coords = tex_pts_idx
@@ -305,9 +324,17 @@ class TiledGrid3D(GridBase):
         # calculate vertex, textures depending on screen size
         ver_pts, tex_pts = self._calculate_vertex_points()
 
-       # Generates a grid of independent quads (think of tiles)
+        #: vertex array that can be transformed.
+        #: it has these attributes:
+        #:
+        #:    - vertices
+        #:    - colors
+        #:    - tex_coords
+        #:
+        #: for more information refer to pyglet's documentation: pyglet.graphics.vertex_list
         self.vertex_list = pyglet.graphics.vertex_list(self.grid.x * self.grid.y * 4,
                             "t2f", "v3f/stream","c4B")
+        #: original vertex array of the grid. (read-only)
         self.vertex_points = ver_pts[:]
         self.vertex_list.vertices = ver_pts
         self.vertex_list.tex_coords = tex_pts

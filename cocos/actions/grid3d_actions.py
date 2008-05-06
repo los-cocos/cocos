@@ -60,6 +60,8 @@ __all__ = [
 class Waves3D( Grid3DAction ):
     '''Simulates waves using the math.sin() function in the z-axis
 
+    Example::
+
        scene.do( Waves3D( waves=5, amplitude=40, grid=(16,16), duration=10) )
     '''
 
@@ -76,7 +78,7 @@ class Waves3D( Grid3DAction ):
         #: Total number of waves to perform
         self.waves=waves
   
-        #: amplitude rate. Default: 1.0
+        #: amplitude rate. Default: 1.0.
         #: This value is modified by other actions like `AccelAmplitude`.
         self.amplitude_rate = 1.0
         self.amplitude=amplitude
@@ -197,6 +199,8 @@ class FlipY3D( Grid3DAction ):
 
 class Lens3D( Grid3DAction ):
     '''Lens simulates a Lens / Magnifying glass effect
+    
+    Example::
 
        scene.do( Lens3D(center=(320,240), radius=150, grid=(16,16), duration=10) )
     '''
@@ -217,7 +221,7 @@ class Lens3D( Grid3DAction ):
         if center==(-1,-1):
             center=(x//2, y//2)
             
-        #: position of the center of the len. Type: (int,int)
+        #: position of the center of the len. Type: (int,int).
         #: This value can be modified by other actions, like `JumpBy` to simulate a jumping lens
         self.position = Point2( center[0]+1, center[1]+1 )  
 
@@ -262,6 +266,8 @@ class Lens3D( Grid3DAction ):
 class Shaky3D( Grid3DAction):
     '''Shaky simulates an earthquake modifying randomly the x,y and z coordinates
 
+    Example::
+
        scene.do( Shaky3D( randrange=6, grid=(4,4), duration=10) )
     '''
     def init( self, randrange=6, *args, **kw ):
@@ -288,6 +294,8 @@ class Shaky3D( Grid3DAction):
 class Liquid( Grid3DAction ):
     '''Simulates a liquid effect using the math.sin() function modifying the x and y coordinates.
         The z coordinate is not modified.
+    
+    Example::
 
        scene.do( Liquid( waves=5, amplitude=40, grid=(16,16), duration=10) )
     '''
@@ -307,7 +315,7 @@ class Liquid( Grid3DAction ):
         #: amplitude of the waves
         self.amplitude=amplitude
 
-        #: amplitude rate. Default: 1.0
+        #: amplitude rate. Default: 1.0.
         #: This value is modified by other actions like `AccelAmplitude`.
         self.amplitude_rate = 1.0
 
@@ -325,9 +333,9 @@ class Waves( Grid3DAction ):
     '''Simulates waves using the math.sin() function both in the vertical and horizontal axis.
     The z coordinate is not modified.
 
-        Example::
+    Example::
 
-            scene.do( Waves( waves=4, vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
+        scene.do( Waves( waves=4, vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
     '''
 
     def init( self, waves=4, amplitude=20, horizontal_sin=True, vertical_sin=True, *args, **kw ):
@@ -381,6 +389,8 @@ class Twirl( Grid3DAction ):
     '''Simulates a twirl effect modifying the x and y coordinates.
         The z coordinate is not modified.
 
+    Example::
+
        scene.do( Twirl( center=(320,240), twirls=5, amplitude=1, grid=(16,12), duration=10) )
     '''
     def init( self, center=(-1,-1), twirls=4, amplitude=1, *args, **kw ):
@@ -399,7 +409,7 @@ class Twirl( Grid3DAction ):
         if center==(-1,-1):
             center=(x//2, y//2)
             
-        #: position of the center of the Twril. Type: (int,int)
+        #: position of the center of the Twril. Type: (int,int).
         #: This value can be modified by other actions, like `JumpBy` to simulate a jumping Twirl
         self.position = Point2( center[0]+1, center[1]+1 )  
 
@@ -409,7 +419,7 @@ class Twirl( Grid3DAction ):
         #: amplitude of the twirls
         self.amplitude=amplitude
 
-        #: amplitude rate. Default: 1.0
+        #: amplitude rate. Default: 1.0.
         #: This value is modified by other actions like `AccelAmplitude`.
         self.amplitude_rate = 1.0
 

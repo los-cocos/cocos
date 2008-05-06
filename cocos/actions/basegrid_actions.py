@@ -132,8 +132,8 @@ class GridBaseAction( IntervalAction ):
  
  
 class Grid3DAction( GridBaseAction ):
-    '''Is an action that does transformations
-    to a 3D grid.'''
+    '''Action that does transformations
+    to a 3D grid ( `Grid3D` )'''
 
     def get_grid(self):
         return Grid3D()
@@ -147,7 +147,7 @@ class Grid3DAction( GridBaseAction ):
             `y` : int
                y-vertex
 
-        :rtype: (int,int)
+        :rtype: (float, float, float)
         '''
         idx = (x * (self.grid.y+1) + y) * 3
         x = self.target.grid.vertex_list.vertices[idx]
@@ -156,7 +156,8 @@ class Grid3DAction( GridBaseAction ):
         return (x,y,z)
 
     def get_original_vertex( self, x, y):
-        '''Get the original vertex coordinate
+        '''Get the original vertex coordinate.
+        The original vertices are the ones weren't modified by the current action.
 
         :Parameters:
             `x` : int 
@@ -164,7 +165,7 @@ class Grid3DAction( GridBaseAction ):
             `y` : int
                y-vertex
 
-        :rtype: (int,int)
+        :rtype: (float, float, float)
         '''
         idx = (x * (self.grid.y+1) + y) * 3
         x = self.target.grid.vertex_points[idx]
@@ -182,7 +183,7 @@ class Grid3DAction( GridBaseAction ):
                x-vertex
             `y` : int
                y-vertex
-            `v` : (int, int, int)
+            `v` : (float, float, float)
                 tuple value for the vertex
         '''
         idx = (x * (self.grid.y+1) + y) * 3
@@ -192,8 +193,9 @@ class Grid3DAction( GridBaseAction ):
 
 
 class TiledGrid3DAction( GridBaseAction ):
-    '''Is an action that does transformations
-    to a grid composed of tiles. You can transform each tile individually'''
+    '''Action that does transformations
+    to a grid composed of tiles ( `TiledGrid3D` ).
+    You can transform each tile individually'''
 
     def get_grid(self):
         return TiledGrid3D()
@@ -231,7 +233,7 @@ class TiledGrid3DAction( GridBaseAction ):
                 y coordinate of the tile
 
         :rtype: [ float, float, float, float, float, float, float, float, float, float, float, float ]
-        :returns: The coordinates with the following order: x0, y0, z0, x1, y1, z1,...
+        :returns: The 4 coordinates with the following order: x0, y0, z0, x1, y1, z1,...,x3,y3,z3
         '''
         idx = (self.grid.y * x + y) * 4 * 3
         return self.target.grid.vertex_points[idx:idx+12]
@@ -353,7 +355,14 @@ class StopGrid( InstantAction ):
             self.target.grid.active = False
 
 class ReuseGrid( InstantAction ):
-    """ReuseGrid will reuse the current grid for the next grid action.
+    """Will reuse the current grid for the next grid action.
+    The next grid action must have these properties:
+    
+        - Be of the same class as the current one ( `Grid3D` or `TiledGrid3D` )
+        - Have the same size
+    
+    If these condition are met, then the next grid action will receive as the ``original vertex``
+    or ``original tiles`` the current ones.
     
     Example::
     
