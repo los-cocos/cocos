@@ -187,7 +187,7 @@ class Resource(object):
             return self.factories[tag.tag](self, tag)
         return self.get_resource(ref)
 
-    def __contains__(self, ref):    
+    def __contains__(self, ref):
         return ref in self.contents
 
     def __getitem__(self, ref):
@@ -494,12 +494,12 @@ class ScrollableLayer(cocos.layer.Layer):
     def set_viewport(self, x, y, w, h):
         self.viewport_x, self.viewport_y = x, y
         self.viewport_w, self.viewport_h = w, h
+        self.position = (-x, -y)
 
     def on_draw(self):
         super(ScrollableLayer, self).on_draw()
         pyglet.gl.glPushMatrix()
         self.transform()
-        pyglet.gl.glTranslatef(-self.viewport_x, -self.viewport_y, 0)
         self.batch.draw()
         pyglet.gl.glPopMatrix()
 
