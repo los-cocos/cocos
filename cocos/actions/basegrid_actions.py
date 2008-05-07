@@ -237,6 +237,21 @@ class TiledGrid3DAction( GridBaseAction ):
         '''
         idx = (self.grid.y * x + y) * 4 * 3
         return self.target.grid.vertex_points[idx:idx+12]
+
+    def get_tile(self, x, y):
+        '''Get the current tile coordinates.
+
+        :Parameters:
+            `x` : int
+                x coordinate of the tile
+            `y` : int
+                y coordinate of the tile
+
+        :rtype: [ float, float, float, float, float, float, float, float, float, float, float, float ]
+        :returns: The 4 coordinates with the following order: x0, y0, z0, x1, y1, z1,...,x3,y3,z3
+        '''
+        idx = (self.grid.y * x + y) * 4 * 3
+        return self.target.grid.vertex_list.vertices[idx:idx+12]
         
 
 class AccelDeccelAmplitude( IntervalAction ):

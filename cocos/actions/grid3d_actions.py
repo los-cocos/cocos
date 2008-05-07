@@ -285,9 +285,9 @@ class Shaky3D( Grid3DAction):
         for i in xrange(0, self.grid.x+1):
             for j in xrange(0, self.grid.y+1):
                 x,y,z = self.get_original_vertex(i,j)
-                x += rr( -self.randrange, self.randrange )
-                y += rr( -self.randrange, self.randrange )
-                z += rr( -self.randrange, self.randrange )
+                x += rr( -self.randrange, self.randrange+1 )
+                y += rr( -self.randrange, self.randrange+1 )
+                z += rr( -self.randrange, self.randrange+1 )
 
                 self.set_vertex( i,j, (x,y,z) )
 

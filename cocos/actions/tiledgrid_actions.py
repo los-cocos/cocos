@@ -83,9 +83,9 @@ class ShakyTiles3D( TiledGrid3DAction ):
             for j in xrange(0, self.grid.y):
                     coords = self.get_original_tile(i,j)   
                     for k in xrange(0,len(coords),3):
-                        x = rr(-self.randrange, self.randrange)
-                        y = rr(-self.randrange, self.randrange)
-                        z = rr(-self.randrange, self.randrange)
+                        x = rr(-self.randrange, self.randrange+1)
+                        y = rr(-self.randrange, self.randrange+1)
+                        z = rr(-self.randrange, self.randrange+1)
                         coords[k] += x
                         coords[k+1] += y
                         coords[k+2] += z
@@ -118,9 +118,9 @@ class ShatteredTiles3D( TiledGrid3DAction ):
                 for j in xrange(0, self.grid.y):
                     coords = self.get_original_tile(i,j)   
                     for k in xrange(0,len(coords),3):
-                        x = rr(-self.randrange, self.randrange)
-                        y = rr(-self.randrange, self.randrange)
-                        z = rr(-self.randrange, self.randrange)
+                        x = rr(-self.randrange, self.randrange+1)
+                        y = rr(-self.randrange, self.randrange+1)
+                        z = rr(-self.randrange, self.randrange+1)
                         coords[k] += x
                         coords[k+1] += y
                         coords[k+2] += z
