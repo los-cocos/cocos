@@ -7,6 +7,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 import math
 
+def sign(x): return 1 if x >= 0 else -1
+
 class MeshSprite:
     def __init__(self, image, x_quads, y_quads):
         x_step = image.width / (x_quads)
@@ -45,9 +47,17 @@ class MeshSprite:
         for p in range(len(self.vertex_points)/2):
             x = self.vertex_points[2*p]
             y = self.vertex_points[2*p+1]
-            scale = abs(math.cos ( float(x)/(y+0.5) + self.elapsed ) ) + 1
-            x = (x-25) * scale + 25
-            y = (y-50) * scale + 50
+            if 0:
+                scale = abs(math.cos ( float(x)/(y+0.5) + self.elapsed ) ) + 1
+                x = (x-25) * scale + 25
+                y = (y-50) * scale + 50
+            else:
+                center = (2+self.elapsed)**4
+                disttoc = math.sqrt( (x-25)**2 + (y-50)**2 ) - center
+                scale = min(1/abs(disttoc), 1)*10
+                
+                x = x + sign(x-25) * scale 
+                y = y + sign(y-50) * scale 
             self.vertex_list.vertices[2*p] = 200+int(x)
             self.vertex_list.vertices[2*p+1] = 200+int(y)
 
@@ -61,7 +71,7 @@ window = pyglet.window.Window()
 grossini = pyglet.resource.image("grossini.png")
 grossini.anchor_x = grossini.width / 2
 grossini.anchor_y = grossini.height / 2
-ms = MeshSprite( grossini, 5,5 )
+ms = MeshSprite( grossini, 15,31 )
 def update(dt):
     window.clear()
     ms.on_draw(dt)
@@ -69,7 +79,7 @@ def update(dt):
 pyglet.clock.schedule_interval(update, 1/60.)
 
 @window.event
-def on_draw():
-    pass
+def on_key_press(key, mods):
+    ms.elapsed = 0
     
 pyglet.app.run()

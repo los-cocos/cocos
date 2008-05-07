@@ -83,7 +83,7 @@ class BatchNode( cocosnode.CocosNode ):
         
 class BatchableNode( cocosnode.CocosNode ):
     def add(self, child, z=0, name=None):
-        batchnode = self.get(BatchNode)
+        batchnode = self.get_ancestor(BatchNode)
         if not batchnode: 
             # this node was addded, but theres no batchnode in the
             # hierarchy. so we proceed as normal

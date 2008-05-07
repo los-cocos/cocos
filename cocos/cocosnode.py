@@ -473,8 +473,8 @@ class CocosNode(object):
         if self.transform_anchor != (0,0):
             if self.transform_anchor == self.children_anchor:
                 glTranslatef( 
-                    self.transform_anchor_x, 
-                    self.transform_anchor_y,
+                    -self.transform_anchor_x, 
+                    -self.transform_anchor_y,
                      0 )
             else:
                 glTranslatef( 

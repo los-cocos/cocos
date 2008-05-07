@@ -145,7 +145,7 @@ class ActionSprite( BatchableNode, pyglet.sprite.Sprite):
             self.image.anchor_x = value
         self._update_position()
 
-    def _get_anchor_x(self, value):
+    def _get_anchor_x(self):
         if isinstance(self.image, pyglet.image.Animation):
             return self.image.frames[0].image.anchor_x
         else:
@@ -161,11 +161,11 @@ class ActionSprite( BatchableNode, pyglet.sprite.Sprite):
             self.image.anchor_y = value
         self._update_position()
         
-    def _get_anchor_y(self, value):
-        if isinstance(self._image, pyglet.image.Animation):
-            return self._image.frames[0].image.anchor_y
+    def _get_anchor_y(self):
+        if isinstance(self.image, pyglet.image.Animation):
+            return self.image.frames[0].image.anchor_y
         else:
-            return self._image.anchor_y
+            return self.image.anchor_y
     transform_anchor_y = property(_get_anchor_y, _set_anchor_y)
     
             

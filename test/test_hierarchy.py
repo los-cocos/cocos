@@ -26,7 +26,7 @@ class TestLayer(cocos.layer.Layer):
         
         self.sprite3 = ActionSprite( 'grossinis_sister2.png', (0, 102) )
         self.sprite2.add( self.sprite3 )
-
+        
         self.sprite.do( Rotate(360,10) ) 
         self.sprite2.do( ScaleBy(2,5)+ScaleBy(0.5,5) ) 
         self.sprite2.do( Rotate(360,10) ) 
