@@ -83,7 +83,8 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
         if not scene: return
         
         if scn._handlers_enabled:
-            director.window.push_handlers( self )
+            if self.is_event_handler:
+                director.window.push_handlers( self )
         
     def on_exit(self):
         super(Layer, self).on_exit()
@@ -92,7 +93,8 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
         if not scene: return
         
         if scn._handlers_enabled:
-            director.window.remove_handlers( self )
+            if self.is_event_handler:
+                director.window.remove_handlers( self )
 
 #
 # MultiplexLayer
