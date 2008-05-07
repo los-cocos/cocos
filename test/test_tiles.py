@@ -27,29 +27,26 @@ class CarSprite(cocos.sprite.ActionSprite):
         self.y += math.cos(r) * s
         manager.set_focus(self.x, self.y)
 
+        
+        
 if __name__ == "__main__":
     from cocos.director import director
-    #director.init(width=400, height=300)
     director.init(width=600, height=300)
 
     car_layer = tiles.ScrollableLayer()
     car = CarSprite('car.png')
-    pyglet.clock.schedule(car.update)
+    car.schedule(car.update)
     car_layer.add(car)
 
-    manager = tiles.ScrollingManager(director.window)
+    manager = tiles.ScrollingManager()
     test_layer = tiles.load('road-map.xml')['map0']
     manager.append(test_layer)
     manager.append(car_layer)
 
     main_scene = cocos.scene.Scene(test_layer, car_layer)
-
+    
     keyboard = key.KeyStateHandler()
     director.window.push_handlers(keyboard)
-
-    @director.window.event
-    def on_close():
-        pyglet.app.exit()
 
     director.run(main_scene)
 

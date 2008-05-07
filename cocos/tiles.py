@@ -999,7 +999,10 @@ class ScrollingManager(list):
     The manager is initialised with the viewport (usually a Window) which has
     the pixel dimensions .width and .height which are used during focusing.
     '''
-    def __init__(self, viewport):
+    def __init__(self, viewport=None):
+        if viewport is None:
+            import director
+            viewport = director.director.window
         self.viewport = viewport
         self.fx = self.fy = 0
 
