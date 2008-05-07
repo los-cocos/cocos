@@ -10,6 +10,9 @@ from cocos.director import director
 import pyglet
 
 class KeyDisplay(cocos.layer.Layer):
+
+    is_event_handler = True     #: enable pyglet's events
+
     def __init__(self):
 
         super( KeyDisplay, self ).__init__()
@@ -52,6 +55,9 @@ class KeyDisplay(cocos.layer.Layer):
         self.text.element.text = text
 
 class MouseDisplay(cocos.layer.Layer):
+
+    is_event_handler = True     #: enable pyglet's events
+
     def __init__(self):
         super( MouseDisplay, self ).__init__()
 

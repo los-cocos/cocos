@@ -76,6 +76,8 @@ class PauseScene(Scene):
 class PauseLayer(Layer):
     '''Layer that shows the text 'PAUSED'
     '''
+    is_event_handler = True     #: enable pyglet's events
+
     def __init__(self):
         super(PauseLayer, self).__init__()
         

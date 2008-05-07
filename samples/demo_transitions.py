@@ -19,6 +19,9 @@ from pyglet.window import key
 
     
 class ControlLayer(Layer):
+
+    is_event_handler = True     #: enable pyglet's events
+
     def __init__( self ):
 
         super(ControlLayer, self).__init__()

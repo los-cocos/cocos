@@ -32,6 +32,10 @@ if __name__ == "__main__":
     # enabling to resize the main window
     director.init( resizable=True)
 
+    # enable opengl depth test
+    # since we are using z-values
+    director.set_depth_test()
+
     # create an Scene with 1 layer: BackgroundLayer
     scene = Scene( BackgroundLayer() )
 

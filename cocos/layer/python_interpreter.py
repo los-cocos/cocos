@@ -55,9 +55,11 @@ class PythonInterpreterLayer(ColorLayer):
 
     name = 'py'
 
-    prompt = ">>> "
-    prompt_more = "... "
+    prompt = ">>> "             #: python prompt
+    prompt_more = "... "        #: python 'more' prompt
     doing_more = False
+
+    is_event_handler = True     #: enable pyglet's events
 
     def __init__(self):
         super(PythonInterpreterLayer, self).__init__( 32,32,32,192 )

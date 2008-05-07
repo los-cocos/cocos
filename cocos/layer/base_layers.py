@@ -53,7 +53,7 @@ __all__ = [ 'Layer', 'MultiplexLayer']
 class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
     """Class that handles events and other important game's behaviors"""
 
-    is_event_handler = False #! if true, the event handlers of this layer will be registered. defaults to false.
+    is_event_handler = False #: if true, the event handlers of this layer will be registered. defaults to false.
     
     def __init__( self ):
         super( Layer, self ).__init__()

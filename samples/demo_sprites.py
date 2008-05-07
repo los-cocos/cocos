@@ -66,6 +66,8 @@ class FontLayer( Layer ):
 
 class SpriteLayer( Layer ):
 
+    is_event_handler = True     #: enable pyglet's events
+
     def __init__( self, index=1 ):
         super(SpriteLayer, self ).__init__()
         self.index = index

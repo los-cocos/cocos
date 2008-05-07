@@ -95,6 +95,8 @@ class Menu(Layer):
      - Finally you shall add the menu to an `Scene` or another `Layer`
     """
 
+    is_event_handler = True #: Receives pyglet events
+
     select_sound = None
     activate_sound = None
     def __init__( self, title = ''):
