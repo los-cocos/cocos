@@ -1026,6 +1026,8 @@ class ScrollingManager(list):
             if hasattr(layer, 'px_width'):
                 bounded.append(layer)
         if not bounded:
+            for layer in self:
+                layer.force_focus(fx, fy)
             return (fx, fy)
 
         # figure the bounds min/max
