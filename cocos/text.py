@@ -67,11 +67,19 @@ class TextElement(cocosnode.CocosNode):
         self.element.draw()
         glPopMatrix()
         
+    def _get_opacity(self):
+        return self.element.color[3]
+    def _set_opacity(self, value):
+        self.element.color = self.element.color[:3] + (int(value),)
+    opacity = property(_get_opacity, _set_opacity)
+        
 class Label(TextElement):
     '''CocosNode Label element. It is a wrapper of pyglet.text.Label with the benefits
     of being of a CocosNode
     '''
     klass = pyglet.text.Label
+    
+    
     
 class HTMLLabel(TextElement):
     '''CocosNode HTMLLabel element. It is a wrapper of pyglet.text.HTMLLabel with the benefits
