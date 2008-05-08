@@ -113,7 +113,7 @@ class Action(object):
             raise TypeError("Can only multiply actions by ints")
         if other <= 1:
             return self
-        return  Sequence(self, self*(other-1))
+        return  Loop(self, other)
 
     def __or__(self, action):
         """Is the Spawn Action"""
@@ -178,7 +178,95 @@ class InstantAction( Action ):
 
     def update(self, t):
         pass
+class Loop(IntervalAction):
+    """Repeat one action for n times
+    You can loop actions using:
 
+        * the Loop() class
+        * the overriden * operator
+
+    Example::
+
+        action = Loop( one, 10 )
+        sprite.do( action )
+
+        or:
+
+        sprite.do( one * 10 )
+    """
+    def init(self,  one, times ):
+        """Init method
+
+        :Parameters:
+            `one` : `Action`
+                The first action to execute
+            `two` : `Action`
+                The second action to execute
+        """
+
+        self.one = one
+        self.times = times
+
+        if not hasattr(self.one, "duration"):
+            raise Exception("You can only loop actions with finite duration, not repeats or others like that")
+        
+        self.duration = self.one.duration * times
+        
+        self.current = None
+        self.last = None
+        
+    def start(self):
+        self.duration = self.one.duration * self.times
+        self.last = 0
+        self.current_action = copy.deepcopy(self.one)
+        self.current_action.target = self.target
+        self.current_action.start()
+        
+    def __repr__(self):
+        return "( %s * %i )" %( self.one, self.times )
+
+    def update(self, t):
+        current = int(t * float(self.times))
+        new_t = (t - (current * (1./self.times) ) ) * self.times
+
+
+        if current >= self.times: # we are done
+            return
+        # just more dt for the current action
+        elif current == self.last:
+            self.current_action.update(new_t)
+        else:
+            # finish the last action
+            self.current_action.update(1)
+            self.current_action.stop()
+            
+            for i in range(self.last+1, current):
+                # fast forward the jumped actions            
+                self.current_action = copy.deepcopy(self.one)
+                self.current_action.target = self.target
+                self.current_action.start()
+                self.current_action.update(1)
+                self.current_action.stop()
+            
+            # set new current action
+            self.current_action = copy.deepcopy(self.one)
+            self.current_action.target = self.target
+            self.last = current
+            
+            # start a new action
+            self.current_action.start()
+            
+            # feed dt
+            self.current_action.update(new_t)
+            
+    def stop(self):
+        self.current_action.update(1)
+        self.current_action.stop()
+        
+    def __reversed__(self):
+        return Loop( Reverse(self.one), self.times )
+        
+        
 class Sequence(IntervalAction):
     """Run actions sequentially: One after another
     You can sequence actions using:
