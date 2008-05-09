@@ -79,7 +79,8 @@ class Camera3DAction( IntervalAction ):
         self.target.grid.camera_up = self.camera_up_orig
 
     def __reversed__( self ):
-        return ReverseTime( self )
+        return _ReverseTime( self )
+
 
 class OrbitCamera( Camera3DAction ):
     '''Orbits the camera around the center of the screen using spherical coordinates

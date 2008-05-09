@@ -128,7 +128,7 @@ class GridBaseAction( IntervalAction ):
         self.size_y = y // self.grid.y
       
     def __reversed__(self):
-        return ReverseTime(self)
+        return _ReverseTime(self)
  
  
 class Grid3DAction( GridBaseAction ):

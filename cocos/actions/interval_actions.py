@@ -42,7 +42,7 @@ It has an start time, and a finish time. The finish time is the parameter
 These `IntervalAction` have some interesting properties, like:
 
   - They can run normally (default)
-  - They can run reversed with the `Reverse` and `ReverseTime` actions.
+  - They can run reversed with the `Reverse` action.
   - They can run with the time altered with the `Accelerate`, `AccelDeccel` and
     `Speed` actions.
 

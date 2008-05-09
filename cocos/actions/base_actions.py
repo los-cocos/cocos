@@ -48,7 +48,7 @@ __all__ = [
             'Action',                           # Base Class
             'IntervalAction', 'InstantAction',  # Important Base classes 
             'Sequence','Spawn','Repeat',        # Basic behaviors
-            'Reverse','ReverseTime',            # Reverse
+            'Reverse','_ReverseTime',           # Reverse
             ]
 
 
@@ -452,27 +452,29 @@ class Repeat(Action):
         return False
 
 
-class ReverseTime( IntervalAction ):
-    """ReverseTime executes an action in reverse order, from time=duration to time=0
+class _ReverseTime( IntervalAction ):
+    """Executes an action in reverse order, from time=duration to time=0
 
-    Example::
+    WARNING: Use this action carefully. This action is not
+    sequenceable. Use it as the default ``__reversed__`` method
+    of your own actions, but using it outside the ``__reversed``
+    scope is not recommended.
 
-        # Executes an reverse-time FlipX3D action
-        action = ReverseTime( FlipX3D( duration=2) )
-        scene.do( action )
+    The default ``__reversed__`` method for all the `Grid3DAction` actions
+    and `CameraAction` actions is ``_ReverseTime()``.
     """
     def init(self, other, *args, **kwargs):
-        super(ReverseTime, self).init(*args, **kwargs)
+        super(_ReverseTime, self).init(*args, **kwargs)
         self.other = other
         self.duration = self.other.duration
         
     def start(self):
         self.other.target = self.target
-        super(ReverseTime, self).start()
+        super(_ReverseTime, self).start()
         self.other.start()
         
     def stop(self):
-        super(ReverseTime,self).stop()
+        super(_ReverseTime,self).stop()
     
     def update(self, t):
         self.other.update(1-t)
