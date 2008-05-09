@@ -1,7 +1,7 @@
 cocos2d: A framework for building 2D games
 http://cocos2d.org
 
-version: 0.3.0beta0
+version: 0.3.0rc0
 
 
 Requirements
@@ -21,11 +21,13 @@ Installing
 Learning cocos2d
 ----------------
 
- * read the programming guide:
-    * coming soon to: http://cocos2d.org
-   
- * download and read the API reference:
-    * coming soon to: http://cocos2d.org
+ * go the tuturials / documentation page:
+   http://cocos2d.org/doc.html
+
+   you will find:
+    . the Programming Guide
+    . the API Reference
+    . some tutorial videos
 
  * run ( and read ) the samples:
    $ cd samples
@@ -35,14 +37,6 @@ Learning cocos2d
    $ cd test
    $ python test_*.py
      ( and read the tests source code )
-
-
-Beta release
--------------
-
-This is a beta release. The API is subject to change.
-Documentation is incomplete, and refers in places to
-deprecated methods.  
 
 
 Do you have any doubt ?

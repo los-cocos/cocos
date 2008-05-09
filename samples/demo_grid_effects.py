@@ -226,12 +226,13 @@ if __name__ == "__main__":
     flipy = FlipY3D(duration=1)
     flip = Flip(duration=1)
     liquid = Liquid( grid=(16,12), duration=4)
+    ripple = Ripple3D( grid=(32,24), waves=10, duration=10, amplitude=50, radius=240)
     shakyt = ShakyTiles3D( grid=(16,12), duration=3)
     corners = CornerSwap( duration=1)
     waves = AccelAmplitude(Waves( waves=8, amplitude=50, grid=(32,24), duration=5), rate=2.0)  
     shaky = Shaky3D( randrange=10, grid=(32,24), duration=5)
     quadmove = QuadMoveBy( delta0=(320,240), delta1=(-630,0), delta2=(-320,-240), delta3=(630,0), duration=2 )
-    fadeout = FadeOutTiles( grid=(16,12), duration=2)
+    fadeout = FadeOutTilesTR( grid=(16,12), duration=2)
     cornerup = MoveCornerUp( duration=1)
     cornerdown = MoveCornerDown( duration=1)
     shatter = ShatteredTiles3D( randrange=16, grid=(16,12), duration=4 )
@@ -248,6 +249,7 @@ if __name__ == "__main__":
               Delay(3) +
               twirl +
               liquid + Delay(2) +
+              ripple + Delay(2) +
               shakyt + Delay(2) +
               ReuseGrid() +
               shuffle + Delay(4) + ReuseGrid() + turnoff + Reverse(turnoff) + Delay(1) +
@@ -265,13 +267,13 @@ if __name__ == "__main__":
               wavestiles + Delay(1) +
               cornerup + Delay(1) +
               Reverse(cornerdown) + Delay(1) +
-              fadeout + Delay(2) +              
+              fadeout + Reverse(fadeout) + Delay(2) +
               quadmove + Delay(1) +
               Reverse(quadmove) +
               StopGrid()
               )
 
-    scene.do( Delay(10) +  OrbitCamera( delta_z=-360*2, duration=10*3 ) )
+    scene.do( Delay(10) +  OrbitCamera( delta_z=-360*3, duration=10*4 ) )
 
     firelayer.do( Delay(4) + DoAction( Repeat( RotateBy(360, 10) ) ) )
 

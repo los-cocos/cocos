@@ -50,6 +50,7 @@ __all__ = [
            'FlipY3D',
            'Lens3D',
            'Shaky3D',
+           'Ripple3D',
 
            'Liquid',    # 3d actions that don't modify the z-coordinate
            'Waves',
@@ -262,6 +263,67 @@ class Lens3D( Grid3DAction ):
                     # since we want to 'fix' possible moved vertex
                     self.set_vertex( i,j, (x,y,z) )
             self._last_position = self.position
+
+
+class Ripple3D( Grid3DAction ):
+    '''Simulates a ripple effect
+    
+    Example::
+
+       scene.do( Ripple3D(center=(320,240), radius=240, grid=(32,24), waves=15, amplitude=60, duration=20 ) )
+    '''
+
+    def init(self, center=(-1,-1), radius=240, waves=15, amplitude=60, *args, **kw):
+        '''
+        :Parameters:
+            `center` : (int,int)
+                Center of the lens. Default: (win_size_width /2, win_size_height /2 )
+            `radius` : int
+                Radius of the lens. Default: 240
+            `waves` : int
+                Number of waves (2 * pi) that the action will perform. Default: 15
+            `amplitude` : int
+                Wave amplitude (height). Default is 60
+        '''
+        super(Ripple3D,self).init( *args, **kw)
+        
+        x,y = director.get_window_size()
+        if center==(-1,-1):
+            center=(x//2, y//2)
+            
+        #: position of the center of the len. Type: (int,int).
+        #: This value can be modified by other actions, like `JumpBy` to simulate a jumping lens
+        self.position = Point2( center[0]+1, center[1]+1 )  
+
+        #: radius of the lens. Type: float
+        self.radius = radius
+
+        #: lens effect factor. Type: float        
+        self.waves = waves
+
+        #: amplitude rate. Default: 1.0.
+        #: This value is modified by other actions like `AccelAmplitude`.
+        self.amplitude_rate = 1.0
+        self.amplitude=amplitude
+       
+        
+    def update( self, t ):
+        for i in xrange(0, self.grid.x+1):
+            for j in xrange(0, self.grid.y+1):
+    
+                x,y,z = self.get_original_vertex(i,j)
+                
+                p = Point2( x,y )
+                vect = self.position - p
+                r = abs(vect)
+                
+                if r < self.radius:
+                    r = self.radius - r
+                    rate = pow( r / self.radius, 3)
+                    z += (math.sin( t*math.pi*self.waves*2 + r * 0.1) * self.amplitude * self.amplitude_rate * rate )
+    
+                self.set_vertex( i,j, (x,y,z) )
+
 
 class Shaky3D( Grid3DAction):
     '''Shaky simulates an earthquake modifying randomly the x,y and z coordinates
