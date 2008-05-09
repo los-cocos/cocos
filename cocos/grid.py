@@ -70,23 +70,21 @@ class GridBase(object):
         #: size of the grid. (rows, columns)
         self.grid = grid
         
-        x,y = director.window.width, director.window.height
+        width, height = director.get_window_size()
 
         if self.texture is None:
             self.texture = image.Texture.create_for_size(
-                    GL_TEXTURE_2D, x, 
-                    y, GL_RGBA)
+                    GL_TEXTURE_2D, width, 
+                    height, GL_RGBA)
         
         self.grabber = framegrabber.TextureGrabber()
         self.grabber.grab(self.texture)
 
         #: x pixels between each vertex (float)
-        self.x_step = x / self.grid.x
+        self.x_step = width / self.grid.x
         #: y pixels between each vertex (float)
-        self.y_step = y / self.grid.y
+        self.y_step = height / self.grid.y
 
-        # camera default value
-        width, height = director.get_window_size()
         
         #: tuple (x,y,z) that says where is the eye of the camera.
         #: used by ``gluLookAt()``
@@ -178,6 +176,7 @@ class GridBase(object):
         elif self._active == False:
             self.vertex_list.delete()
             director.pop_handlers()
+            director.set_2d_projection()
         else:
             raise Exception("Invalid value for GridBase.active")
                                         
@@ -197,9 +196,9 @@ class GridBase(object):
     def _on_resize(self):
         raise NotImplementedError('abstract')
 
-    def _set_3d_projection(self):
+    @classmethod
+    def _set_3d_projection(cls):
         width, height = director.window.width, director.window.height
-#        width, height = director.get_window_size()
 
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
@@ -213,9 +212,10 @@ class GridBase(object):
                    self.camera_center.x, self.camera_center.y, self.camera_center.z,    # camera center
                    self.camera_up.x, self.camera_up.y, self.camera_up.z                 # camera up vector
                    )
-   
-    def _set_2d_projection(self):
-#        width, height = director.window.width, director.window.height
+  
+    @classmethod
+    def _set_2d_projection(cls):
+        width, height = director.window.width, director.window.height
         width, height = director.get_window_size()
         glLoadIdentity()
         glViewport(0, 0, width, height)

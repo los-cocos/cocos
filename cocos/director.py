@@ -373,6 +373,13 @@ class Director(event.EventDispatcher):
             `height` : Integer
                 New height
         """
+        self.set_2d_projection()
+        self.dispatch_event('on_resize', width, height)
+
+    def set_2d_projection(self):
+        width = self.window.width
+        height = self.window.height
+
         width_aspect = width
         height_aspect = int( width / self._window_aspect)
 
@@ -383,14 +390,12 @@ class Director(event.EventDispatcher):
         self._offset_x = (width - width_aspect) / 2
         self._offset_y =  (height - height_aspect) / 2
 
+        glLoadIdentity()
         glViewport(self._offset_x, self._offset_y, width_aspect, height_aspect )
         glMatrixMode(gl.GL_PROJECTION)
         glLoadIdentity()
-        glOrtho(0, self._window_original_width, 0, self._window_original_height, -1, 1)
+        glOrtho(0, self._window_original_width, 0, self._window_original_height, -100, 100)
         glMatrixMode(gl.GL_MODELVIEW)
-        
-        self.dispatch_event('on_resize', width, height)
-
         
     #
     # Misc functions
