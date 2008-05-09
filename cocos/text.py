@@ -70,7 +70,7 @@ class TextElement(cocosnode.CocosNode):
     def _get_opacity(self):
         return self.element.color[3]
     def _set_opacity(self, value):
-        self.element.color = self.element.color[:3] + (int(value),)
+        self.element.color = tuple(self.element.color[:3]) + (int(value),)
     opacity = property(_get_opacity, _set_opacity)
         
 class Label(TextElement):
