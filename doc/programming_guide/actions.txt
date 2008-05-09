@@ -182,4 +182,103 @@ Special Actions
  Example::
  
  	XXX: finish this part
- 	
+	
+Creating your own actions
+-------------------------
+
+Creating your own actions is pretty easy. You should familiarize yourself with this concepts, 
+because actions are very powerful and can be combined with another actions to create more actions. 
+
+For example, there is the Blink action. It is implemented by subclassing `IntervalAction`, 
+but you could actually do something like::
+
+	def Blink(times, duration): 
+		return (
+			Hide() + Delay(duration/(times*2)) + 
+			Show() + Delay(duration/(times*2)) 
+		) * times
+	
+Basic Internals
+^^^^^^^^^^^^^^^
+
+All actions work on a `target`. Its their callers responsability to set 
+the target to the correct element. This allows the user to instantiate an action and then apply the same
+action to various different elements. All cocosnodes can be a target for an action.
+
+You will not know who the target is when `__init__` is called, but you will when `start` is called. If 
+you are making an action that takes more actions as parameters, it is your responsability to:
+   - set the target
+   - call the start method
+   - call the stop method
+   
+You can also override the `__reversed__` method. In this method you have to construct and return an action 
+that would be the reversed version of the action you are doing. For example, 
+in `Show()` we return `Hide()` as its reverse::
+	class Show( InstantAction ):
+	    "<snip>"
+	    def __reversed__(self):
+		return Hide()
+
+		
+Instant Actions
+^^^^^^^^^^^^^^^
+
+Instant actions are actions that will take no time to execute. For example, `Hide()` 
+sets the target visibility to False. 
+
+It is very easy to create an action using the CallFuncS action as a decorator::
+	@CallFuncS
+        def make_visible( sp ):
+            sp.do( Show() )
+        self.sprite.do( make_visible )
+	
+please note that make_visible will not be a regular function that you can call, 
+it will be an action. So you can compose it like any other action.
+
+If you want to subclass InstantAction, you will have to override:
+  - the `init` method to take the parameters you desire
+  - the `start` method to do the action
+  
+Thats it.
+
+For example, this is a minimal implementation of SetOpacity::
+
+	class SetOpacity( InstantAction ):
+	    def init(self, opacity):
+	        self.opacity = opacity
+	    def start(self):
+		self.target.opacity = self.opacity
+		
+Interval Actions
+^^^^^^^^^^^^^^^^
+
+Interval actions is where the fun is. With this actions you can specify
+transformations that take a finite time. For example, `MoveBy(how_much, duration)`.
+
+The protocol for `IntervalAction` subclasses is the following:
+   - `init` method will be called. here you have to set your `duration` property.
+   - a copy of the instance will be made (you dont have to worry about this)
+   - `start` method will be called (`self.target` will be set)
+   - `update(t)` will most likely be called many time with t in [0,1) and t will monotonically rise.
+   - `update(1)` will be called.
+   - `stop()` will be called.
+   
+So its in update that you do your magic. For example, if you want to fade something out, 
+you can write something like::
+	class FadeOut( IntervalAction ):
+	    def init( self, duration ):
+		self.duration = duration
+	
+	    def update( self, t ):
+		self.target.opacity = 255 * (1-t)
+	
+	    def __reversed__(self):
+		return FadeIn( self.duration )
+
+The trick is that whoever is running your action will interpolate the values of t so that you 
+get called with `t==1` when your duration is up. This does not mean that `duration` seconds 
+have elapsed, but it usually does. If someone wants to make your action go twice as fast, they can feed you 
+updates at a different rate and you should not care.
+
+Also, this allows us to change the interpolation method. We usually use linear interpolation, 
+but the `AccelDeccel`, for example, uses a sigmoid funcion so that is goes slower at the ends.
