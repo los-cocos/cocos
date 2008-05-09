@@ -1,3 +1,9 @@
+v0.3.0rc - XXXX
+  - Transitions: added FadeBLTransition, FadeUpTransition, FadeDownTransition
+  - Transitions: reanamed CurtainTransition to FadeTRTransition
+  - Actions: Added FadeOutBLTiles, FadeOutUpTiles, FadeDownTiles
+  - Actions: renamed FadeOutTiles to FadeOutTRTiles
+
 v0.3.0beta0 - May 5th, 2008
   - Actions: actions are defined in the actions/ folder
   - Actions: Goto renamed to MoveTo and Move renamed to MoveBy
