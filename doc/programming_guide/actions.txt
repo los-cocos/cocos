@@ -205,7 +205,7 @@ All actions work on a `target`. Its their callers responsability to set
 the target to the correct element. This allows the user to instantiate an action and then apply the same
 action to various different elements. All cocosnodes can be a target for an action.
 
-You will not know who the target is when `__init__` is called, but you will when `start` is called. If 
+You will not know who the target is when `__init__` or `init` is called, but you will when `start` is called. If 
 you are making an action that takes more actions as parameters, it is your responsability to:
    - set the target
    - call the start method
@@ -281,4 +281,4 @@ have elapsed, but it usually does. If someone wants to make your action go twice
 updates at a different rate and you should not care.
 
 Also, this allows us to change the interpolation method. We usually use linear interpolation, 
-but the `AccelDeccel`, for example, uses a sigmoid funcion so that is goes slower at the ends.
+but `AccelDeccel`, for example, uses a sigmoid funcion so that is goes slower at the ends.
