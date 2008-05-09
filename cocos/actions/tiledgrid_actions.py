@@ -40,7 +40,10 @@ from basegrid_actions import *
 
 rr = random.randrange
 
-__all__ = [ 'FadeOutTiles',             # actions that don't modify the z coordinate
+__all__ = [ 'FadeOutTilesTR',             # actions that don't modify the z coordinate
+           'FadeOutTilesBL',
+           'FadeOutTilesUp',
+           'FadeOutTilesDown',
            'ShuffleTiles',
            'TurnOffTiles',
 
@@ -188,55 +191,113 @@ class ShuffleTiles( TiledGrid3DAction ):
         return Point2(i,j)-Point2(x,y)
 
 
-class FadeOutTiles( TiledGrid3DAction ):
-    '''FadeOutTiles fades out each tile following a diagonal path until all the tiles are faded out.
+class FadeOutTilesTR( TiledGrid3DAction ):
+    '''FadeOutTilesTR fades out each tile following a diagonal Top-Right path until all the tiles are faded out.
     
     Example::
     
-       scene.do( FadeOutTiles( grid=(16,12), duration=10) )
+       scene.do( FadeOutTilesTR( grid=(16,12), duration=10) )
     '''
 
-    def start(self):
-        super(FadeOutTiles,self).start()
-        self.tiles = {}
-        for i in xrange(self.grid.x):
-            for j in xrange(self.grid.y):
-                self.tiles[(i,j)] = Tile( position = Point2(i,j), 
-                                          start_position = Point2(i,j), 
-                                          delta=Point2(0,-j) )
-
     def update( self, t ):
-        x,y = t * self.grid
                 
         # direction right - up
         for i in xrange(self.grid.x):
             for j in xrange(self.grid.y):
-                if i+j <= x+y+8:
-                    for k in xrange(0,4):
-                        idx =     (i * 4 * self.grid.y + j * 4 + k) * 3
-                        idx_dst = (i * 4 * self.grid.y + j * 4 + 2) * 3   # k==2 is coord 'c'
+                distance = self.test_func(i,j,t)
+                if distance == 0:
+                    self.turn_off_tile(i,j)
+                elif distance < 1:
+                    self.transform_tile(i,j,distance)
+                else:
+                    self.turn_on_tile(i,j)
 
-                        vx = self.target.grid.vertex_list.vertices[idx]
-                        vy = self.target.grid.vertex_list.vertices[idx+1]
-                        
-                        x_dst = self.target.grid.vertex_points[idx_dst]
-                        y_dst = self.target.grid.vertex_points[idx_dst+1]
+    def turn_on_tile(self, x,y):
+        self.set_tile(x,y, self.get_original_tile(x,y) )
 
-                        if k==1 or k==0:    # coord 'a' or 'b'
-                            vy = 1 + vy + (y_dst - vy) / 16
-                        if k==3 or k==0:    # coord 'a' or 'd'
-                            vx = 1 + vx + (x_dst - vx) / 16
-                             
-                        if vx >= x_dst:
-                            vx = x_dst
-                        if vy >= y_dst:
-                            vy = y_dst
-                                
-                        self.target.grid.vertex_list.vertices[idx] = int(vx)
-                        self.target.grid.vertex_list.vertices[idx+1] = int(vy)
-    def __reversed__(self):
-        raise GridException("FadeOutTiles has no reverse")
+    def transform_tile(self, x, y, t ):
+        coords = self.get_original_tile(x,y)
+        for c in xrange( len(coords) ):
+
+            # x
+            if c == 0*3 or c == 3*3:
+                coords[c] = coords[c] + (self.target.grid.x_step / 2.0) * (1-t)
+            elif c == 1*3 or c == 2*3:
+                coords[c] = coords[c] - (self.target.grid.x_step / 2.0) * (1-t)
+
+            # y
+            if c == 0*3+1 or c == 1*3+1:
+                coords[c] = coords[c] + (self.target.grid.y_step / 2.0) * (1-t)
+            elif c == 2*3+1 or c == 3*3+1:
+                coords[c] = coords[c] - (self.target.grid.y_step / 2.0) * (1-t)
+
+        self.set_tile(x,y,coords)
+
+
+    def turn_off_tile( self,x,y):
+        self.set_tile(x,y,[0,0,0,0,0,0,0,0,0,0,0,0] )
+
+    def test_func(self, i,j, t ):
+        x,y = self.grid * t
+        if x+y==0:
+            return 1 
+        return pow( (i+j) / float(x+y), 6 )
+
+class FadeOutTilesBL( FadeOutTilesTR):
+    '''FadeOutTilesBL fades out each tile following an Bottom-Left path until all the tiles are faded out.
     
+    Example::
+    
+       scene.do( FadeOutTilesBL( grid=(16,12), duration=5) )
+    '''
+
+    def test_func(self, i,j,t):
+        x,y = self.grid * (1-t)
+        if i+j==0:
+            return 1 
+        return pow( (x+y) / float(i+j), 6)
+
+class FadeOutTilesUp( FadeOutTilesTR):
+    '''FadeOutTilesUp fades out each tile following an upwards path until all the tiles are faded out.
+    
+    Example::
+    
+       scene.do( FadeOutTilesUp( grid=(16,12), duration=5) )
+    '''
+
+    def test_func(self, i,j, t):
+        x,y = self.grid * t
+        if y==0:
+            return 1 
+        return pow( (j) / float(y), 6 )
+
+    def transform_tile(self, x, y, t ):
+        coords = self.get_original_tile(x,y)
+        for c in xrange( len(coords) ):
+
+            # y
+            if c == 0*3+1 or c == 1*3+1:
+                coords[c] = coords[c] + (self.target.grid.y_step / 2.0) * (1-t)
+            elif c == 2*3+1 or c == 3*3+1:
+                coords[c] = coords[c] - (self.target.grid.y_step / 2.0) * (1-t)
+
+        self.set_tile(x,y,coords)
+
+class FadeOutTilesDown( FadeOutTilesUp):
+    '''FadeOutTilesDown fades out each tile following an downwards path until all the tiles are faded out.
+    
+    Example::
+    
+       scene.do( FadeOutTilesDown( grid=(16,12), duration=5) )
+    '''
+
+    def test_func(self, i,j, t):
+        x,y = self.grid * (1-t)
+        if j==0:
+            return 1 
+        return pow( (y) / float(j), 6 )
+
+
 class TurnOffTiles( TiledGrid3DAction ):
     '''TurnOffTiles turns off each in random order
     

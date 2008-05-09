@@ -53,7 +53,8 @@ __all__ = [ 'TransitionScene',
 
             'ShuffleTilesTransition',
             'TurnOffTilesTransition',
-            'CurtainTransition',
+            'FadeTRTransition', 'FadeBLTransition',
+            'FadeUpTransition', 'FadeDownTransition',
 
             'ShrinkAndGrowTransition',
             'CornerMoveTransition',
@@ -415,17 +416,18 @@ class EnvelopeTransition(TransitionScene):
                  )
 
 
-class CurtainTransition(TransitionScene):
+class FadeTRTransition(TransitionScene):
     '''Fade the tiles of the outgoing scene from the left-bottom corner the to top-right corner.
     '''
     def __init__( self, *args, **kwargs ):
-        super(CurtainTransition, self ).__init__( *args, **kwargs)
+        super(FadeTRTransition, self ).__init__( *args, **kwargs)
 
         width, height = director.get_window_size()
         aspect = width / float(height)
         x,y = int(12*aspect), 12
 
-        a = FadeOutTiles( grid=(x,y), duration=self.duration )
+        a = self.get_action(x,y)
+
 #        a = Accelerate( a)
         self.out_scene.do( a + StopGrid() )
 
@@ -433,6 +435,27 @@ class CurtainTransition(TransitionScene):
         # don't call super. overriding order
         self.add( self.in_scene, z=0)
         self.add( self.out_scene, z=1)
+
+    def get_action(self,x,y):
+        return FadeOutTilesTR( grid=(x,y), duration=self.duration )
+
+class FadeBLTransition(FadeTRTransition):
+    '''Fade the tiles of the outgoing scene from the top-right corner to the bottom-left corner.
+    '''
+    def get_action(self,x,y):
+        return FadeOutTilesBL( grid=(x,y), duration=self.duration )
+
+class FadeUpTransition(FadeTRTransition):
+    '''Fade the tiles of the outgoing scene from the bottom to the top.
+    '''
+    def get_action(self,x,y):
+        return FadeOutTilesUp( grid=(x,y), duration=self.duration )
+
+class FadeDownTransition(FadeTRTransition):
+    '''Fade the tiles of the outgoing scene from the top to the bottom.
+    '''
+    def get_action(self,x,y):
+        return FadeOutTilesDown( grid=(x,y), duration=self.duration )
 
 class TurnOffTilesTransition(TransitionScene):
     '''Turn off the tiles of the outgoing scene in random order

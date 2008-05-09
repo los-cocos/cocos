@@ -126,7 +126,10 @@ if __name__ == "__main__":
         ShrinkAndGrowTransition,
         CornerMoveTransition,
         EnvelopeTransition,
-        CurtainTransition,
+        FadeTRTransition,
+        FadeBLTransition,
+        FadeUpTransition,
+        FadeDownTransition,
         TurnOffTilesTransition,
         FadeTransition,
         ]
