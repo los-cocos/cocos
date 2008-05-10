@@ -442,25 +442,25 @@ class FadeTRTransition(TransitionScene):
         self.add( self.out_scene, z=1)
 
     def get_action(self,x,y):
-        return FadeOutTilesTR( grid=(x,y), duration=self.duration )
+        return FadeOutTRTiles( grid=(x,y), duration=self.duration )
 
 class FadeBLTransition(FadeTRTransition):
     '''Fade the tiles of the outgoing scene from the top-right corner to the bottom-left corner.
     '''
     def get_action(self,x,y):
-        return FadeOutTilesBL( grid=(x,y), duration=self.duration )
+        return FadeOutBLTiles( grid=(x,y), duration=self.duration )
 
 class FadeUpTransition(FadeTRTransition):
     '''Fade the tiles of the outgoing scene from the bottom to the top.
     '''
     def get_action(self,x,y):
-        return FadeOutTilesUp( grid=(x,y), duration=self.duration )
+        return FadeOutUpTiles( grid=(x,y), duration=self.duration )
 
 class FadeDownTransition(FadeTRTransition):
     '''Fade the tiles of the outgoing scene from the top to the bottom.
     '''
     def get_action(self,x,y):
-        return FadeOutTilesDown( grid=(x,y), duration=self.duration )
+        return FadeOutDownTiles( grid=(x,y), duration=self.duration )
 
 class TurnOffTilesTransition(TransitionScene):
     '''Turn off the tiles of the outgoing scene in random order

@@ -4,7 +4,7 @@ v0.3.0rc - XXXX
   - Transitions: reanamed CurtainTransition to FadeTRTransition
   - Transitions: added FadeBLTransition, FadeUpTransition, FadeDownTransition
   - Transitions: added test for transitions
-  - Actions: added FadeOutBLTiles, FadeOutUpTiles, FadeDownTiles
+  - Actions: added FadeOutBLTiles, FadeOutUpTiles, FadeOutDownTiles
   - Actions: renamed FadeOutTiles to FadeOutTRTiles
   - Actions: added Ripple3D effect
   - Actions: Waves. parameter horizontal_sin and vertical_sin renamed to hsin and vsin

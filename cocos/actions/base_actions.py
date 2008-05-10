@@ -199,9 +199,9 @@ class Loop(IntervalAction):
 
         :Parameters:
             `one` : `Action`
-                The first action to execute
-            `two` : `Action`
-                The second action to execute
+                Action to be repeated
+            `times` : int
+                Number of times that the action will be repeated
         """
 
         self.one = one
@@ -461,7 +461,7 @@ class _ReverseTime( IntervalAction ):
     scope is not recommended.
 
     The default ``__reversed__`` method for all the `Grid3DAction` actions
-    and `CameraAction` actions is ``_ReverseTime()``.
+    and `Camera3DAction` actions is ``_ReverseTime()``.
     """
     def init(self, other, *args, **kwargs):
         super(_ReverseTime, self).init(*args, **kwargs)

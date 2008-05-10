@@ -55,7 +55,10 @@ class KeyDisplay(cocos.layer.Layer):
 
 class MouseDisplay(cocos.layer.Layer):
 
-    is_event_handler = True     #: enable pyglet's events
+    # If you want that your layer receives events
+    # you must set this variable to 'True',
+    # otherwise it won't receive any event.
+    is_event_handler = True
 
     def __init__(self):
         super( MouseDisplay, self ).__init__()

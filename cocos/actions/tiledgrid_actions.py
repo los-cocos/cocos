@@ -40,10 +40,10 @@ from basegrid_actions import *
 
 rr = random.randrange
 
-__all__ = [ 'FadeOutTilesTR',             # actions that don't modify the z coordinate
-           'FadeOutTilesBL',
-           'FadeOutTilesUp',
-           'FadeOutTilesDown',
+__all__ = [ 'FadeOutTRTiles',             # actions that don't modify the z coordinate
+           'FadeOutBLTiles',
+           'FadeOutUpTiles',
+           'FadeOutDownTiles',
            'ShuffleTiles',
            'TurnOffTiles',
 
@@ -191,12 +191,12 @@ class ShuffleTiles( TiledGrid3DAction ):
         return Point2(i,j)-Point2(x,y)
 
 
-class FadeOutTilesTR( TiledGrid3DAction ):
-    '''FadeOutTilesTR fades out each tile following a diagonal Top-Right path until all the tiles are faded out.
+class FadeOutTRTiles( TiledGrid3DAction ):
+    '''Fades out each tile following a diagonal Top-Right path until all the tiles are faded out.
     
     Example::
     
-       scene.do( FadeOutTilesTR( grid=(16,12), duration=10) )
+       scene.do( FadeOutTRTiles( grid=(16,12), duration=10) )
     '''
 
     def update( self, t ):
@@ -243,12 +243,12 @@ class FadeOutTilesTR( TiledGrid3DAction ):
             return 1 
         return pow( (i+j) / float(x+y), 6 )
 
-class FadeOutTilesBL( FadeOutTilesTR):
-    '''FadeOutTilesBL fades out each tile following an Bottom-Left path until all the tiles are faded out.
+class FadeOutBLTiles( FadeOutTRTiles):
+    '''Fades out each tile following an Bottom-Left path until all the tiles are faded out.
     
     Example::
     
-       scene.do( FadeOutTilesBL( grid=(16,12), duration=5) )
+       scene.do( FadeOutBLTiles( grid=(16,12), duration=5) )
     '''
 
     def test_func(self, i,j,t):
@@ -257,12 +257,12 @@ class FadeOutTilesBL( FadeOutTilesTR):
             return 1 
         return pow( (x+y) / float(i+j), 6)
 
-class FadeOutTilesUp( FadeOutTilesTR):
-    '''FadeOutTilesUp fades out each tile following an upwards path until all the tiles are faded out.
+class FadeOutUpTiles( FadeOutTRTiles):
+    '''Fades out each tile following an upwards path until all the tiles are faded out.
     
     Example::
     
-       scene.do( FadeOutTilesUp( grid=(16,12), duration=5) )
+       scene.do( FadeOutUpTiles( grid=(16,12), duration=5) )
     '''
 
     def test_func(self, i,j, t):
@@ -283,12 +283,12 @@ class FadeOutTilesUp( FadeOutTilesTR):
 
         self.set_tile(x,y,coords)
 
-class FadeOutTilesDown( FadeOutTilesUp):
-    '''FadeOutTilesDown fades out each tile following an downwards path until all the tiles are faded out.
+class FadeOutDownTiles( FadeOutUpTiles):
+    '''Fades out each tile following an downwards path until all the tiles are faded out.
     
     Example::
     
-       scene.do( FadeOutTilesDown( grid=(16,12), duration=5) )
+       scene.do( FadeOutDownTiles( grid=(16,12), duration=5) )
     '''
 
     def test_func(self, i,j, t):

@@ -20,15 +20,14 @@ Example::
 	# Move a sprite 50 pixels to the right, and 100 pixel to the top in 2 seconds.
 	sprite.do( MoveBy( (50,100), duration=2 ) )
 	
-`InvertalAction` has some interesting properties:
+The `IntervalAction` actions have some interesting properties:
 
 	- The can be accelerated using the time-altered actions
 		- `Accelerate`
 		- `AccelDeccel`
 		- `Speed`
-	- They can be executed backwards in time with the `ReverseTime` action.
-	  The starting point will be ending point, and vice-versa.
-	- All the relative actions (the ones ending in 'By') have a `Reverse` action
+	- All the relative actions (the ones ending in 'By') and some
+          absolute actions (the ones ending in 'To')  have a `Reverse` action
 	  that executes the action in the opposite direction.
 
 
@@ -84,6 +83,13 @@ The grids has 2 dimensions: ``rows`` and ``columns``, but each vertex of the gri
 3 dimension: ``x``, ``y`` and ``z``. So you can create 2d or 3d effects by transforming
 a ``tiled-grid-3D`` or a ``grid-3D`` grid.
 
+You can increase the quality of the effect by incresing the size of the
+grid, but the effect's speed will decrease.
+
+A grid of size (16,12) will run fast in most computers but it won't look
+pretty well. And a grid of (32,24) will look pretty well, but in won't
+run fast in some old computers.
+
 
 How they work
 ^^^^^^^^^^^^^
@@ -107,10 +113,14 @@ Index of grid effects
  	- `WavesTiles3D`
 	- `ShuffleTiles`
  	- `TurnOffTiles`
- 	- `FadeOutTiles`
+ 	- `FadeOutTRTiles`
+ 	- `FadeOutBLTiles`
+ 	- `FadeOutUpTiles`
+ 	- `FadeOutDownTiles`
 
  - Grid3D actions
  	- `Lens3D`
+	- `Ripple3D`
  	- `FlipX3D`
  	- `FlipY3D`
  	- `Waves3D`

@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     main_scene.add( BackgroundLayer(), z=0 )
 
-    e = FadeOutTilesDown( grid=(16,12), duration=2 )
+    e = FadeOutDownTiles( grid=(16,12), duration=2 )
     main_scene.do( e + Reverse(e) )
 
     director.run (main_scene)
