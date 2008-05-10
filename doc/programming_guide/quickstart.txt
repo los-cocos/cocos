@@ -87,7 +87,7 @@ You can find the entire program in the `samples/hello_world_actions.py` file.
 
 Like in our previous example, we import the cocos package::
 
-	import cocos
+        import cocos
 
 If you're going to use several actions, you can import all 
 the available actions into the namespace with this import::
@@ -171,9 +171,128 @@ Finally we start the execution::
 Handling Events
 ---------------
 
-FIXME: add an example that handle events
+All our previous examples are non-interactive. They display something, but do not respond to user input (except for quitting when you press **ESC** or close the window).
 
+All layers are event handlers from the pyglet event framework. When a layer is being shown, its event handlers will be active. You can read more about pyglet events at `The Pyglet Event Framework`_
 
+In this section we will build step by step the demo provided in `samples/handling_events.py`; this is a very simple cocos app which shows which keys are pressed, and reacts to mouse motion and clicks. Run the app before reading on te get a clearer idea of what we are trying to build.
+
+.. figure:: event_demo.py.png
+
+This demo has a scene with two layers; one shows which keys are currently pressed (none, one, or maybe several at the same time), the other one shows text with the mouse position, and clicking moves the text.
+
+We start defining the KeyDisplay layer class. As always, we put some initialization on ``__init__`` and the code for displaying it in step::
+
+        class KeyDisplay(cocos.layer.Layer):
+        
+            is_event_handler = True     #: enable pyglet's events
+        
+            def __init__(self):
+        
+                super( KeyDisplay, self ).__init__()
+        
+                self.text = cocos.text.Label("", x=100, y=280 )
+        
+                # To keep track of which keys are pressed:
+                self.keys_pressed = set()
+                self.update_text()
+                self.add(self.text)
+
+            def update_text(self):
+                key_names = [pyglet.window.key.symbol_string (k) for k in self.keys_pressed]
+                text = 'Keys: '+','.join (key_names)
+                # Update self.text
+                self.text.element.text = text
+
+This class defines a key_pressed set, which should be the set of keys pressed at any time. However, this code as it is still does nothing. We need to tell this layer to update this set when a key is pressed or released. In other words, we need to add event handlers to the layer. Adding event handlers to a layer is just a matter of adding methods to it called on_<event name>. The two events that interest us now are ``on_key_press`` and ``on_key_release``::
+
+        def on_key_press (self, key, modifiers):
+            """This function is called when a key is pressed.
+            'key' is a constant indicating which key was pressed.
+            'modifiers' is a bitwise or of several constants indicating which
+                modifiers are active at the time of the press (ctrl, shift, capslock, etc.)
+            """
+            
+            self.keys_pressed.add (key)
+            self.update_text()
+            
+        def on_key_release (self, key, modifiers):
+            """This function is called when a key is released.
+            
+            'key' is a constant indicating which key was pressed.
+            'modifiers' is a bitwise or of several constants indicating which
+                modifiers are active at the time of the press (ctrl, shift, capslock, etc.)
+            
+            Constants are the ones from pyglet.window.key
+            """
+            
+            self.keys_pressed.remove (key)
+            self.update_text()
+        
+        def update_text(self):
+            key_names = [pyglet.window.key.symbol_string (k) for k in self.keys_pressed]
+            text = 'Keys: '+','.join (key_names)
+            # Update self.text
+            self.text.element.text = text
+
+With that code, the layer is now fully working. You can press and release keys or key combinations, and you will se how the display is updated telling you which keys are pressed at any time.
+
+Handling mouse input is similar. You have three events of interest: on_mouse_press, on_mouse_release and on_mouse_motion. With that, we can define our layer::
+
+        class MouseDisplay(cocos.layer.Layer):
+        
+            is_event_handler = True     #: enable pyglet's events
+        
+            def __init__(self):
+                super( MouseDisplay, self ).__init__()
+        
+                self.posx = 100
+                self.posy = 240
+                self.text = cocos.text.Label('No mouse events yet', font_size=18, x=self.posx, y=self.posy )
+                self.add( self.text )
+
+            def update_text (self, x, y):
+                text = 'Mouse @ %d,%d' % (x, y)
+                self.text.element.text = text
+                self.text.element.x = self.posx
+                self.text.element.y = self.posy
+
+And then add event handlers to update the text when the mouse is moved, and change the text position when any button is clicked::
+
+        def on_mouse_motion (self, x, y, dx, dy):
+            """This function is called when the mouse is moved over the app.
+            
+            (x, y) are the physical coordinates of the mouse
+            (dx, dy) is the distance vector covered by the mouse pointer since the
+                last call.
+            """
+            self.update_text (x, y)
+        
+        def on_mouse_press (self, x, y, buttons, modifiers):
+            """This function is called when any mouse button is pressed
+        
+            (x, y) are the physical coordinates of the mouse
+            'buttons' is a bitwise or of pyglet.window.mouse constants LEFT, MIDDLE, RIGHT
+            'modifiers' is a bitwise or of pyglet.window.key modifier constants
+                (values like 'SHIFT', 'OPTION', 'ALT')
+            """
+            self.posx, self.posy = director.get_virtual_coordinates (x, y)
+            self.update_text (x,y)
+
+The only thing a bit unusual here is the call to `director.get_virtual_coordinates` (x, y). As explained in the example before, cocos has two coordinates systems, a physical one and a virtual one. The mouse event handlers receive their arguments from pyglet in physical coordinates. If you want to map that to virtual coordinates, you need to use the director.get_virtual_coordinates method, which does the correct mapping. If you put instead ``self.posx``, ``self.posy = x,y`` in the on_mouse_press handler above, you will see that the app seems to work, but if you resize the window, the clicks will move the text to the wrong place.
+
+The demo does not have much more code, just creating a scene with these two layers and running it::
+
+        director.init(resizable=True)
+        # Run a scene with our event displayers:
+        director.run( cocos.scene.Scene( KeyDisplay(), MouseDisplay() ) )
+
+You can now play to the demo and change it. Some things you can try are:
+
+ * Change the on_mouse_press handler and remove the mapping to virtual coordinates; note how it behaves strangely after resizing the window
+ * Note that the mouse coordinates on screen are physical coordinates, so their range changes when resizing the window; modify the demo to show virtual coordinates.
+ * Change the code to be able to move the mouse coordinates label when you drag the mouse (hint: a mouse drag is a sequence of button_press, several motions, and a button_release event)
+ * Change the code so the keyboard display also shows the modifiers set at each time 
 
 Where to next?
 --------------
@@ -199,7 +318,12 @@ There are numerous examples of cocos2d applications in the ``samples/``
 directory of the documentation and source distributions.  Keep checking
 http://www.cocos2d.org/ for more examples and tutorials as they are written.
 
+
+
+
+
 .. _The OpenGL Programming Guide: http://opengl.org/documentation/books/#the_opengl_programming_guide_the_official_guide_to_learning_opengl_version
 .. _The OpenGL Shading Language: http://opengl.org/documentation/books/#the_opengl_shading_language_2nd_edition
 .. _pyglet Programming Guide: http://pyglet.org/doc/1.1/programming_guide/
 .. _pyglet API Reference: http://pyglet.org/doc/1.1/api/
+.. _The Pyglet Event Framework: http://www.pyglet.org/doc/programming_guide/the_pyglet_event_framework.html
