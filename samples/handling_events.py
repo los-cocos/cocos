@@ -24,6 +24,11 @@ class KeyDisplay(cocos.layer.Layer):
         self.update_text()
         self.add(self.text) 
 
+    def update_text(self):
+        key_names = [pyglet.window.key.symbol_string (k) for k in self.keys_pressed]
+        text = 'Keys: '+','.join (key_names)
+        # Update self.text
+        self.text.element.text = text
 
     def on_key_press (self, key, modifiers):
         """This function is called when a key is pressed.
@@ -48,12 +53,6 @@ class KeyDisplay(cocos.layer.Layer):
         self.keys_pressed.remove (key)
         self.update_text()
 
-    def update_text(self):
-        key_names = [pyglet.window.key.symbol_string (k) for k in self.keys_pressed]
-        text = 'Keys: '+','.join (key_names)
-        # Update self.text
-        self.text.element.text = text
-
 class MouseDisplay(cocos.layer.Layer):
 
     is_event_handler = True     #: enable pyglet's events
@@ -65,6 +64,13 @@ class MouseDisplay(cocos.layer.Layer):
         self.posy = 240
         self.text = cocos.text.Label('No mouse events yet', font_size=18, x=self.posx, y=self.posy )
         self.add( self.text )
+
+    def update_text (self, x, y):
+        text = 'Mouse @ %d,%d' % (x, y)
+        self.text.element.text = text
+        self.text.element.x = self.posx
+        self.text.element.y = self.posy
+
 
     def on_mouse_motion (self, x, y, dx, dy):
         """This function is called when the mouse is moved over the app.
@@ -85,12 +91,6 @@ class MouseDisplay(cocos.layer.Layer):
         """
         self.posx, self.posy = director.get_virtual_coordinates (x, y)
         self.update_text (x,y)
-
-    def update_text (self, x, y):
-        text = 'Mouse @ %d,%d' % (x, y)
-        self.text.element.text = text
-        self.text.element.x = self.posx
-        self.text.element.y = self.posy
 
 
 if __name__ == "__main__":
