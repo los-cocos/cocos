@@ -373,29 +373,25 @@ class Director(event.EventDispatcher):
             `height` : Integer
                 New height
         """
-        self.set_2d_projection()
-        self.dispatch_event('on_resize', width, height)
+        self.set_projection()
 
-    def set_2d_projection(self):
-        width = self.window.width
-        height = self.window.height
+    def set_projection(self):
+        '''Sets a 3D projection mantaining the aspect ratio of the original window size'''
 
-        width_aspect = width
-        height_aspect = int( width / self._window_aspect)
+        width, height = self.window.width, self.window.height
+        ow, oh = self.get_window_size()
 
-        if height_aspect > height:
-            width_aspect = int( height * self._window_aspect )
-            height_aspect = height
-
-        self._offset_x = (width - width_aspect) / 2
-        self._offset_y =  (height - height_aspect) / 2
+        glViewport(0, 0, width, height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(60, 1.0*width/height, 0.1, 3000.0)
+        glMatrixMode(GL_MODELVIEW)
 
         glLoadIdentity()
-        glViewport(self._offset_x, self._offset_y, width_aspect, height_aspect )
-        glMatrixMode(gl.GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, self._window_original_width, 0, self._window_original_height, -100, 100)
-        glMatrixMode(gl.GL_MODELVIEW)
+        gluLookAt( ow/2.0, oh/2.0, oh/1.1566,       # eye
+                   ow / 2.0, oh / 2.0, 0,           # center
+                   0.0, 1.0, 0.0                    # up vector
+                   )
         
     #
     # Misc functions
@@ -430,4 +426,3 @@ Don't instantiate Director(). Just use this singleton."""
 
 Director.register_event_type('on_push')
 Director.register_event_type('on_pop')
-Director.register_event_type('on_resize')

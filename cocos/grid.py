@@ -108,13 +108,25 @@ class GridBase(object):
         return eye_z
         
     def before_draw( self ):
+        # set a 2d projection before binding
+        # to prevent calculating a new texture
+        self._set_2d_projection()
+
         # capture before drawing
         self.grabber.before_render(self.texture)
 
 
     def after_draw( self ):
+
         # capture after drawing
         self.grabber.after_render(self.texture)
+
+        # after unbinding
+        # set a 3d projection
+        self._set_3d_projection()
+
+        # and center the camera
+        self._set_camera()
 
         # blit
         glEnable(self.texture.target)
@@ -122,49 +134,10 @@ class GridBase(object):
 
         glPushAttrib(GL_COLOR_BUFFER_BIT)
 
-        # go to 3D
-        self._set_3d_projection()
-
-        # center the image
-        self._set_camera()
-
         self._blit()
-        
-        # go back to 2D
-        self._set_2d_projection()
                
         glPopAttrib()
         glDisable(self.texture.target)
-
-    def on_resize(self, w, h):
-        '''on_resize handler. Don't return 'True' since this event
-        shall be propagated to all the grids
-        '''
-        if not self.active:
-            return
-        
-        self._set_3d_projection()
-        
-#        if director.window.width > self.texture.width or director.window.height > self.texture.height:
-#            self.texture = image.Texture.create_for_size(
-#                    GL_TEXTURE_2D, director.window.width, 
-#                    director.window.height, GL_RGBA)
-#            self.grabber = framegrabber.TextureGrabber()
-#            self.grabber.grab(self.texture)
-#        
-#        txz = director._offset_x/float(self.texture.width)
-#        tyz = director._offset_y/float(self.texture.height)
-#        
-#        rx = director.window.width - 2*director._offset_x
-#        ry = director.window.height - 2*director._offset_y
-#        
-#        tx = float(rx)/self.texture.width+txz
-#        ty = float(ry)/self.texture.height+tyz
-#        
-#        xsteps = (tx-txz) / self.grid.x
-#        ysteps = (ty-tyz) / self.grid.y
-#
-#        self._on_resize( xsteps, ysteps, txz, tyz)
 
 
     def _set_active(self, bool):
@@ -172,11 +145,9 @@ class GridBase(object):
             return
         self._active = bool
         if self._active == True:
-            self._handlers = director.push_handlers(self.on_resize)
+            pass
         elif self._active == False:
             self.vertex_list.delete()
-            director.pop_handlers()
-            director.set_2d_projection()
         else:
             raise Exception("Invalid value for GridBase.active")
                                         
@@ -215,7 +186,8 @@ class GridBase(object):
   
     @classmethod
     def _set_2d_projection(cls):
-        width, height = director.window.width, director.window.height
+
+#        director.set_2d_projection()
         width, height = director.get_window_size()
         glLoadIdentity()
         glViewport(0, 0, width, height)
