@@ -51,12 +51,12 @@ __all__ = [ 'TransitionScene',
 
             'FlipX3DTransition', 'FlipY3DTransition','FlipAngular3DTransition',
 
-            'ShuffleTilesTransition',
+            'ShuffleTransition',
             'TurnOffTilesTransition',
             'FadeTRTransition', 'FadeBLTransition',
             'FadeUpTransition', 'FadeDownTransition',
 
-            'ShrinkAndGrowTransition',
+            'ShrinkGrowTransition',
             'CornerMoveTransition',
             'EnvelopeTransition',
 
@@ -347,11 +347,11 @@ class FlipAngular3DTransition(TransitionScene):
         self.do( flip + StopGrid() )
 
 
-class ShuffleTilesTransition(TransitionScene):
+class ShuffleTransition(TransitionScene):
     '''Shuffle the outgoing scene, and then reorder the tiles with the incoming scene.
     '''
     def __init__( self, *args, **kwargs ):
-        super(ShuffleTilesTransition, self ).__init__( *args, **kwargs)
+        super(ShuffleTransition, self ).__init__( *args, **kwargs)
 
         width, height = director.get_window_size()
         aspect = width / float(height)
@@ -368,11 +368,11 @@ class ShuffleTilesTransition(TransitionScene):
                 )
 
 
-class ShrinkAndGrowTransition(TransitionScene):
+class ShrinkGrowTransition(TransitionScene):
     '''Shrink the outgoing scene while grow the incoming scene
     '''
     def __init__( self, *args, **kwargs ):
-        super(ShrinkAndGrowTransition, self ).__init__( *args, **kwargs)
+        super(ShrinkGrowTransition, self ).__init__( *args, **kwargs)
 
         width, height = director.get_window_size()
 
@@ -390,7 +390,7 @@ class ShrinkAndGrowTransition(TransitionScene):
 
 
 class CornerMoveTransition(TransitionScene):
-    '''Move the bottom-right corner of the incoming scene to the top-left corner
+    '''Moves the bottom-right corner of the incoming scene to the top-left corner
     '''
     def __init__( self, *args, **kwargs ):
         super(CornerMoveTransition, self ).__init__( *args, **kwargs)
@@ -399,7 +399,12 @@ class CornerMoveTransition(TransitionScene):
 
 
 class EnvelopeTransition(TransitionScene):
-    '''Shrink the outgoing scene and then grow the incoming scene
+    '''From the outgoing scene:
+        - moves the top-right corner to the center
+        - moves the bottom-left corner to the center
+
+      From the incoming scene:
+        - performs the reverse action of the outgoing scene
     '''
     def __init__( self, *args, **kwargs ):
         super(EnvelopeTransition, self ).__init__( *args, **kwargs)

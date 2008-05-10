@@ -1,9 +1,13 @@
 v0.3.0rc - XXXX
-  - Transitions: added FadeBLTransition, FadeUpTransition, FadeDownTransition
+  - Transitions: renamed ShrinkAndGrowTransition -> ShrinkGrowTransition
+  - Transitions: renamed ShuffleTilesTransition -> ShuffleTransition
   - Transitions: reanamed CurtainTransition to FadeTRTransition
-  - Actions: Added FadeOutBLTiles, FadeOutUpTiles, FadeDownTiles
+  - Transitions: added FadeBLTransition, FadeUpTransition, FadeDownTransition
+  - Transitions: added test for transitions
+  - Actions: added FadeOutBLTiles, FadeOutUpTiles, FadeDownTiles
   - Actions: renamed FadeOutTiles to FadeOutTRTiles
-  - Actions: Added Ripple3D effect
+  - Actions: added Ripple3D effect
+  - Actions: Waves. parameter horizontal_sin and vertical_sin renamed to hsin and vsin
 
 v0.3.0beta0 - May 5th, 2008
   - Actions: actions are defined in the actions/ folder

@@ -60,6 +60,7 @@ __all__ = [
 
 class Waves3D( Grid3DAction ):
     '''Simulates waves using the math.sin() function in the z-axis
+    The x and y coordinates remains unmodified.
 
     Example::
 
@@ -95,7 +96,7 @@ class Waves3D( Grid3DAction ):
 
  
 class FlipX3D( Grid3DAction ):
-    '''FlipX3D flips the screen using the Y-axis'''
+    '''FlipX3D flips the screen using the Y-axis as a pivot.'''
 
     def init(self, grid=(1,1), *args, **kw):
         if grid != (1,1):
@@ -147,7 +148,7 @@ class FlipX3D( Grid3DAction ):
     
 
 class FlipY3D( Grid3DAction ):
-    '''FlipY3D flips the screen using the X-axis'''
+    '''FlipY3D flips the screen using the X-axis as a pivot.'''
 
     def init(self, grid=(1,1), *args, **kw):
         if grid != (1,1):
@@ -199,7 +200,8 @@ class FlipY3D( Grid3DAction ):
 
 
 class Lens3D( Grid3DAction ):
-    '''Lens simulates a Lens / Magnifying glass effect
+    '''Lens simulates a Lens / Magnifying glass effect.
+    It modifies the z-coordinate while the x and y remains unmodified.
     
     Example::
 
@@ -266,20 +268,22 @@ class Lens3D( Grid3DAction ):
 
 
 class Ripple3D( Grid3DAction ):
-    '''Simulates a ripple effect
+    '''Simulates a ripple effect.
+    The amplitude of the wave will decrease when it goes away from the center of the ripple.
+    It modifies the z-coordinate while the x and y remains unmodified.
     
     Example::
 
-       scene.do( Ripple3D(center=(320,240), radius=240, grid=(32,24), waves=15, amplitude=60, duration=20 ) )
+       scene.do( Ripple3D(center=(320,240), radius=240, waves=15, amplitude=60, duration=20, grid=(32,24) ) )
     '''
 
     def init(self, center=(-1,-1), radius=240, waves=15, amplitude=60, *args, **kw):
         '''
         :Parameters:
             `center` : (int,int)
-                Center of the lens. Default: (win_size_width /2, win_size_height /2 )
+                Center of the ripple. Default: (win_size_width /2, win_size_height /2 )
             `radius` : int
-                Radius of the lens. Default: 240
+                Radius of the ripple. Default: 240
             `waves` : int
                 Number of waves (2 * pi) that the action will perform. Default: 15
             `amplitude` : int
@@ -326,7 +330,7 @@ class Ripple3D( Grid3DAction ):
 
 
 class Shaky3D( Grid3DAction):
-    '''Shaky simulates an earthquake modifying randomly the x,y and z coordinates
+    '''Shaky simulates an earthquake by modifying randomly the x, y and z coordinates of each vertex.
 
     Example::
 
@@ -355,7 +359,7 @@ class Shaky3D( Grid3DAction):
 
 class Liquid( Grid3DAction ):
     '''Simulates a liquid effect using the math.sin() function modifying the x and y coordinates.
-        The z coordinate is not modified.
+    The z coordinate remains unmodified.
     
     Example::
 
@@ -397,10 +401,10 @@ class Waves( Grid3DAction ):
 
     Example::
 
-        scene.do( Waves( waves=4, vertical_sin=True, horizontal_sin=False, grid=(16,16), duration=10) )
+        scene.do( Waves( waves=4, amplitude=20, hsin=False, vsin=True, grid=(16,16), duration=10) )
     '''
 
-    def init( self, waves=4, amplitude=20, horizontal_sin=True, vertical_sin=True, *args, **kw ):
+    def init( self, waves=4, amplitude=20, hsin=True, vsin=True, *args, **kw ):
         '''Initializes the Waves actions
 
         :Parameters:
@@ -408,18 +412,18 @@ class Waves( Grid3DAction ):
                 Number of waves (2 * pi) that the action will perform. Default is 4
             `amplitude` : int
                 Wave amplitude (height). Default is 20
-            `horizontal_sin` : bool
+            `hsin` : bool
                 whether or not in will perform horizontal waves. Default is True
-            `vertical_sin` : bool
+            `vsin` : bool
                 whether or not in will perform vertical waves. Default is True
         '''
         super(Waves, self).init( *args, **kw )
 
         #: whether or not it will do horizontal waves
-        self.horizontal_sin = horizontal_sin
+        self.hsin = hsin
 
         #: whether or not it will do vertical waves
-        self.vertical_sin = vertical_sin
+        self.vsin = vsin
 
         #: total number of wave
         self.waves=waves
@@ -435,12 +439,12 @@ class Waves( Grid3DAction ):
         for i in xrange(0, self.grid.x+1):
             for j in xrange(0, self.grid.y+1):
                 x,y,z = self.get_original_vertex(i,j)
-                if self.vertical_sin:
+                if self.vsin:
                     xpos = (x + (math.sin(t*math.pi*self.waves*2 + y * .01) * self.amplitude * self.amplitude_rate))
                 else:
                     xpos = x
 
-                if self.horizontal_sin:
+                if self.hsin:
                     ypos = (y + (math.sin(t*math.pi*self.waves*2 + x * .01) * self.amplitude * self.amplitude_rate)) 
                 else:
                     ypos = y
@@ -449,7 +453,7 @@ class Waves( Grid3DAction ):
 
 class Twirl( Grid3DAction ):
     '''Simulates a twirl effect modifying the x and y coordinates.
-        The z coordinate is not modified.
+    The z coordinate is not modified.
 
     Example::
 

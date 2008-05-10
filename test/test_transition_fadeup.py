@@ -9,6 +9,8 @@ import cocos
 from cocos.director import director
 from cocos.actions import *
 from cocos.layer import *
+from cocos.scenes import *
+from cocos.sprite import *
 import pyglet
 
 class BackgroundLayer( cocos.layer.Layer ):
@@ -19,11 +21,17 @@ class BackgroundLayer( cocos.layer.Layer ):
     def on_draw( self ):
         self.img.blit(0,0)
 
+
 if __name__ == "__main__":
     director.init( resizable=True )
-    main_scene = cocos.scene.Scene()
+    scene1 = cocos.scene.Scene()
+    scene2 = cocos.scene.Scene()
 
-    main_scene.add( BackgroundLayer(), z=0 )
+    colorl = ColorLayer(32,32,255,255)
+    sprite = ActionSprite( 'grossini.png', (320,240) )
+    colorl.add( sprite )
 
-    main_scene.do( Waves( waves=6, hsin=True, vsin=True, grid=(16,10), duration=20) )
-    director.run (main_scene)
+    scene1.add( BackgroundLayer(), z=0 )
+    scene2.add( colorl, z=0 )
+
+    director.run( FadeUpTransition( scene2, scene1, 2) )

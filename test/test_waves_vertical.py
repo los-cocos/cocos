@@ -25,5 +25,5 @@ if __name__ == "__main__":
 
     main_scene.add( BackgroundLayer(), z=0 )
 
-    main_scene.do( Waves( horizontal_sin=False, vertical_sin=True, waves=10, grid=(16,16), duration=20) )
+    main_scene.do( Waves( hsin=False, vsin=True, waves=10, grid=(16,16), duration=20) )
     director.run (main_scene)
