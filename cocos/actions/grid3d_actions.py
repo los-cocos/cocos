@@ -319,7 +319,7 @@ class Ripple3D( Grid3DAction ):
                 
                 if r < self.radius:
                     r = self.radius - r
-                    rate = pow( r / self.radius, 3)
+                    rate = pow( r / self.radius, 2)
                     z += (math.sin( t*math.pi*self.waves*2 + r * 0.1) * self.amplitude * self.amplitude_rate * rate )
     
                 self.set_vertex( i,j, (x,y,z) )

@@ -226,7 +226,7 @@ if __name__ == "__main__":
     flipy = FlipY3D(duration=1)
     flip = Flip(duration=1)
     liquid = Liquid( grid=(16,12), duration=4)
-    ripple = Ripple3D( grid=(32,24), waves=10, duration=10, amplitude=50, radius=240)
+    ripple = Ripple3D( grid=(32,24), waves=7, duration=10, amplitude=100, radius=320)
     shakyt = ShakyTiles3D( grid=(16,12), duration=3)
     corners = CornerSwap( duration=1)
     waves = AccelAmplitude(Waves( waves=8, amplitude=50, grid=(32,24), duration=5), rate=2.0)  
@@ -247,9 +247,9 @@ if __name__ == "__main__":
 #    menulayer.do(
     scene.do(
               Delay(3) +
+              ripple + Delay(2) +
               twirl +
               liquid + Delay(2) +
-              ripple + Delay(2) +
               shakyt + Delay(2) +
               ReuseGrid() +
               shuffle + Delay(4) + ReuseGrid() + turnoff + Reverse(turnoff) + Delay(1) +

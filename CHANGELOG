@@ -3,6 +3,7 @@ v0.3.0rc - XXXX
   - Transitions: reanamed CurtainTransition to FadeTRTransition
   - Actions: Added FadeOutBLTiles, FadeOutUpTiles, FadeDownTiles
   - Actions: renamed FadeOutTiles to FadeOutTRTiles
+  - Actions: Added Ripple3D effect
 
 v0.3.0beta0 - May 5th, 2008
   - Actions: actions are defined in the actions/ folder
