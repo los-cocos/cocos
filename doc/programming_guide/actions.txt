@@ -206,20 +206,21 @@ the target to the correct element. This allows the user to instantiate an action
 action to various different elements. All cocosnodes can be a target for an action.
 
 You will not know who the target is when `__init__` or `init` is called, but you will when `start` is called. If 
-you are making an action that takes more actions as parameters, it is your responsability to:
-   - set the target
-   - call the start method
-   - call the stop method
-   
+you are making an action that takes more actions as parameters, it is your responsability to\:
+
+ * set the target
+ * call the start method
+ * call the stop method
+
 You can also override the `__reversed__` method. In this method you have to construct and return an action 
 that would be the reversed version of the action you are doing. For example, 
 in `Show()` we return `Hide()` as its reverse::
+
 	class Show( InstantAction ):
 	    "<snip>"
 	    def __reversed__(self):
 		return Hide()
 
-		
 Instant Actions
 ^^^^^^^^^^^^^^^
 
@@ -227,11 +228,13 @@ Instant actions are actions that will take no time to execute. For example, `Hid
 sets the target visibility to False. 
 
 It is very easy to create an action using the CallFuncS action as a decorator::
+	
 	@CallFuncS
         def make_visible( sp ):
             sp.do( Show() )
         self.sprite.do( make_visible )
-	
+
+
 please note that make_visible will not be a regular function that you can call, 
 it will be an action. So you can compose it like any other action.
 
@@ -265,6 +268,7 @@ The protocol for `IntervalAction` subclasses is the following:
    
 So its in update that you do your magic. For example, if you want to fade something out, 
 you can write something like::
+
 	class FadeOut( IntervalAction ):
 	    def init( self, duration ):
 		self.duration = duration
