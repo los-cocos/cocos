@@ -148,6 +148,8 @@ class GridBase(object):
             pass
         elif self._active == False:
             self.vertex_list.delete()
+            # to restore the camera to default position
+            director.set_projection()
         else:
             raise Exception("Invalid value for GridBase.active")
                                         

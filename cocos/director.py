@@ -180,8 +180,13 @@ class DefaultHandler( object ):
                 director.scene.add( PythonInterpreterLayer(), name='python_interpreter', z=100)
                 self.with_interpreter= True
             else:
-                director.scene.remove('python_interpreter')
-                self.with_interpreter= False
+                try:
+                    director.scene.remove('python_interpreter')
+                    self.with_interpreter= False
+                except Exception, e:
+                    # mmm... probably the interpreter scene was changed. see issue #70
+                    director.scene.add( PythonInterpreterLayer(), name='python_interpreter', z=100)
+                    self.with_interpreter= True
             return True
 
         elif symbol == pyglet.window.key.S and (modifiers & pyglet.window.key.MOD_ACCEL):
