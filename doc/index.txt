@@ -7,6 +7,7 @@ cocos2d documentation:
 
   * `Programming Guide <programming_guide/index.html>`_
   * `API Reference <api/index.html>`_
+  * `FAQ <faq/index.html>`_
 
 ..
 

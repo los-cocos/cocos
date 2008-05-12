@@ -1,0 +1,53 @@
+===========
+cocos2d FAQ
+===========
+
+----------------------------------
+cocos2d Frequently Asked Questions
+----------------------------------
+
+
+.. contents::
+	:local:
+
+Can I use 3D objects in cocos2d ?
+---------------------------------
+
+Yes. cocos2d uses `pyglet`_ / OpenGL so you can 
+use 3D objects and use them within cocos2d.
+
+You can include some 3D objects in your 2d game
+to improve the quality of your graphics without any problem.
+
+Also, the default projection matrix of cocos2d is a 3D one,
+so probably you won't need to change it. But you can override 
+the projection matrix by registering to the ``director on_resize``
+event. See the `test/test_custom_on_resize.py` code as an example.
+
+To enable OpenGL depth test, you can call Directosr's `set_depth_test` method.
+
+Also, remember that cocos2d focus on 2D games, so if you want
+to create a full-blown 3D game, `Panda3d`_ will suit you best.
+
+
+Can I use cocos2d's sprites and actions without the rest of the framework ?
+---------------------------------------------------------------------------
+
+Short answer: **No**.
+Long answer: **Yes**.
+
+Almost everthing in cocos2d is `CocosNode` object (``sprites``, ``layers``,
+``scenes``, etc...), so the easiest way to use cocos2d's sprites (or any
+other `CocosNode` object)  is to port `CocosNode` to your project.
+
+Since `CocosNode` uses director's `get_window_size` method, you shall create
+a Director stub in your project that implements `get_window_size`.
+You shall also call `CocosNode.visit` method from your main loop to draw
+the sprites.
+
+Although I haven't tried it, I think this shall work ok. If it doesn't work,
+let us know.
+
+
+.. _Panda3d: http://www.panda3d.org
+.. _pyglet: http://www.pyglet.org

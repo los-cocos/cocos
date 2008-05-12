@@ -12,6 +12,7 @@ DOC=$BASE/doc
 DOC_HTML=$DOC/html
 DOC_HTML_API=$DOC_HTML/api
 DOC_HTML_GUIDE=$DOC_HTML/programming_guide
+DOC_HTML_FAQ=$DOC_HTML/faq
 DOC_HTML_TUTORIAL=$DOC_HTML/tutorial
 DOC_PDF=$DOC/pdf
 
@@ -54,6 +55,27 @@ function html_guide() {
     cp $DOC/doc.css $DOC_HTML_GUIDE/doc.css
 }
 
+function html_faq() {
+    echo "Generating HTML faq..."
+    # Generate html docs
+    rm -rf $DOC_HTML_FAQ
+    mkdir -p $DOC_HTML_FAQ
+    $TOOLS/gendoc_html.py \
+        --apidoc-dir=$DOC_HTML_API \
+        --html-dir=$DOC_HTML_FAQ\
+        --depth=0 \
+        --add-navigation \
+        $DOC/faq/index.txt
+
+    $TOOLS/gendoc_html.py \
+        --html-dir=$DOC_HTML \
+        $DOC/index.txt
+
+    # Copy stylesheet
+    cp $DOC/doc.css $DOC_HTML/doc.css
+    cp $DOC/doc.css $DOC_HTML_FAQ/doc.css
+}
+
 function html_tutorial() {
     echo "Generating HTML tutorial..."
     # Generate html docs
@@ -82,7 +104,7 @@ function pdf_guide() {
 }
 
 function usage() {
-    echo "Usage: $0 ([clean] [html-api] [html-tutorial] [html-guide] [pdf-guide]) | all"
+    echo "Usage: $0 ([clean] [html-api] [html-tutorial] [html-guide] [html-faq] [pdf-guide]) | all"
 }
 
 if [ -z "$1" ]
@@ -96,9 +118,10 @@ do
         "clean"     ) clean;;
         "html-api"  ) html_api;;
         "html-guide") html_guide;;
+        "html-faq") html_faq;;
         "html-tutorial") html_tutorial;;
         "pdf-guide" ) pdf_guide;;
-        "all"       ) clean; html_api; html_guide; pdf_guide;; # skip tutorial
+        "all"       ) clean; html_api; html_guide; html_faq; pdf_guide;; # skip tutorial
         *           ) usage; exit 1;;
     esac
     shift
