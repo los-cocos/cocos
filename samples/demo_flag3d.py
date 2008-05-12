@@ -77,12 +77,6 @@ class Flag3D( cocos.layer.Layer ):
         gluPerspective(90, 1.0*width/height, 0.1, 400.0)
         glMatrixMode(GL_MODELVIEW)
 
-        glShadeModel(GL_SMOOTH)
-        glClearDepth(1.0)
-        glEnable(GL_DEPTH_TEST)
-        glDepthFunc(GL_LEQUAL)
-        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
-
     def on_draw( self ):
         super(Flag3D,self).on_draw()
 
@@ -212,6 +206,10 @@ class Flag3D( cocos.layer.Layer ):
 
 if __name__ == '__main__':
     director.init()
+
+    # enable depth test
+    director.set_depth_test()
+
     s = cocos.scene.Scene()
     s.add( Flag3D() )
     director.run( s )

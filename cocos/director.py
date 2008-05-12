@@ -61,7 +61,12 @@ Some of the supported parameters are:
     * ``caption``: String. Window title.
     * ``visible``: Boolean. Window is visible or not. Default is True.
 
-For example::
+The full list of valid arguments can be found here:
+
+    - http://www.pyglet.org/doc/1.1/api/pyglet.window.Window-class.html
+
+
+Example::
 
     director.init( caption="Hello World", fullscreen=True )
 
@@ -205,6 +210,10 @@ class Director(event.EventDispatcher):
     def init(self, *args, **kwargs):
         """Initializes the Director creating the main window.
         Keyword arguments are passed to pyglet.window.Window().
+
+        All the valid arguments can be found here:
+
+            - http://www.pyglet.org/doc/1.1/api/pyglet.window.Window-class.html
         
         :rtype: pyglet.window.Window                    
         :returns: The main window, an instance of pyglet.window.Window class.
