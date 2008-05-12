@@ -379,6 +379,7 @@ class Director(event.EventDispatcher):
                 New height
         """
         self.set_projection()
+        self.dispatch_event("on_resize", width, height)
 
     def set_projection(self):
         '''Sets a 3D projection mantaining the aspect ratio of the original window size'''
@@ -431,3 +432,4 @@ Don't instantiate Director(). Just use this singleton."""
 
 Director.register_event_type('on_push')
 Director.register_event_type('on_pop')
+Director.register_event_type('on_resize')

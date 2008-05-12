@@ -1,14 +1,15 @@
 v0.3.0rc - XXXX
+  - Actions: added FadeOutBLTiles, FadeOutUpTiles, FadeOutDownTiles
+  - Actions: renamed FadeOutTiles to FadeOutTRTiles
+  - Actions: added Ripple3D effect
+  - Actions: Waves. parameter horizontal_sin and vertical_sin renamed to hsin and vsin
+  - Actions: renamed ReverseTime to _ReverseTime to prevent massive usage
+  - Director: default projection is 3D (not glOrtho)
   - Transitions: renamed ShrinkAndGrowTransition -> ShrinkGrowTransition
   - Transitions: renamed ShuffleTilesTransition -> ShuffleTransition
   - Transitions: reanamed CurtainTransition to FadeTRTransition
   - Transitions: added FadeBLTransition, FadeUpTransition, FadeDownTransition
   - Transitions: added test for transitions
-  - Actions: added FadeOutBLTiles, FadeOutUpTiles, FadeOutDownTiles
-  - Actions: renamed FadeOutTiles to FadeOutTRTiles
-  - Actions: added Ripple3D effect
-  - Actions: Waves. parameter horizontal_sin and vertical_sin renamed to hsin and vsin
-  - Director: default projection is 3D (not glOrtho)
 
 v0.3.0beta0 - May 5th, 2008
   - Actions: actions are defined in the actions/ folder

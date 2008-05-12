@@ -60,7 +60,9 @@ class Flag3D( cocos.layer.Layer ):
     def on_enter(self):
         super(Flag3D,self).on_enter()
 
-        # hook on resize to override the 2D projection with a 3D projection
+        # hook on resize to override the default projection with a custom one.
+        # cocos2d's default projetion is also a 3d projection, but since this
+        # is a demo, we show how to customize our own on_resize method.
         director.push_handlers(self.on_resize)
 
         # the layer is on "stage"
