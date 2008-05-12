@@ -173,7 +173,7 @@ Handling Events
 
 All our previous examples are non-interactive. They display something, but do not respond to user input (except for quitting when you press **ESC** or close the window).
 
-All layers are event handlers from the pyglet event framework. When a layer is being shown, its event handlers will be active. You can read more about pyglet events at `The Pyglet Event Framework`_
+All layers are event handlers from the pyglet event framework. When a layer is being shown, its event handlers will be active. You can read more about pyglet events at `The pyglet Event Framework`_
 
 In this section we will build step by step the demo provided in `samples/handling_events.py`; this is a very simple cocos app which shows which keys are pressed, and reacts to mouse motion and clicks. Run the app before reading on te get a clearer idea of what we are trying to build.
 
@@ -329,4 +329,4 @@ http://www.cocos2d.org/ for more examples and tutorials as they are written.
 .. _The OpenGL Shading Language: http://opengl.org/documentation/books/#the_opengl_shading_language_2nd_edition
 .. _pyglet Programming Guide: http://pyglet.org/doc/1.1/programming_guide/
 .. _pyglet API Reference: http://pyglet.org/doc/1.1/api/
-.. _The Pyglet Event Framework: http://www.pyglet.org/doc/programming_guide/the_pyglet_event_framework.html
+.. _The pyglet Event Framework: http://www.pyglet.org/doc/1.1/programming_guide/the_pyglet_event_framework.html

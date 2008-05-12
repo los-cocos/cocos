@@ -166,7 +166,6 @@ Modifiers
 	- `AccelDeccel`
 	- `Speed`
 	- `Reverse`
-	- `ReverseTime`
 
  - Amplitude modifiers
 	- `AccelAmplitude`

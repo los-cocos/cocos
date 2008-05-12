@@ -3,7 +3,7 @@ Installation
 
  1. Install python 2.4 with ctypes or python 2.5.
 
- 2. Install pyglet 1.1beta or newer from `Pyglet's homepage`_ . **If you want to use pyglet 1.0, use cocos v0.1.x instead.**
+ 2. Install pyglet 1.1beta or newer from `pyglet's homepage`_ . **If you want to use pyglet 1.0, use cocos v0.1.x instead.**
 
  3. Finally, choose one of the followings\:
 
@@ -24,4 +24,4 @@ Installation
 
 
 
-.. _Pyglet's homepage: http://www.pyglet.org
+.. _pyglet's homepage: http://www.pyglet.org
