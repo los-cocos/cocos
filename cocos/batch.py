@@ -30,10 +30,6 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-#
-# Cocos
-# http://code.google.com/p/los-cocos
-#
 """Batch
 
 Batches
@@ -45,7 +41,6 @@ Batches allow you to optimize the number of gl calls using pygllets batch
 
 __docformat__ = 'restructuredtext'
 
-from director import director
 import cocosnode
 from batch import *
 

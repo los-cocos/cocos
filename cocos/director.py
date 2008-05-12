@@ -141,6 +141,7 @@ from pyglet import clock
 from pyglet import media
 from pyglet.gl import *
 
+
 __all__ = ['director', 'DefaultHandler']
 
 class DefaultHandler( object ):

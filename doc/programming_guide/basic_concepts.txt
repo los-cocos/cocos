@@ -84,7 +84,7 @@ See `Actions, Transformations and Effects` for more detail about actions.
 Sprites
 -------
 
-A Cocos2d' sprite is like any other computer sprite.
+A cocos2d' sprite is like any other computer sprite.
 It is a 2D image that can be moved, rotated, scaled, animated, etc. 
 
 Sprites (implemented using the `ActionSprite` class) can have other sprites

@@ -50,14 +50,10 @@ And now tell the sprite to execute it::
 
 __docformat__ = 'restructuredtext'
 
-from director import director
 import cocosnode
 from batch import *
 
-import rect
-
 import pyglet
-from pyglet.graphics import OrderedGroup
 from pyglet import image
 from pyglet.gl import *
 

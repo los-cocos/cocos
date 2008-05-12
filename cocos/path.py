@@ -11,7 +11,7 @@ class Bezier(Path):
         
     def at(self, t):
         def calc(i):
-            a = 0
+            a = self.a[i]
             b = self.ac[i]
             c = self.bc[i]
             d = self.b[i]
