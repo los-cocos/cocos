@@ -30,7 +30,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Implementation of `Grid3DAction` actions
+'''Implementation of Grid3DAction actions
 '''
 __docformat__ = 'restructuredtext'
 

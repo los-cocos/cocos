@@ -60,6 +60,8 @@ __all__ = [ 'TransitionScene',
             'CornerMoveTransition',
             'EnvelopeTransition',
 
+            'SplitRowsTransition', 'SplitColsTransition',
+
             'FadeTransition',
             ]
 
@@ -502,3 +504,31 @@ class FadeTransition(TransitionScene):
     def on_exit( self ):
         super( FadeTransition, self).on_exit()
         self.remove( self.fadelayer )
+
+class SplitColsTransition(TransitionScene):
+    '''Splits the screen in columns.
+    The odd columns goes upwards while the even columns goes downwards.
+    '''
+    def __init__( self, *args, **kwargs ):
+        super(SplitColsTransition, self ).__init__( *args, **kwargs)
+
+        width, height = director.get_window_size()
+
+        self.in_scene.visible = False
+        flip_a =  self.get_action()
+        flip = flip_a + \
+                CallFunc( self.hide_out_show_in ) + \
+                Reverse(flip_a) + \
+                CallFunc(self.restore_out) 
+        
+        self.do( AccelDeccel(flip) + StopGrid() )
+
+    def get_action( self ):
+        return SplitCols( cols=3, duration=self.duration/2.0)
+
+class SplitRowsTransition(SplitColsTransition):
+    '''Splits the screen in rows.
+    The odd rows goes to the left while the even rows goes to the right.
+    '''
+    def get_action( self ):
+        return SplitRows( rows=3, duration=self.duration/2.0)

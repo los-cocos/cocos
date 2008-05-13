@@ -37,6 +37,7 @@ __docformat__ = 'restructuredtext'
 import random
 from cocos.euclid import *
 from basegrid_actions import *
+from cocos.director import director
 
 rr = random.randrange
 
@@ -46,6 +47,8 @@ __all__ = [ 'FadeOutTRTiles',             # actions that don't modify the z coor
            'FadeOutDownTiles',
            'ShuffleTiles',
            'TurnOffTiles',
+           'SplitRows',
+           'SplitCols',
 
            'ShakyTiles3D',              # actions that modify the z coordinate
            'ShatteredTiles3D',
@@ -425,3 +428,87 @@ class JumpTiles3D( TiledGrid3DAction ):
                         coords[k+2] += sinz2
 
                 self.set_tile( i,j, coords )
+
+
+class SplitRows( TiledGrid3DAction ):
+    '''Split the screen in a number of rows, and move
+    these rows away from the screen.
+
+    The odds rows are moved to the left, while the even rows are moved to
+    the right.
+
+    Example::
+    
+       scene.do( SplitRows( rows=3, duration=2) )
+    '''
+
+    def init( self, rows=9, grid=(-1,-1), *args, **kw ):
+        '''
+        :Parameters:
+            `rows` : int
+                Number of rows that will have the effect. Default: 9
+        '''
+        if grid != (-1,-1):
+            raise Exception("This action doesn't receives the grid argument")
+
+        grid = (1,rows)
+        self.rows = rows
+        super(SplitRows, self).init( grid, *args, **kw )
+
+
+    def update( self, t ):
+
+        x,y = director.get_window_size()
+
+        for j in xrange(0, self.grid.y):
+            coords = self.get_original_tile(0,j)
+
+            for c in xrange(0, len(coords), 3):
+                direction = 1
+                if j % 2 == 0:
+                    direction = -1
+                coords[c] += direction * x * t
+
+            self.set_tile( 0,j, coords )
+
+
+class SplitCols( TiledGrid3DAction ):
+    '''Split the screen in a number of columns, and move
+    these columns away from the screen.
+
+    The odds columns are moved to the upwards, while the even
+    columns are moved to the downwards.
+
+    Example::
+    
+       scene.do( SplitCols( cols=3, duration=2) )
+    '''
+
+    def init( self, cols=9, grid=(-1,-1), *args, **kw ):
+        '''
+        :Parameters:
+            `cols` : int
+                Number of columns that will have the effect. Default: 9
+        '''
+        if grid != (-1,-1):
+            raise Exception("This action doesn't receives the grid argument")
+
+        grid = (cols,1)
+        self.cols = cols
+        super(SplitCols, self).init( grid, *args, **kw )
+
+
+    def update( self, t ):
+
+        x,y = director.get_window_size()
+
+        for i in xrange(0, self.grid.x):
+            coords = self.get_original_tile(i,0)
+
+            for c in xrange(0, len(coords), 3):
+                direction = 1
+                if i % 2 == 0:
+                    direction = -1
+                coords[c+1] += direction * y * t
+
+            self.set_tile( i,0, coords )

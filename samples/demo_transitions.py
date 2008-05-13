@@ -111,6 +111,8 @@ if __name__ == "__main__":
         # ActionTransitions
         RotoZoomTransition,
         JumpZoomTransition,
+        SplitColsTransition,
+        SplitRowsTransition,
         MoveInLTransition,
         MoveInRTransition,
         MoveInBTransition,

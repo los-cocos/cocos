@@ -516,6 +516,21 @@ class CocosNode(object):
         return collect
         
     def visit(self):
+        '''
+        A recursive function that it's called in all 
+        of the node's children.
+
+        This function calls the `transform` method
+        before calling `visit` on it's children.
+
+        After *visiting* all the children that have
+        a z-order value minor that its own, it will
+        draw itself by calling the `on_draw` method.
+
+        After drawing itself, it will *visit* the rest
+        of it's children (the ones with a z-value bigger
+        than its own)
+        '''
 
         if not self.visible:
             return

@@ -38,11 +38,11 @@ Long answer: **Yes**.
 
 Almost everthing in cocos2d is `CocosNode` object (``sprites``, ``layers``,
 ``scenes``, etc...), so the easiest way to use cocos2d's sprites (or any
-other `CocosNode` object)  is to port `CocosNode` to your project.
+other `CocosNode` object) is to port `CocosNode` to your project.
 
 Since `CocosNode` uses director's `get_window_size` method, you shall create
 a Director stub in your project that implements `get_window_size`.
-You shall also call `CocosNode.visit` method from your main loop to draw
+You shall also call the `CocosNode.visit` method from your main loop to draw
 the sprites.
 
 Although I haven't tried it, I think this shall work ok. If it doesn't work,
