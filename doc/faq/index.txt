@@ -26,7 +26,7 @@ event. See the `test/test_custom_on_resize.py` code as an example.
 
 To enable OpenGL depth test, you can call Director's `set_depth_test` method.
 
-Also, remember that cocos2d focus on 2D games, so if you want
+Also, remember that cocos2d focuses on 2D games, so if you want
 to create a full-blown 3D game, `Panda3d`_ will suit you best.
 
 
@@ -49,5 +49,30 @@ Although I haven't tried it, I think this shall work ok. If it doesn't work,
 let us know.
 
 
+Can I code a presentation (ala PowerPoint) in cocos2d ?
+-------------------------------------------------------
+
+Yes, you can.
+
+Since cocos2d has features like 'scene flow control' and transitions
+you can code a presentation using cocos2d relatively easy, and make
+it look pretty cool using those transitions.
+
+Did you know that we have OpenGL transitions, like the ones you will find
+in Apple's Keynote and OpenOffice's Impress ? That's cool :-)
+
+For example, the lighting talk that we did in PyCon 2008 was coded in cocos2d.
+The source code is here: `pycon 2008 cocos2d lighting talk`_
+
+That being said, you should bear in mind that cocos2d is not a presentation
+tool. We are not planning to add presentation-like features to cocos2d.
+
+If you want a python presentation tool, we recommend:
+`Bruce the Presentation Tool`_
+
+
+
 .. _Panda3d: http://www.panda3d.org
 .. _pyglet: http://www.pyglet.org
+.. _Bruce the Presentation Tool: http://code.google.com/p/bruce-tpt/
+.. _pycon 2008 cocos2d lighting talk: http://los-cocos.googlecode.com/svn/branches/pycon-lighting-talk/

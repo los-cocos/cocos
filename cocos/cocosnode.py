@@ -31,7 +31,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 """
-CocosNode: the basic element of cocos
+CocosNode: the basic element of cocos2d
 """
 
 __docformat__ = 'restructuredtext'
@@ -517,19 +517,22 @@ class CocosNode(object):
         
     def visit(self):
         '''
-        A recursive function that it's called in all 
-        of the node's children.
+        This funcion *visits* it's children in a recursive
+        way.
 
-        This function calls the `transform` method
-        before calling `visit` on it's children.
+        It will first *visit* the children that
+        that have a z-order value less than 0.
 
-        After *visiting* all the children that have
-        a z-order value minor that its own, it will
-        draw itself by calling the `on_draw` method.
+        Then it will call the `on_draw` method to
+        draw itself.
 
-        After drawing itself, it will *visit* the rest
-        of it's children (the ones with a z-value bigger
-        than its own)
+        And finally it will *visit* the rest of the
+        children (the ones with a z-value bigger
+        or equal than 0)
+
+        Before *visiting* any children it will call
+        the `transform` method to apply any possible
+        transformation.
         '''
 
         if not self.visible:

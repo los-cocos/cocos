@@ -7,9 +7,17 @@ version: 0.3.0rc0
 Requirements
 ------------
 
+ Software:
+
  * python 2.4 with ctypes or python 2.5
  * pyglet 1.1b1 or newer (http://www.pyglet.org)
    ( If you want to use pyglet 1.0, use cocos v0.1.x instead. )
+ * Linux, Windows or Mac OS/X
+
+ Hardware:
+
+ * To execute some effects you will need a video card with the:
+     GL_EXT_framebuffer_object extension.
 
 
 Installing
