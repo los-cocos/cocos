@@ -73,6 +73,16 @@ Example::
 Effects
 -------
 
+Effects are a special kind of actions. Insteof modifying normal attributes
+like *opacity*, *color*, *position*, *rotation*, or *scale*, they modify a new kind
+of attribute: the **grid** attribute.
+
+A grid attribute is like a matrix, it is a network of lines that cross each other
+to form a series of squares or rectangles.
+
+These special actions render any `CocosNode` object (`Layer`, `Scene`, etc.) into the
+grid, and you can transform the grid by moving it's vertices.
+
 There are 2 kind of grids: ``tiled`` grids and ``non-tiled`` grids. The difference is that
 the ``tiled`` grid is composed of individual tiles while the ``non-tiled`` grid is
 composed of vertex.
@@ -103,40 +113,69 @@ For more information about the internals refer to:
  - `Grid3D` and `Grid3DAction` for ``non-tiled`` grids
 
 
+For example, if you have an scene or layer that renders this image:
+
+.. image:: original_image.png
+
+...we can transform that image into this one using the `Lens3D` action
+(a non-tiled action).
+
+.. image:: grid_lens3d.png
+
+...or we can transoform it into this one using the `WavesTiles3D` action
+(a tiled action):
+
+.. image:: grid_tiledwaved3d.png
+
+
+3D actions
+^^^^^^^^^^
+
+Action names that has the '3D' characters on it's name means
+that they produce a 3D visual effects by modifying the z-coordinate
+of the grid.
+
+If you're going to use any '3D' action, probably you will want to 
+enable the OpenGL depth test. An easy way to do that is by calling
+the Director's `set_depth_test` method.
+
+
 Index of grid effects
 ^^^^^^^^^^^^^^^^^^^^^
 
  - TiledGrid3D actions
 	- `ShatteredTiles3D`
 	- `ShakyTiles3D`
- 	- `JumpTiles3D`
- 	- `WavesTiles3D`
+	- `JumpTiles3D`
+	- `WavesTiles3D`
 	- `ShuffleTiles`
- 	- `TurnOffTiles`
- 	- `FadeOutTRTiles`
- 	- `FadeOutBLTiles`
- 	- `FadeOutUpTiles`
- 	- `FadeOutDownTiles`
+	- `TurnOffTiles`
+	- `FadeOutTRTiles`
+	- `FadeOutBLTiles`
+	- `FadeOutUpTiles`
+	- `FadeOutDownTiles`
+	- `SplitRows`
+	- `SplitCols`
 
  - Grid3D actions
- 	- `Lens3D`
+	- `Lens3D`
 	- `Ripple3D`
- 	- `FlipX3D`
- 	- `FlipY3D`
- 	- `Waves3D`
- 	- `Shaky3D`
+	- `FlipX3D`
+	- `FlipY3D`
+	- `Waves3D`
+	- `Shaky3D`
 	- `Liquid`
- 	- `Waves`
+	- `Waves`
 	- `Twirl`
- 	- `QuadMoveBy`
- 	- `Flip`
- 	- `FlipX`
- 	- `FlipY`
- 	- `SkewHorizontal`
- 	- `SkewVertical`
- 	- `MoveCornerUp`
- 	- `MoveCornerDown`
- 	- `CornerSwap`
+	- `QuadMoveBy`
+	- `Flip`
+	- `FlipX`
+	- `FlipY`
+	- `SkewHorizontal`
+	- `SkewVertical`
+	- `MoveCornerUp`
+	- `MoveCornerDown`
+	- `CornerSwap`
 
 
 Example::
@@ -169,6 +208,7 @@ Modifiers
 
  - Amplitude modifiers
 	- `AccelAmplitude`
+	- `DeccelAmplitude`
 	- `AccelDeccelAmplitude`
    
 Exmaple::
@@ -225,10 +265,10 @@ You can also override the `__reversed__` method. In this method you have to cons
 that would be the reversed version of the action you are doing. For example, 
 in `Show()` we return `Hide()` as its reverse::
 
-	class Show( InstantAction ):
-	    "<snip>"
-	    def __reversed__(self):
-		return Hide()
+    class Show( InstantAction ):
+        "<snip>"
+        def __reversed__(self):
+            return Hide()
 
 Instant Actions
 ^^^^^^^^^^^^^^^
@@ -237,8 +277,8 @@ Instant actions are actions that will take no time to execute. For example, `Hid
 sets the target visibility to False. 
 
 It is very easy to create an action using the CallFuncS action as a decorator::
-	
-	@CallFuncS
+
+    @CallFuncS
         def make_visible( sp ):
             sp.do( Show() )
         self.sprite.do( make_visible )
@@ -255,12 +295,12 @@ Thats it.
 
 For example, this is a minimal implementation of SetOpacity::
 
-	class SetOpacity( InstantAction ):
-	    def init(self, opacity):
-	        self.opacity = opacity
-	    def start(self):
-		self.target.opacity = self.opacity
-		
+    class SetOpacity( InstantAction ):
+        def init(self, opacity):
+            self.opacity = opacity
+        def start(self):
+            self.target.opacity = self.opacity
+
 Interval Actions
 ^^^^^^^^^^^^^^^^
 
@@ -278,15 +318,15 @@ The protocol for `IntervalAction` subclasses is the following:
 So its in update that you do your magic. For example, if you want to fade something out, 
 you can write something like::
 
-	class FadeOut( IntervalAction ):
-	    def init( self, duration ):
-		self.duration = duration
-	
-	    def update( self, t ):
-		self.target.opacity = 255 * (1-t)
-	
-	    def __reversed__(self):
-		return FadeIn( self.duration )
+    class FadeOut( IntervalAction ):
+        def init( self, duration ):
+            self.duration = duration
+
+        def update( self, t ):
+            self.target.opacity = 255 * (1-t)
+
+        def __reversed__(self):
+            return FadeIn( self.duration )
 
 The trick is that whoever is running your action will interpolate the values of t so that you 
 get called with `t==1` when your duration is up. This does not mean that `duration` seconds 
