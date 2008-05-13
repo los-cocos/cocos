@@ -24,7 +24,7 @@ so probably you won't need to change it. But you can override
 the projection matrix by registering to the ``director on_resize``
 event. See the `test/test_custom_on_resize.py` code as an example.
 
-To enable OpenGL depth test, you can call Directosr's `set_depth_test` method.
+To enable OpenGL depth test, you can call Director's `set_depth_test` method.
 
 Also, remember that cocos2d focus on 2D games, so if you want
 to create a full-blown 3D game, `Panda3d`_ will suit you best.
