@@ -72,7 +72,6 @@ class PythonInterpreterLayer(ColorLayer):
         self.history = ['']
         self.history_pos = 0
 
-
     def on_enter(self):
         super(PythonInterpreterLayer, self).on_enter()
 
@@ -194,6 +193,19 @@ class PythonInterpreterLayer(ColorLayer):
         else:
             return self.caret.on_text_motion(motion)
         return pyglet.event.EVENT_HANDLED
+
+    def get_current_scene(self):
+        '''returns director's current scene.
+
+        This is a shortcut, since from the interpreter you can do
+        the same by typing::
+
+            from cocos.director import director
+            current_scene = director.scene
+
+        :rtype: `Scene`
+        '''
+        return cocos.director.director.scene
 
     def _write(self, s):
         self.document.insert_text(len(self.document.text), s, {

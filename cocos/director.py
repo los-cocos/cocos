@@ -141,6 +141,7 @@ from pyglet import clock
 from pyglet import media
 from pyglet.gl import *
 
+import cocos
 
 __all__ = ['director', 'DefaultHandler']
 
@@ -148,7 +149,6 @@ class DefaultHandler( object ):
     def __init__(self):
         super(DefaultHandler,self).__init__()
         self.wired = False
-        self.with_interpreter = False
 
     def on_key_press( self, symbol, modifiers ):
         if symbol == pyglet.window.key.F and (modifiers & pyglet.window.key.MOD_ACCEL):
@@ -182,17 +182,15 @@ class DefaultHandler( object ):
         elif symbol == pyglet.window.key.I and (modifiers & pyglet.window.key.MOD_ACCEL):
             from layer import PythonInterpreterLayer
 
-            if self.with_interpreter == False:
-                director.scene.add( PythonInterpreterLayer(), name='python_interpreter', z=100)
-                self.with_interpreter= True
+            if not director.show_interpreter:
+                if director.python_interpreter == None:
+                    director.python_interpreter = cocos.scene.Scene( PythonInterpreterLayer() )
+                    director.python_interpreter.enable_handlers( True )
+                director.python_interpreter.on_enter()
+                director.show_interpreter = True
             else:
-                try:
-                    director.scene.remove('python_interpreter')
-                    self.with_interpreter= False
-                except Exception, e:
-                    # mmm... probably the interpreter scene was changed. see issue #70
-                    director.scene.add( PythonInterpreterLayer(), name='python_interpreter', z=100)
-                    self.with_interpreter= True
+                director.python_interpreter.on_exit()
+                director.show_interpreter= False
             return True
 
         elif symbol == pyglet.window.key.S and (modifiers & pyglet.window.key.MOD_ACCEL):
@@ -219,13 +217,20 @@ class Director(event.EventDispatcher):
         :rtype: pyglet.window.Window                    
         :returns: The main window, an instance of pyglet.window.Window class.
         """
-        
+       
+        #: pyglet's window object
         self.window = window.Window( *args, **kwargs )
+
+        #: whether or not the FPS are displayed
         self.show_FPS = False 
 
-        # scene related
+        #: stack of scenes
         self.scene_stack = []
+
+        #: scene that is being run
         self.scene = None
+
+        #: this is the next scene that will be shown
         self.next_scene = None
 
 
@@ -243,6 +248,12 @@ class Director(event.EventDispatcher):
 
         # init fps
         self.fps_display = clock.ClockDisplay()
+
+        # python interpreter
+        self.python_interpreter = None
+
+        #: whether or not to show the python interpreter
+        self.show_interpreter = False
 
         # default handler
         self.window.push_handlers( DefaultHandler() )
@@ -281,6 +292,9 @@ class Director(event.EventDispatcher):
         # finally show the FPS
         if self.show_FPS:
             self.fps_display.draw()
+
+        if self.show_interpreter:
+            self.python_interpreter.visit()
 
     
     def push(self, scene):
