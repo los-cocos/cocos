@@ -38,7 +38,6 @@ need it. If you are curious, check implementation of effects to see an example.
 
 __docformat__ = 'restructuredtext'
 
-from gl_pbuffer import Pbuffer
 from gl_framebuffer_object import FramebufferObject
 from pyglet.gl import *
 from director import director
@@ -137,4 +136,3 @@ class FBOGrabber(object):
         
     def after_render (self, texture):
         self.fbuf.unbind()
-

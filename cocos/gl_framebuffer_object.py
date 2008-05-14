@@ -75,3 +75,7 @@ class FramebufferObject (object):
         if status != GL_FRAMEBUFFER_COMPLETE_EXT:
             raise Exception ("Frambuffer not complete: %d" % status)
 
+    def __del__(self):
+        '''Delete the framebuffer from the GPU memory'''
+        id = c_ulong(self._id)
+        glDeleteFramebuffersEXT(1, byref(id))
