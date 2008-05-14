@@ -72,13 +72,32 @@ class TransitionScene(scene.Scene):
     These scenes are children of the transition scene.
     """
     
-    def __init__(self, out_scene, in_scene, duration=2):
+    def __init__(self, dst, duration=2, src=None):
+        '''Initializes the transition
+
+        :Parameters:
+            `dst` : Scene
+                Incoming scene
+            `duration` : float
+                Duration of the transition in seconds. Default: 2
+            `src`: Scene
+                Outgoing scene. Default: current scene
+        '''
         super(TransitionScene, self).__init__()
 
-        self.in_scene = in_scene                #: scene that will replace the old one
-        self.out_scene = out_scene              #: scene that will be replaced
+        self.in_scene = dst                     #: scene that will replace the old one
+        if src == None:
+            src = director.scene
+        self.out_scene = src                    #: scene that will be replaced
         self.dt = 0.0
         self.duration = duration                #: duration in seconds of the transition
+
+        if self.out_scene is None:
+            raise Exception("You need to specfy a `src` argument")
+
+        if id(self.out_scene) == id(self.in_scene):
+            raise Exception("Incoming scene must be different from outgoing scene")
+
 
         self.start()
         self.schedule( self.step )

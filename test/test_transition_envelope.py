@@ -34,4 +34,4 @@ if __name__ == "__main__":
     scene1.add( BackgroundLayer(), z=0 )
     scene2.add( colorl, z=0 )
 
-    director.run( EnvelopeTransition( scene2, scene1, 2) )
+    director.run( EnvelopeTransition( dst=scene1, duration=2, src=scene2) )

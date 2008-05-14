@@ -34,4 +34,4 @@ if __name__ == "__main__":
     scene1.add( BackgroundLayer(), z=0 )
     scene2.add( colorl, z=0 )
 
-    director.run( ShrinkGrowTransition( scene2, scene1, 2) )
+    director.run( ShrinkGrowTransition( scene1, 2, scene2) )

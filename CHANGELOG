@@ -6,6 +6,9 @@ v0.3.0rc - XXXX
   - Actions: Waves. parameter horizontal_sin and vertical_sin renamed to hsin and vsin
   - Actions: renamed ReverseTime to _ReverseTime to prevent massive usage
   - Director: default projection is 3D (not glOrtho)
+  - Transitions: Changed API. There is no need to pass the src scene as a
+	  parameter. If ommited, the src scene will be current scene. 
+	  init( dst, duration=2, src=current_scene)
   - Transitions: renamed ShrinkAndGrowTransition -> ShrinkGrowTransition
   - Transitions: renamed ShuffleTilesTransition -> ShuffleTransition
   - Transitions: reanamed CurtainTransition to FadeTRTransition
