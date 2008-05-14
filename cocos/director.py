@@ -90,6 +90,8 @@ Once a scene is running you can do the following actions:
 
     * ``director.replace( new_scene ):``
         Replaces the running scene with the new_scene 
+        You could also use a transition. For example:
+        director.replace( SplitRowsTransition( new_scene, duration=2 ) )
 
     * ``director.push( new_scene ):``
         The running scene will be pushed to a queue of scenes to run,
