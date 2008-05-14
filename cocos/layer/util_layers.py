@@ -83,8 +83,8 @@ class ColorLayer(Layer):
         self._vertex_list.delete()
         self._vertex_list = None
 
-    def on_draw(self):
-        super(ColorLayer, self).on_draw()
+    def draw(self):
+        super(ColorLayer, self).draw()
         glPushMatrix()
         self.transform()
         glTranslatef( 

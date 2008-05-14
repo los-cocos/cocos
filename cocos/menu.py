@@ -272,7 +272,7 @@ class Menu(Layer):
 
         self._build_items()
 
-    def on_draw( self ):
+    def draw( self ):
         self.title_label.draw()
 
     def on_text( self, text ):
@@ -382,7 +382,7 @@ class MenuItem( CocosNode ):
         y2 = y1 + height
         return (x1,y1,x2,y2)
 
-    def on_draw( self ):
+    def draw( self ):
         glPushMatrix()
         self.transform()
 

@@ -49,7 +49,7 @@ class ControlLayer(Layer):
             halign=font.Text.CENTER,
             valign=font.Text.CENTER)
 
-    def on_draw( self ):
+    def draw( self ):
         self.text_title.draw()
         self.text_subtitle.draw()
         self.text_help.draw()

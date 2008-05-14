@@ -73,7 +73,7 @@ class BatchNode( cocosnode.CocosNode ):
     def visit(self):
         self.batch.draw()
         
-    def on_draw(self):
+    def draw(self):
         pass#self.batch.draw()
         
 class BatchableNode( cocosnode.CocosNode ):

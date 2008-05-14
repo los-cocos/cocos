@@ -22,7 +22,7 @@ class BackgroundLayer( cocos.layer.Layer ):
         super(BackgroundLayer,self).on_enter()
         director.push_handlers(self.on_resize)
 
-    def on_draw( self ):
+    def draw( self ):
         self.img.blit(0,0)
 
     def on_resize( self, width, height ):

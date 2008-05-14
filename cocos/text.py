@@ -61,7 +61,7 @@ class TextElement(cocosnode.CocosNode):
     def create_element(self):
         self.element = self.klass(group=self.group, batch=self.batch, **self.kwargs)
         
-    def on_draw(self):
+    def draw(self):
         glPushMatrix()
         self.transform()
         self.element.draw()

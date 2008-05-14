@@ -20,7 +20,7 @@ class BackgroundLayer( cocos.layer.Layer ):
         super( BackgroundLayer, self ).__init__()
         self.img = pyglet.resource.image('background_image.png')
 
-    def on_draw( self ):
+    def draw( self ):
         self.img.blit(0,0)
 
 if __name__ == "__main__":

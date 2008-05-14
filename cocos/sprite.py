@@ -167,7 +167,7 @@ class ActionSprite( BatchableNode, pyglet.sprite.Sprite):
             
 
     
-    def on_draw(self):
+    def draw(self):
         self._group.set_state()
         if self._vertex_list is not None:
             self._vertex_list.draw(GL_QUADS)

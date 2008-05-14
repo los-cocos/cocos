@@ -68,9 +68,9 @@ class PauseScene(Scene):
         super(PauseScene, self).__init__(*layers)
         self.bg = background
         
-    def on_draw(self):
+    def draw(self):
         self.bg.blit(0,0)
-        super(PauseScene, self).on_draw()
+        super(PauseScene, self).draw()
         
         
 class PauseLayer(Layer):
@@ -89,7 +89,7 @@ class PauseLayer(Layer):
         self.text.x = x/2
         self.text.y = y/2
         
-    def on_draw(self):
+    def draw(self):
         self.text.draw()
         
     def on_key_press(self, k, m):

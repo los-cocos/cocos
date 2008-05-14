@@ -23,7 +23,7 @@ class BackgroundLayer( Layer ):
         # load the image form file
         self.image = pyglet.resource.image('flag.png')
 
-    def on_draw( self ):
+    def draw( self ):
         # blit the image on every frame
         self.image.blit(0,0)
 

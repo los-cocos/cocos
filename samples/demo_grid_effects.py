@@ -70,7 +70,7 @@ class FireManager( Layer ):
             verts[n*8:(n+1)*8] = map(int,[x,y,x+ww,y,x+ww,y+hh,x,y+hh])
             clrs[n*16:(n+1)*16] = [r,g,b,255] * 4
 
-    def on_draw( self ):
+    def draw( self ):
         glPushMatrix()
         self.transform()
 

@@ -37,7 +37,7 @@ class MeshSprite:
         self.vertex_list.tex_coords = texture_points
         self.elapsed = 0
         
-    def on_draw(self, dt):
+    def draw(self, dt):
         self.elapsed += dt
         glEnable(self.texture.target)
         glBindTexture(self.texture.target, self.texture.id)
@@ -74,7 +74,7 @@ grossini.anchor_y = grossini.height / 2
 ms = MeshSprite( grossini, 15,31 )
 def update(dt):
     window.clear()
-    ms.on_draw(dt)
+    ms.draw(dt)
     
 pyglet.clock.schedule_interval(update, 1/60.)
 

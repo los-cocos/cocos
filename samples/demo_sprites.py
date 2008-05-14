@@ -60,8 +60,8 @@ class FontLayer( Layer ):
             valign=font.Text.CENTER,
             batch=self.batch )
 
-    def on_draw( self ):
-        super( FontLayer, self).on_draw()
+    def draw( self ):
+        super( FontLayer, self).draw()
         self.batch.draw()
 
 class SpriteLayer( Layer ):

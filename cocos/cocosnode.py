@@ -63,7 +63,7 @@ class CocosNode(object):
     Subclassing a cocosnode usually means (one/all) of:
         - overriding __init__ to initialize resources and schedule calbacks
         - create callbacks to handle the advancement of time
-        - overriding on_draw to render the node    
+        - overriding draw to render the node    
     """
     def __init__(self):
         # composition stuff
@@ -523,7 +523,7 @@ class CocosNode(object):
         It will first *visit* the children that
         that have a z-order value less than 0.
 
-        Then it will call the `on_draw` method to
+        Then it will call the `draw` method to
         draw itself.
 
         And finally it will *visit* the rest of the
@@ -555,7 +555,7 @@ class CocosNode(object):
             glPopMatrix()
             
         # we draw ourselves
-        self.on_draw()
+        self.draw()
         
         # we visit all the remaining nodes, that are over ourselves
         if position < len(self.children):
@@ -569,7 +569,7 @@ class CocosNode(object):
             self.grid.after_draw()
 
         
-    def on_draw(self, *args, **kwargs):
+    def draw(self, *args, **kwargs):
         """
         This is the function you will have to override if you want your
         subclassed to draw something on screen.
@@ -577,7 +577,7 @@ class CocosNode(object):
         You *must* respect the position, scale, rotation and anchor attributes. 
         If you want opengl to do the scaling for you, you can::
         
-            def on_draw(self):
+            def draw(self):
                 glPushMatrix()
                 self.transform()
                 # ... draw ..

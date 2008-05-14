@@ -224,6 +224,6 @@ class PythonInterpreterLayer(ColorLayer):
         if self.caret.position < self.start_of_line:
             self.caret.position = len(self.document.text)
 
-    def on_draw(self):
-        super( PythonInterpreterLayer, self).on_draw()
+    def draw(self):
+        super( PythonInterpreterLayer, self).draw()
         self.batch.draw()

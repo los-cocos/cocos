@@ -496,8 +496,8 @@ class ScrollableLayer(cocos.layer.Layer):
         self.viewport_w, self.viewport_h = w, h
         self.position = (-x, -y)
 
-    def on_draw(self):
-        super(ScrollableLayer, self).on_draw()
+    def draw(self):
+        super(ScrollableLayer, self).draw()
         pyglet.gl.glPushMatrix()
         self.transform()
         self.batch.draw()

@@ -17,7 +17,7 @@ class Quad(cocos.cocosnode.CocosNode):
         self.size = size
         self.qcolor = color
         
-    def on_draw(self):
+    def draw(self):
         points = (self.x, self.y,
                     self.x, self.y+self.size, 
                     self.x+self.size, self.y+self.size,

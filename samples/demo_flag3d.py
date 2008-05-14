@@ -77,8 +77,8 @@ class Flag3D( cocos.layer.Layer ):
         gluPerspective(90, 1.0*width/height, 0.1, 400.0)
         glMatrixMode(GL_MODELVIEW)
 
-    def on_draw( self ):
-        super(Flag3D,self).on_draw()
+    def draw( self ):
+        super(Flag3D,self).draw()
 
         glLoadIdentity()
 
