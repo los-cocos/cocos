@@ -80,7 +80,7 @@ class TransitionScene(scene.Scene):
                 Incoming scene
             `duration` : float
                 Duration of the transition in seconds. Default: 2
-            `src`: Scene
+            `src` : Scene
                 Outgoing scene. Default: current scene
         '''
         super(TransitionScene, self).__init__()
@@ -109,14 +109,15 @@ class TransitionScene(scene.Scene):
 
     def step(self, dt):
         self.dt += dt
-        if self.dt > self.duration:
+        if self.dt + 0.1 > self.duration:
             self.unschedule(self.step)
             self.finish()
             director.replace( self.in_scene )
 
     def finish(self):
-        '''Called the time is over.
-        It removes both the incoming and the outgoing scenes from the transition scene.
+        '''Called when the time is over.
+        It removes both the incoming and the outgoing scenes from the transition scene,
+        and restores the outgoing scene's attributes like: position, visible and scale.
         '''
         self.remove( self.in_scene )
         self.remove( self.out_scene )
