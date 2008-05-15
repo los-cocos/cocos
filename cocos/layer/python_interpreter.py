@@ -17,6 +17,7 @@ from pyglet import text
 from pyglet.text import caret, document, layout
 
 import cocos
+from cocos.director import director
 from base_layers import Layer
 from util_layers import ColorLayer
 
@@ -47,7 +48,7 @@ class PythonInterpreterLayer(ColorLayer):
     '''Runs an interactive Python interpreter as a child `Layer` of the current `Scene`.
     '''
 
-    cfg = {'code.font_name':'Courier New',
+    cfg = {'code.font_name':'Arial',
             'code.font_size':12,
             'code.color':(255,255,255,255),
             'caret.color':(255,255,255),
@@ -65,7 +66,12 @@ class PythonInterpreterLayer(ColorLayer):
         super(PythonInterpreterLayer, self).__init__( 32,32,32,192 )
 
         self.content = self.prompt
-        self.interpreter = MyInterpreter(locals(), self._write)
+        self.interpreter = MyInterpreter(
+                dict(
+                    self=self, 
+                    cocos=cocos, 
+                    director=director,
+                ), self._write)
 
         self.current_input = []
 
