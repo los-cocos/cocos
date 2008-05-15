@@ -72,14 +72,14 @@ class TransitionScene(scene.Scene):
     These scenes are children of the transition scene.
     """
     
-    def __init__(self, dst, duration=2, src=None):
+    def __init__(self, dst, duration=1.25, src=None):
         '''Initializes the transition
 
         :Parameters:
             `dst` : Scene
                 Incoming scene
             `duration` : float
-                Duration of the transition in seconds. Default: 2
+                Duration of the transition in seconds. Default: 1.25
             `src` : Scene
                 Outgoing scene. Default: current scene
         '''
@@ -104,12 +104,12 @@ class TransitionScene(scene.Scene):
         
     def start(self):
         '''Adds the incoming scene with z=1 and the outgoing scene with z=0'''
-        self.add( self.in_scene, z=1)
-        self.add( self.out_scene, z=0)
+        self.add( self.in_scene, z=1 )
+        self.add( self.out_scene, z=0 )
 
     def step(self, dt):
         self.dt += dt
-        if self.dt + 0.1 > self.duration:
+        if self.dt - 0.05 > self.duration:
             self.unschedule(self.step)
             self.finish()
             director.replace( self.in_scene )
@@ -139,6 +139,11 @@ class TransitionScene(scene.Scene):
         self.out_scene.visible = True
         self.out_scene.position = (0,0)
         self.out_scene.scale = 1
+
+    def restore_z_order( self ):
+        '''Restore the z-order of the scenes'''
+        self.remove( self.out_scene )
+        self.add( self.out_scene, z=-1 )
         
 class RotoZoomTransition(TransitionScene):
     '''Rotate and zoom out the outgoing scene, and then rotate and zoom in the incoming 
@@ -456,12 +461,12 @@ class FadeTRTransition(TransitionScene):
         a = self.get_action(x,y)
 
 #        a = Accelerate( a)
-        self.out_scene.do( a + StopGrid() )
+        self.out_scene.do( a + CallFunc(self.restore_z_order) + StopGrid() )
 
     def start(self):
         # don't call super. overriding order
-        self.add( self.in_scene, z=0)
-        self.add( self.out_scene, z=1)
+        self.add( self.in_scene, z=0 )
+        self.add( self.out_scene, z=1 )
 
     def get_action(self,x,y):
         return FadeOutTRTiles( grid=(x,y), duration=self.duration )
@@ -496,12 +501,12 @@ class TurnOffTilesTransition(TransitionScene):
 
         a = TurnOffTiles( grid=(x,y), duration=self.duration )
 #        a = Accelerate( a)
-        self.out_scene.do( a + StopGrid() )
+        self.out_scene.do( a + CallFunc(self.restore_z_order) + StopGrid() )
 
     def start(self):
         # don't call super. overriding order
-        self.add( self.in_scene, z=0)
-        self.add( self.out_scene, z=1)
+        self.add( self.in_scene, z=0 )
+        self.add( self.out_scene, z=1 )
 
 
 class FadeTransition(TransitionScene):

@@ -63,7 +63,7 @@ class ControlLayer(Layer):
         elif k == key.ENTER:
             director.replace( transition_list[current_transition](
                         (control_list[(control_p+1)%len(control_list)] ),
-                        2)                                
+                        1.25)
                     )
             control_p = (control_p + 1) % len(control_list)
             return True
