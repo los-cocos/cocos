@@ -117,8 +117,7 @@ class GridBase(object):
         self._set_3d_projection()
 
         # and center the camera
-        camera.dirty = True
-        camera.locate()
+        camera.locate( force=True )
 
         # blit
         glEnable(self.texture.target)

@@ -65,7 +65,12 @@ class Camera(object):
         return eye_z
 
     def restore( self ):
-        '''Restore the camera to the initial position'''
+        '''Restore the camera to the initial position
+        and sets it's ``dirty`` attribute in False and ``once`` in true.
+
+        If you use the camera, for a while and you want to stop using it
+        call this method.
+        '''
 
         width, height = director.get_window_size()
 
@@ -88,9 +93,14 @@ class Camera(object):
         #: optimization. Only renders the camera once
         self.once = True
 
-    def locate( self ):
-        '''Sets the camera using gluLookAt using its eye, center and up_vector'''
-        if self.dirty or self.once:
+    def locate( self, force=False ):
+        '''Sets the camera using gluLookAt using its eye, center and up_vector
+
+        :Parameters:
+            `force` : bool
+                whether or not the camera will be located even if it is not dirty
+        '''
+        if force or self.dirty or self.once:
             glLoadIdentity()
             gluLookAt( self._eye.x, self._eye.y, self._eye.z,             # camera eye
                        self._center.x, self._center.y, self._center.z,    # camera center
