@@ -279,10 +279,25 @@ if __name__ == "__main__":
     current_transition = 0
 
     scenes = [
-        cocos.scene.Scene (background, 
+        cocos.scene.Scene (
             TitleSubTitleLayer("cocos2d", "a 2d game library"),
         ),
-        cocos.scene.Scene (background, 
+        cocos.scene.Scene (
+            BulletListLayer("Juegos y python", [
+                "Juegos en un lenguaje interpretado?",
+                "Depende del juego",
+                "Hay mucho que se puede hacer en 30ms",
+                ])
+            ),
+        cocos.scene.Scene (
+            BulletListLayer("Historia", [
+                "2000 : pygame",
+                "2005 : pyweek",
+                "2006 : pyglet",
+                "2008 : cocos"
+                ])
+            ),
+        cocos.scene.Scene (
             BulletListLayer("Features", [
                 "Control de flujo",
                 "Sprites",
@@ -292,9 +307,10 @@ if __name__ == "__main__":
                 "Menus", 
                 ])
             ),
-        cocos.scene.Scene (background, 
+        cocos.scene.Scene (
             BulletListLayer("Features (2)", [
                 "Texto / HTML",
+                "Tiles"
                 "Bien Documentado",
                 "Interprete de python incluido",
                 "Licencia BSD",
@@ -302,26 +318,26 @@ if __name__ == "__main__":
                 "OpenGL",
                 ]),
             ),
-        cocos.scene.Scene (background, 
+        cocos.scene.Scene ( 
             BulletListLayer("Conceptos", []).add(
                 ActionSprite("scene_sp.png", (x/2, 100))),
             ),
-        cocos.scene.Scene (background, 
+        cocos.scene.Scene ( 
             BulletListLayer("Control De Flujo", []),
             ),
-        cocos.scene.Scene (background, 
+        cocos.scene.Scene (
             BulletListLayer("Sprites", []),
             ),
-        cocos.scene.Scene (background, 
+        cocos.scene.Scene ( 
             BulletListLayer("Acciones", []),
             ),
-        cocos.scene.Scene (background, 
+        cocos.scene.Scene (
             BulletListLayer("Efectos", []),
             ),
-        cocos.scene.Scene (background, 
+        cocos.scene.Scene (
             BulletListLayer("Transiciones", []),
             ),
-        cocos.scene.Scene (background, 
+        cocos.scene.Scene (
             BulletListLayer("Documentacion", [
                 "Tutoriales en video",
                 "Guia de programacion (1KLOT)",
@@ -333,7 +349,7 @@ if __name__ == "__main__":
             ]),
             ),
             
-        cocos.scene.Scene (background, 
+        cocos.scene.Scene (
             BulletListLayer("Comunidad", [
                 "5 juegos terminados",
                 "Varios proyectos en desarrollo",
@@ -341,7 +357,7 @@ if __name__ == "__main__":
                 "Lista de correo 'funcional'",
             ]),
             ),
-         cocos.scene.Scene (background, 
+         cocos.scene.Scene (
             TitleSubTitleLayer("cocos2d", "http://www.cocos2d.org"),
         ),
         ]
