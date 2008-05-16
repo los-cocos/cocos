@@ -89,7 +89,6 @@ class TransitionScene(scene.Scene):
         if src == None:
             src = director.scene
         self.out_scene = src                    #: scene that will be replaced
-        self.dt = 0.0
         self.duration = duration                #: duration in seconds of the transition
 
         if self.out_scene is None:
@@ -98,21 +97,12 @@ class TransitionScene(scene.Scene):
         if id(self.out_scene) == id(self.in_scene):
             raise Exception("Incoming scene must be different from outgoing scene")
 
-
         self.start()
-        self.schedule( self.step )
         
     def start(self):
         '''Adds the incoming scene with z=1 and the outgoing scene with z=0'''
         self.add( self.in_scene, z=1 )
         self.add( self.out_scene, z=0 )
-
-    def step(self, dt):
-        self.dt += dt
-        if self.dt - 0.05 > self.duration:
-            self.unschedule(self.step)
-            self.finish()
-            director.replace( self.in_scene )
 
     def finish(self):
         '''Called when the time is over.
@@ -122,6 +112,7 @@ class TransitionScene(scene.Scene):
         self.remove( self.in_scene )
         self.remove( self.out_scene )
         self.restore_out()
+        director.replace( self.in_scene )
 
     def hide_out_show_in( self ):
         '''Hides the outgoing scene and shows the incoming scene'''
@@ -139,11 +130,6 @@ class TransitionScene(scene.Scene):
         self.out_scene.visible = True
         self.out_scene.position = (0,0)
         self.out_scene.scale = 1
-
-    def restore_z_order( self ):
-        '''Restore the z-order of the scenes'''
-        self.remove( self.out_scene )
-        self.add( self.out_scene, z=-1 )
         
 class RotoZoomTransition(TransitionScene):
     '''Rotate and zoom out the outgoing scene, and then rotate and zoom in the incoming 
@@ -164,8 +150,8 @@ class RotoZoomTransition(TransitionScene):
                      Rotate(360 * 2, duration=self.duration/2.0 ) ) + \
                 Delay( self.duration / 2.0 )
 
-        self.out_scene.do(  rotozoom + CallFunc( self.restore_out) ) 
-        self.in_scene.do( Reverse(rotozoom) )
+        self.out_scene.do( rotozoom ) 
+        self.in_scene.do( Reverse(rotozoom) + CallFunc(self.finish) )
 
 class JumpZoomTransition(TransitionScene):
     '''Zoom out and jump the outgoing scene, and then jump and zoom in the incoming 
@@ -189,8 +175,8 @@ class JumpZoomTransition(TransitionScene):
         jumpzoomin = jump + scalein
 
         delay = Delay( self.duration / 2.0 )
-        self.out_scene.do(  jumpzoomout + delay + CallFunc( self.restore_out ) )
-        self.in_scene.do( delay + jumpzoomin )
+        self.out_scene.do(  jumpzoomout ) 
+        self.in_scene.do( delay + jumpzoomin + CallFunc(self.finish) )
 
 
 class MoveInLTransition(TransitionScene):
@@ -199,50 +185,50 @@ class MoveInLTransition(TransitionScene):
     def __init__( self, *args, **kwargs ):
         super(MoveInLTransition, self ).__init__( *args, **kwargs)
 
+        self.init()
+        a = self.get_action()
+
+        self.in_scene.do( (Accelerate(a,0.5) ) + CallFunc(self.finish) )
+
+    def init(self):
         width, height = director.get_window_size()
-
         self.in_scene.position=(-width,0)
-        move = MoveTo( (0,0), duration=self.duration)
-        self.in_scene.do( (Accelerate(move,0.5) ) )
+
+    def get_action(self):
+        return MoveTo( (0,0), duration=self.duration)
 
 
-class MoveInRTransition(TransitionScene):
+class MoveInRTransition(MoveInLTransition):
     '''Move in from to the right the incoming scene.
     '''
-    def __init__( self, *args, **kwargs ):
-        super(MoveInRTransition, self ).__init__( *args, **kwargs)
-
+    def init(self):
         width, height = director.get_window_size()
-
         self.in_scene.position=(width,0)
-        move = MoveTo( (0,0), duration=self.duration)
-        self.in_scene.do( Accelerate(move,0.5) )
+
+    def get_action(self):
+        return MoveTo( (0,0), duration=self.duration)
 
 
-class MoveInTTransition(TransitionScene):
+class MoveInTTransition(MoveInLTransition):
     '''Move in from to the top the incoming scene.
     '''
-    def __init__( self, *args, **kwargs ):
-        super(MoveInTTransition, self ).__init__( *args, **kwargs)
-
+    def init(self):
         width, height = director.get_window_size()
-
         self.in_scene.position=(0,height)
-        move = MoveTo( (0,0), duration=self.duration)
-        self.in_scene.do( Accelerate(move,0.5) )
+
+    def get_action(self):
+        return MoveTo( (0,0), duration=self.duration)
 
 
-class MoveInBTransition(TransitionScene):
+class MoveInBTransition(MoveInLTransition):
     '''Move in from to the bottom the incoming scene.
     '''
-    def __init__( self, *args, **kwargs ):
-        super(MoveInBTransition, self ).__init__( *args, **kwargs)
-
+    def init(self):
         width, height = director.get_window_size()
-
         self.in_scene.position=(0,-height)
-        move = MoveTo( (0,0), duration=self.duration)
-        self.in_scene.do( Accelerate(move,0.5) )
+
+    def get_action(self):
+        return MoveTo( (0,0), duration=self.duration)
 
 class SlideInLTransition(TransitionScene):
     '''Slide in the incoming scene from the left border.
@@ -250,54 +236,49 @@ class SlideInLTransition(TransitionScene):
     def __init__( self, *args, **kwargs ):
         super(SlideInLTransition, self ).__init__( *args, **kwargs)
 
-        width, height = director.get_window_size()
+        self.width, self.height = director.get_window_size()
+        self.init()
 
-        self.in_scene.position=(-width,0)
-        move = MoveBy( (width,0), duration=self.duration)
+        move = self.get_action()
+
         self.in_scene.do( Accelerate(move,0.5) )
-        self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.restore_out) )
+        self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.finish) )
+
+    def init(self):
+        self.in_scene.position=( -self.width,0)
+
+    def get_action(self):
+        return MoveBy( (self.width,0), duration=self.duration)
 
 
-class SlideInRTransition(TransitionScene):
+class SlideInRTransition(SlideInLTransition):
     '''Slide in the incoming scene from the right border.
     '''
-    def __init__( self, *args, **kwargs ):
-        super(SlideInRTransition, self ).__init__( *args, **kwargs)
+    def init(self):
+        self.in_scene.position=(self.width,0)
 
-        width, height = director.get_window_size()
-
-        self.in_scene.position=(width,0)
-        move = MoveBy( (-width,0), duration=self.duration)
-        self.in_scene.do( Accelerate(move,0.5) )
-        self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.restore_out) )
+    def get_action(self):
+        return MoveBy( (-self.width,0), duration=self.duration)
 
 
-class SlideInTTransition(TransitionScene):
+class SlideInTTransition(SlideInLTransition):
     '''Slide in the incoming scene from the top border.
     '''
-    def __init__( self, *args, **kwargs ):
-        super(SlideInTTransition, self ).__init__( *args, **kwargs)
+    def init(self):
+        self.in_scene.position=(0,self.height)
 
-        width, height = director.get_window_size()
-
-        self.in_scene.position=(0,height)
-        move = MoveBy( (0,-height), duration=self.duration)
-        self.in_scene.do( Accelerate(move,0.5) )
-        self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.restore_out) )
+    def get_action(self):
+        return MoveBy( (0,-self.height), duration=self.duration)
 
 
-class SlideInBTransition(TransitionScene):
+class SlideInBTransition(SlideInLTransition):
     '''Slide in the incoming scene from the bottom border.
     '''
-    def __init__( self, *args, **kwargs ):
-        super(SlideInBTransition, self ).__init__( *args, **kwargs)
+    def init(self):
+        self.in_scene.position=(0,-self.height)
 
-        width, height = director.get_window_size()
-
-        self.in_scene.position=(0,-height)
-        move = MoveBy( (0,height), duration=self.duration)
-        self.in_scene.do( Accelerate(move,0.5) )
-        self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.restore_out) )
+    def get_action(self):
+        return MoveBy( (0,self.height), duration=self.duration)
 
 
 class FlipX3DTransition(TransitionScene):
@@ -319,10 +300,11 @@ class FlipX3DTransition(TransitionScene):
                 CallFunc(self.hide_all) + \
                 FlipX3D(duration=0) + \
                 CallFunc( self.hide_out_show_in ) + \
-                flipback90 + \
-                CallFunc(self.restore_out) 
+                flipback90
         
-        self.do( flip + StopGrid() )
+        self.do( flip + \
+                CallFunc(self.finish) + \
+                StopGrid() )
 
 
 class FlipY3DTransition(TransitionScene):
@@ -344,10 +326,11 @@ class FlipY3DTransition(TransitionScene):
                 CallFunc(self.hide_all) + \
                 FlipX3D(duration=0) + \
                 CallFunc( self.hide_out_show_in ) + \
-                flipback90 + \
-                CallFunc( self.restore_out)
+                flipback90
         
-        self.do( flip + StopGrid() )
+        self.do( flip + \
+                    CallFunc(self.finish) + \
+                    StopGrid() )
 
 class FlipAngular3DTransition(TransitionScene):
     '''Flips the screen half horizontally and half vertically.
@@ -368,10 +351,11 @@ class FlipAngular3DTransition(TransitionScene):
                 CallFunc(self.hide_all) + \
                 FlipX3D(duration=0) + \
                 CallFunc( self.hide_out_show_in ) + \
-                flipback90 + \
-                CallFunc( self.restore_out)
+                flipback90
         
-        self.do( flip + StopGrid() )
+        self.do( flip + \
+                    CallFunc(self.finish) + \
+                    StopGrid() )
 
 
 class ShuffleTransition(TransitionScene):
@@ -390,8 +374,8 @@ class ShuffleTransition(TransitionScene):
         self.do( shuffle + \
                  CallFunc(self.hide_out_show_in) + \
                  Reverse(shuffle) + \
-                StopGrid() + \
-                CallFunc(self.restore_out) \
+                 CallFunc(self.finish) + \
+                 StopGrid()
                 )
 
 
@@ -413,7 +397,7 @@ class ShrinkGrowTransition(TransitionScene):
         scale_in = ScaleTo( 1.0, duration=self.duration )
 
         self.in_scene.do( Accelerate(scale_in,0.5) )
-        self.out_scene.do( Accelerate(scale_out,0.5) + CallFunc( self.restore_out) )
+        self.out_scene.do( Accelerate(scale_out,0.5) + CallFunc( self.finish) )
 
 
 class CornerMoveTransition(TransitionScene):
@@ -422,8 +406,14 @@ class CornerMoveTransition(TransitionScene):
     def __init__( self, *args, **kwargs ):
         super(CornerMoveTransition, self ).__init__( *args, **kwargs)
 
-        self.in_scene.do( Reverse(MoveCornerDown( duration=self.duration ) ) + StopGrid() )
+        self.out_scene.do( MoveCornerUp( duration=self.duration ) + \
+                            CallFunc(self.finish) + \
+                            StopGrid() )
 
+    def start(self):
+        # don't call super. overriding order
+        self.add( self.in_scene, z=0 )
+        self.add( self.out_scene, z=1 )
 
 class EnvelopeTransition(TransitionScene):
     '''From the outgoing scene:
@@ -443,8 +433,8 @@ class EnvelopeTransition(TransitionScene):
         self.do( move + \
                  CallFunc(self.hide_out_show_in) + \
                  Reverse(move) + \
-                 StopGrid() + \
-                 CallFunc(self.restore_out) \
+                 CallFunc(self.finish) + \
+                 StopGrid()
                  )
 
 
@@ -461,7 +451,9 @@ class FadeTRTransition(TransitionScene):
         a = self.get_action(x,y)
 
 #        a = Accelerate( a)
-        self.out_scene.do( a + CallFunc(self.restore_z_order) + StopGrid() )
+        self.out_scene.do( a + \
+                            CallFunc(self.finish) + \
+                            StopGrid() )
 
     def start(self):
         # don't call super. overriding order
@@ -501,7 +493,9 @@ class TurnOffTilesTransition(TransitionScene):
 
         a = TurnOffTiles( grid=(x,y), duration=self.duration )
 #        a = Accelerate( a)
-        self.out_scene.do( a + CallFunc(self.restore_z_order) + StopGrid() )
+        self.out_scene.do( a + \
+                        CallFunc(self.finish) + \
+                        StopGrid() )
 
     def start(self):
         # don't call super. overriding order
@@ -525,7 +519,7 @@ class FadeTransition(TransitionScene):
         self.fadelayer.do( FadeIn( duration=self.duration/2.0) + \
                            CallFunc( self.hide_out_show_in) + \
                            FadeOut( duration=self.duration /2.0 ) + \
-                           CallFunc( self.restore_out ) )
+                           CallFunc( self.finish) )
     def on_exit( self ):
         super( FadeTransition, self).on_exit()
         self.remove( self.fadelayer )
@@ -543,10 +537,11 @@ class SplitColsTransition(TransitionScene):
         flip_a =  self.get_action()
         flip = flip_a + \
                 CallFunc( self.hide_out_show_in ) + \
-                Reverse(flip_a) + \
-                CallFunc(self.restore_out) 
+                Reverse(flip_a)
         
-        self.do( AccelDeccel(flip) + StopGrid() )
+        self.do( AccelDeccel(flip) + \
+                    CallFunc(self.finish) + \
+                    StopGrid() )
 
     def get_action( self ):
         return SplitCols( cols=3, duration=self.duration/2.0)
