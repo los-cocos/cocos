@@ -1,10 +1,14 @@
 v0.3.0rc - XXXX
-  - Actions: added FadeOutBLTiles, FadeOutUpTiles, FadeOutDownTiles
-  - Actions: added SplitCols, SplitRows
+  - Actions: added FadeOutBLTiles, FadeOutUpTiles, FadeOutDownTiles effects
+  - Actions: added SplitCols, SplitRows effects
   - Actions: renamed FadeOutTiles to FadeOutTRTiles
   - Actions: added Ripple3D effect
   - Actions: Waves. parameter horizontal_sin and vertical_sin renamed to hsin and vsin
   - Actions: renamed ReverseTime to _ReverseTime to prevent massive usage
+  - CocosNode: on_draw() replaced with draw(). It was conflicting with
+	  pyglet's event
+  - CocosNode: added the Camera attribute (removed from Grid object)
+    It is no longer necesary to have an active grid to perfrom camera actions
   - Director: default projection is 3D (not glOrtho)
   - Transitions: Changed API. There is no need to pass the src scene as a
 	  parameter. If ommited, the src scene will be current scene. 

@@ -4,7 +4,8 @@
 #
 # An example of how to generate a 3D scene manually
 # Of course, the easiest way is to execute an Waves3D action,
-# this example is to show the 'internals' of generating a 3D effect.
+# but this example is provided to show the
+# 'internals' of generating a 3D effect.
 #
 
 import sys

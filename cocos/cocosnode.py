@@ -42,6 +42,7 @@ import pyglet
 from pyglet.gl import *
 
 from director import director
+from camera import Camera
 
 import weakref
 
@@ -94,6 +95,22 @@ class CocosNode(object):
         #: Default: 0.0
         self.rotation = 0.0
 
+        #: eye, center and up vector for the `Camera`.
+        #: gluLookAt() is used with these values.
+        #: Default: FOV 60, center of the screen.
+        #: IMPORTANT: The camera can perform exactly the same
+        #: transformation as ``scale``, ``rotation`` and the
+        #: ``x``, ``y`` attributes (with the exception that the
+        #: camera can modify also the z-coordinate)
+        #: In fact, they all transform the same matrix, so
+        #: use either the camera or the other attributes, but not both
+        #: since the camera will be overriden by the transformations done
+        #: by the other attributes.
+        #: You can change the camera manually or by using the `Camera3DAction`
+        #: action.
+        self.camera = Camera()
+        
+
         #: offset from (x,0) from where children will have its (0,0) coordinate.
         #: Default: 0
         self.children_anchor_x = 0
@@ -118,7 +135,7 @@ class CocosNode(object):
         #: This can be a `Grid3D` or a `TiledGrid3D` object depending
         #: on the action.
         self.grid = None
-        
+
         # actions stuff
         #: list of `Action` objects that are running
         self.actions = []
@@ -454,7 +471,11 @@ class CocosNode(object):
         """
         x,y = director.get_window_size()
 
-            
+        if not(self.grid and self.grid.active):
+            # only apply the camera if the grid is not active
+            # otherwise, the camera will be applied inside the grid
+            self.camera.locate()
+
         if self.transform_anchor != (0,0):
             glTranslatef( 
                 self.position[0] + self.transform_anchor_x, 
@@ -566,7 +587,7 @@ class CocosNode(object):
             glPopMatrix()
         
         if self.grid and self.grid.active:
-            self.grid.after_draw()
+            self.grid.after_draw( self.camera )
 
         
     def draw(self, *args, **kwargs):

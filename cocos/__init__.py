@@ -47,3 +47,4 @@ import path
 import scene
 import grid
 import text
+import camera

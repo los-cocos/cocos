@@ -37,7 +37,6 @@ Actions that moves the OpenGL camera.
 
 __docformat__ = 'restructuredtext'
 
-from cocos.grid import Grid3D
 from cocos.director import director
 from cocos.euclid import *
 from base_actions import *
@@ -48,6 +47,7 @@ __all__ = [ 'CameraException',            # Camera Exceptions
            
             'Camera3DAction',
             'OrbitCamera',
+#            'TVCreditsCamera',           # not ready
             ]
 
 class CameraException( Exception ):
@@ -65,18 +65,16 @@ class Camera3DAction( IntervalAction ):
 
     def start( self ):        
         super(Camera3DAction, self).start()
-        if not (self.target.grid and self.target.grid.active):
-            raise CameraException("An active Grid is needed to run a Camera3DAction")
 
-        self.camera_eye_orig =  self.target.grid.camera_eye
-        self.camera_center_orig = self.target.grid.camera_center
-        self.camera_up_orig = self.target.grid.camera_up
+        self.camera_eye_orig =  self.target.camera.eye
+        self.camera_center_orig = self.target.camera.center
+        self.camera_up_orig = self.target.camera.up_vector
 
     def stop( self ):
         super(Camera3DAction, self).stop()
-        self.target.grid.camera_eye = self.camera_eye_orig
-        self.target.grid.camera_center = self.camera_center_orig
-        self.target.grid.camera_up = self.camera_up_orig
+        self.target.camera.eye = self.camera_eye_orig
+        self.target.camera.center = self.camera_center_orig
+        self.target.camera.up_vector = self.camera_up_orig
 
     def __reversed__( self ):
         return _ReverseTime( self )
@@ -84,8 +82,6 @@ class Camera3DAction( IntervalAction ):
 
 class OrbitCamera( Camera3DAction ):
     '''Orbits the camera around the center of the screen using spherical coordinates
-    It doesn't transform a grid, but it needs that a grid is active to work, otherwise
-    it will raise an exception.
     '''
     def init( self, radius=1, delta_radius=0, angle_z=0, delta_z=0, angle_x=0, delta_x=0, *args, **kw ):
         '''Initialize the camera with spherical coordinates
@@ -120,14 +116,8 @@ class OrbitCamera( Camera3DAction ):
         self.rad_delta_x= math.radians( delta_x )
         self.rad_delta_z = math.radians( delta_z )
 
-    def start( self ):
-        super( OrbitCamera, self).start()
-
-        if self.radius == -1:
-            self.radius = self.target.grid.get_z_eye()
-
     def update( self, t ):
-        r = (self.radius + self.delta_radius * t) * self.target.grid.get_z_eye()
+        r = (self.radius + self.delta_radius * t) * self.target.camera.get_z_eye()
         z_angle = self.rad_z + self.rad_delta_z * t
         x_angle = self.rad_x + self.rad_delta_x * t
 
@@ -138,4 +128,28 @@ class OrbitCamera( Camera3DAction ):
 
         p = p * r
         d = p + self.camera_center_orig
-        self.target.grid.camera_eye = d
+        self.target.camera.eye = d
+
+
+class TVCreditsCamera( OrbitCamera ):
+    '''Sets the camera like the ones that shows the credits on TV
+    '''
+    def init( self):
+        '''Initialize the TV camera
+
+        :Parameters:
+            `radius` : float
+                Radius of the orbit. Default: best distance for the current fov
+                
+
+        For more information regarding spherical coordinates, read this:
+            http://en.wikipedia.org/wiki/Spherical_coordinates
+
+        '''
+        super( TVCreditsCamera, self ).init(  delta_radius=0.0, delta_z=-60, duration=0.5)
+
+    def start(self):
+        super(TVCreditsCamera,self).start()
+
+        width, height = director.get_window_size()
+        self.target.camera.center = Point3( width/2, height /2.0, 0.0 )

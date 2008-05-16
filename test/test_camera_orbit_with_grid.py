@@ -10,8 +10,6 @@ from cocos.director import director
 from cocos.actions import *
 from cocos.layer import *
 
-from pyglet.gl import *
-
 
 
 class BackgroundLayer( cocos.layer.Layer ):
@@ -20,28 +18,23 @@ class BackgroundLayer( cocos.layer.Layer ):
         self.img = pyglet.resource.image('background_image.png')
 
     def draw( self ):
-        glPushMatrix()
-        self.transform()
         self.img.blit(0,0)
-        glPopMatrix()
 
 if __name__ == "__main__":
     director.init( resizable=True )
-#    director.set_depth_test()
+    director.set_depth_test()
 
     main_scene = cocos.scene.Scene()
 
-    background = BackgroundLayer()
-    color = ColorLayer(255,32,32,128)
+    main_scene.add( BackgroundLayer(), z=0 )
 
-    main_scene.add( background, z=0 )
-    main_scene.add( color, z=1 )
+    # set a 3d grid with a grid3d action
+    e = WavesTiles3D( amplitude=60, waves=8, grid=(32,24), duration=8)
 
     # use the remaining grid and move it's camera
     rot = OrbitCamera( angle_x=45,  angle_z=0, delta_z=360, duration=8 )
-    rot2 = OrbitCamera( radius=2, delta_radius=-1, angle_x=0, angle_z=0, delta_z=360, duration=8 )
 
-    background.do( rot + Reverse(rot) )
-    color.do( rot2 + Reverse(rot2) )
+    main_scene.do( e )
+    main_scene.do( rot + Reverse(rot) )
 
     director.run (main_scene)

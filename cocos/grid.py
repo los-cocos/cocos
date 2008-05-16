@@ -85,38 +85,29 @@ class GridBase(object):
         #: y pixels between each vertex (float)
         self.y_step = height / self.grid.y
 
-        
-        #: tuple (x,y,z) that says where is the eye of the camera.
-        #: used by ``gluLookAt()``
-        self.camera_eye = Point3( width /2, height /2, self.get_z_eye() )
-        #: tuple (x,y,z) that says where is pointing to the camera.
-        #: used by ``gluLookAt()``
-        self.camera_center = Point3( width /2, height /2, 0.0 )
-        #: tuple (x,y,z) that says the up vector for the camera.
-        #: used by ``gluLookAt()``
-        self.camera_up = Point3( 0.0, 1.0, 0.0)
-
         self._init()
 
-    def get_z_eye( self ):
-        '''Returns the best distance for the camera for the current window size
 
-        cocos2d uses a Filed Of View (fov) of 60
-        '''
-        width, height = director.get_window_size()
-        eye_z = height / 1.1566
-        return eye_z
-        
     def before_draw( self ):
-        # set a 2d projection before binding
-        # to prevent calculating a new texture
+        '''Binds the framebuffer to a texture
+        and set a 2d projection before binding
+        to prevent calculating a new texture
+        '''
+
         self._set_2d_projection()
 
         # capture before drawing
         self.grabber.before_render(self.texture)
 
 
-    def after_draw( self ):
+    def after_draw( self, camera ):
+        '''Called by CocosNode when the texture is already grabbed.
+        The FrameBuffer will be unbound and the texture will be drawn
+
+        :Parameters:
+            `camera` : `Camera`
+                The target's camera object.
+        '''
 
         # capture after drawing
         self.grabber.after_render(self.texture)
@@ -126,7 +117,7 @@ class GridBase(object):
         self._set_3d_projection()
 
         # and center the camera
-        self._set_camera()
+        camera.locate()
 
         # blit
         glEnable(self.texture.target)
@@ -178,13 +169,6 @@ class GridBase(object):
         glLoadIdentity()
         gluPerspective(60, 1.0*width/height, 0.1, 3000.0)
         glMatrixMode(GL_MODELVIEW)
-
-    def _set_camera( self ):
-        glLoadIdentity()
-        gluLookAt( self.camera_eye.x, self.camera_eye.y, self.camera_eye.z,             # camera eye
-                   self.camera_center.x, self.camera_center.y, self.camera_center.z,    # camera center
-                   self.camera_up.x, self.camera_up.y, self.camera_up.z                 # camera up vector
-                   )
   
     @classmethod
     def _set_2d_projection(cls):
