@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import cocos
 
 class HelloWorld(cocos.layer.Layer):
+    is_event_handler = True
     def __init__(self):
         super( HelloWorld, self ).__init__()
 
