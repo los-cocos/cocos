@@ -130,16 +130,22 @@ class PythonInterpreterLayer(ColorLayer):
             self._write('\n')
 
             line = self.document.text[self.start_of_line:]
-            if line == 'help()':
+            if line.strip() == 'help()':
                 line = 'print "help() not supported, sorry!"'
             self.current_input.append(line)
             self.history_pos = len(self.history)
             if line.strip():
                 self.history[self.history_pos-1] = line.strip()
                 self.history.append('')
-            more = self.interpreter.execute('\n'.join(self.current_input))
+
+            more = False
+            if not self.doing_more:
+                more = self.interpreter.execute('\n'.join(self.current_input))
+
             if self.doing_more and not line.strip():
                 self.doing_more = False
+                self.interpreter.execute('\n'.join(self.current_input))
+
             more = more or self.doing_more
             if not more:
                 self.current_input = []
