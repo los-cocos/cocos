@@ -117,15 +117,19 @@ For example, if you have an scene or layer that renders this image:
 
 .. image:: original_image.png
 
-...we can transform that image into this one using the `Lens3D` action
-(a non-tiled action).
+...we can transform that image into this one using the `Ripple3D` action.
+As you can see from the *wired* image, it is using a grid of 32x24 squares,
+and the grid is *non-tiled* (all the squares are together).
 
-.. image:: grid_lens3d.png
+.. image:: effect_ripple3d.png
+.. image:: effect_ripple3d_grid.png
 
-...or we can transoform it into this one using the `WavesTiles3D` action
-(a tiled action):
+...or we can transform it into this one using the `FadeOutTRTiles` action.
+As you can see from the *wired* image, it is using a grid of 16x12 squares,
+and the grid is *tiled* (all the squares/tiles can be separated).
 
-.. image:: grid_tiledwaved3d.png
+.. image:: effect_fadeouttiles.png
+.. image:: effect_fadeouttiles_grid.png
 
 
 3D actions
@@ -335,3 +339,55 @@ updates at a different rate and you should not care.
 
 Also, this allows us to change the interpolation method. We usually use linear interpolation, 
 but `AccelDeccel`, for example, uses a sigmoid funcion so that is goes slower at the ends.
+
+
+Grid Actions
+^^^^^^^^^^^^
+
+These are `IntervalAction` actions, but instead of modifiying 
+*normal* attributes like *rotation*, *position*, *scale*, they modify the *grid*
+attribute. 
+
+Let's see in detail how to build a basic *non-tiled-grid* action::
+
+    class Shaky3D( Grid3DAction):
+
+*Shaky3D* is a subclass of `Grid3DAction`, so we are building a *non-tiled* action. If we want to 
+create a *tiled* action, we need to subclass from the `TiledGrid3DAction` class::
+
+        def init( self, randrange=6, *args, **kw ):
+            '''
+            :Parameters:
+                `randrange` : int
+                    Number that will be used in random.randrange( -randrange, randrange) to do the effect
+            '''
+            super(Shaky3D,self).init(*args,**kw)
+
+            #: random range of the shaky effect
+            self.randrange = randrange
+
+Our class receives the ``randrange`` parameter, so we save it, and we call ``init`` of our
+super class::
+
+        def update( self, t ):
+            for i in xrange(0, self.grid.x+1):
+                for j in xrange(0, self.grid.y+1):
+                    x,y,z = self.get_original_vertex(i,j)
+                    x += random.randrange( -self.randrange, self.randrange+1 )
+                    y += random.randrange( -self.randrange, self.randrange+1 )
+                    z += random.randrange( -self.randrange, self.randrange+1 )
+
+                    self.set_vertex( i,j, (x,y,z) )
+
+Like any other `IntervalAction` action the ``update`` method is going to be
+called once per frame. So, our *Shaky3D* effect will modify the ``x``,``y``
+and ``z`` coordinate by a random number that is calculated by the
+``random.randrange`` function.
+
+The `get_original_vertex` method returns the original coordinates of the vertex
+``x`` and ``y``, while the `get_vertex` method returns the current coordinates
+of the vertex ``x`` and ``y``.
+
+
+XXX: Explain how to build a Tiled Action
+XXX: How to use: `get_original_tile` and `get_tile`

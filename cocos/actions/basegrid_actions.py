@@ -200,15 +200,6 @@ class TiledGrid3DAction( GridBaseAction ):
     def get_grid(self):
         return TiledGrid3D()
     
-    def set_vertex(self, i,j ):
-        raise GridException("Use set_tile() instead")
-
-    def get_vertex(self, i, j):
-        raise GridException("Use get_tile() instead")
-    
-    def get_original_vertex(self, i, j):
-        raise GridException("Use get_original_tile() instead")
-
     def set_tile(self, x, y, coords):
         '''Set the 4 tile coordinates
 

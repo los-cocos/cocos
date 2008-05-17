@@ -47,7 +47,6 @@ __all__ = [ 'CameraException',            # Camera Exceptions
            
             'Camera3DAction',
             'OrbitCamera',
-#            'TVCreditsCamera',           # not ready
             ]
 
 class CameraException( Exception ):
@@ -129,27 +128,3 @@ class OrbitCamera( Camera3DAction ):
         p = p * r
         d = p + self.camera_center_orig
         self.target.camera.eye = d
-
-
-class TVCreditsCamera( OrbitCamera ):
-    '''Sets the camera like the ones that shows the credits on TV
-    '''
-    def init( self):
-        '''Initialize the TV camera
-
-        :Parameters:
-            `radius` : float
-                Radius of the orbit. Default: best distance for the current fov
-                
-
-        For more information regarding spherical coordinates, read this:
-            http://en.wikipedia.org/wiki/Spherical_coordinates
-
-        '''
-        super( TVCreditsCamera, self ).init(  delta_radius=0.0, delta_z=-60, duration=0.5)
-
-    def start(self):
-        super(TVCreditsCamera,self).start()
-
-        width, height = director.get_window_size()
-        self.target.camera.center = Point3( width/2, height /2.0, 0.0 )

@@ -268,7 +268,7 @@ class Lens3D( Grid3DAction ):
 
 
 class Ripple3D( Grid3DAction ):
-    '''Simulates a ripple effect.
+    '''Simulates a ripple (radial wave) effect.
     The amplitude of the wave will decrease when it goes away from the center of the ripple.
     It modifies the z-coordinate while the x and y remains unmodified.
     
