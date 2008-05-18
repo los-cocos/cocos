@@ -295,14 +295,14 @@ class Ripple3D( Grid3DAction ):
         if center==(-1,-1):
             center=(x//2, y//2)
             
-        #: position of the center of the len. Type: (int,int).
-        #: This value can be modified by other actions, like `JumpBy` to simulate a jumping lens
+        #: Center of the ripple. Type: (int,int).
+        #: This value can be modified by other actions, like `JumpBy` to simulate a jumping ripple effect
         self.position = Point2( center[0]+1, center[1]+1 )  
 
-        #: radius of the lens. Type: float
+        #: radius of the ripple. Type: float
         self.radius = radius
 
-        #: lens effect factor. Type: float        
+        #: number of waves. Type: int
         self.waves = waves
 
         #: amplitude rate. Default: 1.0.

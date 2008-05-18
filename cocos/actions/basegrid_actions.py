@@ -274,7 +274,7 @@ class AccelDeccelAmplitude( IntervalAction ):
 
         # when t=0 and t=1 the amplitude will be 0
         # when t=0.5 (half time), the amplitude will be 40
-        action = IncDecAmplitude( Wave3D( waves=4, amplitude=40, duration=6) )
+        action = AccellDeccelAmplitude( Wave3D( waves=4, amplitude=40, duration=6) )
         scene.do( action )
     """
     def init(self, other, rate=1.0 ):
@@ -317,7 +317,7 @@ class AccelAmplitude( IntervalAction ):
 
         # when t=0 the amplitude will be 0
         # when t=1 the amplitude will be 40
-        action = IncAmplitude( Wave3D( waves=4, amplitude=40, duration=6), rate=1.0 )
+        action = AccelAmplitude( Wave3D( waves=4, amplitude=40, duration=6), rate=1.0 )
         scene.do( action )
     """
     def init(self, other, rate=1 ):
