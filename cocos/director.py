@@ -165,19 +165,20 @@ class DefaultHandler( object ):
             return True
 
         elif symbol == pyglet.window.key.W and (modifiers & pyglet.window.key.MOD_ACCEL):
-            import wired
+#            import wired
             if self.wired == False:
                 glDisable(GL_TEXTURE_2D);
                 glPolygonMode(GL_FRONT, GL_LINE);
                 glPolygonMode(GL_BACK, GL_LINE);
-                wired.wired.install()
+#                wired.wired.install()
+#                wired.wired.uset4F('color', 1.0, 1.0, 1.0, 1.0 )
                 self.wired = True
             else:
                 glEnable(GL_TEXTURE_2D);
                 glPolygonMode(GL_FRONT, GL_FILL);
                 glPolygonMode(GL_BACK, GL_FILL);
                 self.wired = False 
-                wired.wired.uninstall()
+#                wired.wired.uninstall()
             return True
 
         elif symbol == pyglet.window.key.X and (modifiers & pyglet.window.key.MOD_ACCEL):

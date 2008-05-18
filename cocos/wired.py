@@ -15,18 +15,17 @@ void main()
 '''
 
 test_f = '''
-varying vec3 position;
+uniform vec4 color;
 void main() 
 { 
-    vec4 color = vec4(position,1.0);
     gl_FragColor = color;
-} 
+}
 '''
 
 
 def load_shader():
     s = shader.ShaderProgram()
-    s.setShader(shader.VertexShader('test_v', test_v))
+#    s.setShader(shader.VertexShader('test_v', test_v))
     s.setShader(shader.FragmentShader('test_f', test_f))
     return s
 
