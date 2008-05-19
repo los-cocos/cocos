@@ -48,7 +48,6 @@ the sprites.
 Although I haven't tried it, I think this shall work ok. If it doesn't work,
 let us know.
 
-
 Can I code a presentation (ala PowerPoint) in cocos2d ?
 -------------------------------------------------------
 
@@ -69,6 +68,26 @@ tool. We are not planning to add presentation-like features to cocos2d.
 
 If you want a python presentation tool, we recommend:
 `Bruce the Presentation Tool`_
+
+
+ERROR: GPU doesn't support Frame Buffers Objects. Can't continue
+----------------------------------------------------------------
+This error means that your video card doesn't support the
+GL_EXT_framebuffer_object extension. This extension is needed to execute
+the ``effects``. Some transitions need the effects too, so probably
+some of them won't work.
+
+Basically, you can use most of the features of cocos2d: sprites, layers,
+scenes, actions but effects.
+
+If you want to try the effects without the `recommended` card, you can do this:
+ 1. Edit cocos/framegrabber.py
+ 2. Comment the line that says: 'raise Exception("ERROR: GPU....")'
+ 3. Uncomment the next 2 lines.
+
+With these 2 uncommented lines, you shall be able to use the effects but the
+will perform slower and you some features won't be available like having
+effects in layers.
 
 
 
