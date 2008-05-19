@@ -48,6 +48,7 @@ the sprites.
 Although I haven't tried it, I think this shall work ok. If it doesn't work,
 let us know.
 
+
 Can I code a presentation (ala PowerPoint) in cocos2d ?
 -------------------------------------------------------
 
@@ -70,24 +71,36 @@ If you want a python presentation tool, we recommend:
 `Bruce the Presentation Tool`_
 
 
-ERROR: GPU doesn't support Frame Buffers Objects. Can't continue
-----------------------------------------------------------------
-This error means that your video card doesn't support the
-GL_EXT_framebuffer_object extension. This extension is needed to execute
-the ``effects``. Some transitions need the effects too, so probably
-some of them won't work.
+I get this error: ERROR: GPU doesn't support Frame Buffers Objects. Can't continue
+----------------------------------------------------------------------------------
 
-Basically, you can use most of the features of cocos2d: sprites, layers,
-scenes, actions but effects.
+This means that you GPU doesn't support the GL_EXT_framebuffer_object extension.
 
-If you want to try the effects without the `recommended` card, you can do this:
- 1. Edit cocos/framegrabber.py
- 2. Comment the line that says: 'raise Exception("ERROR: GPU....")'
- 3. Uncomment the next 2 lines.
+cocos2d's `effects`_ needs this extension, and some transitions that depends on
+some effects will need it too.
 
-With these 2 uncommented lines, you shall be able to use the effects but the
-will perform slower and you some features won't be available like having
-effects in layers.
+The workaround is to activate the *GenericGrabber* by editing the ``cocos/framegrabber.py`` file.
+Modify these lines::
+
+    raise Exception("ERROR: GPU doesn't support Frame Buffers Objects. Can't continue")
+    #_best_grabber = GenericGrabber
+    #return _best_grabber()
+
+
+To these ones::
+
+    #raise Exception("ERROR: GPU doesn't support Frame Buffers Objects. Can't continue")
+    _best_grabber = GenericGrabber
+    return _best_grabber()
+
+**WARNING** : This modification will let you see the effects, but it doesn't
+support some features, like having effects on layers or sprites.
+It will also perform much slower. And we don't support it.
+
+As we said, it is a workaround, not a fix.
+
+If you want to fix it, you can contribute with a `pbuffer grabber`_ .
+This unfinished code might help you: `gl_pbuffer.py`_
 
 
 
@@ -95,3 +108,6 @@ effects in layers.
 .. _pyglet: http://www.pyglet.org
 .. _Bruce the Presentation Tool: http://code.google.com/p/bruce-tpt/
 .. _pycon 2008 cocos2d lighting talk: http://los-cocos.googlecode.com/svn/branches/pycon-lighting-talk/
+.. _effects: http://cocos2d.org/doc/programming_guide/effects.html
+.. _pbuffer grabber: http://oss.sgi.com/projects/ogl-sample/registry/SGIX/pbuffer.txt
+.. _gl_pbuffer.py: http://los-cocos.googlecode.com/svn/branches/branch-0.2/cocos/gl_pbuffer.py 
