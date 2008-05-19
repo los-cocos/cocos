@@ -147,45 +147,26 @@ the Director's `set_depth_test` method.
 Index of grid effects
 ^^^^^^^^^^^^^^^^^^^^^
 
- - TiledGrid3D actions
-	- `ShatteredTiles3D`
-	- `ShakyTiles3D`
-	- `JumpTiles3D`
-	- `WavesTiles3D`
-	- `ShuffleTiles`
-	- `TurnOffTiles`
-	- `FadeOutTRTiles`
-	- `FadeOutBLTiles`
-	- `FadeOutUpTiles`
-	- `FadeOutDownTiles`
-	- `SplitRows`
-	- `SplitCols`
+You can find all the `Grid3DAction` actions here:
+ - `grid3d_actions`
 
- - Grid3D actions
-	- `Lens3D`
-	- `Ripple3D`
-	- `FlipX3D`
-	- `FlipY3D`
-	- `Waves3D`
-	- `Shaky3D`
-	- `Liquid`
-	- `Waves`
-	- `Twirl`
-	- `QuadMoveBy`
-	- `Flip`
-	- `FlipX`
-	- `FlipY`
-	- `SkewHorizontal`
-	- `SkewVertical`
-	- `MoveCornerUp`
-	- `MoveCornerDown`
-	- `CornerSwap`
+And all the `TiledGrid3DAction` actions here:
+ - `tiledgrid_actions`
 
 
-Example::
-	
+
+Examples
+^^^^^^^^
+
+Some examples::
+
+    # effect applied on a Scene
 	scene.do( Twirl( grid=(16,12), duration=4) )
+
+    # effect applied on a Layer
 	layer1.do( Lens3D( grid=(32,24), duration=5 )
+
+    # effect applied on a different Layer
 	layer2.do( Waves( grid=(16,12), duration=4) + Liquid( grid=(16,12), duration=5 ) )
 	
 

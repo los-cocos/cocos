@@ -1,10 +1,76 @@
+Scenes & Transitions
+====================
+
+.. contents::
+	:local:
+
+Using Director's API
+--------------------
+
+As we mentioned earlier, one of the main resposibilities of
+the `Director` is to manage the flow control of the scenes.
+
+To do this, the director provides an API::
+
+    director.replace( new_scene )
+
+    director.push( new_scene )
+    director.pop()
+
+Use `Director.replace` to replace the current scene with a new one,
+and use `Director.push` to push a new scene on the stack. 
+The old scene will be stack, under the new one.
+You can remove an scene from the stack using `Director.pop`.
+
+When a new scene is pushed or replaced, these actions will be executed::
+
+    # calls on_exit on the 'old' scene
+    outgoing_scene.on_exit()
+
+    # disable handlers
+    outgoing_scnee.enable_handlers( False)
+
+
+    # calls on_enter() on the 'new' scene
+    incoming_scene.on_enter()
+
+    # enable handlers
+    incoming_scnee.enable_handlers( True )
+
+
+When an `Scene` is *entered*, it will propagate the *on_enter* message
+to all it's children, and it's children will do the same with it's children,
+and so on.
+
+The same happens with the *on_exit* message.
+
+
 Transitions
-===========
+-----------
 
-A transition is an special `Scene`.
+A nicer way to change between scenes, is to *decorate* the new scene with
+a *Transition* *Scene*.
 
-You use it to change from one scene to another one using some eye-candy effects, like
-the ones you can find in KeyNote, OpenOffice, etc.
+**Technically**, a transition scene is an scene that performs a transition effect before
+setting control to the new scene.
+
+And **visually**, a transition scene is like the transitions you see using any
+presentation software like OpenOffice Impress, Apple's KeyNote or PowerPoint.
+
+.. image:: transition.png
+
+Example::
+
+    # import all the transitions
+    from cocos.scenes import *
+
+    # using director replace
+    # using the Fade-Top-Right Transition that lasts 2 seconds
+    director.replace( FadeTRTransition( gameover_scene, duration=2 ) )
 
 
-Explain how to use it, and enumerate possible `transitions`
+    # or, using 'push' with the Flip-X transition that lasts 1 second.
+    director.push( FlipX3DTransition( gameover_scene, duration=1 ) )
+
+List of available transitions:
+    - `transitions`

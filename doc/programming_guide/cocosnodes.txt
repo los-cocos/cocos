@@ -1,8 +1,6 @@
 CocosNodes
 ==========
 
-In cocos, every object is a `CocosNode`
-
 .. contents::
     :local:
 
@@ -13,7 +11,86 @@ Built-in cocosnode objects
 CocosNode
 ^^^^^^^^^
 
- TODO: explain `CocosNode`
+In cocos, every object that is part of an scene is a `CocosNode` object.
+For example:
+
+    - sprites
+    - labels
+    - menus
+    - layers
+    - scenes
+
+Every `CocosNode` object has these attributes
+*(see below for some exceptions)* :
+
+    - position
+    - color
+    - opacity
+    - scale
+    - rotation
+    - camera
+    - grid
+
+and these attributes can be modified manually.
+Example::
+
+    # place the sprite in 320,240
+    sprite.position = (320,240)
+
+or by using actions.
+Example::
+
+    # move the sprite to 320,240 in 5 seconds
+    sprite.do( MoveTo( (320,240, duration=2 ) )
+
+You can modify these attributes to **any** `CocosNode` object.
+For example::
+
+    scene.do( ScaleTo(2, duration=2) )
+
+    layer.do( RotateBy(360, duration=3) )
+
+    sprite.do( Blink(5, duration=1 ) )
+
+    label.do( JumpBy( (100,100), 50, 5, duration=3) )
+
+Another important feature of the **any** `CocosNode` object, is that
+is is also a container, it can have children.
+For example::
+
+    # and scene with 2 layers
+    scene.add( background_layer, z=0 )
+    scene.add( game_layer, z=1 )
+
+    # the layer with 1 sprite
+    game_layer.add( sprite )
+
+    # the sprite, with 2 sprite
+    sprite.add( ship1_sprite )
+    sprite.add( ship2_sprite )
+
+and you can remove any children from any `CocosNode` object 
+using *remove*. For example::
+
+    layer.add( sprite1 )
+    layer.add( sprite2, name="car" )
+
+    # remove by reference
+    layer.remove( sprite )
+
+    # remove by name
+    layer.remove( "car" )
+
+In case you want to obtain a reference a certain child, you can 
+use *get*.
+Example::
+
+    layer.add( sprite1, name="car")
+
+    ...
+
+    car_sprite = layer.get("car")
+
 
 ActionSprite
 ^^^^^^^^^^^^
