@@ -1,0 +1,72 @@
+CocosNodes
+==========
+
+In cocos, every object is a `CocosNode`
+
+.. contents::
+    :local:
+
+
+Built-in cocosnode objects
+--------------------------
+
+CocosNode
+^^^^^^^^^
+
+ TODO: explain `CocosNode`
+
+ActionSprite
+^^^^^^^^^^^^
+
+ TODO: explain `ActionSprite`
+
+Labels
+^^^^^^
+
+ TODO: explain `Label`
+
+ TODO: explain `HTMLLabel`
+
+Scene
+^^^^^
+
+ TODO: explain `Scene`
+
+Layer
+^^^^^
+
+  TODO: explain `Layer`
+
+ColorLayer
+^^^^^^^^^^
+
+  TODO: explain `ColorLayer`
+
+Menu
+^^^^
+  
+  TODO: explain `Menu`
+
+  TODO: explain `MultiplexLayer`
+
+
+MenuItem
+^^^^^^^^
+
+  TODO: explain `MenuItem`
+
+  TODO: explain `MultipleMenuItem`
+
+  TODO: explain `ToggleMenuItem`
+
+  TODO: explain `EntryMenuItem`
+
+  TODO: explain pre-defined actions: `shake` , `shake_back` ,
+  `zoom_in` and `zoom_out`
+
+
+Creating your own objects 
+-------------------------
+
+TODO: explain how to build custom cocosnode objects,
+how to use `transform` , etc.

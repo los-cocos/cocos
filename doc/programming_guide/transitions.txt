@@ -1,0 +1,10 @@
+Transitions
+===========
+
+A transition is an special `Scene`.
+
+You use it to change from one scene to another one using some eye-candy effects, like
+the ones you can find in KeyNote, OpenOffice, etc.
+
+
+Explain how to use it, and enumerate possible `transitions`

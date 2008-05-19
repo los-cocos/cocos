@@ -1,0 +1,13 @@
+Tiled maps
+==========
+
+Hexagonal maps
+--------------
+
+TODO: finish
+
+
+Rect maps
+---------
+
+TODO: finish
