@@ -80,14 +80,13 @@ cocos2d's `effects`_ needs this extension, and some transitions that depends on
 some effects will need it too.
 
 The workaround is to activate the *GenericGrabber* by editing the ``cocos/framegrabber.py`` file.
-Modify these lines::
+To do so, modify these lines::
 
     raise Exception("ERROR: GPU doesn't support Frame Buffers Objects. Can't continue")
     #_best_grabber = GenericGrabber
     #return _best_grabber()
 
-
-To these ones::
+into these ones::
 
     #raise Exception("ERROR: GPU doesn't support Frame Buffers Objects. Can't continue")
     _best_grabber = GenericGrabber
