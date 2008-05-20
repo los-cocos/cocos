@@ -12,6 +12,8 @@ from cocos.layer import *
 from cocos.scenes import *
 from cocos.sprite import *
 import pyglet
+from pyglet.gl import *
+
 
 class BackgroundLayer( cocos.layer.Layer ):
     def __init__(self):
@@ -19,7 +21,10 @@ class BackgroundLayer( cocos.layer.Layer ):
         self.img = pyglet.resource.image('background_image.png')
 
     def draw( self ):
+        glPushMatrix()
+        self.transform()
         self.img.blit(0,0)
+        glPopMatrix()
 
 
 if __name__ == "__main__":
