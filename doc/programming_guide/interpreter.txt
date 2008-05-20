@@ -1,5 +1,46 @@
 Built-in Python Interpreter
 ===========================
 
-TODO: Explain how to use it,
-shortcuts, etc.
+A python interpreter can be activated by pressing
+the keys CTRL + i in Windows and Linux and by
+using COMMAND + i in OS/X.
+
+The ``locals()`` of the python interpreter are:
+
+    - ``cocos``
+    - ``director``
+    - ``self``
+
+The interpreter also has some attributes that 
+can be changed in runtime, like:
+
+    - ``opacity``
+    - ``color``
+    - ``cfg['code.font_size']``
+    - ``cfg['code.font_name']``
+    - ``cfg['code.font_color']``
+
+For example::
+
+    # 0 means, no opacity
+    # 255 means,  full opacity
+    self.opacity = 50
+
+    # changing layer color to a reddish one
+    self.color = (204, 32, 32 )
+
+    # changing the font color to white
+    self.cfg['code.font_color'] = (255,255,255)
+
+    # changing the font size
+    self.cfg['code.font_size'] = 24
+
+    # changing the font name
+    self.cfg['code.font_name'] = 'Courier New'
+
+    # obtaining the current scene:
+    current_scene = director.scene
+
+Once the interpreter was activated, it will remain in memory.
+From now on, you can hide it and show it by pressing
+(again) the CTRL+i (or COMMAND+i) keys.

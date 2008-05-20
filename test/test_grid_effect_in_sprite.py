@@ -7,12 +7,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.actions import ScaleBy
 from cocos.sprite import ActionSprite
+from cocos.actions import *
+
 import pyglet
 from pyglet.gl import *
 
-from cocos.actions import *
 
 class BackgroundLayer( cocos.layer.Layer ):
     def __init__(self):
@@ -31,10 +31,6 @@ class TestLayer(cocos.layer.Layer):
         
         x,y = director.get_window_size()
         
-        self.image = pyglet.resource.image('grossini.png')
-        self.image.anchor_x = self.image.width / 2
-        self.image.anchor_y = self.image.height / 2
-
         self.sprite = ActionSprite( 'grossini.png', (x/2,y/2), scale = 1 )
         self.add( self.sprite )
         self.sprite.do( Repeat( ScaleBy( 5, 2 ) + ScaleBy( 0.2, 2 )  ) )

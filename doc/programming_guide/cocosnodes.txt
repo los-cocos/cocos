@@ -28,6 +28,7 @@ Every `CocosNode` object has these attributes
     - opacity
     - scale
     - rotation
+    - visible
     - camera
     - grid
 
@@ -97,6 +98,10 @@ ActionSprite
 
  TODO: explain `ActionSprite`
 
+ These properties are not available:
+
+    - camera
+
 Labels
 ^^^^^^
 
@@ -104,15 +109,28 @@ Labels
 
  TODO: explain `HTMLLabel`
 
+ These properties are not available:
+
+    - camera
+
 Scene
 ^^^^^
 
- TODO: explain `Scene`
+ These properties are not available:
+
+    - color
+    - opacity
+
 
 Layer
 ^^^^^
 
   TODO: explain `Layer`
+
+ These properties are not available:
+
+    - color
+    - opacity
 
 ColorLayer
 ^^^^^^^^^^
@@ -125,6 +143,11 @@ Menu
   TODO: explain `Menu`
 
   TODO: explain `MultiplexLayer`
+
+ These properties are not available:
+
+    - color
+    - opacity
 
 
 MenuItem
@@ -140,6 +163,11 @@ MenuItem
 
   TODO: explain pre-defined actions: `shake` , `shake_back` ,
   `zoom_in` and `zoom_out`
+
+ These properties are not available:
+
+    - color
+    - opacity
 
 
 Creating your own objects 
