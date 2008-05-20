@@ -11,7 +11,7 @@ Built-in cocosnode objects
 CocosNode
 ^^^^^^^^^
 
-In cocos, every object that is part of an scene is a `CocosNode` object.
+In cocos2d, every object that is part of an scene is a `CocosNode` object.
 For example:
 
     - sprites

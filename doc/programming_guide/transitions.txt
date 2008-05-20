@@ -7,7 +7,7 @@ Scenes & Transitions
 Using Director's API
 --------------------
 
-As we mentioned earlier, one of the main resposibilities of
+As we mentioned earlier, one of the main responsibilities of
 the `Director` is to manage the flow control of the scenes.
 
 To do this, the director provides an API::

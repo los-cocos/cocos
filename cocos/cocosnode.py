@@ -104,7 +104,7 @@ class CocosNode(object):
         #: camera can modify also the z-coordinate)
         #: In fact, they all transform the same matrix, so
         #: use either the camera or the other attributes, but not both
-        #: since the camera will be overriden by the transformations done
+        #: since the camera will be overridden by the transformations done
         #: by the other attributes.
         #: You can change the camera manually or by using the `Camera3DAction`
         #: action.
@@ -205,7 +205,7 @@ class CocosNode(object):
     #: Children will be added relative to this point
     children_anchor = make_property("children_anchor")
 
-    #: Transformation achor point.
+    #: Transformation anchor point.
     #: Transformations like scaling and rotation
     #: will use this point as it's center
     transform_anchor = make_property("transform_anchor")
@@ -538,7 +538,7 @@ class CocosNode(object):
         
     def visit(self):
         '''
-        This funcion *visits* it's children in a recursive
+        This function *visits* it's children in a recursive
         way.
 
         It will first *visit* the children that
@@ -596,7 +596,7 @@ class CocosNode(object):
         subclassed to draw something on screen.
         
         You *must* respect the position, scale, rotation and anchor attributes. 
-        If you want opengl to do the scaling for you, you can::
+        If you want OpenGL to do the scaling for you, you can::
         
             def draw(self):
                 glPushMatrix()

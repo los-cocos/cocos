@@ -87,6 +87,8 @@ class PbufferGrabber(object):
     Requires pbuffer extensions. Currently only implemented in GLX.
     
     Not working yet, very untested
+    
+    TODO: finish pbuffer grabber
     """
     def grab (self, texture):
         self.pbuf = Pbuffer(director.window, [

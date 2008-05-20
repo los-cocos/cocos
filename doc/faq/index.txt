@@ -36,7 +36,7 @@ Can I use cocos2d's sprites and actions without the rest of the framework ?
 Short answer: **No**.
 Long answer: **Yes**.
 
-Almost everthing in cocos2d is `CocosNode` object (``sprites``, ``layers``,
+Almost everything in cocos2d is `CocosNode` object (``sprites``, ``layers``,
 ``scenes``, etc...), so the easiest way to use cocos2d's sprites (or any
 other `CocosNode` object) is to port `CocosNode` to your project.
 
@@ -74,7 +74,7 @@ If you want a python presentation tool, we recommend:
 I get this error: ERROR: GPU doesn't support Frame Buffers Objects. Can't continue
 ----------------------------------------------------------------------------------
 
-This means that you GPU doesn't support the GL_EXT_framebuffer_object extension.
+This means that you GPU doesn't support the ``GL_EXT_framebuffer_object`` extension.
 
 cocos2d's `effects`_ needs this extension, and some transitions that depends on
 some effects will need it too.

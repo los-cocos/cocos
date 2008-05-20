@@ -17,3 +17,4 @@ cocos2d simplifies the game development in these areas:
     - **Built-in python interpreter:** For debugging purposes
     - **BSD license:** Just use it
     - **pyglet based:** No external dependencies
+    - **OpenGL based:** Hardward accelerated
