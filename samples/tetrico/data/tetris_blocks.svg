@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docname="tetris_blocks.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient18511">
+      <stop
+         id="stop18513"
+         offset="0"
+         style="stop-color:#de8787;stop-opacity:1" />
+      <stop
+         id="stop18515"
+         offset="1"
+         style="stop-color:#ff8080;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient18465">
+      <stop
+         style="stop-color:#6ebe7b;stop-opacity:1;"
+         offset="0"
+         id="stop18467" />
+      <stop
+         style="stop-color:#6ebe7b;stop-opacity:0;"
+         offset="1"
+         id="stop18469" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient7203">
+      <stop
+         id="stop7205"
+         offset="0"
+         style="stop-color:#dec477;stop-opacity:1" />
+      <stop
+         id="stop7207"
+         offset="1"
+         style="stop-color:#b09339;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient7102">
+      <stop
+         style="stop-color:#999999;stop-opacity:1;"
+         offset="0"
+         id="stop7104" />
+      <stop
+         style="stop-color:#999999;stop-opacity:0;"
+         offset="1"
+         id="stop7106" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient7094">
+      <stop
+         style="stop-color:#999999;stop-opacity:1;"
+         offset="0"
+         id="stop7096" />
+      <stop
+         style="stop-color:#999999;stop-opacity:0;"
+         offset="1"
+         id="stop7098" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient6946">
+      <stop
+         style="stop-color:#ffe300;stop-opacity:1;"
+         offset="0"
+         id="stop6964" />
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="1"
+         id="stop6950" />
+    </linearGradient>
+    <marker
+       inkscape:stockid="Tail"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Tail"
+       style="overflow:visible">
+      <g
+         id="g5489"
+         transform="scale(-1.2)">
+        <path
+           id="path5491"
+           d="M -3.8048674,-3.9585227 L 0.54352094,0"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.8;marker-start:none;marker-end:none;stroke-linecap:round" />
+        <path
+           id="path5493"
+           d="M -1.2866832,-3.9585227 L 3.0617053,0"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.8;marker-start:none;marker-end:none;stroke-linecap:round" />
+        <path
+           id="path5495"
+           d="M 1.3053582,-3.9585227 L 5.6537466,0"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.8;marker-start:none;marker-end:none;stroke-linecap:round" />
+        <path
+           id="path5497"
+           d="M -3.8048674,4.1775838 L 0.54352094,0.21974226"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.8;marker-start:none;marker-end:none;stroke-linecap:round" />
+        <path
+           id="path5499"
+           d="M -1.2866832,4.1775838 L 3.0617053,0.21974226"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.8;marker-start:none;marker-end:none;stroke-linecap:round" />
+        <path
+           id="path5501"
+           d="M 1.3053582,4.1775838 L 5.6537466,0.21974226"
+           style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.8;marker-start:none;marker-end:none;stroke-linecap:round" />
+      </g>
+    </marker>
+    <linearGradient
+       id="linearGradient4733">
+      <stop
+         style="stop-color:#0000ff;stop-opacity:1;"
+         offset="0"
+         id="stop4735" />
+      <stop
+         style="stop-color:#00fcff;stop-opacity:1;"
+         offset="1"
+         id="stop4737" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4601">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop4603" />
+      <stop
+         style="stop-color:#ffff00;stop-opacity:1;"
+         offset="1"
+         id="stop4605" />
+    </linearGradient>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="6.1230318e-14 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6946"
+       id="linearGradient6938"
+       x1="172.91956"
+       y1="173.76671"
+       x2="147.53464"
+       y2="147.58867"
+       gradientUnits="userSpaceOnUse"
+       spreadMethod="pad" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6946"
+       id="linearGradient6988"
+       gradientUnits="userSpaceOnUse"
+       spreadMethod="pad"
+       x1="229.60001"
+       y1="164.96672"
+       x2="244.13464"
+       y2="182.11218" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4733"
+       id="linearGradient6996"
+       gradientUnits="userSpaceOnUse"
+       spreadMethod="pad"
+       x1="212.04999"
+       y1="188.56218"
+       x2="243.35001"
+       y2="218.36218" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4601"
+       id="linearGradient7020"
+       gradientUnits="userSpaceOnUse"
+       spreadMethod="pad"
+       x1="158.84999"
+       y1="199.56218"
+       x2="171.55"
+       y2="212.96219" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient7203"
+       id="linearGradient7201"
+       x1="152.28749"
+       y1="233.25626"
+       x2="152.28749"
+       y2="253.65625"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-0.6875,0)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient18465"
+       id="linearGradient18471"
+       x1="216.5"
+       y1="252.86301"
+       x2="216.5"
+       y2="216.56218"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(45.084136,-37.518679)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient18511"
+       id="linearGradient18523"
+       x1="259.93756"
+       y1="223.50232"
+       x2="260.05936"
+       y2="252.25586"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="7.06"
+     inkscape:cx="246.42506"
+     inkscape:cy="689.15517"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1220"
+     inkscape:window-height="858"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     showguides="false"
+     inkscape:snap-global="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid6958"
+       visible="true"
+       enabled="true" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline">
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18493"
+       width="34"
+       height="34"
+       x="244.68414"
+       y="181.04349"
+       ry="2.5991554"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_green.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:url(#linearGradient6938);fill-opacity:1;fill-rule:evenodd;stroke:#404040;stroke-width:0.69999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2383"
+       width="32"
+       height="32"
+       x="140.56955"
+       y="141.4167"
+       ry="3.75"
+       inkscape:transform-center-x="2.5"
+       inkscape:transform-center-y="-5.75"
+       rx="3.75"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_green.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:url(#linearGradient6988);fill-opacity:1;fill-rule:evenodd;stroke:#404040;stroke-width:0.69999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect6986"
+       width="32"
+       height="32"
+       x="205"
+       y="141.36218"
+       ry="3.75"
+       inkscape:transform-center-x="2.5"
+       inkscape:transform-center-y="-5.75"
+       rx="3.75"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_yellow.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:url(#linearGradient6996);fill-opacity:1;fill-rule:evenodd;stroke:#404040;stroke-width:0.69999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect6994"
+       width="32"
+       height="32"
+       x="205.79999"
+       y="182.56218"
+       ry="3.75"
+       rx="3.75"
+       inkscape:transform-center-x="-5.2"
+       inkscape:transform-center-y="-5.4"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_blue.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:url(#linearGradient7020);fill-opacity:1;fill-rule:evenodd;stroke:#404040;stroke-width:0.69999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect6990"
+       width="32"
+       height="32"
+       x="140.59999"
+       y="182.76219"
+       ry="3.75"
+       inkscape:transform-center-x="2.5"
+       inkscape:transform-center-y="-5.75"
+       rx="3.75"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_red.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:url(#linearGradient7201);fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 165.5,232.6875 C 165.27358,232.64896 165.0724,232.56542 164.84375,232.53125 C 163.15823,232.27935 161.4121,232.15625 159.625,232.15625 C 157.8379,232.15625 156.09177,232.27935 154.40625,232.53125 C 152.72073,232.78315 151.08039,233.17784 149.53125,233.65625 C 147.98211,234.13466 146.50296,234.72674 145.125,235.40625 C 143.74704,236.08576 142.48447,236.83228 141.3125,237.6875 C 140.14053,238.54272 139.05619,239.49446 138.125,240.5 C 137.19381,241.50554 136.40559,242.58829 135.75,243.71875 C 135.20449,244.65938 134.83263,245.64524 134.5,246.65625 L 134.5,249.40625 C 134.5,251.48375 136.1725,253.15625 138.25,253.15625 L 161.75,253.15625 C 163.8275,253.15625 165.5,251.48375 165.5,249.40625 L 165.5,232.6875 z"
+       id="path7076" />
+    <a
+       id="a7718"
+       transform="translate(-0.6875,0)">
+      <path
+         id="rect7071"
+         d="M 138.9375,222.15625 C 136.86,222.15625 135.1875,223.82875 135.1875,225.90625 L 135.1875,246.65625 C 135.52013,245.64524 135.89199,244.65938 136.4375,243.71875 C 137.09309,242.58829 137.88131,241.50554 138.8125,240.5 C 139.74369,239.49446 140.82803,238.54272 142,237.6875 C 143.17197,236.83228 144.43454,236.08576 145.8125,235.40625 C 147.19046,234.72674 148.66961,234.13466 150.21875,233.65625 C 151.76789,233.17784 153.40823,232.78315 155.09375,232.53125 C 156.77927,232.27935 158.5254,232.15625 160.3125,232.15625 C 162.0996,232.15625 163.84573,232.27935 165.53125,232.53125 C 165.7599,232.56542 165.96108,232.64896 166.1875,232.6875 L 166.1875,225.90625 C 166.1875,223.82875 164.515,222.15625 162.4375,222.15625 L 138.9375,222.15625 z"
+         style="opacity:1;fill:#dec477;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    </a>
+    <rect
+       style="opacity:1;fill:#99da99;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18455"
+       width="32"
+       height="32"
+       x="245.68414"
+       y="182.04349"
+       ry="2.8"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_green.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:url(#linearGradient18471);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 275.88935,191.24973 C 262.76516,191.65538 251.5343,196.48826 246.08414,203.31223 L 246.08414,211.03098 C 246.08414,212.58218 247.35519,213.84348 248.9581,213.84348 L 274.17789,213.84348 C 275.7808,213.84348 277.08414,212.58218 277.08414,211.03098 L 277.08414,191.24973 C 276.68535,191.25391 276.28482,191.23751 275.88935,191.24973 z"
+       id="rect7765"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_green.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18503"
+       width="34"
+       height="34"
+       x="244.08995"
+       y="218.29047"
+       ry="2.5991554"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_pink.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#ffaaaa;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078000000000;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18505"
+       width="32"
+       height="32"
+       x="245.08995"
+       y="219.29047"
+       ry="2.8"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_pink.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:url(#linearGradient18523);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 275.29517,228.49671 C 262.17098,228.90236 250.94012,233.73524 245.48996,240.55921 L 245.48996,248.27796 C 245.48996,249.82916 246.76101,251.09046 248.36392,251.09046 L 273.58371,251.09046 C 275.18662,251.09046 276.48996,249.82916 276.48996,248.27796 L 276.48996,228.49671 C 276.09117,228.50089 275.69064,228.48449 275.29517,228.49671 z"
+       id="path18507"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_pink.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18525"
+       width="34"
+       height="34"
+       x="244.75636"
+       y="257.03357"
+       ry="2.5991554"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_orange.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#ff9955;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078000000000;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18527"
+       width="32"
+       height="32"
+       x="245.75636"
+       y="258.03357"
+       ry="2.8"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_orange.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#ff7f2a;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 275.96159,267.23981 C 262.8374,267.64546 251.60654,272.47834 246.15638,279.30231 L 246.15638,287.02106 C 246.15638,288.57226 247.42743,289.83356 249.03034,289.83356 L 274.25013,289.83356 C 275.85304,289.83356 277.15638,288.57226 277.15638,287.02106 L 277.15638,267.23981 C 276.75759,267.24399 276.35706,267.22759 275.96159,267.23981 z"
+       id="path18529"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_orange.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18533"
+       width="34"
+       height="34"
+       x="199.71388"
+       y="257.03357"
+       ry="2.5991554"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_yellow.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#ffe680;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078000000000;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18535"
+       width="32"
+       height="32"
+       x="200.71388"
+       y="258.03357"
+       ry="2.8"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_yellow.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#ffd42a;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 230.9191,267.23981 C 217.79491,267.64546 206.56405,272.47834 201.11389,279.30231 L 201.11389,287.02106 C 201.11389,288.57226 202.38494,289.83356 203.98785,289.83356 L 229.20764,289.83356 C 230.81055,289.83356 232.11389,288.57226 232.11389,287.02106 L 232.11389,267.23981 C 231.7151,267.24399 231.31457,267.22759 230.9191,267.23981 z"
+       id="path18537"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_yellow.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18539"
+       width="34"
+       height="34"
+       x="199.57225"
+       y="293.86075"
+       ry="2.5991554"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_green.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#cdde87;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078000000000;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18541"
+       width="32"
+       height="32"
+       x="200.57225"
+       y="294.86075"
+       ry="2.8"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_green.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#bcd35f;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 230.77745,304.067 C 217.65326,304.47265 206.4224,309.30553 200.97224,316.1295 L 200.97224,323.84825 C 200.97224,325.39945 202.24329,326.66075 203.8462,326.66075 L 229.06599,326.66075 C 230.6689,326.66075 231.97224,325.39945 231.97224,323.84825 L 231.97224,304.067 C 231.57345,304.07118 231.17292,304.05478 230.77745,304.067 z"
+       id="path18543"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_green.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18545"
+       width="34"
+       height="34"
+       x="245.4646"
+       y="293.71912"
+       ry="2.5991554"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_blue.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#80b3ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078000000000;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18547"
+       width="32"
+       height="32"
+       x="246.4646"
+       y="294.71912"
+       ry="2.8"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_blue.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#5599ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 276.66979,303.92538 C 263.5456,304.33103 252.31474,309.16391 246.86458,315.98788 L 246.86458,323.70663 C 246.86458,325.25783 248.13563,326.51913 249.73854,326.51913 L 274.95833,326.51913 C 276.56124,326.51913 277.86458,325.25783 277.86458,323.70663 L 277.86458,303.92538 C 277.46579,303.92956 277.06526,303.91316 276.66979,303.92538 z"
+       id="path18549"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_blue.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18551"
+       width="34"
+       height="34"
+       x="246.17281"
+       y="329.55481"
+       ry="2.5991554"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_violet.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#c6afe9;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078000000000;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18553"
+       width="32"
+       height="32"
+       x="247.17281"
+       y="330.55481"
+       ry="2.8"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_violet.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#aa87de;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 277.37799,339.76108 C 264.2538,340.16673 253.02294,344.99961 247.57278,351.82358 L 247.57278,359.54233 C 247.57278,361.09353 248.84383,362.35483 250.44674,362.35483 L 275.66653,362.35483 C 277.26944,362.35483 278.57278,361.09353 278.57278,359.54233 L 278.57278,339.76108 C 278.17399,339.76526 277.77346,339.74886 277.37799,339.76108 z"
+       id="path18555"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_violet.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18557"
+       width="34"
+       height="34"
+       x="199.57224"
+       y="330.26303"
+       ry="2.5991554"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_magenta.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#e9afdd;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078000000000;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18559"
+       width="32"
+       height="32"
+       x="200.57224"
+       y="331.26303"
+       ry="2.8"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_magenta.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#de87cd;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 230.77742,340.4693 C 217.65323,340.87495 206.42237,345.70783 200.97221,352.5318 L 200.97221,360.25055 C 200.97221,361.80175 202.24326,363.06305 203.84617,363.06305 L 229.06596,363.06305 C 230.66887,363.06305 231.97221,361.80175 231.97221,360.25055 L 231.97221,340.4693 C 231.57342,340.47348 231.17289,340.45708 230.77742,340.4693 z"
+       id="path18561"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_magenta.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18563"
+       width="34"
+       height="34"
+       x="199.85553"
+       y="219.21489"
+       ry="2.5991554"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_black.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18565"
+       width="32"
+       height="32"
+       x="200.85553"
+       y="220.21489"
+       ry="2.8"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_black.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 231.06071,229.42115 C 217.93652,229.8268 206.70566,234.65968 201.2555,241.48365 L 201.2555,249.2024 C 201.2555,250.7536 202.52655,252.0149 204.12946,252.0149 L 229.34925,252.0149 C 230.95216,252.0149 232.2555,250.7536 232.2555,249.2024 L 232.2555,229.42115 C 231.85671,229.42533 231.45618,229.40893 231.06071,229.42115 z"
+       id="path18567"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_black.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18569"
+       width="34"
+       height="34"
+       x="246.31445"
+       y="364.96558"
+       ry="2.5991554"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_red.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078000000000;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18571"
+       width="32"
+       height="32"
+       x="247.31445"
+       y="365.96558"
+       ry="2.8"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_red.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#d40000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 277.51963,375.17186 C 264.39544,375.57751 253.16458,380.41039 247.71442,387.23436 L 247.71442,394.95311 C 247.71442,396.50431 248.98547,397.76561 250.58838,397.76561 L 275.80817,397.76561 C 277.41108,397.76561 278.71442,396.50431 278.71442,394.95311 L 278.71442,375.17186 C 278.31563,375.17604 277.9151,375.15964 277.51963,375.17186 z"
+       id="path18573"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_red.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18575"
+       width="34"
+       height="34"
+       x="198.86403"
+       y="365.81546"
+       ry="2.5991554"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_cyan.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#aaffee;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078000000000;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect18577"
+       width="32"
+       height="32"
+       x="199.86403"
+       y="366.81546"
+       ry="2.8"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_cyan.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#55ffdd;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 230.0692,376.02172 C 216.94501,376.42737 205.71415,381.26025 200.26399,388.08422 L 200.26399,395.80297 C 200.26399,397.35417 201.53504,398.61547 203.13795,398.61547 L 228.35774,398.61547 C 229.96065,398.61547 231.26399,397.35417 231.26399,395.80297 L 231.26399,376.02172 C 230.8652,376.0259 230.46467,376.0095 230.0692,376.02172 z"
+       id="path18579"
+       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_cyan.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>
