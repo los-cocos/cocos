@@ -81,6 +81,7 @@ class Game( Layer ):
                     self.next_block()
 
             self.used_key = True
+            soundex.play("move.mp3")
             return True
 
         if k == key.SPACE:
@@ -93,6 +94,7 @@ class Game( Layer ):
                 if not self.is_valid_block():
                     self.block.restore()
                     break
+            soundex.play("drop.mp3")
 
     def on_text_motion(self, motion):
         if self.used_key:
@@ -112,6 +114,7 @@ class Game( Layer ):
                     self.next_block()
 
             self.used_key = True
+            soundex.play("move.mp3")
             return True
 
     def init_map(self):
@@ -165,6 +168,10 @@ class Game( Layer ):
                     lines.append(j)
 
         lines.reverse()
+
+        if lines:
+            soundex.play("line.mp3")
+
         for l in lines:
             for j in xrange(l, ROWS-1 ):
                 for i in xrange(COLUMNS):

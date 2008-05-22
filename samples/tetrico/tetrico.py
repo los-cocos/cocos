@@ -69,7 +69,7 @@ if __name__ == "__main__":
     pyglet.resource.reindex()
     font.add_directory('data')
 
-    director.init( resizable=True, width=800, height=600 )
+    director.init( resizable=True, width=600, height=800 )
     scene = Scene()
     scene.add( MainMenu(), z=1 ) 
     scene.add( ColorLayer(112,66,20,255), z=0 ) 
