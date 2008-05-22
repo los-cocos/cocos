@@ -16,6 +16,7 @@ from cocos.scene import Scene
 from cocos.actions import *
 from cocos.sprite import *
 from cocos.euclid import *
+from cocos.director import director
 
 from constants import *
 from status import status
@@ -44,8 +45,10 @@ class Game( Layer ):
         self.elapsed = 0
         self.used_key = False
 
-        self.position = ( 320 - COLUMNS * SQUARE_SIZE / 2, 0 )
-        self.transform_anchor = (0,240)
+        width, height = director.get_window_size()
+
+        self.position = ( width/2 - COLUMNS * SQUARE_SIZE / 2, 0 )
+        self.transform_anchor = (0,height/2)
 
     def on_enter(self):
         super(Game,self).on_enter()
@@ -329,6 +332,5 @@ def get_newgame():
     scene = Scene()
     scene.add( Game(), z=2 )
     scene.add( HUD(), z=1 )
-    scene.add( ColorLayer( 12,50,32,255 ), z=0 )
 
     return scene
