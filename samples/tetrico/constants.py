@@ -1,0 +1,5 @@
+ROWS = 20
+COLUMNS = 10
+SQUARE_SIZE = 16
+MUSIC = True
+SOUND = True
