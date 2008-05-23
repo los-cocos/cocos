@@ -1,4 +1,6 @@
 
+__all__ = [ 'status' ]
+
 class Status( object ):
     def __init__( self ):
         self.score = 0

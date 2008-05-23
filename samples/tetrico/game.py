@@ -23,9 +23,20 @@ from status import status
 import soundex
 from HUD import *
 
+__all__ = ['get_newgame']
+
 class Colors( object ):
-    colors = ['black','orange','red','yellow','cyan','magenta','green','blue']
-    BLACK,ORANGE,RED,YELLOW,CYAN,MAGENTA,GREEN,BLUE = range( len(colors) )
+    colors = ['black','orange','red','yellow','cyan','magenta','green','blue',
+            'black',        # don't remove
+            'flip_x','flip_y','plus_one','minus_one',
+            'black' ]       # don't remove
+
+    BLACK,ORANGE,RED,YELLOW,CYAN,MAGENTA,GREEN,BLUE, LAST_COLOR, FLIP_X,FLIP_Y,PLUS_1, MINUS_1, LAST_SPECIAL = range( len(colors) )
+
+    images = [ pyglet.resource.image('block_%s.png' % color) for color in colors ]
+    
+    specials = [ k for k in range( LAST_COLOR+1, LAST_SPECIAL) ]
+
 
 class Game( Layer ):
 
@@ -35,9 +46,6 @@ class Game( Layer ):
         super(Game,self).__init__()
 
         self.init_map()
-        self.images = []
-        for c in Colors.colors:
-            self.images.append( pyglet.resource.image('block_%s.png' % c ) )
 
         self.random_block()
 
@@ -49,6 +57,8 @@ class Game( Layer ):
 
         self.position = ( width/2 - COLUMNS * SQUARE_SIZE / 2, 0 )
         self.transform_anchor = (0,height/2)
+
+        status.score = 0
 
     def on_enter(self):
         super(Game,self).on_enter()
@@ -135,7 +145,7 @@ class Game( Layer ):
             for j in xrange( ROWS ):
                 color = self.map.get( (i,j) )
                 if color:
-                    self.images[color].blit( i * SQUARE_SIZE, j* SQUARE_SIZE)
+                    Colors.images[color].blit( i * SQUARE_SIZE, j* SQUARE_SIZE)
         self.block.draw()
 
         glPopMatrix()
@@ -171,6 +181,7 @@ class Game( Layer ):
 
         if lines:
             soundex.play("line.mp3")
+            status.score += pow(2, len(lines)) -1
 
         for l in lines:
             for j in xrange(l, ROWS-1 ):
@@ -182,8 +193,9 @@ class Game( Layer ):
         '''merges a block in the map'''
         for i in xrange( self.block.x ):
             for j in xrange( self.block.x ):
-                if self.block.get(i,j):
-                    self.map[ (i+self.block.pos.x, j+self.block.pos.y) ] = self.block.color
+                c= self.block.get(i,j)
+                if c:
+                    self.map[ (i+self.block.pos.x, j+self.block.pos.y) ] = c
 
     def are_valid_movements(self):
         '''check wheter there are any left valid movement'''
@@ -239,15 +251,25 @@ class Block( object ):
         super( Block, self).__init__()
 
         self.pos = Point2( COLUMNS/2-1, ROWS )
-        self.image = pyglet.resource.image('block_%s.png' % Colors.colors[ self.color] )
         self.rot = 0
+
+        for x in xrange( len(self._shape) ):
+            for y in xrange( len( self._shape[x]) ):
+                if self._shape[x][y]:
+                    r = random.random()
+                    if r < 0.1:
+                        color = random.choice( Colors.specials )
+                    else:
+                        color = self.color
+                    self._shape[x][y] = color
 
     def draw( self ):
         '''draw the block'''
         for i in xrange(self.x):
             for j in xrange(self.x):
-                if self.get(i,j):
-                    self.image.blit( (i + self.pos.x) * SQUARE_SIZE, (j + self.pos.y) * SQUARE_SIZE)
+                c = self.get(i,j)
+                if c:
+                    Colors.images[c].blit( (i + self.pos.x) * SQUARE_SIZE, (j + self.pos.y) * SQUARE_SIZE)
 
     def rotate( self ):
         '''rotate the block'''
@@ -278,61 +300,81 @@ class Block( object ):
 
 
 class Block_I( Block ):
-    _shape = [ [0,1,0,0],
-               [0,1,0,0],
-               [0,1,0,0],
-               [0,1,0,0] ]
     x = 4
     mod = 2
     color = Colors.RED
 
+    def __init__(self):
+        self._shape = [ [0,1,0,0],
+                   [0,1,0,0],
+                   [0,1,0,0],
+                   [0,1,0,0] ]
+        super(Block_I,self).__init__()
+
 class Block_Z( Block ):
-    _shape = [ [0,0,0],
-               [1,1,0],
-               [0,1,1] ]
     x = 3
     color = Colors.ORANGE
     mod = 2
 
+    def __init__(self):
+        self._shape = [ [0,0,0],
+                       [1,1,0],
+                       [0,1,1] ]
+        super(Block_Z,self).__init__()
+
 class Block_Z2( Block ):
-    _shape = [ [0,0,0],
-               [0,1,1],
-               [1,1,0] ]
     x = 3
     color = Colors.CYAN
     mod = 2
 
+    def __init__(self):
+        self._shape = [ [0,0,0],
+                       [0,1,1],
+                       [1,1,0] ]
+        super(Block_Z2,self).__init__()
+
 class Block_O( Block ):
-    _shape = [ [1,1],
-               [1,1] ]
     x = 2
     color = Colors.BLUE
     mod = 4
 
+    def __init__(self):
+        self._shape = [ [1,1],
+                       [1,1] ]
+        super(Block_O,self).__init__()
+
 class Block_L( Block ):
-    _shape = [ [1,0,0],
-               [1,0,0],
-               [1,1,0] ] 
     x = 3
     color = Colors.MAGENTA
     mod = 4
 
+    def __init__(self):
+        self._shape = [ [1,0,0],
+                       [1,0,0],
+                       [1,1,0] ] 
+        super(Block_L,self).__init__()
+
 class Block_L2( Block ):
-    _shape = [ [0,0,1],
-               [0,0,1],
-               [0,1,1] ] 
     x = 3
     color = Colors.YELLOW
     mod = 4
 
+    def __init__(self):
+        self._shape = [ [0,0,1],
+                       [0,0,1],
+                       [0,1,1] ] 
+        super(Block_L2,self).__init__()
+
 class Block_A( Block ):
-    _shape = [ [0,0,0],
-               [0,1,0],
-               [1,1,1] ] 
     x = 3
     color = Colors.GREEN
     mod = 4
 
+    def __init__(self):
+        self._shape = [ [0,0,0],
+                       [0,1,0],
+                       [1,1,1] ] 
+        super(Block_A,self).__init__()
 
 def get_newgame():
     '''returns the game scene'''

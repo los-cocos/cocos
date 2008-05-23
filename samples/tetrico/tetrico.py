@@ -3,9 +3,6 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
-
-from game import *
-
 from cocos.director import director
 from cocos.layer import *
 from cocos.scene import Scene
@@ -51,8 +48,9 @@ class MainMenu( Menu ):
         self.create_menu( items, zoom_in(), zoom_out() )
 
     def on_new_game(self):
+        import game
         director.push( FadeTRTransition(
-            get_newgame(), 1 ) )
+            game.get_newgame(), 1 ) )
 
     def on_options( self ):
         pass
@@ -69,7 +67,7 @@ if __name__ == "__main__":
     pyglet.resource.reindex()
     font.add_directory('data')
 
-    director.init( resizable=True, width=600, height=800 )
+    director.init( resizable=True, width=600, height=720 )
     scene = Scene()
     scene.add( MainMenu(), z=1 ) 
     scene.add( ColorLayer(112,66,20,255), z=0 ) 
