@@ -54,7 +54,7 @@ class EventHandlerMixin(object):
                 scene.is_running and 
                 isinstance(child, cocos.layer.Layer) 
                 ):
-            child.push_handlers()
+            child.push_all_handlers()
             
             
     def remove(self, child):
@@ -67,7 +67,7 @@ class EventHandlerMixin(object):
                 scene.is_running and 
                 isinstance(child, cocos.layer.Layer) 
                 ):
-            child.remove_handlers()
+            child.remove_all_handlers()
             
     
             
@@ -109,12 +109,12 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
     def push_all_handlers(self):
         for child in self.get_children():
             if isinstance(child, cocos.layer.Layer):
-                child.push_handlers()
+                child.push_all_handlers()
             
     def remove_all_handlers(self):
         for child in self.get_children():
             if isinstance(child, cocos.layer.Layer):
-                child.remove_handlers()
+                child.remove_all_handlers()
     
     def enable_handlers(self, value=True):
         """

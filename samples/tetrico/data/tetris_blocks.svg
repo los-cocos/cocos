@@ -231,8 +231,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="9.9843477"
-     inkscape:cx="292.24362"
-     inkscape:cy="732.93454"
+     inkscape:cx="332.30633"
+     inkscape:cy="749.00356"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -1096,5 +1096,47 @@
          y="310.64673"
          id="tspan2623"
          style="font-size:14px">_</tspan></text>
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2546"
+       width="29.220228"
+       height="29.220228"
+       x="335.53796"
+       y="276.86108"
+       ry="2.2337623"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_liquid.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.85941851;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2548"
+       width="27.501392"
+       height="27.501392"
+       x="336.39737"
+       y="277.72052"
+       ry="2.4063716"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_liquid.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 362.35623,285.63246 C 351.07706,285.98108 341.42505,290.13455 336.74108,295.9992 L 336.74108,302.63283 C 336.74108,303.96596 337.83345,305.04995 339.21102,305.04995 L 360.88537,305.04995 C 362.26294,305.04995 363.38306,303.96596 363.38306,302.63283 L 363.38306,285.63246 C 363.04033,285.63605 362.69611,285.62196 362.35623,285.63246 z"
+       id="path2550"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_liquid.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#383838;fill-opacity:0.78039216;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Wingdings;-inkscape-font-specification:Wingdings"
+       x="339.6496"
+       y="297.96832"
+       id="text2552"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_liquid.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan2554"
+         x="339.6496"
+         y="297.96832">h</tspan></text>
   </g>
 </svg>

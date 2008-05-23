@@ -3,25 +3,31 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
+# stdlib
 import copy
 import random
+import weakref
 
-
+# pyglet related
 import pyglet
 from pyglet.window import key
 from pyglet.gl import *
 
-from cocos.layer import *
+# cocos2d related
+from cocos.layer import Layer, ColorLayer
 from cocos.scene import Scene
-from cocos.actions import *
-from cocos.sprite import *
-from cocos.euclid import *
+from cocos.euclid import Point2
 from cocos.director import director
+from cocos.text import Label
+from cocos.actions import *
 
+# tetrico related
 from constants import *
 from status import status
 import soundex
+import gameover
 from HUD import *
+
 
 __all__ = ['get_newgame']
 
@@ -31,46 +37,39 @@ class Effects( object ):
 
 class FlipX( Effects ):
     def get_action( self ):
-        return OrbitCamera( delta_z=180, duration = 0.5 )
+        return OrbitCamera( delta_z=180, duration = 1 )
 
 class FlipY( Effects ):
     def get_action( self ):
-#        return OrbitCamera( angle_x=90, delta_z=-90, duration = 0.5 )
-        return OrbitCamera( delta_z=180, duration = 0.5 )
+        return RotateBy( 180, duration = 1 )
 
-class Plus1( Effects ):
+class ALiquid( Effects ):
     def get_action( self ):
-        return StopGrid()
-
-class Minus1( Effects ):
-    def get_action( self ):
-        return ShatteredTiles3D( randrange=3, grid=(15,20), duration=0.5 )
+        return Liquid( grid=(16,20), duration=10, waves=10 ) + StopGrid()
 
 class Colors( object ):
     colors = ['black','orange','red','yellow','cyan','magenta','green','blue',
             'black',        # don't remove
-            'flip_x','flip_y','plus_one','minus_one',
+            'flip_x','liquid','flip_y',
             'black' ]       # don't remove
 
-    BLACK,ORANGE,RED,YELLOW,CYAN,MAGENTA,GREEN,BLUE, LAST_COLOR, FLIP_X,FLIP_Y,PLUS_1, MINUS_1, LAST_SPECIAL = range( len(colors) )
+    BLACK,ORANGE,RED,YELLOW,CYAN,MAGENTA,GREEN,BLUE, LAST_COLOR, FLIP_X, LIQUID, FLIP_Y,LAST_SPECIAL = range( len(colors) )
 
     images = [ pyglet.resource.image('block_%s.png' % color) for color in colors ]
     
     specials = [ k for k in range( LAST_COLOR+1, LAST_SPECIAL) ]
 
-    effects = { FLIP_X : FlipX(),
-                FLIP_Y : FlipY(),
-                MINUS_1: Minus1(),
-                PLUS_1: Plus1()
+    effects = { FLIP_X : FlipX,
+                LIQUID : ALiquid,
+                FLIP_Y : FlipY,
     }
 
-
-class Game( Layer ):
+class GameCtrl( Layer, pyglet.event.EventDispatcher ):
 
     is_event_handler = True #: enable pyglet's events
 
     def __init__(self):
-        super(Game,self).__init__()
+        super(GameCtrl,self).__init__()
 
         self.init_map()
 
@@ -80,21 +79,12 @@ class Game( Layer ):
         self.elapsed = 0
         self.used_key = False
 
-        width, height = director.get_window_size()
-
-        self.position = ( width/2 - COLUMNS * SQUARE_SIZE / 2, 0 )
-        self.transform_anchor = (0,height/2)
-
         status.score = 0
 
-    def on_enter(self):
-        super(Game,self).on_enter()
-        soundex.set_music('tetris.mp3')
-        soundex.play_music()
 
-    def on_exit(self):
-        super(Game,self).on_exit()
-        soundex.stop_music()
+        # effects that are queued
+        self.effects = []
+
 
     def on_key_press(self, k, m ):
         if self.used_key:
@@ -163,28 +153,12 @@ class Game( Layer ):
 
     def draw( self ):
         '''draw the map and the block'''
-
         self.used_key = False
-        glPushMatrix()
-        self.transform()
-
-        for i in xrange( COLUMNS ):
-            for j in xrange( ROWS ):
-                color = self.map.get( (i,j) )
-                if color:
-                    Colors.images[color].blit( i * SQUARE_SIZE, j* SQUARE_SIZE)
-        self.block.draw()
-
-        glPopMatrix()
-
 
     def step( self, dt ):
         '''updates the engine'''
         self.elapsed += dt
         if self.elapsed > 0.5:
-
-#            if not self.are_valid_movements():
-#                self.next_block()
 
             self.elapsed = 0
             self.block.pos.y -= 1
@@ -210,19 +184,26 @@ class Game( Layer ):
             soundex.play("line.mp3")
             status.score += pow(2, len(lines)) -1
 
-        actions = []
+        self.effects = []
+
+        for j in lines:
+            for i in xrange(COLUMNS):
+                e = self.map[ (i,j) ]
+                if e in Colors.specials:
+                    self.effects.append( Colors.effects[ e ] )
+
+        if self.effects:
+            self.dispatch_event("on_special_effect", self.effects )
+
         for l in lines:
             for j in xrange(l, ROWS-1 ):
                 for i in xrange(COLUMNS):
-                    e = self.map[ (i,j) ]
-                    if e in Colors.specials:
-                        actions.append( Colors.effects[ e ].get_action() )
                     self.map[ (i,j) ] = self.map[ (i,j+1) ]
 
-        for a in actions:
-            self.do( a )
-        
+        if lines:
+            self.dispatch_event("on_line_complete", lines )
 
+        
     def merge_block( self ):
         '''merges a block in the map'''
         for i in xrange( self.block.x ):
@@ -246,6 +227,9 @@ class Game( Layer ):
         self.merge_block()
         self.check_line()
         self.random_block()
+
+        if not self.is_valid_block():
+            self.game_over()
 
     def random_block( self ):
         '''puts the next block in stage'''
@@ -279,6 +263,60 @@ class Game( Layer ):
                         return False
         return True
 
+    def game_over( self ):
+        self.unschedule( self.step )
+        self.parent.add( gameover.get_gameover(), z=2 )
+
+class GameView( Layer ):
+
+    def __init__(self):
+        super(GameView,self).__init__()
+
+        width, height = director.get_window_size()
+
+        self.position = ( width/2 - COLUMNS * SQUARE_SIZE / 2, 0 )
+        self.transform_anchor = ( COLUMNS*SQUARE_SIZE /2, ROWS * SQUARE_SIZE/2)
+
+        # background layer to delimit the pieces visually
+        cl = ColorLayer( 112,66,20,30, width = COLUMNS * SQUARE_SIZE, height=ROWS * SQUARE_SIZE )
+        self.add( cl, z=-1)
+
+    def on_enter(self):
+        super(GameView,self).on_enter()
+
+        self.ctrl = weakref.ref( self.parent.get('controller') )
+        self.ctrl().push_handlers( self.on_line_complete, self.on_special_effect )
+
+        soundex.set_music('tetris.mp3')
+        soundex.play_music()
+
+    def on_exit(self):
+        super(GameView,self).on_exit()
+        soundex.stop_music()
+
+    def on_line_complete( self, lines ):
+        print 'on_line_complete:' , lines
+        return True
+
+    def on_special_effect( self, effects ):
+        print 'on_special_effect:' , effects
+        return True
+
+    def draw( self ):
+        '''draw the map and the block'''
+
+        glPushMatrix()
+        self.transform()
+
+        for i in xrange( COLUMNS ):
+            for j in xrange( ROWS ):
+                color = self.ctrl().map.get( (i,j) )
+                if color:
+                    Colors.images[color].blit( i * SQUARE_SIZE, j* SQUARE_SIZE)
+        self.ctrl().block.draw()
+
+        glPopMatrix()
+
 
 class Block( object ):
     def __init__(self):
@@ -291,7 +329,7 @@ class Block( object ):
             for y in xrange( len( self._shape[x]) ):
                 if self._shape[x][y]:
                     r = random.random()
-                    if r < 0.1:
+                    if r < 0.2:
                         color = random.choice( Colors.specials )
                     else:
                         color = self.color
@@ -413,7 +451,11 @@ class Block_A( Block ):
 def get_newgame():
     '''returns the game scene'''
     scene = Scene()
-    scene.add( Game(), z=2 )
+    scene.add( GameCtrl(), z=2, name="controller" )
+    scene.add( GameView(), z=2, name="view" )
     scene.add( HUD(), z=1 )
 
     return scene
+
+GameCtrl.register_event_type('on_special_effect')
+GameCtrl.register_event_type('on_line_complete')

@@ -62,19 +62,19 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
         self.transform_anchor_x = x/2
         self.transform_anchor_y = y/2
         
-    def push_handlers(self):
+    def push_all_handlers(self):
         if self.is_event_handler:
             director.window.push_handlers( self )
         for child in self.get_children():
             if isinstance(child, Layer):
-                child.push_handlers()
+                child.push_all_handlers()
                 
-    def remove_handlers(self):
+    def remove_all_handlers(self):
         if self.is_event_handler:
             director.window.remove_handlers( self )
         for child in self.get_children():
             if isinstance(child, Layer):
-                child.remove_handlers()
+                child.remove_all_handlers()
            
     def on_enter(self):
         super(Layer, self).on_enter()

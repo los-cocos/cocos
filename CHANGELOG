@@ -5,11 +5,16 @@ v0.3.0rc - XXXX
   - Actions: added Ripple3D effect
   - Actions: Waves. parameter horizontal_sin and vertical_sin renamed to hsin and vsin
   - Actions: renamed ReverseTime to _ReverseTime to prevent massive usage
+  - Actions: camera can be played from current position
   - CocosNode: on_draw() replaced with draw(). It was conflicting with
 	  pyglet's event
+  - CocosNode: renamed push_handlers() / remove_handlers() to push_all_handlers()
+      remove_all_handlers() so that they don't confligt with
+	  pyglet.event.Event
   - CocosNode: added the Camera attribute (removed from Grid object)
     It is no longer necessary to have an active grid to perform camera actions
   - Director: default projection is 3D (not glOrtho)
+  - Layer: ColorLayer supports position, height and width
   - Transitions: Changed API. There is no need to pass the src scene as a
 	  parameter. If omitted, the src scene will be current scene. 
 	  init( dst, duration=2, src=current_scene)

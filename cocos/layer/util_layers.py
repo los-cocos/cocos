@@ -61,19 +61,38 @@ class ColorLayer(Layer):
     For example, to create green layer::
     
         l = ColorLayer(0, 255, 0, 0 )
+
+    The size and position can be changed, for example::
+
+        l = ColorLayer( 0, 255,0,0, width=200, height=400)
+        l.position = (50,50)
+
     """
-    def __init__(self, *color):
+    def __init__(self, r,g,b,a, width=None, height=None):
         super(ColorLayer, self).__init__()
         self._batch = pyglet.graphics.Batch()
-        self._rgb = color[:3]
-        self._opacity = color[3]
+        self._rgb = r,g,b
+        self._opacity = a
+
+        self.width = width
+        self.height = height
         
+        w,h = director.get_window_size()
+        if not self.width:
+            self.width = w
+        if not self.height:
+            self.height = h
+
     def on_enter(self):
         super(ColorLayer, self).on_enter()
-        x, y = director.get_window_size()
+        x, y = self.width, self.height
+        ox, oy = self.position
         
         self._vertex_list = self._batch.add(4, pyglet.gl.GL_QUADS, None,
-            ('v2i', (0, 0, 0, y, x, y, x, 0)),
+            ('v2i', ( ox, oy,
+                      ox, oy + y,
+                      ox+x, oy+y, 
+                      ox+x, oy)),
             'c4B')
 
         self._update_color()
