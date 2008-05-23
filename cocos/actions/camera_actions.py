@@ -69,11 +69,11 @@ class Camera3DAction( IntervalAction ):
         self.camera_center_orig = self.target.camera.center
         self.camera_up_orig = self.target.camera.up_vector
 
-    def stop( self ):
-        super(Camera3DAction, self).stop()
-        self.target.camera.eye = self.camera_eye_orig
-        self.target.camera.center = self.camera_center_orig
-        self.target.camera.up_vector = self.camera_up_orig
+#    def stop( self ):
+#        super(Camera3DAction, self).stop()
+#        self.target.camera.eye = self.camera_eye_orig
+#        self.target.camera.center = self.camera_center_orig
+#        self.target.camera.up_vector = self.camera_up_orig
 
     def __reversed__( self ):
         return _ReverseTime( self )
@@ -82,16 +82,16 @@ class Camera3DAction( IntervalAction ):
 class OrbitCamera( Camera3DAction ):
     '''Orbits the camera around the center of the screen using spherical coordinates
     '''
-    def init( self, radius=1, delta_radius=0, angle_z=0, delta_z=0, angle_x=0, delta_x=0, *args, **kw ):
+    def init( self, radius=None, delta_radius=0, angle_z=None, delta_z=0, angle_x=None, delta_x=0, *args, **kw ):
         '''Initialize the camera with spherical coordinates
 
         :Parameters:
             `radius` : float
-                Radius of the orbit. Default: best distance for the current fov
+                Radius of the orbit. Default: current radius
             `delta_radius` : float
-                Radius of the orbit. Default: best distance for the current fov
+                Delta movement of the radius. Default: 0
             `angle_z` : float
-                The zenith angle of the spherical coordinate in degrees. Default: 0
+                The zenith angle of the spherical coordinate in degrees. Default: current
             `delta_z` : float
                 Relative movement of the zenith angle. Default: 0
             `angle_x` : float
@@ -110,10 +110,54 @@ class OrbitCamera( Camera3DAction ):
 
         self.radius = radius
         self.delta_radius = delta_radius
-        self.rad_x = math.radians( angle_x )
-        self.rad_z = math.radians( angle_z )
+        self.angle_x = angle_x
         self.rad_delta_x= math.radians( delta_x )
+        self.angle_z = angle_z 
         self.rad_delta_z = math.radians( delta_z )
+
+    def start( self ):
+        super(OrbitCamera,self).start()
+
+        radius, zenith, azimuth = self.get_spherical_coords()
+
+        if not self.radius:
+            self.radius = radius
+
+        if not self.angle_z:
+            self.angle_z= math.degrees(zenith)
+        if not self.angle_x:
+            self.angle_x= math.degrees(azimuth)
+
+        self.rad_x = math.radians( self.angle_x )
+        self.rad_z = math.radians( self.angle_z )
+
+    def get_spherical_coords( self ):
+        '''returns the spherical coordinates from a cartesian coordinates
+
+        using this formula:
+
+            - http://www.math.montana.edu/frankw/ccp/multiworld/multipleIVP/spherical/body.htm#converting
+
+        :rtype: ( radius, zenith, azimuth )
+        '''
+        eye = self.target.camera.eye - self.target.camera.center
+
+        radius = math.sqrt( pow(eye.x,2) + pow(eye.y,2) + pow(eye.z,2) )
+        s = math.sqrt( pow(eye.x,2) + pow(eye.y,2) )
+        if s == 0:
+            s = 0.000000001
+        r = radius
+        if r == 0:
+            r = 0.000000001
+
+        angle_z = math.acos( eye.z / float(r) )
+        if eye.x < 0:
+            angle_x = math.pi - math.asin( eye.y / s )
+        else:
+            angle_x = math.asin( eye.y / s )
+
+        radius = radius / self.target.camera.get_z_eye()
+        return radius, angle_z, angle_x
 
     def update( self, t ):
         r = (self.radius + self.delta_radius * t) * self.target.camera.get_z_eye()

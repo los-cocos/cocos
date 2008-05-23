@@ -232,7 +232,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="9.9843477"
      inkscape:cx="292.24362"
-     inkscape:cy="668.83421"
+     inkscape:cy="732.93454"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -687,7 +687,7 @@
        y="257.46133"
        id="text2475"><tspan
          sodipodi:role="line"
-         id="tspan2477"></tspan></text>
+         id="tspan2477" /></text>
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#383838;fill-opacity:0.78039216;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Wingdings;-inkscape-font-specification:Wingdings"
@@ -949,7 +949,7 @@
        x="304.08871"
        y="308.20209"
        ry="2.2337623"
-       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_black.png"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_minus_one.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <rect
@@ -960,14 +960,14 @@
        x="304.94812"
        y="309.06152"
        ry="2.4063716"
-       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_black.png"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_minus_one.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <path
        style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="M 330.90699,316.97345 C 319.62782,317.32207 309.97581,321.47554 305.29184,327.34019 L 305.29184,333.97382 C 305.29184,335.30695 306.38421,336.39094 307.76178,336.39094 L 329.43613,336.39094 C 330.8137,336.39094 331.93382,335.30695 331.93382,333.97382 L 331.93382,316.97345 C 331.59109,316.97704 331.24687,316.96295 330.90699,316.97345 z"
        id="path2579"
-       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_black.png"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_minus_one.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <text
@@ -975,7 +975,10 @@
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#383838;fill-opacity:0.78039216;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Wingdings 2;-inkscape-font-specification:'Wingdings 2,'"
        x="310.49765"
        y="329.50964"
-       id="text2581"><tspan
+       id="text2581"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_minus_one.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
          id="tspan2583"
          x="310.49765"
@@ -1068,25 +1071,30 @@
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:italic;font-weight:normal;fill:#535353;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans"
-       x="272.92719"
-       y="317.21152"
+       x="271.72531"
+       y="319.41498"
        id="text2613"
        inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_plus_one.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
-         x="272.92719"
-         y="317.21152"
-         id="tspan2617">+</tspan></text>
+         x="271.72531"
+         y="319.41498"
+         id="tspan2617"
+         style="font-size:14px">+</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:italic;font-weight:normal;fill:#535353;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans"
-       x="307.69559"
-       y="315.84235"
-       id="text2621"><tspan
+       x="306.694"
+       y="310.64673"
+       id="text2621"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_minus_one.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
-         x="307.69559"
-         y="315.84235"
-         id="tspan2623">-</tspan></text>
+         x="306.694"
+         y="310.64673"
+         id="tspan2623"
+         style="font-size:14px">_</tspan></text>
   </g>
 </svg>

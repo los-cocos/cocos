@@ -25,6 +25,27 @@ from HUD import *
 
 __all__ = ['get_newgame']
 
+class Effects( object ):
+    def get_action( self ):
+        raise Exception('abstract')
+
+class FlipX( Effects ):
+    def get_action( self ):
+        return OrbitCamera( delta_z=180, duration = 0.5 )
+
+class FlipY( Effects ):
+    def get_action( self ):
+#        return OrbitCamera( angle_x=90, delta_z=-90, duration = 0.5 )
+        return OrbitCamera( delta_z=180, duration = 0.5 )
+
+class Plus1( Effects ):
+    def get_action( self ):
+        return StopGrid()
+
+class Minus1( Effects ):
+    def get_action( self ):
+        return ShatteredTiles3D( randrange=3, grid=(15,20), duration=0.5 )
+
 class Colors( object ):
     colors = ['black','orange','red','yellow','cyan','magenta','green','blue',
             'black',        # don't remove
@@ -36,6 +57,12 @@ class Colors( object ):
     images = [ pyglet.resource.image('block_%s.png' % color) for color in colors ]
     
     specials = [ k for k in range( LAST_COLOR+1, LAST_SPECIAL) ]
+
+    effects = { FLIP_X : FlipX(),
+                FLIP_Y : FlipY(),
+                MINUS_1: Minus1(),
+                PLUS_1: Plus1()
+    }
 
 
 class Game( Layer ):
@@ -183,11 +210,18 @@ class Game( Layer ):
             soundex.play("line.mp3")
             status.score += pow(2, len(lines)) -1
 
+        actions = []
         for l in lines:
             for j in xrange(l, ROWS-1 ):
                 for i in xrange(COLUMNS):
+                    e = self.map[ (i,j) ]
+                    if e in Colors.specials:
+                        actions.append( Colors.effects[ e ].get_action() )
                     self.map[ (i,j) ] = self.map[ (i,j+1) ]
 
+        for a in actions:
+            self.do( a )
+        
 
     def merge_block( self ):
         '''merges a block in the map'''

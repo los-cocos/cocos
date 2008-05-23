@@ -29,16 +29,11 @@ if __name__ == "__main__":
     director.set_depth_test()
 
     main_scene = cocos.scene.Scene()
-
     main_scene.add( BackgroundLayer(), z=0 )
 
-    # set a 3d grid with a grid3d action
-    e = WavesTiles3D( amplitude=60, waves=8, grid=(32,24), duration=8)
-
     # use the remaining grid and move it's camera
-    rot = OrbitCamera( angle_x=45,  angle_z=0, delta_z=360, duration=8 )
+    rot = OrbitCamera( delta_z=60, duration=2 )
 
-    main_scene.do( e )
-    main_scene.do( rot + Reverse(rot) )
+    main_scene.do( rot * 3 )
 
     director.run (main_scene)
