@@ -231,13 +231,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="9.9843477"
-     inkscape:cx="332.30633"
-     inkscape:cy="749.00356"
+     inkscape:cx="368.7235"
+     inkscape:cy="736.66519"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1220"
-     inkscape:window-height="778"
+     inkscape:window-width="1280"
+     inkscape:window-height="752"
      inkscape:window-x="0"
      inkscape:window-y="0"
      showguides="false"
@@ -659,7 +659,7 @@
        x="271.22559"
        y="244.12599"
        ry="2.2337623"
-       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_black.png"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_waves.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <rect
@@ -670,14 +670,14 @@
        x="272.08499"
        y="244.98543"
        ry="2.4063716"
-       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_black.png"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_waves.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <path
        style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="M 298.04388,252.89746 C 286.76471,253.24608 277.1127,257.39955 272.42873,263.2642 L 272.42873,269.89783 C 272.42873,271.23096 273.5211,272.31495 274.89867,272.31495 L 296.57302,272.31495 C 297.95059,272.31495 299.07071,271.23096 299.07071,269.89783 L 299.07071,252.89746 C 298.72798,252.90105 298.38376,252.88696 298.04388,252.89746 z"
        id="path2473"
-       inkscape:export-filename="/home/riq/src/los-cocos/trunk/samples/tetrico/data/block_black.png"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_waves.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <text
@@ -693,7 +693,10 @@
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#383838;fill-opacity:0.78039216;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Wingdings;-inkscape-font-specification:Wingdings"
        x="275.23392"
        y="265.43356"
-       id="text2511"><tspan
+       id="text2511"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_waves.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
          id="tspan2513"
          x="275.23392"
@@ -1101,8 +1104,8 @@
        id="rect2546"
        width="29.220228"
        height="29.220228"
-       x="335.53796"
-       y="276.86108"
+       x="335.83844"
+       y="308.3103"
        ry="2.2337623"
        inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_liquid.png"
        inkscape:export-xdpi="90"
@@ -1112,15 +1115,15 @@
        id="rect2548"
        width="27.501392"
        height="27.501392"
-       x="336.39737"
-       y="277.72052"
+       x="336.69785"
+       y="309.16974"
        ry="2.4063716"
        inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_liquid.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <path
        style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="M 362.35623,285.63246 C 351.07706,285.98108 341.42505,290.13455 336.74108,295.9992 L 336.74108,302.63283 C 336.74108,303.96596 337.83345,305.04995 339.21102,305.04995 L 360.88537,305.04995 C 362.26294,305.04995 363.38306,303.96596 363.38306,302.63283 L 363.38306,285.63246 C 363.04033,285.63605 362.69611,285.62196 362.35623,285.63246 z"
+       d="M 362.6567,317.08169 C 351.37753,317.43031 341.72552,321.58378 337.04155,327.44843 L 337.04155,334.08206 C 337.04155,335.41519 338.13392,336.49918 339.51149,336.49918 L 361.18584,336.49918 C 362.56341,336.49918 363.68353,335.41519 363.68353,334.08206 L 363.68353,317.08169 C 363.3408,317.08528 362.99658,317.07119 362.6567,317.08169 z"
        id="path2550"
        inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_liquid.png"
        inkscape:export-xdpi="90"
@@ -1128,15 +1131,347 @@
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#383838;fill-opacity:0.78039216;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Wingdings;-inkscape-font-specification:Wingdings"
-       x="339.6496"
-       y="297.96832"
+       x="339.95007"
+       y="329.41754"
        id="text2552"
        inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_liquid.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
          id="tspan2554"
-         x="339.6496"
-         y="297.96832">h</tspan></text>
+         x="339.95007"
+         y="329.41754">h</tspan></text>
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2520"
+       width="29.220228"
+       height="29.220228"
+       x="335.73825"
+       y="244.41031"
+       ry="2.2337623"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_speed_up.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.85941851;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2522"
+       width="27.501392"
+       height="27.501392"
+       x="336.59766"
+       y="245.26974"
+       ry="2.4063716"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_speed_up.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 362.55655,253.18178 C 351.27738,253.5304 341.62537,257.68387 336.9414,263.54852 L 336.9414,270.18215 C 336.9414,271.51528 338.03377,272.59927 339.41134,272.59927 L 361.08569,272.59927 C 362.46326,272.59927 363.58338,271.51528 363.58338,270.18215 L 363.58338,253.18178 C 363.24065,253.18537 362.89643,253.17128 362.55655,253.18178 z"
+       id="path2524"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_speed_up.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#383838;fill-opacity:0.78039216;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Wingdings;-inkscape-font-specification:Wingdings"
+       x="341.74658"
+       y="265.7179"
+       id="text2526"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_speed_up.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan2528"
+         x="341.74658"
+         y="265.7179"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Wingdings;-inkscape-font-specification:Wingdings Bold">º</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:italic;font-weight:normal;fill:#535353;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans"
+       x="336.57077"
+       y="255.39655"
+       id="text2532"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_speed_up.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         x="336.57077"
+         y="255.39655"
+         id="tspan2534"
+         style="font-size:14px">+</tspan></text>
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2536"
+       width="29.220228"
+       height="29.220228"
+       x="335.83844"
+       y="276.66077"
+       ry="2.2337623"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_speed_down.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.85941851;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2538"
+       width="27.501392"
+       height="27.501392"
+       x="336.69785"
+       y="277.5202"
+       ry="2.4063716"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_speed_down.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 362.65672,285.43225 C 351.37755,285.78087 341.72554,289.93434 337.04157,295.79899 L 337.04157,302.43262 C 337.04157,303.76575 338.13394,304.84974 339.51151,304.84974 L 361.18586,304.84974 C 362.56343,304.84974 363.68355,303.76575 363.68355,302.43262 L 363.68355,285.43225 C 363.34082,285.43584 362.9966,285.42175 362.65672,285.43225 z"
+       id="path2540"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_speed_down.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#535353;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Wingdings;-inkscape-font-specification:Wingdings"
+       x="341.84677"
+       y="297.96835"
+       id="text2542"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_speed_down.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan2544"
+         x="341.84677"
+         y="297.96835"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Wingdings;-inkscape-font-specification:Wingdings Bold;fill:#535353;fill-opacity:1">º</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:italic;font-weight:normal;fill:#535353;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans"
+       x="338.93597"
+       y="280.04474"
+       id="text2550"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_speed_down.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         x="338.93597"
+         y="280.04474"
+         id="tspan2552"
+         style="font-size:14px">_</tspan></text>
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2554"
+       width="29.220228"
+       height="29.220228"
+       x="336.53952"
+       y="339.25876"
+       ry="2.2337623"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_rotate.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.85941851;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2556"
+       width="27.501392"
+       height="27.501392"
+       x="337.39893"
+       y="340.11819"
+       ry="2.4063716"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_rotate.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 363.35777,348.03015 C 352.0786,348.37877 342.42659,352.53224 337.74262,358.39689 L 337.74262,365.03052 C 337.74262,366.36365 338.83499,367.44764 340.21256,367.44764 L 361.88691,367.44764 C 363.26448,367.44764 364.3846,366.36365 364.3846,365.03052 L 364.3846,348.03015 C 364.04187,348.03374 363.69765,348.01965 363.35777,348.03015 z"
+       id="path2558"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_rotate.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#383838;fill-opacity:0.78039216;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Wingdings 3;-inkscape-font-specification:'Wingdings 3,'"
+       x="342.35068"
+       y="360.366"
+       id="text2560"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_rotate.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan2562"
+         x="342.35068"
+         y="360.366">P</tspan></text>
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2564"
+       width="29.220228"
+       height="29.220228"
+       x="336.3392"
+       y="369.60626"
+       ry="2.2337623"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_lens.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.85941851;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2566"
+       width="27.501392"
+       height="27.501392"
+       x="337.19861"
+       y="370.4657"
+       ry="2.4063716"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_lens.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 363.15746,378.37766 C 351.87829,378.72628 342.22628,382.87975 337.54231,388.7444 L 337.54231,395.37803 C 337.54231,396.71116 338.63468,397.79515 340.01225,397.79515 L 361.6866,397.79515 C 363.06417,397.79515 364.18429,396.71116 364.18429,395.37803 L 364.18429,378.37766 C 363.84156,378.38125 363.49734,378.36716 363.15746,378.37766 z"
+       id="path2568"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_lens.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#383838;fill-opacity:0.78039216;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Wingdings 3;-inkscape-font-specification:'Wingdings 3,'"
+       x="342.15036"
+       y="390.7135"
+       id="text2570"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_lens.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan2572"
+         x="342.15036"
+         y="390.7135"
+         style="-inkscape-font-specification:Webdings;font-family:Webdings;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal">L</tspan></text>
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2574"
+       width="29.220228"
+       height="29.220228"
+       x="367.48795"
+       y="244.10985"
+       ry="2.2337623"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_scale.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.85941851;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2576"
+       width="27.501392"
+       height="27.501392"
+       x="368.34735"
+       y="244.96928"
+       ry="2.4063716"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_scale.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 394.30625,252.88131 C 383.02708,253.22993 373.37507,257.3834 368.6911,263.24805 L 368.6911,269.88168 C 368.6911,271.21481 369.78347,272.2988 371.16104,272.2988 L 392.83539,272.2988 C 394.21296,272.2988 395.33308,271.21481 395.33308,269.88168 L 395.33308,252.88131 C 394.99035,252.8849 394.64613,252.87081 394.30625,252.88131 z"
+       id="path2578"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_scale.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#383838;fill-opacity:0.78039216;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Wingdings;-inkscape-font-specification:Wingdings"
+       x="373.49628"
+       y="265.41742"
+       id="text2580"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_scale.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan2582"
+         x="373.49628"
+         y="265.41742"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Wingdings 2;-inkscape-font-specification:Wingdings 2 Bold">®</tspan></text>
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2588"
+       width="29.220228"
+       height="29.220228"
+       x="367.98874"
+       y="276.36032"
+       ry="2.2337623"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_twirl.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.85941851;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect2590"
+       width="27.501392"
+       height="27.501392"
+       x="368.84814"
+       y="277.21976"
+       ry="2.4063716"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_twirl.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 394.80705,285.13178 C 383.52788,285.4804 373.87587,289.63387 369.1919,295.49852 L 369.1919,302.13215 C 369.1919,303.46528 370.28427,304.54927 371.66184,304.54927 L 393.33619,304.54927 C 394.71376,304.54927 395.83388,303.46528 395.83388,302.13215 L 395.83388,285.13178 C 395.49115,285.13537 395.14693,285.12128 394.80705,285.13178 z"
+       id="path2592"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_twirl.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="spiral"
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#060606;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.62745098;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="path2608"
+       sodipodi:cx="415.24997"
+       sodipodi:cy="275.64645"
+       sodipodi:expansion="1"
+       sodipodi:revolution="2.7863319"
+       sodipodi:radius="9.6107159"
+       sodipodi:argument="-30.321764"
+       sodipodi:t0="0.19697024"
+       d="M 414.92996,273.78067 C 416.13726,273.19434 417.51571,274.00855 417.96565,275.18068 C 418.61054,276.86066 417.49435,278.6701 415.86151,279.21203 C 413.71414,279.92474 411.46354,278.49807 410.83449,276.40377 C 410.0497,273.79096 411.79064,271.09476 414.34689,270.38108 C 417.42422,269.52191 420.56838,271.57913 421.36525,274.5976 C 422.30015,278.13896 419.92548,281.7325 416.44459,282.61163 C 412.43949,283.62315 408.39567,280.93028 407.4349,276.98684 C 406.34616,272.51819 409.35774,268.02347 413.76381,266.98148 C 418.41148,265.88236 423.14698,268.78378 424.56581,273.28406"
+       transform="translate(-33.252047,15.521164)"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_twirl.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#202020;fill-opacity:0.25098039;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect3408"
+       width="29.220228"
+       height="29.220228"
+       x="367.88858"
+       y="308.31033"
+       ry="2.2337623"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_waves.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.85941851;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.50196078;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect3410"
+       width="27.501392"
+       height="27.501392"
+       x="368.74799"
+       y="309.16977"
+       ry="2.4063716"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_waves.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 394.70685,317.08171 C 383.42768,317.43033 373.77567,321.5838 369.0917,327.44845 L 369.0917,334.08208 C 369.0917,335.41521 370.18407,336.4992 371.56164,336.4992 L 393.23599,336.4992 C 394.61356,336.4992 395.73368,335.41521 395.73368,334.08208 L 395.73368,317.08171 C 395.39095,317.0853 395.04673,317.07121 394.70685,317.08171 z"
+       id="path3412"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_waves.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#060606;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.627451"
+       d="M 391.21861,327.52765 C 383.50654,314.9079 375.89462,318.31323 375.89462,318.31323"
+       id="path3426"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_waves.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#060606;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.627451"
+       d="M 376.3954,327.52765 C 390.01673,322.31951 376.49556,318.41338 376.49556,318.41338"
+       id="path3428"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_waves.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
   </g>
 </svg>

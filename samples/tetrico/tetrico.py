@@ -48,9 +48,9 @@ class MainMenu( Menu ):
         self.create_menu( items, zoom_in(), zoom_out() )
 
     def on_new_game(self):
-        import game
+        import gameview
         director.push( FadeTRTransition(
-            game.get_newgame(), 1 ) )
+            gameview.get_newgame(), 1 ) )
 
     def on_options( self ):
         pass
