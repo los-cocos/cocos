@@ -1,8 +1,9 @@
+#
+# original file from http://www.partiallydisassembled.net/make_me/
+# modified later for this game
+#
 from constants import MUSIC, SOUND
 import pyglet
-
-music_player = pyglet.media.Player()
-current_music = None
 
 try:
     import pyglet.media.avbin
@@ -10,6 +11,15 @@ try:
 except:
     have_avbin = False
     MUSIC = False
+
+#
+# MUSIC
+#
+music_player = pyglet.media.Player()
+current_music = None
+
+sound_vol = 0.5
+music_player.volume = 0.2
 
 def set_music(name):
     global current_music
@@ -27,8 +37,12 @@ def set_music(name):
     music_player.next()
     music_player.queue(pyglet.resource.media(name, streaming=True))
     music_player.play()
+    # pyglet bug
+    music_player.volume = music_player.volume
     music_player.eos_action = 'loop'
 
+def music_volume(vol):
+    music_player.volume=vol
 
 def queue_music(name):
     global current_music
@@ -64,9 +78,11 @@ def on_eos():
 def stop_music():
 #    import pdb
 #    pdb.set_trace()
-
     music_player.pause()
 
+#
+# SOUND
+#
 sounds = {}
 
 def load(name, streaming=False):
@@ -79,24 +95,11 @@ def load(name, streaming=False):
     return sounds[name]
 
 def play(name):
-    load(name)
-    sounds[name].play()
-
-move_player = pyglet.media.Player()
-
-def start_move(name):
-    global current_move
-
     if not SOUND:
         return
+    load(name)
+    a = sounds[name].play().volume = sound_vol
 
-    if name not in sounds:
-        sounds[name] = pyglet.resource.media(name, streaming=False)
-
-    move_player.next()
-    move_player.queue(sounds[name])
-    move_player.play()
-    move_player.eos_action = 'loop'
-
-def stop_move():
-    move_player.pause()
+def sound_volume( vol ):
+    global sound_vol
+    sound_vol = vol

@@ -26,18 +26,15 @@ class MainMenu(Menu):
         super( MainMenu, self ).__init__("Test Menu Items")
 
         # then add the items
-        item1= ToggleMenuItem('ToggleMenuItem: ', False, 
-                        lambda x:printf('switch to:',x) )
+        item1= ToggleMenuItem('ToggleMenuItem: ', self.on_toggle_callback, True )
                         
-        resolutions = ['800x600', '1024x768', '320x200', '640x480']
+        resolutions = ['320x200','640x480','800x600', '1024x768', '320x200']
         item2= MultipleMenuItem('MultipleMenuItem: ',
-                        #value switch function:
-                        lambda:setslice(resolutions,0,len(resolutions),
-                                        resolutions[1:]+[resolutions[0]]),
-                        #current value access function:
-                        lambda:resolutions[0])
+                        self.on_multiple_callback,
+                        resolutions,
+                        0 )
 
-        item3 = MenuItem('MenuItem', self.on_quit )
+        item3 = MenuItem('MenuItem', self.on_callback )
 
         self.create_menu( [item1,item2,item3] )
 
@@ -45,6 +42,14 @@ class MainMenu(Menu):
     def on_quit( self ):
         pyglet.app.exit()
 
+    def on_multiple_callback(self, idx ):
+        print 'multiple item callback', idx
+
+    def on_toggle_callback(self, b ):
+        print 'toggle item callback', b
+
+    def on_callback(self ):
+        print 'item callback'
 
 
 if __name__ == "__main__":

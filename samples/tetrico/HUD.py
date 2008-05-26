@@ -5,6 +5,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 from cocos.layer import *
 from cocos.text import *
+from cocos.actions import *
 
 import pyglet
 from pyglet.gl import *
@@ -24,20 +25,67 @@ class BackgroundLayer( Layer ):
 
 class ScoreLayer( Layer ): 
     def __init__(self):
+        w,h = director.get_window_size()
         super( ScoreLayer, self).__init__()
-        self.label =  Label('Score:', font_size=48)
-        self.label.position=(20,600)
-        self.add( self.label )
+
+        # transparent layer
+        self.add( ColorLayer(32,32,32,32, width=w, height=48),z=-1 )
+
+        self.position = (0,h-48)
+
+        self.score=  Label('Score:', font_size=36,
+                font_name='Edit Undo Line BRK',
+                color=(255,255,255,255),
+                halign='left',
+                valign='bottom')
+        self.score.position=(0,0)
+        self.add( self.score)
+
+        self.lines=  Label('Lines:', font_size=36,
+                font_name='Edit Undo Line BRK',
+                color=(255,255,255,255),
+                halign='left',
+                valign='bottom')
+        self.lines.position=(260,0)
+        self.add( self.lines)
 
     def draw(self):
         super( ScoreLayer, self).draw()
-        self.label.element.text = 'Score: %4d' % status.score 
+        self.score.element.text = 'Score: %d' % status.score 
+        self.lines.element.text = 'Lines: %d' % max(0, (status.level.lines - status.lines))
         
         if status.next_piece:
             status.next_piece.draw()
 
+class MessageLayer( Layer ):
+    def show_message( self, msg, callback=None ):
+
+        w,h = director.get_window_size()
+
+        self.msg = Label( msg,
+            font_size=52,
+            font_name='Edit Undo Line BRK',
+            valign='center',
+            halign='center' )
+        self.msg.position=(w/2.0, h)
+
+        self.add( self.msg )
+
+        actions = Accelerate(MoveBy( (0,-h/2.0), duration=0.5)) + \
+                    Delay(1) +  \
+                    Accelerate(MoveBy( (0,-h/2.0), duration=0.5)) + \
+                    Hide()
+
+        if callback:
+            actions += CallFunc( callback )
+
+        self.msg.do( actions )
+
 class HUD( Layer ):
     def __init__( self ):
         super( HUD, self).__init__()
-        self.add( BackgroundLayer(), z=-1)
         self.add( ScoreLayer() )
+        self.add( MessageLayer(), name='msg' )
+
+    def show_message( self, msg, callback = None ):
+        self.get('msg').show_message( msg, callback )

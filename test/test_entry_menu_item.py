@@ -20,7 +20,7 @@ class MainMenu(Menu):
         super( MainMenu, self ).__init__("EntryMenuItem")
 
         l = []
-        l.append( EntryMenuItem('Name:', 'default', self.on_name) )
+        l.append( EntryMenuItem('Name:', self.on_name, 'default') )
         l.append( MenuItem('Quit', self.on_quit ) )
 
         self.create_menu( l )

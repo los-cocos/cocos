@@ -15,6 +15,8 @@ v0.3.0rc - XXXX
     It is no longer necessary to have an active grid to perform camera actions
   - Director: default projection is 3D (not glOrtho)
   - Layer: ColorLayer supports position, height and width
+  - Menu: MultipleMenuItem new API. Toggle and Entry items receives as 2nd
+      argument the callback func (to maintain API coherence)
   - Transitions: Changed API. There is no need to pass the src scene as a
 	  parameter. If omitted, the src scene will be current scene. 
 	  init( dst, duration=2, src=current_scene)
@@ -24,6 +26,8 @@ v0.3.0rc - XXXX
   - Transitions: added FadeBLTransition, FadeUpTransition, FadeDownTransition
   - Transition: added SplitColsTransition, SplitRowsTransition
   - Transitions: added test for transitions
+  - Samples: added Tetrico, a sample game. Added 'presentation', a sample
+	  presentation
 
 v0.3.0beta0 - May 5th, 2008
   - Actions: actions are defined in the actions/ folder

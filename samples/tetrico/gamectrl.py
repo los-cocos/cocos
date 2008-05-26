@@ -24,6 +24,10 @@ import gameover
 
 __all__ = ['Colors','GameCtrl']
 
+#
+# for simplicty, Model and Controller are together
+#
+
 class Colors( object ):
     colors = ['black','orange','red','yellow','cyan','magenta','green','blue',
             'black',        # don't remove
@@ -41,25 +45,25 @@ class GameCtrl( Layer, pyglet.event.EventDispatcher ):
 
     is_event_handler = True #: enable pyglet's events
 
-    def __init__(self):
+    def __init__(self, level):
         super(GameCtrl,self).__init__()
 
-        self.init_map()
+        self.used_key = False
+
+        self.set_new_level( level )
 
         self.random_block()
 
         self.schedule( self.step )
-        self.elapsed = 0
-        self.used_key = False
+        self.paused = False
 
-        status.score = 0
-
-
-        # effects that are queued
-        self.effects = []
-
-
+    #
+    # Controller part (of MVC)
+    #
     def on_key_press(self, k, m ):
+        if self.paused:
+            return False
+
         if self.used_key:
             return
 
@@ -81,7 +85,7 @@ class GameCtrl( Layer, pyglet.event.EventDispatcher ):
                     self.next_block()
 
             self.used_key = True
-            soundex.play("move.mp3")
+            self.dispatch_event("on_move_block")
             return True
 
         if k == key.SPACE:
@@ -94,10 +98,13 @@ class GameCtrl( Layer, pyglet.event.EventDispatcher ):
                 if not self.is_valid_block():
                     self.block.restore()
                     break
-            soundex.play("drop.mp3")
+            self.dispatch_event("on_drop_block")
 
 
     def on_text_motion(self, motion):
+        if self.paused:
+            return False
+
         if self.used_key:
             return
         if motion in (key.MOTION_DOWN, key.MOTION_RIGHT, key.MOTION_LEFT):
@@ -115,30 +122,42 @@ class GameCtrl( Layer, pyglet.event.EventDispatcher ):
                     self.next_block()
 
             self.used_key = True
-            soundex.play("move.mp3")
+            self.dispatch_event("on_move_block")
             return True
 
+    def pause_controller( self ):
+        '''removes the schedule timer and doesn't handler the keys'''
+        self.paused = True
+        self.unschedule( self.step )
+
+    def resume_controller( self ):
+        '''schedules  the timer and handles the keys'''
+        self.paused = False
+        self.schedule( self.step )
+
+    def step( self, dt ):
+        '''updates the engine'''
+        self.elapsed += dt
+        if self.elapsed > status.level.speed:
+            self.elapsed = 0
+            self.block.pos.y -= 1
+            if not self.is_valid_block():
+                self.block.pos.y += 1
+                self.next_block()
+
+    def draw( self ):
+        '''draw the map and the block'''
+        self.used_key = False
+
+    #
+    # Model part (of MVC)
+    #
     def init_map(self):
         '''creates a map'''
         self.map= {}
         for i in xrange( COLUMNS ):
             for j in xrange( ROWS ):
                 self.map[ (i,j) ] = 0
-
-    def draw( self ):
-        '''draw the map and the block'''
-        self.used_key = False
-
-    def step( self, dt ):
-        '''updates the engine'''
-        self.elapsed += dt
-        if self.elapsed > 0.5:
-
-            self.elapsed = 0
-            self.block.pos.y -= 1
-            if not self.is_valid_block():
-                self.block.pos.y += 1
-                self.next_block()
 
     def check_line(self):
         '''checks if the line is complete'''
@@ -152,10 +171,6 @@ class GameCtrl( Layer, pyglet.event.EventDispatcher ):
                     lines.append(j)
 
         lines.reverse()
-
-        if lines:
-            soundex.play("line.mp3")
-            status.score += pow(2, len(lines)) -1
 
         effects = []
         for j in lines:
@@ -173,8 +188,26 @@ class GameCtrl( Layer, pyglet.event.EventDispatcher ):
                     self.map[ (i,j) ] = self.map[ (i,j+1) ]
 
         if lines:
+            status.score += pow(2, len(lines)) -1
+            status.lines += len(lines)
             self.dispatch_event("on_line_complete", lines )
 
+            if status.lines >= status.level.lines:
+                self.pause_controller()
+                self.dispatch_event("on_level_complete")
+
+    def set_new_level( self, level ):
+        self.elapsed = 0
+        status.lines = 0
+        status.level = level
+        self.init_map()
+
+    def set_next_level( self ):
+        import levels
+        self.resume_controller()
+        l = levels.levels[ status.level.nro + 1 ]
+        self.set_new_level( l() )
+        
     def process_effects( self, effects ):
         d = {}
         elements = set(effects)
@@ -211,7 +244,9 @@ class GameCtrl( Layer, pyglet.event.EventDispatcher ):
         self.random_block()
 
         if not self.is_valid_block():
-            self.game_over()
+            self.pause_controller()
+            self.dispatch_event("on_game_over")
+
 
     def random_block( self ):
         '''puts the next block in stage'''
@@ -245,10 +280,6 @@ class GameCtrl( Layer, pyglet.event.EventDispatcher ):
                         return False
         return True
 
-    def game_over( self ):
-        self.unschedule( self.step )
-        self.parent.add( gameover.get_gameover(), z=2 )
-
 
 class Block( object ):
     '''Base class for all blocks'''
@@ -262,8 +293,8 @@ class Block( object ):
             for y in xrange( len( self._shape[x]) ):
                 if self._shape[x][y]:
                     r = random.random()
-                    if r < 0.2:
-                        color = random.choice( Colors.specials )
+                    if r < status.level.prob:
+                        color = random.choice( status.level.blocks )
                     else:
                         color = self.color
                     self._shape[x][y] = color
@@ -383,3 +414,7 @@ class Block_A( Block ):
 
 GameCtrl.register_event_type('on_special_effect')
 GameCtrl.register_event_type('on_line_complete')
+GameCtrl.register_event_type('on_level_complete')
+GameCtrl.register_event_type('on_game_over')
+GameCtrl.register_event_type('on_move_block')
+GameCtrl.register_event_type('on_drop_block')

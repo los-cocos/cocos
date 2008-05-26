@@ -231,8 +231,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="9.9843477"
-     inkscape:cx="368.7235"
-     inkscape:cy="736.66519"
+     inkscape:cx="344.57596"
+     inkscape:cy="776.8031"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -1149,7 +1149,7 @@
        x="335.73825"
        y="244.41031"
        ry="2.2337623"
-       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_speed_up.png"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_speed_down.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <rect
@@ -1160,37 +1160,23 @@
        x="336.59766"
        y="245.26974"
        ry="2.4063716"
-       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_speed_up.png"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_speed_down.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <path
        style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="M 362.55655,253.18178 C 351.27738,253.5304 341.62537,257.68387 336.9414,263.54852 L 336.9414,270.18215 C 336.9414,271.51528 338.03377,272.59927 339.41134,272.59927 L 361.08569,272.59927 C 362.46326,272.59927 363.58338,271.51528 363.58338,270.18215 L 363.58338,253.18178 C 363.24065,253.18537 362.89643,253.17128 362.55655,253.18178 z"
        id="path2524"
-       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_speed_up.png"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_speed_down.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
-    <text
-       xml:space="preserve"
-       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#383838;fill-opacity:0.78039216;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Wingdings;-inkscape-font-specification:Wingdings"
-       x="341.74658"
-       y="265.7179"
-       id="text2526"
-       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_speed_up.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
-         sodipodi:role="line"
-         id="tspan2528"
-         x="341.74658"
-         y="265.7179"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Wingdings;-inkscape-font-specification:Wingdings Bold">º</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:italic;font-weight:normal;fill:#535353;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans"
        x="336.57077"
        y="255.39655"
        id="text2532"
-       inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_speed_up.png"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_speed_down.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
@@ -1230,17 +1216,18 @@
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#535353;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Wingdings;-inkscape-font-specification:Wingdings"
-       x="341.84677"
-       y="297.96835"
+       x="-360.5802"
+       y="299.27042"
        id="text2542"
        inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_speed_down.png"
        inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
+       inkscape:export-ydpi="90"
+       transform="scale(-1,1)"><tspan
          sodipodi:role="line"
          id="tspan2544"
-         x="341.84677"
-         y="297.96835"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Wingdings;-inkscape-font-specification:Wingdings Bold;fill:#535353;fill-opacity:1">º</tspan></text>
+         x="-360.5802"
+         y="299.27042"
+         style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;text-anchor:start;fill:#535353;fill-opacity:1;font-family:Wingdings;-inkscape-font-specification:Wingdings Bold">¿</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:italic;font-weight:normal;fill:#535353;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Bitstream Vera Sans;-inkscape-font-specification:Sans"
@@ -1473,5 +1460,20 @@
        inkscape:export-filename="/Users/riq/cocos/samples/tetrico/data/block_waves.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#535353;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Wingdings;-inkscape-font-specification:Wingdings"
+       x="-360.36609"
+       y="267.54587"
+       id="text2558"
+       inkscape:export-filename="/Users/riq/src/los-cocos/trunk/samples/tetrico/data/block_speed_down.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       transform="scale(-1,1)"><tspan
+         sodipodi:role="line"
+         id="tspan2560"
+         x="-360.36609"
+         y="267.54587"
+         style="font-size:22px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;text-anchor:start;fill:#535353;fill-opacity:1;font-family:Wingdings;-inkscape-font-specification:Wingdings Bold">¿</tspan></text>
   </g>
 </svg>

@@ -16,6 +16,7 @@ from cocos.actions import *
 
 # tetrico related
 from gamectrl import *
+import levels
 from constants import *
 import soundex
 from HUD import *
@@ -45,7 +46,15 @@ class GameView( Layer ):
         super(GameView,self).on_enter()
 
         self.ctrl = weakref.ref( self.parent.get('controller') )
-        self.ctrl().push_handlers( self.on_line_complete, self.on_special_effect )
+        self.hud = self.parent.get('hud')
+
+        self.ctrl().push_handlers( self.on_line_complete, \
+                                    self.on_special_effect, \
+                                    self.on_game_over, \
+                                    self.on_level_complete, \
+                                    self.on_move_block, \
+                                    self.on_drop_block, \
+                                    )
 
         soundex.set_music('tetris.mp3')
         soundex.play_music()
@@ -55,7 +64,24 @@ class GameView( Layer ):
         soundex.stop_music()
 
     def on_line_complete( self, lines ):
-        print 'on_line_complete:' , lines
+        soundex.play('line.mp3')
+        return True
+
+    def on_move_block(self ):
+        soundex.play('move.mp3')
+        return True
+
+    def on_drop_block(self ):
+        soundex.play('drop.mp3')
+        return True
+
+    def on_level_complete( self ):
+        soundex.play('level_complete.mp3')
+        self.hud.show_message('Level complete', self.ctrl().set_next_level)
+        return True
+
+    def on_game_over( self ):
+        print 'on_game_over'
         return True
 
     def on_special_effect( self, effects ):
@@ -82,7 +108,8 @@ class GameView( Layer ):
         elif e == Colors.TWIRL:
             a = Twirl( grid=self.grid_size, duration=self.duration)
         elif e == Colors.LENS:
-            a = Lens3D( grid=self.grid_size, duration=self.duration)
+            w,h = director.get_window_size()
+            a = Lens3D( radius=h/2, grid=self.grid_size, duration=self.duration)
         elif e == Colors.SPEED_UP:
             a = Delay( 0 )
         elif e == Colors.SPEED_DOWN:
@@ -111,8 +138,13 @@ class GameView( Layer ):
 def get_newgame():
     '''returns the game scene'''
     scene = Scene()
-    scene.add( GameCtrl(), z=1, name="controller" )
+
+    # init model and controller
+    scene.add( GameCtrl( levels.Level1() ), z=1, name="controller" )
+
+    # init view
+    scene.add( HUD(), z=3, name="hud" )
+    scene.add( BackgroundLayer(), z=0, name="background" )
     scene.add( GameView(), z=2, name="view" )
-    scene.add( HUD(), z=1 )
 
     return scene

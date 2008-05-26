@@ -176,7 +176,7 @@ class OptionMenu(Menu):
 
         items = []
         items.append( MenuItem('Fullscreen', self.on_fullscreen) )
-        items.append( ToggleMenuItem('Show FPS: ', True, self.on_show_fps) )
+        items.append( ToggleMenuItem('Show FPS: ', self.on_show_fps, True) )
         items.append( MenuItem('OK', self.on_quit) )
         self.create_menu( items, shake(), shake_back() )
 

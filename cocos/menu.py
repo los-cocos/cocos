@@ -325,20 +325,20 @@ class MenuItem( CocosNode ):
     unselected_effect = None
     activated_effect = None
 
-    def __init__(self, label, activate_func):
+    def __init__(self, label, callback_func):
         """Creates a new menu item
 
         :Parameters:
             `label` : string
                 The label the of the menu item
-            `activate_func` : function
+            `callabck_func` : function
                 The callback function
         """
 
         super( MenuItem, self).__init__()
 
         self.label = label
-        self.activate_func = activate_func
+        self.callback_func = callback_func
 
         self.is_selected = False
 
@@ -394,8 +394,8 @@ class MenuItem( CocosNode ):
         glPopMatrix()
 
     def on_key_press(self, symbol, modifiers):
-        if symbol == key.ENTER and self.activate_func:
-            self.activate_func()
+        if symbol == key.ENTER and self.callback_func:
+            self.callback_func()
             return True
 
     def on_text( self, text ):
@@ -404,7 +404,7 @@ class MenuItem( CocosNode ):
     def is_inside_box( self, x, y ):
         """Returns whether the point (x,y) is inside the menu item.
 
-        :rtype: Boolean
+        :rtype: bool 
         """
         (ax,ay,bx,by) = self.get_box()
         if( x >= ax and x <= bx and y >= ay and y <= by ):
@@ -429,65 +429,84 @@ class MenuItem( CocosNode ):
 
 class MultipleMenuItem( MenuItem ):
     """A menu item for switching between multiple values.
-    
-    toggle_func will be called for switching when selected, and
-    get_value_func should be a function returning the value as a
-    string"""
 
-    def __init__(self, label, toggle_func, get_value_func):
+    Example::
+
+        self.volumes = ['Mute','10','20','30','40','50','60','70','80','90','100']
+
+        items.append( MultipleMenuItem(
+                        'SFX volume: ', 
+                        self.on_sfx_volume,
+                        self.volumes,
+                        8 )
+    """
+
+    def __init__(self, label, callback_func, items, default_item=0):
         """Creates a Toggle Menu Item
 
         :Parameters:
             `label` : string
                 Item's label
-            `toggle_func` : function
+            `callback_func` : function
                 Callback function
-            `get_value_func` : function
-                This function returns the item's
-                actual value as a String
+            `items` : list
+                List of strings containing the values 
+            `default_item` : integer
+                Default item of the list. It is an index of the list. Default: 0
         """
-        self.toggle_label = label
-        self.toggle_func = toggle_func
-        self.get_value_func = get_value_func
-        self.value = get_value_func()
-        super( MultipleMenuItem, self).__init__( self._get_label(), None )
-
+        self.my_label = label
+        self.items = items
+        self.idx = default_item
+        if self.idx < 0 or self.idx >= len(self.items):
+            raise Exception("Index out of bounds")
+        super( MultipleMenuItem, self).__init__( self._get_label(), callback_func )
 
     def _get_label(self):
-        return self.toggle_label+self.get_value_func()
+        return self.my_label+self.items[self.idx]
 
     def on_key_press(self, symbol, modifiers):
-        if symbol in ( key.LEFT, key.RIGHT, key.ENTER):
-            self.toggle_func( )
+        if symbol == key.LEFT:
+            self.idx = max(0, self.idx-1)
+        elif symbol == key.RIGHT:
+            self.idx = min(len(self.items)-1, self.idx+1)
+
+        if symbol in (key.LEFT, key.RIGHT):
             self.text.text = self._get_label()
             self.text_selected.text = self._get_label()
+            self.callback_func( self.idx )
             return True
 
 class ToggleMenuItem( MultipleMenuItem ):
-    """A menu item for a boolean toggle option.
-    
-    When selected, ``self.value`` is toggled, the callback function is
-    called with ``self.value`` as argument."""
+    '''A menu item for a boolean toggle option.  
 
-    def __init__(self, label, value, toggle_func):
+    Example::
+
+        items.append( ToggleMenuItem('Show FPS:', self.on_show_fps, director.show_FPS) )
+    '''
+
+    def __init__(self, label, callback_func, value=False ):
         """Creates a Toggle Menu Item
 
         :Parameters:
             `label` : string
                 Item's label
-            `value` : Bool
-                Default value: False is OFF, True is ON
-            `toggle_func` : function
+            `callback_func` : function
                 Callback function
+            `value` : bool
+                Default value of the item: False is 'OFF', True is 'ON'. Default:False
         """
-        self.__value = value
-        
-        def switch_value():
-            self.__value=not self.__value
-            toggle_func(self.__value)
-    
-        super(ToggleMenuItem, self).__init__( label, switch_value, 
-                lambda :['OFF','ON'][int(self.__value)] )          
+
+        super(ToggleMenuItem, self).__init__( label, callback_func, ['OFF','ON'],  int(value) )
+
+    def on_key_press( self, symbol, mod ):
+        if symbol in (key.LEFT, key.RIGHT, key.ENTER):
+            self.idx += 1
+            if self.idx > 1:
+                self.idx = 0
+            self.text.text = self._get_label()
+            self.text_selected.text = self._get_label()
+            self.callback_func( int(self.idx) )
+            return True
 
 class EntryMenuItem(MenuItem):
     """A menu item for entering a value.
@@ -498,21 +517,20 @@ class EntryMenuItem(MenuItem):
     value = property(lambda self: u''.join(self._value),
                      lambda self, v: setattr(self, '_value', list(v)))
 
-    def __init__(self, label, value, set_func):
+    def __init__(self, label, callback_func, value ):
         """Creates an Entry Menu Item
 
         :Parameters:
             `label` : string
                 Item's label
+            `callback_func` : function
+                Callback function taking one argument.
             `value` : String
                 Default value: any string
-            `set_func` : function
-                Callback function taking one argument.
         """
-        self.set_func = set_func
         self._value = list(value)
         self._label = label
-        super(EntryMenuItem, self).__init__( "%s %s" %(label,value), None)
+        super(EntryMenuItem, self).__init__( "%s %s" %(label,value), callback_func )
 
     def on_text( self, text ):
         self._value.append(text)
@@ -532,7 +550,7 @@ class EntryMenuItem(MenuItem):
         new_text = u"%s %s" % (self._label, self.value)
         self.text.text = new_text
         self.text_selected.text = new_text
-        self.set_func(self.value)
+        self.callback_func(self.value)
 
 
 def shake():
