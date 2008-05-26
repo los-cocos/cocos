@@ -110,7 +110,9 @@ class ColorLayer(Layer):
                 -self.children_anchor_x, 
                 -self.children_anchor_y,
                  0 )
+        glPushAttrib(GL_CURRENT_BIT)
         self._batch.draw()
+        glPopAttrib()
         glPopMatrix()
 
     def _update_color(self):
