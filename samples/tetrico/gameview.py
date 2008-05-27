@@ -117,10 +117,7 @@ class GameView( Layer ):
 
         # basic actions
         if e == Colors.ROTATE:
-            diff = 0
-            if self.rotation > 0:
-                diff = 360-self.rotation
-            a = RotateBy( diff + 360 * times, duration=self.duration * times)
+            a = RotateBy( 360 * times, duration=self.duration * times)
         elif e == Colors.SCALE:
             a = ScaleTo( 0.5, duration=self.duration/2.0) + ScaleTo(1, duration=self.duration/2.0) 
             a *= times
