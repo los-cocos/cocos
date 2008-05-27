@@ -3,53 +3,54 @@ from gamectrl import *
 class Level( object ):
     pass
 
-class Level1( Level ):
-    speed = 0.5
-    blocks = [ Colors.LIQUID ]
-    lines = 7
-    nro = 0
-    prob = 0.05
 
-class Level2( Level ):
-    speed = 0.45
-    blocks = [ Colors.LENS, Colors.SCALE]
-    lines = 8
-    nro = 1
+
+class LevelLens( Level ):
+    speed = 0.5
+    blocks = [ Colors.LENS ]
+    lines = 10
     prob = 0.07
 
-class Level3( Level ):
+class LevelScale( Level ):
+    speed = 0.5
+    blocks = [ Colors.SCALE ]
+    lines = 10
+    prob = 0.07
+
+class LevelLiquid( Level ):
+    speed = 0.45
+    blocks = [ Colors.LIQUID ]
+    lines = 12
+    prob = 0.07
+
+class LevelWaves( Level ):
     speed = 0.4
-    blocks = [ Colors.WAVES, Colors.SPEED_UP, Colors.SPEED_DOWN]
-    lines = 9
-    nro = 2
+    blocks = [ Colors.WAVES ]
+    lines = 14
     prob = 0.09
 
-class Level4( Level ):
+class LevelTwirl( Level ):
     speed = 0.35
-    blocks = [ Colors.TWIRL, Colors.SCALE, Colors.ROTATE, Colors.SPEED_DOWN, Colors.SPEED_UP]
-    lines = 11
-    nro = 3
+    blocks = [ Colors.TWIRL ]
+    lines = 16
     prob = 0.11
 
-class Level5( Level ):
+class LevelRotate( Level ):
     speed = 0.3
-    blocks = [ Colors.TWIRL, Colors.LIQUID, Colors.SCALE, Colors.ROTATE, Colors.SPEED_DOWN, Colors.SPEED_UP]
-    lines = 13
-    nro = 4
+    blocks = [ Colors.ROTATE ]
+    lines = 18
     prob = 0.13
 
-class Level6( Level ):
+class LevelWavesRot( Level ):
     speed = 0.25
-    blocks = [ Colors.WAVES, Colors.TWIRL, Colors.LIQUID, Colors.SCALE, Colors.ROTATE, Colors.SPEED_DOWN, Colors.SPEED_UP]
-    lines = 15
-    nro = 5
+    blocks = [ Colors.WAVES, Colors.ROTATE]
+    lines = 20
     prob = 0.15
 
-class Level7( Level ):
+class LevelTwirlZoom( Level ):
     speed = 0.2
-    blocks = [ Colors.LIQUID, Colors.WAVES, Colors.TWIRL, Colors.LIQUID, Colors.SCALE, Colors.ROTATE, Colors.SPEED_DOWN, Colors.SPEED_UP]
-    lines = 17
-    nro = 6
+    blocks = [ Colors.TWIRL, Colors.SCALE ]
+    lines = 22
     prob = 0.17
 
-levels = [Level1, Level2, Level3, Level4, Level5, Level6, Level7]
+levels = [ LevelLens, LevelScale, LevelLiquid, LevelWaves, LevelTwirl, LevelRotate, LevelWavesRot, LevelTwirlZoom ]

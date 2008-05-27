@@ -19,8 +19,6 @@ from cocos.euclid import Point2
 # tetrico related
 from constants import *
 from status import status
-import soundex
-import gameover
 
 __all__ = ['Colors','GameCtrl']
 
@@ -31,11 +29,11 @@ __all__ = ['Colors','GameCtrl']
 class Colors( object ):
     colors = ['black','orange','red','yellow','cyan','magenta','green','blue',
             'black',        # don't remove
-            'rotate','scale','liquid','waves','twirl','lens','speed_up','speed_down',
+            'rotate','scale','liquid','waves','twirl','lens',
             'black' ]       # don't remove
 
     BLACK,ORANGE,RED,YELLOW,CYAN,MAGENTA,GREEN,BLUE, LAST_COLOR,  \
-        ROTATE, SCALE, LIQUID, WAVES, TWIRL, LENS, SPEED_UP, SPEED_DOWN, LAST_SPECIAL = range( len(colors) )
+        ROTATE, SCALE, LIQUID, WAVES, TWIRL, LENS, LAST_SPECIAL = range( len(colors) )
 
     images = [ pyglet.resource.image('block_%s.png' % color) for color in colors ]
     
@@ -45,17 +43,26 @@ class GameCtrl( Layer, pyglet.event.EventDispatcher ):
 
     is_event_handler = True #: enable pyglet's events
 
-    def __init__(self, level):
+    def __init__(self):
         super(GameCtrl,self).__init__()
 
         self.used_key = False
+        self.init()
+        self.paused = True
 
-        self.set_new_level( level )
+        # current block
+        self.block = None
 
-        self.random_block()
+        # grid
+        self.map = {}
 
-        self.schedule( self.step )
-        self.paused = False
+        # phony level
+        import levels
+        status.level = levels.levels[0]
+
+    def start( self ):
+        self.resume_controller()
+        self.set_next_level()
 
     #
     # Controller part (of MVC)
@@ -194,19 +201,38 @@ class GameCtrl( Layer, pyglet.event.EventDispatcher ):
 
             if status.lines >= status.level.lines:
                 self.pause_controller()
-                self.dispatch_event("on_level_complete")
+                if status.level_idx + 1 >= len( levels.levels):
+                    self.dispatch_event("on_win")
+                else:
+                    self.dispatch_event("on_level_complete")
 
-    def set_new_level( self, level ):
+    def init( self ):
         self.elapsed = 0
         status.lines = 0
-        status.level = level
         self.init_map()
+
 
     def set_next_level( self ):
         import levels
         self.resume_controller()
-        l = levels.levels[ status.level.nro + 1 ]
-        self.set_new_level( l() )
+
+        if status.level_idx is None:
+            status.level_idx = 0
+        else:
+            status.level_idx += 1
+
+
+        l = levels.levels[ status.level_idx ]
+
+        self.init()
+        status.level = l()
+
+        # eliminate current and next
+        self.random_block()
+        self.random_block()
+
+        self.dispatch_event("on_new_level")
+
         
     def process_effects( self, effects ):
         d = {}
@@ -415,6 +441,8 @@ class Block_A( Block ):
 GameCtrl.register_event_type('on_special_effect')
 GameCtrl.register_event_type('on_line_complete')
 GameCtrl.register_event_type('on_level_complete')
+GameCtrl.register_event_type('on_new_level')
 GameCtrl.register_event_type('on_game_over')
 GameCtrl.register_event_type('on_move_block')
 GameCtrl.register_event_type('on_drop_block')
+GameCtrl.register_event_type('on_win')

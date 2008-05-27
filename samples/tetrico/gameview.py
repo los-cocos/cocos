@@ -4,8 +4,9 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 # stdlib
-import weakref
 
+
+#pyglet
 from pyglet.gl import *
 
 # cocos2d related
@@ -17,6 +18,7 @@ from cocos.actions import *
 # tetrico related
 from gamectrl import *
 import levels
+import gameover
 from constants import *
 import soundex
 from HUD import *
@@ -26,7 +28,7 @@ __all__ = ['get_newgame']
 
 class GameView( Layer ):
 
-    def __init__(self):
+    def __init__(self, ctrl, hud ):
         super(GameView,self).__init__()
 
         width, height = director.get_window_size()
@@ -39,22 +41,26 @@ class GameView( Layer ):
         self.transform_anchor = ( COLUMNS*SQUARE_SIZE /2, ROWS * SQUARE_SIZE/2)
 
         # background layer to delimit the pieces visually
-        cl = ColorLayer( 112,66,20,30, width = COLUMNS * SQUARE_SIZE, height=ROWS * SQUARE_SIZE )
+        cl = ColorLayer( 112,66,20,50, width = COLUMNS * SQUARE_SIZE, height=ROWS * SQUARE_SIZE )
         self.add( cl, z=-1)
 
-    def on_enter(self):
-        super(GameView,self).on_enter()
+        self.ctrl = ctrl
+        self.hud = hud
 
-        self.ctrl = weakref.ref( self.parent.get('controller') )
-        self.hud = self.parent.get('hud')
-
-        self.ctrl().push_handlers( self.on_line_complete, \
+        self.ctrl.push_handlers( self.on_line_complete, \
                                     self.on_special_effect, \
                                     self.on_game_over, \
                                     self.on_level_complete, \
                                     self.on_move_block, \
                                     self.on_drop_block, \
+                                    self.on_new_level, \
+                                    self.on_win, \
                                     )
+
+        self.hud.show_message( 'GET READY', self.ctrl.start )
+
+    def on_enter(self):
+        super(GameView,self).on_enter()
 
         soundex.set_music('tetris.mp3')
         soundex.play_music()
@@ -77,46 +83,52 @@ class GameView( Layer ):
 
     def on_level_complete( self ):
         soundex.play('level_complete.mp3')
-        self.hud.show_message('Level complete', self.ctrl().set_next_level)
+        self.hud.show_message('Level complete', self.ctrl.set_next_level)
+        return True
+
+    def on_new_level( self ):
+        soundex.play('go.mp3')
+        self.stop()
+        self.do( StopGrid() )
+        self.rotation = 0
+        self.scale = 1
         return True
 
     def on_game_over( self ):
-        print 'on_game_over'
+        self.parent.add( gameover.GameOver(win=False), z=10 )
+        return True
+
+    def on_win( self ):
+        self.parent.add( gameover.GameOver(win=True), z=10 )
         return True
 
     def on_special_effect( self, effects ):
-        print 'on_special_effect:' , effects
-
         for e in effects.iterkeys():
-            a = self.get_action(e)
-            self.do( a * effects[e] )
+            a = self.get_action(e, effects[e])
+            self.do( a )
 
-    def get_action( self, e ):
+    def get_action( self, e, times=1 ):
         '''returns the actions for a specific effects'''
 
         # basic actions
         if e == Colors.ROTATE:
-            a = RotateBy( 360, duration=self.duration)
+            a = RotateBy( 360 * times, duration=self.duration * times)
         elif e == Colors.SCALE:
-            a = ScaleTo( 0.5, duration=self.duration/2.0) + ScaleTo(1, duration=self.duration/2.0)
+            a = ScaleTo( 0.5, duration=self.duration/2.0) + ScaleTo(1, duration=self.duration/2.0) 
+            a *= times
 
         # Grid actions
         elif e == Colors.LIQUID:
-            a = Liquid( grid=self.grid_size, duration=self.duration)
+            a = Liquid( grid=self.grid_size, waves=self.duration*times // 2, duration=self.duration * times) + StopGrid()
         elif e == Colors.WAVES:
-            a = Waves( grid=self.grid_size, duration=self.duration)
+            a = Waves( grid=self.grid_size, waves=self.duration*times // 2, duration=self.duration * times) + StopGrid()
         elif e == Colors.TWIRL:
-            a = Twirl( grid=self.grid_size, duration=self.duration)
+            a = Twirl( grid=self.grid_size, twirls=self.duration*times // 2, duration=self.duration * times ) + StopGrid()
         elif e == Colors.LENS:
             w,h = director.get_window_size()
-            a = Lens3D( radius=h/2, grid=self.grid_size, duration=self.duration)
-        elif e == Colors.SPEED_UP:
-            a = Delay( 0 )
-        elif e == Colors.SPEED_DOWN:
-            a = Delay( 0 )
+            a = Lens3D( radius=h//2, grid=self.grid_size, duration=self.duration * times) + StopGrid()
         else:
             raise Exception("Effect not implemented: %s" % str(e) )
-            
         return a
 
     def draw( self ):
@@ -127,10 +139,12 @@ class GameView( Layer ):
 
         for i in xrange( COLUMNS ):
             for j in xrange( ROWS ):
-                color = self.ctrl().map.get( (i,j) )
+                color = self.ctrl.map.get( (i,j) )
                 if color:
                     Colors.images[color].blit( i * SQUARE_SIZE, j* SQUARE_SIZE)
-        self.ctrl().block.draw()
+
+        if self.ctrl.block:
+            self.ctrl.block.draw()
 
         glPopMatrix()
 
@@ -140,11 +154,13 @@ def get_newgame():
     scene = Scene()
 
     # init model and controller
-    scene.add( GameCtrl( levels.Level1() ), z=1, name="controller" )
+    ctrl = GameCtrl()
+    scene.add( ctrl, z=1, name="controller" )
 
     # init view
-    scene.add( HUD(), z=3, name="hud" )
+    hud = HUD()
+    scene.add( hud, z=3, name="hud" )
     scene.add( BackgroundLayer(), z=0, name="background" )
-    scene.add( GameView(), z=2, name="view" )
+    scene.add( GameView( ctrl, hud ), z=2, name="view" )
 
     return scene
