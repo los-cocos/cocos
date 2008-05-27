@@ -29,7 +29,7 @@ if __name__ == "__main__":
     main_scene.add( BackgroundLayer(), z=0 )
 
     # important:  maintain the aspect ratio in the grid
-    e = Lens3D( lens_effect=0.9, radius=240, grid=(64,48), duration=100 )
+    e = Lens3D( center=(320,200), lens_effect=0.9, radius=240, grid=(64,48), duration=100 )
     main_scene.do( e )
 
     director.run (main_scene)

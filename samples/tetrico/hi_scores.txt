@@ -1,0 +1,10 @@
+150,grossini,5
+100,kathia,4
+50,tamara,3
+0,you,0
+0,you,0
+0,you,0
+0,you,0
+0,you,0
+0,you,0
+0,you,0

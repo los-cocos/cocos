@@ -46,13 +46,25 @@ class ScoreLayer( Layer ):
                 color=(255,255,255,255),
                 halign='left',
                 valign='bottom')
-        self.lines.position=(260,0)
+        self.lines.position=(235,0)
         self.add( self.lines)
+
+        self.lvl=  Label('Lvl:', font_size=36,
+                font_name='Edit Undo Line BRK',
+                color=(255,255,255,255),
+                halign='left',
+                valign='bottom')
+
+        self.lvl.position=(450,0)
+        self.add( self.lvl)
 
     def draw(self):
         super( ScoreLayer, self).draw()
-        self.score.element.text = 'Score: %d' % status.score 
-        self.lines.element.text = 'Lines: %d' % max(0, (status.level.lines - status.lines))
+        self.score.element.text = 'Score:%d' % status.score 
+        self.lines.element.text = 'Lines:%d' % max(0, (status.level.lines - status.lines))
+
+        lvl = status.level_idx or 0
+        self.lvl.element.text = 'Lvl:%d' % lvl
         
         if status.next_piece:
             status.next_piece.draw()

@@ -1,9 +1,7 @@
-from gamectrl import *
+from colors import *
 
 class Level( object ):
     pass
-
-
 
 class LevelLens( Level ):
     speed = 0.5

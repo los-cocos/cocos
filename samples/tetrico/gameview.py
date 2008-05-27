@@ -17,18 +17,20 @@ from cocos.actions import *
 
 # tetrico related
 from gamectrl import *
+from gamemodel import *
 import levels
 import gameover
 from constants import *
 import soundex
 from HUD import *
+from colors import *
 
 
 __all__ = ['get_newgame']
 
 class GameView( Layer ):
 
-    def __init__(self, ctrl, hud ):
+    def __init__(self, model, hud ):
         super(GameView,self).__init__()
 
         width, height = director.get_window_size()
@@ -44,10 +46,10 @@ class GameView( Layer ):
         cl = ColorLayer( 112,66,20,50, width = COLUMNS * SQUARE_SIZE, height=ROWS * SQUARE_SIZE )
         self.add( cl, z=-1)
 
-        self.ctrl = ctrl
+        self.model = model
         self.hud = hud
 
-        self.ctrl.push_handlers( self.on_line_complete, \
+        self.model.push_handlers( self.on_line_complete, \
                                     self.on_special_effect, \
                                     self.on_game_over, \
                                     self.on_level_complete, \
@@ -57,7 +59,7 @@ class GameView( Layer ):
                                     self.on_win, \
                                     )
 
-        self.hud.show_message( 'GET READY', self.ctrl.start )
+        self.hud.show_message( 'GET READY', self.model.start )
 
     def on_enter(self):
         super(GameView,self).on_enter()
@@ -83,7 +85,7 @@ class GameView( Layer ):
 
     def on_level_complete( self ):
         soundex.play('level_complete.mp3')
-        self.hud.show_message('Level complete', self.ctrl.set_next_level)
+        self.hud.show_message('Level complete', self.model.set_next_level)
         return True
 
     def on_new_level( self ):
@@ -110,9 +112,15 @@ class GameView( Layer ):
     def get_action( self, e, times=1 ):
         '''returns the actions for a specific effects'''
 
+        w,h= director.get_window_size()
+        center = (w/2.0, (ROWS * SQUARE_SIZE) / 2.0  )
+
         # basic actions
         if e == Colors.ROTATE:
-            a = RotateBy( 360 * times, duration=self.duration * times)
+            diff = 0
+            if self.rotation > 0:
+                diff = 360-self.rotation
+            a = RotateBy( diff + 360 * times, duration=self.duration * times)
         elif e == Colors.SCALE:
             a = ScaleTo( 0.5, duration=self.duration/2.0) + ScaleTo(1, duration=self.duration/2.0) 
             a *= times
@@ -123,7 +131,7 @@ class GameView( Layer ):
         elif e == Colors.WAVES:
             a = Waves( grid=self.grid_size, waves=self.duration*times // 2, duration=self.duration * times) + StopGrid()
         elif e == Colors.TWIRL:
-            a = Twirl( grid=self.grid_size, twirls=self.duration*times // 2, duration=self.duration * times ) + StopGrid()
+            a = Twirl( grid=self.grid_size, center=center, twirls=self.duration*times // 2, duration=self.duration * times ) + StopGrid()
         elif e == Colors.LENS:
             w,h = director.get_window_size()
             a = Lens3D( radius=h//2, grid=self.grid_size, duration=self.duration * times) + StopGrid()
@@ -139,12 +147,12 @@ class GameView( Layer ):
 
         for i in xrange( COLUMNS ):
             for j in xrange( ROWS ):
-                color = self.ctrl.map.get( (i,j) )
+                color = self.model.map.get( (i,j) )
                 if color:
                     Colors.images[color].blit( i * SQUARE_SIZE, j* SQUARE_SIZE)
 
-        if self.ctrl.block:
-            self.ctrl.block.draw()
+        if self.model.block:
+            self.model.block.draw()
 
         glPopMatrix()
 
@@ -153,14 +161,25 @@ def get_newgame():
     '''returns the game scene'''
     scene = Scene()
 
-    # init model and controller
-    ctrl = GameCtrl()
+    # model
+    model = GameModel()
+
+    # controller
+    ctrl = GameCtrl( model )
+
+    # view
+    hud = HUD()
+    view = GameView( model, hud )
+
+    # set controller in model
+    model.set_controller( ctrl )
+
+    # add controller
     scene.add( ctrl, z=1, name="controller" )
 
-    # init view
-    hud = HUD()
+    # add view
     scene.add( hud, z=3, name="hud" )
     scene.add( BackgroundLayer(), z=0, name="background" )
-    scene.add( GameView( ctrl, hud ), z=2, name="view" )
+    scene.add( view, z=2, name="view" )
 
     return scene

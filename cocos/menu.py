@@ -209,7 +209,6 @@ class Menu(Layer):
         self.font_item['halign'] = self.menu_halign
         self.font_item['valign'] = 'center'
 
-        self._generate_title()
         self._generate_items()
         self.selected_index = 0
         self.children[ self.selected_index ][1].is_selected = True
@@ -270,7 +269,10 @@ class Menu(Layer):
             i.valign = self.menu_valign
             z += 1
 
-        self._build_items()
+        if items:
+            self._build_items()
+
+        self._generate_title()
 
     def draw( self ):
         self.title_label.draw()
@@ -301,7 +303,12 @@ class Menu(Layer):
             return True
         else:
             # send the menu item the rest of the keys
-            return self.children[self.selected_index][1].on_key_press(symbol, modifiers)
+            ret = self.children[self.selected_index][1].on_key_press(symbol, modifiers)
+
+            # play sound if key was handled
+            if ret and self.activate_sound:
+                self.activate_sound.play()
+            return ret
 
     def on_mouse_release( self, x, y, buttons, modifiers ):
         (x,y) = director.get_virtual_coordinates(x,y)
@@ -467,10 +474,10 @@ class MultipleMenuItem( MenuItem ):
     def on_key_press(self, symbol, modifiers):
         if symbol == key.LEFT:
             self.idx = max(0, self.idx-1)
-        elif symbol == key.RIGHT:
+        elif symbol in (key.RIGHT, key.ENTER):
             self.idx = min(len(self.items)-1, self.idx+1)
 
-        if symbol in (key.LEFT, key.RIGHT):
+        if symbol in (key.LEFT, key.RIGHT, key.ENTER):
             self.text.text = self._get_label()
             self.text_selected.text = self._get_label()
             self.callback_func( self.idx )

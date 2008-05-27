@@ -22,4 +22,12 @@ class Status( object ):
         # total lines completed
         self.tot_lines = 0
 
+    def reset( self ):
+        self.score = 0
+        self.next_piece = None
+        self.level = None
+        self.level_idx = None
+        self.lines = 0
+        self.tot_lines = 0
+
 status = Status()

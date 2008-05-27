@@ -14,6 +14,8 @@ from cocos.actions import *
 
 # tetrico related
 import soundex
+import hiscore
+import status
 
 
 class GameOver( ColorLayer ):
@@ -33,7 +35,7 @@ class GameOver( ColorLayer ):
 
         label = Label(msg,
                     font_name='Edit Undo Line BRK',
-                    font_size=48,
+                    font_size=54,
                     valign='center',
                     halign='center' )
         label.position =  ( w/2.0, h/2.0 )
@@ -49,7 +51,52 @@ class GameOver( ColorLayer ):
         
         label.do( Repeat( Delay(5) + effect ) )
 
+        if hiscore.hiscore.is_in( status.status.score ):
+            self.hi_score = True
+
+            label = Label('Enter your name:',
+                        font_name='Edit Undo Line BRK',
+                        font_size=36,
+                        valign='center',
+                        halign='center',
+                        color=(32,32,32,255),
+                        )
+            label.position =  ( w/2.0, h/2.0 )
+            label.position = (w//2, 300)
+            self.add( label )
+
+            self.name= Label('',
+                        font_name='Edit Undo Line BRK',
+                        font_size=36,
+                        valign='center',
+                        halign='center',
+                        color=(32,32,32,255),
+                        )
+            self.name.position=(w//2,250)
+            self.add(self.name)
+        else:
+            self.hi_score = False
+
     def on_key_press( self, k, m ):
-        if k == key.ENTER or k == key.ESCAPE:
+        if not self.hi_score and (k == key.ENTER or k == key.ESCAPE):
             director.pop()
-        return True
+            return True
+
+        if self.hi_score:
+            if k == key.BACKSPACE:
+                self.name.element.text = self.name.element.text[0:-1]
+                return True
+            elif k == key.ENTER:
+                hiscore.hiscore.add( status.status.score,self.name.element.text,status.status.level_idx )
+                director.pop()
+                return True
+        return False
+
+    def on_text( self, t ):
+        if not self.hi_score:
+            return False
+
+        if t=='\r':
+            return True
+
+        self.name.element.text += t

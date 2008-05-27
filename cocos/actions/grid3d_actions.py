@@ -492,7 +492,7 @@ class Twirl( Grid3DAction ):
     def update( self, t ):
             
         cx = self.position.x
-        cy = self.position.x
+        cy = self.position.y
 
         for i in xrange(0, self.grid.x+1):
             for j in xrange(0, self.grid.y+1):

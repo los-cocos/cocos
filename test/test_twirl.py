@@ -30,5 +30,5 @@ if __name__ == "__main__":
 
     main_scene.add( BackgroundLayer(), z=0 )
 
-    main_scene.do( Twirl( twirls=2, amplitude=1, grid=(32,24), duration=10) )
+    main_scene.do( Twirl( twirls=2, center=(320,240), amplitude=1, grid=(32,24), duration=10) )
     director.run (main_scene)

@@ -20,6 +20,111 @@ from pyglet.window import key
 
 from HUD import BackgroundLayer
 import soundex
+import hiscore
+
+class ScoresLayer( ColorLayer):
+
+    FONT_SIZE=30
+
+    is_event_handler = True #: enable pyglet's events
+
+    def __init__(self):
+
+        w,h = director.get_window_size()
+        super( ScoresLayer,self).__init__( 32,32,32,16, width=w, height=h-86)
+
+        self.font_title = {}
+
+        # you can override the font that will be used for the title and the items
+        self.font_title['font_name'] = 'Edit Undo Line BRK'
+        self.font_title['font_size'] = 72
+        self.font_title['color'] = (204,164,164,255)
+        self.font_title['valign'] ='top'
+        self.font_title['halign'] ='center'
+
+        title = Label('TETRICO', **self.font_title )
+
+        title.position=(w/2.0,h)
+
+        self.add(title,z=1)
+
+        self.table = None
+
+    def on_enter( self ):
+        super(ScoresLayer,self).on_enter()
+
+        scores = hiscore.hiscore.get()
+
+        if self.table:
+            self.remove_old()
+
+        self.table =[]
+        for idx,s in enumerate(scores):
+
+            pos= Label( '%d:' % (idx+1), font_name='Edit Undo Line BRK',
+                        font_size=self.FONT_SIZE,
+                        valign='top',
+                        halign='left',
+                        color=(255,255,255,255) )
+
+            name = Label( s[1], font_name='Edit Undo Line BRK',
+                        font_size=self.FONT_SIZE,
+                        valign='top',
+                        halign='left',
+                        color=(255,255,255,255) )
+
+            score = Label( str(s[0]), font_name='Edit Undo Line BRK',
+                        font_size=self.FONT_SIZE,
+                        valign='top',
+                        halign='right',
+                        color=(255,255,255,255) )
+
+            lvl = Label( str(s[2]), font_name='Edit Undo Line BRK',
+                        font_size=self.FONT_SIZE,
+                        valign='top',
+                        halign='right',
+                        color=(255,255,255,255) )
+
+            self.table.append( (pos,name,score,lvl) )
+
+        self.process_table()
+
+    def remove_old( self ):
+        for item in self.table:
+            pos,name,score,lvl = item
+            self.remove(pos)
+            self.remove(name)
+            self.remove(score)
+            self.remove(lvl)
+        self.table = None
+
+    def process_table( self ):
+        w,h = director.get_window_size()
+
+        for idx,item in enumerate(self.table):
+            pos,name,score,lvl = item
+
+            posy = h - 100 - ( (self.FONT_SIZE+15) * idx )
+
+            pos.position=( 5, posy)
+            name.position=( 48, posy)
+            score.position=( w-150, posy )
+            lvl.position=( w-10, posy)
+
+            self.add( pos, z=2 )
+            self.add( name, z=2 )
+            self.add( score, z=2 )
+            self.add( lvl, z=2 )
+
+    def on_key_press( self, k, m ):
+        if k in (key.ENTER, key.ESCAPE, key.SPACE):
+            self.parent.switch_to( 0 )
+            return True
+
+    def on_mouse_release( self, x, y, b, m ):
+        self.parent.switch_to( 0 )
+        return True
+
 
 class OptionsMenu( Menu ):
     def __init__(self):
@@ -128,7 +233,7 @@ class MainMenu( Menu ):
 
 
     def on_scores( self ):
-        pass
+        self.parent.switch_to(2)
 
     def on_quit(self):
         pyglet.app.exit()
@@ -143,7 +248,9 @@ if __name__ == "__main__":
     scene = Scene()
     scene.add( MultiplexLayer(
                     MainMenu(), 
-                    OptionsMenu() ),
+                    OptionsMenu(),
+                    ScoresLayer(),
+                    ),
                 z=1 ) 
     scene.add( BackgroundLayer(), z=0 )
     director.run( scene )
