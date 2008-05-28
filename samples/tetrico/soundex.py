@@ -11,15 +11,17 @@ try:
 except:
     have_avbin = False
     MUSIC = False
+    SOUND = False
 
 #
 # MUSIC
 #
-music_player = pyglet.media.Player()
-current_music = None
+if have_avbin:
+    music_player = pyglet.media.Player()
+    current_music = None
 
-sound_vol = 0.5
-music_player.volume = 0.2
+    sound_vol = 0.5
+    music_player.volume = 0.2
 
 def set_music(name):
     global current_music
@@ -33,7 +35,7 @@ def set_music(name):
 
     if not MUSIC:
         return
-  
+
     music_player.next()
     music_player.queue(pyglet.resource.media(name, streaming=True))
     music_player.play()
