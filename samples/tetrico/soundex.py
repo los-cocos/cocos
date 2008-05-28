@@ -9,6 +9,7 @@ try:
     import pyglet.media.avbin
     have_avbin = True
 except:
+    pyglet.options['audio'] = ('silent')
     have_avbin = False
     MUSIC = False
     SOUND = False
@@ -16,12 +17,11 @@ except:
 #
 # MUSIC
 #
-if have_avbin:
-    music_player = pyglet.media.Player()
-    current_music = None
+music_player = pyglet.media.Player()
+current_music = None
 
-    sound_vol = 0.5
-    music_player.volume = 0.2
+sound_vol = 0.5
+music_player.volume = 0.2
 
 def set_music(name):
     global current_music
