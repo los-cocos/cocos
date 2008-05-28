@@ -37,7 +37,7 @@ class GameView( Layer ):
 
         aspect = width / float(height)
         self.grid_size = ( int(20 *aspect),20)
-        self.duration = 5
+        self.duration = 8
 
         self.position = ( width/2 - COLUMNS * SQUARE_SIZE / 2, 0 )
         self.transform_anchor = ( COLUMNS*SQUARE_SIZE /2, ROWS * SQUARE_SIZE/2)
