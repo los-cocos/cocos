@@ -147,7 +147,7 @@ class TransitionControl(cocos.layer.Layer):
         if self.scene_p >= len(self.scenes):
             self.scene_p = len(self.scenes)-1
         else:
-            self.transition(JumpZoomTransition)
+            self.transition(self.transitions[self.scene_p%len(self.transitions)])
     
     def prev_scene(self):
         self.scene_p -=1 
@@ -269,9 +269,9 @@ if __name__ == "__main__":
     director.init( resizable=True, width=640, height=480 ) 
     director.window.set_fullscreen(False)
     x,y = director.get_window_size()
-    background = BackgroundLayer("background.png")
+    #background = BackgroundLayer("background.png")
     #background = BackgroundLayer("coconut.jpg")
-
+    background = cocos.layer.ColorLayer(0,0,0,255)
     
     transition_list = [
         JumpZoomTransition
@@ -279,25 +279,33 @@ if __name__ == "__main__":
     current_transition = 0
 
     scenes = [
-        cocos.scene.Scene (
+        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             TitleSubTitleLayer("cocos2d", "a 2d game library"),
         ),
-        cocos.scene.Scene (
+        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+            BulletListLayer("cocos2d", [
+                "una libreria para hacer juegos 2d",
+                "programando en python",
+                ])
+            ),
+        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Juegos y python", [
                 "Juegos en un lenguaje interpretado?",
                 "Depende del juego",
                 "Hay mucho que se puede hacer en 30ms",
                 ])
             ),
-        cocos.scene.Scene (
+        
+        
+        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Historia", [
                 "2000 : pygame",
                 "2005 : pyweek",
                 "2006 : pyglet",
-                "2008 : cocos"
+                "2008 : cocos2d"
                 ])
             ),
-        cocos.scene.Scene (
+        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Features", [
                 "Control de flujo",
                 "Sprites",
@@ -307,7 +315,7 @@ if __name__ == "__main__":
                 "Menus", 
                 ])
             ),
-        cocos.scene.Scene (
+        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Features (2)", [
                 "Texto / HTML",
                 "Tiles"
@@ -318,26 +326,11 @@ if __name__ == "__main__":
                 "OpenGL",
                 ]),
             ),
-        cocos.scene.Scene ( 
+        cocos.scene.Scene ( cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Conceptos", []).add(
                 ActionSprite("scene_sp.png", (x/2, 100))),
             ),
-        cocos.scene.Scene ( 
-            BulletListLayer("Control De Flujo", []),
-            ),
-        cocos.scene.Scene (
-            BulletListLayer("Sprites", []),
-            ),
-        cocos.scene.Scene ( 
-            BulletListLayer("Acciones", []),
-            ),
-        cocos.scene.Scene (
-            BulletListLayer("Efectos", []),
-            ),
-        cocos.scene.Scene (
-            BulletListLayer("Transiciones", []),
-            ),
-        cocos.scene.Scene (
+        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Documentacion", [
                 "Tutoriales en video",
                 "Guia de programacion (1KLOT)",
@@ -349,7 +342,7 @@ if __name__ == "__main__":
             ]),
             ),
             
-        cocos.scene.Scene (
+        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Comunidad", [
                 "5 juegos terminados",
                 "Varios proyectos en desarrollo",
@@ -357,12 +350,64 @@ if __name__ == "__main__":
                 "Lista de correo 'funcional'",
             ]),
             ),
-         cocos.scene.Scene (
+        cocos.scene.Scene ( cocos.layer.ColorLayer(0,0,0,255),
+            BulletListLayer("Control De Flujo", []),
+            ),
+        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+            BulletListLayer("Sprites", []),
+            ),
+        cocos.scene.Scene ( cocos.layer.ColorLayer(0,0,0,255),
+            BulletListLayer("Acciones", []),
+            ),
+        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+            BulletListLayer("Efectos", []),
+            ),
+        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+            BulletListLayer("Transiciones", []),
+            ),
+        
+         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             TitleSubTitleLayer("cocos2d", "http://www.cocos2d.org"),
         ),
         ]
     transitions = [None]*(len(scenes)-1)
+    all_t = ['RotoZoomTransition','JumpZoomTransition',
+
+            'SlideInLTransition','SlideInRTransition',
+            'SlideInBTransition','SlideInTTransition',
+
+            'FlipX3DTransition', 'FlipY3DTransition','FlipAngular3DTransition',
+
+            'ShuffleTransition',
+            'TurnOffTilesTransition',
+            'FadeTRTransition', 'FadeBLTransition',
+            'FadeUpTransition', 'FadeDownTransition',
+
+            'ShrinkGrowTransition',
+            'CornerMoveTransition',
+            'EnvelopeTransition',
+
+            'SplitRowsTransition', 'SplitColsTransition',
+
+            'FadeTransition',]
+    transitions = [ getattr(cocos.scenes.transitions, all_t[i % len(all_t)]) 
+                for i in range(len(scenes)-1) ]
+                
     TransitionControl( scenes, transitions )
+
+    def color_name_scene(name, color):    
+        return cocos.scene.Scene(
+            cocos.layer.ColorLayer(*color).add(
+                cocos.text.Label(
+                    name, (x/2,y/2), 
+                    font_name = 'Gill Sans', font_size = 64, 
+                    halign='center', valign='center'
+                )
+            )
+        )
+    director.interpreter_locals["uno"] = color_name_scene("uno", (255,0,0,255))
+    director.interpreter_locals["dos"] = color_name_scene("dos", (0,255,0,255))
+    director.interpreter_locals["tres"] = color_name_scene("tres", (0,0,255,255))
     
     
     director.run (scenes[0])
