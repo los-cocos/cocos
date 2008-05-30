@@ -211,7 +211,9 @@ class DefaultHandler( object ):
 class Director(event.EventDispatcher):
     """Class that creates and handle the main Window and manages how
        and when to execute the Scenes"""
-    
+    #: a dict with locals for the interactive python interpreter (fill with what you need)
+    interpreter_locals = {}
+
     def init(self, *args, **kwargs):
         """Initializes the Director creating the main window.
         Keyword arguments are passed to pyglet.window.Window().
@@ -238,7 +240,6 @@ class Director(event.EventDispatcher):
 
         #: this is the next scene that will be shown
         self.next_scene = None
-
 
         # save resolution and aspect for resize / fullscreen
         self.window.on_resize = self.on_resize_window
@@ -459,6 +460,9 @@ class Director(event.EventDispatcher):
 director = Director()
 """The singleton; check `cocos.director.Director` for details on usage.
 Don't instantiate Director(). Just use this singleton."""
+
+director.interpreter_locals["director"] = director
+director.interpreter_locals["cocos"] = cocos
 
 Director.register_event_type('on_push')
 Director.register_event_type('on_pop')

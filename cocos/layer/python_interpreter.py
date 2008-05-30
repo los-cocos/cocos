@@ -66,12 +66,10 @@ class PythonInterpreterLayer(ColorLayer):
         super(PythonInterpreterLayer, self).__init__( 32,32,32,192 )
 
         self.content = self.prompt
+        local_vars = director.interpreter_locals
+        local_vars["self"] = self
         self.interpreter = MyInterpreter(
-                dict(
-                    self=self, 
-                    cocos=cocos, 
-                    director=director,
-                ), self._write)
+                local_vars, self._write)
 
         self.current_input = []
 
