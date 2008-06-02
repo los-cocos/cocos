@@ -39,16 +39,16 @@ class LevelRotate( Level ):
     lines = 18
     prob = 0.13
 
-class LevelWavesRot( Level ):
-    speed = 0.25
-    blocks = [ Colors.WAVES, Colors.ROTATE]
-    lines = 20
-    prob = 0.15
-
 class LevelTwirlZoom( Level ):
-    speed = 0.2
+    speed = 0.25
     blocks = [ Colors.TWIRL, Colors.SCALE ]
     lines = 22
+    prob = 0.15
+
+class LevelWavesRot( Level ):
+    speed = 0.2
+    blocks = [ Colors.WAVES, Colors.ROTATE]
+    lines = 20
     prob = 0.17
 
-levels = [ LevelLens, LevelScale, LevelLiquid, LevelWaves, LevelTwirl, LevelRotate, LevelWavesRot, LevelTwirlZoom ]
+levels = [ LevelLens, LevelScale, LevelLiquid, LevelWaves, LevelTwirl, LevelRotate, LevelTwirlZoom, LevelWavesRot ]

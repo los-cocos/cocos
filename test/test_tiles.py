@@ -11,7 +11,7 @@ from pyglet.window import key
 import cocos
 from cocos import tiles
 
-class CarSprite(cocos.sprite.ActionSprite):
+class CarSprite(cocos.sprite.Sprite):
     speed = 0
     def update(self, dt):
         # handle input and move the car

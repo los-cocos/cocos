@@ -74,7 +74,7 @@ class SpriteMoveTo( SpriteLayer ):
         
         self.stop()
 
-        sprite = ActionSprite("grossini.png", (20,100))
+        sprite = Sprite("grossini.png", (20,100))
         self.add( sprite )
 
         sprite.do( MoveTo( (580,100), 3 ) )
@@ -241,7 +241,7 @@ class GrossiniLayer(cocos.layer.Layer):
     def __init__( self ):
         super( GrossiniLayer, self ).__init__()
 
-        g = ActionSprite('grossini.png', (320,240))
+        g = Sprite('grossini.png', (320,240))
 
         self.add( g )
 
@@ -256,11 +256,11 @@ class GrossiniLayer2(cocos.layer.Layer):
 
         rot = Rotate( 180, 5 )
 
-        g = ActionSprite('grossinis_sister1.png', (490,240))
+        g = Sprite('grossinis_sister1.png', (490,240))
         self.add( g )
         g.do( Repeat( rot ) )
 
-        g = ActionSprite('grossinis_sister2.png', (150,240))
+        g = Sprite('grossinis_sister2.png', (150,240))
         self.add( g )
         g.do( Repeat( rot ) )
 
@@ -328,7 +328,7 @@ if __name__ == "__main__":
             ),
         cocos.scene.Scene ( cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Conceptos", []).add(
-                ActionSprite("scene_sp.png", (x/2, 100))),
+                Sprite("scene_sp.png", (x/2, 100))),
             ),
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Documentacion", [

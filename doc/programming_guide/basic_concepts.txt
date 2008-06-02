@@ -73,7 +73,7 @@ provides a library of useful predefined layers (a simple menu layer: `Menu`,
 a color layer: `ColorLayer`, a multiplexor between other layers: `MultiplexLayer`,
 a map layer: `HexMapLayer`, and more ).
 
-Layers can have `ActionSprite`, `Label`, `HTMLLabel` and even other `Layer` objects as
+Layers can have `Sprite`, `Label`, `HTMLLabel` and even other `Layer` objects as
 children.
 
 Since layers are subclass of `CocosNode`, they can be transformed manually or 
@@ -87,7 +87,7 @@ Sprites
 A cocos2d' sprite is like any other computer sprite.
 It is a 2D image that can be moved, rotated, scaled, animated, etc. 
 
-Sprites (implemented using the `ActionSprite` class) can have other sprites
+Sprites (implemented using the `Sprite` class) can have other sprites
 as children. When a parent is transformed, all its children are transformed as well.
 
 Since sprites are subclass of `CocosNode`, they can be transformed manually

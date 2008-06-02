@@ -15,7 +15,7 @@ from cocos.actions import *
 from cocos.director import director
 from cocos.layer import Layer 
 from cocos.scene import Scene
-from cocos.sprite import ActionSprite
+from cocos.sprite import Sprite
 
 import foo      # Bezier configurations
 
@@ -109,7 +109,7 @@ class SpriteMoveTo( SpriteLayer ):
     def on_enter( self ):
         super(SpriteMoveTo,self).on_enter()
 
-        sprite3 = ActionSprite( self.image )
+        sprite3 = Sprite( self.image )
         self.add(sprite3)
         sprite3.position = 320,300
         sprite3.do( MoveTo( (620,300), 4 ) )
@@ -119,7 +119,7 @@ class SpriteMoveBy( SpriteLayer ):
     def on_enter( self ):
         super(SpriteMoveBy,self).on_enter()
 
-        sprite = ActionSprite( self.image )
+        sprite = Sprite( self.image )
 
         self.add( sprite )
         sprite.position = 320,200
@@ -132,7 +132,7 @@ class SpriteRepeatMoveBy( SpriteLayer ):
     def on_enter( self ):
         super(SpriteRepeatMoveBy,self).on_enter()
 
-        sprite = ActionSprite( self.image )
+        sprite = Sprite( self.image )
 
         self.add( sprite )
         sprite.position = 120,100
@@ -145,7 +145,7 @@ class SpriteRepeatMoveBy( SpriteLayer ):
 class SpriteScale( SpriteLayer ):
     def on_enter( self ):
         super(SpriteScale,self).on_enter()
-        sprite = ActionSprite( self.image )
+        sprite = Sprite( self.image )
 
         self.add( sprite )
         sprite.position = 320,200
@@ -155,7 +155,7 @@ class SpriteScale( SpriteLayer ):
 class SpriteRotate( SpriteLayer ):
     def on_enter( self ):
         super(SpriteRotate,self).on_enter()
-        sprite = ActionSprite( self.image )
+        sprite = Sprite( self.image )
 
         self.add( sprite )
         self.position = 320,200
@@ -165,7 +165,7 @@ class SpriteRotate( SpriteLayer ):
 class SpriteJump( SpriteLayer ):
     def on_enter( self ):
         super(SpriteJump,self).on_enter()
-        sprite = ActionSprite( self.image )
+        sprite = Sprite( self.image )
 
         self.add( sprite )
         self.position = 120,100
@@ -175,7 +175,7 @@ class SpriteJump( SpriteLayer ):
 class SpriteBezier( SpriteLayer ):
     def on_enter( self ):
         super(SpriteBezier,self).on_enter()
-        sprite = ActionSprite( self.image )
+        sprite = Sprite( self.image )
 
         self.add( sprite )
         self.position = 120,100
@@ -185,7 +185,7 @@ class SpriteBezier( SpriteLayer ):
 class SpriteSpawn( SpriteLayer ):
     def on_enter( self ):
         super(SpriteSpawn,self).on_enter()
-        sprite = ActionSprite( self.image )
+        sprite = Sprite( self.image )
 
         self.add( sprite )
         sprite.position = 120,100
@@ -197,7 +197,7 @@ class SpriteSpawn( SpriteLayer ):
 class SpriteSequence( SpriteLayer ):
     def on_enter( self ):
         super(SpriteSequence,self).on_enter()
-        sprite = ActionSprite( self.image)
+        sprite = Sprite( self.image)
 
         self.add( sprite )
         sprite.position = (120,100)
@@ -211,7 +211,7 @@ class SpriteSequence( SpriteLayer ):
 class SpriteDelay( SpriteLayer ):
     def on_enter( self ):
         super(SpriteDelay,self).on_enter()
-        sprite = ActionSprite( self.image)
+        sprite = Sprite( self.image)
 
         self.add( sprite)
         sprite.position = (120,100)
@@ -224,7 +224,7 @@ class SpriteDelay( SpriteLayer ):
 class SpriteBlink( SpriteLayer ):
     def on_enter( self ):
         super(SpriteBlink,self).on_enter()
-        sprite = ActionSprite( self.image )
+        sprite = Sprite( self.image )
 
         self.add( sprite )
         sprite.position = (320,240)
@@ -236,8 +236,8 @@ class SpriteBlink( SpriteLayer ):
 class SpriteFadeOut( SpriteLayer ):
     def on_enter( self ):
         super(SpriteFadeOut,self).on_enter()
-        sprite1 = ActionSprite( self.image_sister1)
-        sprite2 = ActionSprite( self.image_sister2)
+        sprite1 = Sprite( self.image_sister1)
+        sprite2 = Sprite( self.image_sister2)
 
         self.add( sprite1 )
         self.add( sprite2 )
@@ -254,7 +254,7 @@ class SpriteFadeOut( SpriteLayer ):
 class SpriteRepeat( SpriteLayer ):
     def on_enter( self ):
         super(SpriteRepeat,self).on_enter()
-        sprite = ActionSprite( self.image)
+        sprite = Sprite( self.image)
 
         self.add( sprite )
         sprite.position = 120,100
@@ -266,7 +266,7 @@ class SpriteRepeat( SpriteLayer ):
 class SpriteRepeat2( SpriteLayer ):
     def on_enter( self ):
         super(SpriteRepeat2,self).on_enter()
-        sprite = ActionSprite( self.image)
+        sprite = Sprite( self.image)
 
         self.add( sprite )
         sprite.position = 120,100
@@ -279,7 +279,7 @@ class SpriteRepeat2( SpriteLayer ):
 class SpriteRepeatSeq( SpriteLayer ):
     def on_enter( self ):
         super(SpriteRepeatSeq,self).on_enter()
-        sprite = ActionSprite( self.image )
+        sprite = Sprite( self.image )
 
         self.add( sprite )
         sprite.position = 120,100
@@ -294,7 +294,7 @@ class SpriteRepeatSeq( SpriteLayer ):
 class SpriteRepeatSeq2( SpriteLayer ):
     def on_enter( self ):
         super(SpriteRepeatSeq2,self).on_enter()
-        sprite = ActionSprite( self.image)
+        sprite = Sprite( self.image)
 
         self.add( sprite )
         sprite.position = 120,100
@@ -309,7 +309,7 @@ class SpriteRepeatSeq2( SpriteLayer ):
 class SpriteTrigger( SpriteLayer ):
     def on_enter( self ):
         super(SpriteTrigger,self).on_enter()
-        sprite = ActionSprite( self.image)
+        sprite = Sprite( self.image)
         self.add( sprite )
         sprite.position = 120,100
         
@@ -320,7 +320,7 @@ class SpriteTrigger( SpriteLayer ):
     def say_hello( self ):
         print "HELLO BABY"
 
-        sprite2 = ActionSprite( self.image_sister1)
+        sprite2 = Sprite( self.image_sister1)
         self.add( sprite2 )
         sprite2.position = 270,110
 
@@ -328,8 +328,8 @@ class SpriteTrigger( SpriteLayer ):
 class SpriteReuseAction( SpriteLayer ):
     def on_enter( self ):
         super(SpriteReuseAction,self).on_enter()
-        sprite1 = ActionSprite( self.image_sister1)
-        sprite2 = ActionSprite( self.image_sister2)
+        sprite1 = Sprite( self.image_sister1)
+        sprite2 = Sprite( self.image_sister2)
 
         self.add( sprite1 )
         self.add( sprite2 )
@@ -344,8 +344,8 @@ class SpriteReuseAction( SpriteLayer ):
 class SpriteReuseSequence( SpriteLayer ):
     def on_enter( self ):
         super(SpriteReuseSequence,self).on_enter()
-        sprite1 = ActionSprite( self.image_sister1)
-        sprite2 = ActionSprite( self.image_sister2)
+        sprite1 = Sprite( self.image_sister1)
+        sprite2 = Sprite( self.image_sister2)
 
         self.add( sprite1 )
         self.add( sprite2 )
@@ -368,8 +368,8 @@ class SpriteReuseSequence( SpriteLayer ):
 class SpriteAlterTime( SpriteLayer ):
     def on_enter( self ):
         super(SpriteAlterTime,self).on_enter()
-        sprite1 = ActionSprite( self.image_sister1 )
-        sprite2 = ActionSprite( self.image_sister2 )
+        sprite1 = Sprite( self.image_sister1 )
+        sprite2 = Sprite( self.image_sister2 )
 
         self.add( sprite1 )
         self.add( sprite2 )
@@ -387,8 +387,8 @@ class SpriteAlterTime( SpriteLayer ):
 class SpriteRepeatAlterTime( SpriteLayer ):
     def on_enter( self ):
         super(SpriteRepeatAlterTime,self).on_enter()
-        sprite1 = ActionSprite( self.image_sister1 )
-        sprite2 = ActionSprite( self.image_sister2 )
+        sprite1 = Sprite( self.image_sister1 )
+        sprite2 = Sprite( self.image_sister2 )
 
         self.add( sprite1 )
         self.add( sprite2 )

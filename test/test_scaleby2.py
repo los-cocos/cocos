@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import cocos
 from cocos.director import director
 from cocos.actions import ScaleBy
-from cocos.sprite import ActionSprite
+from cocos.sprite import Sprite
 import pyglet
 
 class TestLayer(cocos.layer.Layer):
@@ -17,7 +17,7 @@ class TestLayer(cocos.layer.Layer):
         
         x,y = director.get_window_size()
         
-        self.sprite = ActionSprite( 'grossini.png', (x/2,y/2), scale = 0.1 )
+        self.sprite = Sprite( 'grossini.png', (x/2,y/2), scale = 0.1 )
         self.add( self.sprite )
         self.sprite.do( ScaleBy( 10, 2 ) + ScaleBy( 0.1, 2 )  )
         

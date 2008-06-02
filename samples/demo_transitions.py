@@ -11,7 +11,7 @@ from cocos.layer import Layer, ColorLayer
 from cocos.scene import Scene
 from cocos.scenes.transitions import *
 from cocos.actions import *
-from cocos.sprite import ActionSprite
+from cocos.sprite import Sprite
 import pyglet
 from pyglet import gl, font
 
@@ -76,7 +76,7 @@ class GrossiniLayer(Layer):
     def __init__( self ):
         super( GrossiniLayer, self ).__init__()
 
-        g = ActionSprite( 'grossini.png')
+        g = Sprite( 'grossini.png')
         g.position = (320,240)
 
         rot = RotateBy( 360, 4 )
@@ -89,10 +89,10 @@ class GrossiniLayer2(Layer):
         super( GrossiniLayer2, self ).__init__()
 
         rot = Rotate( 360, 5 )
-        g1 = ActionSprite( 'grossinis_sister1.png' )
+        g1 = Sprite( 'grossinis_sister1.png' )
         g1.position = (490,240)
 
-        g2 = ActionSprite( 'grossinis_sister2.png' )
+        g2 = Sprite( 'grossinis_sister2.png' )
         g2.position = (140,240)
 
         g1.do( Repeat( rot + Reverse(rot) ) )

@@ -29,12 +29,12 @@ if __name__ == "__main__":
     green.scale = 0.25
     green.children_anchor_y = -y/2
 
-    red.add( ActionSprite( 'grossini.png', (0, y/2) ), z=1 )
-    blue.add( ActionSprite( 'grossini.png', (0, y/2) ), z=1 )
-    green.add( ActionSprite( 'grossini.png', (0, y/2) ), z=1 )
-    red.add( ActionSprite( 'grossini.png', (x, y/2) ), z=1 )
-    blue.add( ActionSprite( 'grossini.png', (x, y/2) ), z=1 )
-    green.add( ActionSprite( 'grossini.png', (x, y/2) ), z=1 )
+    red.add( Sprite( 'grossini.png', (0, y/2) ), z=1 )
+    blue.add( Sprite( 'grossini.png', (0, y/2) ), z=1 )
+    green.add( Sprite( 'grossini.png', (0, y/2) ), z=1 )
+    red.add( Sprite( 'grossini.png', (x, y/2) ), z=1 )
+    blue.add( Sprite( 'grossini.png', (x, y/2) ), z=1 )
+    green.add( Sprite( 'grossini.png', (x, y/2) ), z=1 )
 
     main_scene.add( white, z=0 )
     main_scene.add( red, z=1 )

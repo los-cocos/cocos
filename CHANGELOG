@@ -1,4 +1,4 @@
-v0.3.0rc - XXXX
+v0.3.0beta1 - June 2nd, 2008
   - Actions: added FadeOutBLTiles, FadeOutUpTiles, FadeOutDownTiles effects
   - Actions: added SplitCols, SplitRows effects
   - Actions: renamed FadeOutTiles to FadeOutTRTiles
@@ -17,6 +17,7 @@ v0.3.0rc - XXXX
   - Layer: ColorLayer supports position, height and width
   - Menu: MultipleMenuItem new API. Toggle and Entry items receives as 2nd
       argument the callback func (to maintain API coherence)
+  - Sprites: renamed ActionSprite class to Sprite
   - Transitions: Changed API. There is no need to pass the src scene as a
 	  parameter. If omitted, the src scene will be current scene. 
 	  init( dst, duration=2, src=current_scene)

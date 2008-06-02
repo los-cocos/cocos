@@ -28,10 +28,10 @@ class HelloWorld(cocos.layer.ColorLayer):
         label.position = 320,240
         self.add( label )
         
-        # similar to cocos.text.Label, a cocos.sprite.ActionSprite
+        # similar to cocos.text.Label, a cocos.sprite.Sprite
         # is a subclass of pyglet.sprite.Sprite with the befits of
         # being a CocosNode.
-        sprite = cocos.sprite.ActionSprite('grossini.png')
+        sprite = cocos.sprite.Sprite('grossini.png')
         
         # sprite in the center of the screen (default is 0,0)
         sprite.position = 320,240
