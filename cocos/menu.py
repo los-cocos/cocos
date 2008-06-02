@@ -338,7 +338,7 @@ class MenuItem( CocosNode ):
         :Parameters:
             `label` : string
                 The label the of the menu item
-            `callabck_func` : function
+            `callback_func` : function
                 The callback function
         """
 
