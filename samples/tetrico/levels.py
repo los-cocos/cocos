@@ -42,13 +42,13 @@ class LevelRotate( Level ):
 class LevelTwirlZoom( Level ):
     speed = 0.25
     blocks = [ Colors.TWIRL, Colors.SCALE ]
-    lines = 22
+    lines = 20
     prob = 0.15
 
 class LevelWavesRot( Level ):
     speed = 0.2
     blocks = [ Colors.WAVES, Colors.ROTATE]
-    lines = 20
+    lines = 22
     prob = 0.17
 
 levels = [ LevelLens, LevelScale, LevelLiquid, LevelWaves, LevelTwirl, LevelRotate, LevelTwirlZoom, LevelWavesRot ]
