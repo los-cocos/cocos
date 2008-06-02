@@ -114,9 +114,9 @@ As in the previous example, we create and add a label::
     self.add( label )
 
 In this example we also create and add an sprite as a child. In cocos2d
-sprites are `ActionSprite` objects::
+sprites are `Sprite` objects::
         
-    sprite = cocos.sprite.ActionSprite('grossini.png')
+    sprite = cocos.sprite.Sprite('grossini.png')
 
 We place the sprite in the center of the screen. Default position is (0,0)::
         

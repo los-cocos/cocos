@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.sprite import ActionSprite
+from cocos.sprite import Sprite
 from cocos.actions import *
 from cocos.text import *
 

@@ -57,17 +57,17 @@ import pyglet
 from pyglet import image
 from pyglet.gl import *
 
-__all__ = [ 'ActionSprite',                     # Sprite class
+__all__ = [ 'Sprite',                     # Sprite class
             ]
 
 
         
-class ActionSprite( BatchableNode, pyglet.sprite.Sprite):
-    '''ActionSprites are sprites that can execute actions.
+class Sprite( BatchableNode, pyglet.sprite.Sprite):
+    '''Sprites are sprites that can execute actions.
 
     Example::
 
-        sprite = ActionSprite('grossini.png')
+        sprite = Sprite('grossini.png')
     '''
     
     def __init__( self, image, position=(0,0), rotation=0, scale=1, opacity = 255, color=(255,255,255), anchor = None ):
@@ -173,4 +173,4 @@ class ActionSprite( BatchableNode, pyglet.sprite.Sprite):
             self._vertex_list.draw(GL_QUADS)
         self._group.unset_state()
         
-ActionSprite.supported_classes = ActionSprite
+Sprite.supported_classes = Sprite

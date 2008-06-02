@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.sprite import ActionSprite
+from cocos.sprite import Sprite
 import pyglet
 
 class TestLayer(cocos.layer.Layer):
@@ -20,9 +20,9 @@ class TestLayer(cocos.layer.Layer):
         self.image.anchor_x = self.image.width / 2
         self.image.anchor_y = self.image.height / 2
 
-        self.sprite = ActionSprite( 'grossini.png', (x/2, y/2)  )
-        self.sprite2 = ActionSprite( 'grossini.png', (20,20), rotation=90 )
-        self.sprite3 = ActionSprite( 'grossini.png', (-20,-20), rotation=270 )
+        self.sprite = Sprite( 'grossini.png', (x/2, y/2)  )
+        self.sprite2 = Sprite( 'grossini.png', (20,20), rotation=90 )
+        self.sprite3 = Sprite( 'grossini.png', (-20,-20), rotation=270 )
 
         self.sprite.add( self.sprite2 )
         self.sprite.add( self.sprite3 )

@@ -20,8 +20,8 @@ except:
 music_player = pyglet.media.Player()
 current_music = None
 
-sound_vol = 0.5
-music_player.volume = 0.2
+sound_vol = 0.7
+music_player.volume = 0.4
 
 def set_music(name):
     global current_music

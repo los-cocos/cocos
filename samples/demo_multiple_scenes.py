@@ -13,7 +13,7 @@ import cocos
 from cocos.director import director
 from cocos.actions import *
 from cocos.layer import *
-from cocos.sprite import ActionSprite
+from cocos.sprite import Sprite
 import pyglet
 
 class TestLayer(cocos.layer.Layer):
@@ -22,9 +22,9 @@ class TestLayer(cocos.layer.Layer):
         
         x,y = director.get_window_size()
         
-        sprite1 = ActionSprite( 'grossini.png' )
-        sprite2 = ActionSprite( 'grossinis_sister1.png' )
-        sprite3 = ActionSprite( 'grossinis_sister2.png' )
+        sprite1 = Sprite( 'grossini.png' )
+        sprite2 = Sprite( 'grossinis_sister1.png' )
+        sprite3 = Sprite( 'grossinis_sister2.png' )
 
         sprite1.position = (x/2, y/2 )
         sprite2.position = (x/4, y/2 )

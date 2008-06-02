@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.sprite import ActionSprite
+from cocos.sprite import Sprite
 import pyglet
 
 class TestLayer(cocos.layer.Layer):
@@ -19,19 +19,19 @@ class TestLayer(cocos.layer.Layer):
         self.batch = cocos.sprite.BatchNode()
         self.add( self.batch )
         
-        self.sprite = ActionSprite('grossini.png')
+        self.sprite = Sprite('grossini.png')
         self.sprite.position = x/2, y/2
 
-        self.sprite2 = ActionSprite('grossini.png')
+        self.sprite2 = Sprite('grossini.png')
         self.sprite2.position = 20, 30
 
-        self.sprite5 = ActionSprite('grossini.png')
+        self.sprite5 = Sprite('grossini.png')
         self.sprite5.position = -20, 30
 
-        self.sprite3 = ActionSprite('grossini.png')
+        self.sprite3 = Sprite('grossini.png')
         self.sprite3.position = -20, -30
         
-        self.sprite4 = ActionSprite('grossini.png')
+        self.sprite4 = Sprite('grossini.png')
         self.sprite4.position = 20, -30
         
         self.sprite.add( self.sprite2, z=-1 )

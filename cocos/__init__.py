@@ -34,7 +34,7 @@
 http://cocos2d.org
 '''
 
-__version__ = "0.3.0-rc0"
+__version__ = "0.3.0-beta1"
 __author__ = "cocos2d team"
 version = __version__
 

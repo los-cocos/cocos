@@ -33,7 +33,7 @@ if __name__ == "__main__":
     scene2 = cocos.scene.Scene()
 
     colorl = ColorLayer(32,32,255,255)
-    sprite = ActionSprite( 'grossini.png', (320,240) )
+    sprite = Sprite( 'grossini.png', (320,240) )
     colorl.add( sprite )
 
     scene1.add( BackgroundLayer(), z=0 )

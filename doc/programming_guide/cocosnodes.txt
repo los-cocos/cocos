@@ -93,10 +93,10 @@ Example::
     car_sprite = layer.get("car")
 
 
-ActionSprite
-^^^^^^^^^^^^
+Sprite
+^^^^^^
 
- TODO: explain `ActionSprite`
+ TODO: explain `Sprite`
 
  These properties are not available:
 

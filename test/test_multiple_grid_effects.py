@@ -14,7 +14,7 @@ import pyglet
 
 from cocos.director import director
 from cocos.actions import Flip, Waves3D, ShuffleTiles
-from cocos.sprite import ActionSprite
+from cocos.sprite import Sprite
 from cocos.layer import Layer, ColorLayer
 from cocos.scene import Scene
 
@@ -23,9 +23,9 @@ class SpriteLayer ( Layer ):
     def __init__( self ):
         super( SpriteLayer, self ).__init__()
 
-        sprite1 = ActionSprite( 'grossini.png' )
-        sprite2 = ActionSprite( 'grossinis_sister1.png')
-        sprite3 = ActionSprite( 'grossinis_sister2.png')
+        sprite1 = Sprite( 'grossini.png' )
+        sprite2 = Sprite( 'grossinis_sister1.png')
+        sprite3 = Sprite( 'grossinis_sister2.png')
 
         sprite1.position = (400,240)
         sprite2.position = (300,240)
