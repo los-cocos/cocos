@@ -492,12 +492,7 @@ class CocosNode(object):
             glRotatef( -self.rotation, 0, 0, 1)
     
         if self.transform_anchor != (0,0):
-            if self.transform_anchor == self.children_anchor:
-                glTranslatef( 
-                    -self.transform_anchor_x, 
-                    -self.transform_anchor_y,
-                     0 )
-            else:
+            if self.transform_anchor != self.children_anchor:
                 glTranslatef( 
                     self.children_anchor_x - self.transform_anchor_x, 
                     self.children_anchor_y - self.transform_anchor_y,
@@ -627,8 +622,9 @@ class CocosNode(object):
         self.actions.append( a )
 
         if not self.scheduled:
-            self.scheduled = True
-            pyglet.clock.schedule( self._step )
+            if self.is_running:
+                self.scheduled = True
+                pyglet.clock.schedule( self._step )
         return a
 
     def remove_action(self, action ):
