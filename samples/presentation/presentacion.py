@@ -93,12 +93,12 @@ class TitleSubTitleLayer(cocos.layer.Layer):
 
         self.title = text.Label(
                 title, (x/2, y/2+50), font_name = 'Gill Sans',
-                font_size = 64, halign='center', valign='center' )
+                font_size = 64, anchor_x='center', anchor_y='center' )
         self.add( self.title )
         
         self.subtitle = text.Label(
                 subtitle, (x/2, y/2-30), font_name = 'Gill Sans',
-                font_size = 44, halign='center', valign='center' )
+                font_size = 44, anchor_x='center', anchor_y='center' )
         self.add( self.subtitle )
         
 class BulletListLayer(cocos.layer.Layer):
@@ -109,7 +109,7 @@ class BulletListLayer(cocos.layer.Layer):
 
         self.title = text.Label(
                 title, (x/2, y-50), font_name = 'Gill Sans',
-                font_size = 64, halign='center', valign='center' )
+                font_size = 64, anchor_x='center', anchor_y='center' )
         self.add( self.title )
 
         start_y = (y/12)*8
@@ -124,7 +124,7 @@ class BulletListLayer(cocos.layer.Layer):
         for line in lines:
             line_text = text.Label(
                 line, (x/2, y-150-step*i), font_name = 'Gill Sans',
-                font_size = font_size, halign='center', valign='center' )
+                font_size = font_size, anchor_x='center', anchor_y='center' )
             i += 1   
             self.add( line_text )    
 class TransitionControl(cocos.layer.Layer):
@@ -197,20 +197,20 @@ class ControlLayer(cocos.layer.Layer):
         self.text_title = font.Text(ft_title, "Transition Demos",
             x=5,
             y=480,
-            halign=font.Text.LEFT,
-            valign=font.Text.TOP)
+            anchor_x=font.Text.LEFT,
+            anchor_y=font.Text.TOP)
 
         self.text_subtitle = font.Text(ft_subtitle, transition_list[current_transition].__name__,
             x=5,
             y=400,
-            halign=font.Text.LEFT,
-            valign=font.Text.TOP)
+            anchor_x=font.Text.LEFT,
+            anchor_y=font.Text.TOP)
         
         self.text_help = font.Text(ft_help,"Press LEFT / RIGHT for prev/next example, ENTER to restart example",
             x=320,
             y=20,
-            halign=font.Text.CENTER,
-            valign=font.Text.CENTER)
+            anchor_x=font.Text.CENTER,
+            anchor_y=font.Text.CENTER)
 
     def step( self, df ):
         self.text_help.draw()
@@ -401,7 +401,7 @@ if __name__ == "__main__":
                 cocos.text.Label(
                     name, (x/2,y/2), 
                     font_name = 'Gill Sans', font_size = 64, 
-                    halign='center', valign='center'
+                    anchor_x='center', anchor_y='center'
                 )
             )
         )

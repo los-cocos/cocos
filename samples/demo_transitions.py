@@ -30,8 +30,8 @@ class ControlLayer(Layer):
             font_size=32,
             x=5,
             y=director.get_window_size()[1],
-            halign=font.Text.LEFT,
-            valign=font.Text.TOP )
+            anchor_x=font.Text.LEFT,
+            anchor_y=font.Text.TOP )
 
         self.text_subtitle = pyglet.text.Label( transition_list[current_transition].__name__,
             font_size=18,
@@ -39,15 +39,15 @@ class ControlLayer(Layer):
             width=600,
             x=5,
             y=director.get_window_size()[1] - 80,
-            halign=font.Text.LEFT,
-            valign=font.Text.TOP )
+            anchor_x=font.Text.LEFT,
+            anchor_y=font.Text.TOP )
 
         self.text_help = pyglet.text.Label("Press LEFT / RIGHT for prev/next test, ENTER to restart test",
             font_size=16,
             x=director.get_window_size()[0] /2,
             y=20,
-            halign=font.Text.CENTER,
-            valign=font.Text.CENTER)
+            anchor_x=font.Text.CENTER,
+            anchor_y=font.Text.CENTER)
 
     def draw( self ):
         self.text_title.draw()

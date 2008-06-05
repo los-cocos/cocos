@@ -36,8 +36,8 @@ class GameOver( ColorLayer ):
         label = Label(msg,
                     font_name='Edit Undo Line BRK',
                     font_size=54,
-                    valign='center',
-                    halign='center' )
+                    anchor_y='center',
+                    anchor_x='center' )
         label.position =  ( w/2.0, h/2.0 )
 
         self.add( label )
@@ -57,8 +57,8 @@ class GameOver( ColorLayer ):
             label = Label('Enter your name:',
                         font_name='Edit Undo Line BRK',
                         font_size=36,
-                        valign='center',
-                        halign='center',
+                        anchor_y='center',
+                        anchor_x='center',
                         color=(32,32,32,255),
                         )
             label.position =  ( w/2.0, h/2.0 )
@@ -68,8 +68,8 @@ class GameOver( ColorLayer ):
             self.name= Label('',
                         font_name='Edit Undo Line BRK',
                         font_size=36,
-                        valign='center',
-                        halign='center',
+                        anchor_y='center',
+                        anchor_x='center',
                         color=(32,32,32,255),
                         )
             self.name.position=(w//2,250)

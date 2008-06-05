@@ -21,7 +21,7 @@ class HelloWorld(cocos.layer.Layer):
             font_name='Times New Roman',
             font_size=32,
             x=320, y=240,
-            halign='center', valign='center')
+            anchor_x='center', anchor_y='center')
 
         self.add( self.label )
 

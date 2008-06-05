@@ -124,8 +124,8 @@ class Menu(Layer):
             'color':(192,192,192,255),
             'bold':False,
             'italic':False,
-            'valign':'center',
-            'halign':'center',
+            'anchor_y':'center',
+            'anchor_x':'center',
             'dpi':96,
             'x':0, 'y':0,
         }
@@ -135,8 +135,8 @@ class Menu(Layer):
             'font_size':32,
             'bold':False,
             'italic':False,
-            'valign':'center',
-            'halign':'center',
+            'anchor_y':'center',
+            'anchor_x':'center',
             'color':(192,192,192,255),
             'dpi':96,
         }
@@ -145,8 +145,8 @@ class Menu(Layer):
             'font_size':42,
             'bold':False,
             'italic':False,
-            'valign':'center',
-            'halign':'center',
+            'anchor_y':'center',
+            'anchor_x':'center',
             'color':(255,255,255,255),
             'dpi':96,
         }
@@ -178,7 +178,7 @@ class Menu(Layer):
         elif self.menu_halign == LEFT:
             pos_x = 2
         else:
-            raise Exception("Invalid halign value for menu")
+            raise Exception("Invalid anchor_x value for menu")
 
         for idx,i in enumerate( self.children):
             item = i[1]
@@ -203,11 +203,11 @@ class Menu(Layer):
             item.text_selected = pyglet.text.Label( **self.font_item_selected )
 
     def _build_items( self ):
-        self.font_item_selected['halign'] = self.menu_halign
-        self.font_item_selected['valign'] = 'center'
+        self.font_item_selected['anchor_x'] = self.menu_halign
+        self.font_item_selected['anchor_y'] = 'center'
 
-        self.font_item['halign'] = self.menu_halign
-        self.font_item['valign'] = 'center'
+        self.font_item['anchor_x'] = self.menu_halign
+        self.font_item['anchor_y'] = 'center'
 
         self._generate_items()
         self.selected_index = 0
@@ -265,8 +265,8 @@ class Menu(Layer):
             i.activated_effect = activated_effect
             i.selected_effect = selected_effect
             i.unselected_effect = unselected_effect
-            i.halign = self.menu_halign
-            i.valign = self.menu_valign
+            i.item_halign = self.menu_halign
+            i.item_valign = self.menu_valign
             z += 1
 
         if items:
@@ -353,8 +353,8 @@ class MenuItem( CocosNode ):
         self.text = None
         self.text_selected = None
 
-        self.halign = None
-        self.valign = None
+        self.item_halign = None
+        self.item_valign = None
 
     def get_box( self ):
         """Returns the box that contains the menu item.
@@ -365,23 +365,23 @@ class MenuItem( CocosNode ):
         width = self.text.content_width
         height = self.text.content_height
 
-        if self.halign == CENTER:
+        if self.item_halign == CENTER:
             x_diff = - width / 2
-        elif self.halign == RIGHT:
+        elif self.item_halign == RIGHT:
             x_diff = - width
-        elif self.halign == LEFT:
+        elif self.item_halign == LEFT:
             x_diff = 0
         else:
-            raise Exception("Invalid halign: %s" % str(self.halign) )
+            raise Exception("Invalid halign: %s" % str(self.item_halign) )
 
-        if self.valign == CENTER:
+        if self.item_valign == CENTER:
             y_diff = - height/ 2
-        elif self.valign == TOP:
+        elif self.item_valign == TOP:
             y_diff = - height
-        elif self.valign == BOTTOM:
+        elif self.item_valign == BOTTOM:
             y_diff = 0
         else:
-            raise Exception("Invalid valign: %s" % str(self.valign) )
+            raise Exception("Invalid valign: %s" % str(self.item_valign) )
 
         x1 = self.text.x + x_diff
         y1 = self.text.y + y_diff

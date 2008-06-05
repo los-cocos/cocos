@@ -39,8 +39,8 @@ class ScoresLayer( ColorLayer):
         self.font_title['font_name'] = 'Edit Undo Line BRK'
         self.font_title['font_size'] = 72
         self.font_title['color'] = (204,164,164,255)
-        self.font_title['valign'] ='top'
-        self.font_title['halign'] ='center'
+        self.font_title['anchor_y'] ='top'
+        self.font_title['anchor_x'] ='center'
 
         title = Label('TETRICO', **self.font_title )
 
@@ -63,26 +63,26 @@ class ScoresLayer( ColorLayer):
 
             pos= Label( '%d:' % (idx+1), font_name='Edit Undo Line BRK',
                         font_size=self.FONT_SIZE,
-                        valign='top',
-                        halign='left',
+                        anchor_y='top',
+                        anchor_x='left',
                         color=(255,255,255,255) )
 
             name = Label( s[1], font_name='Edit Undo Line BRK',
                         font_size=self.FONT_SIZE,
-                        valign='top',
-                        halign='left',
+                        anchor_y='top',
+                        anchor_x='left',
                         color=(255,255,255,255) )
 
             score = Label( str(s[0]), font_name='Edit Undo Line BRK',
                         font_size=self.FONT_SIZE,
-                        valign='top',
-                        halign='right',
+                        anchor_y='top',
+                        anchor_x='right',
                         color=(255,255,255,255) )
 
             lvl = Label( str(s[2]), font_name='Edit Undo Line BRK',
                         font_size=self.FONT_SIZE,
-                        valign='top',
-                        halign='right',
+                        anchor_y='top',
+                        anchor_x='right',
                         color=(255,255,255,255) )
 
             self.table.append( (pos,name,score,lvl) )
@@ -147,8 +147,8 @@ class OptionsMenu( Menu ):
         # more info
 
         # example: menus can be vertical aligned and horizontal aligned
-        self.menu_valign = CENTER
-        self.menu_halign = CENTER
+        self.menu_anchor_y = CENTER
+        self.menu_anchor_x = CENTER
 
         items = []
 
@@ -211,8 +211,8 @@ class MainMenu( Menu ):
 
 
         # example: menus can be vertical aligned and horizontal aligned
-        self.menu_valign = CENTER
-        self.menu_halign = CENTER
+        self.menu_anchor_y = CENTER
+        self.menu_anchor_x = CENTER
 
         items = []
 

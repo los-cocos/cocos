@@ -22,7 +22,7 @@ class HelloWorld(cocos.layer.ColorLayer):
         label = cocos.text.Label('Hello, World!',
             font_name='Times New Roman',
             font_size=32,
-            halign='center', valign='center')
+            anchor_x='center', anchor_y='center')
 
         # set the label in the center of the screen
         label.position = 320,240

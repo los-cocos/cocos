@@ -38,8 +38,8 @@ class FontLayer( Layer ):
             font_size=32,
             x=5,
             y=director.get_window_size()[1],
-            halign=font.Text.LEFT,
-            valign=font.Text.TOP,
+            anchor_x=font.Text.LEFT,
+            anchor_y=font.Text.TOP,
             batch=self.batch)
 
         self.text_subtitle = pyglet.text.Label(self.subtitle,
@@ -48,16 +48,16 @@ class FontLayer( Layer ):
             font_size=16,
             x=5,
             y=director.get_window_size()[1] - 80,
-            halign=font.Text.LEFT,
-            valign=font.Text.TOP,
+            anchor_x=font.Text.LEFT,
+            anchor_y=font.Text.TOP,
             batch=self.batch )
 
         self.text_help = pyglet.text.Label("Press LEFT / RIGHT for prev/next test, ENTER to restart test",
             font_size=16,
             x=director.get_window_size()[0] /2,
             y=20,
-            halign=font.Text.CENTER,
-            valign=font.Text.CENTER,
+            anchor_x=font.Text.CENTER,
+            anchor_y=font.Text.CENTER,
             batch=self.batch )
 
     def draw( self ):

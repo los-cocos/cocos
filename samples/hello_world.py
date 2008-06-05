@@ -19,7 +19,7 @@ class HelloWorld(cocos.layer.Layer):
         label = cocos.text.Label('Hello, World!',
             font_name='Times New Roman',
             font_size=32,
-            halign='center', valign='center')
+            anchor_x='center', anchor_y='center')
 
         label.position = 320,240
         self.add( label )
