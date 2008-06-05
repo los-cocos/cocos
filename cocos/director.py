@@ -225,6 +225,9 @@ class Director(event.EventDispatcher):
         :rtype: pyglet.window.Window                    
         :returns: The main window, an instance of pyglet.window.Window class.
         """
+
+        # pop out the Cocos-specific flag
+        do_not_scale_window = kwargs.pop('do_not_scale', False)
        
         #: pyglet's window object
         self.window = window.Window( *args, **kwargs )
@@ -242,8 +245,11 @@ class Director(event.EventDispatcher):
         self.next_scene = None
 
         # save resolution and aspect for resize / fullscreen
-        self.window.on_resize = self.on_resize_window
-        self.window.on_draw = self.on_draw
+        if do_not_scale_window:
+            self.window.push_handlers(on_resize=self.unscaled_resize_window)
+        else:
+            self.window.push_handlers(on_resize=self.scaled_resize_window)
+        self.window.push_handlers(self.on_draw)
         self._window_original_width = self.window.width
         self._window_original_height = self.window.height
         self._window_aspect =  self.window.width / float( self.window.height )
@@ -400,8 +406,17 @@ class Director(event.EventDispatcher):
         return ( int( x_diff * x) - adjust_x,   int( y_diff * y ) - adjust_y )
 
 
-    def on_resize_window( self, width, height):
-        """Method that is called every time the main window is resized.
+    def scaled_resize_window( self, width, height):
+        """One of two possible methods that are called when the main window is resized.
+
+        This implementation scales the display such that the initial resolution
+        requested by the programmer (the "logical" resolution) is always retained
+        and the content scaled to fit the physical display.
+
+        This implementation also sets up a 3D projection for compatibility with the
+        largest set of Cocos transforms.
+
+        The other implementation is `unscaled_resize_window`.
         
         :Parameters:
             `width` : Integer
@@ -410,6 +425,27 @@ class Director(event.EventDispatcher):
                 New height
         """
         self.set_projection()
+        self.dispatch_event("on_resize", width, height)
+        return pyglet.event.EVENT_HANDLED
+
+    def unscaled_resize_window(self, width, height):
+        """One of two possible methods that are called when the main window is resized.
+
+        This implementation does not scale the display but rather forces the logical
+        resolution to match the physical one.
+
+        This implementation sets up a 2D projection, resulting in the best pixel
+        alignment possible. This is good for text and other detailed 2d graphics
+        rendering.
+
+        The other implementation is `scaled_resize_window`.
+        
+        :Parameters:
+            `width` : Integer
+                New width
+            `height` : Integer
+                New height
+        """
         self.dispatch_event("on_resize", width, height)
 
     def set_projection(self):
