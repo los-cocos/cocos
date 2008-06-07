@@ -379,8 +379,11 @@ class FadeOut( IntervalAction ):
         """
         self.duration = duration
 
+    def start(self):
+        self.start_alpha = self.target.opacity
+
     def update( self, t ):
-        self.target.opacity = 255 * (1-t)
+        self.target.opacity = self.start_alpha * (1-t)
 
     def __reversed__(self):
         return FadeIn( self.duration )
@@ -423,7 +426,7 @@ class FadeIn( FadeOut):
         sprite.do( action )
     """
     def update( self, t ):
-        self.target.opacity = 255 * t
+        self.target.opacity = self.start_alpha * t
 
     def __reversed__(self):
         return FadeOut( self.duration )

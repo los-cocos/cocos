@@ -21,9 +21,10 @@ if __name__ == "__main__":
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 
-    l = ColorLayer( 255,128,64,255 )
+    l = ColorLayer( 255,128,64,64 )
     main_scene.add( l, z=0 )
 
     l.do( FadeOut( duration=2) )
+#    l.do( FadeIn( duration=2) )
 
     director.run (main_scene)
