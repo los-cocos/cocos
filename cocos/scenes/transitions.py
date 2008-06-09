@@ -561,6 +561,9 @@ class ZoomTransition(TransitionScene):
     '''Zoom and FadeOut the outgoing scene.'''
 
     def __init__(self, *args, **kwargs):
+        if 'src' in kwargs or len(args) == 3:
+            raise Exception("ZoomTransition does not accept 'src' parameter.")
+
         super(ZoomTransition, self ).__init__( *args, **kwargs)
         self.out_scene.visit()
 
