@@ -40,6 +40,7 @@ from cocos.actions import *
 import cocos.scene as scene
 from cocos.director import director
 from cocos.layer import ColorLayer
+from cocos.sprite import Sprite
 
 __all__ = [ 'TransitionScene',
             'RotoZoomTransition','JumpZoomTransition',
@@ -63,6 +64,8 @@ __all__ = [ 'TransitionScene',
             'SplitRowsTransition', 'SplitColsTransition',
 
             'FadeTransition',
+
+            'ZoomTransition',
             ]
 
 class TransitionScene(scene.Scene):
@@ -552,3 +555,49 @@ class SplitRowsTransition(SplitColsTransition):
     '''
     def get_action( self ):
         return SplitRows( rows=3, duration=self.duration/2.0)
+
+
+class ZoomTransition(TransitionScene):
+    '''Zoom and FadeOut the outgoing scene.'''
+
+    def __init__(self, *args, **kwargs):
+        super(ZoomTransition, self ).__init__( *args, **kwargs)
+        self.out_scene.visit()
+
+    def start(self):
+        screensprite = self._create_out_screenshot()
+
+        zoom = ScaleBy(2, self.duration) | FadeOut(self.duration)
+        screensprite.do(zoom)
+
+        restore = CallFunc(self.finish)
+        self.in_scene.do(Delay(self.duration * 2) + restore)
+
+        self.add(screensprite, z=1)
+        self.add(self.in_scene, z=0)
+
+    def finish(self):
+        '''Called when the time is over.
+        It removes both the incoming and the outgoing scenes from the transition scene,
+        and restores the outgoing scene's attributes like: position, visible and scale.
+        '''
+        self.remove( self.in_scene )
+        self.restore_out()
+        director.replace( self.in_scene )
+
+    def _create_out_screenshot(self):
+        # TODO: try to use `pyglet.image.get_buffer_manager().get_color_buffer()`
+        #       instead of create a new BufferManager... note that pyglet uses
+        #       a BufferManager singleton that fail when you change the window
+        #       size.
+        buffer = pyglet.image.BufferManager()
+        image = buffer.get_color_buffer()
+
+        width, height = director.window.width, director.window.height 
+        actual_width, actual_height = director.get_window_size()
+
+        out = Sprite(image)
+        out.position = actual_width / 2, actual_height / 2
+        out.scale = max(actual_width / float(width), actual_height / float(height))
+
+        return out

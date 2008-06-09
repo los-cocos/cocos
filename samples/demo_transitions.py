@@ -133,6 +133,7 @@ if __name__ == "__main__":
         FadeDownTransition,
         TurnOffTilesTransition,
         FadeTransition,
+        ZoomTransition,
         ]
     current_transition = 0
 
