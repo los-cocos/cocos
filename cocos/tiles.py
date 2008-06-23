@@ -12,11 +12,27 @@ maps
    MapLayers are made of either rectangular or hexagonal Cells which
    reference the tiles used to draw the cell.
 
+The intention here is that you may have a tile set defined in one XML file
+which is shared amongst many map files (or indeed within a single XLM file).
+
 These may be constructed manually or loaded from XML resource files which
 are used to store the specification of tile sets and tile maps. A given
 resource XML file may define multiple tile sets and maps and may even
 reference other external XML resource files. This would allow a single
 tile set to be used by multiple tile maps.
+
+---------
+Tile Maps
+---------
+
+The RectMapLayer class extends the regular Cocos layer to handle a
+regular grid of tile images, or Cells. The map layer may be manipulated
+like any other Cocos layer. It also provides methods for interrogating
+the map contents to find cells (eg. under the mouse) or neighboring
+cells (up, down, left, right.)
+
+Maps may be defined in Python code, but it is a little easier to do so
+in XML. To support map editing the maps support round-tripping to XML.
 
 --------------------------
 The XML File Specification
@@ -46,7 +62,29 @@ You may load that resource and examine it::
   >>> r = load('example.xml')
   >>> r['level1']
 
-XXX TBD
+and then, assuming that level1 is a map::
+
+  >>> scene = cocos.scene.Scene(r['level1'])
+
+if you wish for the level to scroll, you use the ScrollingManager::
+
+  >>> manager = tiles.ScrollingManager()
+  >>> manager.append(r['level1']
+
+and later set the focus with::
+
+  >>> manager.set_focus(focus_x, focus_y)
+
+Typically the focus is set to the center of the player's sprite. The
+focusing will honor any tile map boundaries and prevent area outside
+those boundaries from being displayed.
+
+If you are only scrolling layers with sprites in them (ie. regular
+Cocos Layers, not RectMapLayers) then there are no boundaries and
+the map will scroll without bound in any direction.
+
+If you wish you may force the focus to display areas outside your
+tile maps you may use the ``force_focus`` method of ScrollingManager.
 
 
 -----------------
@@ -585,7 +623,9 @@ class RectMapLayer(RegularTesselationMapLayer):
         self.tw, self.th = tw, th
         if origin is None:
             origin = (0, 0, 0)
-        self.x, self.y, self.z = origin
+        # XXX actually use this
+        assert tuple(origin) == (0, 0, 0), 'non-zero origin %r not handled yet'%origin
+        self.origin_x, self.origin_y, self.origin_z = origin
         self.cells = cells
         self.px_width = len(cells) * tw
         self.px_height = len(cells[0]) * th
@@ -600,7 +640,9 @@ class RectMapLayer(RegularTesselationMapLayer):
         y1 = max(0, y1 // self.th)
         x2 = min(len(self.cells), x2 // self.tw + 1)
         y2 = min(len(self.cells[0]), y2 // self.th + 1)
-        return [self.cells[x][y] for x in range(int(x1), int(x2)) for y in range(int(y1), int(y2))]
+        return [self.cells[x][y]
+            for x in range(int(x1), int(x2))
+                for y in range(int(y1), int(y2))]
 
     def get(self, x, y):
         ''' Return Cell at pixel px=(x,y).
@@ -1010,6 +1052,7 @@ class ScrollingManager(list):
         super(ScrollingManager, self).append(item)
         item.set_viewport(0, 0, self.viewport.width, self.viewport.height)
 
+    _old_focus = None
     def set_focus(self, fx, fy):
         '''Determine the focal point of the view based on focus (fx, fy),
         and registered layers.
@@ -1020,27 +1063,32 @@ class ScrollingManager(list):
         fx = int(fx)
         fy = int(fy)
 
+        # check for NOOP
+        if self._old_focus == (fx, fy):
+            return
+        self._old_focus = (fx, fy)
+
         # check that any layer has bounds
-        bounded = []
+        bounded_layers = []
         for layer in self:
             if hasattr(layer, 'px_width'):
-                bounded.append(layer)
-        if not bounded:
+                bounded_layers.append(layer)
+        if not bounded_layers:
             for layer in self:
                 layer.force_focus(fx, fy)
             return (fx, fy)
 
         # figure the bounds min/max
-        m = bounded[0]
-        b_min_x = m.x
-        b_min_y = m.y
-        b_max_x = m.x + m.px_width
-        b_max_y = m.y + m.px_height
-        for m in bounded[1:]:
-            b_min_x = min(b_min_x, m.x)
-            b_min_y = min(b_min_y, m.y)
-            b_max_x = min(b_max_x, m.x + m.px_width)
-            b_max_y = min(b_max_y, m.y + m.px_height)
+        first = bounded_layers[0]
+        b_min_x = first.origin_x
+        b_min_y = first.origin_y
+        b_max_x = first.origin_x + first.px_width
+        b_max_y = first.origin_y + first.px_height
+        for layer in bounded_layers[1:]:
+            b_min_x = min(b_min_x, layer.origin_x)
+            b_min_y = min(b_min_y, layer.origin_y)
+            b_max_x = min(b_max_x, layer.origin_x + layer.px_width)
+            b_max_y = min(b_max_y, layer.origin_y + layer.px_height)
 
         # figure the view min/max based on focus
         w2 = self.viewport.width/2
