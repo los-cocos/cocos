@@ -35,6 +35,8 @@ if __name__ == "__main__":
 
     car_layer = tiles.ScrollableLayer()
     car = CarSprite('car.png')
+    car.x=200
+    car.y=100
     car.schedule(car.update)
     car_layer.add(car)
 

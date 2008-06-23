@@ -524,12 +524,15 @@ class ScrollableLayer(cocos.layer.Layer):
     The scrolling is usually managed by a ScrollingManager.
     '''
     viewport_x, viewport_y = 0, 0
+    origin_x = origin_y = origin_z = 0
 
     def __init__(self):
         super(ScrollableLayer,self).__init__()
         self.batch = pyglet.graphics.Batch()
 
     def set_viewport(self, x, y, w, h):
+        x -= self.origin_x
+        y -= self.origin_y
         self.viewport_x, self.viewport_y = x, y
         self.viewport_w, self.viewport_h = w, h
         self.position = (-x, -y)
@@ -578,6 +581,9 @@ class MapLayer(ScrollableLayer):
     def set_viewport(self, x, y, w, h):
         super(MapLayer, self).set_viewport(x, y, w, h)
 
+        # set_viewport can mess with the viewport values
+        x, y, w, h = self.viewport_x, self.viewport_y, self.viewport_w, self.viewport_h
+
         # update the sprites set
         keep = set()
         for cell in self.get_in_region(x, y, x+w, y+h):
@@ -623,8 +629,6 @@ class RectMapLayer(RegularTesselationMapLayer):
         self.tw, self.th = tw, th
         if origin is None:
             origin = (0, 0, 0)
-        # XXX actually use this
-        assert tuple(origin) == (0, 0, 0), 'non-zero origin %r not handled yet'%origin
         self.origin_x, self.origin_y, self.origin_z = origin
         self.cells = cells
         self.px_width = len(cells) * tw
