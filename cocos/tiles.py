@@ -167,6 +167,8 @@ class ResourceError(Exception):
 # XXX (though how path extension works isn't clear)
 
 class Resource(object):
+    '''Load some tile mapping resources from an XML file.
+    '''
     cache = {}
     def __init__(self, filename, paths=None):
         self.filename = filename
@@ -266,13 +268,9 @@ class Resource(object):
     def get_resource(self, ref):
         return self[ref]
 
-    def save_xml(self):
-        #filename = raw_input('filename for save? > ')
-        #if not filename.strip():
-        #    print 'Filename blank - save skipped'
-        #    return
-        filename = 'editor-save.xml'
-
+    def save_xml(self, filename):
+        '''Save this resource's XML to the indicated file.
+        '''
         # generate the XML
         root = ElementTree.Element('resource')
         for namespace, res in self.requires:
@@ -440,11 +438,6 @@ class TileSet(dict):
         self.id = id
         self.properties = properties
 
-    # We retain a cache of opened tilesets so that multiple maps may refer to
-    # the same tileset and we don't waste resources by duplicating the
-    # tilesets in memory.
-    tilesets = {}
-
     tile_id = 0
     @classmethod
     def generate_id(cls):
@@ -453,10 +446,14 @@ class TileSet(dict):
 
     def add(self, properties, image, id=None):
         '''Add a new Tile to this TileSet, generating a unique id if
-        necessary.'''
+        necessary.
+
+        Returns the Tile instance.
+        '''
         if id is None:
             id = self.generate_id()
         self[id] = Tile(id, properties, image)
+        return self[id]
 
 
 #
@@ -538,6 +535,7 @@ class ScrollableLayer(cocos.layer.Layer):
         self.position = (-x, -y)
 
     def draw(self):
+        # invoked by Cocos machinery
         super(ScrollableLayer, self).draw()
         pyglet.gl.glPushMatrix()
         self.transform()
@@ -569,16 +567,17 @@ class MapLayer(ScrollableLayer):
         super(MapLayer, self).__init__()
 
     def set_dirty(self):
-        '''Force re-calculation of the sprites to draw for the viewport.
-        '''
+        # Force re-calculation of the sprites to draw for the viewport.
         self._sprites.clear()
         self.set_viewport(self.viewport_x, self.viewport_y, self.viewport_w, self.viewport_h)
 
     def get_visible(self):
+        # determine the Cells currently visible
         return self.get_in_region(self.viewport_x, self.viewport_y,
             self.viewport_x + self.viewport_w, self.viewport_y + self.viewport_h)
 
     def set_viewport(self, x, y, w, h):
+        # invoked by ScrollingManager.set_focus()
         super(MapLayer, self).set_viewport(x, y, w, h)
 
         # set_viewport can mess with the viewport values
@@ -639,6 +638,7 @@ class RectMapLayer(RegularTesselationMapLayer):
         pixel bounds specified by the bottom-left (x1, y1) and top-right
         (x2, y2) corners.
 
+        Returs a list of Cell instances.
         '''
         x1 = max(0, x1 // self.tw)
         y1 = max(0, y1 // self.th)
@@ -651,7 +651,8 @@ class RectMapLayer(RegularTesselationMapLayer):
     def get(self, x, y):
         ''' Return Cell at pixel px=(x,y).
 
-        Return None if out of bounds.'''
+        Return None if out of bounds.
+        '''
         return self.get_cell(int((x + self.x) // self.tw), int((y + self.y) // self.th))
 
     UP = (0, 1)
@@ -709,6 +710,12 @@ class Cell(object):
 
 class RectCell(Cell):
     '''A rectangular cell from a MapLayer.
+
+    Cell attributes:
+        x, y            -- top-left coordinate
+        width, height   -- dimensions
+        properties      -- arbitrary properties
+        cell            -- cell from the MapLayer's cells
 
     Read-only attributes:
         top         -- y extent
@@ -907,6 +914,12 @@ class HexMapLayer(RegularTesselationMapLayer):
 class HexCell(Cell):
     '''A flat-top, regular hexagon cell from a HexMap.
 
+    Cell attributes:
+        x, y            -- top-left coordinate
+        width, height   -- dimensions
+        properties      -- arbitrary properties
+        cell            -- cell from the MapLayer's cells
+
     Read-only attributes:
         top             -- y extent
         bottom          -- y extent
@@ -1061,7 +1074,8 @@ class ScrollingManager(list):
         '''Determine the focal point of the view based on focus (fx, fy),
         and registered layers.
 
-        The focus will always be
+        The focus will always be shifted to ensure no managed layers display
+        out-of-bounds data, as defined by their dimensions px_width and px_height.
         '''
         # enforce int-only positioning of focus
         fx = int(fx)
@@ -1126,6 +1140,9 @@ class ScrollingManager(list):
                 self.viewport.width, self.viewport.height)
 
     def force_focus(self, fx, fy):
+        '''Force the manager to focus on a point, regardless of any managed layer
+        visible boundaries.
+        '''
         self.fx, self.fy = map(int, (fx, fy))
 
         w2 = self.viewport.width/2
