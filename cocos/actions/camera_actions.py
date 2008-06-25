@@ -119,7 +119,6 @@ class OrbitCamera( Camera3DAction ):
         super(OrbitCamera,self).start()
 
         radius, zenith, azimuth = self.get_spherical_coords()
-        print radius, zenith, azimuth
 
         if self.radius is None:
             self.radius = radius

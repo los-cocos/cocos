@@ -31,7 +31,6 @@ if __name__ == "__main__":
     main_scene = cocos.scene.Scene()
     main_scene.add( BackgroundLayer(), z=0 )
 
-    # use the remaining grid and move it's camera
     rot = OrbitCamera( delta_z=60, duration=2 )
 
     main_scene.do( rot * 3 )

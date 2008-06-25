@@ -1,5 +1,6 @@
 v0.3.0xxxx - xxxx
   - Transitions: Added ZoomTransition by Hugo Ruscitti
+  - Fixed Tile Map
 
 v0.3.0beta1 - June 2nd, 2008
   - Actions: added FadeOutBLTiles, FadeOutUpTiles, FadeOutDownTiles effects
