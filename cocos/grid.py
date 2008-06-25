@@ -268,6 +268,59 @@ class Grid3D(GridBase):
  
         return ( index_points, vertex_points_idx, texture_points_idx )
 
+    def get_vertex( self, x, y):
+        '''Get the current vertex coordinate
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+
+        :rtype: (float, float, float)
+        '''
+        idx = (x * (self.grid.y+1) + y) * 3
+        x = self.vertex_list.vertices[idx]
+        y = self.vertex_list.vertices[idx+1]
+        z = self.vertex_list.vertices[idx+2]
+        return (x,y,z)
+
+    def get_original_vertex( self, x, y):
+        '''Get the original vertex coordinate.
+        The original vertices are the ones weren't modified by the current action.
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+
+        :rtype: (float, float, float)
+        '''
+        idx = (x * (self.grid.y+1) + y) * 3
+        x = self.vertex_points[idx]
+        y = self.vertex_points[idx+1]
+        z = self.vertex_points[idx+2]
+
+        return (x,y,z)
+
+
+    def set_vertex( self, x, y, v):
+        '''Set a vertex point is a certain value
+
+        :Parameters:
+            `x` : int 
+               x-vertex
+            `y` : int
+               y-vertex
+            `v` : (float, float, float)
+                tuple value for the vertex
+        '''
+        idx = (x * (self.grid.y+1) + y) * 3
+        self.vertex_list.vertices[idx] = int(v[0])
+        self.vertex_list.vertices[idx+1] = int(v[1])
+        self.vertex_list.vertices[idx+2] = int(v[2])
+
 class TiledGrid3D(GridBase):
     '''`TiledGrid3D` is a 3D grid implementation. It differs from `Grid3D` in that
     the tiles can be separated from the grid. 
@@ -321,3 +374,68 @@ class TiledGrid3D(GridBase):
 
         # Generates a quad for each tile, to perform tiles effect
         return (vertex_points, texture_points)
+
+    def set_tile(self, x, y, coords):
+        '''Set the 4 tile coordinates
+
+        Coordinates positions::
+
+            3 <-- 2
+                  ^
+                  |
+            0 --> 1
+
+        :Parameters:
+            `x` : int 
+                x coodinate of the tile
+            `y` : int 
+                y coordinate of the tile
+            `coords` : [ float, float, float, float, float, float, float, float, float, float, float, float ]
+                The 4 coordinates in the format (x0, y0, z0, x1, y1, z1,..., x3, y3, z3)
+        '''
+        idx = (self.grid.y * x + y) * 4 * 3
+        self.vertex_list.vertices[idx:idx+12] = coords
+    
+    def get_original_tile(self, x, y):
+        '''Get the 4-original tile coordinates.
+
+        Coordinates positions::
+
+            3 <-- 2
+                  ^
+                  |
+            0 --> 1
+
+        :Parameters:
+            `x` : int
+                x coordinate of the tile
+            `y` : int
+                y coordinate of the tile
+
+        :rtype: [ float, float, float, float, float, float, float, float, float, float, float, float ]
+        :returns: The 4 coordinates with the following order: x0, y0, z0, x1, y1, z1,...,x3, y3, z3
+        '''
+        idx = (self.grid.y * x + y) * 4 * 3
+        return self.vertex_points[idx:idx+12]
+
+    def get_tile(self, x, y):
+        '''Get the current tile coordinates.
+
+        Coordinates positions::
+
+            3 <-- 2
+                  ^
+                  |
+            0 --> 1
+
+        :Parameters:
+            `x` : int
+                x coordinate of the tile
+            `y` : int
+                y coordinate of the tile
+
+        :rtype: [ float, float, float, float, float, float, float, float, float, float, float, float ]
+        :returns: The 4 coordinates with the following order: x0, y0, z0, x1, y1, z1,...,x3, y3, z3
+        '''
+        idx = (self.grid.y * x + y) * 4 * 3
+        return self.vertex_list.vertices[idx:idx+12]

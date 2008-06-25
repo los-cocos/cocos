@@ -149,11 +149,7 @@ class Grid3DAction( GridBaseAction ):
 
         :rtype: (float, float, float)
         '''
-        idx = (x * (self.grid.y+1) + y) * 3
-        x = self.target.grid.vertex_list.vertices[idx]
-        y = self.target.grid.vertex_list.vertices[idx+1]
-        z = self.target.grid.vertex_list.vertices[idx+2]
-        return (x,y,z)
+        return self.target.grid.get_vertex(x,y)
 
     def get_original_vertex( self, x, y):
         '''Get the original vertex coordinate.
@@ -167,12 +163,7 @@ class Grid3DAction( GridBaseAction ):
 
         :rtype: (float, float, float)
         '''
-        idx = (x * (self.grid.y+1) + y) * 3
-        x = self.target.grid.vertex_points[idx]
-        y = self.target.grid.vertex_points[idx+1]
-        z = self.target.grid.vertex_points[idx+2]
-
-        return (x,y,z)
+        return self.target.grid.get_original_vertex(x,y)
 
 
     def set_vertex( self, x, y, v):
@@ -186,10 +177,7 @@ class Grid3DAction( GridBaseAction ):
             `v` : (float, float, float)
                 tuple value for the vertex
         '''
-        idx = (x * (self.grid.y+1) + y) * 3
-        self.target.grid.vertex_list.vertices[idx] = int(v[0])
-        self.target.grid.vertex_list.vertices[idx+1] = int(v[1])
-        self.target.grid.vertex_list.vertices[idx+2] = int(v[2])
+        return self.target.grid.set_vertex(x,y,v)
 
 
 class TiledGrid3DAction( GridBaseAction ):
@@ -218,8 +206,7 @@ class TiledGrid3DAction( GridBaseAction ):
             `coords` : [ float, float, float, float, float, float, float, float, float, float, float, float ]
                 The 4 coordinates in the format (x0, y0, z0, x1, y1, z1,..., x3, y3, z3)
         '''
-        idx = (self.grid.y * x + y) * 4 * 3
-        self.target.grid.vertex_list.vertices[idx:idx+12] = coords
+        return self.target.grid.set_tile(x,y,coords)
     
     def get_original_tile(self, x, y):
         '''Get the 4-original tile coordinates.
@@ -240,8 +227,7 @@ class TiledGrid3DAction( GridBaseAction ):
         :rtype: [ float, float, float, float, float, float, float, float, float, float, float, float ]
         :returns: The 4 coordinates with the following order: x0, y0, z0, x1, y1, z1,...,x3, y3, z3
         '''
-        idx = (self.grid.y * x + y) * 4 * 3
-        return self.target.grid.vertex_points[idx:idx+12]
+        return self.target.grid.get_original_tile(x,y)
 
     def get_tile(self, x, y):
         '''Get the current tile coordinates.
@@ -262,8 +248,7 @@ class TiledGrid3DAction( GridBaseAction ):
         :rtype: [ float, float, float, float, float, float, float, float, float, float, float, float ]
         :returns: The 4 coordinates with the following order: x0, y0, z0, x1, y1, z1,...,x3, y3, z3
         '''
-        idx = (self.grid.y * x + y) * 4 * 3
-        return self.target.grid.vertex_list.vertices[idx:idx+12]
+        return self.target.grid.get_tile(x,y)
         
 
 class AccelDeccelAmplitude( IntervalAction ):
