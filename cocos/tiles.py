@@ -4,16 +4,20 @@
 Tile Maps
 =========
 
-Tile maps are made of two components:
+Tile maps are made of three components:
 
+images
+   Images are from individual files for from image atlases in a single file.
 tiles
    Tiles may be stand-alone or part of a TileSet.
 maps
    MapLayers are made of either rectangular or hexagonal Cells which
    reference the tiles used to draw the cell.
 
-The intention here is that you may have a tile set defined in one XML file
-which is shared amongst many map files (or indeed within a single XLM file).
+The intent is that you may have a tile set defined in one XML file
+which is shared amongst many map files (or indeed within a single
+XML file). Images may be shared amongst multiple tiles with the tiles
+adding different meta-data in each case.
 
 These may be constructed manually or loaded from XML resource files which
 are used to store the specification of tile sets and tile maps. A given
@@ -21,7 +25,7 @@ resource XML file may define multiple tile sets and maps and may even
 reference other external XML resource files. This would allow a single
 tile set to be used by multiple tile maps.
 
----------
+
 Tile Maps
 ---------
 
@@ -34,7 +38,7 @@ cells (up, down, left, right.)
 Maps may be defined in Python code, but it is a little easier to do so
 in XML. To support map editing the maps support round-tripping to XML.
 
---------------------------
+
 The XML File Specification
 --------------------------
 
@@ -87,7 +91,6 @@ If you wish you may force the focus to display areas outside your
 tile maps you may use the ``force_focus`` method of ScrollingManager.
 
 
------------------
 XML file contents
 -----------------
 
@@ -107,10 +110,14 @@ If you wish to avoid id clashes you may supply a namespace:
 
     <require file="road-tiles.xml" namespace="road" />
 
+If a namespace is given then the element ids from the "road-tiles.xml"
+will be prefixed by the namespace and a period, e.g. "road.bitumen".
+
 Other tags within <resource> are:
 
 <image file="" id="">
-    Loads file with pyglet.image.load.
+    Loads file with pyglet.image.load and gives it the id which is used
+    by tiles to reference the image.
 
 <imageatlas file="" [id="" size="x,y"]>
     Sets up an image atlas for child <image> tags to use. Child tags are of
@@ -119,7 +126,8 @@ Other tags within <resource> are:
         <image offset="" id="" [size=""]>
 
     If the <imageatlas> tag does not provide a size attribute then all
-    child <image> tags must provide one.
+    child <image> tags must provide one. Image atlas ids are optional as
+    they are currently not reference directly.
 
 <tileset id="">
     Sets up a TileSet object. Child tags are of the form:
@@ -128,8 +136,8 @@ Other tags within <resource> are:
          [<image ...>]
        </tile>
 
-    The <image> tag is optional, this tiles may have only properties (or be
-    completely empty).
+    The <image> tag is optional; these tiles may have only properties (or be
+    completely empty). The id is used by maps to reference the tile.
 
 <rectmap id="" tile_size="" [origin=""]>
     Sets up a RectMap object. Child tags are of the form:
@@ -143,8 +151,9 @@ Most tags may additionally have properties specified as:
    <property [type=""] name="" value="" />
 
 Where type is one of "unicode", "int", "float" or "bool". The property will
-be a unicode string by default if no type is specified.
-
+be a unicode string by default if no type is specified. The properties
+are loaded into a dictionary called ".properties" on the appropriate
+Image, Tile, Map and Cell instance.
 '''
 
 __docformat__ = 'restructuredtext'
@@ -1092,9 +1101,7 @@ class ScrollingManager(list):
             if hasattr(layer, 'px_width'):
                 bounded_layers.append(layer)
         if not bounded_layers:
-            for layer in self:
-                layer.force_focus(fx, fy)
-            return (fx, fy)
+            return self.force_focus(fx, fy)
 
         # figure the bounds min/max
         first = bounded_layers[0]
