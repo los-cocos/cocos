@@ -1,6 +1,7 @@
-v0.3.0xxxx - xxxx
+v0.3.0rc0 -  June 27th, 2008
   - Transitions: Added ZoomTransition by Hugo Ruscitti
   - Fixed Tile Map
+  - Compatible with pyglet 1.1beta2
 
 v0.3.0beta1 - June 2nd, 2008
   - Actions: added FadeOutBLTiles, FadeOutUpTiles, FadeOutDownTiles effects
