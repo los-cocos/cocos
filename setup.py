@@ -7,8 +7,8 @@ $Date: 2008-04-05 16:22:08 -0500 (Sat, 05 Apr 2008) $
 """
 
 __author__ = "cocos2d team"
-__version__ = "0.3.0-beta1"
-__date__ = "2008-06-02"
+__version__ = "0.3.0-rc0"
+__date__ = "2008-06-27"
 
 try:
     import setuptools
