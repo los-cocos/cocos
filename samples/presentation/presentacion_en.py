@@ -409,16 +409,19 @@ if __name__ == "__main__":
             ),
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("More Effects II", [
-                "Acciones",
+                "Actions",
                 "Lens + Jump",
                 "Reuse Grid",
             ]),
             ),
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
-            BulletListLayer("Transitions", [
+            BulletListLayer("Coming soon", [
+                "Particle system",
+                "Pymunk integration",
+                "Drawing primitives",
             ]),
             ),
-        
+
          cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             TitleSubTitleLayer("cocos2d", "http://www.cocos2d.org"),
         ),
