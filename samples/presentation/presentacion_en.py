@@ -291,16 +291,16 @@ if __name__ == "__main__":
                 ])
             ),
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
-            BulletListLayer("Games and Python", [
-                "Juegos en un lenguaje interpretado?",
-                "Depende del juego",
-                "Hay mucho que se puede hacer en 30ms",
+            BulletListLayer("Games-Python", [
+                "Games in an interpreted language?",
+                "Depends on the game",
+                "30ms is a lot",
                 ])
             ),
         
         
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
-            BulletListLayer("Historia", [
+            BulletListLayer("Inspiration", [
                 "2000 : pygame",
                 "2005 : pyweek",
                 "2006 : pyglet",
@@ -309,51 +309,51 @@ if __name__ == "__main__":
             ),
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Features", [
-                "Control de flujo",
+                "Flow Control",
                 "Sprites",
-                "Acciones",
-                "Efectos",
-                "Transiciones",
+                "Actions",
+                "Effects",
+                "Transitions",
                 "Menus", 
                 ])
             ),
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Features (2)", [
-                "Texto / HTML",
+                "Text / HTML",
                 "Tiles"
-                "Bien Documentado",
-                "Interprete de python incluido",
-                "Licencia BSD",
-                "Basado en pyglet",
+                "Well documented",
+                "Embedded python interpreter",
+                "BSD License",
+                "pyglet-based",
                 "OpenGL",
                 ]),
             ),
         cocos.scene.Scene ( cocos.layer.ColorLayer(0,0,0,255),
-            BulletListLayer("Conceptos", []).add(
+            BulletListLayer("Concepts", []).add(
                 Sprite("scene_en.png", (x/2, 100))),
             ),
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
-            BulletListLayer("Documentacion", [
-                "Tutoriales en video",
-                "Guia de programacion (1KLOT)",
-                "Documentacion de api [casi] completa",
-                "5KLOC de tests",
-                "Los test son ejemplos funcionales",
-                "FAQ [en progreso]",
+            BulletListLayer("Documentation", [
+                "Video Tutorial",
+                "Programming guide",
+                "(almost) complete API reference",
+                "5KLOC of tests",
+                "tests are readable samples",
+                "FAQ [in progress]",
 
             ]),
             ),
             
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
-            BulletListLayer("Comunidad", [
-                "5 juegos terminados",
-                "Varios proyectos en desarrollo",
-                "Contribuidores de todo el mundo",
-                "Lista de correo 'funcional'",
+            BulletListLayer("Comunity", [
+                "5 finished games",
+                "Several projects in development",
+                "Contributors from around the world",
+                "Working mailing list",
             ]),
             ),
         cocos.scene.Scene ( cocos.layer.ColorLayer(0,0,0,255),
-            BulletListLayer("Control De Flujo", [
+            BulletListLayer("Flow Control", [
                 "director.run()",
                 "director.push() / pop()",
                 "director.replace",
@@ -395,7 +395,7 @@ if __name__ == "__main__":
                 "ColorBuffer",
                 "Grid / Tiled",
                 "Camera",
-                "PONER SCREENSHOTS / SLIDES PARA EXPLICAR TEORIA",
+                #"PONER SCREENSHOTS / SLIDES PARA EXPLICAR TEORIA",
             ]),
             ),
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
@@ -415,7 +415,7 @@ if __name__ == "__main__":
             ]),
             ),
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
-            BulletListLayer("Transiciones", [
+            BulletListLayer("Transitions", [
             ]),
             ),
         
@@ -429,7 +429,8 @@ if __name__ == "__main__":
             'SlideInLTransition','SlideInRTransition',
             'SlideInBTransition','SlideInTTransition',
 
-            'FlipX3DTransition', 'FlipY3DTransition','FlipAngular3DTransition',
+            'FlipX3DTransition','FadeTRTransition', 
+             'FlipY3DTransition','FlipAngular3DTransition',
 
             'ShuffleTransition',
             'TurnOffTilesTransition',
