@@ -76,6 +76,7 @@ class PythonInterpreterLayer(ColorLayer):
         self.history = ['']
         self.history_pos = 0
 
+
     def on_enter(self):
         super(PythonInterpreterLayer, self).on_enter()
 
@@ -94,7 +95,7 @@ class PythonInterpreterLayer(ColorLayer):
         # generate the document
         self.layout = layout.IncrementalTextLayout(self.document,
             vw, vh, multiline=True, batch=self.batch)
-        self.layout.valign = 'top'
+        self.layout.anchor_y= 'top'
 
         self.caret = caret.Caret(self.layout, color=self.cfg['caret.color'] )
         self.caret.on_activate()
@@ -215,7 +216,7 @@ class PythonInterpreterLayer(ColorLayer):
     def _scroll_to_bottom(self):
         # on key press always move the view to the bottom of the screen
         if self.layout.height < self.layout.content_height:
-            self.layout.valign = 'bottom'
+            self.layout.anchor_y= 'bottom'
             self.layout.y = 0
             self.layout.view_y = 0
         if self.caret.position < self.start_of_line:
