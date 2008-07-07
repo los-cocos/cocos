@@ -91,7 +91,7 @@ class Camera(object):
         self.dirty = False
 
         #: optimization. Only renders the camera once
-        self.once = True
+        self.once = False
 
     def locate( self, force=False ):
         '''Sets the camera using gluLookAt using its eye, center and up_vector
