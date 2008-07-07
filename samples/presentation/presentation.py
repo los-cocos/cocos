@@ -167,7 +167,7 @@ class TransitionControl(cocos.layer.Layer):
         if transition:
             director.replace( transition(
                         self.scenes[ self.scene_p ],
-                        duration = 1
+#                        duration = 1
                          )
                 )
         else:
@@ -191,99 +191,13 @@ class RunScene(cocos.layer.Layer):
         if keyp in (key.F1,):
             director.push( self.target )    
         
-class ControlLayer(cocos.layer.Layer):
-    is_event_handler = True
-    
-    def on_enter( self ):
-        super(ControlLayer, self).on_enter()
-        
-        ft_title = font.load( "Arial", 32 )
-        ft_subtitle = font.load( "Arial", 18 )
-        ft_help = font.load( "Arial", 16 )
-
-        self.text_title = font.Text(ft_title, "Transition Demos",
-            x=5,
-            y=480,
-            anchor_x=font.Text.LEFT,
-            anchor_y=font.Text.TOP)
-
-        self.text_subtitle = font.Text(ft_subtitle, transition_list[current_transition].__name__,
-            x=5,
-            y=400,
-            anchor_x=font.Text.LEFT,
-            anchor_y=font.Text.TOP)
-        
-        self.text_help = font.Text(ft_help,"Press LEFT / RIGHT for prev/next example, ENTER to restart example",
-            x=320,
-            y=20,
-            anchor_x=font.Text.CENTER,
-            anchor_y=font.Text.CENTER)
-
-    def step( self, df ):
-        self.text_help.draw()
-
-        self.text_subtitle.text = transition_list[current_transition].__name__
-        self.text_subtitle.draw()
-        self.text_title.draw()
-
-    def on_key_press( self, k , m ):
-        global current_transition, control_p
-        if k == key.LEFT:
-            current_transition = (current_transition-1)%len(transition_list)
-        if k == key.RIGHT:
-            current_transition = (current_transition+1)%len(transition_list)
-        if k == key.ENTER:
-            director.replace( transition_list[current_transition](
-                        control_list[control_p],
-                        (control_list[(control_p+1)%len(control_list)] ),
-                        2)                                
-                    )
-            control_p = (control_p + 1) % len(control_list)
-            return True
-        if k == key.ESCAPE:
-            director.scene.end()
-            return True
-
-class GrossiniLayer(cocos.layer.Layer):
-    def __init__( self ):
-        super( GrossiniLayer, self ).__init__()
-
-        g = Sprite('grossini.png', (320,240))
-
-        self.add( g )
-
-        rot = Rotate( 180, 5 )
-
-        g.do( Repeat( rot ) )
-
-   
-class GrossiniLayer2(cocos.layer.Layer):
-    def __init__( self ):
-        super( GrossiniLayer2, self ).__init__()
-
-        rot = Rotate( 180, 5 )
-
-        g = Sprite('grossinis_sister1.png', (490,240))
-        self.add( g )
-        g.do( Repeat( rot ) )
-
-        g = Sprite('grossinis_sister2.png', (150,240))
-        self.add( g )
-        g.do( Repeat( rot ) )
 
 if __name__ == "__main__":
     aspect = 1280 / float(800)
     director.init( resizable=True, width=640, height=480 ) 
     director.window.set_fullscreen(False)
     x,y = director.get_window_size()
-    #background = BackgroundLayer("background.png")
-    #background = BackgroundLayer("coconut.jpg")
-    background = cocos.layer.ColorLayer(0,0,0,255)
     
-    transition_list = [
-        JumpZoomTransition
-        ]
-    current_transition = 0
 
     scenes = [
         cocos.scene.Scene (
@@ -442,26 +356,34 @@ if __name__ == "__main__":
     transitions = [None]*(len(scenes)-1)
     all_t = [
             'ZoomTransition',
-            'RotoZoomTransition','JumpZoomTransition',
 
-            'SlideInLTransition','SlideInRTransition',
-            'SlideInBTransition','SlideInTTransition',
+            'FlipX3DTransition',
+            'FlipY3DTransition','FlipAngular3DTransition',
 
-            'FlipX3DTransition','FadeTRTransition', 
-             'FlipY3DTransition','FlipAngular3DTransition',
-
-            'ShuffleTransition',
             'TurnOffTilesTransition',
+
+            'ShrinkGrowTransition',
+
             'FadeTRTransition', 'FadeBLTransition',
             'FadeUpTransition', 'FadeDownTransition',
 
-            'ShrinkGrowTransition',
+            'SplitRowsTransition', 'SplitColsTransition',
+
+            'RotoZoomTransition',
+
+            'FadeTransition',
+
             'CornerMoveTransition',
             'EnvelopeTransition',
 
-            'SplitRowsTransition', 'SplitColsTransition',
+            'MoveInLTransition','MoveInRTransition',
+            'MoveInBTransition','MoveInTTransition',
 
-            'FadeTransition',]
+            'ShuffleTransition',
+            'JumpZoomTransition',
+
+            ]
+
     transitions = [ getattr(cocos.scenes.transitions, all_t[i % len(all_t)]) 
                 for i in range(len(scenes)-1) ]
                 
