@@ -105,9 +105,6 @@ class PythonInterpreterLayer(ColorLayer):
         self.start_of_line = len(self.document.text)
 
     def on_resize(self, vw, vh):
-        print "PythonInterpreter::on_resize(%d,%d)" % (vw,vh)
-#        vw,vh = director.get_window_size()
-#        print vw,vh
         self.layout.begin_update()
         self.layout.height = vh
         self.layout.x = 2

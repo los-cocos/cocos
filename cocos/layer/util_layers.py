@@ -83,21 +83,27 @@ class ColorLayer(Layer):
         if not self.height:
             self.height = h
 
-
-        self.started = False
-
     def on_enter(self):
         super(ColorLayer, self).on_enter()
+        x, y = self.width, self.height
+        ox, oy = self.position
+        
+        self._vertex_list = self._batch.add(4, pyglet.gl.GL_QUADS, None,
+            ('v2i', ( ox, oy,
+                      ox, oy + y,
+                      ox+x, oy+y, 
+                      ox+x, oy)),
+            'c4B')
+
+        self._update_color()
 
     def on_exit(self):
         super(ColorLayer, self).on_exit()
-        if self._vertex_list:
-            self._vertex_list.delete()
+        self._vertex_list.delete()
         self._vertex_list = None
 
     def draw(self):
-
-
+        super(ColorLayer, self).draw()
         glPushMatrix()
         self.transform()
         glTranslatef( 
@@ -105,36 +111,7 @@ class ColorLayer(Layer):
                 -self.children_anchor_y,
                  0 )
         glPushAttrib(GL_CURRENT_BIT)
-        if not self.started:
-            x, y = self.width, self.height
-            ox, oy = self.position
-            
-            self._vertex_list = self._batch.add(4, pyglet.gl.GL_QUADS, None,
-                ('v2i', ( ox, oy,
-                          ox, oy + y,
-                          ox+x, oy+y, 
-                          ox+x, oy)),
-                'c4B')
-
-            self._update_color()
-
-            self.started = True
         self._batch.draw()
-
-        import traceback
-        traceback.print_stack()
-
-        glColor4ub(255,255,255,255)
-        glPushMatrix()
-        glTranslatef(300,0,0)
-        glBegin(GL_QUADS)
-        glVertex2f(0,0)
-        glVertex2f(600,0)
-        glVertex2f(600,600)
-        glVertex2f(0,600)
-        glEnd()
-        glPopMatrix()
-
         glPopAttrib()
         glPopMatrix()
 
