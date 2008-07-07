@@ -80,7 +80,7 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
         super(Layer, self).on_enter()
         
         scn = self.get_ancestor(scene.Scene)
-        if not scene: return
+        if not scn: return
         
         if scn._handlers_enabled:
             if self.is_event_handler:
@@ -90,7 +90,7 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
         super(Layer, self).on_exit()
         
         scn = self.get_ancestor(scene.Scene)
-        if not scene: return
+        if not scn: return
         
         if scn._handlers_enabled:
             if self.is_event_handler:
