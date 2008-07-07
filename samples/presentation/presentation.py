@@ -19,6 +19,12 @@ from cocos.sprite import *
 from cocos import text
 
 
+def get_color_layer( idx ):
+    if idx % 2 == 0:
+        return cocos.layer.ColorLayer(32,32,32,255)
+    else:
+        return cocos.layer.ColorLayer(32,64,200,255)
+
 class HelloWorld(Layer):
     def __init__(self):
 
@@ -147,14 +153,15 @@ class TransitionControl(cocos.layer.Layer):
         if self.scene_p >= len(self.scenes):
             self.scene_p = len(self.scenes)-1
         else:
-            self.transition(self.transitions[self.scene_p%len(self.transitions)])
+            self.transition(self.transitions[self.scene_p%len(self.transitions)-1])
     
     def prev_scene(self):
         self.scene_p -=1 
         if self.scene_p < 0:
             self.scene_p = 0
         else:
-            self.transition()
+#            self.transition()
+            self.transition(self.transitions[self.scene_p%len(self.transitions)])
            
     def transition(self, transition=None):
         if transition:
@@ -279,10 +286,10 @@ if __name__ == "__main__":
     current_transition = 0
 
     scenes = [
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             TitleSubTitleLayer("cocos2d", "a 2d game library"),
         ),
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("cocos2d", [
                 "a framework for",
                 "building 2D games, demos",
@@ -290,7 +297,7 @@ if __name__ == "__main__":
                 "developed 100% in python",
                 ])
             ),
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Games-Python", [
                 "Games in an interpreted language?",
                 "Depends on the game",
@@ -299,7 +306,7 @@ if __name__ == "__main__":
             ),
         
         
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Inspiration", [
                 "2000 : pygame",
                 "2005 : pyweek",
@@ -307,7 +314,7 @@ if __name__ == "__main__":
                 "2008 : cocos2d"
                 ])
             ),
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Features", [
                 "Flow Control",
                 "Sprites",
@@ -317,7 +324,7 @@ if __name__ == "__main__":
                 "Menus", 
                 ])
             ),
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Features (2)", [
                 "Text / HTML",
                 "Tiles"
@@ -328,11 +335,11 @@ if __name__ == "__main__":
                 "OpenGL",
                 ]),
             ),
-        cocos.scene.Scene ( cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Concepts", []).add(
                 Sprite("scene_en.png", (x/2, 100))),
             ),
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Documentation", [
                 "Video Tutorial",
                 "Programming guide",
@@ -344,7 +351,7 @@ if __name__ == "__main__":
             ]),
             ),
             
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Community", [
                 "5 finished games",
                 "Several projects in development",
@@ -352,14 +359,14 @@ if __name__ == "__main__":
                 "Working mailing list",
             ]),
             ),
-        cocos.scene.Scene ( cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Flow Control", [
                 "director.run()",
                 "director.push() / pop()",
                 "director.replace",
             ]),
             ),
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Sprites", [
                 "position",
                 "scale",
@@ -368,7 +375,7 @@ if __name__ == "__main__":
                 "opacity",
             ]),
             ),
-        cocos.scene.Scene ( cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Basic Actions", [
                 "MoveBy/To",
                 "ScaleBy/To",
@@ -377,7 +384,7 @@ if __name__ == "__main__":
                 "FadeIn/FadeOut",
             ]),
             ),
-        cocos.scene.Scene ( cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("More Actions", [
                 "Reverse",
                 "Sequence",
@@ -388,7 +395,7 @@ if __name__ == "__main__":
                 "CallFunc",
             ]),
             ),
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Effects: Theory", [
                 "FrameBuffer Object",
                 "PixelBuffer Object",
@@ -398,7 +405,7 @@ if __name__ == "__main__":
                 #"PONER SCREENSHOTS / SLIDES PARA EXPLICAR TEORIA",
             ]),
             ),
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("More Effects", [
                 "Ripple3D",
                 "Lens",
@@ -407,14 +414,14 @@ if __name__ == "__main__":
                 "OrbitCamera",
             ]),
             ),
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("More Effects II", [
                 "Actions",
                 "Lens + Jump",
                 "Reuse Grid",
             ]),
             ),
-        cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+        cocos.scene.Scene (
             BulletListLayer("Coming soon", [
                 "Particle system",
                 "Pymunk integration",
@@ -422,12 +429,20 @@ if __name__ == "__main__":
             ]),
             ),
 
-         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
+         cocos.scene.Scene (
             TitleSubTitleLayer("cocos2d", "http://www.cocos2d.org"),
         ),
         ]
+
+    i = 0;
+    for s in scenes:
+        s.add( get_color_layer(i), z=-1)
+        i = i+1
+
     transitions = [None]*(len(scenes)-1)
-    all_t = ['RotoZoomTransition','JumpZoomTransition',
+    all_t = [
+            'ZoomTransition',
+            'RotoZoomTransition','JumpZoomTransition',
 
             'SlideInLTransition','SlideInRTransition',
             'SlideInBTransition','SlideInTTransition',
@@ -462,9 +477,9 @@ if __name__ == "__main__":
                 )
             )
         )
-    director.interpreter_locals["uno"] = color_name_scene("uno", (255,0,0,255))
-    director.interpreter_locals["dos"] = color_name_scene("dos", (0,255,0,255))
-    director.interpreter_locals["tres"] = color_name_scene("tres", (0,0,255,255))
+    director.interpreter_locals["one"] = color_name_scene("one", (255,0,0,255))
+    director.interpreter_locals["two"] = color_name_scene("two", (0,255,0,255))
+    director.interpreter_locals["three"] = color_name_scene("three", (0,0,255,255))
     
     
     director.run (scenes[0])
