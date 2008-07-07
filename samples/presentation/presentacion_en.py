@@ -345,7 +345,7 @@ if __name__ == "__main__":
             ),
             
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
-            BulletListLayer("Comunity", [
+            BulletListLayer("Community", [
                 "5 finished games",
                 "Several projects in development",
                 "Contributors from around the world",
