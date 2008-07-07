@@ -2,6 +2,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 
 import cocos
@@ -18,6 +19,8 @@ from cocos.scenes.transitions import *
 from cocos.sprite import *
 from cocos import text
 
+import demo_grid_effects
+
 
 def get_color_layer( idx ):
     if idx % 2 == 0:
@@ -25,71 +28,7 @@ def get_color_layer( idx ):
     else:
         return cocos.layer.ColorLayer(32,64,200,255)
 
-class HelloWorld(Layer):
-    def __init__(self):
-
-        super( HelloWorld, self ).__init__()
-
-        # see pyglet documentation for help on this lines
-        self.text = pyglet.text.Label('Hello, World!', font_name='', font_size=32, x=100, y=240, batch=self.batch)
-
-        
-class BackgroundLayer(Layer):
-    """
-    """
-    def __init__( self, path_name ):
-        super(BackgroundLayer, self).__init__()
-        
-        self.image = image.load(path_name)
-        
-        
-    def draw(self):
-        texture = self.image.texture
-        
-        rx = director.window.width - 2*director._offset_x
-        ry = director.window.height - 2*director._offset_y
-        
-        tx = float(rx)/texture.width
-        ty = float(ry)/texture.height
-
-
-        glEnable(GL_TEXTURE_2D)        
-        glBindTexture(texture.target, texture.id)
-
-        x, y = director.get_window_size()
-        glBegin(gl.GL_QUADS)
-        glTexCoord2d(0,0);
-        glVertex2f( 0, 0 )
-        glTexCoord2d(0,ty);
-        glVertex2f( 0, y )
-        glTexCoord2d(tx,ty);
-        glVertex2f( x, y )
-        glTexCoord2d(tx,0);
-        glVertex2f( x,0 )
-        glEnd()
-        
-        glDisable(GL_TEXTURE_2D)
-        
-
-class SpriteLayer( Layer ):
-    pass
-
-class SpriteMoveTo( SpriteLayer ):
-    def on_enter( self ):
-        super(SpriteMoveTo, self).on_enter()
-        
-        self.stop()
-
-        sprite = Sprite("grossini.png", (20,100))
-        self.add( sprite )
-
-        sprite.do( MoveTo( (580,100), 3 ) )
-
-    def on_exit(self):
-        super(SpriteMoveTo, self).on_exit()
-        [ self.remove( c ) for c in self.get_chidren() ]
-        
-
+       
 
 class TitleSubTitleLayer(cocos.layer.Layer):
     def __init__(self, title, subtitle):
@@ -197,7 +136,8 @@ if __name__ == "__main__":
     director.init( resizable=True, width=640, height=480 ) 
     director.window.set_fullscreen(False)
     x,y = director.get_window_size()
-    
+
+    pyglet.font.add_directory('..')
 
     scenes = [
         cocos.scene.Scene (
@@ -402,6 +342,8 @@ if __name__ == "__main__":
     director.interpreter_locals["one"] = color_name_scene("one", (255,0,0,255))
     director.interpreter_locals["two"] = color_name_scene("two", (0,255,0,255))
     director.interpreter_locals["three"] = color_name_scene("three", (0,0,255,255))
+
+    director.interpreter_locals["grid_scene"] = demo_grid_effects.start()
     
     
     director.run (scenes[0])

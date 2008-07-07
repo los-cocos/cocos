@@ -158,7 +158,7 @@ class MainMenu(Menu):
         self.parent.switch_to( 1 )
 
     def on_quit( self ):
-        pyglet.app.exit()
+        director.pop()
 
 
 class OptionMenu(Menu):
@@ -208,8 +208,10 @@ class ScoreMenu(Menu):
         self.parent.switch_to( 0 )
 
 
-if __name__ == "__main__":
+def init():
     director.init( resizable=True, width=640, height=480)
+
+def start():
     director.set_depth_test()
 
     firelayer = FireManager(director.get_window_size()[0], 250)
@@ -248,6 +250,7 @@ if __name__ == "__main__":
     scene.do(
               Delay(3) +
               ripple + Delay(2) +
+              wavestiles + Delay(1) +
               twirl +
               liquid + Delay(2) +
               shakyt + Delay(2) +
@@ -264,7 +267,6 @@ if __name__ == "__main__":
               corners + Delay(2) + Reverse(corners) +
               waves + Delay(2) + ReuseGrid() + shaky +
               jumptiles + Delay(1) +
-              wavestiles + Delay(1) +
               cornerup + Delay(1) +
               Reverse(cornerdown) + Delay(1) +
               fadeout + Reverse(fadeout) + Delay(2) +
@@ -277,4 +279,12 @@ if __name__ == "__main__":
 
     firelayer.do( Delay(4) + DoAction( Repeat( RotateBy(360, 10) ) ) )
 
+    return scene
+
+def run(scene):
     director.run( scene )
+
+if __name__ == "__main__":
+    init()
+    s = start()
+    run(s)
