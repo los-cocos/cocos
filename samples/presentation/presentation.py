@@ -88,6 +88,7 @@ class TransitionControl(cocos.layer.Layer):
         
             
     def next_scene(self):
+        self.duration = None
         self.scene_p +=1 
         if self.scene_p >= len(self.scenes):
             self.scene_p = len(self.scenes)-1
@@ -95,6 +96,7 @@ class TransitionControl(cocos.layer.Layer):
             self.transition(self.transitions[self.scene_p%len(self.transitions)-1])
     
     def prev_scene(self):
+        self.duration=0.5
         self.scene_p -=1 
         if self.scene_p < 0:
             self.scene_p = 0
@@ -106,7 +108,7 @@ class TransitionControl(cocos.layer.Layer):
         if transition:
             director.replace( transition(
                         self.scenes[ self.scene_p ],
-#                        duration = 1
+                        duration = self.duration
                          )
                 )
         else:

@@ -104,13 +104,19 @@ class PythonInterpreterLayer(ColorLayer):
 
         self.start_of_line = len(self.document.text)
 
-    def on_resize(self, vw, vh):
+    def on_resize(self, x, y):
+        vw, vh = director.get_window_size()
         self.layout.begin_update()
         self.layout.height = vh
         self.layout.x = 2
         self.layout.width = vw - 4
         self.layout.y = vh
         self.layout.end_update()
+
+        # XXX: hack
+        x,y = director.window.width, director.window.height
+        self.layout.top_group._scissor_width=x-4
+
         self.caret.position = len(self.document.text)
 
     def on_exit(self):

@@ -93,6 +93,8 @@ class TransitionScene(scene.Scene):
             src = director.scene
         self.out_scene = src                    #: scene that will be replaced
         self.duration = duration                #: duration in seconds of the transition
+        if not self.duration:
+            self.duration = 1.25
 
         if self.out_scene is None:
             raise Exception("You need to specfy a `src` argument")
