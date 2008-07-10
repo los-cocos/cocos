@@ -284,7 +284,7 @@ class Director(event.EventDispatcher):
         self.scene_stack.append( self.scene )
         self._set_scene( scene )
 
-        pyglet.app.run()
+        event_loop.run()
 
 
     def on_draw( self ):
@@ -493,7 +493,9 @@ class Director(event.EventDispatcher):
             glDisable( GL_DEPTH_TEST )
 
 
+event_loop = pyglet.app.EventLoop()
 director = Director()
+director.event = event_loop.event
 """The singleton; check `cocos.director.Director` for details on usage.
 Don't instantiate Director(). Just use this singleton."""
 
