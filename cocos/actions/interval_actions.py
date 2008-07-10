@@ -566,7 +566,9 @@ class Jump(IntervalAction):
                 Duration time in seconds
         """
 
-        print 'WARNING: Deprecated "Jump" action. Consider using JumpBy instead'
+        import warnings
+        warnings.warn('Deprecated "Jump" action. Consider using JumpBy instead', DeprecationWarning)
+        
 
         self.y = y
         self.x = x
