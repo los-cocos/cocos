@@ -52,13 +52,12 @@ def set_pause_scene_generator(generator):
     __pause_scene_generator__ = generator
     
 def default_pause_scene():
-    x,y = director.get_window_size()
+    w, h = director.window.width, director.window.height
     texture = pyglet.image.Texture.create_for_size(
-                    GL_TEXTURE_2D, x, 
-                    y, GL_RGBA)
+                    GL_TEXTURE_2D, w, h, GL_RGBA)
     texture.blit_into(pyglet.image.get_buffer_manager().get_color_buffer(), 0,0,0)
     return PauseScene(
-        texture, ColorLayer(25,25,25,205), PauseLayer()
+        texture.get_region(0, 0, w, h), ColorLayer(25,25,25,205), PauseLayer()
         )
 set_pause_scene_generator( default_pause_scene )
 
@@ -67,9 +66,10 @@ class PauseScene(Scene):
     def __init__(self, background, *layers):
         super(PauseScene, self).__init__(*layers)
         self.bg = background
+        self.width, self.height = director.get_window_size()
         
     def draw(self):
-        self.bg.blit(0,0)
+        self.bg.blit(0, 0, width=self.width, height=self.height)
         super(PauseScene, self).draw()
         
         
