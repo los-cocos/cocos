@@ -680,7 +680,7 @@ class RectMapLayer(RegularTesselationMapLayer):
     def _as_xml(self, root):
         m = ElementTree.SubElement(root, 'rectmap', id=self.id,
             tile_size='%dx%d'%(self.tw, self.th),
-            origin='%s,%s,%s'%(self.x, self.y, self.z))
+            origin='%s,%s,%s'%(self.origin_x, self.origin_y, self.origin_z))
         for column in self.cells:
             c = ElementTree.SubElement(m, 'column')
             c.tail = '\n'
@@ -705,6 +705,7 @@ class Cell(object):
 
     def _as_xml(self, parent):
         c = ElementTree.SubElement(parent, 'cell')
+        c.tail = '\n'
         if self.tile:
             c.set('tile', self.tile.id)
         for k in self.properties:
