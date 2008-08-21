@@ -196,7 +196,7 @@ class Resource(object):
         root = tree.getroot()
         if root.tag != 'resource':
             raise ResourceError('document is <%s> instead of <resource>'%
-                root.name)
+                root.tag)
         self.handle(root)
 
     def find_file(self, filename):
