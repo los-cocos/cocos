@@ -196,7 +196,7 @@ class Resource(object):
         root = tree.getroot()
         if root.tag != 'resource':
             raise ResourceError('document is <%s> instead of <resource>'%
-                root.tag)
+                root.name)
         self.handle(root)
 
     def find_file(self, filename):
@@ -530,11 +530,17 @@ class ScrollableLayer(cocos.layer.Layer):
     The scrolling is usually managed by a ScrollingManager.
     '''
     viewport_x, viewport_y = 0, 0
+    viewport_w, viewport_h = 0, 0
     origin_x = origin_y = origin_z = 0
+    tw = 0
 
     def __init__(self):
         super(ScrollableLayer,self).__init__()
         self.batch = pyglet.graphics.Batch()
+
+    _scale = 0
+    scale = property(lambda s: s._scale,
+        lambda s, v: setattr(s, '_scale', v) or (s.tw and s.set_dirty()))
 
     def set_viewport(self, x, y, w, h):
         x -= self.origin_x
@@ -568,8 +574,8 @@ class MapLayer(ScrollableLayer):
         (width, height) -- size of map in cells
         (px_width, px_height)      -- size of map in pixels
         (tw, th)        -- size of each cell in pixels
-        (x, y, z)       -- offset of map top left from origin in pixels
-        cells           -- array [x][y] of Cell instances
+        (origin_x, origin_y, origin_z)  -- offset of map top left from origin in pixels
+        cells           -- array [i][j] of Cell instances
     '''
     def __init__(self):
         self._sprites = {}
@@ -582,19 +588,17 @@ class MapLayer(ScrollableLayer):
 
     def get_visible(self):
         # determine the Cells currently visible
-        return self.get_in_region(self.viewport_x, self.viewport_y,
-            self.viewport_x + self.viewport_w, self.viewport_y + self.viewport_h)
+        x, y = self.viewport_x / self.scale, self.viewport_y / self.scale
+        w, h = self.viewport_w / self.scale, self.viewport_h / self.scale
+        return self.get_in_region(int(x), int(y), int(x + w), int(y + h))
 
     def set_viewport(self, x, y, w, h):
         # invoked by ScrollingManager.set_focus()
         super(MapLayer, self).set_viewport(x, y, w, h)
 
-        # set_viewport can mess with the viewport values
-        x, y, w, h = self.viewport_x, self.viewport_y, self.viewport_w, self.viewport_h
-
         # update the sprites set
         keep = set()
-        for cell in self.get_in_region(x, y, x+w, y+h):
+        for cell in self.get_visible():
             cx, cy = key = cell.origin[:2]
             keep.add(key)
             if key not in self._sprites and cell.tile is not None:
@@ -607,14 +611,14 @@ class MapLayer(ScrollableLayer):
 class RegularTesselationMapLayer(MapLayer):
     '''A class of MapLayer that has a regular array of Cells.
     '''
-    def get_cell(self, x, y):
-        ''' Return Cell at cell pos=(x,y).
+    def get_cell(self, i, j):
+        ''' Return Cell at cell pos=(i, j).
 
         Return None if out of bounds.'''
-        if x < 0 or y < 0:
+        if i < 0 or j < 0:
             return None
         try:
-            return self.cells[x][y]
+            return self.cells[i][j]
         except IndexError:
             return None
 
@@ -622,7 +626,7 @@ class RectMapLayer(RegularTesselationMapLayer):
     '''Rectangular map.
 
     Cells are stored in column-major order with y increasing up,
-    allowing [x][y] addressing:
+    allowing [i][j] addressing:
     +---+---+---+
     | d | e | f |
     +---+---+---+
@@ -653,16 +657,57 @@ class RectMapLayer(RegularTesselationMapLayer):
         y1 = max(0, y1 // self.th)
         x2 = min(len(self.cells), x2 // self.tw + 1)
         y2 = min(len(self.cells[0]), y2 // self.th + 1)
-        return [self.cells[x][y]
-            for x in range(int(x1), int(x2))
-                for y in range(int(y1), int(y2))]
+        return [self.cells[i][j]
+            for i in range(int(x1), int(x2))
+                for j in range(int(y1), int(y2))]
 
-    def get(self, x, y):
-        ''' Return Cell at pixel px=(x,y).
+    def pixel_from_screen(self, x, y):
+        '''Look up the map-space pixel matching the screen-space pixel.
+
+        Account for viewport, layer and screen transformations.
+        '''
+        # XXX director display scaling
+
+        # XXX rotation of layer
+
+        # scaling of layer
+        y /= self.scale
+        x /= self.scale
+
+        # shift for viewport
+        y -= self.viewport_y
+        x -= self.viewport_x
+        return int(x), int(y)
+
+    def pixel_to_screen(self, x, y):
+        '''Look up the screen-space pixel matching the map-space pixel.
+
+        Account for viewport, layer and screen transformations.
+        '''
+        # shift for viewport
+        x += self.viewport_x
+        y += self.viewport_y
+
+        # scaling of layer
+        x *= self.scale
+        y *= self.scale
+
+        # XXX rotation of layer
+
+        # XXX director display scaling
+
+        return int(x), int(y)
+
+    def get_at_pixel(self, x, y):
+        ''' Return Cell at pixel px=(x,y) on the map.
+
+        The pixel coordinate passed in is in the map's coordinate space,
+        unmodified by screen, layer or viewport transformations.
 
         Return None if out of bounds.
         '''
-        return self.get_cell(int((x + self.x) // self.tw), int((y + self.y) // self.th))
+        return self.get_cell(int((x - self.origin_x) // self.tw),
+            int((y - self.origin_y) // self.th))
 
     UP = (0, 1)
     DOWN = (0, -1)
@@ -675,7 +720,7 @@ class RectMapLayer(RegularTesselationMapLayer):
         Returns None if out of bounds.
         '''
         dx, dy = direction
-        return self.get_cell(cell.x + dx, cell.y + dy)
+        return self.get_cell(cell.i + dx, cell.j + dy)
 
     def _as_xml(self, root):
         m = ElementTree.SubElement(root, 'rectmap', id=self.id,
@@ -692,14 +737,14 @@ class Cell(object):
     '''Base class for cells from rect and hex maps.
 
     Common attributes:
-        x, y            -- top-left coordinate
+        i, j            -- index of this cell in the map
         width, height   -- dimensions
         properties      -- arbitrary properties
         cell            -- cell from the MapLayer's cells
     '''
-    def __init__(self, x, y, width, height, properties, tile):
+    def __init__(self, i, j, width, height, properties, tile):
         self.width, self.height = width, height
-        self.x, self.y = x, y
+        self.i, self.j = i, j
         self.properties = properties
         self.tile = tile
 
@@ -715,105 +760,112 @@ class Cell(object):
 
     def __repr__(self):
         return '<%s object at 0x%x (%g, %g) properties=%r tile=%r>'%(
-            self.__class__.__name__, id(self), self.x, self.y,
+            self.__class__.__name__, id(self), self.i, self.j,
                 self.properties, self.tile)
 
 class RectCell(Cell):
     '''A rectangular cell from a MapLayer.
 
     Cell attributes:
-        x, y            -- top-left coordinate
+        i, j            -- index of this cell in the map
         width, height   -- dimensions
         properties      -- arbitrary properties
         cell            -- cell from the MapLayer's cells
 
     Read-only attributes:
-        top         -- y extent
-        bottom      -- y extent
-        left        -- x extent
-        right       -- x extent
-        origin      -- (x, y) of bottom-left corner
+        x, y        -- bottom-left pixel
+        top         -- y pixel extent
+        bottom      -- y pixel extent
+        left        -- x pixel extent
+        right       -- x pixel extent
+        origin      -- (x, y) of bottom-left corner pixel
         center      -- (x, y)
-        topleft     -- (x, y) of top-left corner
-        topright    -- (x, y) of top-right corner
-        bottomleft  -- (x, y) of bottom-left corner
-        bottomright -- (x, y) of bottom-right corner
-        midtop      -- (x, y) of middle of top side
-        midbottom   -- (x, y) of middle of bottom side
-        midleft     -- (x, y) of middle of left side
-        midright    -- (x, y) of middle of right side
+        topleft     -- (x, y) of top-left corner pixel
+        topright    -- (x, y) of top-right corner pixel
+        bottomleft  -- (x, y) of bottom-left corner pixel
+        bottomright -- (x, y) of bottom-right corner pixel
+        midtop      -- (x, y) of middle of top side pixel
+        midbottom   -- (x, y) of middle of bottom side pixel
+        midleft     -- (x, y) of middle of left side pixel
+        midright    -- (x, y) of middle of right side pixel
+
+    Note that all pixel attributes are *not* adjusted for screen,
+    viewport or layer transformations.
     '''
+    x = property(lambda self: self.i * self.width)
+    y = property(lambda self: self.j * self.height)
+
     def get_origin(self):
-        return self.x * self.width, self.y * self.height
+        return self.i * self.width, self.j * self.height
     origin = property(get_origin)
 
     # ro, side in pixels, y extent
     def get_top(self):
-        return (self.y + 1) * self.height
+        return (self.j + 1) * self.height
     top = property(get_top)
 
     # ro, side in pixels, y extent
     def get_bottom(self):
-        return self.y * self.height
+        return self.j * self.height
     bottom = property(get_bottom)
 
     # ro, in pixels, (x, y)
     def get_center(self):
-        return (self.x * self.width + self.width // 2,
-            self.y * self.height + self.height // 2)
+        return (self.i * self.width + self.width // 2,
+            self.j * self.height + self.height // 2)
     center = property(get_center)
 
     # ro, mid-point in pixels, (x, y)
     def get_midtop(self):
-        return (self.x * self.width + self.width // 2,
-            (self.y + 1) * self.height)
+        return (self.i * self.width + self.width // 2,
+            (self.j + 1) * self.height)
     midtop = property(get_midtop)
 
     # ro, mid-point in pixels, (x, y)
     def get_midbottom(self):
-        return (self.x * self.width + self.width // 2, self.y * self.height)
+        return (self.i * self.width + self.width // 2, self.j * self.height)
     midbottom = property(get_midbottom)
 
     # ro, side in pixels, x extent
     def get_left(self):
-        return self.x * self.width
+        return self.i * self.width
     left = property(get_left)
 
     # ro, side in pixels, x extent
     def get_right(self):
-        return (self.x + 1) * self.width
+        return (self.i + 1) * self.width
     right = property(get_right)
 
     # ro, corner in pixels, (x, y)
     def get_topleft(self):
-        return (self.x * self.width, (self.y + 1) * self.height)
+        return (self.i * self.width, (self.j + 1) * self.height)
     topleft = property(get_topleft)
 
     # ro, corner in pixels, (x, y)
     def get_topright(self):
-        return ((self.x + 1) * self.width, (self.y + 1) * self.height)
+        return ((self.i + 1) * self.width, (self.j + 1) * self.height)
     topright = property(get_topright)
 
     # ro, corner in pixels, (x, y)
     def get_bottomleft(self):
-        return (self.x * self.height, self.y * self.height)
+        return (self.i * self.height, self.j * self.height)
     bottomleft = property(get_bottomleft)
     origin = property(get_bottomleft)
 
     # ro, corner in pixels, (x, y)
     def get_bottomright(self):
-        return ((self.x + 1) * self.width, self.y * self.height)
+        return ((self.i + 1) * self.width, self.j * self.height)
     bottomright = property(get_bottomright)
 
     # ro, mid-point in pixels, (x, y)
     def get_midleft(self):
-        return (self.x * self.width, self.y * self.height + self.height // 2)
+        return (self.i * self.width, self.j * self.height + self.height // 2)
     midleft = property(get_midleft)
 
     # ro, mid-point in pixels, (x, y)
     def get_midright(self):
-        return ((self.x + 1) * self.width,
-            self.y * self.height + self.height // 2)
+        return ((self.i + 1) * self.width,
+            self.j * self.height + self.height // 2)
     midright = property(get_midright)
 
 
@@ -839,7 +891,7 @@ class HexMapLayer(RegularTesselationMapLayer):
         self.th = th
         if origin is None:
             origin = (0, 0, 0)
-        self.x, self.y, self.z = origin
+        self.origin_x, self.origin_y, self.origin_z = origin
         self.cells = cells
 
         # figure some convenience values
@@ -862,11 +914,14 @@ class HexMapLayer(RegularTesselationMapLayer):
         y1 = max(0, y1 // self.th - 1)
         x2 = min(len(self.cells), x2 // col_width + 1)
         y2 = min(len(self.cells[0]), y2 // self.th + 1)
-        return [self.cells[x][y] for x in range(x1, x2) for y in range(y1, y2)]
+        return [self.cells[i][j] for i in range(x1, x2) for j in range(y1, y2)]
 
-    def get(self, x, y):
+    # XXX add get_from_screen 
+
+    def get_at_pixel(self, x, y):
         '''Get the Cell at pixel px=(x,y).
         Return None if out of bounds.'''
+        # XXX update my docstring
         s = self.edge_length
         # map is divided into columns of
         # s/2 (shared), s, s/2(shared), s, s/2 (shared), ...
@@ -891,29 +946,29 @@ class HexMapLayer(RegularTesselationMapLayer):
         Return None if out of bounds.
         '''
         if direction is self.UP:
-            return self.get_cell(cell.x, cell.y + 1)
+            return self.get_cell(cell.i, cell.j + 1)
         elif direction is self.DOWN:
-            return self.get_cell(cell.x, cell.y - 1)
+            return self.get_cell(cell.i, cell.j - 1)
         elif direction is self.UP_LEFT:
-            if cell.x % 2:
-                return self.get_cell(cell.x - 1, cell.y + 1)
+            if cell.i % 2:
+                return self.get_cell(cell.i - 1, cell.j + 1)
             else:
-                return self.get_cell(cell.x - 1, cell.y)
+                return self.get_cell(cell.i - 1, cell.j)
         elif direction is self.UP_RIGHT:
-            if cell.x % 2:
-                return self.get_cell(cell.x + 1, cell.y + 1)
+            if cell.i % 2:
+                return self.get_cell(cell.i + 1, cell.j + 1)
             else:
-                return self.get_cell(cell.x + 1, cell.y)
+                return self.get_cell(cell.i + 1, cell.j)
         elif direction is self.DOWN_LEFT:
-            if cell.x % 2:
-                return self.get_cell(cell.x - 1, cell.y)
+            if cell.i % 2:
+                return self.get_cell(cell.i - 1, cell.j)
             else:
-                return self.get_cell(cell.x - 1, cell.y - 1)
+                return self.get_cell(cell.i - 1, cell.j - 1)
         elif direction is self.DOWN_RIGHT:
-            if cell.x % 2:
-                return self.get_cell(cell.x + 1, cell.y)
+            if cell.i % 2:
+                return self.get_cell(cell.i + 1, cell.j)
             else:
-                return self.get_cell(cell.x + 1, cell.y - 1)
+                return self.get_cell(cell.i + 1, cell.j - 1)
         else:
             raise ValueError, 'Unknown direction %r'%direction
 
@@ -925,37 +980,41 @@ class HexCell(Cell):
     '''A flat-top, regular hexagon cell from a HexMap.
 
     Cell attributes:
-        x, y            -- top-left coordinate
+        i, j            -- index of this cell in the map
         width, height   -- dimensions
         properties      -- arbitrary properties
         cell            -- cell from the MapLayer's cells
 
     Read-only attributes:
-        top             -- y extent
-        bottom          -- y extent
-        left            -- (x, y) of left corner
-        right           -- (x, y) of right corner
+        x, y            -- bottom-left pixel
+        top             -- y pixel extent
+        bottom          -- y pixel extent
+        left            -- (x, y) of left corner pixel
+        right           -- (x, y) of right corner pixel
         center          -- (x, y)
         origin          -- (x, y) of bottom-left corner of bounding rect
-        topleft         -- (x, y) of top-left corner
-        topright        -- (x, y) of top-right corner
-        bottomleft      -- (x, y) of bottom-left corner
-        bottomright     -- (x, y) of bottom-right corner
-        midtop          -- (x, y) of middle of top side
-        midbottom       -- (x, y) of middle of bottom side
-        midtopleft      -- (x, y) of middle of left side
-        midtopright     -- (x, y) of middle of right side
-        midbottomleft   -- (x, y) of middle of left side
-        midbottomright  -- (x, y) of middle of right side
+        topleft         -- (x, y) of top-left corner pixel
+        topright        -- (x, y) of top-right corner pixel
+        bottomleft      -- (x, y) of bottom-left corner pixel
+        bottomright     -- (x, y) of bottom-right corner pixel
+        midtop          -- (x, y) of middle of top side pixel
+        midbottom       -- (x, y) of middle of bottom side pixel
+        midtopleft      -- (x, y) of middle of left side pixel
+        midtopright     -- (x, y) of middle of right side pixel
+        midbottomleft   -- (x, y) of middle of left side pixel
+        midbottomright  -- (x, y) of middle of right side pixel
+
+    Note that all pixel attributes are *not* adjusted for screen,
+    viewport or layer transformations.
     '''
-    def __init__(self, x, y, height, properties, tile):
+    def __init__(self, i, j, height, properties, tile):
         width = hex_width(height)
-        Cell.__init__(self, x, y, width, height, properties, tile)
+        Cell.__init__(self, i, j, width, height, properties, tile)
 
     def get_origin(self):
-        x = self.x * (self.width / 2 + self.width // 4)
-        y = self.y * self.height
-        if self.x % 2:
+        x = self.i * (self.width / 2 + self.width // 4)
+        y = self.j * self.height
+        if self.i % 2:
             y += self.height // 2
         return (x, y)
     origin = property(get_origin)
