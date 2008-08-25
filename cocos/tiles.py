@@ -547,6 +547,15 @@ class ScrollableLayer(cocos.layer.Layer):
         y -= self.origin_y
         self.viewport_x, self.viewport_y = x, y
         self.viewport_w, self.viewport_h = w, h
+
+        # XXX transform about the center of the viewport
+        #self.transform_anchor_x = x + w//2
+        #self.transform_anchor_y = y + h//2
+
+        # XXX transform about the origin
+        self.transform_anchor_x = 0
+        self.transform_anchor_y = 0
+
         self.position = (-x, -y)
 
     def draw(self):
@@ -666,7 +675,8 @@ class RectMapLayer(RegularTesselationMapLayer):
 
         Account for viewport, layer and screen transformations.
         '''
-        # XXX director display scaling
+        # director display scaling and viewport shift
+        x, y = self.get_virtual_coordinates(x, y)
 
         # XXX rotation of layer
 
@@ -674,9 +684,6 @@ class RectMapLayer(RegularTesselationMapLayer):
         y /= self.scale
         x /= self.scale
 
-        # shift for viewport
-        y -= self.viewport_y
-        x -= self.viewport_x
         return int(x), int(y)
 
     def pixel_to_screen(self, x, y):
@@ -684,15 +691,15 @@ class RectMapLayer(RegularTesselationMapLayer):
 
         Account for viewport, layer and screen transformations.
         '''
-        # shift for viewport
-        x += self.viewport_x
-        y += self.viewport_y
-
         # scaling of layer
         x *= self.scale
         y *= self.scale
 
         # XXX rotation of layer
+
+        # shift for viewport
+        x += self.viewport_x
+        y += self.viewport_y
 
         # XXX director display scaling
 
