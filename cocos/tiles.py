@@ -527,6 +527,12 @@ def hex_width(height):
 class ScrollableLayer(cocos.layer.Layer):
     '''A Cocos Layer that is scrollable in a Scene.
 
+    Scrollable layers have a viewport which identifies the section of the layer
+    currently visible on the screen.
+
+    Scrollable layers know how to convert pixel coordinates from their own
+    pixel space to the screen space.
+
     The scrolling is usually managed by a ScrollingManager.
     '''
     viewport_x, viewport_y = 0, 0
@@ -542,20 +548,16 @@ class ScrollableLayer(cocos.layer.Layer):
     scale = property(lambda s: s._scale,
         lambda s, v: setattr(s, '_scale', v) or (s.tw and s.set_dirty()))
 
+    def set_focus(self, x, y):
+        # transform about the focal point
+        self.transform_anchor_x = x
+        self.transform_anchor_y = y
+
     def set_viewport(self, x, y, w, h):
         x -= self.origin_x
         y -= self.origin_y
         self.viewport_x, self.viewport_y = x, y
         self.viewport_w, self.viewport_h = w, h
-
-        # XXX transform about the center of the viewport
-        #self.transform_anchor_x = x + w//2
-        #self.transform_anchor_y = y + h//2
-
-        # XXX transform about the origin
-        self.transform_anchor_x = 0
-        self.transform_anchor_y = 0
-
         self.position = (-x, -y)
 
     def draw(self):
@@ -574,8 +576,70 @@ class ScrollableLayer(cocos.layer.Layer):
         x, y = director.get_virtual_coordinates(x, y)
         return x+self.viewport_x, y+self.viewport_y
 
+    def viewport_map_dimensions(self):
+        '''Calculate the current viewport in map-space pixels.
+        '''
+        # figure the dim
+        # convert the viewport (in untransformed map pixels) into screen pixels
+        # based on the layer's current scale (XXX and rotation)
+        # XXX assume anchor is centered
+        w, h = self.viewport_w, self.viewport_h
+        tx, ty = self.transform_anchor_x, self.transform_anchor_y
+
+        # now scale w,h and determine new x,y
+        w /= self.scale
+        h /= self.scale
+        x = tx - w/2
+        y = ty - h/2
+        return map(int, (x, y, w, h))
+
+    def pixel_from_screen(self, x, y):
+        '''Look up the Layer-space pixel matching the screen-space pixel.
+
+        Account for viewport, layer and screen transformations.
+        '''
+        # director display scaling
+        x, y = director.get_virtual_coordinates(x, y)
+
+        # normalise x,y coord
+        ww, wh = director.get_window_size()
+        sx = x / ww
+        sy = y / wh
+
+        # get the map-space dimensions
+        x, y, w, h = self.viewport_map_dimensions()
+
+        # convert screen pixel to map pixel
+        x = x + sx * w
+        y = y + sy * h
+
+        return int(x), int(y)
+
+    def pixel_to_screen(self, x, y):
+        '''Look up the screen-space pixel matching the Layer-space pixel.
+
+        Account for viewport, layer and screen transformations.
+        '''
+        raise NotImplementedError('do this some day')
+        # scaling of layer
+        x *= self.scale
+        y *= self.scale
+
+        # XXX rotation of layer
+
+        # shift for viewport
+        x += self.viewport_x
+        y += self.viewport_y
+
+        # XXX director display scaling
+
+        return int(x), int(y)
+
 class MapLayer(ScrollableLayer):
     '''Base class for Maps.
+
+    Maps are comprised of tiles and can figure out which tiles are required to
+    be rendered on screen.
 
     Both rect and hex maps have the following attributes:
 
@@ -591,23 +655,29 @@ class MapLayer(ScrollableLayer):
         super(MapLayer, self).__init__()
 
     def set_dirty(self):
-        # Force re-calculation of the sprites to draw for the viewport.
+        # re-calculate the sprites to draw for the viewport
         self._sprites.clear()
-        self.set_viewport(self.viewport_x, self.viewport_y, self.viewport_w, self.viewport_h)
-
-    def get_visible(self):
-        # determine the Cells currently visible
-        x, y = self.viewport_x / self.scale, self.viewport_y / self.scale
-        w, h = self.viewport_w / self.scale, self.viewport_h / self.scale
-        return self.get_in_region(int(x), int(y), int(x + w), int(y + h))
+        self._update_sprite_set()
 
     def set_viewport(self, x, y, w, h):
         # invoked by ScrollingManager.set_focus()
         super(MapLayer, self).set_viewport(x, y, w, h)
+        self._update_sprite_set()
 
+    def get_visible_cells(self):
+        '''Given the current viewport in map-space pixels, transform it based
+        on the current screen-space transform and figure the region of
+        map-space pixels currently visible.
+
+        Pass to get_in_region to return a list of Cell instances.
+        '''
+        x, y, w, h = self.viewport_map_dimensions()
+        return self.get_in_region(x, y, x + w, y + h)
+
+    def _update_sprite_set(self):
         # update the sprites set
         keep = set()
-        for cell in self.get_visible():
+        for cell in self.get_visible_cells():
             cx, cy = key = cell.origin[:2]
             keep.add(key)
             if key not in self._sprites and cell.tile is not None:
@@ -656,11 +726,11 @@ class RectMapLayer(RegularTesselationMapLayer):
         self.px_height = len(cells[0]) * th
 
     def get_in_region(self, x1, y1, x2, y2):
-        '''Return cells (in [column][row]) that are within the
+        '''Return cells (in [column][row]) that are within the map-space
         pixel bounds specified by the bottom-left (x1, y1) and top-right
         (x2, y2) corners.
 
-        Returs a list of Cell instances.
+        Return a list of Cell instances.
         '''
         x1 = max(0, x1 // self.tw)
         y1 = max(0, y1 // self.th)
@@ -669,41 +739,6 @@ class RectMapLayer(RegularTesselationMapLayer):
         return [self.cells[i][j]
             for i in range(int(x1), int(x2))
                 for j in range(int(y1), int(y2))]
-
-    def pixel_from_screen(self, x, y):
-        '''Look up the map-space pixel matching the screen-space pixel.
-
-        Account for viewport, layer and screen transformations.
-        '''
-        # director display scaling and viewport shift
-        x, y = self.get_virtual_coordinates(x, y)
-
-        # XXX rotation of layer
-
-        # scaling of layer
-        y /= self.scale
-        x /= self.scale
-
-        return int(x), int(y)
-
-    def pixel_to_screen(self, x, y):
-        '''Look up the screen-space pixel matching the map-space pixel.
-
-        Account for viewport, layer and screen transformations.
-        '''
-        # scaling of layer
-        x *= self.scale
-        y *= self.scale
-
-        # XXX rotation of layer
-
-        # shift for viewport
-        x += self.viewport_x
-        y += self.viewport_y
-
-        # XXX director display scaling
-
-        return int(x), int(y)
 
     def get_at_pixel(self, x, y):
         ''' Return Cell at pixel px=(x,y) on the map.
@@ -1143,7 +1178,9 @@ class ScrollingManager(list):
 
     def append(self, item):
         super(ScrollingManager, self).append(item)
-        item.set_viewport(0, 0, self.viewport.width, self.viewport.height)
+        self.set_focus(self.fx, self.fy)
+        #item.set_focus(self.fx, self.fy)
+        #item.set_viewport(0, 0, self.viewport.width, self.viewport.height)
 
     _old_focus = None
     def set_focus(self, fx, fy):
@@ -1210,6 +1247,7 @@ class ScrollingManager(list):
         # translate the layers to match focus
         vx, vy = self.fx - w2, self.fy - h2
         for layer in self:
+            layer.set_focus(self.fx, self.fy)
             layer.set_viewport(vx, vy,
                 self.viewport.width, self.viewport.height)
 
@@ -1225,6 +1263,7 @@ class ScrollingManager(list):
 
         # translate the layers to match focus
         for layer in self:
+            layer.set_focus(self.fx, self.fy)
             layer.set_viewport(vx, vy,
                 self.viewport.width, self.viewport.height)
 
