@@ -10,7 +10,7 @@ from pyglet.window import key
 from pyglet.gl import *
 
 import cocos
-from cocos import tiles
+from cocos import tiles, actions
 
 class CarSprite(cocos.sprite.Sprite):
     speed = 0
@@ -27,7 +27,7 @@ class CarSprite(cocos.sprite.Sprite):
         s = dt * speed
         self.x += math.sin(r) * s
         self.y += math.cos(r) * s
-        manager.set_focus(self.x, self.y)
+        scroller.set_focus(self.x, self.y)
 
 if __name__ == "__main__":
     from cocos.director import director
@@ -40,15 +40,23 @@ if __name__ == "__main__":
     car.schedule(car.update)
     car_layer.add(car)
 
-    manager = tiles.ScrollingManager()
+    scroller = tiles.ScrollingManager()
     test_layer = tiles.load('road-map.xml')['map0']
-    manager.append(test_layer)
-    manager.append(car_layer)
+    scroller.add(test_layer)
+    scroller.add(car_layer)
 
-    main_scene = cocos.scene.Scene(test_layer, car_layer)
-    
+    main_scene = cocos.scene.Scene(scroller)
+
     keyboard = key.KeyStateHandler()
     director.window.push_handlers(keyboard)
+
+    def on_key_press(key, modifier):
+        if key == pyglet.window.key.SPACE:
+            if scroller.scale == .75:
+                scroller.do(actions.ScaleTo(1, 2))
+            else:
+                scroller.do(actions.ScaleTo(.75, 2))
+    director.window.push_handlers(on_key_press)
 
     director.run(main_scene)
 
