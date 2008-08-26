@@ -527,29 +527,24 @@ def hex_width(height):
 class ScrollableLayer(cocos.layer.Layer):
     '''A Cocos Layer that is scrollable in a Scene.
 
-    Scrollable layers have a viewport which identifies the section of the layer
+    Scrollable layers have a view which identifies the section of the layer
     currently visible.
 
     The scrolling is usually managed by a ScrollingManager.
     '''
-    viewport_x, viewport_y = 0, 0
-    viewport_w, viewport_h = 0, 0
+    view_x, view_y = 0, 0
+    view_w, view_h = 0, 0
     origin_x = origin_y = origin_z = 0
 
     def __init__(self):
         super(ScrollableLayer,self).__init__()
         self.batch = pyglet.graphics.Batch()
 
-    def set_focus(self, x, y):
-        # transform about the focal point
-        self.transform_anchor_x = x
-        self.transform_anchor_y = y
-
-    def set_viewport(self, x, y, w, h):
+    def set_view(self, x, y, w, h):
         x -= self.origin_x
         y -= self.origin_y
-        self.viewport_x, self.viewport_y = x, y
-        self.viewport_w, self.viewport_h = w, h
+        self.view_x, self.view_y = x, y
+        self.view_w, self.view_h = w, h
         self.position = (-x, -y)
 
     def draw(self):
@@ -580,25 +575,25 @@ class MapLayer(ScrollableLayer):
         super(MapLayer, self).__init__()
 
     def set_dirty(self):
-        # re-calculate the sprites to draw for the viewport
+        # re-calculate the sprites to draw for the view
         self._sprites.clear()
         self._update_sprite_set()
 
-    def set_viewport(self, x, y, w, h):
+    def set_view(self, x, y, w, h):
         # invoked by ScrollingManager.set_focus()
-        super(MapLayer, self).set_viewport(x, y, w, h)
+        super(MapLayer, self).set_view(x, y, w, h)
         self._update_sprite_set()
 
     def get_visible_cells(self):
-        '''Given the current viewport in map-space pixels, transform it based
+        '''Given the current view in map-space pixels, transform it based
         on the current screen-space transform and figure the region of
         map-space pixels currently visible.
 
         Pass to get_in_region to return a list of Cell instances.
         '''
         # XXX refactor me away
-        x, y = self.viewport_x, self.viewport_y
-        w, h = self.viewport_w, self.viewport_h
+        x, y = self.view_x, self.view_y
+        w, h = self.view_w, self.view_h
         return self.get_in_region(x, y, x + w, y + h)
 
     def _update_sprite_set(self):
@@ -671,7 +666,7 @@ class RectMapLayer(RegularTesselationMapLayer):
         ''' Return Cell at pixel px=(x,y) on the map.
 
         The pixel coordinate passed in is in the map's coordinate space,
-        unmodified by screen, layer or viewport transformations.
+        unmodified by screen, layer or view transformations.
 
         Return None if out of bounds.
         '''
@@ -759,7 +754,7 @@ class RectCell(Cell):
         midright    -- (x, y) of middle of right side pixel
 
     Note that all pixel attributes are *not* adjusted for screen,
-    viewport or layer transformations.
+    view or layer transformations.
     '''
     x = property(lambda self: self.i * self.width)
     y = property(lambda self: self.j * self.height)
@@ -885,7 +880,7 @@ class HexMapLayer(RegularTesselationMapLayer):
         y2 = min(len(self.cells[0]), y2 // self.th + 1)
         return [self.cells[i][j] for i in range(x1, x2) for j in range(y1, y2)]
 
-    # XXX add get_from_screen 
+    # XXX add get_from_screen
 
     def get_at_pixel(self, x, y):
         '''Get the Cell at pixel px=(x,y).
@@ -974,7 +969,7 @@ class HexCell(Cell):
         midbottomright  -- (x, y) of middle of right side pixel
 
     Note that all pixel attributes are *not* adjusted for screen,
-    viewport or layer transformations.
+    view or layer transformations.
     '''
     def __init__(self, i, j, height, properties, tile):
         width = hex_width(height)
@@ -1105,6 +1100,14 @@ class ScrollingManager(cocos.layer.Layer):
             import director
             viewport = director.director.window
         self.viewport = viewport
+
+        # These variables define the Layer-space pixel view which is mapping
+        # to the viewport. If the Layer is not scrolled or scaled then this
+        # will be a one to one mapping.
+        self.view_x, self.view_y = 0, 0
+        self.view_w, self.view_h = self.viewport.width, self.viewport.height
+
+        # Focal point on the Layer
         self.fx = self.fy = 0
 
         super(ScrollingManager, self).__init__()
@@ -1137,7 +1140,7 @@ class ScrollingManager(cocos.layer.Layer):
         sy = y / wh
 
         # get the map-space dimensions
-        x, y, w, h = self.viewport_map_dimensions()
+        x, y, w, h = self.view_x, self.view_y, self.view_w, self.view_h
 
         # convert screen pixel to map pixel
         x = x + sx * w
@@ -1158,75 +1161,52 @@ class ScrollingManager(cocos.layer.Layer):
         # XXX rotation of layer
 
         # shift for viewport
-        x += self.viewport_x
-        y += self.viewport_y
+        x += self.view_x
+        y += self.view_y
 
         # XXX director display scaling
 
         return int(x), int(y)
 
-    def viewport_map_dimensions(self):
-        '''Calculate the current viewport in map-space pixels.
-
-        The viewport may be expanded by the current scaling. The expansion will
-        be about the transform anchor point.
-
-        '''
-        # convert the viewport (in untransformed map pixels) into screen pixels
-        # based on the layer's current scale (XXX and rotation)
-        x, y = self.viewport_x, self.viewport_y
-        w, h = self.viewport_w, self.viewport_h
-        cx, cy = x + w/2, y + h/2
-        #print (x, y, w, h)
-
-        tx, ty = self.transform_anchor_x, self.transform_anchor_y
-        tx, ty = cx, cy
-
-        #print ('T', self.transform_anchor_x, self.transform_anchor_y),
-
-        # now scale w,h and determine new x,y
-        w /= self.scale
-        h /= self.scale
-        x = tx - w/2
-        y = ty - h/2
-        #print map(int, (x, y, w, h))
-
-        return map(int, (x, y, w, h))
-
     _old_focus = None
     def set_focus(self, fx, fy):
-        '''Determine the focal point of the view based on focus (fx, fy),
-        and registered layers.
+        '''Determine the viewport based on a desired focus pixel in the
+        Layer space (fx, fy) and honoring any bounding restrictions of
+        child layers.
 
-        The focus will always be shifted to ensure no managed layers display
+        The focus will always be shifted to ensure no child layers display
         out-of-bounds data, as defined by their dimensions px_width and px_height.
         '''
+        # if no child specifies dimensions then just force the focus
+        if not [l for z,l in self.children if hasattr(l, 'px_width')]:
+            return self.force_focus(fx, fy)
+
         # This calculation takes into account the scaling of this Layer (and
         # therefore also its children).
         # The result is that all chilren will have their viewport set, defining
         # which of their pixels should be visible.
 
-        # enforce int-only positioning of focus
-        fx = int(fx)
-        fy = int(fy)
+        # Convert the Layer-space focal point to screen space and enforce
+        # int-only positioning of focus
+        sx = int(fx * self.scale)
+        sy = int(fy * self.scale)
+
+#        print 'SET FOCUS', (fx, fy), (sx, sy)
 
         # check for NOOP
         if self._old_focus == (fx, fy):
+            print
             return
         self._old_focus = (fx, fy)
 
         # collate children dimensions (if any)
         x1 = []; y1 = []; x2 = []; y2 = []
         for z, layer in self.children:
-            if hasattr(layer, 'px_width'):
-                x1.append(layer.origin_x)
-                y1.append(layer.origin_y)
-                x2.append(layer.origin_x + layer.px_width)
-                y2.append(layer.origin_y + layer.px_height)
-
-        # if no child specifies dimensions then just force the focus
-        if not x1:
-            return self.force_focus(fx, fy)
+            if not hasattr(layer, 'px_width'): continue
+            x1.append(layer.origin_x)
+            y1.append(layer.origin_y)
+            x2.append(layer.origin_x + layer.px_width)
+            y2.append(layer.origin_y + layer.px_height)
 
         # figure the child min/max bounds
         b_min_x = min(x1)
@@ -1234,15 +1214,12 @@ class ScrollingManager(cocos.layer.Layer):
         b_max_x = min(x2)
         b_max_y = min(y2)
 
-
         # get our viewport information, scaled as appropriate
         w = self.viewport.width / self.scale
         h = self.viewport.height / self.scale
         w2, h2 = w/2, h/2
-        fx /= self.scale
-        fy /= self.scale
 
-        #print map(int, (fx, fy, w, h))
+#        print '%1.2f'%self.scale, map(int, (sx, sy, w, h)),
 
         # XXX viewport origin may be shifted
 
@@ -1266,13 +1243,17 @@ class ScrollingManager(cocos.layer.Layer):
             fy -= v_max_y - b_max_y
 
         self.fx, self.fy = map(int, (fx, fy))
+#        print 'FOCUS=', (self.fx, self.fy)
+
+#        self.transform_anchor_x = fx
+#        self.transform_anchor_y = fy
 
         # translate the layers to match focus
         vx, vy = self.fx - w2, self.fy - h2
+        self.view_x, self.view_y = vx, vy
+        self.view_w, self.view_h = w, h
         for z, layer in self.children:
-            layer.set_focus(self.fx, self.fy)
-            layer.set_viewport(vx, vy,
-                self.viewport.width, self.viewport.height)
+            layer.set_view(vx, vy, w, h)
 
     def force_focus(self, fx, fy):
         '''Force the manager to focus on a point, regardless of any managed layer
@@ -1286,6 +1267,11 @@ class ScrollingManager(cocos.layer.Layer):
 
         self.fx, self.fy = map(int, (fx, fy))
 
+        # Convert the Layer-space focal point to screen space and enforce
+        # int-only positioning of focus
+        sx = int(fx / self.scale)
+        sx = int(fy / self.scale)
+
         # get our viewport information, scaled as appropriate
         w = self.viewport.width / self.scale
         h = self.viewport.height / self.scale
@@ -1297,6 +1283,5 @@ class ScrollingManager(cocos.layer.Layer):
 
         # translate the layers to match focus
         for z, layer in self.children:
-            layer.set_focus(fx, fy)
-            layer.set_viewport(vx, vy, w, h)
+            layer.set_view(vx, vy, w, h)
 
