@@ -654,10 +654,12 @@ class RectMapLayer(RegularTesselationMapLayer):
 
         Return a list of Cell instances.
         '''
-        x1 = max(0, x1 // self.tw)
-        y1 = max(0, y1 // self.th)
-        x2 = min(len(self.cells), x2 // self.tw + 1)
-        y2 = min(len(self.cells[0]), y2 // self.th + 1)
+        ox = self.origin_x
+        oy = self.origin_y
+        x1 = max(0, (x1 - ox) // self.tw)
+        y1 = max(0, (y1 - oy) // self.th)
+        x2 = min(len(self.cells), (x2 - ox) // self.tw + 1)
+        y2 = min(len(self.cells[0]), (y2 - oy) // self.th + 1)
         return [self.cells[i][j]
             for i in range(int(x1), int(x2))
                 for j in range(int(y1), int(y2))]
@@ -1108,8 +1110,8 @@ class ScrollingManager(cocos.layer.Layer):
         self.view_w, self.view_h = self.viewport.width, self.viewport.height
 
         # transform about the center of the layer, always
-        self.transform_anchor_x = self.view_w//2
-        self.transform_anchor_y = self.view_h//2
+        self.transform_anchor_x = 0 #self.view_w//2
+        self.transform_anchor_y = 0 #self.view_h//2
 
         # Focal point on the Layer
         self.fx = self.fy = 0
@@ -1190,20 +1192,18 @@ class ScrollingManager(cocos.layer.Layer):
         # The result is that all chilren will have their viewport set, defining
         # which of their pixels should be visible.
 
-        # Convert the Layer-space focal point to screen space and enforce
-        # int-only positioning of focus
-        sx = int(fx * self.scale)
-        sy = int(fy * self.scale)
+        fx, fy = int(fx), int(fy)
 
-#        print 'SET FOCUS', (fx, fy), (sx, sy)
+        a = (fx, fy, self.scale)
 
-        # check for NOOP
-        if self._old_focus == (fx, fy):
-#            print
+        # check for NOOP (same arg passed in)
+        if self._old_focus == a:
             return
-        self._old_focus = (fx, fy)
+        self._old_focus = a
 
-        # collate children dimensions (if any)
+        #print 'SET FOCUS', (fx, fy),
+
+        # collate children dimensions
         x1 = []; y1 = []; x2 = []; y2 = []
         for z, layer in self.children:
             if not hasattr(layer, 'px_width'): continue
@@ -1212,48 +1212,42 @@ class ScrollingManager(cocos.layer.Layer):
             x2.append(layer.origin_x + layer.px_width)
             y2.append(layer.origin_y + layer.px_height)
 
-        # figure the child min/max bounds
+        # figure the child layer min/max bounds
         b_min_x = min(x1)
         b_min_y = min(y1)
         b_max_x = min(x2)
         b_max_y = min(y2)
 
+        #print 'BOUND=', map(int, (b_min_x, b_min_y, b_max_x, b_max_y)),
         # get our viewport information, scaled as appropriate
-        w = self.viewport.width / self.scale
-        h = self.viewport.height / self.scale
-        w2, h2 = w/2, h/2
+        w = int(self.viewport.width / self.scale)
+        h = int(self.viewport.height / self.scale)
+        w2, h2 = w//2, h//2
 
-#        print '%1.2f'%self.scale, map(int, (sx, sy, w, h)),
-
-        # XXX viewport origin may be shifted
+        #print '%1.2f'%self.scale, (w, h),
 
         # check for the minimum, and then maximum bound
-        v_min_x = fx - w2
-        v_min_y = fy - h2
-        x_moved = y_moved = False
-        if v_min_x < b_min_x:
-            fx += b_min_x - v_min_x
-            x_moved = True
-        else:
-            v_max_x = fx + w2
-            if v_max_x > b_max_x:
-                fx -= v_max_x - b_max_x
-        if v_min_y < b_min_y:
-            fy += b_min_y - v_min_y
-        else:
-            v_max_y = fy + h2
-            if v_max_y > b_max_y:
-                fy -= v_max_y - b_max_y
+        if (fx - w2) < b_min_x:
+            fx = b_min_x + w2       # hit minimum X extent
+        elif (fx + w2) > b_max_x:
+            fx = b_max_x - w2       # hit maximum X extent
+        if (fy - h2) < b_min_y:
+            fy = b_min_y + h2       # hit minimum Y extent
+        elif (fy + h2) > b_max_y:
+            fy = b_max_y - h2       # hit maximum Y extent
 
+        # ... and this is our focus point, center of screen
         self.fx, self.fy = map(int, (fx, fy))
-#        print 'FOCUS=', (self.fx, self.fy)
 
-        # translate the layers to match focus
-        vx, vy = self.fx - w2, self.fy - h2
-        self.view_x, self.view_y = vx, vy
+        #print 'FOCUS=', (self.fx, self.fy),
+
+        # determine child view bounds to match that focus point
+        x, y = int(fx - w2*self.scale), int(fy - h2*self.scale)
+        self.view_x, self.view_y = x, y
         self.view_w, self.view_h = w, h
+        #print 'VIEW=', (x, y, w, h)
         for z, layer in self.children:
-            layer.set_view(vx, vy, w, h)
+            layer.set_view(x, y, w, h)
 
     def force_focus(self, fx, fy):
         '''Force the manager to focus on a point, regardless of any managed layer
@@ -1267,20 +1261,18 @@ class ScrollingManager(cocos.layer.Layer):
 
         self.fx, self.fy = map(int, (fx, fy))
 
-        # Convert the Layer-space focal point to screen space and enforce
-        # int-only positioning of focus
-        sx = int(fx / self.scale)
-        sx = int(fy / self.scale)
-
         # get our scaled view size
-        w = int(self.view_w / self.scale)
-        h = int(self.view_h / self.scale)
+        w = int(self.viewport.width / self.scale)
+        h = int(self.viewport.height / self.scale)
         cx, cy = w//2, h//2
 
         # bottom-left corner of the 
-        vx, vy = fx - cx, fy - cy
+        x, y = fx - cx * self.scale, fy - cy * self.scale
+
+        self.view_x, self.view_y = x, y
+        self.view_w, self.view_h = w, h
 
         # translate the layers to match focus
         for z, layer in self.children:
-            layer.set_view(vx, vy, w, h)
+            layer.set_view(x, y, w, h)
 

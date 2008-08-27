@@ -51,7 +51,7 @@ if __name__ == "__main__":
     director.window.push_handlers(keyboard)
 
     def on_key_press(key, modifier):
-        if key == pyglet.window.key.SPACE:
+        if key == pyglet.window.key.Z:
             if scroller.scale == .75:
                 scroller.do(actions.ScaleTo(1, 2))
             else:
