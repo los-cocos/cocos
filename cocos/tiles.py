@@ -1107,6 +1107,10 @@ class ScrollingManager(cocos.layer.Layer):
         self.view_x, self.view_y = 0, 0
         self.view_w, self.view_h = self.viewport.width, self.viewport.height
 
+        # transform about the center of the layer, always
+        self.transform_anchor_x = self.view_w//2
+        self.transform_anchor_y = self.view_h//2
+
         # Focal point on the Layer
         self.fx = self.fy = 0
 
@@ -1195,7 +1199,7 @@ class ScrollingManager(cocos.layer.Layer):
 
         # check for NOOP
         if self._old_focus == (fx, fy):
-            print
+#            print
             return
         self._old_focus = (fx, fy)
 
@@ -1223,30 +1227,26 @@ class ScrollingManager(cocos.layer.Layer):
 
         # XXX viewport origin may be shifted
 
-        # check for the minimum bound
+        # check for the minimum, and then maximum bound
         v_min_x = fx - w2
         v_min_y = fy - h2
         x_moved = y_moved = False
         if v_min_x < b_min_x:
             fx += b_min_x - v_min_x
             x_moved = True
+        else:
+            v_max_x = fx + w2
+            if v_max_x > b_max_x:
+                fx -= v_max_x - b_max_x
         if v_min_y < b_min_y:
             fy += b_min_y - v_min_y
-            y_moved = True
-
-        # now check the maximum bound - only if we've not already hit a bound
-        v_max_x = fx + w2
-        v_max_y = fy + h2
-        if not x_moved and v_max_x > b_max_x:
-            fx -= v_max_x - b_max_x
-        if not y_moved and v_max_y > b_max_y:
-            fy -= v_max_y - b_max_y
+        else:
+            v_max_y = fy + h2
+            if v_max_y > b_max_y:
+                fy -= v_max_y - b_max_y
 
         self.fx, self.fy = map(int, (fx, fy))
 #        print 'FOCUS=', (self.fx, self.fy)
-
-#        self.transform_anchor_x = fx
-#        self.transform_anchor_y = fy
 
         # translate the layers to match focus
         vx, vy = self.fx - w2, self.fy - h2
@@ -1272,14 +1272,13 @@ class ScrollingManager(cocos.layer.Layer):
         sx = int(fx / self.scale)
         sx = int(fy / self.scale)
 
-        # get our viewport information, scaled as appropriate
-        w = self.viewport.width / self.scale
-        h = self.viewport.height / self.scale
-        w2, h2 = w/2, h/2
-        fx /= self.scale
-        fy /= self.scale
+        # get our scaled view size
+        w = int(self.view_w / self.scale)
+        h = int(self.view_h / self.scale)
+        cx, cy = w//2, h//2
 
-        vx, vy = fx - w2, fy - h2
+        # bottom-left corner of the 
+        vx, vy = fx - cx, fy - cy
 
         # translate the layers to match focus
         for z, layer in self.children:
