@@ -1,3 +1,8 @@
+v0.3.0 - XXX
+  - Added particle systems: Sun, Fire, Fireworks, Meteor, Galaxy, Flower, Exposion, Spiral
+  - Fixed Camera "once" locate bug
+  - Applied patch by naveen.michaudagrawal
+
 v0.3.0rc0 -  June 27th, 2008
   - Transitions: Added ZoomTransition by Hugo Ruscitti
   - Fixed Tile Map

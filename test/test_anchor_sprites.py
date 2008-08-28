@@ -16,18 +16,18 @@ class TestLayer(cocos.layer.Layer):
         
         x,y = director.get_window_size()
         
-        self.sprite = Sprite('grossini.png')
-        self.sprite.position = x/2, y/2
-        self.add( self.sprite  )
+        sprite1 = Sprite('grossini.png')
+        sprite1.position = x/2, y/2
+        sprite1.children_anchor = 0,-100
+        self.add( sprite1  )
 
-        self.sprite = Sprite('grossini.png', anchor = (0,0))
-        self.sprite.position = x/2, y/2
-        self.add( self.sprite  )
+        sprite2 = Sprite('grossini.png')
+        sprite2.position = 50,0
+        sprite1.add( sprite2  )
 
-        self.sprite = Sprite('grossini.png')
-        self.sprite.position = x/2, y/2
-        self.sprite.anchor_x = 0
-        self.add( self.sprite  )
+        sprite3 = Sprite('grossini.png')
+        sprite3.position = -50,0
+        sprite1.add( sprite3 )
         
         
 
