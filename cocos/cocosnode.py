@@ -8,7 +8,7 @@
 #
 #   * Redistributions of source code must retain the above copyright
 #     notice, this list of conditions and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright 
+#   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in
 #     the documentation and/or other materials provided with the
 #     distribution.
@@ -53,18 +53,18 @@ class CocosNode(object):
     """
     Cocosnode is the main element. Anything thats gets drawn or contains things that get drawn is a cocosnode.
     The most popular cocosnodes are scenes, layers and sprites.
-    
+
     The main features of a cocosnode are:
         - They can contain other cocos nodes (add, get, remove, etc)
         - They can schedule periodic callback (schedule, schedule_interval, etc)
         - They can execute actions (do, pause, stop, etc)
-        
+
     Some cocosnodes provide extra functionality for them or their children.
-    
+
     Subclassing a cocosnode usually means (one/all) of:
         - overriding __init__ to initialize resources and schedule calbacks
         - create callbacks to handle the advancement of time
-        - overriding draw to render the node    
+        - overriding draw to render the node
     """
     def __init__(self):
         # composition stuff
@@ -76,10 +76,10 @@ class CocosNode(object):
         self.children_names = {}
 
         self._parent = None
-        
+
         # drawing stuff
 
-        #: x-position of the object relative to its parent's children_anchor_x value. 
+        #: x-position of the object relative to its parent's children_anchor_x value.
         #: Default: 0
         self.x = 0
 
@@ -109,7 +109,7 @@ class CocosNode(object):
         #: You can change the camera manually or by using the `Camera3DAction`
         #: action.
         self.camera = Camera()
-        
+
 
         #: offset from (x,0) from where children will have its (0,0) coordinate.
         #: Default: 0
@@ -145,14 +145,14 @@ class CocosNode(object):
 
         #: whether or not the next frame will be skipped
         self.skip_frame = False
-        
+
         # schedule stuff
         self.scheduled = False          # deprecated, soon to be removed
-        self.scheduled_calls = []       #: list of scheduled callbacks  
+        self.scheduled_calls = []       #: list of scheduled callbacks
         self.scheduled_interval_calls = []  #: list of scheduled interval callbacks
         self.is_running = False         #: whether of not the object is running
-        
-    
+
+
     def make_property(attr):
         def set_attr():
             def inner(self, value):
@@ -169,7 +169,7 @@ class CocosNode(object):
             get_attr(),
             set_attr(),
             doc="""a property to get fast access to [transform_|children_]
-            
+
             :type: (int,int)
             """+attr )
 
@@ -184,7 +184,7 @@ class CocosNode(object):
 
     #: Anchor y value for transformations and adding children
     anchor_y = make_property("anchor_y")
-    
+
     def make_property(attr):
         def set_attr():
             def inner(self, value):
@@ -197,7 +197,7 @@ class CocosNode(object):
             get_attr,
             set_attr(),
             doc='''a property to get fast access to "+attr+"_[x|y]
-            
+
             :type: (int,int)
             ''')
 
@@ -210,7 +210,7 @@ class CocosNode(object):
     #: will use this point as it's center
     transform_anchor = make_property("transform_anchor")
     del make_property
-        
+
     def schedule_interval(self, callback, interval, *args, **kwargs):
         """
         Schedule a function to be called every `interval` seconds.
@@ -225,11 +225,11 @@ class CocosNode(object):
                 The function to call when the timer lapses.
             `interval` : float
                 The number of seconds to wait between each call.
-                
+
         This function is a wrapper to pyglet.clock.schedule_interval.
         It has the additional benefit that all calllbacks are paused and
         resumed when the node leaves or enters a scene.
-        
+
         You should not have to schedule things using pyglet by yourself.
         """
         if self.is_running:
@@ -237,7 +237,7 @@ class CocosNode(object):
         self.scheduled_interval_calls.append(
                 (callback, interval, args, kwargs)
                 )
-                
+
     def schedule(self, callback, *args, **kwargs):
         """
         Schedule a function to be called every frame.
@@ -253,89 +253,89 @@ class CocosNode(object):
         :Parameters:
             `callback` : function
                 The function to call each frame.
-                
+
         This function is a wrapper to pyglet.clock.schedule.
         It has the additional benefit that all calllbacks are paused and
         resumed when the node leaves or enters a scene.
-        
+
         You should not have to schedule things using pyglet by yourself.
-        """        
+        """
         if self.is_running:
             pyglet.clock.schedule(callback, *args, **kwargs)
         self.scheduled_calls.append(
                 (callback, args, kwargs)
                 )
-                         
+
     def unschedule(self, callback):
         """
-        Remove a function from the schedule.  
-        
+        Remove a function from the schedule.
+
         If the function appears in the schedule more than once, all occurances
         are removed.  If the function was not scheduled, no error is raised.
 
         :Parameters:
             `callback` : function
                 The function to remove from the schedule.
-        
+
         This function is a wrapper to pyglet.clock.unschedule.
         It has the additional benefit that all calllbacks are paused and
         resumed when the node leaves or enters a scene.
-        
+
         You should not unschedule things using pyglet that where scheduled
         by node.schedule/node.schedule_interface.
         """
-        
+
         total_len = len(self.scheduled_calls + self.scheduled_interval_calls)
-        self.scheduled_calls = [ 
-                c for c in self.scheduled_calls if c[0] != callback 
+        self.scheduled_calls = [
+                c for c in self.scheduled_calls if c[0] != callback
                 ]
-        self.scheduled_interval_calls = [ 
-                c for c in self.scheduled_interval_calls if c[0] != callback 
+        self.scheduled_interval_calls = [
+                c for c in self.scheduled_interval_calls if c[0] != callback
                 ]
         if total_len == len(
                 self.scheduled_calls + self.scheduled_interval_calls
                 ):
             raise Exception("Call not scheduled")
-            
+
         if self.is_running:
             pyglet.clock.unschedule( callback )
-           
+
     def resume_scheduler(self):
         """
-        Time will continue/start passing for this node and callbacks 
+        Time will continue/start passing for this node and callbacks
         will be called.
         """
         for c, i, a, k in self.scheduled_interval_calls:
-            pyglet.clock.schedule_interval(c, i, *a, **k)  
+            pyglet.clock.schedule_interval(c, i, *a, **k)
         for c, a, k in self.scheduled_calls:
-            pyglet.clock.schedule(c, *a, **k)  
-            
+            pyglet.clock.schedule(c, *a, **k)
+
     def pause_scheduler(self):
         """
-        Time will stop passing for this node and callbacks will 
+        Time will stop passing for this node and callbacks will
         not be called
         """
         for f in set(
                 [ x[0] for x in self.scheduled_interval_calls ] +
                 [ x[0] for x in self.scheduled_calls ]
                 ):
-            pyglet.clock.unschedule(f)  
+            pyglet.clock.unschedule(f)
         for arg in self.scheduled_calls:
-            pyglet.clock.unschedule(arg[0])  
+            pyglet.clock.unschedule(arg[0])
 
     def _get_parent(self):
         if self._parent is None: return None
         else: return self._parent()
-        
+
     def _set_parent(self, parent):
         if parent is None: self._parent = None
         else: self._parent = weakref.ref(parent)
-        
+
     parent = property(_get_parent, _set_parent, doc='''The parent of this object.
-    
+
     :type: object
     ''')
-        
+
     def get_ancestor(self, klass):
         """
         Walks the nodes tree upwards until it finds a node of the class `klass`
@@ -346,18 +346,18 @@ class CocosNode(object):
         parent = self.parent
         if parent:
             return parent.get_ancestor( klass )
-            
+
     def _get_position(self):
         return (self.x, self.y)
     def _set_position(self, (x,y)):
         self.x, self.y = x,y
-        
+
     position = property(_get_position, _set_position,
                         doc='''The (x, y) coordinates of the object.
 
     :type: (int, int)
     ''')
-        
+
     def add(self, child, z=0, name=None ):
         """Adds a child to the container
 
@@ -385,7 +385,7 @@ class CocosNode(object):
         if self.is_running:
             child.on_enter()
         return self
-    
+
     def remove( self, obj ):
         """Removes a child from the container given its name or object
 
@@ -430,18 +430,18 @@ class CocosNode(object):
             return self.children_names[ name ]
         else:
             raise Exception("Child not found: %s" % name )
-            
+
     def on_enter( self ):
         """
         Called every time just before the node enters the stage.
         """
         self.is_running = True
 
-        # start actions 
+        # start actions
         self.resume()
         # resume scheduler
         self.resume_scheduler()
-        
+
         # propagate
         for c in self.get_children():
             c.on_enter()
@@ -457,12 +457,12 @@ class CocosNode(object):
         self.pause()
         # pause callbacks
         self.pause_scheduler()
-        
+
         # propagate
         for c in self.get_children():
             c.on_exit()
-                    
-                     
+
+
     def transform( self ):
         """
         Apply ModelView transformations
@@ -477,38 +477,38 @@ class CocosNode(object):
             self.camera.locate()
 
         if self.transform_anchor != (0,0):
-            glTranslatef( 
-                self.position[0] + self.transform_anchor_x, 
+            glTranslatef(
+                self.position[0] + self.transform_anchor_x,
                 self.position[1] + self.transform_anchor_y,
                  0 )
         elif self.position != (0,0):
             glTranslatef( self.position[0], self.position[1], 0 )
 
-            
+
         if self.scale != 1.0:
             glScalef( self.scale, self.scale, 1)
 
         if self.rotation != 0.0:
             glRotatef( -self.rotation, 0, 0, 1)
-    
+
         if self.transform_anchor != (0,0):
             if self.transform_anchor != self.children_anchor:
-                glTranslatef( 
-                    self.children_anchor_x - self.transform_anchor_x, 
+                glTranslatef(
+                    self.children_anchor_x - self.transform_anchor_x,
                     self.children_anchor_y - self.transform_anchor_y,
-                     0 )            
-        elif self.children_anchor != (0,0):
-            glTranslatef( 
-                self.children_anchor_x, 
-                self.children_anchor_y,
-                 0 )
+                     0 )
+        #elif self.children_anchor != (0,0):
+        #    glTranslatef(
+        #        self.children_anchor_x,
+        #        self.children_anchor_y,
+        #         0 )
 
 
     def walk(self, callback, collect=None):
         """
         Executes callback on all the subtree starting at self.
         returns a list of all return values that are not none
-        
+
         :Parameters:
             `callback` : function
                 callable, takes a cocosnode as argument
@@ -517,20 +517,20 @@ class CocosNode(object):
 
         :rtype: list
         :return: the list of not-none return values
-        
+
         """
         if collect is None:
             collect = []
-            
+
         r = callback(self)
         if r is not None:
             collect.append( r )
-            
+
         for node in self.get_children():
             node.walk(callback, collect)
-            
+
         return collect
-        
+
     def visit(self):
         '''
         This function *visits* it's children in a recursive
@@ -555,10 +555,10 @@ class CocosNode(object):
             return
 
         position = 0
-        
+
         if self.grid and self.grid.active:
             self.grid.before_draw()
-            
+
         # we visit all nodes that should be drawn before ourselves
         if self.children and self.children[0][0] < 0:
             glPushMatrix()
@@ -567,12 +567,12 @@ class CocosNode(object):
                 if z >= 0: break
                 position += 1
                 c.visit()
-                
+
             glPopMatrix()
-            
+
         # we draw ourselves
         self.draw()
-        
+
         # we visit all the remaining nodes, that are over ourselves
         if position < len(self.children):
             glPushMatrix()
@@ -580,19 +580,19 @@ class CocosNode(object):
             for z,c in self.children[position:]:
                 c.visit()
             glPopMatrix()
-        
+
         if self.grid and self.grid.active:
             self.grid.after_draw( self.camera )
 
-        
+
     def draw(self, *args, **kwargs):
         """
         This is the function you will have to override if you want your
         subclassed to draw something on screen.
-        
-        You *must* respect the position, scale, rotation and anchor attributes. 
+
+        You *must* respect the position, scale, rotation and anchor attributes.
         If you want OpenGL to do the scaling for you, you can::
-        
+
             def draw(self):
                 glPushMatrix()
                 self.transform()
@@ -600,7 +600,7 @@ class CocosNode(object):
                 glPopMatrix()
         """
         pass
-                
+
     def do( self, action, target=None ):
         '''Executes an *action*.
         When the action finished, it will be removed from the sprite's queue.
@@ -617,7 +617,7 @@ class CocosNode(object):
             a.target = self
         else:
             a.target = target
-            
+
         a.start()
         self.actions.append( a )
 
@@ -648,7 +648,7 @@ class CocosNode(object):
     def resume(self):
         """
         Resumes the execution of actions.
-        """        
+        """
         if self.scheduled:
             return
         self.scheduled = True
@@ -693,5 +693,5 @@ class CocosNode(object):
             if action.done():
                 action.stop()
                 self.remove_action( action )
-        
+
 
