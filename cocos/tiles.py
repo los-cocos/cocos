@@ -541,10 +541,10 @@ class ScrollableLayer(cocos.layer.Layer):
         self.batch = pyglet.graphics.Batch()
 
     def set_view(self, x, y, w, h):
-        x -= self.origin_x
-        y -= self.origin_y
         self.view_x, self.view_y = x, y
         self.view_w, self.view_h = w, h
+        x -= self.origin_x
+        y -= self.origin_y
         self.position = (-x, -y)
 
     def draw(self):
@@ -656,8 +656,8 @@ class RectMapLayer(RegularTesselationMapLayer):
         '''
         ox = self.origin_x
         oy = self.origin_y
-        x1 = max(0, (x1 - ox) // self.tw)
-        y1 = max(0, (y1 - oy) // self.th)
+        x1 = max(0, (x1 - ox) // self.tw - 1)
+        y1 = max(0, (y1 - oy) // self.th - 1)
         x2 = min(len(self.cells), (x2 - ox) // self.tw + 1)
         y2 = min(len(self.cells[0]), (y2 - oy) // self.th + 1)
         return [self.cells[i][j]
@@ -1266,7 +1266,7 @@ class ScrollingManager(cocos.layer.Layer):
         h = int(self.viewport.height / self.scale)
         cx, cy = w//2, h//2
 
-        # bottom-left corner of the 
+        # bottom-left corner of the
         x, y = fx - cx * self.scale, fy - cy * self.scale
 
         self.view_x, self.view_y = x, y
