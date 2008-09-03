@@ -596,6 +596,11 @@ class MapLayer(ScrollableLayer):
         w, h = self.view_w, self.view_h
         return self.get_in_region(x, y, x + w, y + h)
 
+    debug = False
+    def set_debug(self, debug):
+        self.debug = debug
+        self._update_sprite_set()
+
     def _update_sprite_set(self):
         # update the sprites set
         keep = set()
@@ -605,8 +610,25 @@ class MapLayer(ScrollableLayer):
             if key not in self._sprites and cell.tile is not None:
                 self._sprites[key] = pyglet.sprite.Sprite(cell.tile.image,
                     x=cx, y=cy, batch=self.batch)
+            s = self._sprites[key]
+            if self.debug:
+                if getattr(s, '_label', None): continue
+                label = [
+                    'cell=%d,%d'%(cell.i, cell.j),
+                    'origin=%d,%d px'%(cx, cy),
+                ]
+                for p in cell.properties:
+                    label.append('%s=%r'%(p, cell.properties[p]))
+                lx, ly = cell.topleft
+                s._label = pyglet.text.Label(
+                    '\n'.join(label), multiline=True, x=lx, y=ly,
+                    bold=True, font_size=8, width=cell.width,
+                    batch=self.batch)
+            else:
+                s._label = None
         for k in list(self._sprites):
             if k not in keep:
+                self._sprites[k]._label = None
                 del self._sprites[k]
 
 class RegularTesselationMapLayer(MapLayer):

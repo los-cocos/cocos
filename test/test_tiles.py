@@ -56,6 +56,8 @@ if __name__ == "__main__":
                 scroller.do(actions.ScaleTo(1, 2))
             else:
                 scroller.do(actions.ScaleTo(.75, 2))
+        elif key == pyglet.window.key.D:
+            test_layer.set_debug(True)
     director.window.push_handlers(on_key_press)
 
     director.run(main_scene)

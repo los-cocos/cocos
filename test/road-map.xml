@@ -3,7 +3,9 @@
  <requires file="road-tiles.xml" />
  <rectmap id="map0" tile_size="128x128" origin="100,0,0">
   <column>
-    <cell tile="bl" />
+    <cell tile="bl">
+      <property type="bool" name="start" value="True" />
+    </cell>
     <cell tile="vl" />
     <cell tile="vl" />
     <cell tile="vl" />
