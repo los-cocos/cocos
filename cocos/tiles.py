@@ -569,6 +569,10 @@ class MapLayer(ScrollableLayer):
         (tw, th)        -- size of each cell in pixels
         (origin_x, origin_y, origin_z)  -- offset of map top left from origin in pixels
         cells           -- array [i][j] of Cell instances
+        debug           -- display debugging information on cells
+
+    The debug flag turns on textual display of data about each visible cell
+    including its cell index, origin pixel and any properties set on the cell.
     '''
     def __init__(self):
         self._sprites = {}
