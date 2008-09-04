@@ -1,3 +1,29 @@
+'''Cocos tilemap editor!
+
+Usage: editor.py <level.xml>
+
+The level must contain at least one <rectmap> and one <tileset> (either
+directly or via <requires>).
+
+PALETTE:
+- Click LMB in the palette to select the active tile.
+- Use LMB dragging on the palette to drag it around the window.
+
+MAP:
+- Click LMB in the map to set the map to the active tile.
+- Click RMB in the map to clear the map cell.
+- Use the scroll-wheel to zoom in and out.
+- Use LMB dragging to pan around the map. Alternatively use the arrow keys
+  to pan around.
+
+Hit "d" to turn some debugging information on (cell location, pixel location,
+cell properties).
+
+Hit control-s to save the map and quit.
+
+Hit control-q, or escape, or the window close button to quit without saving.
+
+'''
 
 import pyglet
 from pyglet.gl import *
@@ -25,6 +51,9 @@ class TileEditorLayer(tiles.ScrollableLayer):
                 director.pop()
             elif key == pyglet.window.key.Q:
                 director.pop()
+        if key == pyglet.window.key.D:
+            m = self.selector.map_layer
+            m.set_debug(not m.debug)
 
     _desired_scale = 1
     def on_mouse_scroll(self, x, y, dx, dy):
@@ -211,8 +240,11 @@ class TileSetLayer(cocos.layer.Layer):
         return True
 
     def on_mouse_release(self, x, y, button, modifiers):
-        self._dragging = False
-        self._drag_start = None
+        if self._dragging:
+            self._dragging = False
+            self._drag_start = None
+            return True
+
         lx, ly = self.position
 
         if self.active_tab is self.tiles_label:
@@ -261,7 +293,8 @@ class TileSetLayer(cocos.layer.Layer):
         sy = self.bg.y + ly
         if x < sx or x > sx + self.bg.width: return False
         if y < sy or y > sy + self.bg.height: return False
-        self._dragging = True
+
+        #self._dragging = True
         return True
 
     _dragging = False
@@ -277,7 +310,9 @@ class TileSetLayer(cocos.layer.Layer):
         self._dragging = False
 
     def draw(self):
+        self.transform()
         self.active_batch.draw()
+        #self.tilesets_batch.draw()
 
         if self.active_batch is self.tiles_batch:
             glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT)
