@@ -370,9 +370,9 @@ if __name__ == '__main__':
         print 'Usage: %s <level.xml>'%sys.argv[0]
         sys.exit(0)
 
-    director.init(width=700, height=440)
+    #director.init(width=700, height=440)
     #director.init(fullscreen=True)
-    #director.init(width=1024, height=768)
+    director.init(width=1024, height=768)
     director.show_FPS = True
 
     pyglet.gl.glClearColor(1, 1, 1, 1)
