@@ -319,13 +319,20 @@ def load(filename, paths=None):
 #
 # XML PROPERTY PARSING
 #
-_xml_to_python = {
-    'unicode': unicode,
-    'int': int,
-    'float': float,
-    'bool': bool,
-}
+_xml_to_python = dict(
+    unicode=unicode,
+    int=int,
+    float=float,
+    bool=bool,
+)
 _python_to_xml = {
+    str: unicode,
+    unicode: unicode,
+    int: repr,
+    float: repr,
+    bool: repr,
+}
+_xml_type = {
     str: 'unicode',
     unicode: 'unicode',
     int: 'int',
@@ -747,8 +754,9 @@ class Cell(object):
             c.set('tile', self.tile.id)
         for k in self.properties:
             v = self.properties[k]
+            v = _python_to_xml[type(v)](v)
             ElementTree.SubElement(c, 'property', value=v,
-                type=_python_to_xml[type(v)])
+                type=_xml_type[type(v)])
 
     def __repr__(self):
         return '<%s object at 0x%x (%g, %g) properties=%r tile=%r>'%(
