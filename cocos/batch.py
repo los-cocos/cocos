@@ -8,7 +8,7 @@
 #
 #   * Redistributions of source code must retain the above copyright
 #     notice, this list of conditions and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright 
+#   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in
 #     the documentation and/or other materials provided with the
 #     distribution.
@@ -62,29 +62,29 @@ class BatchNode( cocosnode.CocosNode ):
     def __init__(self):
         super(BatchNode, self).__init__()
         self.batch = pyglet.graphics.Batch()
-        
+
     def add(self, child, z=0, name=None):
         ensure_batcheable(child)
         group = pyglet.graphics.OrderedGroup( z )
         child.set_batch( self.batch, group )
-         
+
         super(BatchNode, self).add(child, z, name)
-    
+
     def visit(self):
         self.batch.draw()
-        
+
     def draw(self):
         pass#self.batch.draw()
-        
+
 class BatchableNode( cocosnode.CocosNode ):
     def add(self, child, z=0, name=None):
         batchnode = self.get_ancestor(BatchNode)
-        if not batchnode: 
+        if not batchnode:
             # this node was addded, but theres no batchnode in the
             # hierarchy. so we proceed as normal
             super(BatchableNode, self).add(child, z, name)
             return
-            
+
         # we are being batched, so we set groups and batch
         # pre/same/post will be set, because if we have a
         # batchnode parent, we already executed set_batch on self
@@ -95,15 +95,18 @@ class BatchableNode( cocosnode.CocosNode ):
             group = self.same_group
         else:
             group = self.post_group
-            
+
         super(BatchableNode, self).add(child, z, name)
         child.set_batch( self.batch, group )
-        
-                 
+
+
     def remove(self, child):
+        if isinstance(child, str):
+            child = self.get(child)
         child.set_batch( None, None )
         super(BatchableNode, self).remove(child)
-        
+
+
     def set_batch(self, batch, group):
         sprite_group = NodeGroup(self, group)
         self.pre_group = NodeGroup(self, OrderedGroup(-1, parent=group))
@@ -111,7 +114,7 @@ class BatchableNode( cocosnode.CocosNode ):
         self.same_group = NodeGroup(self, self.group)
         self.post_group = NodeGroup(self, OrderedGroup(1, parent=group))
         self.batch = batch
-        
+
         for z, child in self.children:
             if z < 0:
                 group = self.pre_group
@@ -120,8 +123,8 @@ class BatchableNode( cocosnode.CocosNode ):
             else:
                 group = self.post_group
             child.set_batch( self.batch, group )
-        
-        
+
+
 class NodeGroup(pyglet.graphics.Group):
     def __init__(self, sprite, group):
         super(NodeGroup, self).__init__(parent=group)
