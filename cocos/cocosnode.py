@@ -160,7 +160,7 @@ class CocosNode(object):
                 setattr(self, "transform_"+attr,value)
             return inner
         def get_attr():
-            def inner(self, value):
+            def inner(self):
                 if getattr(self,"children_"+attr) != getattr(self, "transform_"+attr):
                     raise Exception("no consistent value for "+attr)
                 return getattr(self,"children_"+attr)
@@ -292,10 +292,6 @@ class CocosNode(object):
         self.scheduled_interval_calls = [
                 c for c in self.scheduled_interval_calls if c[0] != callback
                 ]
-        if total_len == len(
-                self.scheduled_calls + self.scheduled_interval_calls
-                ):
-            raise Exception("Call not scheduled")
 
         if self.is_running:
             pyglet.clock.unschedule( callback )

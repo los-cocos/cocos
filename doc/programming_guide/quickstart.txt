@@ -35,20 +35,20 @@ Always call ``super`` in the constructor::
 To display the text, we'll create a `Label`.  Keyword arguments are used
 to set the font, position and alignment of the label::
 
-    label = cocos.text.Label('Hello, world', 
-                              font_name='Times New Roman', 
-                              font_size=36,
-                              halign='center', valign='center')
+    label = cocos.text.Label('Hello, world',
+                              font_name='Times New Roman',
+                              font_size=32,
+                              anchor_x='center', anchor_y='center')
 
 The label position will be the center of the screen::
 
 	label.position = 320,240
-	
+
 Since `Label` is a subclass of `CocosNode` it can be added
 as a child. All `CocosNode` objects know how to render itself, perform actions
 and transformations.
 To add it as a layer's child, use the `CocosNode.add` method::
- 
+
         self.add( label )
 
 After defining the ``HelloWorld`` class, we need to initialize and create a window.
@@ -80,7 +80,7 @@ Hello Actions
 
 This example is very similar to example #1, with the difference that it introduces
 us to the world of actions.
-An action is like an order. You can tell **any** `CocosNode` object to execute an 
+An action is like an order. You can tell **any** `CocosNode` object to execute an
 action.
 You can find the entire program in the `samples/hello_world_actions.py` file.
 
@@ -89,12 +89,12 @@ Like in our previous example, we import the cocos package::
 
         import cocos
 
-If you're going to use several actions, you can import all 
+If you're going to use several actions, you can import all
 the available actions into the namespace with this import::
 
 	from cocos.actions import *
 
-We subclass `ColorLayer` to have a background color, and then 
+We subclass `ColorLayer` to have a background color, and then
 we call super() with a blueish color::
 
 	class HelloWorld(cocos.layer.ColorLayer):
@@ -115,16 +115,16 @@ As in the previous example, we create and add a label::
 
 In this example we also create and add an sprite as a child. In cocos2d
 sprites are `Sprite` objects::
-        
+
     sprite = cocos.sprite.Sprite('grossini.png')
 
 We place the sprite in the center of the screen. Default position is (0,0)::
-        
+
     sprite.position = 320,240
 
 We set the scale attribute to 3. This means that our sprite will be 3 times bigger.
 The default scale attribute is 1::
-        
+
     sprite.scale = 3
 
 We add the sprite as a child but on top of the label by setting the z-value to 1, since
@@ -142,15 +142,15 @@ We tell the label to:
  3. and we repeat these 2 actions forever
 
 Notice that the '+' operator is the `Sequence` action::
-       
+
 	label.do( Repeat( scale + Reverse( scale) ) )
 
 And we tell the sprite to do the same actions but starting with the 'scale back' action::
-        
+
 	sprite.do( Repeat( Reverse(scale) + scale ) )
 
 Then we initialize the director, like in the previous example::
- 
+
     cocos.director.director.init()
     hello_layer = HelloWorld ()
 
@@ -184,18 +184,18 @@ This demo has a scene with two layers; one shows which keys are currently presse
 We start defining the KeyDisplay layer class. As always, we put some initialization on ``__init__`` and the code for displaying it in step::
 
         class KeyDisplay(cocos.layer.Layer):
-       
+
             # If you want that your layer receives events
             # you must set this variable to 'True',
             # otherwise it won't receive any event.
             is_event_handler = True
-        
+
             def __init__(self):
-        
+
                 super( KeyDisplay, self ).__init__()
-        
+
                 self.text = cocos.text.Label("", x=100, y=280 )
-        
+
                 # To keep track of which keys are pressed:
                 self.keys_pressed = set()
                 self.update_text()
@@ -215,23 +215,23 @@ This class defines a key_pressed set, which should be the set of keys pressed at
             'modifiers' is a bitwise or of several constants indicating which
                 modifiers are active at the time of the press (ctrl, shift, capslock, etc.)
             """
-            
+
             self.keys_pressed.add (key)
             self.update_text()
-            
+
         def on_key_release (self, key, modifiers):
             """This function is called when a key is released.
-            
+
             'key' is a constant indicating which key was pressed.
             'modifiers' is a bitwise or of several constants indicating which
                 modifiers are active at the time of the press (ctrl, shift, capslock, etc.)
-            
+
             Constants are the ones from pyglet.window.key
             """
-            
+
             self.keys_pressed.remove (key)
             self.update_text()
-        
+
         def update_text(self):
             key_names = [pyglet.window.key.symbol_string (k) for k in self.keys_pressed]
             text = 'Keys: '+','.join (key_names)
@@ -243,12 +243,12 @@ With that code, the layer is now fully working. You can press and release keys o
 Handling mouse input is similar. You have three events of interest: on_mouse_press, on_mouse_release and on_mouse_motion. With that, we can define our layer::
 
         class MouseDisplay(cocos.layer.Layer):
-        
+
             is_event_handler = True     #: enable pyglet's events
-        
+
             def __init__(self):
                 super( MouseDisplay, self ).__init__()
-        
+
                 self.posx = 100
                 self.posy = 240
                 self.text = cocos.text.Label('No mouse events yet', font_size=18, x=self.posx, y=self.posy )
@@ -264,16 +264,16 @@ And then add event handlers to update the text when the mouse is moved, and chan
 
         def on_mouse_motion (self, x, y, dx, dy):
             """This function is called when the mouse is moved over the app.
-            
+
             (x, y) are the physical coordinates of the mouse
             (dx, dy) is the distance vector covered by the mouse pointer since the
                 last call.
             """
             self.update_text (x, y)
-        
+
         def on_mouse_press (self, x, y, buttons, modifiers):
             """This function is called when any mouse button is pressed
-        
+
             (x, y) are the physical coordinates of the mouse
             'buttons' is a bitwise or of pyglet.window.mouse constants LEFT, MIDDLE, RIGHT
             'modifiers' is a bitwise or of pyglet.window.key modifier constants
@@ -295,7 +295,7 @@ You can now play to the demo and change it. Some things you can try are:
  * Change the on_mouse_press handler and remove the mapping to virtual coordinates; note how it behaves strangely after resizing the window
  * Note that the mouse coordinates on screen are physical coordinates, so their range changes when resizing the window; modify the demo to show virtual coordinates.
  * Change the code to be able to move the mouse coordinates label when you drag the mouse (hint: a mouse drag is a sequence of button_press, several motions, and a button_release event)
- * Change the code so the keyboard display also shows the modifiers set at each time 
+ * Change the code so the keyboard display also shows the modifiers set at each time
 
 Where to next?
 --------------
@@ -311,11 +311,11 @@ the entire guide from start to finish.
 
 To achieve optimal performance in your 2D
 applications you'll need to work with OpenGL directly.  The canonical
-references for OpenGL are `The OpenGL Programming Guide`_ and 
+references for OpenGL are `The OpenGL Programming Guide`_ and
 `The OpenGL Shading Language`_.
 
-Since cocos2d uses pyglet you shall also check `pyglet Programming Guide`_ 
-and `pyglet API Reference`_ 
+Since cocos2d uses pyglet you shall also check `pyglet Programming Guide`_
+and `pyglet API Reference`_
 
 There are numerous examples of cocos2d applications in the ``samples/``
 directory of the documentation and source distributions.  Keep checking
