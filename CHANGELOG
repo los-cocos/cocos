@@ -1,7 +1,12 @@
-v0.3.0 - XXX
+v0.3.0 - September 5th, 2008
   - Added particle systems: Sun, Fire, Fireworks, Meteor, Galaxy, Flower, Exposion, Spiral
-  - Fixed Camera "once" locate bug
+  - Added lerp actions
   - Applied patch by naveen.michaudagrawal
+  - Applied patch by Kao Cardoso Félix
+  - Fixed Camera "once" locate bug
+  - Many bugfixes 
+  - Primitive vector based line drawing.
+  - Tile-map editor
 
 v0.3.0rc0 -  June 27th, 2008
   - Transitions: Added ZoomTransition by Hugo Ruscitti

@@ -104,7 +104,7 @@ import math
 from base_actions import *
 from cocos.euclid import *
 
-__all__ = [
+__all__ = [  'Lerp',                            # interpolation
             'MoveTo','MoveBy',                  # movement actions
             'Jump', 'JumpTo', 'JumpBy',
             'Bezier',                    # complex movement actions
@@ -117,6 +117,38 @@ __all__ = [
             'Accelerate','AccelDeccel','Speed', # Time alter actions
             ]
 
+class Lerp( IntervalAction ):
+    """
+    Interpolate between values for some specified attribute 
+    
+    """
+    def init(self, attrib, start, end, duration):
+        """Init method.
+
+        :Parameters:
+            `attrib` : string
+                The name of the attrbiute where the value is stored
+            `start`  : float
+                The start value
+            `end`    : float
+                The end value
+            `duration` : float
+                Duration time in seconds
+        """
+        self.attrib = attrib
+        self.duration = duration
+        self.start_p = start
+        self.end_p = end
+        self.delta = end-start
+
+    def update(self, t):
+        setattr(self.target, self.attrib,
+                self.start_p + self.delta * t
+                )
+
+    def __reversed__(self):
+        return Lerp(self.attrib, self.end_p, self.start_p, self.duration)
+        
 class RotateBy( IntervalAction ):
     """Rotates a `CocosNode` object clockwise a number of degrees
     by modiying it's rotation attribute.
