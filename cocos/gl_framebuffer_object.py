@@ -8,7 +8,7 @@
 #
 #   * Redistributions of source code must retain the above copyright
 #     notice, this list of conditions and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright 
+#   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in
 #     the documentation and/or other materials provided with the
 #     distribution.
@@ -41,14 +41,14 @@ from pyglet.gl.glext_arb import *
 class FramebufferObject (object):
     """
     Wrapper for framebuffer objects. See
-    
+
     http://oss.sgi.com/projects/ogl-sample/registry/EXT/framebuffer_object.txt
-    
+
     API is not very OO, should be improved.
     """
     def __init__ (self):
         """Create a new framebuffer object"""
-        id = c_ulong(0)
+        id = c_uint(0)
         glGenFramebuffersEXT (1, byref(id))
         self._id = id.value
 

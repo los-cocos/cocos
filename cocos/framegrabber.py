@@ -8,7 +8,7 @@
 #
 #   * Redistributions of source code must retain the above copyright
 #     notice, this list of conditions and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright 
+#   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in
 #     the documentation and/or other materials provided with the
 #     distribution.
@@ -62,7 +62,8 @@ def TextureGrabber():
         _best_grabber = FBOGrabber
         return _best_grabber()
     except:
-        pass
+        import traceback
+        traceback.print_exc()
     # Fallback: GL generic grabber
     raise Exception("ERROR: GPU doesn't support Frame Buffers Objects. Can't continue")
 #    _best_grabber = GenericGrabber
@@ -74,10 +75,10 @@ class GenericGrabber(object):
     implementation."""
     def grab (self, texture):
         pass
-    
+
     def before_render (self, texture):
         director.window.clear()
-        
+
     def after_render (self, texture):
         buffer = image.get_buffer_manager().get_color_buffer()
         texture.blit_into(buffer, 0, 0, 0)
@@ -85,9 +86,9 @@ class GenericGrabber(object):
 class PbufferGrabber(object):
     """A render-to texture mechanism using pbuffers.
     Requires pbuffer extensions. Currently only implemented in GLX.
-    
+
     Not working yet, very untested
-    
+
     TODO: finish pbuffer grabber
     """
     def grab (self, texture):
@@ -99,7 +100,7 @@ class PbufferGrabber(object):
             GLX_DEPTH_SIZE, 24,
             GLX_DOUBLEBUFFER, 1,
             ])
-    
+
     def before_render (self, texture):
         self.pbuf.switch_to()
         gl.glViewport(0, 0, self.pbuf.width, self.pbuf.height)
@@ -108,7 +109,7 @@ class PbufferGrabber(object):
         gl.glOrtho(0, self.pbuf.width, 0, self.pbuf.height, -1, 1)
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glEnable (gl.GL_TEXTURE_2D)
-        
+
     def after_render (self, texture):
         buffer = image.get_buffer_manager().get_color_buffer()
         texture.blit_into (buffer, 0, 0, 0)
@@ -131,10 +132,10 @@ class FBOGrabber(object):
         self.fbuf.texture2d (texture)
         self.fbuf.check_status()
         self.fbuf.unbind()
-    
+
     def before_render (self, texture):
         self.fbuf.bind()
         glClear(GL_COLOR_BUFFER_BIT)
-        
+
     def after_render (self, texture):
         self.fbuf.unbind()

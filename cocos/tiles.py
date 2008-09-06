@@ -323,7 +323,7 @@ _xml_to_python = dict(
     unicode=unicode,
     int=int,
     float=float,
-    bool=bool,
+    bool=lambda value: value != "False",
 )
 _python_to_xml = {
     str: unicode,
