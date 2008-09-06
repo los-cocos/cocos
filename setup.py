@@ -31,6 +31,7 @@ cocos2d simplifies the game development in these areas:
     * Creating transitions between scenes
     * Managing sprites
     * Basic menus 
+    * and much more!
 """
 
 setup(
@@ -42,7 +43,7 @@ setup(
 
     packages = find_packages(),
 
-    install_requires=['pyglet>=1.1beta1',],
+    install_requires=['pyglet>=1.1.1',],
     dependency_links=['http://code.google.com/p/pyglet/downloads/list',],
 
     include_package_data = True,
