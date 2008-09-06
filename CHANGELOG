@@ -3,8 +3,9 @@ v0.3.0 - September 5th, 2008
   - Added lerp actions
   - Applied patch by naveen.michaudagrawal
   - Applied patch by Kao Cardoso Félix
+  - Applied patch by JeanpierreDA
   - Fixed Camera "once" locate bug
-  - Many bugfixes 
+  - Many bugfixes
   - Primitive vector based line drawing.
   - Tile-map editor
 
@@ -34,7 +35,7 @@ v0.3.0beta1 - June 2nd, 2008
       argument the callback func (to maintain API coherence)
   - Sprites: renamed ActionSprite class to Sprite
   - Transitions: Changed API. There is no need to pass the src scene as a
-	  parameter. If omitted, the src scene will be current scene. 
+	  parameter. If omitted, the src scene will be current scene.
 	  init( dst, duration=2, src=current_scene)
   - Transitions: renamed ShrinkAndGrowTransition -> ShrinkGrowTransition
   - Transitions: renamed ShuffleTilesTransition -> ShuffleTransition
@@ -55,7 +56,7 @@ v0.3.0beta0 - May 5th, 2008
   - Actions: Added IntervalAction decorators:
      Accelerate, AccelDeccel, Speed, ReverseTime
   - Actions: time can be modified in a whole sequence. eg: Accelerate( sequence )
-  - Actions: Added a new base class: InstantAction 
+  - Actions: Added a new base class: InstantAction
   - Actions: every cocosnode support actions. eg: sprites, layers, scenes, etc.
   - Actions: Added grid (mesh distortion) effects:
      Liquid, Waves, Shaky3D, ShakyTiles3D, ShuffleTiles, QuadMoveBy,
@@ -75,7 +76,7 @@ v0.3.0beta0 - May 5th, 2008
      MOD_ACCEL + s: Takes a screenshot of the current window
      MOD_ACCEL + x: Toggles FPS
      MOD_ACCEL + i: Toggles the python interpreter
-  - Director: alpha blending enabled by default. 
+  - Director: alpha blending enabled by default.
     use director.set_alpha_bleding(True|False) to change.
   - Documentation: using pyglet's documentation tools
   - Documentation: started the programming guide in restructured text format
@@ -94,7 +95,7 @@ v0.3.0beta0 - May 5th, 2008
   - Install: Added setup.py and setup.cfg contributed by David Eyk
   - Menu: Added MultipleMenuItem, an item that supports multiple possible
     values. Contributed by Alejandro Weil (tenuki)
-  - Menu: Added EntryMenuItem, based on patch by David Eyk    
+  - Menu: Added EntryMenuItem, based on patch by David Eyk
   - Menu: changed API. instead of 'add() and build_items()' use 'create_menu()'
   - Menu: Added support for actions when an item is selected and/or activated
   - Samples: added new samples that shows some features of cocos:
@@ -103,7 +104,7 @@ v0.3.0beta0 - May 5th, 2008
   - Scenes: Added the cocos/scenes directory. Pause and transitions are there
   - Sprites: ActionSprite and SpriteGroup added in sprite.py
   - Tests: added lots of 'unit tests' tests
-    
+
 v0.2.0 - March, 21th 2008
   - Director: uses the new pyglet 1.1 loop
   - Director: doesn't have the step() method. Uses on_draw() instead.
@@ -138,7 +139,7 @@ v0.1.1 - March, 10th 2008
   - Improved Programming Guide
   - Improved API Reference Guide
   - Added warning if pyglet version is not v1.0
-  
-  
+
+
 v0.1.0 - February, 29th 2008
   - First public release
