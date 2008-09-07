@@ -7,7 +7,7 @@ $Date: 2008-04-05 16:22:08 -0500 (Sat, 05 Apr 2008) $
 """
 
 __author__ = "cocos2d team"
-__author_email__ = "lucio.torre@gmail.com" 
+__author_email__ = "lucio.torre@gmail.com"
 __version__ = "0.3.0"
 __date__ = "2008-06-27"
 
@@ -31,7 +31,7 @@ cocos2d simplifies the game development in these areas:
     * Creating special effects in layers
     * Creating transitions between scenes
     * Managing sprites
-    * Basic menus 
+    * Basic menus
     * and much more!
 """
 
@@ -43,6 +43,7 @@ setup(
     url = "http://cocos2d.org",
 
     packages = find_packages(),
+    package_data={'cocos': ['resources/*']},
 
     install_requires=['pyglet>=1.1.1',],
     dependency_links=['http://code.google.com/p/pyglet/downloads/list',],

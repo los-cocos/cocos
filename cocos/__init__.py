@@ -8,7 +8,7 @@
 #
 #   * Redistributions of source code must retain the above copyright
 #     notice, this list of conditions and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright 
+#   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in
 #     the documentation and/or other materials provided with the
 #     distribution.
@@ -31,6 +31,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 '''cocos2d
+cocos2d is a framework for building 2D games, demos, and other graphical/interactive applications.
+
+Main Features:
+--------------
+    * Flow control: Manage the flow control between different scenes in an easy way
+    * Sprites: Fast and easy sprites
+    * Actions: Just tell sprites what you want them to do. Composable actions like move, rotate, scale and much more
+    * Effects: Effects like waves, twirl, lens and much more
+    * Tiled Maps: Support for rectangular and hexagonal tiled maps
+    * Transitions: Move from scene to scene with style
+    * Menus: Built in classes to create menus
+    * Text Rendering: Label and HTMLLabel with action support
+    * Documentation: Programming Guide + API Reference + Video Tutorials + Lots of simple tests showing how to use it
+    * Built-in Python Interpreter: For debugging purposes
+    * BSD License: Just use it
+    * Pyglet Based: No external dependencies
+    * OpenGL Based: Hardware Acceleration
+
 http://cocos2d.org
 '''
 
@@ -39,11 +57,9 @@ __author__ = "cocos2d team"
 version = __version__
 
 
-"""
-add the cocos resources path
-"""
-import os, pyglet
 
+# add the cocos resources path
+import os, pyglet
 pyglet.resource.path.append(os.path.join(os.path.dirname(__file__), "resources"))
 pyglet.resource.reindex()
 del os, pyglet
