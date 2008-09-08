@@ -45,7 +45,7 @@ class TileEditorLayer(tiles.ScrollableLayer):
         w, h = director.get_window_size()
 
     def on_key_press(self, key, modifier):
-        if modifier == pyglet.window.key.MOD_ACCEL:
+        if modifier & pyglet.window.key.MOD_ACCEL:
             if key == pyglet.window.key.S:
                 self.level_to_edit.save_xml(self.filename)
                 director.pop()
