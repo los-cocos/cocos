@@ -775,7 +775,7 @@ class Cell(object):
     def __getitem__(self, key):
         if key in self.properties:
             return self.properties[key]
-        elif key in self.tile.properties:
+        elif self.tile is not None and key in self.tile.properties:
             return self.tile.properties[key]
         raise KeyError(key)
 
@@ -785,6 +785,8 @@ class Cell(object):
     def get(self, key, default=None):
         if key in self.properties:
             return self.properties[key]
+        if self.tile is None:
+            return default
         return self.tile.properties.get(key, default)
 
     def __repr__(self):
