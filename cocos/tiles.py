@@ -640,7 +640,7 @@ class MapLayer(ScrollableLayer):
             else:
                 s._label = None
         for k in list(self._sprites):
-            if k not in keep:
+            if k not in keep and k in self._sprites:
                 self._sprites[k]._label = None
                 del self._sprites[k]
 
