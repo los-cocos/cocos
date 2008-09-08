@@ -618,7 +618,9 @@ class MapLayer(ScrollableLayer):
         for cell in self.get_visible_cells():
             cx, cy = key = cell.origin[:2]
             keep.add(key)
-            if key not in self._sprites and cell.tile is not None:
+            if cell.tile is None:
+                continue
+            if key not in self._sprites:
                 self._sprites[key] = pyglet.sprite.Sprite(cell.tile.image,
                     x=cx, y=cy, batch=self.batch)
             s = self._sprites[key]
