@@ -132,6 +132,19 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         self.color = color
 
 
+    def contains(self, x, y):
+        '''Test whether this (untransformed) Sprite contains the pixel coordinates
+        given.
+        '''
+        sx, sy = self.position
+        ax, ay = self.image_anchor
+        sx -= ax
+        sy -= ay
+        if x < sx or x > sx + self.width: return False
+        if y < sy or y > sy + self.height: return False
+        return True
+
+
     def _set_anchor_x(self, value):
         if isinstance(self.image, pyglet.image.Animation):
             for img in self.image.frames:
