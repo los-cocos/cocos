@@ -742,6 +742,18 @@ class Cell(object):
         width, height   -- dimensions
         properties      -- arbitrary properties
         cell            -- cell from the MapLayer's cells
+
+
+    Properties are available through the dictionary interface, ie. if the
+    cell has a property 'cost' then you may access it as:
+
+        cell['cost']
+
+    You may also set properties in this way and use the .get() method to
+    supply a default value.
+
+    If the named property does not exist on the cell it will be looked up
+    on the cell's tile.
     '''
     def __init__(self, i, j, width, height, properties, tile):
         self.width, self.height = width, height
@@ -759,6 +771,21 @@ class Cell(object):
             v = _python_to_xml[type(v)](v)
             ElementTree.SubElement(c, 'property', value=v,
                 type=_xml_type[type(v)])
+
+    def __getitem__(self, key):
+        if key in self.properties:
+            return self.properties[key]
+        elif key in self.tile.properties:
+            return self.tile.properties[key]
+        raise KeyError(key)
+
+    def __setitem__(self, key, value):
+        self.properties[key] = value
+
+    def get(self, key, default=None):
+        if key in self.properties:
+            return self.properties[key]
+        return self.tile.properties.get(key, default)
 
     def __repr__(self):
         return '<%s object at 0x%x (%g, %g) properties=%r tile=%r>'%(
