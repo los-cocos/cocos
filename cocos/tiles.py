@@ -772,6 +772,11 @@ class Cell(object):
             ElementTree.SubElement(c, 'property', value=v,
                 type=_xml_type[type(v)])
 
+    def __contains__(self, key):
+        if key in self.properties:
+            return True
+        return key in self.tile.properties
+
     def __getitem__(self, key):
         if key in self.properties:
             return self.properties[key]
