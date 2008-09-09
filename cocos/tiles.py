@@ -769,7 +769,7 @@ class Cell(object):
         for k in self.properties:
             v = self.properties[k]
             v = _python_to_xml[type(v)](v)
-            ElementTree.SubElement(c, 'property', value=v,
+            ElementTree.SubElement(c, 'property', name=k, value=v,
                 type=_xml_type[type(v)])
 
     def __contains__(self, key):
