@@ -612,6 +612,16 @@ class MapLayer(ScrollableLayer):
         self.debug = debug
         self._update_sprite_set()
 
+    def set_cell_opacity(self, i, j, opacity):
+        key = self.cells[i][j].origin[:2]
+        if key in self._sprites:
+            self._sprites[key].set_opacity(opacity)
+
+    def set_cell_color(self, i, j, color):
+        key = self.cells[i][j].origin[:2]
+        if key in self._sprites:
+            self._sprites[key].set_rgb(color)
+
     def _update_sprite_set(self):
         # update the sprites set
         keep = set()
