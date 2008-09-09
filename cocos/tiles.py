@@ -739,6 +739,7 @@ class Cell(object):
 
     Common attributes:
         i, j            -- index of this cell in the map
+        position        -- the above as a tuple
         width, height   -- dimensions
         properties      -- arbitrary properties
         cell            -- cell from the MapLayer's cells
@@ -760,6 +761,9 @@ class Cell(object):
         self.i, self.j = i, j
         self.properties = properties
         self.tile = tile
+
+    @property
+    def position(self): return (i, j)
 
     def _as_xml(self, parent):
         c = ElementTree.SubElement(parent, 'cell')
