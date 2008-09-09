@@ -763,7 +763,7 @@ class Cell(object):
         self.tile = tile
 
     @property
-    def position(self): return (i, j)
+    def position(self): return (self.i, self.j)
 
     def _as_xml(self, parent):
         c = ElementTree.SubElement(parent, 'cell')
