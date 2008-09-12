@@ -495,7 +495,8 @@ def rectmap_factory(resource, tag):
             properties = _handle_properties(cell)
             c.append(RectCell(i, j, width, height, properties, tile))
 
-    m = RectMapLayer(id, width, height, cells, origin)
+    properties = _handle_properties(tag)
+    m = RectMapLayer(id, width, height, cells, origin, properties)
     resource.add_resource(id, m)
 
     return m
@@ -521,7 +522,8 @@ def hexmap_factory(resource, tag):
             properties = _handle_properties(tag)
             c.append(HexCell(i, j, height, properties, tile))
 
-    m = HexMapLayer(id, width, cells, origin)
+    properties = _handle_properties(tag)
+    m = HexMapLayer(id, width, cells, origin, properties)
     resource.add_resource(id, m)
 
     return m
@@ -577,13 +579,29 @@ class MapLayer(ScrollableLayer):
         (origin_x, origin_y, origin_z)  -- offset of map top left from origin in pixels
         cells           -- array [i][j] of Cell instances
         debug           -- display debugging information on cells
+        properties      -- arbitrary properties
 
     The debug flag turns on textual display of data about each visible cell
     including its cell index, origin pixel and any properties set on the cell.
     '''
-    def __init__(self):
+    def __init__(self, properties):
         self._sprites = {}
+        self.properties = properties
         super(MapLayer, self).__init__()
+
+    def __contains__(self, key):
+        return key in self.properties
+
+    def __getitem__(self, key):
+        if key in self.properties:
+            return self.properties[key]
+        raise KeyError(key)
+
+    def __setitem__(self, key, value):
+        self.properties[key] = value
+
+    def get(self, key, default=None):
+        return self.properties.get(key, default)
 
     def set_dirty(self):
         # re-calculate the sprites to draw for the view
@@ -681,8 +699,9 @@ class RectMapLayer(RegularTesselationMapLayer):
     Thus cells = [['a', 'd'], ['b', 'e'], ['c', 'f']]
     and cells[0][1] = 'd'
     '''
-    def __init__(self, id, tw, th, cells, origin=None):
-        super(RectMapLayer, self).__init__()
+    def __init__(self, id, tw, th, cells, origin=None, properties=None):
+        properties = properties or {}
+        super(RectMapLayer, self).__init__(properties)
         self.id = id
         self.tw, self.th = tw, th
         if origin is None:
@@ -737,6 +756,17 @@ class RectMapLayer(RegularTesselationMapLayer):
         m = ElementTree.SubElement(root, 'rectmap', id=self.id,
             tile_size='%dx%d'%(self.tw, self.th),
             origin='%s,%s,%s'%(self.origin_x, self.origin_y, self.origin_z))
+        m.tail = '\n'
+
+        # map properties
+        for k in self.properties:
+            v = self.properties[k]
+            v = _python_to_xml[type(v)](v)
+            p = ElementTree.SubElement(m, 'property', name=k, value=v,
+                type=_xml_type[type(v)])
+            p.tail = '\n'
+
+        # columns / cells
         for column in self.cells:
             c = ElementTree.SubElement(m, 'column')
             c.tail = '\n'
@@ -935,8 +965,9 @@ class HexMapLayer(RegularTesselationMapLayer):
         \_/ \_/
     has cells = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
     '''
-    def __init__(self, id, th, cells, origin=None):
-        super(HexMapLayer, self).__init__()
+    def __init__(self, id, th, cells, origin=None, properties=None):
+        properties = properties or {}
+        super(HexMapLayer, self).__init__(properties)
         self.id = id
         self.th = th
         if origin is None:
