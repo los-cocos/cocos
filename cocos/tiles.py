@@ -282,6 +282,7 @@ class Resource(object):
         '''
         # generate the XML
         root = ElementTree.Element('resource')
+        root.tail = '\n'
         for namespace, res in self.requires:
             r = ElementTree.SubElement(root, 'requires', file=res.filename)
             r.tail = '\n'
@@ -341,7 +342,7 @@ _xml_type = {
 }
 def _handle_properties(tag):
     properties = {}
-    for tag in tag.getiterator('property'):
+    for tag in tag.findall('./property'):
         name = tag.get('name')
         type = tag.get('type') or 'unicode'
         value = tag.get('value')
