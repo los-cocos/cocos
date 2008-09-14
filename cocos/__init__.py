@@ -60,7 +60,7 @@ version = __version__
 
 # add the cocos resources path
 import os, pyglet
-pyglet.resource.path.append(os.path.join(os.path.dirname(__file__), "resources"))
+pyglet.resource.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), "resources"))
 pyglet.resource.reindex()
 del os, pyglet
 
