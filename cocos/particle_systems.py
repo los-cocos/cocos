@@ -458,7 +458,7 @@ class Galaxy( ParticleSystem ):
 class Smoke( ParticleSystem ):
 
     # total particles
-    total_particles = 200
+    total_particles = 80
 
     # duration
     duration = -1
@@ -468,14 +468,14 @@ class Smoke( ParticleSystem ):
 
     # angle
     angle = 90.0
-    angle_var = 5.0
+    angle_var = 10.0
 
     # speed of particles
     speed = 25.0
     speed_var = 10.0
 
     # radial
-    radial_accel = 0.0
+    radial_accel = 5
     radial_accel_var = 0
 
     # tangential
@@ -483,27 +483,26 @@ class Smoke( ParticleSystem ):
     tangential_accel_var = 0.0
 
     # emitter variable position
-    pos_var = Point2(20,0)
+    pos_var = Point2(0.1,0)
 
     # life of particles
     life = 4.0
     life_var = 1.0
 
     # size, in pixels
-    size = 60.0
+    size = 40.0
     size_var = 10.0
 
     # emits per frame
     emission_rate = total_particles / life
 
-    # color of particles
-    start_color = Color(0.8, 0.8, 0.8, 1.0)
-    start_color_var = Color(0.02, 0.02, 0.02, 0.0)
-    end_color = Color(0.0, 0.0, 0.0, 0.0)
-    end_color_var = Color(0.0, 0.0, 0.0, 0.0)
+    start_color = Color(0.5,0.5,0.5,0.1)
+    start_color_var = Color(0,0,0,0.1)
+    end_color = Color(0.5,0.5,0.5,0.1)
+    end_color_var = Color(0,0,0,0.1)
 
     # blend additive
-    blend_additive = False
+    blend_additive = True
 
     # color modulate
-    color_modulate = True
+    color_modulate = False
