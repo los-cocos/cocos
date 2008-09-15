@@ -413,7 +413,7 @@ class CocosNode(object):
         return [ c for (z, c) in self.children ]
 
     def __contains__(self, child):
-        return  c in self.get_children()
+        return child in self.get_children()
 
     def get( self, name ):
         """Gets a child from the container given its name
