@@ -548,6 +548,10 @@ class ScrollableLayer(cocos.layer.Layer):
 
     def __init__(self):
         super(ScrollableLayer,self).__init__()
+        # force transform anchor to be 0 so we don't OpenGL glTranslate()
+        # and screw up our pixel alignment on screen
+        self.transform_anchor_x = 0
+        self.transform_anchor_y = 0
         self.batch = pyglet.graphics.Batch()
 
     def set_view(self, x, y, w, h):
