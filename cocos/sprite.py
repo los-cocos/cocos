@@ -95,7 +95,7 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
 
         pyglet.sprite.Sprite.__init__(self, image)
-        cocosnode.CocosNode.__init__(self)
+        BatchableNode.__init__(self)
 
         if anchor is None:
             if isinstance(self.image, pyglet.image.Animation):
