@@ -86,7 +86,7 @@ class ColorLayer(Layer):
     def on_enter(self):
         super(ColorLayer, self).on_enter()
         x, y = self.width, self.height
-        ox, oy = self.position
+        ox, oy = 0, 0
         
         self._vertex_list = self._batch.add(4, pyglet.gl.GL_QUADS, None,
             ('v2i', ( ox, oy,
