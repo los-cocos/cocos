@@ -1250,7 +1250,9 @@ class ScrollingManager(cocos.layer.Layer):
         '''Add the child and then update the manager's focus / viewport.
         '''
         super(ScrollingManager, self).add(child, z=z, name=name)
-        self.set_focus(self.fx, self.fy)
+        # set the focus again and force it so we don't just skip because the
+        # focal point hasn't changed
+        self.set_focus(self.fx, self.fy, force=True)
 
     def pixel_from_screen(self, x, y):
         '''Look up the Layer-space pixel matching the screen-space pixel.
@@ -1294,7 +1296,7 @@ class ScrollingManager(cocos.layer.Layer):
         return int(x), int(y)
 
     _old_focus = None
-    def set_focus(self, fx, fy):
+    def set_focus(self, fx, fy, force=False):
         '''Determine the viewport based on a desired focus pixel in the
         Layer space (fx, fy) and honoring any bounding restrictions of
         child layers.
@@ -1316,7 +1318,7 @@ class ScrollingManager(cocos.layer.Layer):
         a = (fx, fy, self.scale)
 
         # check for NOOP (same arg passed in)
-        if self._old_focus == a:
+        if not force and self._old_focus == a:
             return
         self._old_focus = a
 
