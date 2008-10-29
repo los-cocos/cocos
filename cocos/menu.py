@@ -8,7 +8,7 @@
 #
 #   * Redistributions of source code must retain the above copyright
 #     notice, this list of conditions and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright 
+#   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in
 #     the documentation and/or other materials provided with the
 #     distribution.
@@ -34,14 +34,14 @@
 # Ideas borrowed from:
 #    pygext: http://opioid-interactive.com/~shang/projects/pygext/
 #    pyglet astraea: http://www.pyglet.org
-#    Grossini's Hell: http://www.pyweek.org/e/Pywiii/ 
+#    Grossini's Hell: http://www.pyweek.org/e/Pywiii/
 #
 """A `Layer` that implements a simple menu
 
 Menu
 ====
 
-This module provides a Menu class. Menus can contain regular items 
+This module provides a Menu class. Menus can contain regular items
 (which trigger a function when selected), toggle items (which toggle a flag when selected),
 or entry items (which lets you enter alphanumeric data).
 
@@ -63,13 +63,13 @@ from actions import *
 
 __all__ = [ 'Menu',                                 # menu class
 
-    'MenuItem', 'ToggleMenuItem',                   # menu items classes
-    'MultipleMenuItem', 'EntryMenuItem',
+            'MenuItem', 'ToggleMenuItem',                   # menu items classes
+            'MultipleMenuItem', 'EntryMenuItem',
 
-    'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM',     # menu aligment
+            'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM',     # menu aligment
 
-    'shake', 'shake_back','zoom_in','zoom_out'      # Some useful actions for the menu items
-    ]
+            'shake', 'shake_back','zoom_in','zoom_out'      # Some useful actions for the menu items
+            ]
 
 #
 # Class Menu
@@ -86,11 +86,11 @@ BOTTOM = font.Text.BOTTOM
 
 class Menu(Layer):
     """Abstract base class for menu layers.
-    
+
     Normal usage is:
 
      - create a subclass
-     - override __init__ to set all style attributes, 
+     - override __init__ to set all style attributes,
        and then call `create_menu()`
      - Finally you shall add the menu to an `Scene` or another `Layer`
     """
@@ -153,7 +153,7 @@ class Menu(Layer):
 
         self.title_height = 0
 
-     
+
     def _generate_title( self ):
         width, height = director.get_window_size()
 
@@ -223,7 +223,7 @@ class Menu(Layer):
         self.children[ self.selected_index][1].is_selected = False
         self.children[ self.selected_index][1].on_unselected()
 
-        self.children[ new_idx ][1].is_selected = True 
+        self.children[ new_idx ][1].is_selected = True
         self.children[ new_idx ][1].on_selected()
 
         self.selected_index = new_idx
@@ -241,7 +241,7 @@ class Menu(Layer):
         first one will be shown first.
 
         Example::
-    
+
             l = []
             l.append( MenuItem('Options', self.on_new_game ) )
             l.append( MenuItem('Quit', self.on_quit ) )
@@ -327,12 +327,12 @@ class Menu(Layer):
 
 class MenuItem( CocosNode ):
     """A regular menu item. It triggers a function when it is activated"""
-    
+
     selected_effect = None
     unselected_effect = None
     activated_effect = None
 
-    def __init__(self, label, callback_func):
+    def __init__(self, label, callback_func, *args, **kwargs):
         """Creates a new menu item
 
         :Parameters:
@@ -346,6 +346,8 @@ class MenuItem( CocosNode ):
 
         self.label = label
         self.callback_func = callback_func
+        self.callback_args = args
+        self.callback_kwargs = kwargs
 
         self.is_selected = False
 
@@ -387,6 +389,9 @@ class MenuItem( CocosNode ):
         y1 = self.text.y + y_diff
         x2 = x1 + width
         y2 = y1 + height
+        x1 += self.parent.x
+        y1 += self.parent.y
+
         return (x1,y1,x2,y2)
 
     def draw( self ):
@@ -402,7 +407,7 @@ class MenuItem( CocosNode ):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ENTER and self.callback_func:
-            self.callback_func()
+            self.callback_func(*self.callback_args, **self.callback_kwargs)
             return True
 
     def on_text( self, text ):
@@ -411,7 +416,7 @@ class MenuItem( CocosNode ):
     def is_inside_box( self, x, y ):
         """Returns whether the point (x,y) is inside the menu item.
 
-        :rtype: bool 
+        :rtype: bool
         """
         (ax,ay,bx,by) = self.get_box()
         if( x >= ax and x <= bx and y >= ay and y <= by ):
@@ -442,7 +447,7 @@ class MultipleMenuItem( MenuItem ):
         self.volumes = ['Mute','10','20','30','40','50','60','70','80','90','100']
 
         items.append( MultipleMenuItem(
-                        'SFX volume: ', 
+                        'SFX volume: ',
                         self.on_sfx_volume,
                         self.volumes,
                         8 )
@@ -457,7 +462,7 @@ class MultipleMenuItem( MenuItem ):
             `callback_func` : function
                 Callback function
             `items` : list
-                List of strings containing the values 
+                List of strings containing the values
             `default_item` : integer
                 Default item of the list. It is an index of the list. Default: 0
         """
@@ -484,7 +489,7 @@ class MultipleMenuItem( MenuItem ):
             return True
 
 class ToggleMenuItem( MultipleMenuItem ):
-    '''A menu item for a boolean toggle option.  
+    '''A menu item for a boolean toggle option.
 
     Example::
 
