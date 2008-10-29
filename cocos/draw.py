@@ -278,11 +278,14 @@ class Canvas(cocosnode.CocosNode):
                                 ])
                                 texcoord += [ 0.1,0.9,0.1,0.5,0.5,0.9 ]
                             elif ctx.join in (MITER_JOIN, ROUND_JOIN):
-                                far = Ray2(
-                                    Point2(*bottom), prev.direction
-                                    ).intersect(Ray2(
-                                    Point2(*top), -current.direction
-                                    ))
+                                if bottom == top:
+                                    far = Point2(*bottom)
+                                else:
+                                    far = Ray2(
+                                        Point2(*bottom), prev.direction
+                                        ).intersect(Ray2(
+                                        Point2(*top), -current.direction
+                                        ))
                                 strip.extend( [ int(x) for x in
                                     list(inter) + list(bottom) + list(top) +
                                     list(bottom) + list(top) + list(far)
