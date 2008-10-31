@@ -630,6 +630,17 @@ class MapLayer(ScrollableLayer):
         w, h = self.view_w, self.view_h
         return self.get_in_region(x, y, x + w, y + h)
 
+    def is_visible(self, rect):
+        '''Determine whether the indicated rect (with .x, .y, .width and
+        .height attributes) located in this Layer is visible.
+        '''
+        x, y = rect.x, rect.y
+        if x + rect.width < self.view_x: return False
+        if y + rect.height < self.view_y: return False
+        if x > self.view_x + self.view_w: return False
+        if y > self.view_y + self.view_h: return False
+        return True
+
     debug = False
     def set_debug(self, debug):
         self.debug = debug
