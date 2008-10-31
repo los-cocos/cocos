@@ -259,9 +259,6 @@ class Director(event.EventDispatcher):
         # opengl settings
         self.set_alpha_blending()
 
-        # init fps
-        self.fps_display = clock.ClockDisplay()
-
         # python interpreter
         self.python_interpreter = None
 
@@ -272,6 +269,18 @@ class Director(event.EventDispatcher):
         self.window.push_handlers( DefaultHandler() )
 
         return self.window
+
+    fps_display = None
+    def set_show_FPS(self, value):
+        if value and self.fps_display is None:
+            self.fps_display = clock.ClockDisplay()
+        elif not value and self.fps_display is not None:
+            self.fps_display.unschedule()
+            self.fps_display.label.delete()
+            self.fps_display = None
+
+    show_FPS = property(lambda self: self.fps_display is not None,
+        set_show_FPS)
 
     def run(self, scene):
         """Runs a scene, entering in the Director's main loop.
