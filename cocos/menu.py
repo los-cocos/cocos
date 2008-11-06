@@ -60,11 +60,12 @@ from layer import *
 from director import *
 from cocosnode import *
 from actions import *
+from sprite import Sprite
 
-__all__ = [ 'Menu',                                 # menu class
+__all__ = [ 'Menu',                                         # menu class
 
-            'MenuItem', 'ToggleMenuItem',                   # menu items classes
-            'MultipleMenuItem', 'EntryMenuItem',
+            'MenuItem', 'ToggleMenuItem',  # menu items classes
+            'MultipleMenuItem', 'EntryMenuItem', 'ImageMenuItem',
 
             'CENTER', 'LEFT', 'RIGHT', 'TOP', 'BOTTOM',     # menu aligment
 
@@ -110,6 +111,9 @@ class Menu(Layer):
 
         self.menu_halign = CENTER
         self.menu_valign = CENTER
+
+        self.menu_hmargin = 2 # Variable margins for left and right alignment
+        self.menu_vmargin = 2 # Variable margins for top and bottom alignment
 
         #
         # Menu default options
@@ -174,33 +178,22 @@ class Menu(Layer):
         if self.menu_halign == CENTER:
             pos_x = width // 2
         elif self.menu_halign == RIGHT:
-            pos_x = width - 2
+            pos_x = width - self.menu_hmargin
         elif self.menu_halign == LEFT:
-            pos_x = 2
+            pos_x = self.menu_hmargin
         else:
             raise Exception("Invalid anchor_x value for menu")
 
         for idx,i in enumerate( self.children):
             item = i[1]
-
             if self.menu_valign == CENTER:
-                pos_y = height / 2 + (fo_height * len(self.children) )/2 - (idx * fo_height ) - self.title_height * 0.2
+                pos_y = (height + (len(self.children) - 2 * idx) * fo_height - self.title_height) * 0.5
             elif self.menu_valign == TOP:
-                pos_y = height - (idx * fo_height ) - self.title_height
+                pos_y = height - (idx * fo_height ) - self.title_height - self.menu_vmargin
             elif self.menu_valign == BOTTOM:
-                pos_y = 0 + fo_height * len(self.children) - (idx * fo_height )
-
+                pos_y = 0 + fo_height * (len(self.children) - idx) + self.menu_vmargin
             item.transform_anchor = (pos_x, pos_y)
-
-            self.font_item['x'] = pos_x
-            self.font_item['y'] = pos_y
-            self.font_item['text'] = item.label
-            item.text = pyglet.text.Label( **self.font_item )
-
-            self.font_item_selected['x'] = pos_x
-            self.font_item_selected['y'] = pos_y
-            self.font_item_selected['text'] = item.label
-            item.text_selected = pyglet.text.Label( **self.font_item_selected )
+            item.generateWidgets (pos_x, pos_y, self.font_item, self.font_item_selected)
 
     def _build_items( self ):
         self.font_item_selected['anchor_x'] = self.menu_halign
@@ -249,13 +242,13 @@ class Menu(Layer):
 
         :Parameters:
             `items` : list
-                list of `MenuItem` that will be part of the `Menu`
+                list of `BaseMenuItem` that will be part of the `Menu`
             `selected_effect` : function
-                This action will be executed when the `MenuItem` is selected
+                This action will be executed when the `BaseMenuItem` is selected
             `unselected_effect` : function
-                This action will be executed when the `MenuItem` is unselected
+                This action will be executed when the `BaseMenuItem` is unselected
             `activated_effect` : function
-                this action will executed when the `MenuItem` is activated (pressing Enter or by clicking on it)
+                this action will executed when the `BaseMenuItem` is activated (pressing Enter or by clicking on it)
         """
         z=0
         for i in items:
@@ -269,10 +262,10 @@ class Menu(Layer):
             i.item_valign = self.menu_valign
             z += 1
 
+        self._generate_title() # If you generate the title after the items
+                # the V position of the items can't consider the title's height
         if items:
             self._build_items()
-
-        self._generate_title()
 
     def draw( self ):
         self.title_label.draw()
@@ -325,14 +318,15 @@ class Menu(Layer):
                 self._select_item( idx )
                 break
 
-class MenuItem( CocosNode ):
-    """A regular menu item. It triggers a function when it is activated"""
+
+class BaseMenuItem( CocosNode ):
+    """An abstract menu item. It triggers a function when it is activated"""
 
     selected_effect = None
     unselected_effect = None
     activated_effect = None
 
-    def __init__(self, label, callback_func, *args, **kwargs):
+    def __init__(self, callback_func, *args, **kwargs):
         """Creates a new menu item
 
         :Parameters:
@@ -342,31 +336,62 @@ class MenuItem( CocosNode ):
                 The callback function
         """
 
-        super( MenuItem, self).__init__()
+        super( BaseMenuItem, self).__init__()
 
-        self.label = label
         self.callback_func = callback_func
         self.callback_args = args
         self.callback_kwargs = kwargs
 
         self.is_selected = False
 
-        # Variables that will be set when init_font() is called
-        self.text = None
-        self.text_selected = None
-
         self.item_halign = None
         self.item_valign = None
+
+    def get_item_width (self):
+        """ Returns the width of the item.
+            This method should be implemented by descendents.
+
+            :rtype: int
+        """
+        raise NotImplementedError
+
+    def get_item_height (self):
+        """ Returns the width of the item.
+            This method should be implemented by descendents.
+
+            :rtype: int
+        """
+        raise NotImplementedError
+
+    def generateWidgets (self, pos_x, pos_y, font_item, font_item_selected):
+        """ Generate a normal and a selected widget.
+            This method should be implemented by descendents.
+        """
+        raise NotImplementedError
+
+    def get_item_x (self):
+        """ Return the x position of the item.
+            This method should be implemented by descendents.
+
+            :rtype: int
+        """
+        raise NotImplementedError
+
+    def get_item_y (self):
+        """ Return the y position of the item.
+            This method should be implemented by descendents.
+
+            :rtype: int
+        """
+        raise NotImplementedError
 
     def get_box( self ):
         """Returns the box that contains the menu item.
 
         :rtype: (x1,x2,y1,y2)
         """
-
-        width = self.text.content_width
-        height = self.text.content_height
-
+        width = self.get_item_width ()
+        height = self.get_item_height ()
         if self.item_halign == CENTER:
             x_diff = - width / 2
         elif self.item_halign == RIGHT:
@@ -376,34 +401,19 @@ class MenuItem( CocosNode ):
         else:
             raise Exception("Invalid halign: %s" % str(self.item_halign) )
 
-        if self.item_valign == CENTER:
-            y_diff = - height/ 2
-        elif self.item_valign == TOP:
-            y_diff = - height
-        elif self.item_valign == BOTTOM:
-            y_diff = 0
-        else:
-            raise Exception("Invalid valign: %s" % str(self.item_valign) )
+        y_diff = - height/ 2
 
-        x1 = self.text.x + x_diff
-        y1 = self.text.y + y_diff
-        x2 = x1 + width
-        y2 = y1 + height
+        x1 = self.get_item_x() + x_diff
+        y1 = self.get_item_y() + y_diff
         x1 += self.parent.x
         y1 += self.parent.y
+        x2 = x1 + width
+        y2 = y1 + height
 
         return (x1,y1,x2,y2)
 
     def draw( self ):
-        glPushMatrix()
-        self.transform()
-
-        if self.is_selected:
-            self.text_selected.draw()
-        else:
-            self.text.draw()
-
-        glPopMatrix()
+        raise NotImplementedError
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ENTER and self.callback_func:
@@ -438,6 +448,86 @@ class MenuItem( CocosNode ):
             self.stop()
             self.do( self.activated_effect )
 
+class MenuItem (BaseMenuItem):
+    """A menu item that shows a label. """
+    def __init__ (self, label, callback_func, *args, **kwargs):
+        self.label = label
+        super (MenuItem, self).__init__(callback_func, *args, **kwargs)
+        # Variables that will be set when init_font() is called
+        self.text = None
+        self.text_selected = None
+
+    def get_item_width (self):
+        return self.text.content_width
+    
+    def get_item_height (self):
+        return self.text.content_height
+
+    def get_item_x (self):
+        return self.text.x
+
+    def get_item_y (self):
+        return self.text.y
+
+    def generateWidgets (self, pos_x, pos_y, font_item, font_item_selected):
+        font_item['x'] = pos_x
+        font_item['y'] = pos_y
+        font_item['text'] = self.label
+        self.text = pyglet.text.Label(**font_item )
+        font_item_selected['x'] = pos_x
+        font_item_selected['y'] = pos_y
+        font_item_selected['text'] = self.label
+        self.text_selected = pyglet.text.Label( **font_item_selected )
+
+    def draw( self ):
+        glPushMatrix()
+        self.transform()
+        if self.is_selected:
+            self.text_selected.draw()
+        else:
+            self.text.draw()
+        glPopMatrix()
+
+
+class ImageMenuItem (BaseMenuItem):
+    def __init__ (self, name, callback_func, *args, **kwargs):
+        self.image = pyglet.resource.image (name)
+        super (ImageMenuItem, self).__init__(callback_func, *args, **kwargs)
+        self.sprite = None
+        self.selected_sprite = None
+
+    def generateWidgets (self, pos_x, pos_y, font_item, font_item_selected):
+        anchors = {'left': 0, 'center': 0.5, 'right': 1, 'top': 1, 'bottom': 0}
+        anchor=(anchors[font_item['anchor_x']] * self.image.width,
+                anchors[font_item['anchor_y']] * self.image.height)
+        self.sprite = Sprite( self.image, anchor=anchor, opacity=255, color=font_item['color'][:3])
+        self.sprite.scale = font_item['font_size'] / float(self.sprite.height )
+        self.sprite.position = pos_x, pos_y
+        self.selected_sprite = Sprite( self.image, anchor=anchor, color=font_item_selected['color'][:3])
+        self.selected_sprite.scale = font_item_selected['font_size'] / float(self.selected_sprite.height )
+        self.selected_sprite.position = pos_x, pos_y
+
+    def draw (self):
+        glPushMatrix()
+        self.transform()
+        if self.is_selected:
+            self.selected_sprite.draw()
+        else:
+            self.sprite.draw()
+        glPopMatrix()
+
+    def get_item_width (self):
+        return self.sprite.width
+
+    def get_item_height (self):
+        return self.sprite.height
+
+    def get_item_x (self):
+        return self.sprite.x
+
+    def get_item_y (self):
+        return self.sprite.y
+
 
 class MultipleMenuItem( MenuItem ):
     """A menu item for switching between multiple values.
@@ -450,7 +540,7 @@ class MultipleMenuItem( MenuItem ):
                         'SFX volume: ',
                         self.on_sfx_volume,
                         self.volumes,
-                        8 )
+                        8 ) )
     """
 
     def __init__(self, label, callback_func, items, default_item=0):

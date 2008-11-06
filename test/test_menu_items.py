@@ -33,10 +33,11 @@ class MainMenu(Menu):
                         self.on_multiple_callback,
                         resolutions,
                         0 )
-
         item3 = MenuItem('MenuItem', self.on_callback )
+        item4 = EntryMenuItem('EntryMenuItem:', self.on_entry_callback, 'value')
+        item5 = ImageMenuItem('imagemenuitem.png', self.on_image_callback)
 
-        self.create_menu( [item1,item2,item3] )
+        self.create_menu( [item1,item2,item3,item4,item5] )
 
 
     def on_quit( self ):
@@ -51,6 +52,11 @@ class MainMenu(Menu):
     def on_callback(self ):
         print 'item callback'
 
+    def on_entry_callback (self, value):
+        print 'entry item callback', value
+
+    def on_image_callback (self):
+        print 'image item callback'
 
 if __name__ == "__main__":
 
