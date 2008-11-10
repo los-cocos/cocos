@@ -619,7 +619,7 @@ class EntryMenuItem(MenuItem):
     value = property(lambda self: u''.join(self._value),
                      lambda self, v: setattr(self, '_value', list(v)))
 
-    def __init__(self, label, callback_func, value ):
+    def __init__(self, label, callback_func, value, max_length=0 ):
         """Creates an Entry Menu Item
 
         :Parameters:
@@ -629,14 +629,18 @@ class EntryMenuItem(MenuItem):
                 Callback function taking one argument.
             `value` : String
                 Default value: any string
+            `max_length` : integer
+                Maximum value length (Defaults to 0 for unbound length)
         """
         self._value = list(value)
         self._label = label
         super(EntryMenuItem, self).__init__( "%s %s" %(label,value), callback_func )
+        self.max_length = max_length
 
     def on_text( self, text ):
-        self._value.append(text)
-        self._calculate_value()
+        if self.max_length == 0 or len(self._value) < self.max_length:
+            self._value.append(text)
+            self._calculate_value()
         return True
 
     def on_key_press(self, symbol, modifiers):
