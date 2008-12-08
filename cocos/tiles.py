@@ -146,14 +146,39 @@ Other tags within <resource> are:
         <cell tile="" />
        </column>
 
+Map, Cell and Tile Properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Most tags may additionally have properties specified as:
 
    <property [type=""] name="" value="" />
 
 Where type is one of "unicode", "int", "float" or "bool". The property will
-be a unicode string by default if no type is specified. The properties
-are loaded into a dictionary called ".properties" on the appropriate
-Image, Tile, Map and Cell instance.
+be a unicode string by default if no type is specified.
+
+Properties are accessed on the map, cell or tile using common dict operations
+with some extensions. Accessing a property on a **cell** will fall back to look
+on the **tile** if it's not found on the cell.
+
+If a cell has a property ``player-spawn`` (boolean) and the tile that the cell
+uses has a property ``move-cost=1`` (int) then the following are true::
+
+    'player-spawn' in cell == True
+    cell.get('player-spawn') == True
+    cell['player-spawn'] == True
+
+    'player-spawn' in tile == False
+    tile.get('player-spawn') == None
+    tile['player-spawn'] --> raises KeyError
+
+    cell['move-cost'] == 1
+
+You may additionally set properties on cells and tiles::
+
+    cell['player-postion'] = True
+    cell['burnt-out'] = True
+
+and when the map is exported to XML these properties will also be exported.
 '''
 
 __docformat__ = 'restructuredtext'
