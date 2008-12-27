@@ -64,31 +64,26 @@ Assuming the following XML file called "example.xml"::
 You may load that resource and examine it::
 
   >>> r = load('example.xml')
-  >>> r['level1']
+  >>> map = r['level1']
 
 and then, assuming that level1 is a map::
 
-  >>> scene = cocos.scene.Scene(r['level1'])
+  >>> scene = cocos.scene.Scene(map)
 
-if you wish for the level to scroll, you use the ScrollingManager::
+and then either manually select the tiles to display:
+
+  >>> map.set_view(0, 0, window_width, window_height)
+
+or if you wish for the level to scroll, you use the ScrollingManager::
 
   >>> manager = tiles.ScrollingManager()
-  >>> manager.append(r['level1']
+  >>> manager.add(map)
 
 and later set the focus with::
 
   >>> manager.set_focus(focus_x, focus_y)
 
-Typically the focus is set to the center of the player's sprite. The
-focusing will honor any tile map boundaries and prevent area outside
-those boundaries from being displayed.
-
-If you are only scrolling layers with sprites in them (ie. regular
-Cocos Layers, not RectMapLayers) then there are no boundaries and
-the map will scroll without bound in any direction.
-
-If you wish you may force the focus to display areas outside your
-tile maps you may use the ``force_focus`` method of ScrollingManager.
+See the section on `controlling map scrolling`_ below for more detail.
 
 
 XML file contents
@@ -179,6 +174,47 @@ You may additionally set properties on cells and tiles::
     cell['burnt-out'] = True
 
 and when the map is exported to XML these properties will also be exported.
+
+
+Controlling Map Scrolling
+-------------------------
+
+You have three options for map scrolling:
+
+1. never automatically scroll the map,
+2. automatically scroll the map but stop at the map edges, and
+3. scroll the map an allow the edge of the map to be displayed.
+
+The first is possibly the easiest since you don't need to use a
+ScrollingManager layer. You simple call map.set_view(x, y, w, h) on your
+map layer giving the bottom-left corner coordinates and the dimensions
+to display. This could be as simple as::
+
+   map.set_view(0, 0, map.px_width, map.px_height)
+
+If you wish to have the map scroll around in response to player
+movement the ScrollingManager may be used. It has a concept of "focus"
+which is the pixel position of the player's view focus (*usually* the
+center of the player sprite itself, but the player may be allowed to
+move the view around, or you may move it around for them to highlight
+something else in the map). The ScrollingManager is clever enough to
+manage many layers of map imagery and handle scaling them.
+
+Two methods are available for setting the map focus:
+
+**set_focus(x, y)**
+  Attempt to set the focus to the pixel coordinates given. The map layer(s)
+  contained in the ScrollingManager are moved accordingly. If a layer
+  would be moved outside of its define px_width, px_height then the
+  scrolling is restricted. The resultant restricted focal point is stored
+  on the ScrollingManager as manager.fx and manager.fy.
+
+**force_focus(x, y)**
+  Force setting the focus to the pixel coordinates given. The map layer(s)
+  contained in the ScrollingManager are moved accordingly regardless of
+  whether any out-of-bounds cells would be displayed. The .fx and .fy
+  attributes are still set, but they'll *always* be set to the supplied
+  x and y values.
 '''
 
 __docformat__ = 'restructuredtext'
