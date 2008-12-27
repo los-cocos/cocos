@@ -39,6 +39,7 @@ function html_guide() {
     # Generate html docs
     rm -rf $DOC_HTML_GUIDE
     mkdir -p $DOC_HTML_GUIDE
+    mkdir -p $DOC_HTML_GUIDE/skeleton
     $TOOLS/gendoc_html.py \
         --apidoc-dir=$DOC_HTML_API \
         --html-dir=$DOC_HTML_GUIDE \

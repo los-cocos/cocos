@@ -75,3 +75,4 @@ import grid
 import text
 import camera
 import draw
+import skeleton
