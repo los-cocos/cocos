@@ -28,16 +28,18 @@ class MainMenu(Menu):
         # then add the items
         item1= ToggleMenuItem('ToggleMenuItem: ', self.on_toggle_callback, True )
                         
-        resolutions = ['320x200','640x480','800x600', '1024x768', '320x200']
+        resolutions = ['320x200','640x480','800x600', '1024x768', '1200x1024']
         item2= MultipleMenuItem('MultipleMenuItem: ',
                         self.on_multiple_callback,
-                        resolutions,
-                        0 )
+                        resolutions)
         item3 = MenuItem('MenuItem', self.on_callback )
-        item4 = EntryMenuItem('EntryMenuItem:', self.on_entry_callback, 'value')
+        item4 = EntryMenuItem('EntryMenuItem:', self.on_entry_callback, 'value',
+                              max_length=8)
         item5 = ImageMenuItem('imagemenuitem.png', self.on_image_callback)
 
-        self.create_menu( [item1,item2,item3,item4,item5] )
+        colors = [(255, 255, 255), (129, 255, 100), (50, 50, 100), (255, 200, 150)]
+        item6 = ColorMenuItem('ColorMenuItem:', self.on_color_callback, colors)
+        self.create_menu( [item1,item2,item3,item4,item5,item6] )
 
 
     def on_quit( self ):
@@ -57,6 +59,9 @@ class MainMenu(Menu):
 
     def on_image_callback (self):
         print 'image item callback'
+
+    def on_color_callback(self, value):
+        print 'color item callback:', value
 
 if __name__ == "__main__":
 
