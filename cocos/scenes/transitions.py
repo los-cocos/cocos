@@ -91,6 +91,13 @@ class TransitionScene(scene.Scene):
         self.in_scene = dst                     #: scene that will replace the old one
         if src == None:
             src = director.scene
+
+            # if the director is already running a transition scene then terminate
+            # it so we may move on
+            if isinstance(src, TransitionScene):
+                src.finish()
+                src = src.in_scene
+
         self.out_scene = src                    #: scene that will be replaced
         self.duration = duration                #: duration in seconds of the transition
         if not self.duration:
@@ -99,7 +106,7 @@ class TransitionScene(scene.Scene):
         if self.out_scene is None:
             raise Exception("You need to specfy a `src` argument")
 
-        if id(self.out_scene) == id(self.in_scene):
+        if self.out_scene is self.in_scene:
             raise Exception("Incoming scene must be different from outgoing scene")
 
         self.start()
@@ -521,7 +528,6 @@ class FadeTransition(TransitionScene):
 
         self.in_scene.visible = False
         self.add( self.fadelayer, z=2 )
-
 
     def on_enter( self ):
         super( FadeTransition, self).on_enter()
