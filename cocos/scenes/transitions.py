@@ -509,11 +509,15 @@ class TurnOffTilesTransition(TransitionScene):
 
 
 class FadeTransition(TransitionScene):
-    '''Fade out the outgoing scene and then fade in the incoming scene.'''
+    '''Fade out the outgoing scene and then fade in the incoming scene.
+    
+    Optionally supply the color to fade to in-between as an RGB color tuple.
+    '''
     def __init__( self, *args, **kwargs ):
+        color = kwargs.pop('color', (0, 0, 0)) + (0,)
         super(FadeTransition, self ).__init__( *args, **kwargs)
 
-        self.fadelayer = ColorLayer(0,0,0,0)
+        self.fadelayer = ColorLayer(*color)
 
         self.in_scene.visible = False
         self.add( self.fadelayer, z=2 )
