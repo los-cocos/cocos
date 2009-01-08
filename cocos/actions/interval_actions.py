@@ -422,7 +422,7 @@ class FadeTo( IntervalAction ):
 
     Example::
 
-        action = FadeOut( 2 )
+        action = FadeTo( 128, 2 )
         sprite.do( action )
     """
     def init( self, alpha, duration ):
