@@ -102,8 +102,11 @@ class BatchableNode( cocosnode.CocosNode ):
 
     def remove(self, child):
         if isinstance(child, str):
-            child = self.get(child)
-        child.set_batch( None, None )
+            child_node = self.get(child)
+        else:
+            child_node = child
+            
+        child_node.set_batch( None, None )
         super(BatchableNode, self).remove(child)
 
 
