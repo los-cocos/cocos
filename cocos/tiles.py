@@ -46,15 +46,12 @@ Assuming the following XML file called "example.xml"::
 
     <?xml version="1.0"?>
     <resource>
-      <require file="ground-tiles.xml" namespace="ground" />
+      <requires file="ground-tiles.xml" namespace="ground" />
 
       <rectmap id="level1">
        <column>
-        <cell>
-          <tile ref="ground:grass" />
-        </cell>
-        <cell>
-          <tile ref="ground:house" />
+        <cell tile="ground:grass" />
+        <cell tile="ground:house">
           <property type="bool" name="secretobjective" value="True" />
         </cell>
        </column>
@@ -96,17 +93,17 @@ XML resource files must contain a document-level tag <resource>::
      ...
     </resource>
 
-You may draw in other resource files by using the <require> tag:
+You may draw in other resource files by using the <requires> tag:
 
-    <require file="road-tiles.xml" />
+    <requires file="road-tiles.xml" />
 
 This will load "road-tiles.xml" into the resource's namespace.
 If you wish to avoid id clashes you may supply a namespace:
 
-    <require file="road-tiles.xml" namespace="road" />
+    <requires file="road-tiles.xml" namespace="road" />
 
 If a namespace is given then the element ids from the "road-tiles.xml"
-will be prefixed by the namespace and a period, e.g. "road.bitumen".
+will be prefixed by the namespace and a period, e.g. "road:bitumen".
 
 Other tags within <resource> are:
 
@@ -321,7 +318,7 @@ class Resource(object):
 
     def findall(self, cls, ns=''):
         '''Find all elements of the given class in this resource and all
-        <require>'ed resources.
+        <requires>'ed resources.
         '''
         for k in self.contents:
             if isinstance(self.contents[k], cls):
