@@ -2,8 +2,6 @@
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-#
-
 
 import cocos
 from cocos.director import director
@@ -11,19 +9,7 @@ from cocos.sprite import Sprite
 import pyglet
 from cocos.actions import MoveBy
 
-# Try instantiating a TestNoBatch instead of a TestBatch for comparison
-class TestNoBatch(cocos.layer.Layer):
-    def __init__(self):
-        super( TestNoBatch, self ).__init__()
-        x,y = director.get_window_size()
-        self.batch = cocos.cocosnode.CocosNode()
-        self.batch.position = 50, 100
-        self.add( self.batch )
-        for i in range(216):
-            sprite = Sprite('grossini.png')
-            sprite.position = (i/12)*30, (i%12)*25
-            self.batch.add( sprite )
-        self.batch.do(MoveBy((100, 100), 10))
+# Same as test_batch, but now nest sprites, and remove one
 
 class TestBatch(cocos.layer.Layer):
     def __init__(self):
@@ -33,9 +19,16 @@ class TestBatch(cocos.layer.Layer):
         self.batchnode.position = 50,100
         self.add(self.batchnode)
         for i in range(216):
-            sprite = Sprite('grossini.png')
+            if i%4 == 0:
+                sprite = Sprite('grossini.png')
+                self.parentSprite = sprite
+                self.batchnode.add(sprite, z=i%4)
+            else:
+                sprite = Sprite('grossinis_sister1.png')
+                self.parentSprite.add(sprite)
             sprite.position = (i/12)*30, (i%12)*25
-            self.batchnode.add(sprite)
+        # Remove the last Grossini, and his sisters
+        self.batchnode.remove (self.parentSprite)
         self.batchnode.do(MoveBy((100, 100), 10))
 
 if __name__ == "__main__":

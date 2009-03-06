@@ -2,48 +2,32 @@
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-#
-
 
 import cocos
 from cocos.director import director
 from cocos.sprite import Sprite
 import pyglet
+from cocos.actions import MoveBy
 
-class TestLayer(cocos.layer.Layer):
+# Same as test_batch, but now create 4 groups
+
+class TestBatch(cocos.layer.Layer):
     def __init__(self):
-        super( TestLayer, self ).__init__()
-
+        super( TestBatch, self ).__init__()
         x,y = director.get_window_size()
-
-        self.batch = cocos.sprite.BatchNode()
-        self.add( self.batch )
-
-        self.sprite = Sprite('grossini.png')
-        self.sprite.position = x/2, y/2
-
-        self.sprite2 = Sprite('grossini.png')
-        self.sprite2.position = 20, 30
-
-        self.sprite5 = Sprite('grossini.png')
-        self.sprite5.position = -20, 30
-
-        self.sprite3 = Sprite('grossini.png')
-        self.sprite3.position = -20, -30
-
-        self.sprite4 = Sprite('grossini.png')
-        self.sprite4.position = 20, -30
-
-        self.sprite.add( self.sprite2, z=-1, name="temp" )
-        self.sprite3.add( self.sprite4, z=1 )
-        self.batch.add( self.sprite  )
-        self.sprite.add( self.sprite3, z=-1 )
-        self.sprite2.add( self.sprite5, z=1 )
-        self.sprite.remove("temp")
-
+        self.batchnode = cocos.batch.BatchNode()
+        self.batchnode.position = 50,100
+        self.add(self.batchnode)
+        for i in range(216):
+            sprite = Sprite('grossini.png')
+            sprite.position = (i/12)*30, (i%12)*25
+            self.batchnode.add(sprite, z=i%4)
+        self.batchnode.do(MoveBy((100, 100), 10))
 
 if __name__ == "__main__":
     director.init()
-    test_layer = TestLayer ()
+    test_layer = TestBatch ()
     main_scene = cocos.scene.Scene (test_layer)
+    director.show_FPS = True
     director.run (main_scene)
+

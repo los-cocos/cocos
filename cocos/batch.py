@@ -49,7 +49,7 @@ from pyglet.graphics import OrderedGroup
 from pyglet import image
 from pyglet.gl import *
 
-__all__ = ['BatchNode','BatchableNode','NodeGroup' ]
+__all__ = ['BatchNode','BatchableNode']
 
 
 def ensure_batcheable(node):
@@ -62,19 +62,30 @@ class BatchNode( cocosnode.CocosNode ):
     def __init__(self):
         super(BatchNode, self).__init__()
         self.batch = pyglet.graphics.Batch()
+        self.groups = {}
 
     def add(self, child, z=0, name=None):
         ensure_batcheable(child)
-        group = pyglet.graphics.OrderedGroup( z )
-        child.set_batch( self.batch, group )
-
+        child.set_batch(self.batch, self.groups, z)
         super(BatchNode, self).add(child, z, name)
 
     def visit(self):
+        """ All children are placed in to self.batch, so nothing to visit """
+        glPushMatrix()
+        self.transform()
         self.batch.draw()
+        glPopMatrix()
+
+    def remove(self, child):
+        if isinstance(child, str):
+            child_node = self.get(child)
+        else:
+            child_node = child
+        child_node.set_batch(None)
+        super(BatchNode, self).remove(child)
 
     def draw(self):
-        pass#self.batch.draw()
+        pass # All drawing done in visit!
 
 class BatchableNode( cocosnode.CocosNode ):
     def add(self, child, z=0, name=None):
@@ -85,19 +96,9 @@ class BatchableNode( cocosnode.CocosNode ):
             super(BatchableNode, self).add(child, z, name)
             return
 
-        # we are being batched, so we set groups and batch
-        # pre/same/post will be set, because if we have a
-        # batchnode parent, we already executed set_batch on self
         ensure_batcheable(child)
-        if z < 0:
-            group = self.pre_group
-        elif z == 0:
-            group = self.same_group
-        else:
-            group = self.post_group
-
         super(BatchableNode, self).add(child, z, name)
-        child.set_batch( self.batch, group )
+        child.set_batch(self.batch, batchnode.groups, z)
 
 
     def remove(self, child):
@@ -105,37 +106,19 @@ class BatchableNode( cocosnode.CocosNode ):
             child_node = self.get(child)
         else:
             child_node = child
-            
-        child_node.set_batch( None, None )
+        child_node.set_batch(None)
         super(BatchableNode, self).remove(child)
 
-
-    def set_batch(self, batch, group):
-        sprite_group = NodeGroup(self, group)
-        self.pre_group = NodeGroup(self, OrderedGroup(-1, parent=group))
-        self.group = OrderedGroup(0, parent=group)
-        self.same_group = NodeGroup(self, self.group)
-        self.post_group = NodeGroup(self, OrderedGroup(1, parent=group))
+    def set_batch(self, batch, groups=None, z=0):
         self.batch = batch
+        if batch is None:
+            self.group = None
+        else:
+            group = groups.get(z)
+            if group is None:
+                group = pyglet.graphics.Group()
+                groups[z] = group
+            self.group = group
+        for childZ, child in self.children:
+            child.set_batch(self.batch, groups, z + childZ)
 
-        for z, child in self.children:
-            if z < 0:
-                group = self.pre_group
-            elif z == 0:
-                group = self.same_group
-            else:
-                group = self.post_group
-            child.set_batch( self.batch, group )
-
-
-class NodeGroup(pyglet.graphics.Group):
-    def __init__(self, sprite, group):
-        super(NodeGroup, self).__init__(parent=group)
-        self.sprite = sprite
-
-    def set_state(self):
-        glPushMatrix()
-        self.sprite.transform()
-
-    def unset_state(self):
-        glPopMatrix()
