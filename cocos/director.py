@@ -501,8 +501,9 @@ class Director(event.EventDispatcher):
         else:
             glDisable( GL_DEPTH_TEST )
 
-
 event_loop = pyglet.app.event_loop
+if not hasattr(event_loop, "event"):
+    event_loop = pyglet.app.EventLoop()
 director = Director()
 director.event = event_loop.event
 """The singleton; check `cocos.director.Director` for details on usage.
