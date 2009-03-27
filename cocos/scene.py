@@ -1,0 +1,139 @@
+# ----------------------------------------------------------------------------
+# cocos2d
+# Copyright (c) 2008 Daniel Moisset, Ricardo Quesada, Rayentray Tappa, Lucio Torre
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#   * Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#   * Redistributions in binary form must reproduce the above copyright 
+#     notice, this list of conditions and the following disclaimer in
+#     the documentation and/or other materials provided with the
+#     distribution.
+#   * Neither the name of cocos2d nor the names of its
+#     contributors may be used to endorse or promote products
+#     derived from this software without specific prior written
+#     permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+# ----------------------------------------------------------------------------
+"""
+Scene class and subclasses
+"""
+__docformat__ = 'restructuredtext'
+
+__all__ = ['Scene']
+
+from pyglet.gl import *
+
+import cocos
+from cocos.director import director
+import cocos.cocosnode as cocosnode
+
+class EventHandlerMixin(object):
+    def add(self, child, *args, **kwargs):
+        super(EventHandlerMixin, self).add(child, *args, **kwargs)
+        
+        scene = self.get(Scene)
+        if not scene: return
+        
+        if (    scene._handlers_enabled and 
+                scene.is_running and 
+                isinstance(child, cocos.layer.Layer) 
+                ):
+            child.push_all_handlers()
+            
+            
+    def remove(self, child):
+        super(EventHandlerMixin, self).remove(child)
+        
+        scene = self.get(Scene)
+        if not scene: return
+        
+        if (    scene._handlers_enabled and 
+                scene.is_running and 
+                isinstance(child, cocos.layer.Layer) 
+                ):
+            child.remove_all_handlers()
+            
+    
+            
+ 
+class Scene(cocosnode.CocosNode, EventHandlerMixin):
+    """
+    """
+   
+    def __init__(self, *children):
+        """
+        Creates a Scene with layers and / or scenes.
+        
+        Responsibilities:
+            Control the dispatching of events to its layers
+            
+        :Parameters:
+            `children` : list of `Layer` or `Scene`
+                Layers or Scenes that will be part of the scene.
+                They are automatically assigned a z-level from 0 to
+                num_children.
+        """
+
+        super(Scene,self).__init__()
+        self._handlers_enabled = False
+        for i, c in enumerate(children):
+            self.add( c, z=i )
+        
+        x,y = director.get_window_size()
+        
+        self.transform_anchor_x = x/2
+        self.transform_anchor_y = y/2
+            
+    def on_enter(self):
+        for c in self.get_children():
+            c.parent = self
+        super(Scene, self).on_enter()
+        
+            
+    def push_all_handlers(self):
+        for child in self.get_children():
+            if isinstance(child, cocos.layer.Layer):
+                child.push_all_handlers()
+            
+    def remove_all_handlers(self):
+        for child in self.get_children():
+            if isinstance(child, cocos.layer.Layer):
+                child.remove_all_handlers()
+    
+    def enable_handlers(self, value=True):
+        """
+        This function makes the scene elegible for receiving events
+        """
+        if value and not self._handlers_enabled and self.is_running:
+            self.push_all_handlers()
+        elif not value and self._handlers_enabled and self.is_running:
+            self.remove_all_handlers()
+        self._handlers_enabled = value
+        
+        
+    def end(self, value=None):
+        """Ends the current scene setting director.return_value with `value`
+        
+        :Parameters:
+            `value` : anything
+                The return value. It can be anything. A type or an instance.
+        """
+        director.return_value = value
+        director.pop()
+

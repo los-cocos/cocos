@@ -1,0 +1,98 @@
+# ----------------------------------------------------------------------------
+# pyglet
+# Copyright (c) 2006-2008 Alex Holkner
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions 
+# are met:
+#
+#  * Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#  * Redistributions in binary form must reproduce the above copyright 
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the
+#    distribution.
+#  * Neither the name of pyglet nor the names of its
+#    contributors may be used to endorse or promote products
+#    derived from this software without specific prior written
+#    permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+# ----------------------------------------------------------------------------
+
+'''Display and screen management.
+
+Rendering is performed on a `Canvas`, which conceptually could be an
+off-screen buffer, the content area of a `Window`, or an entire screen.
+Currently, canvases can only be created with windows (though windows can be
+set fullscreen).
+
+Windows and canvases must belong to a `Display`.  On Windows and Mac OS X
+there is only one display, which can be obtained with `get_display`.  Linux
+supports multiple displays, corresponding to discrete X11 display connections
+and screens.  `get_display` on Linux returns the default display and screen 0
+(``localhost:0.0``); if a particular screen or display is required then
+`Display` can be instantiated directly.
+
+Within a display one or more screens are attached.  A `Screen` often
+corresponds to a physical attached monitor, however a monitor or projector set
+up to clone another screen will not be listed.  Use `Display.get_screens` to
+get a list of the attached screens; these can then be queried for their sizes
+and virtual positions on the desktop.
+
+The size of a screen is determined by its current mode, which can be changed
+by the application; see the documentation for `Screen`.
+
+:since: pyglet 1.2
+'''
+
+import sys
+_is_epydoc = hasattr(sys, 'is_epydoc') and sys.is_epydoc
+
+def get_display():
+    '''Get the default display device.
+
+    If there is already a `Display` connection, that display will be returned.
+    Otherwise, a default `Display` is created and returned.  If multiple
+    display connections are active, an arbitrary one is returned.
+
+    :since: pyglet 1.2
+
+    :rtype: `Display`
+    '''
+    # If there's an existing display, return it (return arbitrary display if
+    # there are multiple).
+    from pyglet.app import displays
+    for display in displays:
+        return display
+
+    # Otherwise, create a new display and return it.
+    return Display()
+
+if _is_epydoc:
+    from pyglet.canvas.base import Display, Screen, Canvas
+else:
+    if sys.platform == 'darwin':
+        from pyglet.canvas.carbon import CarbonDisplay as Display
+        from pyglet.canvas.carbon import CarbonScreen as Screen
+        from pyglet.canvas.carbon import CarbonCanvas as Canvas
+    elif sys.platform in ('win32', 'cygwin'):
+        from pyglet.canvas.win32 import Win32Display as Display
+        from pyglet.canvas.win32 import Win32Screen as Screen
+        from pyglet.canvas.win32 import Win32Canvas as Canvas
+    else:
+        from pyglet.canvas.xlib import XlibDisplay as Display
+        from pyglet.canvas.xlib import XlibScreen as Screen
+        from pyglet.canvas.xlib import XlibCanvas as Canvas

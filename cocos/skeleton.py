@@ -1,0 +1,428 @@
+import math
+import cPickle
+
+import cocos
+from cocos import euclid
+
+import pyglet
+from pyglet.gl import *
+
+import copy
+
+class Skin(cocos.cocosnode.CocosNode):
+    def __init__(self, skeleton):
+        super(Skin, self).__init__()
+        self.skeleton = skeleton
+
+class ColorSkin(Skin):
+    def __init__(self, skeleton, color):
+        super(ColorSkin, self).__init__(skeleton)
+        self.color = color
+
+    def draw(self):
+        self.skeleton.propagate_matrix()
+        glPushMatrix()
+        self.transform()
+        self.skeleton.visit_children( lambda bone: self.draw_bone( bone ) )
+        bones = self.skeleton.visit_children(
+            lambda bone: (bone.label, bone.parent_matrix*bone.matrix))
+        bones = dict(bones)
+        glPopMatrix()
+
+    def draw_bone(self, bone):
+        p1 = bone.get_start()
+        p2 = bone.get_end()
+
+        glColor4ub(*self.color)
+        glLineWidth(5)
+        glBegin(GL_LINES)
+        glVertex2f(*p1)
+        glVertex2f(*p2)
+        glEnd()
+
+class BitmapSkin(Skin):
+    skin_parts = []
+
+    def __init__(self, skeleton, skin_def, alpha=255):
+        super(BitmapSkin, self).__init__(skeleton)
+        self.alpha = alpha
+        self.skin_parts = skin_def
+        self.regenerate()
+
+
+    def move(self, idx, dx, dy):
+        sp = self.skin_parts
+        pos = sp[idx][1]
+        sp[idx] = sp[idx][0], (pos[0]+dx, pos[1]+dy), sp[idx][2], \
+            sp[idx][3], sp[idx][4], sp[idx][5]
+        self.regenerate()
+
+    def get_control_points(self):
+        return [ (i, p[0]) for i,p in enumerate(self.skin_parts) ]
+
+    def regenerate(self):
+#        print self.skin_parts
+        self.parts = [ (name, position, scale,\
+                        pyglet.resource.image(image,flip_y=flip_y, flip_x=flip_x)) \
+                       for name, position, image, flip_x, flip_y, scale
+                       in self.skin_parts ]
+    def draw(self):
+        self.skeleton.propagate_matrix()
+        glPushMatrix()
+        self.transform()
+
+        bones = self.skeleton.visit_children(
+            lambda bone: (bone.label, bone.parent_matrix*bone.matrix))
+        bones = dict(bones)
+
+        for bname, position, scale, image in self.parts:
+            matrix = bones[bname]
+            self.blit_image(matrix, position, scale, image)
+        glPopMatrix()
+
+    def blit_image(self, matrix, position, scale, image):
+        x, y = image.width*scale, image.height*scale
+        #dx = self.x + position[0]
+        #dy = self.y + position[1]
+        dx, dy = position
+        glEnable(image.target)
+        glBindTexture(image.target, image.id)
+        glPushAttrib(GL_COLOR_BUFFER_BIT)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+        # blit img
+        points = [
+            (-dx, -dy),
+            (x-dx, -dy),
+            (x-dx, y-dy),
+            (-dx, y-dy)
+            ]
+        a,b,_,c,d,_,e,f,_,g,h,_ = image.texture.tex_coords
+        textures = [ a,b,c,d,e,f,g,h ]
+        np = [ matrix*euclid.Point2(*p) for p in points ]
+
+
+        glColor4ub(255,255,255,self.alpha)
+        glBegin(GL_QUADS)
+        glTexCoord2f(a,b)
+        glVertex2f(*np[0])
+        glTexCoord2f(c,d)
+        glVertex2f(*np[1])
+        glTexCoord2f(e,f)
+        glVertex2f(*np[2])
+        glTexCoord2f(g,h)
+        glVertex2f(*np[3])
+        glEnd()
+        glColor4ub(255,255,255,255)
+        #pyglet.graphics.draw(4, GL_QUADS,
+        #    ("v2f", new_points),
+        #    ("t2f", textures),
+        #    ("c4B", [255,255,255,self.alpha]*4),
+        #    )
+
+        glPopAttrib()
+        glDisable(image.target)
+
+    def flip(self):
+        nsp = []
+        for name, position, image, flip_x, flip_y, scale in self.skin_parts:
+            im = pyglet.resource.image(image,flip_y=flip_y, flip_x=flip_x)
+            x = im.width*scale - position[0]
+            y = position[1]
+            nsp.append( (name, (x,y), image, not flip_x, flip_y, scale))
+        self.skin_parts = nsp
+        self.regenerate()
+        self.skeleton = self.skeleton.flipped()
+        
+class Animate(cocos.actions.IntervalAction):
+    def init(self, animation, recenter=False, recenter_x=False, recenter_y=False):
+        if recenter:
+            recenter_x = recenter_y = True
+        self.recenter_x = recenter_x
+        self.recenter_y = recenter_y
+        self.duration = animation.get_duration()
+        self.animation = animation
+
+    def start(self):
+        nsk = copy.deepcopy(self.target.skeleton)
+        if self.recenter_x:
+            self.target.x += nsk.translation.x
+            nsk.translation.x = 0
+        if self.recenter_y:
+            self.target.y += nsk.translation.y
+            nsk.translation.y = 0
+
+        self.start_skeleton = nsk
+
+    def update(self, t):
+        self.animation.pose(self.target.skeleton, t, self.start_skeleton)
+
+    def __reversed__(self):
+        raise NotImplementedError("gimme some time")
+
+class Skeleton(object):
+    def __init__(self, bone):
+        super(Skeleton, self).__init__()
+        self.bone = bone
+        self.matrix = euclid.Matrix3.new_identity()
+        self.translation = euclid.Vector2(0,0)
+
+    def flipped(self):
+        sk = Skeleton(self.bone.flipped())
+        sk.translation.x  = -self.translation.x
+        sk.translation.y  = self.translation.y
+        sk.matrix = euclid.Matrix3.new_translate( *sk.translation )
+        return sk
+
+    def save(self, name):
+        f = open(name, "w")
+        cPickle.dump(self, f)
+        f.close()
+
+    def move(self, dx, dy):
+        self.matrix.translate(dx, dy)
+        self.translation.x += dx
+        self.translation.y += dy
+
+    def propagate_matrix(self):
+        def visit(matrix, child):
+            child.parent_matrix = matrix
+            matrix = matrix * child.matrix
+            for c in child.children:
+                visit(matrix, c)
+        visit(self.matrix, self.bone)
+
+    def visit_children(self, func):
+        result = []
+        def inner(bone):
+            result.append( func( bone ) )
+            for b in bone.children:
+                inner(b)
+        inner(self.bone)
+        return result
+
+    def get_control_points(self):
+        points = [self]
+        self.propagate_matrix()
+        points += self.visit_children( lambda bone: bone )
+        return points
+
+    def interpolated_to(self, next, delta):
+        sk = Skeleton(self.bone.interpolated_to(next.bone, delta))
+        sk.translation = (next.translation-self.translation) * delta + self.translation
+        sk.matrix = euclid.Matrix3.new_translate( *sk.translation )
+        return sk
+
+    def pose_from(self, other):
+        self.matrix = other.matrix
+        self.translation = other.translation
+        self.bone = copy.deepcopy(other.bone)
+
+class Bone(object):
+    def __init__(self, label, size, rotation, translation):
+        self.size = size
+        self.label = label
+        self.children = []
+        self.matrix = euclid.Matrix3.new_translate(*translation) * \
+               euclid.Matrix3.new_rotate( math.radians(rotation) )
+        self.parent_matrix = euclid.Matrix3.new_identity()
+        self.translation = euclid.Point2(*translation)
+        self.rotation = math.radians(rotation)
+
+    def move(self, dx, dy):
+        self.translation.x += dx
+        self.translation.y += dy
+        self.matrix = euclid.Matrix3.new_translate(*self.translation) * \
+               euclid.Matrix3.new_rotate( self.rotation)
+
+
+    def flipped(self):
+        bone = Bone(self.label, self.size, -math.degrees(self.rotation),
+                    (-self.translation[0], self.translation[1]))
+        for b in self.children:
+            bone.add( b.flipped() )
+        return bone
+
+    def rotate(self, angle):
+        self.rotation += angle
+        self.matrix.rotate( angle )
+
+    def add(self, bone):
+        self.children.append(bone)
+        return self
+
+    def get_end(self):
+        return self.parent_matrix * self.matrix * euclid.Point2(0, -self.size)
+
+    def get_start(self):
+        return self.parent_matrix * self.matrix * euclid.Point2(0, 0)
+
+    def interpolated_to(self, next, delta):
+        ea = next.rotation%(math.pi*2)
+        sa = self.rotation %(math.pi*2)
+
+        angle = ((ea%(math.pi*2)) - (sa%(math.pi*2)))
+        if angle > math.pi:
+            angle = -math.pi*2+angle
+        if angle < -math.pi:
+            angle = math.pi*2+angle
+        nr = ( sa + angle * delta ) % (math.pi*2)
+        nr = math.degrees( nr )
+        bone = Bone(self.label, self.size, nr, self.translation)
+        for i, c in enumerate(self.children):
+            nc = c.interpolated_to(next.children[i], delta)
+            bone.add( nc )
+        return bone
+
+    def dump(self, depth=0):
+        print "-"*depth, self
+        for c in self.children:
+            c.dump(depth+1)
+
+    def repr(self, depth=0):
+        repr = " "*depth*4 + "Bone('%s', %s, %s, %s)"%(
+            self.label, self.size, math.degrees(self.rotation), self.translation
+            )
+        for c in self.children:
+            repr += " "*depth*4 +".add(\n" + c.repr(depth+1) + ")"
+        repr += "\n"
+        return repr
+
+class Animation(object):
+    def __init__(self, skeleton):
+        self.frames = {}
+        self.position = 0
+        self.skeleton = skeleton
+
+    def flipped(self):
+        c = copy.deepcopy(self)
+        for t, sk in c.frames.items():
+            c.frames[t] = sk.flipped()
+        return c
+
+    def pose(self, who, t, start):
+        dt = t * self.get_duration()
+        self.position = dt
+        ct, curr = self.get_keyframe()
+
+        #print who.tranlation
+        # if we are in a keyframe, pose that
+        if curr:
+            who.pose_from( curr )
+            return
+
+        # find previous, if not, use start
+        pt, prev = self.get_keyframe(-1)
+        if not prev:
+            prev = start
+            pt = 0
+
+        # find next, if not, pose at prev
+        nt, next = self.get_keyframe(1)
+        if not next:
+            who.pose_from( prev )
+            return
+
+        # we find the dt betwen prev and next and pose from it
+        ft = (nt-dt)/(nt-pt)
+
+        who.pose_from( next.interpolated_to( prev, ft ) )
+
+    def get_duration(self):
+        if self.frames:
+            return max(max( self.frames ), self.position )
+        else:
+            return self.position
+
+    def get_markers(self):
+        return self.frames.keys()
+
+    def get_position(self):
+        return self.position
+
+    def get_keyframe(self, offset=0):
+        if offset == 0:
+            if self.position in self.frames:
+                return self.position, self.frames[self.position]
+            else:
+                return None, None
+        elif offset < 0:
+            prevs = [ t for t in self.frames if t < self.position ]
+            prevs.sort()
+            if abs(offset) <= len(prevs):
+                return prevs[offset], self.frames[prevs[offset]]
+            else:
+                return None, None
+        elif offset > 0:
+            next = [ t for t in self.frames if t > self.position ]
+            next.sort()
+            if abs(offset) <= len(next):
+                return next[offset-1], self.frames[next[offset-1]]
+            else:
+                return None, None
+
+    def next_keyframe(self):
+        next = [ t for t in self.frames if t > self.position ]
+        if not next:
+            return False
+        self.position = min(next)
+        return True
+
+    def prev_keyframe(self):
+        prevs = [ t for t in self.frames if t < self.position ]
+        if not prevs:
+            return False
+        self.position = max(prevs)
+        return True
+
+    def move_position(self, delta):
+        self.position = max(self.position+delta, 0)
+        return True
+
+    def move_start(self):
+        self.position = 0
+        return True
+
+    def move_end(self):
+        if self.frames:
+            self.position = max( self.frames )
+        else:
+            self.position = 0
+        return True
+
+    def insert_keyframe(self):
+        if self.position not in self.frames:
+            t, sk = self.get_keyframe(-1)
+            if not sk:
+                sk = self.skeleton
+            self.frames[ self.position ] = copy.deepcopy(sk)
+            return True
+        return False
+
+    def remove_keyframe(self):
+        if self.position in self.frames:
+            del self.frames[ self.position ]
+            return True
+        return False
+
+    def insert_time(self, delta):
+        new_frames = {}
+        for t, sk in sorted(self.frames.items()):
+            if t >= self.position:
+                t += delta
+            new_frames[ t ] = sk
+        self.frames = new_frames
+
+    def delete_time(self, delta):
+        for t in self.frames:
+            if self.position <= t < self.position + delta:
+                return False
+
+        new_frames = {}
+        for t, sk in sorted(self.frames.items()):
+            if t > self.position:
+                t -= delta
+            new_frames[ t ] = sk
+        self.frames = new_frames
+
