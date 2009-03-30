@@ -11,13 +11,16 @@ class EditMode(Mode, MouseEventHandler):
     def __init__(self, editor):
         self.ed = editor
         self.hovering = None
+        self.hovered_nodes = []
 
     def on_enable(self):
         self.ed.register_handler(self)
 
     def on_disable(self):
         if self.ed.floating_sprite:
-            self.ed.discard_floating()
+            self.ed.floating_sprite.color = 255, 255, 255
+        for node in self.ed.hovered_nodes:
+            node.color = 255, 255, 255
         self.ed.unregister_handler(self)
 
     def on_key_press(self, k, m):
@@ -106,7 +109,7 @@ class EditPlugin(Plugin):
         self.ed = editor
         edit_mode = EditMode(editor)
         editor.register_mode(edit_mode)
-        
+
         def get_active():
             'active sprite'
             if editor.floating_sprite:
@@ -115,6 +118,3 @@ class EditPlugin(Plugin):
                 return edit_mode.hovering
             return None
         editor.console.add_mode_variable('edit', 'active', get_active)
-            
-        
-        

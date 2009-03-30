@@ -50,19 +50,19 @@ class LayersNode(CocosNode):
         return self.children[z][1]
 
     def pointer_to_world(self, x, y):
-        nx = (x - self.x) / self.scale 
-        ny = (y - self.y) / self.scale 
+        nx = (x - self.x) / self.scale
+        ny = (y - self.y) / self.scale
 
         return nx, ny
-    
+
     def world_to_pointer(self, nx, ny):
         x = nx * self.scale + self.x
         y = ny * self.scale + self.y
-        
-        return x, y
-    
 
-        
+        return x, y
+
+
+
 class TilessEditor(Layer):
     is_event_handler = True
     def __init__(self, output_filename, tilesdir):
@@ -77,16 +77,16 @@ class TilessEditor(Layer):
 
         # used to add children with a new z every time
         self.increment_z = 0
-        
+
         self.mouse_position = (0, 0)
-        
+
         self.layers = LayersNode()
 
         for z in range(1, 10):
             self.layers.add_layer("Layer %d" % z, z)
         self.layers.add_layer('Collision Layer', 10, layer_type=CollisionLayer)
 
-        
+
         self.set_current_layer(0)
 
         x,y = director.get_window_size()
@@ -108,9 +108,9 @@ class TilessEditor(Layer):
         self.plugins = {}
         self.modes = {}
         self.current_mode = None
-        
+
         self.look_at(0,0)
-        
+
 
     def register_handler(self, handler):
         self.event_handlers.append(handler)
@@ -118,7 +118,7 @@ class TilessEditor(Layer):
     def unregister_handler(self, handler):
         if handler in self.event_handlers:
             self.event_handlers.remove(handler)
-        
+
 
     def register_plugin(self, plugin_class):
         self.plugins[plugin_class.name] = plugin_class(self)
@@ -146,7 +146,7 @@ class TilessEditor(Layer):
         self.floating_sprite.parent.remove(self.floating_sprite)
         self.floating_sprite = None
         self.propagate_event('floating_discard')
-        
+
     def set_floating(self, sprite):
         self.floating_sprite = sprite
         self.propagate_event('floating_change', sprite)
@@ -163,7 +163,7 @@ class TilessEditor(Layer):
         self.increment_z += 1
         layer.add(node)
         node.fucking_z = self.increment_z
-    
+
 
     def propagate_event(self, event_type, *args):
         for handler in self.event_handlers:
@@ -187,7 +187,7 @@ class TilessEditor(Layer):
             self.switch_mode('stamp')
             return True
 
-        self.propagate_event('key_press', k, m)            
+        self.propagate_event('key_press', k, m)
 
         if k == key.S and (m & pyglet.window.key.MOD_ACCEL):
             file = open(self.output_filename, 'w')
@@ -259,22 +259,20 @@ class TilessEditor(Layer):
                 self.sprite_grid.disable()
             elif self.floating_sprite:
                 self.sprite_grid.enable(self.floating_sprite)
-            elif self.hovering:
-                self.sprite_grid.enable(self.hovering)
             else:
                 self.sprite_grid.disable()
-            return True                
+            return True
 
     def on_enter(self):
         self.propagate_event('enter')
         super(TilessEditor, self).on_enter()
-            
+
     def on_exit(self):
         super(TilessEditor, self).on_exit()
         if self.floating_sprite:
             self.current_layer.remove(self.floating_sprite)
             self.floating_sprite = None
-        
+
     def on_mouse_motion(self, px, py, dx, dy):
         self.propagate_event('mouse_motion', px, py, dx, dy)
         self.hud.update()
@@ -282,7 +280,7 @@ class TilessEditor(Layer):
     def on_mouse_press(self, x, y, button, m):
         self.propagate_event('mouse_press', x, y, button, m)
         self.update_hotspot()
-        
+
 
     def update_hotspot(self):
         pass
@@ -306,10 +304,10 @@ class TilessEditor(Layer):
 
     def on_mouse_drag(self, px, py, dx, dy, button, m):
         self.propagate_event('mouse_drag', px, py, dx, dy, button, m)
-                    
+
     def on_mouse_release(self, x, y, button, m):
         self.propagate_event('mouse_release', x, y, button, m)
-    
+
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         self.propagate_event("mouse_scroll", x, y, scroll_x, scroll_y)
         self.update_hotspot()
@@ -318,14 +316,14 @@ class TilessEditor(Layer):
     def move_floating(self, nx, ny):
         self.floating_sprite.position = (nx, ny)
         self.propagate_event('floating_change', self.floating_sprite)
-    
+
     def rotate_floating(self, scroll_y):
         if scroll_y>0: sign = 1
         else: sign = -1
         amount = -5*sign
         self.floating_sprite.rotation += amount
         self.propagate_event('floating_change', self.floating_sprite)
-        
+
     def change_floating_opacity(self, scroll_y):
         opacity = self.floating_sprite.opacity
         if scroll_y < 0:
@@ -343,7 +341,7 @@ class TilessEditor(Layer):
         self.floating_sprite.scale *= amount
         self.propagate_event('floating_change', self.floating_sprite)
 
-        
+
     def zoom(self, x, y, scroll_y):
         wx, wy = self.layers.pointer_to_world(x,y)
         self.layers.scale *= 1.3**scroll_y
@@ -352,12 +350,12 @@ class TilessEditor(Layer):
         dy = (wy - nwy) * self.layers.scale
         self.layers.x -= dx
         self.layers.y -= dy
-        
+
     def look_at(self, x, y):
         xs, ys = director.get_window_size()
         self.layers.x = -(x * self.layers.scale) + xs/2
         self.layers.y = -(y * self.layers.scale) + ys/2
-        
+
     def generate_json(self):
         layers = {}
         for z, layers_node in self.layers.children:
@@ -400,7 +398,7 @@ class TilessEditor(Layer):
                 layer = self.layers.get( name )
                 self.layer_add_node(layer, s)
         # collision layer
-        name = "Collision Layer" 
+        name = "Collision Layer"
         current_layer = layers_dict.get(name)
         for img in current_layer:
             s = build_sprite(img)
@@ -416,7 +414,7 @@ class TilessEditor(Layer):
 if __name__ == '__main__':
 
     import optparse
-    
+
     parser = optparse.OptionParser()
     parser.add_option("-f", "--filename", dest="filename", default='map.json',
                       help="output filename", metavar="FILE")
@@ -428,13 +426,13 @@ if __name__ == '__main__':
                       help="set window width", metavar="WIDTH")
     parser.add_option("-y", "--height", dest="height", default='600',
                       help="set window height", metavar="HEIGHT")
-    
+
     parser.add_option("-q", "--quiet",
                       action="store_false", dest="verbose", default=True,
                       help="don't print status messages to stdout")
 
     (options, args) = parser.parse_args()
-    
+
     if options.fullscreen:
         director.init(fullscreen=options.fullscreen)
     else:

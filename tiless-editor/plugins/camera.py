@@ -3,8 +3,9 @@ from pyglet.window import key
 from console import Console, Interpreter
 from plugin import Plugin, Mode, EventHandler
 
+from plugins.handlers import MouseEventHandler
 
-class CameraMode(Mode, EventHandler):
+class CameraMode(Mode, MouseEventHandler):
     name = 'camera'
 
     def __init__(self, editor):
@@ -39,4 +40,3 @@ class CameraPlugin(Plugin):
     def __init__(self, editor):
         self.ed = editor
         editor.register_mode(CameraMode(editor))
-

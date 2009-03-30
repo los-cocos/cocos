@@ -15,7 +15,7 @@ from plugin import Plugin, Mode
 from plugins.handlers import MouseEventHandler
 
 class ImgSelector(Layer):
-    
+
     is_event_handler = True
 
     def __init__(self, tilesdir, grid_size=200, padding_percent=10):
@@ -60,7 +60,7 @@ class ImgSelector(Layer):
 
             x_count += 1
 
-    def scroll_page(self, scroll_y): 
+    def scroll_page(self, scroll_y):
         if self.y <= 0 and scroll_y == 1:
             return
         else:
@@ -85,7 +85,7 @@ class ImgSelector(Layer):
             self.position_nodes()
 
         if k == key.ESCAPE:
-            director.pop()
+            director.scene.end(None)
             return True
 
         if k == key.PAGEUP or k == key.PAGEDOWN:
@@ -115,16 +115,18 @@ class ImgSelector(Layer):
 
 class StampMode(Mode, MouseEventHandler):
     name = 'stamp'
-    
+
     def __init__(self, editor):
         self.ed = editor
         self.drag_x = 0
         self.drag_y = 0
-        
+
     def on_enable(self):
         self.ed.register_handler(self)
         if not self.ed.floating_sprite:
             director.push(Scene(ImgSelector(self.ed.tilesdir)))
+        else:
+            self.clone_to_floating(self.ed.floating_sprite)
 
 
     def on_disable(self):
@@ -136,13 +138,9 @@ class StampMode(Mode, MouseEventHandler):
         if k == key.ENTER:
             self._stamp()
             return True
-
         if k in [key.SPACE, key.F3]:
+            director.return_value = None
             director.push(Scene(ImgSelector(self.ed.tilesdir)))
-
-            
-    def on_key_press(self, k, m):
-    
         if k == key.PAGEUP or k == key.PAGEDOWN:
             if k == key.PAGEUP:
                 direction = 1
@@ -161,13 +159,13 @@ class StampMode(Mode, MouseEventHandler):
                     # NOTHING -> scale
                 else:
                     self.ed.scale_floating(direction)
-                
+
             return True
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.drag_x = 0
         self.drag_y = 0
-        
+
         if button == 1:
             self._stamp()
             return True
@@ -175,22 +173,29 @@ class StampMode(Mode, MouseEventHandler):
         elif button == 4:
             self.ed.switch_mode('edit')
             return True
-        
+
     def on_enter(self):
-        if hasattr(director, 'return_value'):
-            floating = director.return_value
-            sprite = NotifierSprite(floating.image,
-                                    (floating.x, floating.y))
+        return_value = getattr(director, "return_value", None)
+        if return_value:
+            self.clone_to_floating(return_value)
+        else:
+            self.ed.set_floating(None)
+            self.ed.switch_mode('edit')
+            return True
 
-            if self.ed.sprite_grid.enabled:
-                sprite.rotation = self.ed.sprite_grid.rotation
-                sprite.scale = self.ed.sprite_grid.grid_scale
-            
-            sprite.path = floating.path
-            sprite.rect = floating.rect
+    def clone_to_floating(self, source_sprite):
+        sprite = NotifierSprite(source_sprite.image,
+                                (source_sprite.x, source_sprite.y))
 
-            self.ed.current_layer.add(sprite)
-            self.ed.set_floating(sprite)
+        if self.ed.sprite_grid.enabled:
+            sprite.rotation = self.ed.sprite_grid.rotation
+            sprite.scale = self.ed.sprite_grid.grid_scale
+
+        sprite.path = source_sprite.path
+        sprite.rect = source_sprite.rect
+
+        self.ed.current_layer.add(sprite)
+        self.ed.set_floating(sprite)
 
 
     def on_mouse_motion(self, px, py, dx, dy):
@@ -198,12 +203,12 @@ class StampMode(Mode, MouseEventHandler):
         if self.ed.floating_sprite:
             nx, ny= self.ed.sprite_grid.snap_to_grid((x, y))
             self.ed.move_floating(nx, ny)
-        
+
 
     def on_mouse_drag(self, px, py, dx, dy, button, m):
         x, y = self.ed.layers.pointer_to_world(px, py)
         nx, ny = self.ed.sprite_grid.snap_to_grid((x, y))
-        
+
         if self.ed.sprite_grid.enabled:
             if (nx,ny) != self.ed.floating_sprite.position:
                 self.ed.floating_sprite.position = (nx, ny)
@@ -212,7 +217,6 @@ class StampMode(Mode, MouseEventHandler):
             self.ed.floating_sprite.position = (nx, ny)
             self.drag_x += dx
             self.drag_y += dy
-            print self.drag_x, self.drag_y
             if self.drag_x:
                 if self.drag_y == 0:
                     if self.drag_x > 0:
@@ -221,7 +225,7 @@ class StampMode(Mode, MouseEventHandler):
                         angle = 180
                 else:
                     angle = degrees(atan(self.drag_y / self.drag_x))
-                
+
             else:
                 if self.drag_y > 0:
                     angle = 90
@@ -234,9 +238,8 @@ class StampMode(Mode, MouseEventHandler):
                 self.drag_x = 0
                 self.drag_y = 0
                 self._stamp()
-                
+
     def _stamp(self):
-        print "STAMP"
         s = NotifierSprite(self.ed.floating_sprite.image,
                            (self.ed.floating_sprite.x, self.ed.floating_sprite.y),
                            self.ed.floating_sprite.rotation,
@@ -251,18 +254,16 @@ class StampMode(Mode, MouseEventHandler):
 
 class StampPlugin(Plugin):
     name = 'stamp'
-    
+
     def __init__(self, editor):
         self.ed = editor
         stamp_mode = StampMode(editor)
         editor.register_mode(stamp_mode)
-        
-        
+
+
         def get_active():
             'active sprite'
             if editor.floating_sprite:
                 return editor.floating_sprite
             return None
         editor.console.add_mode_variable('stamp', 'active', get_active)
-        
-
