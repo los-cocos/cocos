@@ -186,17 +186,17 @@ class DefaultHandler( object ):
             return True
 
         elif symbol == pyglet.window.key.I and (modifiers & pyglet.window.key.MOD_ACCEL):
-            from layer import PythonInterpreterLayer
+            from layer import InterpreterLayer
 
             if not director.show_interpreter:
-                if director.python_interpreter == None:
-                    director.python_interpreter = cocos.scene.Scene( PythonInterpreterLayer() )
-                    director.python_interpreter.enable_handlers( True )
-                director.python_interpreter.on_enter()
+                if director.interpreter == None:
+                    director.interpreter = cocos.scene.Scene( InterpreterLayer() )
+                    director.interpreter.enable_handlers( True )
+                director.interpreter.on_enter()
                 director.show_interpreter = True
             else:
-                director.python_interpreter.on_exit()
-                director.show_interpreter= False
+                director.interpreter.on_exit()
+                director.show_interpreter = False
             return True
 
         elif symbol == pyglet.window.key.S and (modifiers & pyglet.window.key.MOD_ACCEL):
@@ -260,7 +260,7 @@ class Director(event.EventDispatcher):
         self.set_alpha_blending()
 
         # python interpreter
-        self.python_interpreter = None
+        self.interpreter = None
 
         #: whether or not to show the python interpreter
         self.show_interpreter = False
@@ -316,7 +316,7 @@ class Director(event.EventDispatcher):
             self.fps_display.draw()
 
         if self.show_interpreter:
-            self.python_interpreter.visit()
+            self.interpreter.visit()
 
     
     def push(self, scene):

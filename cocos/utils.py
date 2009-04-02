@@ -42,9 +42,14 @@ This module provides classes or functions that were useful to us while doing gam
 """
 
 __docformat__ = 'restructuredtext'
+__all__ = ['SequenceScene', 'FileIn', 'FileOut']
+
+from StringIO import StringIO
+
 from cocos.layer import *
 from cocos.scene import Scene
 from cocos.director import director
+
 
 class SequenceScene(Scene):
     """SequenceScene is used when you want to load more than one scene to the director.
@@ -64,3 +69,53 @@ class SequenceScene(Scene):
             director.push( self.scenes[ self.p ] )
 
         self.p += 1
+
+
+class FileIO(StringIO):
+    """
+    A fake file object. If asked for a file number, returns one set on
+    instance creation
+    """
+
+    def __init__(self, buffer, fn=-1):
+        StringIO.__init__(self)
+        self.buffer = buffer
+        self.fn = fn
+
+    def fileno(self):
+        return self.fn
+
+    def dispatch_event(self, event_type, *args):
+        self.buffer.dispatch_event(event_type, *args)
+
+
+class FileIn(FileIO):
+    """
+    A fake input file object. If asked for a file number, returns one set on
+    instance creation
+    """
+    def read(self, n=-1):
+        return self.readline()
+
+    def readline(self, length=None):
+        # FIXME: dubious implementation
+        #self.buffer.input_mode = False
+        self.buffer.write_prompt('')
+        #while self.buffer.input_mode:
+        #    self.buffer.dispatch_events()
+        s = self.buffer.output.get_command()
+        return s + '\n'
+
+
+class FileOut(FileIO):
+    """
+    A fake output file object. If asked for a file number, returns one set on
+    instance creation
+    """
+    def write(self, s):
+        self.buffer.write(s)
+
+    def writelines(self, iterable):
+        for s in iterable:
+            self.buffer.write(s)
+

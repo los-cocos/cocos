@@ -2,11 +2,12 @@ import traceback
 
 from pyglet.window import key
 
-from console import Console, Interpreter
+from console import Console
 from plugin import Plugin, Mode, EventHandler
 
 
 DEADGRAVE = 210453397504
+
 
 class EditorConsole(Console):
     def __init__(self, editor):
@@ -18,45 +19,48 @@ class EditorConsole(Console):
         self.mode_cmds = {}
         self.cmds = {}
         self.add_command('help', self.do_help)
-        
+
     def add_mode_variable(self, mode, varname, getter):
         self.mode_vars.setdefault(mode, {})[varname] = getter
-    
+        self.dispatch_event('on_add_mode_variable')
+
     def add_variable(self, varname, getter):
         self.vars[varname] = getter
+        self.dispatch_event('on_add_variable')
 
     def add_mode_command(self, mode, cmd, callable):
         self.mode_cmds.setdefault(mode, {})[varname] = getter
-    
+        self.dispatch_event('on_add_mode_command')
+
     def add_command(self, cmd, callable):
         self.cmds[cmd] = callable
-    
+        self.dispatch_event('on_add_command')
+
     def do_layers(self, rest):
-        for n, l in self.ed.layers.children_names.items():
+        for n, l in self.editor.layers.children_names.items():
             label = getattr(l, "label", None)
             if label is None:
                 label = "<unlabelled>"
-            self._write("%s: %s\n" % (n, label))
+            self.write("%s: %s\n" % (n, label))
 
     def do_help(self, rest):
         def write_section(name, source):
-            self._write(name + "\n")
+            self.write(name + "\n")
             for k, v in source.items():
                 if v.__doc__ is not None:
-                    self._write("%s: %s\n" % (k, v.__doc__))
+                    self.write("%s: %s\n" % (k, v.__doc__))
                 else:
-                    self._write(k + "\n")
-            self._write("\n")
-        mode = self.editor.current_mode.name            
+                    self.write(k + "\n")
+            self.write("\n")
+        mode = self.editor.current_mode.name
         write_section("Variables", self.vars)
         if mode in self.mode_vars:
-            write_section("Mode Variables", self.mode_vars[mode])                    
+            write_section("Mode Variables", self.mode_vars[mode])
         write_section("Commands", self.cmds)
         if mode in self.mode_cmds:
-            write_section("Mode Commands", self.mode_cmds[mode])                    
-            
-            
-    def calculate_variables(self, source):
+            write_section("Mode Commands", self.mode_cmds[mode])
+
+    def update_locals(self, source):
         for k, v in source.items():
             try:
                 r = v()
@@ -66,27 +70,69 @@ class EditorConsole(Console):
                     del self.locals[k]
             else:
                 self.locals[k] = r
-                
-    def evaluate(self, input, first=True):
+
+    def reset_locals(self):
         mode = self.editor.current_mode.name
-        self.calculate_variables(self.vars)
+        #self.update_locals(self.vars)
+        #self.update_locals(self.cmds)
+        #self.update_locals(self.mode_vars.get(mode, {}))
+        #self.update_locals(self.mode_cmds.get(mode, {}))
         if mode in self.mode_vars:
-            self.calculate_variables(self.mode_vars[mode])
-        
-        if first:
-            parts = input.split(" ")
-            if parts:
-                start = parts[0].strip()
-                rest = " ".join(parts[1:])
-                if start in self.cmds:
-                    self.cmds[start](rest)
-                    return
-                
-                elif mode in self.mode_cmds and start in self.mode_cmds[mode]:
-                    self.mode_cmds[mode][start](rest)
-                    return
-                
-        return super(EditorConsole, self).evaluate(input, first)
+            self.update_locals(self.mode_vars[mode])
+        if mode in self.mode_cmds:
+            self.update_locals(self.mode_cmds[mode])
+        self.update_completer(self.locals)
+
+    def update_completer(self, ns_locals):
+        self.interpreter.dispatch_event('on_update_completer', ns_locals)
+
+    #################
+    # Text Events
+    #################
+    def on_add_mode_variable(self):
+        self.update_locals(self.mode_vars)
+
+    def on_add_variable(self):
+        self.update_locals(self.vars)
+
+    def on_add_mode_command(self):
+        self.update_locals(self.mode_cmds)
+
+    def on_add_command(self):
+        self.update_locals(self.cmds)
+
+    def on_command(self, command):
+        self.reset_locals()
+
+        mode = self.editor.current_mode.name
+        parts = command.split(" ")
+        if parts:
+            start = parts[0].strip()
+            rest = " ".join(parts[1:])
+            if start in self.cmds:
+                #command = "%s(%s)" % (self.cmds[start], rest)
+                self.write('\n')
+                self.cmds[start](rest)
+                self.write_prompt()
+                return
+
+            elif mode in self.mode_cmds and start in self.mode_cmds[mode]:
+                #command = "%s(%s)" % (self.mode_cmds[mode][start], rest)
+                self.write('\n')
+                self.mode_cmds[mode][start](rest)
+                self.write_prompt()
+                return
+
+        return super(EditorConsole, self).on_command(command)
+
+    def on_completion(self, command):
+        self.reset_locals()
+        super(EditorConsole, self).on_completion(command)
+
+EditorConsole.register_event_type('on_add_mode_variable')
+EditorConsole.register_event_type('on_add_variable')
+EditorConsole.register_event_type('on_add_mode_command')
+EditorConsole.register_event_type('on_add_command')
 
 
 class ConsoleEventHandler(EventHandler):
@@ -95,15 +141,15 @@ class ConsoleEventHandler(EventHandler):
         self.editor = editor
         self.console = console
         self.console_visible = None
-        self.mouse_position = 0,0
-        
+        self.mouse_position = (0, 0)
+
     def toggle_console(self):
         if not self.console_visible:
             self.editor.add(self.console, z=100)
         else:
             self.editor.remove(self.console)
         self.console_visible = not self.console_visible
-        
+
     def on_key_press(self, k, m):
         print k
 
@@ -113,12 +159,10 @@ class ConsoleEventHandler(EventHandler):
 
     def on_mouse_drag(self, px, py, dx, dy, b, m):
         self.mouse_position = px, py
-        
+
     def on_mouse_motion(self, px, py, dx, dy):
         self.mouse_position = px, py
-        
-        
-    
+
 
 class ConsolePlugin(Plugin):
     name = 'console'
@@ -128,12 +172,11 @@ class ConsolePlugin(Plugin):
         self.editor.console = console
         self.handler = ConsoleEventHandler(editor, console)
         self.editor.register_handler(self.handler)
-        
+
         def get_editor():
             'the editor instance'
             return editor
-        
-        
+
         console.add_variable('editor', get_editor)
         bookmarks = {}
         def goto(name):
@@ -148,5 +191,4 @@ class ConsolePlugin(Plugin):
             bookmarks[name] = self.editor.layers.pointer_to_world(
                 *self.handler.mouse_position)
         editor.console.add_command('mark', mark)
-    
-    
+

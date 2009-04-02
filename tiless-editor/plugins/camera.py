@@ -1,9 +1,9 @@
 from pyglet.window import key
 
-from console import Console, Interpreter
 from plugin import Plugin, Mode, EventHandler
 
 from plugins.handlers import MouseEventHandler
+
 
 class CameraMode(Mode, MouseEventHandler):
     name = 'camera'

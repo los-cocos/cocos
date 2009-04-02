@@ -1,4 +1,3 @@
-import pdb
 from bisect import bisect, insort
 from cocos.batch import BatchNode
 
