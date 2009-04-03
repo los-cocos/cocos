@@ -97,7 +97,6 @@ class InterpreterLayer(Layer, EventDispatcher):
             'font_size': self.cfg['code.font_size'],
             'color': self.cfg['code.color'],
         })
-        self._scroll_to_bottom()
         self.layout.end_update()
 
     #################
@@ -123,19 +122,6 @@ class InterpreterLayer(Layer, EventDispatcher):
             self.write(self.prompt_more)
         self.prompt_end = len(self.document.text)
         self.caret.position = len(self.document.text)
-
-    #################
-    # Helpers
-    #################
-    def _scroll_to_bottom(self):
-        # on key press always move the view to the bottom of the screen
-        vw, vh = director.get_window_size()
-        if self.layout.height < self.layout.content_height:
-            self.layout.anchor_y = 'top'
-            self.layout.y = vh
-            self.layout.view_y = vh
-        if self.caret.position < self.prompt_end:
-            self.caret.position = len(self.document.text)
 
     #################
     # Layer Events
@@ -264,7 +250,6 @@ class InterpreterLayer(Layer, EventDispatcher):
         command = self.get_command()
         if command == completed:
             # there are many possibilities (completion was ambiguous)
-            # so write out all possibilities
             # so write out all possibilities
             self.write(output)
 
