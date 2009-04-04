@@ -210,11 +210,15 @@ class InterpreterLayer(Layer, EventDispatcher):
             # remove line
             self.document.delete_text(self.prompt_end, self.caret.position)
             self.caret.position = self.prompt_end
-#        elif symbol == key.L and modifiers and key.MOD_ACCEL:
-#            # clear screen
-#            self.document.delete_text(0, self.prompt_start)
-#            self.prompt_end -= self.prompt_start
-#            self.prompt_start -= self.prompt_start
+        elif symbol == key.L and modifiers & key.MOD_ACCEL:
+            # clear screen
+            # first remove all lines upto the last prompt
+            self.document.delete_text(0, self.prompt_start)
+            self.prompt_end -= self.prompt_start
+            self.prompt_start -= self.prompt_start
+            # finally clear the current line
+            self.document.delete_text(self.prompt_end, len(self.document.text))
+            self.caret.position = self.prompt_end
         elif symbol == key.TAB:
             self.dispatch_event('on_completion', self.get_command())
         elif symbol == key.PAGEUP:
