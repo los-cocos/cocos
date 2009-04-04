@@ -46,7 +46,8 @@ class InterpreterLayer(Layer, EventDispatcher):
         height = self.cfg['background.height']
         bg_y = self.cfg['background.y']
 
-        bg = ColorLayer(*color, height=height)
+        r, g, b, a = color
+        bg = ColorLayer(r, g, b, a, height=height)
         if bg_y is not None:
             bg.y = bg_y
         self.add(bg, z=-1)
