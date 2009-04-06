@@ -19,10 +19,11 @@ class EditorConsole(Console):
         self.mode_cmds = {}
         self.cmds = {}
         self.add_command('help', self.do_help)
+        self.add_command('layers', self.do_layers)
 
     def add_mode_variable(self, mode, varname, getter):
         self.mode_vars.setdefault(mode, {})[varname] = getter
-        self.dispatch_event('on_add_mode_variable')
+        self.dispatch_event('on_add_mode_variable', mode)
 
     def add_variable(self, varname, getter):
         self.vars[varname] = getter
@@ -30,20 +31,20 @@ class EditorConsole(Console):
 
     def add_mode_command(self, mode, cmd, callable):
         self.mode_cmds.setdefault(mode, {})[varname] = getter
-        self.dispatch_event('on_add_mode_command')
+        self.dispatch_event('on_add_mode_command', mode)
 
     def add_command(self, cmd, callable):
         self.cmds[cmd] = callable
         self.dispatch_event('on_add_command')
 
-    def do_layers(self, rest):
+    def do_layers(self):
         for n, l in self.editor.layers.children_names.items():
             label = getattr(l, "label", None)
             if label is None:
                 label = "<unlabelled>"
             self.write("%s: %s\n" % (n, label))
 
-    def do_help(self, rest):
+    def do_help(self):
         def write_section(name, source):
             self.write(name + "\n")
             for k, v in source.items():
@@ -62,25 +63,32 @@ class EditorConsole(Console):
 
     def update_locals(self, source):
         for k, v in source.items():
-            try:
-                r = v()
-            except:
-                traceback.print_exc()
-                if k in self.locals:
-                    del self.locals[k]
+            if hasattr(v, 'im_func'):
+                # is an instance method
+                r = v.im_func
+            elif hasattr(v, 'func_code'):
+                # is a function
+                if v.func_code.co_argcount > 0:
+                    r = v
+                else:
+                    r = v()
             else:
-                self.locals[k] = r
+                r = v
+            self.locals[k] = r
 
     def reset_locals(self):
         mode = self.editor.current_mode.name
-        #self.update_locals(self.vars)
-        #self.update_locals(self.cmds)
-        #self.update_locals(self.mode_vars.get(mode, {}))
-        #self.update_locals(self.mode_cmds.get(mode, {}))
-        if mode in self.mode_vars:
-            self.update_locals(self.mode_vars[mode])
+        self.locals = {}
+        # generic commands
+        self.update_locals(self.cmds)
+        # generic variables
+        self.update_locals(self.vars)
+        # mode specific commands
         if mode in self.mode_cmds:
             self.update_locals(self.mode_cmds[mode])
+        # mode specific variables
+        if mode in self.mode_vars:
+            self.update_locals(self.mode_vars[mode])
         self.update_completer(self.locals)
 
     def update_completer(self, ns_locals):
@@ -89,14 +97,14 @@ class EditorConsole(Console):
     #################
     # Text Events
     #################
-    def on_add_mode_variable(self):
-        self.update_locals(self.mode_vars)
+    def on_add_mode_variable(self, mode):
+        self.update_locals(self.mode_vars[mode])
 
     def on_add_variable(self):
         self.update_locals(self.vars)
 
-    def on_add_mode_command(self):
-        self.update_locals(self.mode_cmds)
+    def on_add_mode_command(self, mode):
+        self.update_locals(self.mode_cmds[mode])
 
     def on_add_command(self):
         self.update_locals(self.cmds)
@@ -107,21 +115,21 @@ class EditorConsole(Console):
         mode = self.editor.current_mode.name
         parts = command.split(" ")
         if parts:
-            start = parts[0].strip()
-            rest = " ".join(parts[1:])
-            if start in self.cmds:
-                #command = "%s(%s)" % (self.cmds[start], rest)
+            name = parts[0].strip()
+            args = parts[1:]
+            if command in self.cmds:
                 self.write('\n')
-                self.cmds[start](rest)
+                self.cmds[command](*args)
+                self.interpreter.history.append(command)
                 self.write_prompt()
                 return
-
-            elif mode in self.mode_cmds and start in self.mode_cmds[mode]:
-                #command = "%s(%s)" % (self.mode_cmds[mode][start], rest)
+            elif mode in self.mode_cmds and command in self.mode_cmds[mode]:
                 self.write('\n')
-                self.mode_cmds[mode][start](rest)
+                self.mode_cmds[mode][command](*args)
+                self.interpreter.history.append(command)
                 self.write_prompt()
                 return
+            return super(EditorConsole, self).on_command(command)
 
         return super(EditorConsole, self).on_command(command)
 

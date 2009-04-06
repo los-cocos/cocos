@@ -60,13 +60,16 @@ class Interpreter(InteractiveInterpreter, EventDispatcher):
         return completer
 
     def execute(self, command):
+        more = False
         self.toggle_env()
         try:
             more = self.runsource(command)
             self.history.append(command)
         except Exception, e:
+            self.toggle_env()
             print e
-        self.toggle_env()
+        else:
+            self.toggle_env()
         return more
 
     def toggle_env(self):
@@ -74,6 +77,15 @@ class Interpreter(InteractiveInterpreter, EventDispatcher):
         self.stdout, sys.stdout = sys.stdout, self.stdout
         self.stderr, sys.stderr = sys.stderr, self.stderr
 
+    #################
+    # Common Events
+    #################
+    def on_exit(self):
+        self.history.save()
+
+    #################
+    # Command Events
+    #################
     def on_command(self, command):
         self.execute(command)
         self.stdout.dispatch_event('on_command_done')
@@ -101,12 +113,9 @@ class Interpreter(InteractiveInterpreter, EventDispatcher):
     def on_update_completer(self, ns_locals):
         self.completer.namespace = ns_locals
 
-    def on_exit(self):
-        self.history.save()
-
+Interpreter.register_event_type('on_exit')
 Interpreter.register_event_type('on_command')
 Interpreter.register_event_type('on_completion')
 Interpreter.register_event_type('on_history_prev')
 Interpreter.register_event_type('on_history_next')
 Interpreter.register_event_type('on_update_completer')
-Interpreter.register_event_type('on_exit')

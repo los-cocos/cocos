@@ -98,13 +98,8 @@ class FileIn(FileIO):
         return self.readline()
 
     def readline(self, length=None):
-        # FIXME: dubious implementation
-        #self.buffer.input_mode = False
-        self.buffer.write_prompt('')
-        #while self.buffer.input_mode:
-        #    self.buffer.dispatch_events()
-        s = self.buffer.output.get_command()
-        return s + '\n'
+        self.buffer.dispatch_event('on_get_command')
+        return ''
 
 
 class FileOut(FileIO):

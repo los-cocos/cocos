@@ -56,7 +56,8 @@ class InterpreterLayer(Layer, EventDispatcher):
         if ns_locals is None:
             ns_locals = director.interpreter_locals
             ns_locals['self'] = self
-        self.interpreter = Interpreter(stdout=self, ns_locals=ns_locals,
+        self.interpreter = Interpreter(stdin=self, stdout=self, stderr=self,
+                                       ns_locals=ns_locals,
                                        history_file=self.history_file,
                                        history_size=self.history_size)
 
@@ -258,6 +259,10 @@ class InterpreterLayer(Layer, EventDispatcher):
             # so write out all possibilities
             self.write(output)
 
+    def on_get_command(self):
+        command = self.get_command()
+        self.write(command + '\n')
+
     def on_set_command(self, command):
         self.set_command(command)
 
@@ -265,4 +270,5 @@ InterpreterLayer.register_event_type('on_command')
 InterpreterLayer.register_event_type('on_command_done')
 InterpreterLayer.register_event_type('on_completion')
 InterpreterLayer.register_event_type('on_completed')
+InterpreterLayer.register_event_type('on_get_command')
 InterpreterLayer.register_event_type('on_set_command')
