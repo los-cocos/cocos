@@ -101,14 +101,13 @@ class EditMode(Mode, MouseEventHandler):
                 return True
 
 
-
 class EditPlugin(Plugin):
     name = 'edit'
 
     def __init__(self, editor):
         self.ed = editor
         edit_mode = EditMode(editor)
-        editor.register_mode(edit_mode)
+        editor.register_mode("sprite", edit_mode)
 
         def get_active():
             'active sprite'

@@ -2,10 +2,10 @@
 __all__ = ['Console']
 
 from cocos.director import director
-from cocos.layer.interpreter import InterpreterLayer
+from cocos.layer.python_interpreter import PythonInterpreterLayer
 
 
-class Console(InterpreterLayer):
+class Console(PythonInterpreterLayer):
     def init_config(self):
         super(Console, self).init_config()
         x,y = director.get_window_size()
@@ -34,4 +34,3 @@ class Console(InterpreterLayer):
         self.layout.top_group._scissor_width = x - 4
 
         self.caret.position = len(self.document.text)
-

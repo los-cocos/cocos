@@ -257,8 +257,8 @@ class StampPlugin(Plugin):
 
     def __init__(self, editor):
         self.ed = editor
-        stamp_mode = StampMode(editor)
-        editor.register_mode(stamp_mode)
+        self.stamp_mode = StampMode(editor)
+        editor.register_mode("sprite", self.stamp_mode)
 
 
         def get_active():

@@ -12,22 +12,34 @@ BOTTOM_BAR_HEIGHT = 32
 class LayerMenu(Menu):
     def __init__(self, hud):
         super(LayerMenu, self).__init__()
+        self.hud = hud
         self.menu_valign = BOTTOM
         self.menu_halign = RIGHT
         self.font_item['font_size'] = 12
         self.font_item_selected['font_size'] = 14
 
-        self.labels = [i.label for i in hud.editor.layers.get_children() if hasattr(i, 'label')]
-        self.items = [MenuItem(i, self.on_quit) for i in self.labels]
+        self.labels = [i.label
+                       for i in hud.editor.layers.get_children()
+                       if hasattr(i, 'label')]
+        
+        self.items = [MenuItem(label, self.on_quit) for label in self.labels]
+        self.items += [MenuItem("New %s layer"%layer_type,
+                                lambda: self.create_layer(layer_type))
+                       for layer_type in self.hud.editor.layer_types]
         self.create_menu(self.items)
-        self.hud = hud
+
+    def create_layer(self, layer_type):
+        layer = self.hud.editor.layer_types[layer_type].get_new_layer()
+        layer_num = len(self.hud.editor.layers.layers)
+        self.hud.editor.layers.add_layer(
+            "%s layer (%s)" % (layer_type, layer_num),
+            layer_num, layer)
+        self.hud.editor.set_current_layer(layer_num)
+        self.hud.hide_layers_menu()
 
     def on_quit(self):
-        self.hud.showingLayerMenu = False
-        self.hud.add(self.hud.layerNameLabel)
-        self.hud.remove(self)
         self.hud.editor.set_current_layer (self.selected_index)
-        self.hud.update()
+        self.hud.hide_layers_menu()
 
 class HUDLayer(Layer):
     is_event_handler = True
@@ -41,7 +53,11 @@ class HUDLayer(Layer):
         self.pointerLabel = Label('0,0', position=(self.hud_x, self.hud_y),
                                   **atts)
         self.add(self.pointerLabel, z=1)
-        self.layerNameLabel = Label(editor.current_layer.label,
+        if editor.current_layer is not None:
+            self.layerNameLabel = Label(editor.current_layer.label,
+                                    position=(self.hud_x - 140, self.hud_y), **atts)
+        else:
+            self.layerNameLabel = Label("<no layers>",
                                     position=(self.hud_x - 140, self.hud_y), **atts)
         self.add(self.layerNameLabel, z=1)
         self.editor = editor
@@ -59,15 +75,26 @@ class HUDLayer(Layer):
     def update(self):
         x, y = self.editor.layers.pointer_to_world(*self.editor.mouse_position)
         self.pointerLabel.element.text = "%d,%d" % (x,y)
-        self.layerNameLabel.element.text = self.editor.current_layer.label
+        if self.editor.current_layer is not None:
+            self.layerNameLabel.element.text = self.editor.current_layer.label
+        else:
+            self.layerNameLabel.element.text = "<no layers>"
 
     def on_mouse_press(self, x, y, button, modifiers):
         X, Y = self.layerNameLabel.position
         if X - 70 < x < X and Y < y < Y + 20:
             if not self.showingLayerMenu:
-                self.remove(self.layerNameLabel)
-                self.layerMenu = LayerMenu(self)
-                self.layerMenu.position = -140, 0
-                self.add(self.layerMenu)
-                self.showingLayerMenu = True
+                self.show_layers_menu()
 
+    def show_layers_menu(self):
+        self.remove(self.layerNameLabel)
+        self.layerMenu = LayerMenu(self)
+        self.layerMenu.position = -140, 0
+        self.add(self.layerMenu)
+        self.showingLayerMenu = True
+
+    def hide_layers_menu(self):
+        self.showingLayerMenu = False
+        self.add(self.layerNameLabel)
+        self.remove(self.layerMenu)
+        self.update()

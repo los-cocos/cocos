@@ -36,18 +36,23 @@ class LayersNode(CocosNode):
     """ This Node promises to have one and only one child at each z """
     def __init__(self):
         super(LayersNode, self).__init__()
+        self.layers = []
 
-    def add_layer(self, name, z, layer_type=PickerBatchNode):
-        layer = layer_type()
+    def add_layer(self, name, z, layer):
         layer.label = name
+        self.layers.append(layer)
         self.add(layer, name=name, z=z)
         # Normalize z (unique, consecutive and zero-based)
         self.children = [(i, self.children[i][1]) for i in range(len(self.children))]
 
+    def remove_layer(self, layer):
+        self.remove(layer.label)
+        self.layers.remove(layer)
+
     def get_by_depth(self, z):
-        if z > len(self.children):
-            raise ValueError("I only have %d layers" % len(self.children))
-        return self.children[z][1]
+        if z > len(self.layers):
+            raise ValueError("I only have %d layers" % len(self.layers))
+        return self.layers[z]
 
     def pointer_to_world(self, x, y):
         nx = (x - self.x) / self.scale
@@ -74,20 +79,11 @@ class TilessEditor(Layer):
         self.floating_sprite = None
         self.hovered_nodes = []
 
-
-        # used to add children with a new z every time
-        self.increment_z = 0
-
         self.mouse_position = (0, 0)
 
         self.layers = LayersNode()
 
-        for z in range(1, 10):
-            self.layers.add_layer("Layer %d" % z, z)
-        self.layers.add_layer('Collision Layer', 10, layer_type=CollisionLayer)
-
-
-        self.set_current_layer(0)
+        self.current_layer = None
 
         x,y = director.get_window_size()
         self.add(self.layers, z=10)
@@ -104,6 +100,7 @@ class TilessEditor(Layer):
         from cocos.layer import ColorLayer
         self.hotspot = None
 
+        self.layer_types = {}
         self.event_handlers = []
         self.plugins = {}
         self.modes = {}
@@ -111,6 +108,8 @@ class TilessEditor(Layer):
 
         self.look_at(0,0)
 
+    def register_layer_factory(self, name, factory):
+        self.layer_types[name] = factory
 
     def register_handler(self, handler):
         self.event_handlers.append(handler)
@@ -119,17 +118,16 @@ class TilessEditor(Layer):
         if handler in self.event_handlers:
             self.event_handlers.remove(handler)
 
-
     def register_plugin(self, plugin_class):
         self.plugins[plugin_class.name] = plugin_class(self)
 
-
-    def register_mode(self, mode):
-        if not self.modes:
+    def register_mode(self, layer_type, mode):
+        if not self.modes and self.current_layer is not None and \
+                layer_type == self.current_layer.layer_type:
             enable = True
         else:
             enable = False
-        self.modes[mode.name] = mode
+        self.modes.setdefault(layer_type, {})[mode.name] = mode
         if enable:
             self.switch_mode(mode.name)
 
@@ -137,10 +135,20 @@ class TilessEditor(Layer):
         print "MODE:", mode_name
         if self.current_mode:
             self.current_mode.on_disable()
-        self.current_mode = self.modes[mode_name]
+        if not self.current_layer:
+            return
+        layer_type = self.current_layer.layer_type
+        try:
+            modes = self.modes[layer_type]
+        except KeyError:
+            raise KeyError("No modes for layer type '%s'" % layer_type)
+        try:
+            self.current_mode = modes[mode_name]
+        except KeyError:
+            raise KeyError("No mode named '%s' on layer type '%s'" % (
+                mode_name, layer_type))
         self.current_mode.on_enable()
         self.propagate_event('mode_changed', mode_name)
-
 
     def discard_floating(self):
         self.floating_sprite.parent.remove(self.floating_sprite)
@@ -160,10 +168,7 @@ class TilessEditor(Layer):
 
 
     def layer_add_node(self, layer, node):
-        self.increment_z += 1
         layer.add(node)
-        node.fucking_z = self.increment_z
-
 
     def propagate_event(self, event_type, *args):
         for handler in self.event_handlers:
@@ -174,7 +179,6 @@ class TilessEditor(Layer):
                     break
 
     def on_key_press(self, k, m):
-
         if k == key.F1:
             self.switch_mode('edit')
             return True
@@ -196,6 +200,8 @@ class TilessEditor(Layer):
             return True
 
         if k == key.L and (m & pyglet.window.key.MOD_ACCEL):
+            for l in self.layers.layers[:]:
+                self.layers.remove_layer(l)
             self.read_json()
             return True
 
@@ -245,10 +251,8 @@ class TilessEditor(Layer):
                 s.path = self.floating_sprite.path
                 s.rect = self.floating_sprite.rect
 
-                self.increment_z += 1
                 self.current_layer.remove(self.floating_sprite)
                 self.current_layer.add(self.floating_sprite, static=False)
-                s.fucking_z = self.increment_z
 
                 self.last_stamp_pos = self.floating_sprite.position
                 self.floating_sprite = s
@@ -357,55 +361,36 @@ class TilessEditor(Layer):
         self.layers.y = -(y * self.layers.scale) + ys/2
 
     def generate_json(self):
-        layers = {}
-        for z, layers_node in self.layers.children:
-            layers[z] = {}
-            sprites = []
-            for i, c in layers_node.children:
-                label = getattr(c, "label", None)
-                sprites.append(dict(position=c.position,
-                                 scale=c.scale,
-                                 rotation=c.rotation,
-                                 opacity=c.opacity,
-                                 filename=c.path,
-                                 label=label,
-                                 z=0,
-                                 rect=c.rect,
-                                 ))
-            if hasattr(layers_node,'label'):
-                layers[z]['name'] = layers_node.label
-            layers[z]['sprites'] = sprites
+        layers = []
+        for z, layer in enumerate(self.layers.layers):
+            layer_type = layer.layer_type
+            if not layer_type in self.layer_types:
+                continue
+
+            factory = self.layer_types[layer_type]
+            data = factory.layer_to_dict(layer)
+            layers.append(dict(data=data, z=z, layer_type=layer_type,
+                               label=layer.label))
         result = dict(tilesdir=self.tilesdir, layers=layers)
         return simplejson.dumps(result)
 
 
     def read_json(self):
-        layers_dict = simplejson.load(open(self.output_filename))['layers']
+        try:
+            layers = simplejson.load(open(self.output_filename))['layers']
+        except:
+            return False
 
-        def build_sprite(img):
-            s = Sprite(str(img['filename']),
-                       img['position'], img['rotation'], img['scale'], img['opacity'])
-            s.label = img['label'] if "label" in img else None
-            s.path = img['filename']
-            s.rect =img['rect']
-            return s
+        for layer_data in layers:
+            layer_type = layer_data['layer_type']
+            if not layer_type in self.layer_types:
+                continue
 
-        for z in range(1, 10):
-            name = "Layer %d" % z
-            current_layer = layers_dict.get(name)
-            for img in current_layer:
-                s = build_sprite(img)
-                layer = self.layers.get( name )
-                self.layer_add_node(layer, s)
-        # collision layer
-        name = "Collision Layer"
-        current_layer = layers_dict.get(name)
-        for img in current_layer:
-            s = build_sprite(img)
-            layer = self.layers.get( name )
-            self.layer_add_node(layer, s)
-
+            factory = self.layer_types[layer_type]
+            layer = factory.dict_to_layer(layer_data['data'])
+            self.layers.add_layer(layer_data['label'], layer_data['z'], layer)
         self.set_current_layer(0)
+        return True
 
     def __repr__(self):
         return "<Editor>"
@@ -441,11 +426,14 @@ if __name__ == '__main__':
     editor = TilessEditor(options.filename, options.tilesdir)
     editor_scene =  Scene(editor)
 
-    from plugins import editor_console, camera, stamp, edit
+    from plugins import editor_console, camera, stamp, edit, sprite_layer
 
     editor.register_plugin(editor_console.ConsolePlugin)
+
+    editor.register_plugin(sprite_layer.SpriteLayerPlugin)
     editor.register_plugin(edit.EditPlugin)
     editor.register_plugin(camera.CameraPlugin)
     editor.register_plugin(stamp.StampPlugin)
+
 
     director.run(editor_scene)

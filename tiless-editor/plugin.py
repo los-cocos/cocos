@@ -37,3 +37,19 @@ class EventHandler(object):
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         pass
 
+class LayerFactory(object):
+    def get_new_layer(self):
+        pass
+
+    def layer_to_dict(self, layer):
+        pass
+
+    def dict_to_layer(self, dict):
+        pass
+
+class EditorLayer(object):
+    layer_type = "layer_type"
+
+    def childrenAt(self, x, y):
+        pass
+

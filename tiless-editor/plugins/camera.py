@@ -39,4 +39,5 @@ class CameraPlugin(Plugin):
 
     def __init__(self, editor):
         self.ed = editor
-        editor.register_mode(CameraMode(editor))
+        self.mode = CameraMode(editor)
+        editor.register_mode("sprite", self.mode)

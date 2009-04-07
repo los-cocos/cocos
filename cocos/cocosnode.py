@@ -390,7 +390,7 @@ class CocosNode(object):
                 name of the reference to be removed
                 or object to be removed
         """
-        if isinstance(obj, str):
+        if isinstance(obj, str) or isinstance(obj, unicode):
             if obj in self.children_names:
                 child = self.children_names.pop( obj )
                 self._remove( child )

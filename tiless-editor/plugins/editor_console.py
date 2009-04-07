@@ -12,7 +12,7 @@ DEADGRAVE = 210453397504
 class EditorConsole(Console):
     def __init__(self, editor):
         self.locals = {}
-        super(EditorConsole, self).__init__(self.locals)
+        super(EditorConsole, self).__init__()
         self.editor = editor
         self.mode_vars = {}
         self.vars = {}
@@ -20,6 +20,10 @@ class EditorConsole(Console):
         self.cmds = {}
         self.add_command('help', self.do_help)
         self.add_command('layers', self.do_layers)
+
+    # XXXX
+    def dispatch_event(self,*args, **kwargs):
+        pass
 
     def add_mode_variable(self, mode, varname, getter):
         self.mode_vars.setdefault(mode, {})[varname] = getter
@@ -137,10 +141,10 @@ class EditorConsole(Console):
         self.reset_locals()
         super(EditorConsole, self).on_completion(command)
 
-EditorConsole.register_event_type('on_add_mode_variable')
-EditorConsole.register_event_type('on_add_variable')
-EditorConsole.register_event_type('on_add_mode_command')
-EditorConsole.register_event_type('on_add_command')
+#EditorConsole.register_event_type('on_add_mode_variable')
+#EditorConsole.register_event_type('on_add_variable')
+#EditorConsole.register_event_type('on_add_mode_command')
+#EditorConsole.register_event_type('on_add_command')
 
 
 class ConsoleEventHandler(EventHandler):
@@ -199,4 +203,3 @@ class ConsolePlugin(Plugin):
             bookmarks[name] = self.editor.layers.pointer_to_world(
                 *self.handler.mouse_position)
         editor.console.add_command('mark', mark)
-
