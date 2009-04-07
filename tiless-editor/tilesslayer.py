@@ -7,6 +7,11 @@ TilessLayer
 
 __docformat__ = 'restructuredtext'
 
+# This code is so you can run the samples without installing the package
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 # cocos2d
 import cocos
 from cocos.cocosnode import *
