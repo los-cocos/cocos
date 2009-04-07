@@ -1,3 +1,8 @@
+# This code is so you can run the samples without installing the package
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 from cocos.scene import Scene
 from cocos.director import director
 from cocos.sprite import NotifierSprite
