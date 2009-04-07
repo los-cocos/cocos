@@ -7,23 +7,38 @@ TilessLayer
 
 __docformat__ = 'restructuredtext'
 
+# This code is so you can run the samples without installing the package
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 # cocos2d
 import cocos
 from cocos.cocosnode import *
 from cocos.director import director
 from cocos.actions import Accelerate, Rotate
 from cocos.sprite import Sprite
+
+# pyglet
 import pyglet
 from pyglet.image.atlas import Allocator
+
+# python
 import os
+import simplejson
+import Image
+
+
+# How many pixels left as border
+PIXEL_BORDER = 1
 
 class MyAllocator(Allocator):
 
     def alloc(self, width, height):
 
         # create an Atlas with 1 pixel of border
-        width += 2
-        height += 2
+        width +=  PIXEL_BORDER + 1
+        height += PIXEL_BORDER + 1
         return super(MyAllocator,self).alloc(width, height)
 
 class _Void(object):
@@ -82,7 +97,6 @@ class TextureAtlas(object):
    
 
     def fix_image(self):
-        import Image
 
         im = Image.open( self.atlas_image_name )
         size = im.size
@@ -117,7 +131,21 @@ class TextureAtlas(object):
 
         im.save("atlas-fixed.png", "PNG")
 
+    def output_coords( self ):
+        im = Image.open( self.atlas_image_name )
+        fp = open('atlas-coords.json','w')
+        size = im.size
+        coords = []
+        for region in self.regions:
+            rect = [ region.x, (size[1] - region.y) - region.height, region.width, region.height ]
+            coords.append( rect )
+        d = {}
+        d['coords'] = coords
+        simplejson.dump(d,fp)
+        fp.close()
+
 if __name__ == "__main__":
     director.init()
     tex = TextureAtlas( 'tiles/set4')
     tex.fix_image()
+    tex.output_coords()
