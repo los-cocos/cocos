@@ -1,3 +1,17 @@
+# ----------------------------------------------------------------------------
+# cocos2d
+# ----------------------------------------------------------------------------
+'''
+ToolBar test
+'''
+
+__docformat__ = 'restructuredtext'
+
+# This code is so you can run the samples without installing the package
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 import cocos
 from cocos.scene import *
 from cocos.layer import *
@@ -31,13 +45,16 @@ class Test(Layer):
     def create_hbar(self, w, spacing):
         h = WidgetContainer( width=w,spacing=spacing)
 
-        g = WidgetButton('tiles/set4/Chest Closed.png')
+        g = WidgetButton('tiles/set4/Chest Open.png', unselected_image='tiles/set4/Chest Closed.png', callback= self.callback)
         h.add(g)
-        g = WidgetButton('tiles/set4/Chest Lid.png')
+        g = WidgetButton('tiles/set4/Chest Open.png', unselected_image='tiles/set4/Chest Closed.png', callback= self.callback)
         h.add(g)
-        g = WidgetButton('tiles/set4/Chest Open.png')
+        g = WidgetButton('tiles/set4/Chest Open.png', unselected_image='tiles/set4/Chest Closed.png', callback= self.callback)
         h.add(g)
         return h
+
+    def callback( self, sender ):
+        print sender
 
 
 if __name__ == "__main__":

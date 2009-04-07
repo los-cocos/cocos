@@ -88,16 +88,18 @@ class Widget(object):
 
 
 class WidgetButton( CocosNode ):
-    def __init__(self, selected_image, unselected_image=None, disabled_image=None, **kw):
+    def __init__(self, selected_image, unselected_image=None, disabled_image=None, callback=None, **kw):
         super(WidgetButton,self).__init__(**kw)
 
         self._images = []
+
+        self._callback_func = callback
 
         self._load_image( 0, selected_image )
         self._load_image( 1, unselected_image )
         self._load_image( 2, disabled_image )
 
-        self._state = Widget.SELECTED
+        self._state = Widget.UNSELECTED
 
         self._rect = [0,0, self._images[0].width, self._images[0].height ]
 
@@ -131,10 +133,13 @@ class WidgetButton( CocosNode ):
         return [self.x, self.y, self.width, self.height]
 
     def on_select( self ):
-        print 'on select'
+        self._state = Widget.SELECTED
 
     def on_unselect( self ):
-        print 'on unselect'
+        self._state = Widget.UNSELECTED
+
+    def on_disable( self ):
+        self._state = Widget.DISABLED
 
     def on_activate( self ):
-        print 'on activate'
+        self._callback_func( self )

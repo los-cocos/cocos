@@ -122,16 +122,7 @@ class WidgetContainer(Layer):
     def on_key_press(self, symbol, modifiers):
         return False
 
-    def on_mouse_release( self, x, y, buttons, modifiers ):
-        (x,y) = director.get_virtual_coordinates(x,y)
-
-        node = self.children[ self._selected_item ][1]
-        (posx, posy) = node.absolute_position()
-        rect = [posx, posy, node.width, node.height] 
-        if rect_contains_point( rect, (x,y) ):
-            self._activate_item()
-
-    def on_mouse_motion( self, x, y, dx, dy ):
+    def on_mouse_press( self, x, y, buttons, modifiers ):
         (x,y) = director.get_virtual_coordinates(x,y)
 
         for idx,i in enumerate( self.children):
@@ -140,9 +131,45 @@ class WidgetContainer(Layer):
             rect = [posx, posy, node.width, node.height] 
             if rect_contains_point( rect, (x,y) ):
                 self._select_item( idx )
-                break
-        else:
+                return True
+        self._unselect_item()
+        return False
+
+    def on_mouse_release( self, x, y, buttons, modifiers ):
+        (x,y) = director.get_virtual_coordinates(x,y)
+
+        node = self.children[ self._selected_item ][1]
+        (posx, posy) = node.absolute_position()
+        rect = [posx, posy, node.width, node.height] 
+        if rect_contains_point( rect, (x,y) ):
+            self._activate_item()
             self._unselect_item()
+            return True
+        self._unselect_item()
+        return False
+
+    def on_mouse_drag( self, x, y, dx, dy, buttons, modifiers ):
+        (x,y) = director.get_virtual_coordinates(x,y)
+
+        # unselect button 
+        if self._selected_item != -1:
+            node = self.children[ self._selected_item ][1]
+            (posx, posy) = node.absolute_position()
+            rect = [posx, posy, node.width, node.height] 
+            if not rect_contains_point( rect, (x,y) ):
+                self._unselect_item()
+                return True
+
+        # unselect button 
+        for idx,i in enumerate( self.children):
+            node = self.children[ idx ][1]
+            (posx, posy) = node.absolute_position()
+            rect = [posx, posy, node.width, node.height] 
+            if rect_contains_point( rect, (x,y) ):
+                self._select_item( idx )
+                return True
+
+        return False
 
     def _unselect_item( self ):
         if self._selected_item != -1:
