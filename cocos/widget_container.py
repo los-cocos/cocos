@@ -30,17 +30,12 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-"""A `WidgetContainer` that implements a simple menu
+"""A `WidgetContainer` that implements a container
 
-Menu
-====
+WidgetContainer
+===============
 
-This module provides a Menu class. Menus can contain regular items
-(which trigger a function when selected), toggle items (which toggle a flag when selected),
-or entry items (which lets you enter alphanumeric data).
-
-To use a menu in your code, just subclass `Menu` and add the menu to an `Scene` or
-another `Layer`.
+XXX TODO
 """
 
 __docformat__ = 'restructuredtext'
@@ -57,7 +52,7 @@ from cocosnode import *
 from actions import *
 from sprite import Sprite
 
-__all__ = [ 'WidgetContainer',
+__all__ = [ 'WidgetContainer', 'RadioWidgetContainer'
             ]
 
 def rect_contains_point( rect, point ):
@@ -67,14 +62,7 @@ def rect_contains_point( rect, point ):
             point[1] < rect[1] + rect[3] )
 
 class WidgetContainer(Layer):
-    """Abstract base class for menu layers.
-
-    Normal usage is:
-
-     - create a subclass
-     - override __init__ to set all style attributes,
-       and then call `create_menu()`
-     - Finally you shall add the menu to an `Scene` or another `Layer`
+    """XXX TODO
     """
 
     is_event_handler = True #: Receives pyglet events
@@ -188,3 +176,10 @@ class WidgetContainer(Layer):
 
     def _activate_item( self ):
         self.children[ self._selected_item ][1].on_activate()
+
+
+class RadioWidgetContainer(Layer):
+    """XXX TODO
+    """
+    def __init__(self, selected=1, *args, **kw ):
+        super(RadioWidgetContainer, self).__init__( *args, **kw)

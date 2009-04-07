@@ -2,7 +2,8 @@ from cocos.layer import Layer, ColorLayer
 from cocos.text import Label
 from cocos.menu import Menu, MenuItem, BOTTOM, CENTER, RIGHT
 
-from toolbar import *
+from cocos.widget_container import *
+from cocos.widget import *
 
 from cocos.director import director
 
@@ -65,11 +66,30 @@ class HUDLayer(Layer):
 
         translucent = ColorLayer( 64,64,64,192, x, TOP_BAR_HEIGHT)
         translucent.position = (0,y-TOP_BAR_HEIGHT)
-        self.add( translucent )
+        self.add( translucent, name="top-bar" )
 
         translucent = ColorLayer( 64,64,64,192, x, BOTTOM_BAR_HEIGHT)
         translucent.position = (0,0)
-        self.add( translucent )
+        self.add( translucent, name="bottom-bar" )
+
+
+        self.add_mode_buttons()
+
+    def add_mode_buttons( self ):
+        container = WidgetContainer( width=200, spacing=4)
+
+        button = WidgetButton('resources/mode-edit-selected.png', unselected_image='resources/mode-edit-unselected.png', callback=self.callback_mode_edit)
+        container.add(button)
+        button = WidgetButton('resources/mode-camera-selected.png', unselected_image='resources/mode-camera-unselected.png', callback=self.callback_mode_camera)
+        container.add(button)
+        button = WidgetButton('resources/mode-stamp-selected.png', unselected_image='resources/mode-stamp-unselected.png', callback=self.callback_mode_stamp)
+        container.add(button)
+
+
+        container.align_horizontal('left')
+
+        bar = self.get("top-bar")
+        bar.add( container )
 
 
     def update(self):
@@ -98,3 +118,16 @@ class HUDLayer(Layer):
         self.add(self.layerNameLabel)
         self.remove(self.layerMenu)
         self.update()
+
+
+#
+# Callbacks
+#
+    def callback_mode_edit( self, sender ):
+        self.editor.switch_mode('edit')
+
+    def callback_mode_camera( self, sender ):
+        self.editor.switch_mode('camera')
+
+    def callback_mode_stamp( self, sender ):
+        self.editor.switch_mode('stamp')
