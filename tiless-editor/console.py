@@ -2,10 +2,10 @@
 __all__ = ['Console']
 
 from cocos.director import director
-from cocos.layer.python_interpreter import PythonInterpreterLayer
+from cocos.layer.interpreter import InterpreterLayer
 
 
-class Console(PythonInterpreterLayer):
+class Console(InterpreterLayer):
     def init_config(self):
         super(Console, self).init_config()
         x,y = director.get_window_size()

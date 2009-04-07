@@ -21,10 +21,6 @@ class EditorConsole(Console):
         self.add_command('help', self.do_help)
         self.add_command('layers', self.do_layers)
 
-    # XXXX
-    def dispatch_event(self,*args, **kwargs):
-        pass
-
     def add_mode_variable(self, mode, varname, getter):
         self.mode_vars.setdefault(mode, {})[varname] = getter
         self.dispatch_event('on_add_mode_variable', mode)
@@ -141,10 +137,10 @@ class EditorConsole(Console):
         self.reset_locals()
         super(EditorConsole, self).on_completion(command)
 
-#EditorConsole.register_event_type('on_add_mode_variable')
-#EditorConsole.register_event_type('on_add_variable')
-#EditorConsole.register_event_type('on_add_mode_command')
-#EditorConsole.register_event_type('on_add_command')
+EditorConsole.register_event_type('on_add_mode_variable')
+EditorConsole.register_event_type('on_add_variable')
+EditorConsole.register_event_type('on_add_mode_command')
+EditorConsole.register_event_type('on_add_command')
 
 
 class ConsoleEventHandler(EventHandler):
