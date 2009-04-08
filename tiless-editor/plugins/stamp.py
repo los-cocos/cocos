@@ -18,15 +18,15 @@ class ImgSelector(Layer):
 
     is_event_handler = True
 
-    def __init__(self, tilesdir, grid_size=200, padding_percent=10):
+    def __init__(self, atlas, grid_size=200, padding_percent=10):
         super(ImgSelector, self).__init__()
 
         self.grid_size = grid_size
         self.padding_percent = padding_percent
         self.h_slots = (director.window.width / self.grid_size)
 
-        self.atlas = atlas.TextureAtlas(tilesdir)
-        self.atlas.fix_image()
+        self.atlas = atlas #atlas.TextureAtlas(tilesdir)
+        # self.atlas.fix_image()
 
         gl.glTexParameteri( self.atlas.texture.target,
                             gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE )
@@ -120,11 +120,13 @@ class StampMode(Mode, MouseEventHandler):
         self.ed = editor
         self.drag_x = 0
         self.drag_y = 0
+        self.atlas = atlas.TextureAtlas(self.ed.tilesdir)
+        self.atlas.fix_image()
 
     def on_enable(self):
         self.ed.register_handler(self)
         if not self.ed.floating_sprite:
-            director.push(Scene(ImgSelector(self.ed.tilesdir)))
+            director.push(Scene(ImgSelector(self.atlas)))
         else:
             self.clone_to_floating(self.ed.floating_sprite)
 

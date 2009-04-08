@@ -59,6 +59,9 @@ class TextureAtlas(object):
         for filename in os.listdir(texture_dir):
             if os.path.splitext(filename)[1] in ['.jpg', '.jpeg', '.png']:
                 path = os.path.join(texture_dir, filename)
+                # FIXME: Hack for paths working on windows:
+                path = path.replace("\\", "/")
+
                 img = pyglet.image.load(path)
                 void = _Void()
                 void.path = path
@@ -94,7 +97,7 @@ class TextureAtlas(object):
 
         self.texture = atlas.texture
         atlas.texture.save( self.atlas_image_name )
-   
+
 
     def fix_image(self):
 
