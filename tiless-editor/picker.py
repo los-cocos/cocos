@@ -1,5 +1,8 @@
+import math
 from bisect import bisect, insort
 from cocos.batch import BatchNode
+
+from cocos.euclid import Vector2, Matrix3
 
 class Picker(object):
     """ A picker to find your children quickly  """
@@ -38,7 +41,26 @@ class Picker(object):
         if xPos == 0: return set()
         yPos = bisect(self.ys, y)
         if yPos == 0: return set()
-        return self.xChildren[self.xs[xPos-1]].intersection(self.yChildren[self.ys[yPos-1]])
+
+        canditates = self.xChildren[self.xs[xPos-1]].intersection(self.yChildren[self.ys[yPos-1]])
+        return [child for child in canditates if self._point_inside_child(x, y, child)]
+
+    def _point_inside_child(self, x, y, child):
+        """
+        """
+        # import pdb; pdb.set_trace()
+        point = Vector2(x, y)
+        cpos = Vector2(child.x, child.y)
+
+        angle = math.radians(child.rotation)
+        local_point = (Matrix3.new_rotate(angle) * (point - cpos)) * child.scale
+        half_w, half_h = (child.width / 2) * child.scale, (child.height / 2) * child.scale
+
+        if abs(local_point.x) < half_w  and abs(local_point.y) < half_h:
+            return True
+        else:
+            return False
+
 
     def _delete1d(self, child, ps, pChildren, p1, p2):
         p1Pos = bisect(ps, p1) - 1
@@ -52,7 +74,7 @@ class Picker(object):
         if pChildren[ps[p2Pos]] == pChildren[ps[p2Pos - 1]]:
             del pChildren[ps[p2Pos]]
             ps.pop(p2Pos)
-        
+
     def delete(self, child, x1, y1, x2, y2):
         """ Delete all occurrences of child between x1, y1, x2, y1 """
         self._delete1d(child, self.xs, self.xChildren, x1, x2)
