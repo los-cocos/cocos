@@ -98,23 +98,26 @@ class HUDLayer(Layer):
         dispatcher = CCWidgetEventDispatcher()
         self.add( dispatcher )
 
+        group = CCButtonGroup()
+
+        button = CCRadioButton(normal_icon='resources/mode-camera-unselected.png',
+                                selected_icon = 'resources/mode-camera-selected.png',
+                                clicked_callback=self.callback_mode_camera)
+        button.position = (200,200)
+        group.add( button )
+        button.checked = True
+
+        button = CCRadioButton(normal_icon='resources/mode-edit-unselected.png',
+                                selected_icon = 'resources/mode-edit-selected.png',
+                                clicked_callback=self.callback_mode_edit)
+        button.position = (240,200)
+        group.add( button )
+        self.add( group )
+        dispatcher.add_widget( group )
+
         button = CCActionButton(normal_icon='resources/mode-stamp-unselected.png',
                                 selected_icon = 'resources/mode-stamp-selected.png',
                                 clicked_callback=self.callback_mode_stamp)
-        self.add( button )
-        button.position = (200,200)
-        dispatcher.add_widget( button )
-
-        button = CCActionButton(normal_icon='resources/mode-edit-unselected.png',
-                                selected_icon = 'resources/mode-edit-selected.png',
-                                clicked_callback=self.callback_mode_edit)
-        self.add( button )
-        button.position = (240,200)
-        dispatcher.add_widget( button )
-
-        button = CCActionButton(normal_icon='resources/mode-camera-unselected.png',
-                                selected_icon = 'resources/mode-camera-selected.png',
-                                clicked_callback=self.callback_mode_camera)
         self.add( button )
         button.position = (280,200)
         dispatcher.add_widget( button )

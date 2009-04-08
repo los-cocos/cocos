@@ -49,6 +49,7 @@ from director import *
 from cocosnode import *
 from actions import *
 from sprite import Sprite
+from widget_buttons import *
 
 __all__ = [ 'CCWidgetEventDispatcher' ]
 
@@ -70,7 +71,12 @@ class CCWidgetEventDispatcher(Layer):
         self._selected_widget = None
 
     def add_widget( self, widget):
-        self._widgets.append( widget )
+        if isinstance( widget, CCAbstractButton ):
+            self._widgets.append( widget )
+
+        for n in widget.children:
+            w = n[1]
+            self.add_widget( w )
 
     def remove_widget( self, widget ):
         self._widgets.remove( widget )

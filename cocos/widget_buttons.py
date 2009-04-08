@@ -32,7 +32,7 @@
 # ----------------------------------------------------------------------------
 
 
-"""A `WidgetContainer` that implements a container
+"""A CCWidgets that implements a container
 
 WidgetContainer
 ===============
@@ -58,7 +58,7 @@ from sprite import Sprite
 # widgets based on QT's hierachy
 #
 
-__all__ = [ 'CCAbstractButton', 'CCRadioButton','CCPushButton', 'CCCheckBox', 'CCActionButton' ]
+__all__ = [ 'CCWidget', 'CCButtonGroup', 'CCAbstractButton', 'CCRadioButton','CCPushButton', 'CCCheckBox', 'CCActionButton' ]
 
 def rect_contains_point( rect, point ):
     return (point[0] >= rect[0] and
@@ -69,13 +69,43 @@ def rect_contains_point( rect, point ):
 class CCWidget(CocosNode):
     pass
 
+class CCButtonGroup( CCWidget ):
+    def __init__(self, *args, **kw):
+        super(CCButtonGroup, self).__init__(*args, **kw)
+
+        self._exclusive = True
+
+    def on_mouse_click( self, widget ):
+        widget.checked = True
+        widget.on_toggle()
+        if self.exclusive:
+            for n in self.children:
+                w = n[1] 
+                if w is widget:
+                    continue
+                if w.checked:
+                    w.checked = False
+                    w.on_toggle()
+
+    def _get_exclusive( self ):
+        return self._exclusive
+    def _set_exclusive( self, ex ):
+        self._exclusive = ex
+    exclusive = property( _get_exclusive, _set_exclusive, doc='''
+    This property holds whether the button group is exclusive.
+If this property is true then only one button in the group can be checked at any given time. The user can click on any button to check it, and that button will replace the existing one as the checked button in the group.
+In an exclusive group, the user cannot uncheck the currently checked button by clicking on it; instead, another button in the group must be clicked to set the new checked button for that group.
+By default, this property is true.
+    ''')
+
+
 class CCAbstractButton(CCWidget):
     """XXX TODO
     """
 
     UNSELECTED, SELECTED, DISABLED = range(3)
 
-    def __init__(self, clicked_callback=None, pressed_callback=None, released_callback=None, toggled_callback=None, normal_icon=None, selected_icon=None, disabled_icon=None, parent=None, group=None):
+    def __init__(self, clicked_callback=None, pressed_callback=None, released_callback=None, toggled_callback=None, normal_icon=None, selected_icon=None, disabled_icon=None, group=None):
         super(CCAbstractButton, self).__init__()
 
         # signals
@@ -84,7 +114,7 @@ class CCAbstractButton(CCWidget):
         self.signal_released = released_callback
         self.signal_toggled = toggled_callback
 
-        self.checked = False
+        self._checked = False
 
         self.icon_size = (0,0)
         self._icons = [None, None, None]
@@ -92,7 +122,6 @@ class CCAbstractButton(CCWidget):
             self._load_icon( icon, idx )
 
         self._group = group
-        self._parent = parent
 
         self._state = CCAbstractButton.UNSELECTED
 
@@ -108,6 +137,15 @@ class CCAbstractButton(CCWidget):
     group = property(_get_group, _set_group, doc='''
     Returns the group that this button belongs to / sets a new group for the button.
     If the button is not a member of any group, this function returns None.
+    ''')
+
+    def _get_checked( self ):
+        return self._checked
+    def _set_checked( self, checked):
+        self._checked= checked
+    checked = property(_get_checked, lambda self,y:self._set_checked(y), doc='''
+    This property holds whether the button is checked.
+    Only checkable buttons can be checked. By default, the button is unchecked.
     ''')
     
     def _get_icon( self ):
@@ -148,8 +186,8 @@ class CCAbstractButton(CCWidget):
         pass
 
     def on_toggle( self ):
-        if self.signal_toggle:
-            self.signal_toggle( self )
+        if self.signal_toggled:
+            self.signal_toggled( self )
 
     def on_select( self ):
         self._state = self.SELECTED
@@ -173,7 +211,34 @@ class CCAbstractButton(CCWidget):
         pass
 
 class CCRadioButton(CCAbstractButton):
-    pass
+    def __init__( self, *args, **kw ):
+        super(CCRadioButton, self).__init__(*args, **kw)
+
+    
+    def _set_checked( self, v ):
+        print self, v
+        super(CCRadioButton,self)._set_checked(v)
+        if v:
+            self._state = self.SELECTED
+        else:
+            self._state = self.UNSELECTED
+
+    def on_unselect( self ):
+        if not self.checked:
+            self._state = self.UNSELECTED
+
+    def on_mouse_click( self ):
+        if not self.checked:
+            # parent must be a button group
+            self.parent.on_mouse_click( self )
+            super(CCRadioButton,self).on_mouse_click()
+
+    def draw( self ):
+        glPushMatrix()
+        self.transform()
+        self._icons[self._state].blit(0,0,0)
+        glPopMatrix()
+
 
 class CCPushButton( CCAbstractButton ):
     pass
