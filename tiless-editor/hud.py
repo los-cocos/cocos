@@ -78,49 +78,39 @@ class HUDLayer(Layer):
         self.add_mode_buttons()
 
     def add_mode_buttons( self ):
-        container = RadioWidgetContainer( width=200, spacing=4)
-
-        button = WidgetButton('resources/mode-edit-selected.png', unselected_image='resources/mode-edit-unselected.png', callback=self.callback_mode_edit)
-        container.add(button)
-        button = WidgetButton('resources/mode-camera-selected.png', unselected_image='resources/mode-camera-unselected.png', callback=self.callback_mode_camera)
-        container.add(button)
-        button = WidgetButton('resources/mode-stamp-selected.png', unselected_image='resources/mode-stamp-unselected.png', callback=self.callback_mode_stamp)
-        container.add(button)
-
-
-        container.align_horizontal('left')
-
-        bar = self.get("top-bar")
-        bar.add( container )
-
 
         # NEW BUTTONS
+        x, y = director.get_window_size()
+
         dispatcher = CCWidgetEventDispatcher()
         self.add( dispatcher )
 
         group = CCButtonGroup()
+        group.position = (4,y-32)
+        self.add( group, z=1 )
 
-        button = CCRadioButton(normal_icon='resources/mode-camera-unselected.png',
-                                selected_icon = 'resources/mode-camera-selected.png',
-                                clicked_callback=self.callback_mode_camera)
-        button.position = (200,200)
-        group.add( button )
-        button.checked = True
-
+        # edit
         button = CCRadioButton(normal_icon='resources/mode-edit-unselected.png',
                                 selected_icon = 'resources/mode-edit-selected.png',
                                 clicked_callback=self.callback_mode_edit)
-        button.position = (240,200)
+        button.position = (0,0)
         group.add( button )
-        self.add( group )
-        dispatcher.add_widget( group )
+        button.checked = True
 
-        button = CCActionButton(normal_icon='resources/mode-stamp-unselected.png',
+        # camera
+        button = CCRadioButton(normal_icon='resources/mode-camera-unselected.png',
+                                selected_icon = 'resources/mode-camera-selected.png',
+                                clicked_callback=self.callback_mode_camera)
+        button.position = (36,0)
+        group.add( button )
+
+        # stamp
+        button = CCRadioButton(normal_icon='resources/mode-stamp-unselected.png',
                                 selected_icon = 'resources/mode-stamp-selected.png',
                                 clicked_callback=self.callback_mode_stamp)
-        self.add( button )
-        button.position = (280,200)
-        dispatcher.add_widget( button )
+        group.add( button )
+        button.position = (36*2,0)
+        dispatcher.add_widget( group )
 
 
     def update(self):

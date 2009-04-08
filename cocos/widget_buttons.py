@@ -216,7 +216,6 @@ class CCRadioButton(CCAbstractButton):
 
     
     def _set_checked( self, v ):
-        print self, v
         super(CCRadioButton,self)._set_checked(v)
         if v:
             self._state = self.SELECTED
