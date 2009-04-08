@@ -4,6 +4,8 @@ from cocos.menu import Menu, MenuItem, BOTTOM, CENTER, RIGHT
 
 from cocos.widget_container import *
 from cocos.widget import *
+from cocos.widget_buttons import *
+from cocos.widget_event_dispatcher import *
 
 from cocos.director import director
 
@@ -90,6 +92,32 @@ class HUDLayer(Layer):
 
         bar = self.get("top-bar")
         bar.add( container )
+
+
+        # NEW BUTTONS
+        dispatcher = CCWidgetEventDispatcher()
+        self.add( dispatcher )
+
+        button = CCActionButton(normal_icon='resources/mode-stamp-unselected.png',
+                                selected_icon = 'resources/mode-stamp-selected.png',
+                                clicked_callback=self.callback_mode_stamp)
+        self.add( button )
+        button.position = (200,200)
+        dispatcher.add_widget( button )
+
+        button = CCActionButton(normal_icon='resources/mode-edit-unselected.png',
+                                selected_icon = 'resources/mode-edit-selected.png',
+                                clicked_callback=self.callback_mode_edit)
+        self.add( button )
+        button.position = (240,200)
+        dispatcher.add_widget( button )
+
+        button = CCActionButton(normal_icon='resources/mode-camera-unselected.png',
+                                selected_icon = 'resources/mode-camera-selected.png',
+                                clicked_callback=self.callback_mode_camera)
+        self.add( button )
+        button.position = (280,200)
+        dispatcher.add_widget( button )
 
 
     def update(self):
