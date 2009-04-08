@@ -159,11 +159,6 @@ class WidgetContainer(Layer):
 
         return False
 
-    def _unselect_item( self ):
-        if self._selected_item != -1:
-            self.children[ self._selected_item][1].on_unselect()
-            self._selected_item = -1
-
     def _select_item( self, new_idx ):
         if self._selected_item == new_idx:
             return
@@ -178,8 +173,24 @@ class WidgetContainer(Layer):
         self.children[ self._selected_item ][1].on_activate()
 
 
-class RadioWidgetContainer(Layer):
+class RadioWidgetContainer(WidgetContainer):
     """XXX TODO
     """
-    def __init__(self, selected=1, *args, **kw ):
+    def __init__(self, selected_item=0, *args, **kw ):
         super(RadioWidgetContainer, self).__init__( *args, **kw)
+        self._radio_selected_item = selected_item
+
+    def _unselect_item( self ):
+        if self._selected_item != -1:
+            self.children[ self._selected_item][1].on_unselect()
+            self._selected_item = -1
+
+    def _select_item( self, new_idx ):
+        if self._selected_item == new_idx:
+            return
+
+        if self._selected_item != -1:
+            self.children[ self._selected_item][1].on_unselect()
+
+        self._selected_item = new_idx
+        self.children[ self._selected_item][1].on_select()

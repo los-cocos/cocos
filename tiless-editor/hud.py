@@ -76,7 +76,7 @@ class HUDLayer(Layer):
         self.add_mode_buttons()
 
     def add_mode_buttons( self ):
-        container = WidgetContainer( width=200, spacing=4)
+        container = RadioWidgetContainer( width=200, spacing=4)
 
         button = WidgetButton('resources/mode-edit-selected.png', unselected_image='resources/mode-edit-unselected.png', callback=self.callback_mode_edit)
         container.add(button)
