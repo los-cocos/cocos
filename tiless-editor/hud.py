@@ -3,7 +3,7 @@ from cocos.text import Label
 from cocos.menu import Menu, MenuItem, BOTTOM, CENTER, RIGHT
 
 from cocos.widget_buttons import *
-from cocos.widget_event_dispatcher import *
+from cocos.event_dispatcher import *
 
 from cocos.director import director
 
@@ -80,7 +80,7 @@ class HUDLayer(Layer):
         # NEW BUTTONS
         x, y = director.get_window_size()
 
-        dispatcher = WidgetEventDispatcher()
+        dispatcher = EventDispatcher()
         self.add( dispatcher )
 
         group = WButtonGroup()

@@ -31,8 +31,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 """
-WidgetEventDispatcher
-=====================
+EventDispatcher
+===============
 
 """
 
@@ -51,7 +51,7 @@ from actions import *
 from sprite import Sprite
 from widget_buttons import *
 
-__all__ = [ 'WidgetEventDispatcher' ]
+__all__ = [ 'EventDispatcher' ]
 
 def rect_contains_point( rect, point ):
     return (point[0] >= rect[0] and
@@ -59,14 +59,14 @@ def rect_contains_point( rect, point ):
             point[1] >= rect[1] and
             point[1] < rect[1] + rect[3] )
 
-class WidgetEventDispatcher(Layer):
+class EventDispatcher(Layer):
     """XXX TODO
     """
 
     is_event_handler = True #: Receives pyglet events
 
     def __init__(self):
-        super(WidgetEventDispatcher, self).__init__()
+        super(EventDispatcher, self).__init__()
         self._widgets = []
         self._selected_widget = None
 
