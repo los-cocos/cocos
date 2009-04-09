@@ -88,27 +88,41 @@ class HUDLayer(Layer):
         self.add( group, z=1 )
 
         # edit
-        button = WRadioButton(normal_icon='resources/mode-edit-unselected.png',
+        button = WToolButton(normal_icon='resources/mode-edit-unselected.png',
                                 selected_icon = 'resources/mode-edit-selected.png',
                                 clicked_callback=self.callback_mode_edit)
         button.position = (0,0)
+        button.checkable = True
         group.add( button )
         button.checked = True
 
         # camera
-        button = WRadioButton(normal_icon='resources/mode-camera-unselected.png',
+        button = WToolButton(normal_icon='resources/mode-camera-unselected.png',
                                 selected_icon = 'resources/mode-camera-selected.png',
                                 clicked_callback=self.callback_mode_camera)
         button.position = (36,0)
+        button.checkable = True
         group.add( button )
 
         # stamp
-        button = WRadioButton(normal_icon='resources/mode-stamp-unselected.png',
+        button = WToolButton(normal_icon='resources/mode-stamp-unselected.png',
                                 selected_icon = 'resources/mode-stamp-selected.png',
                                 clicked_callback=self.callback_mode_stamp)
-        group.add( button )
         button.position = (36*2,0)
-        dispatcher.add_widget( group )
+        button.checkable = True
+        group.add( button )
+
+
+        # grid
+        button = WToolButton(normal_icon='resources/grid-button-unselected.png',
+                                selected_icon = 'resources/grid-button-selected.png',
+                                clicked_callback=self.callback_grid_toggle)
+        button.position = (36*3,0)
+        button.checkable = True
+
+        dispatcher.add( button )
+        dispatcher.add( group )
+        self.add( dispatcher )
 
 
     def update(self):
@@ -138,7 +152,6 @@ class HUDLayer(Layer):
         self.remove(self.layerMenu)
         self.update()
 
-
 #
 # Callbacks
 #
@@ -150,3 +163,7 @@ class HUDLayer(Layer):
 
     def callback_mode_stamp( self, sender ):
         self.editor.switch_mode('stamp')
+
+    def callback_grid_toggle( self, sender ):
+        print 'grid pressed'
+        self.editor.grid_clicked()

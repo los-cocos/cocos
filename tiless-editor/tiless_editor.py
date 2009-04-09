@@ -264,13 +264,17 @@ class TilessEditor(Layer):
                 self.current_layer.add(self.floating_sprite)
 
         if k == key.G and (m & pyglet.window.key.MOD_ACCEL):
-            if self.sprite_grid.enabled:
-                self.sprite_grid.disable()
-            elif self.floating_sprite:
-                self.sprite_grid.enable(self.floating_sprite)
-            else:
-                self.sprite_grid.disable()
+            self.grid_clicked()
             return True
+
+    # keyboard or button actions
+    def grid_clicked( self ):
+        if self.sprite_grid.enabled:
+            self.sprite_grid.disable()
+        elif self.floating_sprite:
+            self.sprite_grid.enable(self.floating_sprite)
+        else:
+            self.sprite_grid.disable()
 
     def on_enter(self):
         self.propagate_event('enter')
