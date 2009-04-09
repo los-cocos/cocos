@@ -81,48 +81,49 @@ class HUDLayer(Layer):
         x, y = director.get_window_size()
 
         dispatcher = EventDispatcher()
-        self.add( dispatcher )
 
-        group = WButtonGroup()
-        group.position = (4,y-32)
-        self.add( group, z=1 )
+        main_group = WButtonGroup()
+        main_group.exclusive = False
+        main_group.layout = WHBoxLayout( spacing=10)
+        main_group.position = (4,y-32)
+
+        mode_group = WButtonGroup()
+        mode_group.layout = WHBoxLayout( spacing=2)
 
         # edit
         button = WToolButton(normal_icon='resources/mode-edit-unselected.png',
                                 selected_icon = 'resources/mode-edit-selected.png',
                                 clicked_callback=self.callback_mode_edit)
-        button.position = (0,0)
         button.checkable = True
-        group.add( button )
+        mode_group.add( button )
         button.checked = True
 
         # camera
         button = WToolButton(normal_icon='resources/mode-camera-unselected.png',
                                 selected_icon = 'resources/mode-camera-selected.png',
                                 clicked_callback=self.callback_mode_camera)
-        button.position = (36,0)
         button.checkable = True
-        group.add( button )
+        mode_group.add( button )
 
         # stamp
         button = WToolButton(normal_icon='resources/mode-stamp-unselected.png',
                                 selected_icon = 'resources/mode-stamp-selected.png',
                                 clicked_callback=self.callback_mode_stamp)
-        button.position = (36*2,0)
         button.checkable = True
-        group.add( button )
+        mode_group.add( button )
 
 
         # grid
-        button = WToolButton(normal_icon='resources/grid-button-unselected.png',
+        grid_button = WToolButton(normal_icon='resources/grid-button-unselected.png',
                                 selected_icon = 'resources/grid-button-selected.png',
                                 clicked_callback=self.callback_grid_toggle)
-        button.position = (36*3,0)
-        button.checkable = True
+        grid_button.checkable = True
 
-        dispatcher.add( button )
-        dispatcher.add( group )
-        self.add( dispatcher )
+        main_group.add( mode_group )
+        main_group.add( grid_button )
+
+        dispatcher.add( main_group )
+        self.add( dispatcher, z=1 )
 
 
     def update(self):

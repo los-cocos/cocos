@@ -60,7 +60,9 @@ from sprite import Sprite
 # widgets based on QT's hierachy
 #
 
-__all__ = [ 'WObject', 'WButtonGroup', 'WAbstractButton', 'WRadioButton','WPushButton', 'WCheckBox', 'WToolButton' ]
+__all__ = [ 'WObject', 'WButtonGroup', 'WAbstractButton', 'WRadioButton','WPushButton', 'WCheckBox', 'WToolButton',
+            'WHBoxLayout', 'WVBoxLayout',
+]
 
 def rect_contains_point( rect, point ):
     return (point[0] >= rect[0] and
@@ -76,11 +78,12 @@ class WObject( CocosNode ):
         self._width = 0
         self._height = 0
 
+        self._layout = None
+
     def on_mouse_press( self, x, y, buttons, modifiers ):
         (x,y) = director.get_virtual_coordinates(x,y)
 
-        for child in self.children:
-            widget = child[1]
+        for z,widget in self.children:
             (posx, posy) = widget.absolute_position()
             rect = [posx, posy, widget.width, widget.height] 
             if rect_contains_point( rect, (x,y) ):
@@ -109,8 +112,7 @@ class WObject( CocosNode ):
 
         self._unselect_widget()
 
-        for child in self.children:
-            widget = child[1]
+        for z,widget in self.children:
             (posx, posy) = widget.absolute_position()
             rect = [posx, posy, widget.width, widget.height] 
             if rect_contains_point( rect, (x,y) ):
@@ -160,6 +162,18 @@ class WObject( CocosNode ):
             self._selected_widget.on_unselect()
 
 
+    def add(self, child, *args, **kw ):
+        super( WObject, self).add( child, *args, **kw )
+        if self.layout:
+            self.layout.align_widget( child )
+
+    # layout
+    def _get_layout( self ):
+        return self._layout
+    def _set_layout( self, l ):
+        self._layout = l
+    layout = property(lambda self:self._get_layout(), lambda self,y:self._set_layout(y), doc='')
+
     # width, height and rect:w
     def _get_width( self ):
         return self._width
@@ -183,8 +197,7 @@ class WButtonGroup( WObject ):
             widget.on_mouse_click(x,y, buttons, modifiers)
 
         if self.exclusive:
-            for child in self.children:
-                w = child[1] 
+            for z,w in self.children:
                 if w is widget:
                     continue
                 if w.checked:
@@ -196,9 +209,18 @@ class WButtonGroup( WObject ):
         pass
 
     def _get_width( self ):
-        return  32 * 3
+        w = 0
+        for z,widget in self.children:
+            x,y = widget.position
+            w = max(w,x + widget.width)
+        return w
     def _get_height( self ):
-        return 32
+        h = 0
+        for z,widget in self.children:
+            x,y = widget.position
+            h = max(h,y + widget.height )
+        return h
+
     def _get_exclusive( self ):
         return self._exclusive
     def _set_exclusive( self, ex ):
@@ -336,3 +358,69 @@ class WToolButton( WAbstractButton ):
         self.transform()
         self._icons[self._state].blit(0,0,0)
         glPopMatrix()
+
+
+#
+# Layouts
+#
+class WLayout( object ):
+    def align_widget( self, widget ):
+        pass
+
+LeftToRight = TopToBottom = 0
+RightToLeft = BottomToTop = 1
+
+class WBoxLayout( WLayout ):
+    def __init__( self, spacing=4, direction = LeftToRight):
+        self._spacing = spacing
+        self._direction = direction 
+
+    def _get_spacing( self ):
+        return self._spacing
+    def _set_spacing( self, spacing ):
+        self._spacing = spacing
+    spacing = property( lambda self:self._get_spacing(), lambda self,y:self._set_spacing(y), doc='XXX: spacing property' )
+
+    def _get_direction( self ):
+        return self._direction
+    def _set_direction( self, direction):
+        self._direction = direction 
+    direction = property( lambda self:self._get_direction(), lambda self,y:self._set_direction(y), doc='XXX: direction property' )
+
+
+class WHBoxLayout( WBoxLayout ):
+    def __init__(self, *args, **kw ):
+        super(WHBoxLayout, self).__init__( *args, **kw)
+        self.direction = LeftToRight
+
+        self._last_pos = 0
+
+    def align_widget( self, widget ):
+
+        x,y = widget.position
+        if self.direction == LeftToRight:
+            x += self._last_pos
+            widget.position = (x,y)
+
+            self._last_pos += self.spacing + widget.width
+        else:
+            raise Exception("xxx: implement me")
+
+
+class WVBoxLayout( WBoxLayout ):
+    def __init__(self, *args, **kw ):
+        super(WHBoxLayout, self).__init__( *args, **kw)
+        self.direction = TopToBottom
+
+        self._last_pos = 0
+
+    def align_widget( self, widget ):
+
+        x,y = widget.position
+        if self.direction == TopToBottom:
+            y += self._last_pos
+            widget.position = (x,y)
+
+            self._last_pos += self.spacing + widget.width
+        else:
+            raise Exception("xxx: implement me")
