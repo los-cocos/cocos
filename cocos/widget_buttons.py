@@ -62,6 +62,7 @@ from sprite import Sprite
 
 __all__ = [ 'WObject', 'WButtonGroup', 'WAbstractButton', 'WRadioButton','WPushButton', 'WCheckBox', 'WToolButton',
             'WHBoxLayout', 'WVBoxLayout',
+            'WToolbar',
 ]
 
 def rect_contains_point( rect, point ):
@@ -81,15 +82,16 @@ class WObject( CocosNode ):
         self._layout = None
 
     def on_mouse_press( self, x, y, buttons, modifiers ):
-        (x,y) = director.get_virtual_coordinates(x,y)
+#        (x,y) = director.get_virtual_coordinates(x,y)
 
         for z,widget in self.children:
-            (posx, posy) = widget.absolute_position()
-            rect = [posx, posy, widget.width, widget.height] 
-            if rect_contains_point( rect, (x,y) ):
-                self._select_widget( widget )
-                widget.on_mouse_press(x,y, buttons, modifiers)
-                return True
+            if isinstance(widget,WObject):
+                (posx, posy) = widget.absolute_position()
+                rect = [posx, posy, widget.width, widget.height] 
+                if rect_contains_point( rect, (x,y) ):
+                    self._select_widget( widget )
+                    widget.on_mouse_press(x,y, buttons, modifiers)
+                    return True
 
         self._unselect_widget()
         return False
@@ -98,7 +100,7 @@ class WObject( CocosNode ):
         widget.on_mouse_click( x, y, buttons, modifiers )
 
     def on_mouse_release( self, x, y, buttons, modifiers ):
-        (x,y) = director.get_virtual_coordinates(x,y)
+#        (x,y) = director.get_virtual_coordinates(x,y)
 
         node = self._selected_widget
         if node:
@@ -113,16 +115,17 @@ class WObject( CocosNode ):
         self._unselect_widget()
 
         for z,widget in self.children:
-            (posx, posy) = widget.absolute_position()
-            rect = [posx, posy, widget.width, widget.height] 
-            if rect_contains_point( rect, (x,y) ):
-                widget.on_mouse_release(x,y, buttons, modifiers)
-                return True
+            if isinstance(widget,WObject):
+                (posx, posy) = widget.absolute_position()
+                rect = [posx, posy, widget.width, widget.height] 
+                if rect_contains_point( rect, (x,y) ):
+                    widget.on_mouse_release(x,y, buttons, modifiers)
+                    return True
 
         return False
 
     def on_mouse_drag( self, x, y, dx, dy, buttons, modifiers ):
-        (x,y) = director.get_virtual_coordinates(x,y)
+#        (x,y) = director.get_virtual_coordinates(x,y)
 
         # drag within the selected widget
 
@@ -187,9 +190,9 @@ class WObject( CocosNode ):
         return [self.x, self.y, self.width, self.height]
 
 class WButtonGroup( WObject ):
-    def __init__(self, *args, **kw):
+    def __init__(self, exclusive=True, *args, **kw):
         super(WButtonGroup, self).__init__(*args, **kw)
-        self._exclusive = True
+        self._exclusive = exclusive 
 
     def on_mouse_click_proxy( self, widget, x, y, buttons, modifiers):
 
@@ -198,11 +201,12 @@ class WButtonGroup( WObject ):
 
         if self.exclusive:
             for z,w in self.children:
-                if w is widget:
-                    continue
-                if w.checked:
-                    w.checked = False
-                    w.on_toggle()
+                if isinstance(w,WObject):
+                    if w is widget:
+                        continue
+                    if w.checked:
+                        w.checked = False
+                        w.on_toggle()
 
     def on_mouse_click( self, x, y, buttons, modifiers ):
         # ignore
@@ -231,6 +235,34 @@ If this property is true then only one button in the group can be checked at any
 In an exclusive group, the user cannot uncheck the currently checked button by clicking on it; instead, another button in the group must be clicked to set the new checked button for that group.
 By default, this property is true.
     ''')
+
+
+class WToolbar( WButtonGroup ):
+
+    BAR_HEIGHT = 36
+    def __init__(self, exclusive=False, *args, **kw ):
+
+        super( WToolbar, self ).__init__(exclusive=False, *args, **kw)
+
+        width,height = director.window.width, director.window.height
+
+        self._backbar = ColorLayer( 64,64,64,192, width, self.BAR_HEIGHT)
+        self._backbar.position = (0,-2)
+
+        self.position = (0,height-(self.BAR_HEIGHT-2))
+        self.add( self._backbar, z=-1 )
+
+    def on_enter(self):
+        super(WToolbar,self).on_enter()
+        director.push_handlers(self.on_resize)
+
+    def on_resize( self, width, height ):
+        self.position = (0,height-(self.BAR_HEIGHT-2))
+        print self.position
+
+        self._backbar.width = width
+        print self._backbar.width
+        print self._backbar.height
 
 
 class WAbstractButton(WObject):

@@ -74,14 +74,16 @@ class ColorLayer(Layer):
         self._rgb = r,g,b
         self._opacity = a
 
-        self.width = width
-        self.height = height
+        self._width = width
+        self._height = height
         
         w,h = director.get_window_size()
-        if not self.width:
-            self.width = w
-        if not self.height:
-            self.height = h
+        if not self._width:
+            self._width = w
+        if not self._height:
+            self._height = h
+
+        self._vertex_list = None
 
     def on_enter(self):
         super(ColorLayer, self).on_enter()
@@ -114,6 +116,24 @@ class ColorLayer(Layer):
         self._batch.draw()
         glPopAttrib()
         glPopMatrix()
+
+    def _get_width( self ):
+        return self._width
+    def _set_width( self, w ):
+        self._width = w
+        if self._vertex_list:
+            self._vertex_list.vertices[3*2+0] = w
+            self._vertex_list.vertices[2*2+0] = w
+    width = property(lambda self: self._get_width(), lambda self,w: self._set_width(w) )
+
+    def _get_height( self ):
+        return self._height
+    def _set_height( self, h ):
+        self._height = h
+        if self._vertex_list:
+            self._vertex_list.vertices[1*2+1] = h
+            self._vertex_list.vertices[2*2+1] = h
+    height = property(lambda self: self._get_height(), lambda self,h: self._set_height(h) )
 
     def _update_color(self):
         r, g, b = self._rgb

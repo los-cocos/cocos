@@ -64,14 +64,9 @@ class HUDLayer(Layer):
         self.editor = editor
         self.showingLayerMenu = False
 
-        translucent = ColorLayer( 64,64,64,192, x, TOP_BAR_HEIGHT)
-        translucent.position = (0,y-TOP_BAR_HEIGHT)
-        self.add( translucent, name="top-bar" )
-
-        translucent = ColorLayer( 64,64,64,192, x, BOTTOM_BAR_HEIGHT)
-        translucent.position = (0,0)
-        self.add( translucent, name="bottom-bar" )
-
+#        translucent = ColorLayer( 64,64,64,192, x, BOTTOM_BAR_HEIGHT)
+#        translucent.position = (0,0)
+#        self.add( translucent, name="bottom-bar" )
 
         self.add_mode_buttons()
 
@@ -82,10 +77,8 @@ class HUDLayer(Layer):
 
         dispatcher = EventDispatcher()
 
-        main_group = WButtonGroup()
-        main_group.exclusive = False
-        main_group.layout = WHBoxLayout( spacing=10)
-        main_group.position = (4,y-32)
+        toolbar = WToolbar()
+        toolbar.layout = WHBoxLayout( spacing=10)
 
         mode_group = WButtonGroup()
         mode_group.layout = WHBoxLayout( spacing=2)
@@ -119,10 +112,10 @@ class HUDLayer(Layer):
                                 clicked_callback=self.callback_grid_toggle)
         grid_button.checkable = True
 
-        main_group.add( mode_group )
-        main_group.add( grid_button )
+        toolbar.add( mode_group )
+        toolbar.add( grid_button )
 
-        dispatcher.add( main_group )
+        dispatcher.add( toolbar )
         self.add( dispatcher, z=1 )
 
 
