@@ -430,7 +430,7 @@ if __name__ == '__main__':
     if options.fullscreen:
         director.init(fullscreen=options.fullscreen)
     else:
-        director.init(width=int(options.width), height=int(options.height), do_not_scale=True)
+        director.init(width=int(options.width), height=int(options.height), do_not_scale=True, resizable=True)
 
     editor = TilessEditor(options.filename, options.tilesdir)
     editor_scene =  Scene(editor)

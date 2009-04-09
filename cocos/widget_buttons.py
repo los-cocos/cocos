@@ -193,6 +193,7 @@ class WButtonGroup( WObject ):
     def __init__(self, exclusive=True, *args, **kw):
         super(WButtonGroup, self).__init__(*args, **kw)
         self._exclusive = exclusive 
+        self._dirty = False
 
     def on_mouse_click_proxy( self, widget, x, y, buttons, modifiers):
 
@@ -208,22 +209,36 @@ class WButtonGroup( WObject ):
                         w.checked = False
                         w.on_toggle()
 
+    def add( self, *args, **kw ):
+        self._dirty = True
+        super( WButtonGroup, self).add( *args, **kw )
+
     def on_mouse_click( self, x, y, buttons, modifiers ):
         # ignore
         pass
 
     def _get_width( self ):
-        w = 0
-        for z,widget in self.children:
-            x,y = widget.position
-            w = max(w,x + widget.width)
-        return w
+        if self._dirty:
+            h = w = 0
+            for z,widget in self.children:
+                x,y = widget.position
+                w = max(w,x + widget.width)
+                h = max(h,y + widget.height )
+            self._dirty = False
+            self._width = w
+            self._height = h
+        return self._width
     def _get_height( self ):
-        h = 0
-        for z,widget in self.children:
-            x,y = widget.position
-            h = max(h,y + widget.height )
-        return h
+        if self._dirty:
+            h = w = 0
+            for z,widget in self.children:
+                x,y = widget.position
+                w = max(w,x + widget.width)
+                h = max(h,y + widget.height )
+            self._dirty = False
+            self._width = w
+            self._height = h
+        return self._height
 
     def _get_exclusive( self ):
         return self._exclusive
