@@ -2,8 +2,6 @@ from cocos.layer import Layer, ColorLayer
 from cocos.text import Label
 from cocos.menu import Menu, MenuItem, BOTTOM, CENTER, RIGHT
 
-from cocos.widget_container import *
-from cocos.widget import *
 from cocos.widget_buttons import *
 from cocos.widget_event_dispatcher import *
 
@@ -82,15 +80,15 @@ class HUDLayer(Layer):
         # NEW BUTTONS
         x, y = director.get_window_size()
 
-        dispatcher = CCWidgetEventDispatcher()
+        dispatcher = WidgetEventDispatcher()
         self.add( dispatcher )
 
-        group = CCButtonGroup()
+        group = WButtonGroup()
         group.position = (4,y-32)
         self.add( group, z=1 )
 
         # edit
-        button = CCRadioButton(normal_icon='resources/mode-edit-unselected.png',
+        button = WRadioButton(normal_icon='resources/mode-edit-unselected.png',
                                 selected_icon = 'resources/mode-edit-selected.png',
                                 clicked_callback=self.callback_mode_edit)
         button.position = (0,0)
@@ -98,14 +96,14 @@ class HUDLayer(Layer):
         button.checked = True
 
         # camera
-        button = CCRadioButton(normal_icon='resources/mode-camera-unselected.png',
+        button = WRadioButton(normal_icon='resources/mode-camera-unselected.png',
                                 selected_icon = 'resources/mode-camera-selected.png',
                                 clicked_callback=self.callback_mode_camera)
         button.position = (36,0)
         group.add( button )
 
         # stamp
-        button = CCRadioButton(normal_icon='resources/mode-stamp-unselected.png',
+        button = WRadioButton(normal_icon='resources/mode-stamp-unselected.png',
                                 selected_icon = 'resources/mode-stamp-selected.png',
                                 clicked_callback=self.callback_mode_stamp)
         group.add( button )

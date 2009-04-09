@@ -51,7 +51,7 @@ from actions import *
 from sprite import Sprite
 from widget_buttons import *
 
-__all__ = [ 'CCWidgetEventDispatcher' ]
+__all__ = [ 'WidgetEventDispatcher' ]
 
 def rect_contains_point( rect, point ):
     return (point[0] >= rect[0] and
@@ -59,19 +59,21 @@ def rect_contains_point( rect, point ):
             point[1] >= rect[1] and
             point[1] < rect[1] + rect[3] )
 
-class CCWidgetEventDispatcher(Layer):
+class WidgetEventDispatcher(Layer):
     """XXX TODO
     """
 
     is_event_handler = True #: Receives pyglet events
 
     def __init__(self):
-        super(CCWidgetEventDispatcher, self).__init__()
+        super(WidgetEventDispatcher, self).__init__()
         self._widgets = []
         self._selected_widget = None
 
     def add_widget( self, widget):
-        if isinstance( widget, CCAbstractButton ):
+
+        # XXX: Don't test subclass. Test if it implements a protocol/interface.
+        if isinstance( widget, WAbstractButton ):
             self._widgets.append( widget )
 
         for n in widget.children:

@@ -32,10 +32,12 @@
 # ----------------------------------------------------------------------------
 
 
-"""A CCWidgets that implements a container
+"""Widgets
 
-WidgetContainer
-===============
+Widgets
+=======
+
+All Widgets objects starts with a capital W.
 
 XXX TODO
 """
@@ -58,7 +60,7 @@ from sprite import Sprite
 # widgets based on QT's hierachy
 #
 
-__all__ = [ 'CCWidget', 'CCButtonGroup', 'CCAbstractButton', 'CCRadioButton','CCPushButton', 'CCCheckBox', 'CCActionButton' ]
+__all__ = [ 'WObject', 'WButtonGroup', 'WAbstractButton', 'WRadioButton','WPushButton', 'WCheckBox' ]
 
 def rect_contains_point( rect, point ):
     return (point[0] >= rect[0] and
@@ -66,12 +68,12 @@ def rect_contains_point( rect, point ):
             point[1] >= rect[1] and
             point[1] < rect[1] + rect[3] )
 
-class CCWidget(CocosNode):
+class WObject(CocosNode):
     pass
 
-class CCButtonGroup( CCWidget ):
+class WButtonGroup( WObject ):
     def __init__(self, *args, **kw):
-        super(CCButtonGroup, self).__init__(*args, **kw)
+        super(WButtonGroup, self).__init__(*args, **kw)
 
         self._exclusive = True
 
@@ -99,14 +101,14 @@ By default, this property is true.
     ''')
 
 
-class CCAbstractButton(CCWidget):
+class WAbstractButton(WObject):
     """XXX TODO
     """
 
     UNSELECTED, SELECTED, DISABLED = range(3)
 
     def __init__(self, clicked_callback=None, pressed_callback=None, released_callback=None, toggled_callback=None, normal_icon=None, selected_icon=None, disabled_icon=None, group=None):
-        super(CCAbstractButton, self).__init__()
+        super(WAbstractButton, self).__init__()
 
         # signals
         self.signal_clicked = clicked_callback
@@ -123,7 +125,7 @@ class CCAbstractButton(CCWidget):
 
         self._group = group
 
-        self._state = CCAbstractButton.UNSELECTED
+        self._state = WAbstractButton.UNSELECTED
 
     def hitButton( self, rect ):
         '''Returns true if pos is inside the clickable button rectangle; otherwise returns false.
@@ -210,13 +212,13 @@ class CCAbstractButton(CCWidget):
         # all icons sizes must be equal
         pass
 
-class CCRadioButton(CCAbstractButton):
+class WRadioButton(WAbstractButton):
     def __init__( self, *args, **kw ):
-        super(CCRadioButton, self).__init__(*args, **kw)
+        super(WRadioButton, self).__init__(*args, **kw)
 
     
     def _set_checked( self, v ):
-        super(CCRadioButton,self)._set_checked(v)
+        super(WRadioButton,self)._set_checked(v)
         if v:
             self._state = self.SELECTED
         else:
@@ -230,7 +232,7 @@ class CCRadioButton(CCAbstractButton):
         if not self.checked:
             # parent must be a button group
             self.parent.on_mouse_click( self )
-            super(CCRadioButton,self).on_mouse_click()
+            super(WRadioButton,self).on_mouse_click()
 
     def draw( self ):
         glPushMatrix()
@@ -239,18 +241,8 @@ class CCRadioButton(CCAbstractButton):
         glPopMatrix()
 
 
-class CCPushButton( CCAbstractButton ):
+class WPushButton( WAbstractButton ):
     pass
 
-class CCCheckBox( CCAbstractButton ):
+class WCheckBox( WAbstractButton ):
     pass
-
-class CCActionButton( CCAbstractButton ):
-    def __init__( self, *args, **kw ):
-        super(CCActionButton, self).__init__(*args, **kw)
-
-    def draw( self ):
-        glPushMatrix()
-        self.transform()
-        self._icons[self._state].blit(0,0,0)
-        glPopMatrix()
