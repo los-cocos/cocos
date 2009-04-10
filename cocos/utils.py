@@ -45,6 +45,7 @@ __docformat__ = 'restructuredtext'
 __all__ = ['SequenceScene', 'FileIn', 'FileOut']
 
 from StringIO import StringIO
+from pyglet.event import EventDispatcher
 
 from cocos.layer import *
 from cocos.scene import Scene
@@ -71,22 +72,19 @@ class SequenceScene(Scene):
         self.p += 1
 
 
-class FileIO(StringIO):
+class FileIO(StringIO, EventDispatcher):
     """
     A fake file object. If asked for a file number, returns one set on
     instance creation
     """
 
     def __init__(self, buffer, fn=-1):
-        StringIO.__init__(self)
+        super(FileIO, self).__init__()
         self.buffer = buffer
         self.fn = fn
 
     def fileno(self):
         return self.fn
-
-    def dispatch_event(self, event_type, *args):
-        self.buffer.dispatch_event(event_type, *args)
 
 
 class FileIn(FileIO):
@@ -98,8 +96,11 @@ class FileIn(FileIO):
         return self.readline()
 
     def readline(self, length=None):
-        self.buffer.dispatch_event('on_get_command')
+        import pdb; pdb.set_trace()
+        self.dispatch_event('on_get_command')
         return ''
+
+FileIn.register_event_type('on_get_command')
 
 
 class FileOut(FileIO):

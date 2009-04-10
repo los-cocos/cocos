@@ -3,7 +3,6 @@ __all__ = ['InterpreterLayer']
 
 import pyglet
 
-from pyglet.event import EventDispatcher
 from pyglet.text import caret, document, layout
 from pyglet.window import key
 
@@ -12,8 +11,10 @@ from cocos.layer.base_layers import Layer
 from cocos.layer.util_layers import ColorLayer
 from cocos.interpreter import Interpreter
 
+LINE_HEIGHT = 20
 
-class InterpreterLayer(Layer, EventDispatcher):
+
+class InterpreterLayer(Layer):
     name = "py"
 
     prompt = ">>> "             #: first line prompt
@@ -104,6 +105,8 @@ class InterpreterLayer(Layer, EventDispatcher):
             'color': self.cfg['code.color'],
         })
         self.layout.end_update()
+        lines = len(text.split())
+        self._scroll(lines)
 
     #################
     # Layer API
@@ -128,6 +131,9 @@ class InterpreterLayer(Layer, EventDispatcher):
             self.write(self.prompt_more)
         self.prompt_end = len(self.document.text)
         self.caret.position = len(self.document.text)
+
+    def _scroll(self, amount):
+        self.layout.view_y -= amount * LINE_HEIGHT
 
     #################
     # Layer Events
@@ -162,7 +168,7 @@ class InterpreterLayer(Layer, EventDispatcher):
     #################
     def on_text(self, text):
         if text == '\r':
-            self.dispatch_event('on_command', self.get_command())
+            self.on_command(self.get_command())
         else:
             self.caret.on_text(text)
 
@@ -178,9 +184,9 @@ class InterpreterLayer(Layer, EventDispatcher):
         elif motion == key.MOTION_DELETE:
             self.caret.on_text_motion(motion)
         elif motion == key.MOTION_UP:
-            self.interpreter.dispatch_event('on_history_prev', self.get_command())
+            self.interpreter.on_history_prev(self.get_command())
         elif motion == key.MOTION_DOWN:
-            self.interpreter.dispatch_event('on_history_next', self.get_command())
+            self.interpreter.on_history_next(self.get_command())
         elif motion == key.MOTION_BEGINNING_OF_LINE:
             self.caret.position = self.prompt_start
         elif motion == key.MOTION_END_OF_LINE:
@@ -193,7 +199,7 @@ class InterpreterLayer(Layer, EventDispatcher):
     # Mouse Events
     #################
     def on_mouse_scroll(self, x, y, dx, dy):
-        self.layout.view_y += dy * 16
+        self._scroll(dy)
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.caret.on_mouse_press(x, y, button, modifiers)
@@ -225,11 +231,11 @@ class InterpreterLayer(Layer, EventDispatcher):
             self.document.delete_text(self.prompt_end, len(self.document.text))
             self.caret.position = self.prompt_end
         elif symbol == key.TAB:
-            self.dispatch_event('on_completion', self.get_command())
+            self.on_completion(self.get_command())
         elif symbol == key.PAGEUP:
-            self.layout.view_y += 16
+            self._scroll(-1)
         elif symbol == key.PAGEDOWN:
-            self.layout.view_y -= 16
+            self._scroll(1)
         else:
             return pyglet.event.EVENT_UNHANDLED
         return pyglet.event.EVENT_HANDLED
@@ -238,8 +244,11 @@ class InterpreterLayer(Layer, EventDispatcher):
     # Command Events
     #################
     def on_command(self, command):
+        # clear autocompletion results
+        self.document.delete_text(self.caret.position, len(self.document.text))
         self.write('\n')
-        self.interpreter.dispatch_event('on_command', command)
+        # execute command
+        self.interpreter.on_command(command)
 
     def on_command_done(self):
         self.write_prompt()
@@ -250,9 +259,9 @@ class InterpreterLayer(Layer, EventDispatcher):
         # clear the command line
         self.document.delete_text(self.prompt_end, len(self.document.text))
         # request completion
-        self.interpreter.dispatch_event('on_completion', command)
+        self.interpreter.on_completion(command)
 
-    def on_completed(self, completed, output):
+    def on_completion_done(self, completed, output):
         # write out the result of completion
         self.write(completed)
         self.caret.position = len(self.document.text)
@@ -263,16 +272,10 @@ class InterpreterLayer(Layer, EventDispatcher):
             # so write out all possibilities
             self.write(output)
 
+    def on_history_result(self, command):
+        self.set_command(command)
+
     def on_get_command(self):
         command = self.get_command()
         self.write(command + '\n')
 
-    def on_set_command(self, command):
-        self.set_command(command)
-
-InterpreterLayer.register_event_type('on_command')
-InterpreterLayer.register_event_type('on_command_done')
-InterpreterLayer.register_event_type('on_completion')
-InterpreterLayer.register_event_type('on_completed')
-InterpreterLayer.register_event_type('on_get_command')
-InterpreterLayer.register_event_type('on_set_command')

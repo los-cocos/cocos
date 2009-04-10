@@ -104,22 +104,24 @@ class Interpreter(InteractiveInterpreter, EventDispatcher):
             output.append('\n')
             for symbol in possibilities:
                 output.append(symbol + '\n')
-        self.stdout.dispatch_event('on_completed', completed or slice, ''.join(output))
+        self.dispatch_event('on_completion_done', completed or slice, ''.join(output))
 
     def on_history_prev(self, command):
         item = self.history.previous()
-        self.stdout.dispatch_event('on_set_command', item)
+        self.dispatch_event('on_history_result', item)
 
     def on_history_next(self, command):
         item = self.history.next()
-        self.stdout.dispatch_event('on_set_command', item)
+        self.dispatch_event('on_history_result', item)
 
-    def on_update_completer(self, ns_locals):
-        self.completer.namespace = ns_locals
+    def update_namespace(self, ns_locals=None, ns_globals=None):
+        namespace = self.completer.namespace
+        if ns_globals is not None:
+            namespace.update(ns_globals)
+        if ns_locals is not None:
+            namespace.update(ns_locals)
+        self.completer.namespace = namespace
 
-Interpreter.register_event_type('on_exit')
-Interpreter.register_event_type('on_command')
-Interpreter.register_event_type('on_completion')
-Interpreter.register_event_type('on_history_prev')
-Interpreter.register_event_type('on_history_next')
-Interpreter.register_event_type('on_update_completer')
+Interpreter.register_event_type('on_command_done')
+Interpreter.register_event_type('on_completion_done')
+Interpreter.register_event_type('on_history_result')
