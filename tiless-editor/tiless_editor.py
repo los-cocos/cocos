@@ -198,6 +198,10 @@ class TilessEditor(Layer):
 
         self.propagate_event('key_press', k, m)
 
+        if k == key.I and (m & pyglet.window.key.MOD_ACCEL):
+            # override cocos default interpreter
+            return True
+
         if k == key.S and (m & pyglet.window.key.MOD_ACCEL):
             file = open(self.output_filename, 'w')
             file.write(self.generate_json())
