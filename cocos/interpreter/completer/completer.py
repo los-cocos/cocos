@@ -24,8 +24,17 @@ class Completer(object):
             completed = line
         return completed, possibilities
 
-    def _get_completion(self, char, index):
-        return ''
+    def _get_completion(self, text, state):
+        matches = sorted(self._get_matches(text))
+        if len(matches) > state:
+            return matches[state]
+
+    def _get_matches(self, text):
+        matches = set()
+        for target in self._namespace:
+            if target.startswith(text):
+                matches.add(target)
+        return matches
 
     @apply
     def namespace():
