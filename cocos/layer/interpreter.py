@@ -21,14 +21,15 @@ class InterpreterLayer(Layer, EventDispatcher):
 
     history_file = '.cocos_history'
     history_size = 100
+    history_persistent = False
 
     is_event_handler = True     #: enable pyglet's events
 
-    def __init__(self, ns_locals=None):
+    def __init__(self, ns_locals=None, ns_globals=None):
         super(InterpreterLayer, self).__init__()
         self.init_config()
         self.init_background()
-        self.init_interpreter(ns_locals)
+        self.init_interpreter(ns_locals, ns_globals)
         self.init_text()
 
     def init_config(self):
@@ -52,14 +53,17 @@ class InterpreterLayer(Layer, EventDispatcher):
             bg.y = bg_y
         self.add(bg, z=-1)
 
-    def init_interpreter(self, ns_locals=None):
-        if ns_locals is None:
-            ns_locals = director.interpreter_locals
-            ns_locals['self'] = self
+    def init_interpreter(self, ns_locals=None, ns_globals=None):
+        if ns_globals is None:
+            ns_globals = director.interpreter_locals
+            ns_globals['self'] = self
         self.interpreter = Interpreter(stdin=self, stdout=self, stderr=self,
-                                       ns_locals=ns_locals,
+                                       ns_locals=ns_locals, ns_globals=ns_globals,
                                        history_file=self.history_file,
-                                       history_size=self.history_size)
+                                       history_size=self.history_size,
+                                       history_persistent=self.history_persistent)
+        # register event handlers
+        self.interpreter.push_handlers(self)
 
     def init_text(self):
         self.content = self.prompt

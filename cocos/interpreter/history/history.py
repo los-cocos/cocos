@@ -4,9 +4,10 @@ import os.path
 
 class History(object):
 
-    def __init__(self, filename=None, size=100):
+    def __init__(self, filename=None, size=100, persistent=False):
         self.filename = filename
         self.size = size
+        self.persistent = persistent
         if filename and os.path.exists(filename):
             self.load(filename, size)
         else:
@@ -17,13 +18,13 @@ class History(object):
         return len(self.data)
 
     def __del__(self):
-        self.save()
+        self.persist()
 
     def load(self, filename, size):
         self.data = pickle.load(open(filename, 'rb'))
 
-    def save(self):
-        if self.filename:
+    def persist(self):
+        if self.persistent and self.filename:
             pickle.dump(self.data, open(self.filename, 'wb'))
 
     def reset(self, size):

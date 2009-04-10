@@ -12,7 +12,7 @@ class ReadlineHistory(History):
         readline.set_history_length(size)
 
     def save(self):
-        if self.filename:
+        if self.persistent and self.filename:
             readline.write_history_file(self.filename)
 
     def reset(self, size):

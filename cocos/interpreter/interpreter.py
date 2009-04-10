@@ -20,7 +20,8 @@ from completer import Completer
 class Interpreter(InteractiveInterpreter, EventDispatcher):
     def __init__(self, ns_locals=None, ns_globals=None,
                  stdin=None, stdout=None, stderr=None,
-                 history_file=None, history_size=100):
+                 history_file=None, history_size=100,
+                 history_persistent=False):
 
         # redirect input and output
         if stdin is None:
@@ -39,16 +40,19 @@ class Interpreter(InteractiveInterpreter, EventDispatcher):
         if ns_globals is None:
             ns_globals = {}
 
-        self.history = self.init_history(history_file, history_size)
-        self.completer = self.init_completer(ns_locals)
-        super(Interpreter, self).__init__(locals=ns_locals)
+        self.history = self.init_history(history_file, history_size,
+                                         history_persistent)
+        namespace = ns_globals.copy()
+        namespace.update(ns_locals)
+        self.completer = self.init_completer(namespace)
+        super(Interpreter, self).__init__(locals=namespace)
 
-    def init_history(self, filename, size):
+    def init_history(self, filename, size, persistent):
         if has_readline:
             from history import ReadlineHistory
-            history = ReadlineHistory(filename, size)
+            history = ReadlineHistory(filename, size, persistent)
         else:
-            history = History(filename, size)
+            history = History(filename, size, persistent)
         return history
 
     def init_completer(self, namespace=None):
@@ -81,14 +85,14 @@ class Interpreter(InteractiveInterpreter, EventDispatcher):
     # Common Events
     #################
     def on_exit(self):
-        self.history.save()
+        self.history.persist()
 
     #################
     # Command Events
     #################
     def on_command(self, command):
         self.execute(command)
-        self.stdout.dispatch_event('on_command_done')
+        self.dispatch_event('on_command_done')
 
     def on_completion(self, command):
         if not command.strip():
