@@ -106,7 +106,7 @@ class InterpreterLayer(Layer):
         })
         self.layout.end_update()
         lines = len(text.split())
-        self._scroll(lines)
+        self._scroll(-lines)
 
     #################
     # Layer API
@@ -133,7 +133,7 @@ class InterpreterLayer(Layer):
         self.caret.position = len(self.document.text)
 
     def _scroll(self, amount):
-        self.layout.view_y -= amount * LINE_HEIGHT
+        self.layout.view_y += amount * LINE_HEIGHT
 
     #################
     # Layer Events
@@ -233,9 +233,9 @@ class InterpreterLayer(Layer):
         elif symbol == key.TAB:
             self.on_completion(self.get_command())
         elif symbol == key.PAGEUP:
-            self._scroll(-1)
-        elif symbol == key.PAGEDOWN:
             self._scroll(1)
+        elif symbol == key.PAGEDOWN:
+            self._scroll(-1)
         else:
             return pyglet.event.EVENT_UNHANDLED
         return pyglet.event.EVENT_HANDLED
