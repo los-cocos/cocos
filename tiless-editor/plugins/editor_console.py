@@ -7,6 +7,7 @@ from plugin import Plugin, Mode, EventHandler
 
 
 DEADGRAVE = 210453397504
+TOPMOST_LAYER = 1000
 
 
 class EditorConsole(Console):
@@ -21,21 +22,24 @@ class EditorConsole(Console):
         self.add_command('help', self.do_help)
         self.add_command('layers', self.do_layers)
 
+    def init_interpreter(self, ns_locals=None, ns_globals=None):
+        super(EditorConsole, self).init_interpreter(ns_locals=self.locals)
+
     def add_mode_variable(self, mode, varname, getter):
         self.mode_vars.setdefault(mode, {})[varname] = getter
-        self.dispatch_event('on_add_mode_variable', mode)
+        self.update_locals(self.mode_vars[mode])
 
     def add_variable(self, varname, getter):
         self.vars[varname] = getter
-        self.dispatch_event('on_add_variable')
+        self.update_locals(self.vars)
 
     def add_mode_command(self, mode, cmd, callable):
         self.mode_cmds.setdefault(mode, {})[varname] = getter
-        self.dispatch_event('on_add_mode_command', mode)
+        self.update_locals(self.mode_cmds[mode])
 
     def add_command(self, cmd, callable):
         self.cmds[cmd] = callable
-        self.dispatch_event('on_add_command')
+        self.update_locals(self.cmds)
 
     def do_layers(self):
         for n, l in self.editor.layers.children_names.items():
@@ -53,13 +57,14 @@ class EditorConsole(Console):
                 else:
                     self.write(k + "\n")
             self.write("\n")
-        mode = self.editor.current_mode.name
         write_section("Variables", self.vars)
-        if mode in self.mode_vars:
-            write_section("Mode Variables", self.mode_vars[mode])
-        write_section("Commands", self.cmds)
-        if mode in self.mode_cmds:
-            write_section("Mode Commands", self.mode_cmds[mode])
+        if self.editor.current_mode is not None:
+            mode = self.editor.current_mode.name
+            if mode in self.mode_vars:
+                write_section("Mode Variables", self.mode_vars[mode])
+            write_section("Commands", self.cmds)
+            if mode in self.mode_cmds:
+                write_section("Mode Commands", self.mode_cmds[mode])
 
     def update_locals(self, source):
         for k, v in source.items():
@@ -77,70 +82,59 @@ class EditorConsole(Console):
             self.locals[k] = r
 
     def reset_locals(self):
-        mode = self.editor.current_mode.name
         self.locals = {}
         # generic commands
         self.update_locals(self.cmds)
         # generic variables
         self.update_locals(self.vars)
-        # mode specific commands
-        if mode in self.mode_cmds:
-            self.update_locals(self.mode_cmds[mode])
-        # mode specific variables
-        if mode in self.mode_vars:
-            self.update_locals(self.mode_vars[mode])
+        if self.editor.current_mode is not None:
+            mode = self.editor.current_mode.name
+            # mode specific commands
+            if mode in self.mode_cmds:
+                self.update_locals(self.mode_cmds[mode])
+            # mode specific variables
+            if mode in self.mode_vars:
+                self.update_locals(self.mode_vars[mode])
         self.update_completer(self.locals)
 
-    def update_completer(self, ns_locals):
-        self.interpreter.dispatch_event('on_update_completer', ns_locals)
+    def update_completer(self, ns_locals=None, ns_globals=None):
+        self.interpreter.update_namespace(ns_locals, ns_globals)
 
     #################
     # Text Events
     #################
-    def on_add_mode_variable(self, mode):
-        self.update_locals(self.mode_vars[mode])
-
-    def on_add_variable(self):
-        self.update_locals(self.vars)
-
-    def on_add_mode_command(self, mode):
-        self.update_locals(self.mode_cmds[mode])
-
-    def on_add_command(self):
-        self.update_locals(self.cmds)
-
     def on_command(self, command):
         self.reset_locals()
 
-        mode = self.editor.current_mode.name
-        parts = command.split(" ")
-        if parts:
-            name = parts[0].strip()
-            args = parts[1:]
-            if command in self.cmds:
-                self.write('\n')
-                self.cmds[command](*args)
-                self.interpreter.history.append(command)
-                self.write_prompt()
-                return
-            elif mode in self.mode_cmds and command in self.mode_cmds[mode]:
-                self.write('\n')
-                self.mode_cmds[mode][command](*args)
-                self.interpreter.history.append(command)
-                self.write_prompt()
-                return
-            return super(EditorConsole, self).on_command(command)
+        try:
+            parts = command.split(" ")
+            if parts:
+                name = parts[0].strip()
+                args = parts[1:]
+                if name in self.cmds:
+                    self.write('\n')
+                    self.cmds[name](*args)
+                    self.interpreter.history.append(command)
+                    self.write_prompt()
+                    return
+                else:
+                    if self.editor.current_mode is not None:
+                        mode = self.editor.current_mode.name
+                        if mode in self.mode_cmds and name in self.mode_cmds[mode]:
+                            self.write('\n')
+                            self.mode_cmds[mode][name](*args)
+                            self.interpreter.history.append(command)
+                            self.write_prompt()
+                            return
+                return super(EditorConsole, self).on_command(command)
+        except Exception, e:
+            print e
 
         return super(EditorConsole, self).on_command(command)
 
     def on_completion(self, command):
         self.reset_locals()
         super(EditorConsole, self).on_completion(command)
-
-EditorConsole.register_event_type('on_add_mode_variable')
-EditorConsole.register_event_type('on_add_variable')
-EditorConsole.register_event_type('on_add_mode_command')
-EditorConsole.register_event_type('on_add_command')
 
 
 class ConsoleEventHandler(EventHandler):
@@ -153,7 +147,7 @@ class ConsoleEventHandler(EventHandler):
 
     def toggle_console(self):
         if not self.console_visible:
-            self.editor.add(self.console, z=100)
+            self.editor.add(self.console, z=TOPMOST_LAYER)
         else:
             self.editor.remove(self.console)
         self.console_visible = not self.console_visible
@@ -162,6 +156,10 @@ class ConsoleEventHandler(EventHandler):
         print k
 
         if k == key.F12:
+            self.toggle_console()
+            return True
+        elif k == key.I and (m & key.MOD_ACCEL):
+            # override cocos default interpreter
             self.toggle_console()
             return True
 
