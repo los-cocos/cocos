@@ -1,4 +1,45 @@
+# ----------------------------------------------------------------------------
+# cocos2d
+# Copyright (c) 2009 cocos2d
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#   * Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#   * Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in
+#     the documentation and/or other materials provided with the
+#     distribution.
+#   * Neither the name of cocos2d nor the names of its
+#     contributors may be used to endorse or promote products
+#     derived from this software without specific prior written
+#     permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+# ----------------------------------------------------------------------------
+'''A base python interpreter for embedding into a layer
 
+Interpreter
+===========
+
+TBD
+
+'''
+
+__docformat__ = 'restructuredtext'
 __all__ = ['Interpreter']
 
 try:
@@ -6,6 +47,8 @@ try:
     has_readline = True
 except:
     has_readline = False
+finally:
+    del readline
 import sys
 
 from code import InteractiveInterpreter
@@ -15,6 +58,23 @@ from cocos.utils import FileIn, FileOut
 
 from history import History
 from completer import Completer
+
+
+def init_history(filename, size, persistent):
+    if has_readline:
+        from history import ReadlineHistory
+        history = ReadlineHistory(filename, size, persistent)
+    else:
+        history = History(filename, size, persistent)
+    return history
+
+def init_completer(namespace=None):
+    if has_readline:
+        from completer import ReadlineCompleter
+        completer = ReadlineCompleter(namespace)
+    else:
+        completer = Completer(namespace)
+    return completer
 
 
 class Interpreter(InteractiveInterpreter, EventDispatcher):
@@ -40,28 +100,14 @@ class Interpreter(InteractiveInterpreter, EventDispatcher):
         if ns_globals is None:
             ns_globals = {}
 
-        self.history = self.init_history(history_file, history_size,
-                                         history_persistent)
+        self.history = init_history(history_file, history_size,
+                                    history_persistent)
+
         namespace = ns_globals.copy()
         namespace.update(ns_locals)
-        self.completer = self.init_completer(namespace)
+        self.completer = init_completer(namespace)
+
         super(Interpreter, self).__init__(locals=namespace)
-
-    def init_history(self, filename, size, persistent):
-        if has_readline:
-            from history import ReadlineHistory
-            history = ReadlineHistory(filename, size, persistent)
-        else:
-            history = History(filename, size, persistent)
-        return history
-
-    def init_completer(self, namespace=None):
-        if has_readline:
-            from completer import ReadlineCompleter
-            completer = ReadlineCompleter(namespace)
-        else:
-            completer = Completer(namespace)
-        return completer
 
     def execute(self, command):
         more = False
@@ -100,17 +146,17 @@ class Interpreter(InteractiveInterpreter, EventDispatcher):
         completed, possibilities = self.completer.complete(command)
         output = []
         if len(possibilities) > 1:
-            slice = command
             output.append('\n')
             for symbol in possibilities:
                 output.append(symbol + '\n')
-        self.dispatch_event('on_completion_done', completed or slice, ''.join(output))
+        self.dispatch_event('on_completion_done', completed or command,
+                            ''.join(output))
 
-    def on_history_prev(self, command):
+    def on_history_prev(self):
         item = self.history.previous()
         self.dispatch_event('on_history_result', item)
 
-    def on_history_next(self, command):
+    def on_history_next(self):
         item = self.history.next()
         self.dispatch_event('on_history_result', item)
 
