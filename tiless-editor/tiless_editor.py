@@ -439,11 +439,12 @@ if __name__ == '__main__':
     editor = TilessEditor(options.filename, options.tilesdir)
     editor_scene =  Scene(editor)
 
-    from plugins import editor_console, camera, stamp, edit, sprite_layer
+    from plugins import editor_console, camera, stamp, edit, sprite_layer, collision_layer
 
     editor.register_plugin(editor_console.ConsolePlugin)
 
     editor.register_plugin(sprite_layer.SpriteLayerPlugin)
+    editor.register_plugin(collision_layer.CollisionLayerPlugin)
     editor.register_plugin(edit.EditPlugin)
     editor.register_plugin(camera.CameraPlugin)
     editor.register_plugin(stamp.StampPlugin)

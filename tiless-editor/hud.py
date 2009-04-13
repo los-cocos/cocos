@@ -25,7 +25,7 @@ class LayerMenu(Menu):
         
         self.items = [MenuItem(label, self.on_quit) for label in self.labels]
         self.items += [MenuItem("New %s layer"%layer_type,
-                                lambda: self.create_layer(layer_type))
+                                self.create_layer, layer_type)
                        for layer_type in self.hud.editor.layer_types]
         self.create_menu(self.items)
 
