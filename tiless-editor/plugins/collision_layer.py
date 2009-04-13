@@ -27,16 +27,16 @@ class CollisionLayerPlugin(Plugin):
         stamp_mode = CollisionStampMode(editor)
         camera_mode = CameraMode(editor)
         editor.register_layer_factory("collision", self.factory)
-        editor.register_mode("collision", collision_mode)
         editor.register_mode("collision", edit_mode)
         editor.register_mode("collision", camera_mode)
+        editor.register_mode("collision", stamp_mode)
 
 
 class CollisionStampMode(StampMode):
     name = 'stamp'
 
     def __init__(self, editor):
-        super(CollisionMode, self).__init__(editor)
+        super(CollisionStampMode, self).__init__(editor)
         collision_tiles_dir = os.path.join(self.ed.tilesdir, '../collision')
         self.atlas = atlas.TextureAtlas(collision_tiles_dir)
         self.atlas.fix_image()

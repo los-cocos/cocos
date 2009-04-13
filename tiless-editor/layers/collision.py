@@ -1,6 +1,9 @@
 """
 Layer for having collision detection.
 """
+from __future__ import division
+import os.path
+
 import pymunk as pm
 from pymunk.vec2d import Vec2d
 
@@ -23,32 +26,154 @@ class Body(object):
 
 
 class Shape(object):
-    def __init__(self, position, body=None):
-        self.position = position
+    def __init__(self, position=(0, 0), scale=1.0, rotation=0, body=None):
+        if body is None:
+            body = Body()
 
-        if body is not None:
-            self.body = body
-        else:
-            self.body = Body()
+        self.position = position
+        self.scale = scale
+        self.rotation = rotation
+        self.body = body
 
 
 class Circle(Shape):
     def __init__(self, position, radius):
-        super(Circle, self).__init__(position)
+        self._scale = 1.0
         self.radius = radius
+        super(Circle, self).__init__(position)
+
+    @apply
+    def scale():
+        def fget(self):
+            return self._scale
+        def fset(self, scale):
+            old_scale = self._scale
+            self._scale = scale
+            scale_factor = scale / old_scale
+            self.radius *= scale_factor
+        return property(fget, fset)
 
 
 class Segment(Shape):
     def __init__(self, position, radius, length):
-        super(Segment, self).__init__(position)
+        self._scale = 1.0
         self.radius = radius
         self.length = length
+        super(Segment, self).__init__(position)
+
+    @apply
+    def scale():
+        def fget(self):
+            return self._scale
+        def fset(self, scale):
+            old_scale = self._scale
+            self._scale = scale
+            scale_factor = scale / old_scale
+            self.radius *= scale_factor
+            self.length *= scale_factor
+        return property(fget, fset)
 
 
 class Polygon(Shape):
     def __init__(self, position, vertices):
-        super(Polygon, self).__init__(position)
+        self._position = position
+        self._scale = 1.0
+        self._rotation = 0
         self.vertices = vertices
+        super(Polygon, self).__init__(position)
+
+    @apply
+    def position():
+        def fget(self):
+            return self._position
+        def fset(self, position):
+            old_position = self._position
+            self._position = position
+            offset = Vec2d(position) - Vec2d(old_position)
+            self._update_vertices(offset)
+        return property(fget, fset)
+
+    @apply
+    def scale():
+        def fget(self):
+            return self._scale
+        def fset(self, scale):
+            old_scale = self._scale
+            self._scale = scale
+            scale_factor = scale / old_scale
+            self._update_vertices(scale_factor=scale_factor)
+        return property(fget, fset)
+
+    @apply
+    def rotation():
+        def fget(self):
+            return self._rotation
+        def fset(self, rotation):
+            # FIXME: fix shape update on rotation 
+            self._rotation = rotation
+            self._update_vertices(rotation_angle=rotation)
+        return property(fget, fset)
+
+    def _update_vertices(self, offset=(0, 0), scale_factor=1.0, rotation_angle=0):
+        for i in xrange(len(self.vertices)):
+            self.vertices[i] += Vec2d(offset)
+            self.vertices[i].length *= scale_factor
+
+
+class Square(Polygon):
+    def __init__(self, position, width, height):
+        self._position = position
+        self._scale = 1.0
+        self._rotation = 0
+        self.width = width
+        self.height = height
+        vertices = self._generate_vertices(position, width, height,
+                                           self._scale, self._rotation)
+        super(Square, self).__init__(position, vertices)
+
+    @apply
+    def position():
+        def fget(self):
+            return self._position
+        def fset(self, position):
+            self._position = position
+            self._rebuild_vertices()
+        return property(fget, fset)
+
+    @apply
+    def scale():
+        def fget(self):
+            return self._scale
+        def fset(self, scale):
+            self._scale = scale
+            self._rebuild_vertices()
+        return property(fget, fset)
+
+    @apply
+    def rotation():
+        def fget(self):
+            return self._rotation
+        def fset(self, rotation):
+            self._rotation = rotation
+            self._rebuild_vertices()
+        return property(fget, fset)
+
+    def _rebuild_vertices(self):
+        self.vertices = self._generate_vertices(self.position,
+                                                self.width, self.height,
+                                                self.scale, self.rotation)
+
+    def _generate_vertices(self, position, width, height, scale, rotation):
+        position = Vec2d(position)
+        _height = Vec2d(0, height) * 0.5 * scale
+        _width = Vec2d(width, 0) * 0.5 * scale
+        v1 = position +  _height - _width
+        v2 = position -  _height - _width
+        v3 = position -  _height + _width
+        v4 = position +  _height + _width
+        # FIXME: take rotation into account when generating vertices
+        vertices = [v1, v2, v3, v4]
+        return vertices
 
 
 class CollisionSpace(object):
@@ -221,7 +346,7 @@ class CollisionLayer(PickerBatchNode):
         super(CollisionLayer, self).add(child, z, name)
 
         # create a shape
-        shape = self._get_shape(child)
+        shape = self._create_shape(child)
         self.space.add(shape, static)
         self._shapes[child] = shape
 
@@ -241,29 +366,26 @@ class CollisionLayer(PickerBatchNode):
     def step(self, dt=0):
         self.space.step(dt)
 
-    def _get_shape(self, child):
-        #        _shape = getattr(child, 'shape', None)
-        #        if _shape == 'circle':
-        #            radius = min(child.width, child.height) * 0.5 * child.scale
-        #            shape = Circle(child.position, radius)
-        #        elif _shape == 'segment':
-        #            shape = Segment(child.position, child.length)
-        #        elif _shape == 'polygon':
-        #            shape = Polygon(child.position, child.vertices)
-        #        else:
-        #            raise ValueError("Child has invalid shape", _shape)
+    def _create_shape(self, child):
+        def get_shape_name(child):
+            image_name = os.path.basename(child.path)
+            shape_name = image_name.split('.')[0]
+            return shape_name
 
-        # FIXME: for now we only create squares
-        child.shape = 'polygon'
-        position = Vec2d(child.position)
-        _height = Vec2d(0, child.height * 0.5) * child.scale
-        _width = Vec2d(child.width * 0.5, 0) * child.scale
-        v1 = position +  _height + _width
-        v2 = position +  _height - _width
-        v3 = position -  _height + _width
-        v4 = position -  _height - _width
-        child.vertices = [v1, v2, v3, v4]
-        shape = Polygon(child.position, child.vertices)
+        _shape = get_shape_name(child)
+        if _shape == 'circle':
+            radius = min(child.width, child.height) * 0.5 * child.scale
+            shape = Circle(child.position, radius)
+        elif _shape == 'segment':
+            radius = 0.5 * child.height
+            length = child.width
+            shape = Segment(child.position, radius, length)
+        elif _shape == 'square':
+            # FIXME: for now we only create squares
+            shape = Square(child.position, child.width, child.height)
+        else:
+            raise ValueError("Child has invalid shape", _shape)
+
         return shape
 
     #################
