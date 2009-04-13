@@ -2,10 +2,11 @@
 Layer for having collision detection.
 """
 import pymunk as pm
+from pymunk.vec2d import Vec2d
 
 from picker import PickerBatchNode
 
-__all__ = ["Body", "Circle", "Capsule", "CollisionSpace", "CollisionLayer"]
+__all__ = ["Body", "Circle", "Segment", "Polygon", "CollisionSpace", "CollisionLayer"]
 
 # FIXME: set better values for static bodies
 STATIC_BODY_MASS = 1000
@@ -37,11 +38,17 @@ class Circle(Shape):
         self.radius = radius
 
 
-class Capsule(Shape):
+class Segment(Shape):
     def __init__(self, position, radius, length):
-        super(Capsule, self).__init__(position)
+        super(Segment, self).__init__(position)
         self.radius = radius
         self.length = length
+
+
+class Polygon(Shape):
+    def __init__(self, position, vertices):
+        super(Polygon, self).__init__(position)
+        self.vertices = vertices
 
 
 class CollisionSpace(object):
@@ -130,14 +137,26 @@ class CollisionSpace(object):
         pm_body.position = shape.position
 
         if isinstance(shape, Circle):
-            # FIXME: for now we only create circles
             radius = shape.radius
-            # FIXME: for now, circle shapes are completely aligned to their 
+            # WARNING: for now, circle shapes are completely aligned to their
             # body's center of gravity
             offset = (0, 0)
             pm_obj = pm.Circle(pm_body, radius,  offset)
-        elif isinstance(shape, Capsule):
-            pass
+        elif isinstance(shape, Segment):
+            # WARNING: the segment is assumed to be centered around its position
+            # points a and b are equally distant from the segments center
+            position = Vec2d(shape.position)
+            length = Vec2d(shape.length, 0)
+            a = position - 0.5 * length
+            b = position + 0.5 * length
+            radius = shape.radius
+            pm_obj = pm.Segment(pm_body, a, b, radius)
+        elif isinstance(shape, Polygon):
+            vertices = shape.vertices
+            # WARNING: for now, polygon shapes are completely aligned to their
+            # body's center of gravity
+            offset = (0, 0)
+            pm_obj = pm.Poly(pm_body, vertices, offset)
 
         return pm_obj
 
@@ -202,9 +221,7 @@ class CollisionLayer(PickerBatchNode):
         super(CollisionLayer, self).add(child, z, name)
 
         # create a shape
-        # FIXME: only creating Circle shapes
-        radius = min(child.width, child.height) * 0.5 * child.scale
-        shape = Circle(child.position, radius)
+        shape = self._get_shape(child)
         self.space.add(shape, static)
         self._shapes[child] = shape
 
@@ -224,6 +241,34 @@ class CollisionLayer(PickerBatchNode):
     def step(self, dt=0):
         self.space.step(dt)
 
+    def _get_shape(self, child):
+        #        _shape = getattr(child, 'shape', None)
+        #        if _shape == 'circle':
+        #            radius = min(child.width, child.height) * 0.5 * child.scale
+        #            shape = Circle(child.position, radius)
+        #        elif _shape == 'segment':
+        #            shape = Segment(child.position, child.length)
+        #        elif _shape == 'polygon':
+        #            shape = Polygon(child.position, child.vertices)
+        #        else:
+        #            raise ValueError("Child has invalid shape", _shape)
+
+        # FIXME: for now we only create squares
+        child.shape = 'polygon'
+        position = Vec2d(child.position)
+        _height = Vec2d(0, child.height * 0.5) * child.scale
+        _width = Vec2d(child.width * 0.5, 0) * child.scale
+        v1 = position +  _height + _width
+        v2 = position +  _height - _width
+        v3 = position -  _height + _width
+        v4 = position -  _height - _width
+        child.vertices = [v1, v2, v3, v4]
+        shape = Polygon(child.position, child.vertices)
+        return shape
+
+    #################
+    # Helper methods (for debugging collisions)
+    #################
     def  _on_collision(self, shape_a, shape_b):
         # this is a default implementation for the callback
         # it shows the shapes that collided in a visual way
