@@ -202,16 +202,14 @@ class TilessEditor(Layer):
             # override cocos default interpreter
             return True
 
+        # save
         if k == key.S and (m & pyglet.window.key.MOD_ACCEL):
-            file = open(self.output_filename, 'w')
-            file.write(self.generate_json())
-            file.close()
+            self.action_save()
             return True
 
+        # load
         if k == key.L and (m & pyglet.window.key.MOD_ACCEL):
-            for l in self.layers.layers[:]:
-                self.layers.remove_layer(l)
-            self.read_json()
+            self.action_load()
             return True
 
         num_keys = [key._1, key._2, key._3, key._4,
@@ -272,13 +270,23 @@ class TilessEditor(Layer):
             return True
 
     # keyboard or button actions
-    def grid_clicked( self ):
+    def action_grid_clicked( self ):
         if self.sprite_grid.enabled:
             self.sprite_grid.disable()
         elif self.floating_sprite:
             self.sprite_grid.enable(self.floating_sprite)
         else:
             self.sprite_grid.disable()
+
+    def action_load( self ):
+        for l in self.layers.layers[:]:
+            self.layers.remove_layer(l)
+        self.read_json()
+
+    def action_save( self ):
+        file = open(self.output_filename, 'w')
+        file.write(self.generate_json())
+        file.close()
 
     def on_enter(self):
         self.propagate_event('enter')

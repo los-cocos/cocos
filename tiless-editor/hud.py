@@ -80,6 +80,23 @@ class HUDLayer(Layer):
         toolbar = WToolbar()
         toolbar.layout = WHBoxLayout( spacing=10)
 
+        # LOAD / SAVE group
+        load_save_group= WButtonGroup()
+        load_save_group.layout = WHBoxLayout( spacing=2)
+
+        button = WToolButton(normal_icon='resources/load-button-unselected.png',
+                                selected_icon = 'resources/load-button-selected.png',
+                                clicked_callback=self.callback_load)
+        load_save_group.add( button )
+
+        button = WToolButton(normal_icon='resources/save-button-unselected.png',
+                                selected_icon = 'resources/save-button-selected.png',
+                                clicked_callback=self.callback_save)
+        load_save_group.add( button )
+
+        toolbar.add( load_save_group )
+
+        # EDIT / CAMERA / STAMP group
         mode_group = WButtonGroup()
         mode_group.layout = WHBoxLayout( spacing=2)
 
@@ -106,7 +123,7 @@ class HUDLayer(Layer):
         mode_group.add( button )
 
 
-        # grid
+        # GRID
         grid_button = WToolButton(normal_icon='resources/grid-button-unselected.png',
                                 selected_icon = 'resources/grid-button-selected.png',
                                 clicked_callback=self.callback_grid_toggle)
@@ -149,6 +166,12 @@ class HUDLayer(Layer):
 #
 # Callbacks
 #
+    def callback_load( self, sender ):
+        self.editor.action_load()
+
+    def callback_save( self, sender ):
+        self.editor.action_save()
+
     def callback_mode_edit( self, sender ):
         self.editor.switch_mode('edit')
 
@@ -160,4 +183,4 @@ class HUDLayer(Layer):
 
     def callback_grid_toggle( self, sender ):
         print 'grid pressed'
-        self.editor.grid_clicked()
+        self.editor.action_grid_clicked()
