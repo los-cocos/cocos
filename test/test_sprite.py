@@ -10,6 +10,12 @@ from cocos.director import director
 from cocos.sprite import Sprite
 import pyglet
 
+## the following is in case we want to get the images
+## from other directories:
+# pyglet.resource.path.append("/data/other/directory")
+# pyglet.resource.reindex()
+
+
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
