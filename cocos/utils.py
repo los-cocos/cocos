@@ -96,7 +96,6 @@ class FileIn(FileIO):
         return self.readline()
 
     def readline(self, length=None):
-        import pdb; pdb.set_trace()
         self.dispatch_event('on_get_command')
         return ''
 
