@@ -30,57 +30,10 @@ class Shape(object):
         if body is None:
             body = Body()
 
-        self.position = position
-        self.scale = scale
-        self.rotation = rotation
-        self.body = body
-
-
-class Circle(Shape):
-    def __init__(self, position, radius):
-        self._scale = 1.0
-        self.radius = radius
-        super(Circle, self).__init__(position)
-
-    @apply
-    def scale():
-        def fget(self):
-            return self._scale
-        def fset(self, scale):
-            old_scale = self._scale
-            self._scale = scale
-            scale_factor = scale / old_scale
-            self.radius *= scale_factor
-        return property(fget, fset)
-
-
-class Segment(Shape):
-    def __init__(self, position, radius, length):
-        self._scale = 1.0
-        self.radius = radius
-        self.length = length
-        super(Segment, self).__init__(position)
-
-    @apply
-    def scale():
-        def fget(self):
-            return self._scale
-        def fset(self, scale):
-            old_scale = self._scale
-            self._scale = scale
-            scale_factor = scale / old_scale
-            self.radius *= scale_factor
-            self.length *= scale_factor
-        return property(fget, fset)
-
-
-class Polygon(Shape):
-    def __init__(self, position, vertices):
         self._position = position
-        self._scale = 1.0
-        self._rotation = 0
-        self.vertices = vertices
-        super(Polygon, self).__init__(position)
+        self._scale = scale
+        self._rotation = rotation
+        self.body = body
 
     @apply
     def position():
@@ -90,7 +43,8 @@ class Polygon(Shape):
             old_position = self._position
             self._position = position
             offset = Vec2d(position) - Vec2d(old_position)
-            self._update_vertices(offset)
+            # update position sensible attributes
+            self._position_updated(offset)
         return property(fget, fset)
 
     @apply
@@ -100,8 +54,9 @@ class Polygon(Shape):
         def fset(self, scale):
             old_scale = self._scale
             self._scale = scale
-            scale_factor = scale / old_scale
-            self._update_vertices(scale_factor=scale_factor)
+            factor = scale / old_scale
+            # update scale sensible attributes
+            self._scale_updated(factor)
         return property(fget, fset)
 
     @apply
@@ -109,64 +64,113 @@ class Polygon(Shape):
         def fget(self):
             return self._rotation
         def fset(self, rotation):
-            # FIXME: fix shape update on rotation 
+            old_rotation = self._rotation
             self._rotation = rotation
-            self._update_vertices(rotation_angle=rotation)
+            angle = rotation - old_rotation
+            # update rotation sensible attributes
+            self._rotation_updated(angle)
         return property(fget, fset)
 
-    def _update_vertices(self, offset=(0, 0), scale_factor=1.0, rotation_angle=0):
+    def _position_updated(self, offset):
+        pass
+
+    def _scale_updated(self, factor):
+        pass
+
+    def _rotation_updated(self, angle):
+        pass
+
+
+class Circle(Shape):
+    def __init__(self, radius, position=(0, 0), scale=1.0, rotation=0):
+        super(Circle, self).__init__(position, scale, rotation)
+        self.radius = radius
+
+    def _scale_updated(self, factor):
+        self.radius *= factor
+
+    def draw(self):
+        import shape
+        x, y = self.position
+        width = height = self.radius * 2
+        rotation = -self.rotation
+        _shape = shape.Ellipse(x=x, y=y,
+                               width=width, height=height,
+                               rotation=rotation,
+                               anchor_x='center', anchor_y='center')
+        _shape.draw()
+
+
+class Segment(Shape):
+    def __init__(self, radius, length, position=(0, 0), scale=1.0, rotation=0):
+        super(Segment, self).__init__(position, scale, rotation)
+        self.radius = radius
+        self.length = length
+
+    def _scale_updated(self, factor):
+        self.radius *= factor
+        self.length *= factor
+
+    def draw(self):
+        import shape
+        x, y = self.position
+        width = self.length
+        height = self.radius * 2
+        rotation = -self.rotation
+        _shape = shape.Ellipse(x=x, y=y,
+                               width=width, height=height,
+                               rotation=rotation,
+                               anchor_x='center', anchor_y='center')
+        _shape.draw()
+
+
+class Polygon(Shape):
+    def __init__(self, vertices, position=(0, 0), scale=1.0, rotation=0):
+        super(Polygon, self).__init__(position, scale, rotation)
+        self.vertices = vertices
+
+    def _position_updated(self, offset):
+        self._update_vertices(offset)
+
+    def _scale_updated(self, factor):
+        self._update_vertices(factor=factor)
+
+    def _rotation_updated(self, angle):
+        self._update_vertices(angle=angle)
+
+    def _update_vertices(self, offset=(0, 0), scaling_factor=1.0, rotation_angle=0):
         for i in xrange(len(self.vertices)):
             self.vertices[i] += Vec2d(offset)
-            self.vertices[i].length *= scale_factor
+            self.vertices[i].length *= scaling_factor
 
 
 class Square(Polygon):
-    def __init__(self, position, width, height):
-        self._position = position
-        self._scale = 1.0
-        self._rotation = 0
+    def __init__(self, width, height, position=(0, 0), scale=1.0, rotation=0):
+        vertices = self._generate_vertices(width, height, position)
+        super(Square, self).__init__(vertices, position, scale, rotation)
         self.width = width
         self.height = height
-        vertices = self._generate_vertices(position, width, height,
-                                           self._scale, self._rotation)
-        super(Square, self).__init__(position, vertices)
 
-    @apply
-    def position():
-        def fget(self):
-            return self._position
-        def fset(self, position):
-            self._position = position
-            self._rebuild_vertices()
-        return property(fget, fset)
+    def _position_updated(self, offset):
+        self._rebuild_vertices()
 
-    @apply
-    def scale():
-        def fget(self):
-            return self._scale
-        def fset(self, scale):
-            self._scale = scale
-            self._rebuild_vertices()
-        return property(fget, fset)
+    def _scale_updated(self, factor):
+        self.width *= factor
+        self.height *= factor
+        self._rebuild_vertices()
 
-    @apply
-    def rotation():
-        def fget(self):
-            return self._rotation
-        def fset(self, rotation):
-            self._rotation = rotation
-            self._rebuild_vertices()
-        return property(fget, fset)
+    def _rotation_updated(self, angle):
+        self._rebuild_vertices()
 
     def _rebuild_vertices(self):
-        self.vertices = self._generate_vertices(self.position,
-                                                self.width, self.height,
-                                                self.scale, self.rotation)
+        self.vertices = self._generate_vertices(self.width, self.height,
+                                                self.position, self.scale,
+                                                self.rotation)
 
-    def _generate_vertices(self, position, width, height, scale, rotation):
+    def _generate_vertices(self, width, height, position=(0, 0), scale=1.0, rotation=0):
+        _height = Vec2d(0, height) * 0.5
+        _width = Vec2d(width, 0) * 0.5
         position = Vec2d(position)
-        _height = Vec2d(0, height) * 0.5 * scale
-        _width = Vec2d(width, 0) * 0.5 * scale
         v1 = position +  _height - _width
         v2 = position -  _height - _width
         v3 = position -  _height + _width
@@ -174,6 +178,26 @@ class Square(Polygon):
         # FIXME: take rotation into account when generating vertices
         vertices = [v1, v2, v3, v4]
         return vertices
+
+    def draw(self):
+        import shape
+        x, y = self.position
+        width = self.width
+        height = self.height
+        rotation = -self.rotation
+        _shape = shape.Rectangle(x=x, y=y,
+                                 width=width, height=height,
+                                 rotation=rotation,
+                                 anchor_x='center', anchor_y='center')
+
+        pos = Vec2d(x, y)
+        _shape_vertices = _shape.generate_vertices()[0]
+        #print 'Square:'
+        #print 'position: ', self.position
+        #print 'width, height ', self.width, self.height
+        #print 'vertices: ', self.vertices
+        #print 'shape_vertices: ', _shape_vertices
+        _shape.draw()
 
 
 class CollisionSpace(object):
@@ -338,6 +362,7 @@ class CollisionLayer(PickerBatchNode):
         super(CollisionLayer, self).__init__()
 
         self._shapes = {}
+        self.show_shapes = False
         if callback is None:
             callback = self._on_collision
         self.space = CollisionSpace(callback=callback)
@@ -363,6 +388,12 @@ class CollisionLayer(PickerBatchNode):
         self.space.update(shape)
         super(CollisionLayer, self).on_notify(node, attribute)
 
+    def visit(self):
+        super(CollisionLayer, self).visit()
+        if self.show_shapes:
+            # used for debugging purposes
+            self._show_shapes()
+
     def step(self, dt=0):
         self.space.step(dt)
 
@@ -374,15 +405,14 @@ class CollisionLayer(PickerBatchNode):
 
         _shape = get_shape_name(child)
         if _shape == 'circle':
-            radius = min(child.width, child.height) * 0.5 * child.scale
-            shape = Circle(child.position, radius)
+            radius = 0.5 * max(child.width, child.height)
+            shape = Circle(radius, child.position, child.scale, child.rotation)
         elif _shape == 'segment':
             radius = 0.5 * child.height
             length = child.width
-            shape = Segment(child.position, radius, length)
+            shape = Segment(radius, length, child.position, child.scale, child.rotation)
         elif _shape == 'square':
-            # FIXME: for now we only create squares
-            shape = Square(child.position, child.width, child.height)
+            shape = Square(child.width, child.height, child.position, child.scale, child.rotation)
         else:
             raise ValueError("Child has invalid shape", _shape)
 
@@ -410,3 +440,11 @@ class CollisionLayer(PickerBatchNode):
             scale_back = Reverse(scale)
             node.do(scale + scale_back)
 
+    def _show_shapes(self):
+        from pyglet.gl import glPushMatrix, glPopMatrix
+        glPushMatrix()
+        self.transform()
+        for shape in self._shapes.values():
+            # draw each shape
+            shape.draw()
+        glPopMatrix()

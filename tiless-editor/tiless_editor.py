@@ -5,7 +5,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from cocos.scene import Scene
 from cocos.director import director
-from cocos.sprite import NotifierSprite
 from cocos.layer import Layer
 from cocos.actions import *
 from cocos.text import Label
@@ -238,32 +237,6 @@ class TilessEditor(Layer):
         if k == key.Q and (m & pyglet.window.key.MOD_ACCEL):
             director.pop()
             return True
-
-        # WARNING: this key is used only for testing the collisions
-        # it is used to trigger the collision detection
-        if k==key.C and (m & pyglet.window.key.MOD_ACCEL):
-            if isinstance(self.current_layer, CollisionLayer):
-                self.current_layer.step()
-
-        # WARNING: this key is used only for testing the collisions
-        # it is used to add a static object to the collision space
-        # it otherwise acts as the stamp method
-        if k==key.A and (m & pyglet.window.key.MOD_ACCEL):
-            if isinstance(self.current_layer, CollisionLayer) and self.floating_sprite is not None:
-                s = NotifierSprite(self.floating_sprite.image,
-                                   (self.floating_sprite.x, self.floating_sprite.y),
-                                   self.floating_sprite.rotation,
-                                   self.floating_sprite.scale,
-                                   self.floating_sprite.opacity)
-                s.path = self.floating_sprite.path
-                s.rect = self.floating_sprite.rect
-
-                self.current_layer.remove(self.floating_sprite)
-                self.current_layer.add(self.floating_sprite, static=False)
-
-                self.last_stamp_pos = self.floating_sprite.position
-                self.floating_sprite = s
-                self.current_layer.add(self.floating_sprite)
 
         if k == key.G and (m & pyglet.window.key.MOD_ACCEL):
             self.grid_clicked()
