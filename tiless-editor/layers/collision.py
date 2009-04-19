@@ -9,18 +9,15 @@ from pymunk.vec2d import Vec2d
 
 from picker import PickerBatchNode
 
-__all__ = ["Body", "Circle", "Segment", "Polygon", "CollisionSpace", "CollisionLayer"]
-
-# FIXME: set better values for static bodies
-STATIC_BODY_MASS = 1000
-STATIC_BODY_INERTIA = 1000
+__all__ = ["Body", "Circle", "Segment", "Polygon", "CollisionSpace",
+           "CollisionLayer"]
 
 def _get_vars(obj):
     return (x for x in dir(obj) if not x.startswith('_'))
 
 
 class Body(object):
-    def __init__(self, mass=STATIC_BODY_MASS, inertia=STATIC_BODY_INERTIA):
+    def __init__(self, mass=pm.inf, inertia=pm.inf):
         self.mass = mass
         self.inertia = inertia
 
@@ -138,7 +135,9 @@ class Polygon(Shape):
     def _rotation_updated(self, angle):
         self._update_vertices(angle=angle)
 
-    def _update_vertices(self, offset=(0, 0), scaling_factor=1.0, rotation_angle=0):
+    def _update_vertices(self, offset=(0, 0), scaling_factor=1.0,
+                         rotation_angle=0):
+        # FIXME: review vertices update algorithm
         for i in xrange(len(self.vertices)):
             self.vertices[i] += Vec2d(offset)
             self.vertices[i].length *= scaling_factor
@@ -167,16 +166,14 @@ class Square(Polygon):
                                                 self.position, self.scale,
                                                 self.rotation)
 
-    def _generate_vertices(self, width, height, position=(0, 0), scale=1.0, rotation=0):
-        _height = Vec2d(0, height) * 0.5
-        _width = Vec2d(width, 0) * 0.5
-        position = Vec2d(position)
-        v1 = position +  _height - _width
-        v2 = position -  _height - _width
-        v3 = position -  _height + _width
-        v4 = position +  _height + _width
-        # FIXME: take rotation into account when generating vertices
-        vertices = [v1, v2, v3, v4]
+    def _generate_vertices(self, width, height, position=(0, 0), scale=1.0,
+                           rotation=0):
+        # vertices are calculated as an offset from the shape's center
+        # the order is relevant, as a specific order is expected in pymunk
+        half_height = 0.5 * height
+        half_width = 0.5 * width
+        vertices = [(-half_width, -half_height), (-half_width, half_height),
+                    (half_width, half_height), (half_width, -half_height)]
         return vertices
 
     def draw(self):
@@ -189,14 +186,6 @@ class Square(Polygon):
                                  width=width, height=height,
                                  rotation=rotation,
                                  anchor_x='center', anchor_y='center')
-
-        pos = Vec2d(x, y)
-        _shape_vertices = _shape.generate_vertices()[0]
-        #print 'Square:'
-        #print 'position: ', self.position
-        #print 'width, height ', self.width, self.height
-        #print 'vertices: ', self.vertices
-        #print 'shape_vertices: ', _shape_vertices
         _shape.draw()
 
 
@@ -305,6 +294,8 @@ class CollisionSpace(object):
             # WARNING: for now, polygon shapes are completely aligned to their
             # body's center of gravity
             offset = (0, 0)
+            moment = pm.moment_for_poly(mass, vertices, offset)
+            pm_body = pm.Body(mass, moment)
             pm_obj = pm.Poly(pm_body, vertices, offset)
 
         return pm_obj
@@ -321,8 +312,8 @@ class CollisionSpace(object):
             for k, v in objects.items():
                 if v == pm_shape:
                     return k
-        raise KeyError("Requested a non-existing shape. Data corruption" 
-            "possible.")
+        raise KeyError("Requested a non-existing shape. Data corruption"
+                       "possible.")
 
     def _reset(self):
         for body in self._space.bodies:
@@ -345,6 +336,12 @@ class CollisionSpace(object):
                     # object
                     value = getattr(shape, attr)
                     setattr(pm_obj.body, attr, value)
+                elif attr == 'vertices':
+                    # special case: the 'vertices' attribute is special,
+                    # because it maps to the 'verts' attribute of the pymunk
+                    # object.
+                    value = getattr(shape, attr)
+                    setattr(pm_obj, 'verts', value)
                 else:
                     value = getattr(shape, attr)
                     setattr(pm_obj, attr, value)
@@ -410,9 +407,11 @@ class CollisionLayer(PickerBatchNode):
         elif _shape == 'segment':
             radius = 0.5 * child.height
             length = child.width
-            shape = Segment(radius, length, child.position, child.scale, child.rotation)
+            shape = Segment(radius, length, child.position, child.scale,
+                            child.rotation)
         elif _shape == 'square':
-            shape = Square(child.width, child.height, child.position, child.scale, child.rotation)
+            shape = Square(child.width, child.height, child.position,
+                           child.scale, child.rotation)
         else:
             raise ValueError("Child has invalid shape", _shape)
 
