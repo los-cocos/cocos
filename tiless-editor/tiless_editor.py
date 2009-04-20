@@ -239,7 +239,7 @@ class TilessEditor(Layer):
             return True
 
         if k == key.G and (m & pyglet.window.key.MOD_ACCEL):
-            self.grid_clicked()
+            self.action_grid_clicked()
             return True
 
     # keyboard or button actions
