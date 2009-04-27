@@ -49,6 +49,18 @@ class EditMode(Mode, MouseEventHandler):
 
             return True
 
+        if k == key.DELETE:
+            if self.ed.floating_sprite:
+                self.ed.discard_floating()
+
+            elif self.hovering:
+                self.hovering.parent.remove(self.hovering)
+                self.hovering = None
+                self.ed.propagate_event('hovering_change', self.hovering)
+
+            return True
+        
+
     def on_mouse_motion(self, px, py, dx, dy):
         x, y = self.ed.layers.pointer_to_world(px, py)
         self.ed.mouse_position = (px, py)
