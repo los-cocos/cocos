@@ -76,27 +76,33 @@ class TilessLayer( CocosNode ):
     def parse_json_file( self, jsonfile ):
         '''data parser'''
 
-        layers_dict = simplejson.load(open( jsonfile ))['layers']
+        layers_list= simplejson.load(open( jsonfile ))['layers']
 
-        for key in layers_dict.keys():
-            current_layer = layers_dict[key]
-            batch = BatchNode()
+        for layer in layers_list:
 
-            sprites = current_layer.get('sprites',[])
-            for sprite in sprites:
-                rect = sprite['rect']
-                region = pyglet.image.TextureRegion( rect[0], rect[1], 0, rect[2], rect[3], self.atlas.texture )
+            type = layer['layer_type']
 
-                s = Sprite( region, sprite['position'], sprite['rotation'], sprite['scale'], sprite['opacity'])
-                if "label" in sprite:
-                    s.label = sprite['label']
+            if type == 'sprite':
 
-                batch.add( s )
-            self.add( batch )
+                z = layer.get('z',0)
+                sprites = layer.get('data',[])
+                batch = BatchNode()
+
+                for sprite in sprites['sprites']:
+                    rect = sprite['rect']
+                    region = pyglet.image.TextureRegion( rect[0], rect[1], 0, rect[2], rect[3], self.atlas.texture )
+
+                    s = Sprite( region, sprite['position'], sprite['rotation'], sprite['scale'], sprite['opacity'])
+                    if "label" in sprite:
+                        s.label = sprite['label']
+
+                    batch.add( s )
+                self.add( batch, z=z )
 
 
 if __name__ == "__main__":
     director.init(width=800, height=600, fullscreen=False)
     test_layer = TilessLayer('map.json', 'atlas-fixed.png')
     main_scene = cocos.scene.Scene (test_layer)
+    main_scene.scale = 0.3
     director.run (main_scene)
