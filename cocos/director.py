@@ -8,7 +8,7 @@
 #
 #   * Redistributions of source code must retain the above copyright
 #     notice, this list of conditions and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright 
+#   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in
 #     the documentation and/or other materials provided with the
 #     distribution.
@@ -39,14 +39,14 @@ Initializing
 ------------
 
 The director is the singleton that creates and handles the main ``Window``
-and manages the logic behind the ``Scenes``. 
+and manages the logic behind the ``Scenes``.
 
 The first thing to do, is to initialize the ``director``::
 
     from cocos.director import *
     director.init( list_of_arguments )
 
-This will initialize the director, and will create a display area 
+This will initialize the director, and will create a display area
 (a 640x480 window by default).
 The parameters that are supported by director.init() are the same
 parameters that are supported by pyglet.window.Window().
@@ -89,7 +89,7 @@ refer to the ``Layers`` and ``Scene`` documentation.
 Once a scene is running you can do the following actions:
 
     * ``director.replace( new_scene ):``
-        Replaces the running scene with the new_scene 
+        Replaces the running scene with the new_scene
         You could also use a transition. For example:
         director.replace( SplitRowsTransition( new_scene, duration=2 ) )
 
@@ -112,7 +112,7 @@ Other functions you can use are:
       to this size. If you need the _physical_ dimensions, check the dimensions
       of ``director.window``
 
-    
+
     * ``get_virtual_coordinates(self, x, y):``
       Transforms coordinates that belongs the real (physical) window size, to
       the coordinates that belongs to the virtual (logical) window. Returns
@@ -127,12 +127,12 @@ The director also has some useful attributes:
 
     * ``director.window``: This is the pyglet window handled by this director,
       if you happen to need low level access to it.
-            
+
     * ``self.show_FPS``: You can set this to a boolean value to enable, disable
       the framerate indicator.
-            
+
     * ``self.scene``: The scene currently active
-            
+
 '''
 
 __docformat__ = 'restructuredtext'
@@ -159,7 +159,7 @@ class DefaultHandler( object ):
 
         elif symbol == pyglet.window.key.P and (modifiers & pyglet.window.key.MOD_ACCEL):
             import scenes.pause as pause
-            pause_sc = pause.get_pause_scene() 
+            pause_sc = pause.get_pause_scene()
             if pause:
                 director.push( pause_sc )
             return True
@@ -177,12 +177,12 @@ class DefaultHandler( object ):
                 glEnable(GL_TEXTURE_2D);
                 glPolygonMode(GL_FRONT, GL_FILL);
                 glPolygonMode(GL_BACK, GL_FILL);
-                self.wired = False 
+                self.wired = False
 #                wired.wired.uninstall()
             return True
 
         elif symbol == pyglet.window.key.X and (modifiers & pyglet.window.key.MOD_ACCEL):
-            director.show_FPS = not director.show_FPS 
+            director.show_FPS = not director.show_FPS
             return True
 
         elif symbol == pyglet.window.key.I and (modifiers & pyglet.window.key.MOD_ACCEL):
@@ -221,19 +221,19 @@ class Director(event.EventDispatcher):
         All the valid arguments can be found here:
 
             - http://www.pyglet.org/doc/1.1/api/pyglet.window.Window-class.html
-        
-        :rtype: pyglet.window.Window                    
+
+        :rtype: pyglet.window.Window
         :returns: The main window, an instance of pyglet.window.Window class.
         """
 
         # pop out the Cocos-specific flag
         do_not_scale_window = kwargs.pop('do_not_scale', False)
-       
+
         #: pyglet's window object
         self.window = window.Window( *args, **kwargs )
 
         #: whether or not the FPS are displayed
-        self.show_FPS = False 
+        self.show_FPS = False
 
         #: stack of scenes
         self.scene_stack = []
@@ -255,7 +255,7 @@ class Director(event.EventDispatcher):
         self._window_aspect =  self.window.width / float( self.window.height )
         self._offset_x = 0
         self._offset_y = 0
-        
+
         # opengl settings
         self.set_alpha_blending()
 
@@ -285,7 +285,7 @@ class Director(event.EventDispatcher):
     def run(self, scene):
         """Runs a scene, entering in the Director's main loop.
 
-        :Parameters:   
+        :Parameters:
             `scene` : `Scene`
                 The scene that will be run.
         """
@@ -299,7 +299,7 @@ class Director(event.EventDispatcher):
     def on_draw( self ):
         """Callback to draw the window.
         It propagates the event to the running scene."""
-         
+
         self.window.clear()
 
         if self.next_scene is not None:
@@ -318,12 +318,12 @@ class Director(event.EventDispatcher):
         if self.show_interpreter:
             self.python_interpreter.visit()
 
-    
+
     def push(self, scene):
         """Suspends the execution of the running scene, pushing it
         on the stack of suspended scenes. The new scene will be executed.
 
-        :Parameters:   
+        :Parameters:
             `scene` : `Scene`
                 It is the scene that will be run.
            """
@@ -332,24 +332,24 @@ class Director(event.EventDispatcher):
     def on_push( self, scene ):
         self.next_scene = scene
         self.scene_stack.append( self.scene )
-        
+
     def pop(self):
         """Pops out a scene from the queue. This scene will replace the running one.
            The running scene will be deleted. If there are no more scenes in the stack
            the execution is terminated.
         """
         self.dispatch_event("on_pop")
-        
+
     def on_pop(self):
         self.next_scene = self.scene_stack.pop()
-        
+
     def replace(self, scene):
         """Replaces the running scene with a new one. The running scene is terminated.
 
-        :Parameters:   
+        :Parameters:
             `scene` : `Scene`
                 It is the scene that will be run.
-        """  
+        """
         self.next_scene = scene
 
     def _set_scene(self, scene ):
@@ -361,9 +361,9 @@ class Director(event.EventDispatcher):
         if self.scene is not None:
             self.scene.on_exit()
             self.scene.enable_handlers( False )
-            
+
         old = self.scene
-        
+
         self.scene = scene
         self.scene.enable_handlers( True )
         scene.on_enter()
@@ -376,7 +376,7 @@ class Director(event.EventDispatcher):
     #
     def get_window_size( self ):
         """Returns the size of the window when it was created, and not the
-        actual size of the window. 
+        actual size of the window.
 
         Usually you don't want to know the current window size, because the
         Director() hides the complexity of rescaling your objects when
@@ -390,7 +390,7 @@ class Director(event.EventDispatcher):
         :returns: The size of the window when it was created
         """
         return ( self._window_original_width, self._window_original_height)
-        
+
 
     def get_virtual_coordinates( self, x, y ):
         """Transforms coordinates that belongs the *real* window size, to the
@@ -400,9 +400,9 @@ class Director(event.EventDispatcher):
         to 640x1000, then if you move your mouse over that window,
         it will return the coordinates that belongs to the newly resized window.
         Probably you are not interested in those coordinates, but in the coordinates
-        that belongs to your *virtual* window. 
+        that belongs to your *virtual* window.
 
-        :rtype: (x,y)           
+        :rtype: (x,y)
         :returns: Transformed coordinates from the *real* window to the *virtual* window
         """
 
@@ -426,7 +426,7 @@ class Director(event.EventDispatcher):
         largest set of Cocos transforms.
 
         The other implementation is `unscaled_resize_window`.
-        
+
         :Parameters:
             `width` : Integer
                 New width
@@ -435,6 +435,12 @@ class Director(event.EventDispatcher):
         """
         self.set_projection()
         self.dispatch_event("on_resize", width, height)
+
+        # fix offset
+        h_relation = self.window.height  / float(self._window_original_height)
+        should_width = h_relation * self._window_original_width
+        self._offset_x = (self.window.width - should_width) / 2
+
         return pyglet.event.EVENT_HANDLED
 
     def unscaled_resize_window(self, width, height):
@@ -448,7 +454,7 @@ class Director(event.EventDispatcher):
         rendering.
 
         The other implementation is `scaled_resize_window`.
-        
+
         :Parameters:
             `width` : Integer
                 New width
@@ -474,13 +480,13 @@ class Director(event.EventDispatcher):
                    ow / 2.0, oh / 2.0, 0,           # center
                    0.0, 1.0, 0.0                    # up vector
                    )
-        
+
     #
     # Misc functions
     #
     def set_alpha_blending( self, on=True ):
         """
-        Enables/Disables alpha blending in OpenGL 
+        Enables/Disables alpha blending in OpenGL
         using the GL_ONE_MINUS_SRC_ALPHA algorithm.
         On by default.
         """
