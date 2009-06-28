@@ -71,6 +71,7 @@ class ColorLayer(Layer):
     def __init__(self, r,g,b,a, width=None, height=None):
         super(ColorLayer, self).__init__()
         self._batch = pyglet.graphics.Batch()
+        self._vertex_list = None
         self._rgb = r,g,b
         self._opacity = a
 
@@ -136,8 +137,9 @@ class ColorLayer(Layer):
     height = property(lambda self: self._get_height(), lambda self,h: self._set_height(h) )
 
     def _update_color(self):
-        r, g, b = self._rgb
-        self._vertex_list.colors[:] = [r, g, b, int(self._opacity)] * 4
+        if self._vertex_list:
+            r, g, b = self._rgb
+            self._vertex_list.colors[:] = [r, g, b, int(self._opacity)] * 4
 
     def _set_opacity(self, opacity):
         self._opacity = opacity
