@@ -13,20 +13,13 @@ import cocos
 from cocos import tiles, actions
 
 class CarSprite(cocos.sprite.Sprite):
-    speed = 0
+    motion = actions.Mover(0, 0, max_forward_speed=200,
+        max_reverse_speed=-100)
     def update(self, dt):
         # handle input and move the car
         self.rotation += (keyboard[key.RIGHT] - keyboard[key.LEFT]) * 150 * dt
-        speed = self.speed
-        speed += (keyboard[key.UP] - keyboard[key.DOWN]) * 50
-        if keyboard[key.SPACE]: speed = 0
-        if speed > 200: speed = 200
-        if speed < -100: speed = -100
-        self.speed = speed
-        r = math.radians(self.rotation)
-        s = dt * speed
-        self.x += math.sin(r) * s
-        self.y += math.cos(r) * s
+        self.motion.acceleration = (keyboard[key.UP] - keyboard[key.DOWN]) * 400
+        if keyboard[key.SPACE]: self.motion.speed = 0
         scroller.set_focus(self.x, self.y)
 
 if __name__ == "__main__":
@@ -35,10 +28,11 @@ if __name__ == "__main__":
 
     car_layer = tiles.ScrollableLayer()
     car = CarSprite('car.png')
-    car.x=200
-    car.y=100
-    car.schedule(car.update)
     car_layer.add(car)
+    car.x = 200
+    car.y = 100
+    car.schedule(car.update)
+    car.do(car.motion)
 
     scroller = tiles.ScrollingManager()
     test_layer = tiles.load('road-map.xml')['map0']

@@ -170,5 +170,3 @@ class DoAction(InstantAction):
 
     def __reversed__(self):
         return self
-
-
