@@ -606,8 +606,8 @@ class ScrollableLayer(cocos.layer.Layer):
 
     def __init__(self):
         super(ScrollableLayer,self).__init__()
-        # force transform anchor to be 0 so we don't OpenGL glTranslate()
-        # and screw up our pixel alignment on screen
+        # force (cocos) transform anchor to be 0 so we don't OpenGL
+        # glTranslate() and screw up our pixel alignment on screen
         self.transform_anchor_x = 0
         self.transform_anchor_y = 0
         self.batch = pyglet.graphics.Batch()
@@ -848,6 +848,45 @@ class RectMapLayer(RegularTesselationMapLayer):
                 cell._as_xml(c)
 
 
+class RectMapCollider(object):
+    '''This class implements collisions between a moving rect object and a
+    tilemap.
+    '''
+    def collide_bottom(self, dy):
+        pass
+
+    def collide_left(self, dx):
+        pass
+
+    def collide_right(self, dx):
+        pass
+
+    def collide_top(self, dy):
+        pass
+
+    def do_collision(self, cell, last, rect, dy, dx):
+        g = cell.tile.properties.get
+        self.resting = False
+        if (g('top') and last.bottom >= cell.top and rect.bottom < cell.top):
+            dy = last.y - rect.y
+            rect.bottom = cell.top
+            if dy: self.collide_bottom(dy)
+        if (g('left') and last.right <= cell.left and rect.right > cell.left):
+            dx = last.x - rect.x
+            rect.right = cell.left
+            if dx: self.collide_right(dx)
+        if (g('right') and last.left >= cell.right and rect.left < cell.right):
+            dx = last.x - rect.x
+            rect.left = cell.right
+            if dx: self.collide_left(dx)
+            self.dx = 0
+        if (g('bottom') and last.top <= cell.bottom and rect.top > cell.bottom):
+            dy = last.y - rect.y
+            rect.top = cell.bottom
+            if dy: self.collide_top(dy)
+    
+
+
 class Cell(object):
     '''Base class for cells from rect and hex maps.
 
@@ -917,17 +956,10 @@ class Cell(object):
             self.__class__.__name__, id(self), self.i, self.j,
                 self.properties, self.tile)
 
-class RectCell(Cell):
-    '''A rectangular cell from a MapLayer.
+class Rect(object):
+    '''
+    Calculated properties, read/write:
 
-    Cell attributes:
-        i, j            -- index of this cell in the map
-        width, height   -- dimensions
-        properties      -- arbitrary properties
-        cell            -- cell from the MapLayer's cells
-
-    Read-only attributes:
-        x, y        -- bottom-left pixel
         top         -- y pixel extent
         bottom      -- y pixel extent
         left        -- x pixel extent
@@ -942,86 +974,329 @@ class RectCell(Cell):
         midbottom   -- (x, y) of middle of bottom side pixel
         midleft     -- (x, y) of middle of left side pixel
         midright    -- (x, y) of middle of right side pixel
+    '''
+    def __init__(self, x, y, width, height):
+        self.x, self.y = x, y
+        self.width, self.height = width, height
+
+    def __nonzero__(self):
+        return bool(self.width and self.height)
+
+    def __repr__(self):
+        return 'Rect(xy=%.4g,%.4g; wh=%.4g,%.4g)'%(self.x, self.y,
+            self.width, self.height)
+
+    def __eq__(self, other):
+        '''Compare the two rects.
+
+        >>> r1 = Rect(0, 0, 10, 10)
+        >>> r1 == Rect(0, 0, 10, 10)
+        True
+        >>> r1 == Rect(1, 0, 10, 10)
+        False
+        >>> r1 == Rect(0, 1, 10, 10)
+        False
+        >>> r1 == Rect(0, 0, 11, 10)
+        False
+        >>> r1 == Rect(0, 0, 10, 11)
+        False
+        '''
+        return (self.x == other.x and self.y == other.y and
+            self.width == other.width and  self.height == other.height)
+
+    def __ne__(self, other):
+        '''Compare the two rects.
+
+        >>> r1 = Rect(0, 0, 10, 10)
+        >>> r1 != Rect(0, 0, 10, 10)
+        False
+        >>> r1 != Rect(1, 0, 10, 10)
+        True
+        >>> r1 != Rect(0, 1, 10, 10)
+        True
+        >>> r1 != Rect(0, 0, 11, 10)
+        True
+        >>> r1 != Rect(0, 0, 10, 11)
+        True
+        '''
+        return not (self == other)
+
+    def copy(self):
+        return self.__class__(self.x, self.y, self.width, self.height)
+
+    def clippedBy(self, other):
+        '''Determine whether this rect is clipped by the other rect.
+
+        >>> r1 = Rect(0, 0, 10, 10)
+        >>> r2 = Rect(1, 1, 9, 9)
+        >>> r2.clippedBy(r1)
+        False
+        >>> r1.clippedBy(r2)
+        True
+        >>> r2 = Rect(1, 1, 11, 11)
+        >>> r1.intersect(r2)
+        Rect(xy=1,1; wh=9,9)
+        >>> r1.clippedBy(r2)
+        True
+        >>> r2.intersect(r1)
+        Rect(xy=1,1; wh=9,9)
+        >>> r2.clippedBy(r1)
+        True
+        >>> r2 = Rect(11, 11, 1, 1)
+        >>> r1.clippedBy(r2)
+        True
+        '''
+        i = self.intersect(other)
+        if i is None: return True
+        if i.x > self.x: return True
+        if i.y > self.y: return True
+        if i.width < self.width: return True
+        if i.height < self.height: return True
+        return False
+
+    def intersect(self, other):
+        '''Find the intersection of two rects defined as tuples (x, y, w, h).
+
+        >>> r1 = Rect(0, 51, 200, 17)
+        >>> r2 = Rect(0, 64, 200, 55)
+        >>> r1.intersect(r2)
+        Rect(xy=0,64; wh=200,4)
+
+        >>> r1 = Rect(0, 64, 200, 55)
+        >>> r2 = Rect(0, 0, 200, 17)
+        >>> print r1.intersect(r2)
+        None
+
+        >>> r1 = Rect(10, 10, 10, 10)
+        >>> r2 = Rect(20, 20, 10, 10)
+        >>> print r1.intersect(r2)
+        None
+
+        >>> bool(Rect(0, 0, 1, 1))
+        True
+        >>> bool(Rect(0, 0, 1, 0))
+        False
+        >>> bool(Rect(0, 0, 0, 1))
+        False
+        >>> bool(Rect(0, 0, 0, 0))
+        False
+        '''
+        s_tr_x, s_tr_y = self.topright
+        o_tr_x, o_tr_y = other.topright
+        bl_x = max(self.x, other.x)
+        bl_y = max(self.y, other.y)
+        tr_x = min(s_tr_x, o_tr_x)
+        tr_y = min(s_tr_y, o_tr_y)
+        w, h = max(0, tr_x-bl_x), max(0, tr_y-bl_y)
+        if not w or not h:
+            return None
+        return self.__class__(bl_x, bl_y, w, h)
+
+    def get_origin(self): return self.x, self.y
+    def set_origin(self, origin): self.x, self.y = origin
+    origin = property(get_origin, set_origin)
+
+    def get_top(self): return self.y + self.height
+    def set_top(self, y): self.y = y - self.height
+    top = property(get_top, set_top)
+
+    def get_bottom(self): return self.y
+    def set_bottom(self, y): self.y = y
+    bottom = property(get_bottom, set_bottom)
+
+    def get_left(self): return self.x
+    def set_left(self, x): self.x = x
+    left = property(get_left, set_left)
+
+    def get_right(self): return self.x + self.width
+    def set_right(self, x): self.x = x - self.width
+    right = property(get_right, set_right)
+
+    def get_center(self):
+        return (self.x + self.width//2, self.y + self.height//2)
+    def set_center(self, center):
+        x, y = center
+        self.x = x - self.width//2
+        self.y = y - self.height//2
+    center = property(get_center, set_center)
+
+    def get_midtop(self):
+        return (self.x + self.width//2, self.y + self.height)
+    def set_midtop(self, midtop):
+        x, y = midtop
+        self.x = x - self.width//2
+        self.y = y - self.height
+    midtop = property(get_midtop, set_midtop)
+
+    def get_midbottom(self):
+        return (self.x + self.width//2, self.y)
+    def set_midbottom(self, midbottom):
+        x, y = midbottom
+        self.x = x - self.width//2
+        self.y = y
+    midbottom = property(get_midbottom, set_midbottom)
+
+    def get_midleft(self):
+        return (self.x, self.y + self.height//2)
+    def set_midleft(self, midleft):
+        x, y = midleft
+        self.x = x
+        self.y = y - self.height//2
+    midleft = property(get_midleft, set_midleft)
+
+    def get_midright(self):
+        return (self.x + self.width, self.y + self.height//2)
+    def set_midright(self, midright):
+        x, y = midright
+        self.x = x - self.width
+        self.y = y - self.height//2
+    midright = property(get_midright, set_midright)
+ 
+    def get_topleft(self):
+        return (self.x, self.y + self.height)
+    def set_topleft(self, pos):
+        x, y = pos
+        self.x = x
+        self.y = y - self.height
+    topleft = property(get_topleft, set_topleft)
+ 
+    def get_topright(self):
+        return (self.x + self.width, self.y + self.height)
+    def set_topright(self, pos):
+        x, y = pos
+        self.x = x - self.width
+        self.y = y - self.height
+    topright = property(get_topright, set_topright)
+ 
+    def get_bottomright(self):
+        return (self.x + self.width, self.y)
+    def set_bottomright(self, pos):
+        x, y = pos
+        self.x = x - self.width
+        self.y = y
+    bottomright = property(get_bottomright, set_bottomright)
+ 
+    def get_bottomleft(self):
+        return (self.x, self.y)
+    def set_bottomleft(self, pos):
+        self.x, self.y = pos
+    bottomleft = property(get_bottomleft, set_bottomleft)
+
+    # side in pixels, y extent
+    def get_top(self):
+        return self.y + self.height
+    def set_top(self, top):
+        self.y = top - self.height
+    top = property(get_top, set_top)
+
+    # side in pixels, y extent
+    def get_bottom(self):
+        return self.y
+    def set_bottom(self, bottom):
+        self.y = bottom
+    bottom = property(get_bottom, set_bottom)
+
+    # in pixels, (x, y)
+    def get_center(self):
+        return (self.x + self.width // 2, self.y + self.height // 2)
+    def set_center(self, center):
+        x, y = center
+        self.x = x - self.width // 2
+        self.y = y - self.height // 2
+    center = property(get_center, set_center)
+
+    # mid-point in pixels, (x, y)
+    def get_midtop(self):
+        return (self.x + self.width // 2, self.y + self.height)
+    def set_midtop(self, midtop):
+        x, y = midtop
+        self.x = x - self.width // 2
+        self.y = y - self.height
+    midtop = property(get_midtop, set_midtop)
+
+    # mid-point in pixels, (x, y)
+    def get_midbottom(self):
+        return (self.x + self.width // 2, self.y)
+    def set_midbottom(self, midbottom):
+        x, y = midbottom
+        self.x = x - self.width // 2
+        self.y = y
+    midbottom = property(get_midbottom, set_midbottom)
+
+XXX
+
+    # side in pixels, x extent
+    def get_left(self):
+        return self.x
+    left = property(get_left, set_left)
+
+    # side in pixels, x extent
+    def get_right(self):
+        return self.x + self.width
+    right = property(get_right, set_right)
+
+    # corner in pixels, (x, y)
+    def get_topleft(self):
+        return (self.x, self.y + self.height)
+    topleft = property(get_topleft, set_topleft)
+
+    # corner in pixels, (x, y)
+    def get_topright(self):
+        return (self.x + self.width, self.y + self.height)
+    topright = property(get_topright, set_topright)
+
+    # corner in pixels, (x, y)
+    def get_bottomleft(self):
+        return (self.x, self.y)
+    bottomleft = property(get_bottomleft, set_bottom_left)
+
+    # corner in pixels, (x, y)
+    def get_bottomright(self):
+        return (self.i + self.width, self.y)
+    bottomright = property(get_bottomright, set_bottomright)
+
+    # mid-point in pixels, (x, y)
+    def get_midleft(self):
+        return (self.x, self.y + self.height // 2)
+    midleft = property(get_midleft, set_midleft)
+
+    # mid-point in pixels, (x, y)
+    def get_midright(self):
+        return (self.x + self.width, self.y + self.height // 2)
+    midright = property(get_midright, set_midright)
+
+class RectCell(Rect, Cell):
+    '''A rectangular cell from a MapLayer.
+
+    Cell attributes:
+        i, j            -- index of this cell in the map
+        x, y        -- bottom-left pixel
+        width, height   -- dimensions
+        properties      -- arbitrary properties
+        cell            -- cell from the MapLayer's cells
 
     Note that all pixel attributes are *not* adjusted for screen,
     view or layer transformations.
     '''
-    x = property(lambda self: self.i * self.width)
-    y = property(lambda self: self.j * self.height)
+    def __init__(self, i, j, width, height, properties, tile):
+        super(Rect, self).__init__(i*width, j*height, width, height)
+        supet(Cell, self).__init__(self, i, j, width, height, properties, tile)
 
-    def get_origin(self):
-        return self.i * self.width, self.j * self.height
-    origin = property(get_origin)
-
-    # ro, side in pixels, y extent
-    def get_top(self):
-        return (self.j + 1) * self.height
-    top = property(get_top)
-
-    # ro, side in pixels, y extent
-    def get_bottom(self):
-        return self.j * self.height
-    bottom = property(get_bottom)
-
-    # ro, in pixels, (x, y)
-    def get_center(self):
-        return (self.i * self.width + self.width // 2,
-            self.j * self.height + self.height // 2)
-    center = property(get_center)
-
-    # ro, mid-point in pixels, (x, y)
-    def get_midtop(self):
-        return (self.i * self.width + self.width // 2,
-            (self.j + 1) * self.height)
-    midtop = property(get_midtop)
-
-    # ro, mid-point in pixels, (x, y)
-    def get_midbottom(self):
-        return (self.i * self.width + self.width // 2, self.j * self.height)
-    midbottom = property(get_midbottom)
-
-    # ro, side in pixels, x extent
-    def get_left(self):
-        return self.i * self.width
-    left = property(get_left)
-
-    # ro, side in pixels, x extent
-    def get_right(self):
-        return (self.i + 1) * self.width
-    right = property(get_right)
-
-    # ro, corner in pixels, (x, y)
-    def get_topleft(self):
-        return (self.i * self.width, (self.j + 1) * self.height)
-    topleft = property(get_topleft)
-
-    # ro, corner in pixels, (x, y)
-    def get_topright(self):
-        return ((self.i + 1) * self.width, (self.j + 1) * self.height)
-    topright = property(get_topright)
-
-    # ro, corner in pixels, (x, y)
-    def get_bottomleft(self):
-        return (self.i * self.height, self.j * self.height)
-    bottomleft = property(get_bottomleft)
-    origin = property(get_bottomleft)
-
-    # ro, corner in pixels, (x, y)
-    def get_bottomright(self):
-        return ((self.i + 1) * self.width, self.j * self.height)
-    bottomright = property(get_bottomright)
-
-    # ro, mid-point in pixels, (x, y)
-    def get_midleft(self):
-        return (self.i * self.width, self.j * self.height + self.height // 2)
-    midleft = property(get_midleft)
-
-    # ro, mid-point in pixels, (x, y)
-    def get_midright(self):
-        return ((self.i + 1) * self.width,
-            self.j * self.height + self.height // 2)
-    midright = property(get_midright)
-
+    # other properties are read-only
+    origin = property(Rect.get_origin)
+    top = property(Rect.get_top)
+    bottom = property(Rect.get_bottom)
+    center = property(Rect.get_center)
+    midtop = property(Rect.get_midtop)
+    midbottom = property(Rect.get_midbottom)
+    left = property(Rect.get_left)
+    right = property(Rect.get_right)
+    topleft = property(Rect.get_topleft)
+    topright = property(Rect.get_topright)
+    bottomleft = property(Rect.get_bottomleft)
+    bottomright = property(Rect.get_bottomright)
+    midleft = property(Rect.get_midleft)
+    midright = property(Rect.get_midright)
 
 class HexMapLayer(RegularTesselationMapLayer):
     '''MapLayer with flat-top, regular hexagonal cells.

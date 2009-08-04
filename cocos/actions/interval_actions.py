@@ -731,13 +731,18 @@ class RandomDelay(Delay):
 
 class Mover(IntervalAction):
     """Moves a `CocosNode` object around in x, y according to 
-    a direction and speed. Duration is typically None
+    a direction and speed.
 
     Example::
 
-        # Move the sprite 50 pixels to the left in 8 seconds
-        action = MoveBy( (-50,0), 8 )
-        sprite.do( action )
+        # control the movement of the given sprite
+        mover = Mover(0)
+        sprite.do(mover)
+
+        ...
+        sprite.rotation = 45
+        mover.speed = 100
+
     """
     def init(self, speed, acceleration=0, 
             max_forward_speed=None, max_reverse_speed=None):
