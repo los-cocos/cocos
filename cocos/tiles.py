@@ -495,7 +495,6 @@ class Tile(object):
     '''Tiles hold an image and some optional properties.
     '''
     def __init__(self, id, properties, image, offset=None):
-        super(Tile, self).__init__()
         self.id = id
         self.properties = properties
         self.image = image
@@ -746,7 +745,7 @@ class MapLayer(ScrollableLayer):
                 self._sprites[k]._label = None
                 del self._sprites[k]
 
-class RegularTesselationMapLayer(MapLayer):
+class RegularTesselationMap(object):
     '''A class of MapLayer that has a regular array of Cells.
     '''
     def get_cell(self, i, j):
@@ -760,7 +759,7 @@ class RegularTesselationMapLayer(MapLayer):
         except IndexError:
             return None
 
-class RectMapLayer(RegularTesselationMapLayer):
+class RectMap(RegularTesselationMap):
     '''Rectangular map.
 
     Cells are stored in column-major order with y increasing up,
@@ -775,7 +774,6 @@ class RectMapLayer(RegularTesselationMapLayer):
     '''
     def __init__(self, id, tw, th, cells, origin=None, properties=None):
         properties = properties or {}
-        super(RectMapLayer, self).__init__(properties)
         self.id = id
         self.tw, self.th = tw, th
         if origin is None:
@@ -846,6 +844,13 @@ class RectMapLayer(RegularTesselationMapLayer):
             c.tail = '\n'
             for cell in column:
                 cell._as_xml(c)
+
+class RectMapLayer(RectMap, MapLayer):
+    '''A renderable, scrollable rect map.
+    '''
+    def __init__(self, id, tw, th, cells, origin=None, properties=None):
+        RectMap.__init__(self, id, tw, th, cells, origin, properties)
+        RectMapLayer.__init__(self, properties)
 
 
 class RectMapCollider(object):
@@ -1223,46 +1228,67 @@ class Rect(object):
         self.y = y
     midbottom = property(get_midbottom, set_midbottom)
 
-XXX
-
     # side in pixels, x extent
     def get_left(self):
         return self.x
+    def set_left(self, x):
+        self.x = x
     left = property(get_left, set_left)
 
     # side in pixels, x extent
     def get_right(self):
         return self.x + self.width
+    def set_right(self, x):
+        self.x = x - self.width
     right = property(get_right, set_right)
 
     # corner in pixels, (x, y)
     def get_topleft(self):
         return (self.x, self.y + self.height)
+    def set_topleft(self, topleft):
+        self.x, y = topleft
+        self.y = y - self.height
     topleft = property(get_topleft, set_topleft)
 
     # corner in pixels, (x, y)
     def get_topright(self):
         return (self.x + self.width, self.y + self.height)
+    def set_topright(self, topright):
+        x, y = topright
+        self.x = x - self.width
+        self.y = y - self.height
     topright = property(get_topright, set_topright)
 
     # corner in pixels, (x, y)
     def get_bottomleft(self):
         return (self.x, self.y)
-    bottomleft = property(get_bottomleft, set_bottom_left)
+    def set_bottomleft(self, bottomleft):
+        self.x, self.y = bottomleft
+    bottomleft = property(get_bottomleft, set_bottomleft)
 
     # corner in pixels, (x, y)
     def get_bottomright(self):
-        return (self.i + self.width, self.y)
+        return (self.x + self.width, self.y)
+    def set_bottomright(self, bottomright):
+        x, self.y = bottomright
+        self.x = x - self.width
     bottomright = property(get_bottomright, set_bottomright)
 
     # mid-point in pixels, (x, y)
     def get_midleft(self):
         return (self.x, self.y + self.height // 2)
+    def set_midleft(self, midleft):
+        self.x, y = midleft
+        self.y = y - self.height // 2
     midleft = property(get_midleft, set_midleft)
 
     # mid-point in pixels, (x, y)
     def get_midright(self):
         return (self.x + self.width, self.y + self.height // 2)
+    def set_midright(self, midright):
+        x, y = midright
+        self.x = x - self.width
+        self.y = y - self.height // 2
     midright = property(get_midright, set_midright)
 
 class RectCell(Rect, Cell):
@@ -1279,8 +1305,8 @@ class RectCell(Rect, Cell):
     view or layer transformations.
     '''
     def __init__(self, i, j, width, height, properties, tile):
-        super(Rect, self).__init__(i*width, j*height, width, height)
-        supet(Cell, self).__init__(self, i, j, width, height, properties, tile)
+        Rect.__init__(self, i*width, j*height, width, height)
+        Cell.__init__(self, i, j, width, height, properties, tile)
 
     # other properties are read-only
     origin = property(Rect.get_origin)
@@ -1298,7 +1324,7 @@ class RectCell(Rect, Cell):
     midleft = property(Rect.get_midleft)
     midright = property(Rect.get_midright)
 
-class HexMapLayer(RegularTesselationMapLayer):
+class HexMap(RegularTesselationMap):
     '''MapLayer with flat-top, regular hexagonal cells.
 
     Additional attributes extending MapBase:
@@ -1316,7 +1342,6 @@ class HexMapLayer(RegularTesselationMapLayer):
     '''
     def __init__(self, id, th, cells, origin=None, properties=None):
         properties = properties or {}
-        super(HexMapLayer, self).__init__(properties)
         self.id = id
         self.th = th
         if origin is None:
@@ -1401,6 +1426,14 @@ class HexMapLayer(RegularTesselationMapLayer):
                 return self.get_cell(cell.i + 1, cell.j - 1)
         else:
             raise ValueError, 'Unknown direction %r'%direction
+
+class HexMapLayer(HexMap, MapLayer):
+    '''A renderable, scrollable hex map.
+    '''
+    def __init__(self, id, tw, th, cells, origin=None, properties=None):
+        HexMap.__init__(self, id, tw, th, cells, origin, properties)
+        HexMapLayer.__init__(self, properties)
+
 
 # Note that we always add below (not subtract) so that we can try to
 # avoid accumulation errors due to rounding ints. We do this so
