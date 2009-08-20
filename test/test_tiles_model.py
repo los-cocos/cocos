@@ -145,6 +145,24 @@ class MapModelTest(unittest.TestCase):
         self.assertEquals((t.i, t.j), (1, 1))
         self.assertEquals(t.properties['meta'], 'e')
 
+    def test_rect_region(self):
+        # test rectangular tile map
+        #    +---+---+---+
+        #    | d | e | f |
+        #    +---+---+---+
+        #    | a | b | c |
+        #    +---+---+---+
+        m = gen_rect_map(rmd, 64, 64)
+        t = m.get_in_region(0, 0, 63, 63)
+        self.assertEquals(len(t), 1)
+        self.assertEquals(t[0].properties['meta'], 'a')
+        t = m.get_in_region(64, 64, 127, 127)
+        self.assertEquals(len(t), 1)
+        self.assertEquals(t[0].properties['meta'], 'e')
+        t = m.get_in_region(32, 32, 96, 96)
+        self.assertEquals(len(t), 4)
+
+
     def test_hex_neighbor(self):
         # test hexagonal tile map
         # tiles = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
