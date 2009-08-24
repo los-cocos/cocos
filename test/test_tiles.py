@@ -9,6 +9,9 @@ import pyglet
 from pyglet.window import key
 from pyglet.gl import *
 
+pyglet.resource.path.append(pyglet.resource.get_script_home())
+pyglet.resource.reindex()
+
 import cocos
 from cocos import tiles, actions
 

@@ -230,25 +230,20 @@ from cocos.director import director
 class ResourceError(Exception):
     pass
 
-# XXX this should use pyglet.resource to load all resources
-# XXX (though how path extension works isn't clear)
-
 class Resource(object):
     '''Load some tile mapping resources from an XML file.
     '''
     cache = {}
-    def __init__(self, filename, paths=None):
+    def __init__(self, filename):
         self.filename = filename
-        if paths is None:
-            self.paths = []
-        else:
-            self.paths = paths
 
         # id to map, tileset, etc.
         self.contents = {}
 
         # list of (namespace, Resource) from <requires> tags
         self.requires = []
+
+        filename = self.find_file(filename)
 
         tree = ElementTree.parse(filename)
         root = tree.getroot()
@@ -262,11 +257,8 @@ class Resource(object):
             return filename
         if os.path.exists(filename):
             return filename
-        for path in self.paths:
-            fn = os.path.join(path, filename)
-            if os.path.exists(fn):
-                return fn
-        raise ResourceError('File "%s" not found in any paths'%filename)
+        path = pyglet.resource.location(filename).path
+        return os.path.join(path, filename)
 
     def resource_factory(self, tag):
         for child in tag:
@@ -353,17 +345,14 @@ class Resource(object):
 
 _cache = weakref.WeakValueDictionary()
 class _NOT_LOADED(object): pass
-def load(filename, paths=None):
+def load(filename):
     '''Load resource(s) defined in the indicated XML file.
     '''
     # make sure we can find files relative to this one
     dirname = os.path.dirname(filename)
-    if dirname:
-        if paths:
-            paths = list(paths)
-        else:
-            paths = []
-        paths.append(dirname)
+    if dirname and dirname not in pyglet.resource.path:
+        pyglet.resource.path.append(dirname)
+        pyglet.resource.reindex()
 
     if filename in _cache:
         if _cache[filename] is _NOT_LOADED:
@@ -371,7 +360,7 @@ def load(filename, paths=None):
         return _cache[filename]
 
     _cache[filename] = _NOT_LOADED
-    obj = Resource(filename, paths)
+    obj = Resource(filename)
     _cache[filename] = obj
     return obj
 
@@ -850,7 +839,7 @@ class RectMapLayer(RectMap, MapLayer):
     '''
     def __init__(self, id, tw, th, cells, origin=None, properties=None):
         RectMap.__init__(self, id, tw, th, cells, origin, properties)
-        RectMapLayer.__init__(self, properties)
+        MapLayer.__init__(self, properties)
 
 
 class RectMapCollider(object):
@@ -869,6 +858,9 @@ class RectMapCollider(object):
     def collide_top(self, dy):
         pass
 
+    # XXX this should take a *map* to collide with and find all collisions;
+    # resolve them and re-collide if necessary; make sure the cells
+    # colliding the sprite midpoints are done first
     def do_collision(self, cell, last, rect, dy, dx):
         g = cell.tile.properties.get
         self.resting = False

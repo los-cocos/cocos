@@ -8,6 +8,10 @@ This test should just run without failing.
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: MAP_MODEL.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 import unittest
 
 from cocos.tiles import Rect, RectCell, RectMap, HexCell, HexMap, Tile
@@ -291,6 +295,7 @@ class MapModelTest(unittest.TestCase):
         # \_/ \_/ 
         m = gen_hex_map(hmd, 32)
         t = m.get_at_pixel(0,0)
+        print t
         assert t is None
         t = m.get_at_pixel(0,16)
         self.assertEquals((t.i, t.j), (0, 0))

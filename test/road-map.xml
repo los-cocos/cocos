@@ -1,4 +1,4 @@
-<resource><requires file="../test/road-tiles.xml" />
+<resource><requires file="road-tiles.xml" />
 <rectmap id="map0" origin="100,0,0" tile_size="128x128"><column><cell tile="bl"><property type="unicode" value="True" /></cell>
 <cell tile="vl" />
 <cell tile="vl" />
