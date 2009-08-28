@@ -404,8 +404,7 @@ def image_factory(resource, tag):
     filename = resource.find_file(tag.get('file'))
     if not filename:
         raise ResourceError('No file= on <image> tag')
-    # XXX use pyglet.resource
-    image = pyglet.image.load(filename)
+    image = pyglet.image.load(tag.get('file'))
 
     image.properties = _handle_properties(tag)
 
@@ -420,8 +419,7 @@ def imageatlas_factory(resource, tag):
     filename = resource.find_file(tag.get('file'))
     if not filename:
         raise ResourceError('No file= on <imageatlas> tag')
-    # XXX use pyglet.resource
-    atlas = pyglet.image.load(filename)
+    atlas = pyglet.image.load(tag.get('file'))
     atlas.properties = _handle_properties(tag)
     if tag.get('id'):
         atlas.id = tag.get('id')
