@@ -921,9 +921,10 @@ class Cell(object):
             c.set('tile', self.tile.id)
         for k in self.properties:
             v = self.properties[k]
-            v = _python_to_xml[type(v)](v)
+            t = type(v)
+            v = _python_to_xml[t](v)
             ElementTree.SubElement(c, 'property', name=k, value=v,
-                type=_xml_type[type(v)])
+                type=_xml_type[t])
 
     def __contains__(self, key):
         if key in self.properties:
