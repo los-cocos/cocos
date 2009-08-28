@@ -823,9 +823,10 @@ class RectMap(RegularTesselationMap):
         # map properties
         for k in self.properties:
             v = self.properties[k]
-            v = _python_to_xml[type(v)](v)
+            t = type(v)
+            v = _python_to_xml[t](v)
             p = ElementTree.SubElement(m, 'property', name=k, value=v,
-                type=_xml_type[type(v)])
+                type=_xml_type[t])
             p.tail = '\n'
 
         # columns / cells
