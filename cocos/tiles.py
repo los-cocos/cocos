@@ -266,8 +266,7 @@ class Resource(object):
             self.handle(child)
 
     def requires_factory(self, tag):
-        filename = self.find_file(tag.get('file'))
-        resource = load(filename)
+        resource = load(tag.get('file'))
         self.requires.append((tag.get('namespace', ''), resource))
 
     factories = {
