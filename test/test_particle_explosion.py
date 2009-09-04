@@ -24,6 +24,8 @@ class L(Layer):
 #        p = Meteor()
 #        p = Galaxy()
 
+        p.auto_remove_on_finish = True
+
         p.position = (320,240)
         self.add( p )
 

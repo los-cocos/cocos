@@ -169,6 +169,9 @@ class ParticleSystem( CocosNode ):
         #: Count of particles
         self.particle_count = 0
 
+        #: auto remove when particle finishes
+        self.auto_remove_on_finish = False
+
         self.schedule( self.step )
 
     def on_enter( self ):
@@ -230,6 +233,10 @@ class ParticleSystem( CocosNode ):
 
 
     def step( self, delta ):
+
+        # update particle count
+        self.particle_count = numpy.sum( self.particle_life >= 0 )
+
         if self.active:
             rate = 1.0 / self.emission_rate
             self.emit_counter += delta
@@ -237,7 +244,7 @@ class ParticleSystem( CocosNode ):
 #            if random.random() < 0.01:
 #                delta += 0.5
 
-            self.particle_count = sum( self.particle_life >= 0 )
+            self.particle_count = numpy.sum( self.particle_life >= 0 )
 
             while self.particle_count < self.total_particles and self.emit_counter > rate:
                 self.add_particle()
@@ -249,6 +256,10 @@ class ParticleSystem( CocosNode ):
                 self.stop_system()
 
         self.update_particles( delta )
+
+        if self.particle_count == 0 and self.auto_remove_on_finish == True:
+            self.unschedule( self.step )
+            self.parent.remove( self )
 
     def add_particle( self ):
         self.init_particle()
