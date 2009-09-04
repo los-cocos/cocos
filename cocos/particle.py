@@ -63,6 +63,10 @@ class Color( object ):
 
 
 class ParticleSystem( CocosNode ):
+
+    # type of particle
+    POSITION_FREE, POSITION_GROUPED = range(2)
+
     #: is the particle system active ?
     active = True
 
@@ -130,6 +134,9 @@ class ParticleSystem( CocosNode ):
     #:color modulate
     color_modulate = True
 
+    # position type
+    position_type = POSITION_GROUPED
+
     def __init__(self):
         super(ParticleSystem,self).__init__()
 
@@ -153,6 +160,8 @@ class ParticleSystem( CocosNode ):
         self.particle_life.fill(-1.0)
         # size x 1
         self.particle_size = numpy.zeros( (self.total_particles, 1), numpy.float32 )
+        # start position
+        self.start_pos = numpy.zeros( (self.total_particles, 2), numpy.float32 )
 
         #: How many particles can be emitted per second
         self.emit_counter = 0
@@ -280,6 +289,13 @@ class ParticleSystem( CocosNode ):
         self.particle_life -= delta
 
 
+        # position: free or grouped
+        if self.position_type == self.POSITION_FREE:
+            tuple = numpy.array( [self.x, self.y] )
+            tmp = tuple - self.start_pos
+            self.particle_pos -= tmp
+
+
         # color
         self.particle_color += self.particle_delta_color * delta
 
@@ -307,6 +323,9 @@ class ParticleSystem( CocosNode ):
         self.particle_pos[idx][0] = self.pos_var.x * rand()
         self.particle_pos[idx][1] = self.pos_var.y * rand()
 
+        # start position
+        self.start_pos[idx][0] = self.x
+        self.start_pos[idx][1] = self.y
 
         a = math.radians( self.angle + self.angle_var * rand() )
         v = Point2( math.cos( a ), math.sin( a ) )

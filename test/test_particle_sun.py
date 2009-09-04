@@ -10,8 +10,11 @@ from cocos.director import director
 from cocos.actions import *
 from cocos.layer import *
 from cocos.particle_systems import *
+from cocos.particle import *
 
 class L(Layer):
+    is_event_handler = True
+
     def __init__(self):
         super( L, self).__init__()
 
@@ -26,6 +29,14 @@ class L(Layer):
 
         p.position = (320,240)
         self.add( p )
+
+        p.position_type = ParticleSystem.POSITION_FREE
+        self.sun = p
+
+    def on_mouse_drag( self, x, y, dx, dy, buttons, modifiers ):
+        (x,y) = director.get_virtual_coordinates(x,y)
+        x,y = self.sun.position
+        self.sun.position = (x+dx, y+dy)
 
 if __name__ == "__main__":
     director.init( resizable=True )
