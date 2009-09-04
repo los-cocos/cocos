@@ -244,8 +244,6 @@ class ParticleSystem( CocosNode ):
 #            if random.random() < 0.01:
 #                delta += 0.5
 
-            self.particle_count = numpy.sum( self.particle_life >= 0 )
-
             while self.particle_count < self.total_particles and self.emit_counter > rate:
                 self.add_particle()
                 self.emit_counter -= rate
