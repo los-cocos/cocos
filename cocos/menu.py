@@ -488,12 +488,12 @@ class MenuItem (BaseMenuItem):
         return self.item.content_height
 
     def generateWidgets (self, pos_x, pos_y, font_item, font_item_selected):
-        font_item['x'] = pos_x
-        font_item['y'] = pos_y
+        font_item['x'] = int(pos_x)
+        font_item['y'] = int(pos_y)
         font_item['text'] = self.label
         self.item = pyglet.text.Label(**font_item )
-        font_item_selected['x'] = pos_x
-        font_item_selected['y'] = pos_y
+        font_item_selected['x'] = int(pos_x)
+        font_item_selected['y'] = int(pos_y)
         font_item_selected['text'] = self.label
         self.item_selected = pyglet.text.Label( **font_item_selected )
 
@@ -520,12 +520,12 @@ class ImageMenuItem (BaseMenuItem):
         self.item = Sprite(self.image, anchor=anchor, opacity=255,
                            color=font_item['color'][:3])
         self.item.scale = font_item['font_size'] / float(self.item.height )
-        self.item.position = pos_x, pos_y
+        self.item.position = int(pos_x), int(pos_y)
         self.selected_item = Sprite(self.image, anchor=anchor,
                                     color=font_item_selected['color'][:3])
         self.selected_item.scale = (font_item_selected['font_size'] /
                                      float(self.selected_item.height))
-        self.selected_item.position = pos_x, pos_y
+        self.selected_item.position = int(pos_x), int(pos_y)
 
     def draw (self):
         glPushMatrix()
@@ -715,14 +715,14 @@ class ColorMenuItem( MenuItem ):
             return True
 
     def generateWidgets (self, pos_x, pos_y, font_item, font_item_selected):
-        font_item['x'] = pos_x
-        font_item['y'] = pos_y
+        font_item['x'] = int(pos_x)
+        font_item['y'] = int(pos_y)
         font_item['text'] = self.my_label
         self.item = pyglet.text.Label(**font_item )
         self.item.labelWidth=self.item.content_width
         self.item.text = self.label
-        font_item_selected['x'] = pos_x
-        font_item_selected['y'] = pos_y
+        font_item_selected['x'] = int(pos_x)
+        font_item_selected['y'] = int(pos_y)
         font_item_selected['text'] = self.my_label
         self.item_selected = pyglet.text.Label( **font_item_selected )
         self.item_selected.labelWidth=self.item_selected.content_width
@@ -738,10 +738,10 @@ class ColorMenuItem( MenuItem ):
         else:
             item = self.item
 
-        x1 = item._get_left() + item.labelWidth * 1.05
-        y1 = item.y - item.content_height / 2
-        y2 = item.y + item.content_height / 3
-        x2 = x1 + (y2 - y1) * 2
+        x1 = int(item._get_left() + item.labelWidth * 1.05)
+        y1 = int(item.y - item.content_height / 2)
+        y2 = int(item.y + item.content_height / 3)
+        x2 = int(x1 + (y2 - y1) * 2)
         pyglet.graphics.draw(4, pyglet.graphics.GL_QUADS,
                              ('v2f', (x1, y1, x1, y2, x2, y2, x2, y1)),
                              ('c3B', self.items[self.idx] * 4))

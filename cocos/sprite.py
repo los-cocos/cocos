@@ -52,6 +52,7 @@ __docformat__ = 'restructuredtext'
 
 import cocosnode
 from batch import *
+import rect
 
 import pyglet
 from pyglet import image
@@ -130,6 +131,17 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
         #: color of the sprite in R,G,B format where 0,0,0 is black and 255,255,255 is white
         self.color = color
+
+
+    def get_rect(self):
+        '''Get a cocos.rect.Rect for this sprite.
+        '''
+        sx, sy = self.position
+        ax, ay = self.image_anchor
+        sx -= ax*self.scale
+        sy -= ay*self.scale
+        return rect.Rect(sx, sy, self.width*self.scale,
+            self.height*self.scale)
 
 
     def contains(self, x, y):
