@@ -152,9 +152,15 @@ class DefaultHandler( object ):
         super(DefaultHandler,self).__init__()
         self.wired = False
 
+    def on_deactivate(self):
+        """The window was deactivated, get out of fullscreen if there."""
+        if director.window.fullscreen:
+            director.window.set_fullscreen(False)
+
     def on_key_press( self, symbol, modifiers ):
         if symbol == pyglet.window.key.F and (modifiers & pyglet.window.key.MOD_ACCEL):
-            director.window.set_fullscreen( not director.window.fullscreen )
+            self._shouldbe_full = not director.window.fullscreen
+            director.window.set_fullscreen(self._shouldbe_full)
             return True
 
         elif symbol == pyglet.window.key.P and (modifiers & pyglet.window.key.MOD_ACCEL):
