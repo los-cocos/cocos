@@ -26,5 +26,5 @@ if __name__ == "__main__":
     main_scene.add( BackgroundLayer(), z=0 )
 
     flip = FlipX3D( duration=2)
-    main_scene.do( flip + ReverseTime(flip) )
+    main_scene.do( flip + Reverse(flip) )
     director.run (main_scene)
