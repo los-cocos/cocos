@@ -320,8 +320,10 @@ class Canvas(cocosnode.CocosNode):
         super(Canvas, self).on_exit()
 
     def free(self):
+        self._dirty = True
         if self._vertex_list:
             self._vertex_list.delete()
+            self._vertex_list = None
 
     def set_color(self, color):
         self._context.color = color
