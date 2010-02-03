@@ -185,8 +185,8 @@ class Vector2:
                            other.y - self.y)
         else:
             assert hasattr(other, '__len__') and len(other) == 2
-            return Vector2(other.x - self[0],
-                           other.y - self[1])
+            return Vector2(other[0] - self.x,
+                           other[1] - self.y)
 
     def __mul__(self, other):
         assert type(other) in (int, long, float)
@@ -407,9 +407,9 @@ class Vector3:
                            other.z - self.z)
         else:
             assert hasattr(other, '__len__') and len(other) == 3
-            return Vector3(other.x - self[0],
-                           other.y - self[1],
-                           other.z - self[2])
+            return Vector3(other[0] - self.x,
+                           other[1] - self.y,
+                           other[2] - self.z)
 
     def __mul__(self, other):
         if isinstance(other, Vector3):
