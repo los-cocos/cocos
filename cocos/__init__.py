@@ -62,17 +62,25 @@ version = __version__
 import os, pyglet
 pyglet.resource.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), "resources"))
 pyglet.resource.reindex()
+try:
+    unittesting = os.environ['cocos_utest']
+except KeyError:
+    unittesting = False
 del os, pyglet
 
-import actions
-import director
-import layer
-import menu
-import sprite
-import path
-import scene
-import grid
-import text
-import camera
-import draw
-import skeleton
+def import_all():
+    import actions
+    import director
+    import layer
+    import menu
+    import sprite
+    import path
+    import scene
+    import grid
+    import text
+    import camera
+    import draw
+    import skeleton
+
+if not unittesting:
+    import_all()

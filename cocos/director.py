@@ -140,7 +140,7 @@ __docformat__ = 'restructuredtext'
 import pyglet
 from pyglet import window, event
 from pyglet import clock
-from pyglet import media
+#from pyglet import media
 from pyglet.gl import *
 
 import cocos
