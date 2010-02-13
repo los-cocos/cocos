@@ -20,13 +20,15 @@ import sys
 director.init()
 
 class Actions1(unittest.TestCase):
-    def test_delete(self):
+    def test_remove_action(self):
         node = CocosNode()
         self.assertTrue(len(node.actions)==0)
         action = ac.Action()
         node.do(action)
         self.assertTrue(len(node.actions)==1)
         node.remove_action(action)
+        dt = 0.1
+        node._step(dt)# needed to complete delete, will traceback if remove failed
         self.assertTrue(len(node.actions)==0)
 
 if __name__ == '__main__':
