@@ -13,7 +13,7 @@ pyglet.resource.path.append(pyglet.resource.get_script_home())
 pyglet.resource.reindex()
 
 import cocos
-from cocos import tiles, actions
+from cocos import tiles, actions, scrolling
 
 class CarSprite(cocos.sprite.Sprite):
     motion = actions.Mover(0, 0, max_forward_speed=200,
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     from cocos.director import director
     director.init(width=600, height=300, do_not_scale=True)
 
-    car_layer = tiles.ScrollableLayer()
+    car_layer = scrolling.ScrollableLayer()
     car = CarSprite('car.png')
     car_layer.add(car)
     car.x = 200
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     car.schedule(car.update)
     car.do(car.motion)
 
-    scroller = tiles.ScrollingManager()
+    scroller = scrolling.ScrollingManager()
     test_layer = tiles.load('road-map.xml')['map0']
     scroller.add(test_layer)
     scroller.add(car_layer)
