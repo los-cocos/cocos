@@ -698,7 +698,8 @@ class MapLayer(scrolling.ScrollableLayer):
                 del self._sprites[k]
 
 class RegularTesselationMap(object):
-    '''A class of MapLayer that has a regular array of Cells.
+    '''A regularly tesselated map that allows access to its cells by index
+    (i, j).
     '''
     def get_cell(self, i, j):
         ''' Return Cell at cell pos=(i, j).
@@ -715,14 +716,17 @@ class RectMap(RegularTesselationMap):
     '''Rectangular map.
 
     Cells are stored in column-major order with y increasing up,
-    allowing [i][j] addressing:
-    +---+---+---+
-    | d | e | f |
-    +---+---+---+
-    | a | b | c |
-    +---+---+---+
+    allowing [i][j] addressing::
+
+     +---+---+---+
+     | d | e | f |
+     +---+---+---+
+     | a | b | c |
+     +---+---+---+
+
     Thus cells = [['a', 'd'], ['b', 'e'], ['c', 'f']]
-    and cells[0][1] = 'd'
+
+    (and thus the cell at (0,0) is 'a' and (1, 1) is 'd')
     '''
     def __init__(self, id, tw, th, cells, origin=None, properties=None):
         properties = properties or {}
@@ -775,6 +779,18 @@ class RectMap(RegularTesselationMap):
         '''
         dx, dy = direction
         return self.get_cell(cell.i + dx, cell.j + dy)
+
+    def get_neighbors(self, cell):
+        '''Get all neighbor cells for the nominated cell.
+
+        Return a dict with the directions (self.UP, self.DOWN, etc) as keys
+        and neighbor cells as values.
+        '''
+        r = {}
+        for direction in (self.UP, self.RIGHT, self.LEFT, self.DOWN):
+            dx, dy = direction
+            r[direction] = self.get_cell(cell.i + dx, cell.j + dy)
+        return r
 
     def _as_xml(self, root):
         m = ElementTree.SubElement(root, 'rectmap', id=self.id,
@@ -857,7 +873,6 @@ class Cell(object):
         width, height   -- dimensions
         properties      -- arbitrary properties
         cell            -- cell from the MapLayer's cells
-
 
     Properties are available through the dictionary interface, ie. if the
     cell has a property 'cost' then you may access it as:
@@ -955,18 +970,23 @@ class RectCell(Rect, Cell):
 class HexMap(RegularTesselationMap):
     '''MapLayer with flat-top, regular hexagonal cells.
 
-    Additional attributes extending MapBase:
+    Calculated attributes:
 
-        edge_length -- length of an edge in pixels
+     edge_length -- length of an edge in pixels = int(th / math.sqrt(3))
+     tw          -- with of a "tile" in pixels = edge_length * 2
 
     Hexmaps store their cells in an offset array, column-major with y
-    increasing up, such that a map:
-          /d\ /h\
+    increasing up, such that a map::
+
+          /d\ /h\ 
         /b\_/f\_/
-        \_/c\_/g\
+        \_/c\_/g\ 
         /a\_/e\_/
         \_/ \_/
+
     has cells = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
+
+    (and this the cell at (0, 0) is 'a' and (1, 1) is 'd')
     '''
     def __init__(self, id, th, cells, origin=None, properties=None):
         properties = properties or {}
@@ -1002,17 +1022,21 @@ class HexMap(RegularTesselationMap):
     # XXX add get_from_screen
 
     def get_at_pixel(self, x, y):
-        '''Get the Cell at pixel px=(x,y).
+        '''Get the Cell at pixel (x,y).
+
         Return None if out of bounds.'''
-        # XXX update my docstring
+        print 'LOOKING UP', (x, y), 'with edge_length', self.edge_length
         s = self.edge_length
         # map is divided into columns of
         # s/2 (shared), s, s/2(shared), s, s/2 (shared), ...
         x = x // (s/2 + s)
+        print 'x=', x
+        y = y // self.th
+        print 'y=', y
         if x % 2:
             # every second cell is up one
             y -= self.th // 2
-        y = y // self.th
+            print 'shift y=', y
         return self.get_cell(x, y)
 
     UP = 'up'
@@ -1055,11 +1079,38 @@ class HexMap(RegularTesselationMap):
         else:
             raise ValueError, 'Unknown direction %r'%direction
 
+    def get_neighbors(self, cell):
+        '''Get all neighbor cells for the nominated cell.
+
+        Return a dict with the directions (self.UP, self.DOWN, etc) as keys
+        and neighbor cells as values.
+        '''
+        r = {}
+        for direction in (self.UP_LEFT, self.UP, self.UP_RIGHT,
+                self.DOWN_LEFT, self.DOWN, self.DOWN_RIGHT):
+            dx, dy = direction
+            r[direction] = self.get_cell(cell.i + dx, cell.j + dy)
+        return r
+
 class HexMapLayer(HexMap, MapLayer):
     '''A renderable, scrollable hex map.
+
+    The Layer has a calculated attribute:
+
+     edge_length -- length of an edge in pixels = int(th / math.sqrt(3))
+     tw          -- with of a "tile" in pixels = edge_length * 2
+
+    Hexmaps store their cells in an offset array, column-major with y
+    increasing up, such that a map:
+          /d\ /h\
+        /b\_/f\_/
+        \_/c\_/g\
+        /a\_/e\_/
+        \_/ \_/
+    has cells = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
     '''
-    def __init__(self, id, tw, th, cells, origin=None, properties=None):
-        HexMap.__init__(self, id, tw, th, cells, origin, properties)
+    def __init__(self, id, th, cells, origin=None, properties=None):
+        HexMap.__init__(self, id, th, cells, origin, properties)
         HexMapLayer.__init__(self, properties)
 
 
