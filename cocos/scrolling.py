@@ -85,6 +85,15 @@ class ScrollableLayer(cocos.layer.Layer):
         self.batch.draw()
         pyglet.gl.glPopMatrix()
 
+    def set_dirty(self):
+        '''The viewport has changed in some way.
+        '''
+        pass
+
+    is_event_handler = True
+    def on_resize(self, width, height):
+        self.view_w, self.view_h = width, height
+        self.set_dirty()
 
 class ScrollingManager(cocos.layer.Layer):
     '''Manages scrolling of Layers in a Cocos Scene.
@@ -123,6 +132,12 @@ class ScrollingManager(cocos.layer.Layer):
         # always transform about 0,0
         self.transform_anchor_x = 0
         self.transform_anchor_y = 0
+
+    is_event_handler = True
+    def on_resize(self, width, height):
+        self.view_w, self.view_h = width, height
+        if self.children:
+            self.set_focus(self.fx, self.fy)
 
     _scale = 0
     def set_scale(self, scale):
