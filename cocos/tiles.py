@@ -850,6 +850,9 @@ class RectMapCollider(object):
         pass
 
     # XXX this should take a *map* to collide with and find all collisions;
+    # def collide_map(self, map, last, new, dy, dx):
+    #    do this cleverly :)
+
     # resolve them and re-collide if necessary; make sure the cells
     # colliding the sprite midpoints are done first
     def do_collision(self, cell, last, new, dy, dx):
@@ -893,7 +896,6 @@ class RectMapCollider(object):
             new.top = cell.bottom
             if dy: self.collide_top(dy)
     
-
 
 class Cell(object):
     '''Base class for cells from rect and hex maps.
