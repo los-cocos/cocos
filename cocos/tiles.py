@@ -205,6 +205,7 @@ import weakref
 from xml.etree import ElementTree
 
 import pyglet
+from pyglet.gl import gl
 
 import cocos
 from cocos.director import director
@@ -443,6 +444,16 @@ def imageatlas_factory(resource, tag):
 
         x, y = map(int, child.get('offset').split(','))
         image = atlas.get_region(x, y, width, height)
+
+        # set texture clamping to avoid mis-rendering subpixel edges
+        image.texture.id
+        gl.glBindTexture(image.texture.target, image.texture.id)
+        gl.glTexParameteri(image.texture.target,
+            gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+        gl.glTexParameteri(image.texture.target,
+            gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+
+        # save the image off and set properties
         id = child.get('id')
         resource.add_resource(id, image)
         image.properties = _handle_properties(child)
