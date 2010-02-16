@@ -1,3 +1,11 @@
+v0.4.0 - ??? 2010
+  - Scrolling Layers moved to cocos.scrolling from cocos.tiles and usable
+    in non-tiled games
+  - ccoos.tiles.RectMapCollider provides a skeleton for handling collisions
+    between sprites and rectangular tile maps
+  - Many bugfixes
+
+
 v0.3.0 - September 5th, 2008
   - Added particle systems: Sun, Fire, Fireworks, Meteor, Galaxy, Flower, Exposion, Spiral
   - Added lerp actions
