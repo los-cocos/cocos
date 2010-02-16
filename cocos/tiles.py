@@ -852,25 +852,45 @@ class RectMapCollider(object):
     # XXX this should take a *map* to collide with and find all collisions;
     # resolve them and re-collide if necessary; make sure the cells
     # colliding the sprite midpoints are done first
-    def do_collision(self, cell, last, rect, dy, dx):
+    def do_collision(self, cell, last, new, dy, dx):
+        '''Collide a Rect moving from "last" to "new" with the given map
+        RectCell "cell". The "dx" and "dy" values may indicate the velocity
+        of the moving rect.
+
+        The RectCell must have the boolean properties "top", "left",
+        "bottom" and "right" for those sides which the rect should collide.
+
+        If there is no collision then nothing is done.
+
+        If there is a collision:
+        
+        1. The "new" rect's position will be modified to its closest position
+           to the side of the cell that the collision is on, and
+        2. If the "dx" and "dy" values are passed in the methods
+           collide_<side> will be called to indicate that the rect has
+           collided with the cell on the rect's side indicated. The value
+           passed to the collide method will be a *modified* distance based
+           on the position of the rect after collision (according to step
+           #1).
+        '''
         g = cell.tile.properties.get
         self.resting = False
-        if (g('top') and last.bottom >= cell.top and rect.bottom < cell.top):
-            dy = last.y - rect.y
-            rect.bottom = cell.top
+        if (g('top') and last.bottom >= cell.top and new.bottom < cell.top):
+            dy = last.y - new.y
+            new.bottom = cell.top
             if dy: self.collide_bottom(dy)
-        if (g('left') and last.right <= cell.left and rect.right > cell.left):
-            dx = last.x - rect.x
-            rect.right = cell.left
+        if (g('left') and last.right <= cell.left and new.right > cell.left):
+            dx = last.x - new.x
+            new.right = cell.left
             if dx: self.collide_right(dx)
-        if (g('right') and last.left >= cell.right and rect.left < cell.right):
-            dx = last.x - rect.x
-            rect.left = cell.right
+        if (g('right') and last.left >= cell.right and new.left < cell.right):
+            dx = last.x - new.x
+            new.left = cell.right
             if dx: self.collide_left(dx)
             self.dx = 0
-        if (g('bottom') and last.top <= cell.bottom and rect.top > cell.bottom):
-            dy = last.y - rect.y
-            rect.top = cell.bottom
+        if (g('bottom') and last.top <= cell.bottom and new.top > cell.bottom):
+            dy = last.y - new.y
+            new.top = cell.bottom
             if dy: self.collide_top(dy)
     
 
@@ -954,6 +974,10 @@ class RectCell(Rect, Cell):
         width, height   -- dimensions
         properties      -- arbitrary properties
         cell            -- cell from the MapLayer's cells
+
+    The cell may have the standard properties "top", "left", "bottom" and
+    "right" which are booleans indicating that those sides are impassable.
+    These are used by RectCellCollider.
 
     Note that all pixel attributes are *not* adjusted for screen,
     view or layer transformations.
