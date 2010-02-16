@@ -27,7 +27,7 @@ class CarSprite(cocos.sprite.Sprite):
 
 if __name__ == "__main__":
     from cocos.director import director
-    director.init(width=600, height=300, do_not_scale=True)
+    director.init(width=600, height=300, do_not_scale=True, resizable=True)
 
     car_layer = scrolling.ScrollableLayer()
     car = CarSprite('car.png')
