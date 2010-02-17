@@ -73,8 +73,8 @@ and then either manually select the tiles to display:
 
 or if you wish for the level to scroll, you use the ScrollingManager::
 
-  >>> from cocos import scrolling
-  >>> manager = scrolling.ScrollingManager()
+  >>> from cocos import layers
+  >>> manager = layers.ScrollingManager()
   >>> manager.add(map)
 
 and later set the focus with::
@@ -213,17 +213,17 @@ from cocos.rect import Rect
 
 # Implement these classes for backwards compatibility; some older code
 # expects ScrollableLayer and ScrollingManager to be in the tiles module.
-from cocos import scrolling
-class ScrollableLayer(scrolling.ScrollableLayer):
+from cocos import layers
+class ScrollableLayer(layers.ScrollableLayer):
     def __init__(self, parallax=1):
         import warnings
-        warnings.warn('ScrollableLayer been has moved to cocos.scrolling',
+        warnings.warn('ScrollableLayer been has moved to cocos.layers',
             DeprecationWarning, stacklevel=2)
         super(ScrollableLayer, self).__init__(parallax=parallax)
-class ScrollingManager(scrolling.ScrollingManager):
+class ScrollingManager(layers.ScrollingManager):
     def __init__(self, viewport=None):
         import warnings
-        warnings.warn('ScrollingManager been has moved to cocos.scrolling',
+        warnings.warn('ScrollingManager been has moved to cocos.layers',
             DeprecationWarning, stacklevel=2)
         super(ScrollingManager, self).__init__(viewport=viewport)
 
@@ -589,7 +589,7 @@ def hex_width(height):
     return int(height / math.sqrt(3)) * 2
 
 
-class MapLayer(scrolling.ScrollableLayer):
+class MapLayer(layers.ScrollableLayer):
     '''Base class for Maps.
 
     Maps are comprised of tiles and can figure out which tiles are required to

@@ -294,18 +294,25 @@ class MapModelTest(unittest.TestCase):
         # /a\_/e\_/
         # \_/ \_/ 
         m = gen_hex_map(hmd, 32)
+        
+        # bottom-left map corner will return A
         t = m.get_at_pixel(0,0)
-        print t
-        assert t is None
-        t = m.get_at_pixel(0,16)
         self.assertEquals((t.i, t.j), (0, 0))
         self.assertEquals(t.properties['meta'], 'a')
-        t = m.get_at_pixel(16,16)
+
+        # left-most corner of A
+        t = m.get_at_pixel(0, 16)
         self.assertEquals((t.i, t.j), (0, 0))
         self.assertEquals(t.properties['meta'], 'a')
+
+        t = m.get_at_pixel(16, 16)
+        self.assertEquals((t.i, t.j), (0, 0))
+        self.assertEquals(t.properties['meta'], 'a')
+
         t = m.get_at_pixel(35,16)
         self.assertEquals((t.i, t.j), (0, 0))
         self.assertEquals(t.properties['meta'], 'a')
+
         t = m.get_at_pixel(36,16)
         self.assertEquals((t.i, t.j), (1, 0))
         self.assertEquals(t.properties['meta'], 'c')

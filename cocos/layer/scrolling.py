@@ -32,10 +32,10 @@ Two methods are available for setting the map focus:
   x and y values.
 '''
 
-import cocos.layer
+from cocos.layer.base_layers import Layer
 import pyglet
 
-class ScrollableLayer(cocos.layer.Layer):
+class ScrollableLayer(Layer):
     '''A Cocos Layer that is scrollable in a Scene.
 
     A layer may have a "parallax" value which is used to scale the position
@@ -95,7 +95,7 @@ class ScrollableLayer(cocos.layer.Layer):
         self.view_w, self.view_h = width, height
         self.set_dirty()
 
-class ScrollingManager(cocos.layer.Layer):
+class ScrollingManager(Layer):
     '''Manages scrolling of Layers in a Cocos Scene.
 
     Each ScrollableLayer that is added to this manager (via standard list
@@ -114,7 +114,7 @@ class ScrollingManager(cocos.layer.Layer):
     def __init__(self, viewport=None):
         # initialise the viewport stuff
         if viewport is None:
-            import director
+            from cocos import director
             self.view_w, self.view_h = director.director.get_window_size()
         else:
             self.view_w, self.view_h = viewport.width, viewport.height
