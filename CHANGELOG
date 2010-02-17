@@ -1,6 +1,6 @@
 v0.4.0 - ??? 2010
-  - Scrolling Layers moved to cocos.scrolling from cocos.tiles and usable
-    in non-tiled games
+  - ScrollableLayer and ScrollingManager moved to cocos.layer from cocos.tiles and
+    usable in non-tiled games
   - ccoos.tiles.RectMapCollider provides a skeleton for handling collisions
     between sprites and rectangular tile maps
   - Many bugfixes
