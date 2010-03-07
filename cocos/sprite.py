@@ -58,6 +58,7 @@ import pyglet
 from pyglet import image
 from pyglet.gl import *
 import euclid
+import math
 
 __all__ = [ 'Sprite',                     # Sprite class
             ]
@@ -160,6 +161,17 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 #        return rect.Rect(p1.x, p1.y, p2.x, p2.y )
 
 
+    def _set_rotation( self, a ):
+        pyglet.sprite.Sprite._set_rotation(self, a)
+        BatchableNode._set_rotation(self,a)
+
+    def _set_scale( self, s ):
+        pyglet.sprite.Sprite._set_scale(self,s)
+        BatchableNode._set_scale(self,s)
+
+    def _set_position( self, p ):
+        pyglet.sprite.Sprite.position = p
+        BatchableNode._set_position(self,p)
 
     def contains(self, x, y):
         '''Test whether this (untransformed) Sprite contains the pixel coordinates
@@ -220,5 +232,28 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         if self._vertex_list is not None:
             self._vertex_list.draw(GL_QUADS)
         self._group.unset_state()
+
+    #
+    # Custom implementation
+    #
+    def get_local_transform2( self ):
+        '''returns an euclid.Matrix3 with the local transformation matrix'''
+        if self.is_transform_dirty:
+
+            matrix = euclid.Matrix3().identity()
+
+            matrix.translate( self.image_anchor_x, self.image_anchor_y )
+
+            matrix.translate(self.x, self.y)
+            matrix.rotate( math.radians(-self._rotation) )
+            matrix.scale(self._scale, self._scale)
+
+            matrix.translate( -self.image_anchor_x, -self.image_anchor_y )
+            
+            self.is_transform_dirty = False	
+
+            self.transform_matrix = matrix
+	
+        return self.transform_matrix
 
 Sprite.supported_classes = Sprite

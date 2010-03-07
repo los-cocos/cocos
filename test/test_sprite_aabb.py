@@ -11,6 +11,7 @@ from cocos.sprite import Sprite
 from cocos.actions import *
 import pyglet
 from pyglet.gl import *
+import cocos.euclid
 
 ## the following is in case we want to get the images
 ## from other directories:
@@ -24,21 +25,36 @@ class TestLayer(cocos.layer.Layer):
 
         x,y = director.get_window_size()
 
-        sprite = Sprite('grossini.png')
-        sprite.position = x/2, y/2
+        parent = Sprite('grossinis_sister1.png')
+        self.add( parent )
+        parent.position = ( x/2, y/2 )
+
+        sprite = Sprite('grossinis_sister2.png')
+        sprite.position = 100,140
         sprite.do( RotateBy( duration=2, angle=360 ) )
+        sprite.do( ScaleBy( duration=2, scale=2 ) )
+        sprite.do( MoveBy( duration=2, delta=(200,0) ) )
+        parent.add( sprite )
+
+        self.sprite1 = sprite
+
+        sprite = Sprite('grossini.png')
         self.add( sprite )
+        sprite.position = 100,140
+        sprite.do( RotateBy( duration=2, angle=360 ) )
+        sprite.do( ScaleBy( duration=2, scale=2 ) )
+        sprite.do( MoveBy( duration=2, delta=(200,0) ) )
 
-
-        self.sprite = sprite
+        self.sprite2 = sprite
 
 
     def draw( self ):
-        r = self.sprite.get_AABB()
-        left = r.left
-        bottom = r.bottom
-        right = r.right
-        top = r.top
+        # local coords
+        r = self.sprite1.get_AABB()
+
+        left,bottom = r.left,r.bottom
+        right,top = r.right,r.top
+
         glBegin(GL_LINE_LOOP)
         glColor4f(1, 0, 0, 1)
         glVertex3f(left, bottom, 0)
@@ -47,6 +63,25 @@ class TestLayer(cocos.layer.Layer):
         glVertex3f(left, top, 0)
         glEnd()
 
+        # world coords
+        r = self.sprite2.get_AABB()
+
+        x,y = self.sprite2.position
+        bl = self.sprite2.point_to_world( (0,0) )
+        s = r.size
+        tr = self.sprite2.point_to_world( s )
+
+        left,bottom = bl.x, bl.y
+        right,top = tr.x, tr.y
+
+        glBegin(GL_LINE_LOOP)
+        glColor4f(1, 1, 0, 1)
+        glVertex3f(left, bottom, 0)
+        glVertex3f(right, bottom, 0)
+        glVertex3f(right, top, 0)
+        glVertex3f(left, top, 0)
+        glEnd()
+        
 
 
 if __name__ == "__main__":

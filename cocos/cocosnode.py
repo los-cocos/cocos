@@ -43,7 +43,9 @@ from pyglet.gl import *
 
 from director import director
 from camera import Camera
+import euclid
 
+import math
 import weakref
 
 
@@ -89,11 +91,11 @@ class CocosNode(object):
 
         #: a float, alters the scale of this node and its children.
         #: Default: 1.0
-        self.scale = 1.0
+        self._scale = 1.0
 
         #: a float, in degrees, alters the rotation of this node and its children.
         #: Default: 0.0
-        self.rotation = 0.0
+        self._rotation = 0.0
 
         #: eye, center and up vector for the `Camera`.
         #: gluLookAt() is used with these values.
@@ -151,6 +153,10 @@ class CocosNode(object):
         self.scheduled_calls = []       #: list of scheduled callbacks
         self.scheduled_interval_calls = []  #: list of scheduled interval callbacks
         self.is_running = False         #: whether of not the object is running
+
+        # matrix stuff
+        self.is_transform_dirty = False
+        self.transform_matrix = euclid.Matrix3().identity()
 
 
     def make_property(attr):
@@ -343,16 +349,39 @@ class CocosNode(object):
         if parent:
             return parent.get_ancestor( klass )
 
+    #
+    # Transform properties
+    #
     def _get_position(self):
         return (self.x, self.y)
     def _set_position(self, (x,y)):
         self.x, self.y = x,y
+        self.is_transform_dirty = True
 
-    position = property(_get_position, _set_position,
+    position = property(_get_position, lambda self,p:self._set_position(p),
                         doc='''The (x, y) coordinates of the object.
 
     :type: (int, int)
     ''')
+
+    def _get_scale( self ):
+        return self._scale
+
+    def _set_scale( self, s ):
+        self._scale = s
+        self.is_transform_dirty = True
+
+    scale = property( _get_scale, lambda self, scale: self._set_scale(scale))
+
+    def _get_rotation( self ):
+        return self._rotation
+
+    def _set_rotation( self, a ):
+        self._rotation = a
+        self.is_transform_dirty = True
+
+    rotation = property( _get_rotation, lambda self, angle: self._set_rotation(angle))
+
 
     def add(self, child, z=0, name=None ):
         """Adds a child to the container
@@ -458,7 +487,6 @@ class CocosNode(object):
         for c in self.get_children():
             c.on_exit()
 
-
     def transform( self ):
         """
         Apply ModelView transformations
@@ -477,10 +505,10 @@ class CocosNode(object):
 
 
         if self.rotation != 0.0:
-            glRotatef( -self.rotation, 0, 0, 1)
+            glRotatef( -self._rotation, 0, 0, 1)
 
         if self.scale != 1.0:
-            glScalef( self.scale, self.scale, 1)
+            glScalef( self._scale, self._scale, 1)
 
         if self.transform_anchor != (0,0):
             glTranslatef(
@@ -689,3 +717,40 @@ class CocosNode(object):
             if action.done():
                 action.stop()
                 self.remove_action( action )
+
+    # world to local / local to world methods
+    def get_local_transform( self ):
+        '''returns an euclid.Matrix3 with the local transformation matrix'''
+        if self.is_transform_dirty:
+
+            matrix = euclid.Matrix3().identity()
+
+            matrix.translate(self.x, self.y)
+            matrix.translate( self.transform_anchor_x, self.transform_anchor_y )
+            matrix.rotate( math.radians(-self.rotation) )
+            matrix.scale(self._scale, self._scale)
+            matrix.translate( -self.transform_anchor_x, -self.transform_anchor_y )
+
+            
+            self.is_transform_dirty = False	
+
+            self.transform_matrix = matrix
+	
+        return self.transform_matrix
+
+    def get_world_transform( self ):
+        '''returns an euclid.Matrix3 with the world transformation matrix'''
+        matrix = self.get_local_transform()
+
+        p = self.parent
+        while p != None:
+            matrix = p.get_local_transform() * matrix
+            p = p.parent
+
+        return matrix
+
+    def point_to_world( self, p ): 
+        '''returns an euclid.Vector2 converted to world space'''
+        v = euclid.Point2( p[0], p[1] )
+        matrix = self.get_world_transform()
+        return matrix *  v
