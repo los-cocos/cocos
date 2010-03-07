@@ -8,7 +8,7 @@
 #
 #   * Redistributions of source code must retain the above copyright
 #     notice, this list of conditions and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright 
+#   * Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in
 #     the documentation and/or other materials provided with the
 #     distribution.
@@ -51,15 +51,15 @@ from cocos.director import *
 from base_layers import Layer
 import cocos.cocosnode
 
-__all__ = ['ColorLayer']    
+__all__ = ['ColorLayer']
 
 
 class ColorLayer(Layer):
     """Creates a layer of a certain color.
     The color shall be specified in the format (r,g,b,a).
-    
+
     For example, to create green layer::
-    
+
         l = ColorLayer(0, 255, 0, 0 )
 
     The size and position can be changed, for example::
@@ -77,7 +77,7 @@ class ColorLayer(Layer):
 
         self.width = width
         self.height = height
-        
+
         w,h = director.get_window_size()
         if not self.width:
             self.width = w
@@ -88,11 +88,11 @@ class ColorLayer(Layer):
         super(ColorLayer, self).on_enter()
         x, y = self.width, self.height
         ox, oy = 0, 0
-        
+
         self._vertex_list = self._batch.add(4, pyglet.gl.GL_QUADS, None,
             ('v2i', ( ox, oy,
                       ox, oy + y,
-                      ox+x, oy+y, 
+                      ox+x, oy+y,
                       ox+x, oy)),
             'c4B')
 
@@ -107,10 +107,6 @@ class ColorLayer(Layer):
         super(ColorLayer, self).draw()
         glPushMatrix()
         self.transform()
-        glTranslatef( 
-                -self.children_anchor_x, 
-                -self.children_anchor_y,
-                 0 )
         glPushAttrib(GL_CURRENT_BIT)
         self._batch.draw()
         glPopAttrib()
@@ -147,9 +143,9 @@ class ColorLayer(Layer):
 
     This property sets the color of the layer's vertices. This allows the
     layer to be drawn with a color tint.
-    
+
     The color is specified as an RGB tuple of integers ``(red, green, blue)``.
     Each color component must be in the range 0 (dark) to 255 (saturated).
-    
+
     :type: (int, int, int)
     ''')

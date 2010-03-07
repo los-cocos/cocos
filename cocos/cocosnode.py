@@ -472,13 +472,8 @@ class CocosNode(object):
             # otherwise, the camera will be applied inside the grid
             self.camera.locate()
 
-        if self.transform_anchor != (0,0):
-            glTranslatef(
-                self.position[0] + self.transform_anchor_x,
-                self.position[1] + self.transform_anchor_y,
-                 0 )
-        elif self.position != (0,0):
-            glTranslatef( self.position[0], self.position[1], 0 )
+        glTranslatef( self.position[0], self.position[1], 0 )
+        glTranslatef( self.transform_anchor_x, self.transform_anchor_y, 0 )
 
 
         if self.scale != 1.0:
@@ -488,16 +483,17 @@ class CocosNode(object):
             glRotatef( -self.rotation, 0, 0, 1)
 
         if self.transform_anchor != (0,0):
-            if self.transform_anchor != self.children_anchor:
-                glTranslatef(
-                    self.children_anchor_x - self.transform_anchor_x,
-                    self.children_anchor_y - self.transform_anchor_y,
-                     0 )
-        #elif self.children_anchor != (0,0):
-        #    glTranslatef(
-        #        self.children_anchor_x,
-        #        self.children_anchor_y,
-        #         0 )
+            glTranslatef(
+                - self.transform_anchor_x,
+                - self.transform_anchor_y,
+                0 )
+
+    def transform_children(self):
+        if self.children_anchor != (0,0):
+            glTranslatef(
+                self.children_anchor_x,
+                self.children_anchor_y,
+                 0 )
 
 
     def walk(self, callback, collect=None):
@@ -556,9 +552,12 @@ class CocosNode(object):
             self.grid.before_draw()
 
         # we visit all nodes that should be drawn before ourselves
+
+
         if self.children and self.children[0][0] < 0:
             glPushMatrix()
             self.transform()
+            self.transform_children()
             for z,c in self.children:
                 if z >= 0: break
                 position += 1
@@ -573,6 +572,7 @@ class CocosNode(object):
         if position < len(self.children):
             glPushMatrix()
             self.transform()
+            self.transform_children()
             for z,c in self.children[position:]:
                 c.visit()
             glPopMatrix()
@@ -689,5 +689,3 @@ class CocosNode(object):
             if action.done():
                 action.stop()
                 self.remove_action( action )
-
-
