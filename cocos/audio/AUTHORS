@@ -1,0 +1,8 @@
+The audio module of cocos uses as backend a modified version of pygame-ctypes,
+by Daniel F. Moisset
+
+All other source code (everything outside SDL/ and pygame/) was written by the cocos2d team
+
+Based on the pygame-ctypes port made by Alex Holner: http://pygame.org/ctypes/
+    which in turn is based on pygame: http://pygame.org
+    made for the Google Summer of Code 2006: http://code.google.com/soc
