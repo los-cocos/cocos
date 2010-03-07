@@ -87,7 +87,7 @@ __metaclass__ = _EuclidMetaclass
 class Vector2:
     __slots__ = ['x', 'y']
 
-    def __init__(self, x, y):
+    def __init__(self, x=0, y=0):
         self.x = x
         self.y = y
 
@@ -108,7 +108,7 @@ class Vector2:
             return self.x == other[0] and \
                    self.y == other[1]
 
-    def __ne__(self, other):
+    def __neq__(self, other):
         return not self.__eq__(other)
 
     def __nonzero__(self):
@@ -152,8 +152,15 @@ class Vector2:
 
     def __add__(self, other):
         if isinstance(other, Vector2):
-            return Vector2(self.x + other.x,
-                           self.y + other.y)
+            # Vector + Vector -> Vector
+            # Vector + Point -> Point
+            # Point + Point -> Vector
+            if self.__class__ is other.__class__:
+                _class = Vector2
+            else:
+                _class = Point2
+            return _class(self.x + other.x,
+                          self.y + other.y)
         else:
             assert hasattr(other, '__len__') and len(other) == 2
             return Vector2(self.x + other[0],
@@ -171,8 +178,15 @@ class Vector2:
 
     def __sub__(self, other):
         if isinstance(other, Vector2):
-            return Vector2(self.x - other.x,
-                           self.y - other.y)
+            # Vector - Vector -> Vector
+            # Vector - Point -> Point
+            # Point - Point -> Vector
+            if self.__class__ is other.__class__:
+                _class = Vector2
+            else:
+                _class = Point2
+            return _class(self.x - other.x,
+                          self.y - other.y)
         else:
             assert hasattr(other, '__len__') and len(other) == 2
             return Vector2(self.x - other[0],
@@ -185,8 +199,8 @@ class Vector2:
                            other.y - self.y)
         else:
             assert hasattr(other, '__len__') and len(other) == 2
-            return Vector2(other[0] - self.x,
-                           other[1] - self.y)
+            return Vector2(other.x - self[0],
+                           other.y - self[1])
 
     def __mul__(self, other):
         assert type(other) in (int, long, float)
@@ -282,7 +296,7 @@ class Vector2:
 class Vector3:
     __slots__ = ['x', 'y', 'z']
 
-    def __init__(self, x, y, z):
+    def __init__(self, x=0, y=0, z=0):
         self.x = x
         self.y = y
         self.z = z
@@ -308,7 +322,7 @@ class Vector3:
                    self.y == other[1] and \
                    self.z == other[2]
 
-    def __ne__(self, other):
+    def __neq__(self, other):
         return not self.__eq__(other)
 
     def __nonzero__(self):
@@ -407,9 +421,9 @@ class Vector3:
                            other.z - self.z)
         else:
             assert hasattr(other, '__len__') and len(other) == 3
-            return Vector3(other[0] - self.x,
-                           other[1] - self.y,
-                           other[2] - self.z)
+            return Vector3(other.x - self[0],
+                           other.y - self[1],
+                           other.z - self[2])
 
     def __mul__(self, other):
         if isinstance(other, Vector3):
@@ -738,6 +752,7 @@ class Matrix4:
 
     copy = __copy__
 
+
     def __repr__(self):
         return ('Matrix4([% 8.2f % 8.2f % 8.2f % 8.2f\n'  \
                 '         % 8.2f % 8.2f % 8.2f % 8.2f\n'  \
@@ -755,8 +770,6 @@ class Matrix4:
                 self.d, self.h, self.l, self.p][key]
 
     def __setitem__(self, key, value):
-        assert not isinstance(key, slice) or \
-               key.stop - key.start == len(value), 'key length != value length'
         L = self[:]
         L[key] = value
         (self.a, self.e, self.i, self.m,
@@ -891,6 +904,20 @@ class Matrix4:
         self.p = Am * Bd + An * Bh + Ao * Bl + Ap * Bp
         return self
 
+    def transform(self, other):
+        A = self
+        B = other
+        P = Point3(0, 0, 0)
+        P.x = A.a * B.x + A.b * B.y + A.c * B.z + A.d
+        P.y = A.e * B.x + A.f * B.y + A.g * B.z + A.h
+        P.z = A.i * B.x + A.j * B.y + A.k * B.z + A.l
+        w =   A.m * B.x + A.n * B.y + A.o * B.z + A.p
+        if w != 0:
+            P.x /= w
+            P.y /= w
+            P.z /= w
+        return P
+
     def identity(self):
         self.a = self.f = self.k = self.p = 1.
         self.b = self.c = self.d = self.e = self.g = self.h = \
@@ -925,7 +952,32 @@ class Matrix4:
         self *= Matrix4.new_rotate_euler(heading, attitude, bank)
         return self
 
+    def rotate_triple_axis(self, x, y, z):
+        self *= Matrix4.new_rotate_triple_axis(x, y, z)
+        return self
+
+    def transpose(self):
+        (self.a, self.e, self.i, self.m,
+         self.b, self.f, self.j, self.n,
+         self.c, self.g, self.k, self.o,
+         self.d, self.h, self.l, self.p) = \
+        (self.a, self.b, self.c, self.d,
+         self.e, self.f, self.g, self.h,
+         self.i, self.j, self.k, self.l,
+         self.m, self.n, self.o, self.p)
+
+    def transposed(self):
+        M = self.copy()
+        M.transpose()
+        return M
+
     # Static constructors
+    def new(cls, *values):
+        M = cls()
+        M[:] = values
+        return M
+    new = classmethod(new)
+
     def new_identity(cls):
         self = cls()
         return self
@@ -1024,6 +1076,26 @@ class Matrix4:
         return self
     new_rotate_euler = classmethod(new_rotate_euler)
 
+    def new_rotate_triple_axis(cls, x, y, z):
+      m = cls()
+      
+      m.a, m.b, m.c = x.x, y.x, z.x
+      m.e, m.f, m.g = x.y, y.y, z.y
+      m.i, m.j, m.k = x.z, y.z, z.z
+      
+      return m
+    new_rotate_triple_axis = classmethod(new_rotate_triple_axis)
+
+    def new_look_at(cls, eye, at, up):
+      z = (eye - at).normalized()
+      x = up.cross(z).normalized()
+      y = z.cross(x)
+      
+      m = cls.new_rotate_triple_axis(x, y, z)
+      m.d, m.h, m.l = eye.x, eye.y, eye.z
+      return m
+    new_look_at = classmethod(new_look_at)
+    
     def new_perspective(cls, fov_y, aspect, near, far):
         # from the gluPerspective man page
         f = 1 / math.tan(fov_y / 2)
@@ -1038,6 +1110,53 @@ class Matrix4:
         return self
     new_perspective = classmethod(new_perspective)
 
+    def determinant(self):
+        return ((self.a * self.f - self.e * self.b)
+              * (self.k * self.p - self.o * self.l)
+              - (self.a * self.j - self.i * self.b)
+              * (self.g * self.p - self.o * self.h)
+              + (self.a * self.n - self.m * self.b)
+              * (self.g * self.l - self.k * self.h)
+              + (self.e * self.j - self.i * self.f)
+              * (self.c * self.p - self.o * self.d)
+              - (self.e * self.n - self.m * self.f)
+              * (self.c * self.l - self.k * self.d)
+              + (self.i * self.n - self.m * self.j)
+              * (self.c * self.h - self.g * self.d))
+
+    def inverse(self):
+        tmp = Matrix4()
+        d = self.determinant();
+
+        if abs(d) < 0.001:
+            # No inverse, return identity
+            return tmp
+        else:
+            d = 1.0 / d;
+
+            tmp.a = d * (self.f * (self.k * self.p - self.o * self.l) + self.j * (self.o * self.h - self.g * self.p) + self.n * (self.g * self.l - self.k * self.h));
+            tmp.e = d * (self.g * (self.i * self.p - self.m * self.l) + self.k * (self.m * self.h - self.e * self.p) + self.o * (self.e * self.l - self.i * self.h));
+            tmp.i = d * (self.h * (self.i * self.n - self.m * self.j) + self.l * (self.m * self.f - self.e * self.n) + self.p * (self.e * self.j - self.i * self.f));
+            tmp.m = d * (self.e * (self.n * self.k - self.j * self.o) + self.i * (self.f * self.o - self.n * self.g) + self.m * (self.j * self.g - self.f * self.k));
+            
+            tmp.b = d * (self.j * (self.c * self.p - self.o * self.d) + self.n * (self.k * self.d - self.c * self.l) + self.b * (self.o * self.l - self.k * self.p));
+            tmp.f = d * (self.k * (self.a * self.p - self.m * self.d) + self.o * (self.i * self.d - self.a * self.l) + self.c * (self.m * self.l - self.i * self.p));
+            tmp.j = d * (self.l * (self.a * self.n - self.m * self.b) + self.p * (self.i * self.b - self.a * self.j) + self.d * (self.m * self.j - self.i * self.n));
+            tmp.n = d * (self.i * (self.n * self.c - self.b * self.o) + self.m * (self.b * self.k - self.j * self.c) + self.a * (self.j * self.o - self.n * self.k));
+            
+            tmp.c = d * (self.n * (self.c * self.h - self.g * self.d) + self.b * (self.g * self.p - self.o * self.h) + self.f * (self.o * self.d - self.c * self.p));
+            tmp.g = d * (self.o * (self.a * self.h - self.e * self.d) + self.c * (self.e * self.p - self.m * self.h) + self.g * (self.m * self.d - self.a * self.p));
+            tmp.k = d * (self.p * (self.a * self.f - self.e * self.b) + self.d * (self.e * self.n - self.m * self.f) + self.h * (self.m * self.b - self.a * self.n));
+            tmp.o = d * (self.m * (self.f * self.c - self.b * self.g) + self.a * (self.n * self.g - self.f * self.o) + self.e * (self.b * self.o - self.n * self.c));
+            
+            tmp.d = d * (self.b * (self.k * self.h - self.g * self.l) + self.f * (self.c * self.l - self.k * self.d) + self.j * (self.g * self.d - self.c * self.h));
+            tmp.h = d * (self.c * (self.i * self.h - self.e * self.l) + self.g * (self.a * self.l - self.i * self.d) + self.k * (self.e * self.d - self.a * self.h));
+            tmp.l = d * (self.d * (self.i * self.f - self.e * self.j) + self.h * (self.a * self.j - self.i * self.b) + self.l * (self.e * self.b - self.a * self.f));
+            tmp.p = d * (self.a * (self.f * self.k - self.j * self.g) + self.e * (self.j * self.c - self.b * self.k) + self.i * (self.b * self.g - self.f * self.c));
+
+        return tmp;
+        
+
 class Quaternion:
     # All methods and naming conventions based off 
     # http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions
@@ -1045,8 +1164,11 @@ class Quaternion:
     # w is the real part, (x, y, z) are the imaginary parts
     __slots__ = ['w', 'x', 'y', 'z']
 
-    def __init__(self):
-        self.identity()
+    def __init__(self, w=1, x=0, y=0, z=0):
+        self.w = w
+        self.x = x
+        self.y = y
+        self.z = z
 
     def __copy__(self):
         Q = Quaternion()
@@ -1054,6 +1176,7 @@ class Quaternion:
         Q.x = self.x
         Q.y = self.y
         Q.z = self.z
+        return Q
 
     copy = __copy__
 
@@ -1145,6 +1268,10 @@ class Quaternion:
         self *= Quaternion.new_rotate_euler(heading, attitude, bank)
         return self
 
+    def rotate_matrix(self, m):
+        self *= Quaternion.new_rotate_matrix(m)
+        return self
+
     def conjugated(self):
         Q = Quaternion()
         Q.w = self.w
@@ -1166,10 +1293,10 @@ class Quaternion:
         d = self.magnitude()
         if d != 0:
             Q = Quaternion()
-            Q.w /= d
-            Q.x /= d
-            Q.y /= d
-            Q.z /= d
+            Q.w = self.w / d
+            Q.x = self.x / d
+            Q.y = self.y / d
+            Q.z = self.z / d
             return Q
         else:
             return self.copy()
@@ -1259,12 +1386,64 @@ class Quaternion:
         Q.z = c1 * s2 * c3 - s1 * c2 * s3
         return Q
     new_rotate_euler = classmethod(new_rotate_euler)
-
+    
+    def new_rotate_matrix(cls, m):
+      if m[0*4 + 0] + m[1*4 + 1] + m[2*4 + 2] > 0.00000001:
+        t = m[0*4 + 0] + m[1*4 + 1] + m[2*4 + 2] + 1.0
+        s = 0.5/math.sqrt(t)
+        
+        return cls(
+          s*t,
+          (m[1*4 + 2] - m[2*4 + 1])*s,
+          (m[2*4 + 0] - m[0*4 + 2])*s,
+          (m[0*4 + 1] - m[1*4 + 0])*s
+          )
+        
+      elif m[0*4 + 0] > m[1*4 + 1] and m[0*4 + 0] > m[2*4 + 2]:
+        t = m[0*4 + 0] - m[1*4 + 1] - m[2*4 + 2] + 1.0
+        s = 0.5/math.sqrt(t)
+        
+        return cls(
+          (m[1*4 + 2] - m[2*4 + 1])*s,
+          s*t,
+          (m[0*4 + 1] + m[1*4 + 0])*s,
+          (m[2*4 + 0] + m[0*4 + 2])*s
+          )
+        
+      elif m[1*4 + 1] > m[2*4 + 2]:
+        t = -m[0*4 + 0] + m[1*4 + 1] - m[2*4 + 2] + 1.0
+        s = 0.5/math.sqrt(t)
+        
+        return cls(
+          (m[2*4 + 0] - m[0*4 + 2])*s,
+          (m[0*4 + 1] + m[1*4 + 0])*s,
+          s*t,
+          (m[1*4 + 2] + m[2*4 + 1])*s
+          )
+        
+      else:
+        t = -m[0*4 + 0] - m[1*4 + 1] + m[2*4 + 2] + 1.0
+        s = 0.5/math.sqrt(t)
+        
+        return cls(
+          (m[0*4 + 1] - m[1*4 + 0])*s,
+          (m[2*4 + 0] + m[0*4 + 2])*s,
+          (m[1*4 + 2] + m[2*4 + 1])*s,
+          s*t
+          )
+    new_rotate_matrix = classmethod(new_rotate_matrix)
+    
     def new_interpolate(cls, q1, q2, t):
         assert isinstance(q1, Quaternion) and isinstance(q2, Quaternion)
         Q = cls()
 
         costheta = q1.w * q2.w + q1.x * q2.x + q1.y * q2.y + q1.z * q2.z
+        if costheta < 0.:
+            costheta = -costheta
+            q1 = q1.conjugated()
+        elif costheta > 1:
+            costheta = 1
+
         theta = math.acos(costheta)
         if abs(theta) < 0.01:
             Q.w = q2.w
@@ -1370,6 +1549,12 @@ def _intersect_line2_circle(L, C):
         u1 = max(min(u1, 1.0), 0.0)
     if not L._u_in(u2):
         u2 = max(min(u2, 1.0), 0.0)
+
+    # Tangent
+    if u1 == u2:
+        return Point2(L.p.x + u1 * L.v.x,
+                      L.p.y + u1 * L.v.y)
+
     return LineSegment2(Point2(L.p.x + u1 * L.v.x,
                                L.p.y + u1 * L.v.y),
                         Point2(L.p.x + u2 * L.v.x,
