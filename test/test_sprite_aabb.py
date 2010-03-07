@@ -35,7 +35,7 @@ class TestLayer(cocos.layer.Layer):
         sprite.do( ScaleBy( duration=2, scale=2 ) )
         sprite.do( MoveBy( duration=2, delta=(200,0) ) )
         parent.add( sprite )
-
+        sprite.opacity = 128
         self.sprite1 = sprite
 
         sprite = Sprite('grossini.png')
@@ -50,7 +50,7 @@ class TestLayer(cocos.layer.Layer):
 
     def draw( self ):
         # local coords
-        r = self.sprite1.get_AABB()
+        r = self.sprite2.get_AABB()
 
         left,bottom = r.left,r.bottom
         right,top = r.right,r.top
@@ -64,23 +64,28 @@ class TestLayer(cocos.layer.Layer):
         glEnd()
 
         # world coords
-        r = self.sprite2.get_AABB()
 
-        x,y = self.sprite2.position
-        bl = self.sprite2.point_to_world( (0,0) )
-        s = r.size
-        tr = self.sprite2.point_to_world( s )
+        bl = self.sprite1.point_to_world( (0,0) )
+        x,y = self.sprite1.width, self.sprite2.height
+        tr = self.sprite1.point_to_world( (x,y) )
 
         left,bottom = bl.x, bl.y
         right,top = tr.x, tr.y
 
-        glBegin(GL_LINE_LOOP)
+        bl = self.sprite1.point_to_world( (0,0) )
+        glPointSize(16)
+        glBegin(GL_POINTS)
         glColor4f(1, 1, 0, 1)
-        glVertex3f(left, bottom, 0)
-        glVertex3f(right, bottom, 0)
-        glVertex3f(right, top, 0)
-        glVertex3f(left, top, 0)
+        glVertex3f(bl.x, bl.y, 0)
         glEnd()
+
+#        glBegin(GL_LINE_LOOP)
+#        glColor4f(1, 1, 0, 1)
+#        glVertex3f(left, bottom, 0)
+#        glVertex3f(right, bottom, 0)
+#        glVertex3f(right, top, 0)
+#        glVertex3f(left, top, 0)
+#        glEnd()
         
 
 

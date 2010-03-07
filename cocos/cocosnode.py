@@ -157,6 +157,8 @@ class CocosNode(object):
         # matrix stuff
         self.is_transform_dirty = False
         self.transform_matrix = euclid.Matrix3().identity()
+        self.is_inverse_transform_dirty = False
+        self.inverse_transform_matrix = euclid.Matrix3().identity()
 
 
     def make_property(attr):
@@ -357,6 +359,7 @@ class CocosNode(object):
     def _set_position(self, (x,y)):
         self.x, self.y = x,y
         self.is_transform_dirty = True
+        self.is_inverse_transform_dirty = True
 
     position = property(_get_position, lambda self,p:self._set_position(p),
                         doc='''The (x, y) coordinates of the object.
@@ -370,6 +373,7 @@ class CocosNode(object):
     def _set_scale( self, s ):
         self._scale = s
         self.is_transform_dirty = True
+        self.is_inverse_transform_dirty = True
 
     scale = property( _get_scale, lambda self, scale: self._set_scale(scale))
 
@@ -379,6 +383,7 @@ class CocosNode(object):
     def _set_rotation( self, a ):
         self._rotation = a
         self.is_transform_dirty = True
+        self.is_inverse_transform_dirty = True
 
     rotation = property( _get_rotation, lambda self, angle: self._set_rotation(angle))
 
@@ -753,4 +758,31 @@ class CocosNode(object):
         '''returns an euclid.Vector2 converted to world space'''
         v = euclid.Point2( p[0], p[1] )
         matrix = self.get_world_transform()
+        return matrix *  v
+
+    def get_local_inverse( self ):
+        '''returns an euclid.Matrix3 with the local inverse transformation matrix'''
+        if self.is_inverse_transform_dirty:
+
+            matrix = self.get_local_transform().inverse()
+            self.inverse_transform_matrix = matrix
+            self.is_inverse_transform_dirty = False	
+	
+        return self.inverse_transform_matrix
+
+    def get_world_inverse( self ):
+        '''returns an euclid.Matrix3 with the world inverse transformation matrix'''
+        matrix = self.get_local_inverse()
+
+        p = self.parent
+        while p != None:
+            matrix = matrix * p.get_local_inverse()
+            p = p.parent
+
+        return matrix
+
+    def point_to_local( self, p ): 
+        '''returns an euclid.Vector2 converted to local space'''
+        v = euclid.Point2( p[0], p[1] )
+        matrix = self.get_world_inverse()
         return matrix *  v
