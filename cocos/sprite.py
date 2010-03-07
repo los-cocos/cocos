@@ -30,7 +30,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Action Sprite
+'''Sprite
 
 Animating a sprite
 ==================
@@ -57,6 +57,7 @@ import rect
 import pyglet
 from pyglet import image
 from pyglet.gl import *
+import euclid
 
 __all__ = [ 'Sprite',                     # Sprite class
             ]
@@ -142,6 +143,22 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         sy -= ay*self.scale
         return rect.Rect(sx, sy, self.width*self.scale,
             self.height*self.scale)
+
+    def get_AABB(self):
+        '''Returns a local-coordinates Axis aligned Bounding Box'''
+
+        v = self._vertex_list.vertices
+        x = v[0], v[2], v[4], v[6]
+        y = v[1], v[3], v[5], v[7]
+        return rect.Rect(min(x),min(y),max(x)-min(x),max(y)-min(y))
+
+#        p1 = euclid.Point2(0,0)
+#        p2 = euclid.Point2(self.width, self.height)
+#        mat = self.get_transform_matrix()
+#        p1 = mat * p1
+#        p2 = mat * p2
+#        return rect.Rect(p1.x, p1.y, p2.x, p2.y )
+
 
 
     def contains(self, x, y):

@@ -719,6 +719,51 @@ class Matrix3:
         return self
     new_rotate = classmethod(new_rotate)
 
+    def determinant(self):
+        m00 = self.a
+        m10 = self.b
+        m20 = self.c
+        m01 = self.e
+        m11 = self.f
+        m21 = self.g
+        m02 = self.i
+        m12 = self.j
+        m22 = self.k
+
+        return m00*m11*m22 + m01*m12*m20 + m02*m10*m21 - m00*m12*m21 - m01*m10*m22 - m02*m11*m20
+
+    def inverse(self):
+        tmp = Matrix3()
+        det = self.determinant()
+
+        if abs(det) < 0.001:
+            # No inverse, return identity
+            return tmp
+        else:
+            m00 = self.a
+            m10 = self.b
+            m20 = self.c
+            m01 = self.e
+            m11 = self.f
+            m21 = self.g
+            m02 = self.i
+            m12 = self.j
+            m22 = self.k
+
+            det = 1.0 / det
+
+            tmp.a = det * (m11*m22 - m12*m21)
+            tmp.b = det * (m12*m20 - m10*m22)
+            tmp.c = det * (m10*m21 - m11*m20)
+            tmp.e = det * (m02*m21 - m01*m22)
+            tmp.f = det * (m00*m22 - m02*m20)
+            tmp.g = det * (m01*m20 - m00*m21)
+            tmp.i = det * (m01*m12 - m02*m11)
+            tmp.j = det * (m02*m10 - m00*m12)
+            tmp.k = det * (m00*m11 - m01*m10)
+
+        return tmp
+
 # a b c d
 # e f g h
 # i j k l
