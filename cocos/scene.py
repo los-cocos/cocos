@@ -42,6 +42,7 @@ from pyglet.gl import *
 import cocos
 from cocos.director import director
 import cocos.cocosnode as cocosnode
+import cocos.audio.pygame.music
 
 class EventHandlerMixin(object):
     def add(self, child, *args, **kwargs):
@@ -81,7 +82,7 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         Creates a Scene with layers and / or scenes.
         
         Responsibilities:
-            Control the dispatching of events to its layers
+            Control the dispatching of events to its layers; and background music playback
             
         :Parameters:
             `children` : list of `Layer` or `Scene`
@@ -99,11 +100,23 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         
         self.transform_anchor_x = x/2
         self.transform_anchor_y = y/2
+        self.music = None
+        self.music_playing = False
             
     def on_enter(self):
         for c in self.get_children():
             c.parent = self
         super(Scene, self).on_enter()
+        if self.music is not None:
+            cocos.audio.pygame.music.load(self.music)
+        if self.music_playing:
+            cocos.audio.pygame.music.play()
+
+    def on_exit(self):
+        super(Scene, self).on_exit()
+        # _apply_music after super, because is_running must be already False
+        if self.music_playing:
+            cocos.audio.pygame.music.stop()
         
             
     def push_all_handlers(self):
@@ -136,4 +149,39 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         """
         director.return_value = value
         director.pop()
+
+    def load_music(self, filename):
+        """This prepares a streamed music file to be played in this scene.
+        
+        Music will be stopped after calling this (even if it was playing before).
+        
+        :Parameters:
+            `filename`: Filename of music to load. Depending on installed
+            libraries, supported formats may be WAV, MP3, OGG, MOD; You can also
+            use 'None' to unset music
+        """
+        self.music = filename
+        self.music_playing = False
+        if self.is_running:
+            if filename is not None:
+                cocos.audio.pygame.music.load(filename)
+            else:
+                cocos.audio.pygame.music.stop()
+    
+    def play_music(self):
+        """Enable music playback for this scene. Nothing happens if music was already playing
+        
+        Note that if you call this method on an inactive scene, the music will
+        start playing back only if/when the scene gets activated.
+        """
+        if self.music is not None and not self.music_playing:
+            self.music_playing = True
+            if self.is_running:
+                cocos.audio.pygame.music.play()                
+
+    def stop_music(self):
+        """Stops music playback for this scene.
+        """
+        self.load_music(None)
+
 
