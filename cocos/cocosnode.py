@@ -476,11 +476,11 @@ class CocosNode(object):
         glTranslatef( self.transform_anchor_x, self.transform_anchor_y, 0 )
 
 
-        if self.scale != 1.0:
-            glScalef( self.scale, self.scale, 1)
-
         if self.rotation != 0.0:
             glRotatef( -self.rotation, 0, 0, 1)
+
+        if self.scale != 1.0:
+            glScalef( self.scale, self.scale, 1)
 
         if self.transform_anchor != (0,0):
             glTranslatef(
