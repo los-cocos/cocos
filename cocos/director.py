@@ -49,7 +49,8 @@ The first thing to do, is to initialize the ``director``::
 This will initialize the director, and will create a display area
 (a 640x480 window by default).
 The parameters that are supported by director.init() are the same
-parameters that are supported by pyglet.window.Window().
+parameters that are supported by pyglet.window.Window(), plus a ``audio``
+argument for audio settigns.
 
 Some of the supported parameters are:
 
@@ -61,17 +62,26 @@ Some of the supported parameters are:
     * ``caption``: String. Window title.
     * ``visible``: Boolean. Window is visible or not. Default is True.
 
-The full list of valid arguments can be found here:
+The full list of valid video arguments can be found at the pyglet Window
+documentation:
 
     - http://www.pyglet.org/doc/1.1/api/pyglet.window.Window-class.html
 
+The ``audio`` argument can be:
+
+    * None: in this case a "null" audio system will be used, where all the 
+      sound operations will be no-ops. This may be useful if you do not want
+      to depend on SDL_mixer
+    * A dictionary with string keys; these are the arguments for setting up
+      the audio output (sample rate and bit-width, channels, buffer size).
+      The key names/values should match the positional arguments of 
+      http://www.pygame.org/docs/ref/mixer.html#pygame.mixer.init
+    * The default value is {}, which means sound enabled with default
+      settings
 
 Example::
 
     director.init( caption="Hello World", fullscreen=True )
-
-For a complete list of the supported parameters, see the pyglet Window
-documentation.
 
 Running a Scene
 ----------------
@@ -143,7 +153,7 @@ from pyglet import clock
 #from pyglet import media
 from pyglet.gl import *
 
-import cocos
+import cocos, cocos.audio
 
 __all__ = ['director', 'DefaultHandler']
 
@@ -232,8 +242,9 @@ class Director(event.EventDispatcher):
         :returns: The main window, an instance of pyglet.window.Window class.
         """
 
-        # pop out the Cocos-specific flag
+        # pop out the Cocos-specific flags
         do_not_scale_window = kwargs.pop('do_not_scale', False)
+        audio_settings = kwargs.pop('audio', {})
 
         #: pyglet's window object
         self.window = window.Window( *args, **kwargs )
@@ -273,6 +284,9 @@ class Director(event.EventDispatcher):
 
         # default handler
         self.window.push_handlers( DefaultHandler() )
+
+        # Audio setup:
+        cocos.audio.initialize(audio_settings)
 
         return self.window
 
