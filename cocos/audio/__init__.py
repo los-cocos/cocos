@@ -1,9 +1,15 @@
 __all__ = ['SDL', 'pygame']
 
-import pygame.mixer
+_working = True
+
+try:
+    import pygame.mixer
+except ImportError, error:
+    _working = False
 
 def initialize(arguments={}):
     if arguments is None:
         assert False # Null audio not implemented yet
     else:
-        pygame.mixer.init(**arguments)
+        if _working:
+            pygame.mixer.init(**arguments)

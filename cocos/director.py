@@ -69,12 +69,12 @@ documentation:
 
 The ``audio`` argument can be:
 
-    * None: in this case a "null" audio system will be used, where all the 
+    * None: in this case a "null" audio system will be used, where all the
       sound operations will be no-ops. This may be useful if you do not want
       to depend on SDL_mixer
     * A dictionary with string keys; these are the arguments for setting up
       the audio output (sample rate and bit-width, channels, buffer size).
-      The key names/values should match the positional arguments of 
+      The key names/values should match the positional arguments of
       http://www.pygame.org/docs/ref/mixer.html#pygame.mixer.init
     * The default value is {}, which means sound enabled with default
       settings
@@ -147,6 +147,7 @@ The director also has some useful attributes:
 
 __docformat__ = 'restructuredtext'
 
+from os import getenv
 import pyglet
 from pyglet import window, event
 from pyglet import clock
@@ -322,6 +323,19 @@ class Director(event.EventDispatcher):
         :rtype: pyglet.window.Window
         :returns: The main window, an instance of pyglet.window.Window class.
         """
+
+        # if audio is not working, better to not work at all. Except if
+        # explicitely instructed to continue
+        if not (cocos.audio._working or
+                kwargs.get('noaudio',False) or
+                getenv('COCOS2D_NOSOUND') is not None
+                ):
+            from cocos.audio.exceptions import NoAudioError
+            msg = "cocos.audio isn't able to work without needed dependencies. "
+            msg += "Try installing pygame for fixing it, or forcing no audio "
+            msg += "mode by calling director.init with audio=None, or setting the "
+            msg += "COCOS2D_NOSOUND variable in your env."
+            raise NoAudioError(msg)
 
         # pop out the Cocos-specific flags
         do_not_scale_window = kwargs.pop('do_not_scale', False)

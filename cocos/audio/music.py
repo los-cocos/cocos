@@ -3,7 +3,11 @@ your cocos applications; but instead use the music control functions in the
 Scene class
 """
 
-import pygame.music
+from cocos import audio
+try:
+    import pygame.music
+except ImportError:
+    audio._working = False
 
 class MusicControl(object):
     def load(self, filename):
@@ -11,10 +15,20 @@ class MusicControl(object):
 
     def play(self):
         pygame.music.play()
-        
+
     def stop(self):
         pygame.music.stop()
 
-# Shared singleton
-control = MusicControl()
+class DummyMusicControl(object):
+    def load(self,filename):
+        pass
+    def play(self):
+        pass
+    def stop(self):
+        pass
 
+# Shared singleton
+if audio._working:
+    control = MusicControl()
+else:
+    control = DummyMusicControl()

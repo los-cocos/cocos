@@ -1,4 +1,10 @@
-from cocos.audio.pygame.mixer import Sound
+from cocos import audio
+try:
+    from cocos.audio.pygame.mixer import Sound
+except ImportError:
+    audio._working = False
+
+
 import actions
 
 class Effect(object):
@@ -17,8 +23,12 @@ class Effect(object):
         :Parameters:
             `filename` : path of a WAV or Ogg audio file
         """
-        self.sound = Sound(filename)
+        if audio._working:
+            self.sound = Sound(filename)
+        else:
+            self.sound = None
         self.action = actions.PlayAction(self.sound)
 
     def play(self):
-        self.sound.play()
+        if audio._working:
+            self.sound.play()

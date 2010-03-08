@@ -1,11 +1,13 @@
 from cocos import actions
+from cocos import audio
 
 class PlayAction(actions.InstantAction):
     def init(self, sound):
         self.sound = sound
 
     def start(self):
-        self.sound.play()
+        if audio._working:
+            self.sound.play()
     
     def __deepcopy__(self, memo):
         # A shallow copy should be enough because sound effects are immutable
