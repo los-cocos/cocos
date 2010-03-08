@@ -46,9 +46,13 @@ def _platform_library_name(library):
     return library
 
 class SDL_DLL:
-    def __init__(self, library_name, version_function_name):
+    def __init__(self, library_name, version_function_name, version=None):
         self.library_name = library_name
         library = find_library(library_name)
+        if library is None and version is not None:
+            # try to lookup with version. this is useful in linux, sometimes
+            # there is'nt a libSDL.so but a libSDL-1.2.so
+            library = find_library("%s-%s" % (library_name, version))
         if not library:
             raise ImportError, 'Dynamic library "%s" was not found' % \
                 _platform_library_name(library_name)
@@ -218,7 +222,7 @@ class SDL_DLL:
         return _f
 
 # Shortcuts to the SDL core library
-_dll = SDL_DLL('SDL', 'SDL_Linked_Version')
+_dll = SDL_DLL('SDL', 'SDL_Linked_Version', '1.2')
 version_compatible = _dll.version_compatible
 assert_version_compatible = _dll.assert_version_compatible
 private_function = _dll.private_function

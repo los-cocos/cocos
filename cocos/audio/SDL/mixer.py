@@ -29,7 +29,7 @@ import version
 import array
 import rwops
 
-_dll = dll.SDL_DLL('SDL_mixer', 'Mix_Linked_Version')
+_dll = dll.SDL_DLL('SDL_mixer', 'Mix_Linked_Version', '1.2')
 
 Mix_Linked_Version = _dll.function('Mix_Linked_Version',
     '''Get the version of the dynamically linked SDL_mixer library.

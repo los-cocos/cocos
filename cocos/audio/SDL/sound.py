@@ -44,7 +44,7 @@ import cocos.audio.SDL.rwops
 import cocos.audio.SDL.version
 SDL = cocos.audio.SDL
 
-_dll = SDL.dll.SDL_DLL('SDL_sound', None)
+_dll = SDL.dll.SDL_DLL('SDL_sound', None, '1.2')
 
 class Sound_Version(Structure):
     '''Version structure.
