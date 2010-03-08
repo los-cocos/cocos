@@ -329,8 +329,6 @@ class Menu(Layer):
 
     def on_mouse_motion( self, x, y, dx, dy ):
         (x,y) = director.get_virtual_coordinates(x,y)
-        self._x = x
-        self._y = y
         for idx,i in enumerate( self.children):
             item = i[1]
             if item.is_inside_box( x, y):

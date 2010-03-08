@@ -61,8 +61,8 @@ def TextureGrabber():
     # Preferred method: framebuffer object
     try:
         # TEST XXX
-        _best_grabber = GenericGrabber
-        #_best_grabber = FBOGrabber
+        #_best_grabber = GenericGrabber
+        _best_grabber = FBOGrabber
         return _best_grabber()
     except:
         import traceback
