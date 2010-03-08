@@ -15,7 +15,7 @@ class TestLayer(cocos.layer.Layer):
         super( TestLayer, self ).__init__()
 
         x,y = director.get_window_size()
-        
+
         self.sprite = Sprite( 'grossini.png', (x/2, y/2)  )
         self.sprite2 = Sprite( 'grossini.png', (20,20), rotation=90 )
         self.sprite3 = Sprite( 'grossini.png', (-20,-20), rotation=270 )

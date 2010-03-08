@@ -43,7 +43,7 @@ class TestLayer(cocos.layer.Layer):
         sprite3.do( RotateBy(duration=2, angle=360) )
         sprite4.do( RotateBy(duration=2, angle=-360) )
 
-        sprite3.transform_anchor = sprite3.image.width, 0
+        sprite3.transform_anchor = sprite3.image.width/2, sprite3.image.height/2
 
 if __name__ == "__main__":
     director.init()

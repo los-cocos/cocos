@@ -218,8 +218,8 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
             self._vertex_list.vertices[:] = [0, 0, 0, 0, 0, 0, 0, 0]
             return
 
+        img = self._texture
         if self.transform_anchor_x == self.transform_anchor_y == 0:
-            img = self._texture
 
             if self._rotation:
                 x1 = -self._image_anchor_x * self._scale
@@ -255,10 +255,18 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
                 y2 = y1 + img.height
                 self._vertex_list.vertices[:] = [x1, y1, x2, y1, x2, y2, x1, y2]
         else:
-            x1 = int(self._x - self._image_anchor_x)
-            y1 = int(self._y - self._image_anchor_y)
+            x1 = int(- self._image_anchor_x)
+            y1 = int(- self._image_anchor_y)
             x2 = x1 + img.width
             y2 = y1 + img.height
-            self._vertex_list.vertices[:] = [x1, y1, x2, y1, x2, y2, x1, y2]
+            m = self.get_local_transform()
+            p1 = m * euclid.Point2(x1, y1)
+            p2 = m * euclid.Point2(x2, y1)
+            p3 = m * euclid.Point2(x2, y2)
+            p4 = m * euclid.Point2(x1, y2)
+
+            self._vertex_list.vertices[:] = [
+                int(p1.x), int(p1.y), int(p2.x), int(p2.y),
+                int(p3.x), int(p3.y), int(p4.x), int(p4.y)]
 
 Sprite.supported_classes = Sprite
