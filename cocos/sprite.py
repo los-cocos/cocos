@@ -168,6 +168,14 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         pyglet.sprite.Sprite.position = p
         BatchableNode._set_position(self,p)
 
+    def _set_x(self, x ):
+        pyglet.sprite.Sprite._set_x( self, x )
+        BatchableNode._set_x( self, x)
+
+    def _set_y(self, y ):
+        pyglet.sprite.Sprite._set_y( self, y )
+        BatchableNode._set_y( self, y)
+
     def contains(self, x, y):
         '''Test whether this (untransformed) Sprite contains the pixel coordinates
         given.

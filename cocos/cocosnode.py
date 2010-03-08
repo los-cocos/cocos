@@ -83,11 +83,11 @@ class CocosNode(object):
 
         #: x-position of the object relative to its parent's children_anchor_x value.
         #: Default: 0
-        self.x = 0
+        self._x = 0
 
         #: y-position of the object relative to its parent's children_anchor_y value.
         #: Default: 0
-        self.y = 0
+        self._y = 0
 
         #: a float, alters the scale of this node and its children.
         #: Default: 1.0
@@ -339,8 +339,24 @@ class CocosNode(object):
     #
     # Transform properties
     #
+    def _get_x(self):
+        return self._x
+    def _set_x(self, x):
+        self._x = x
+        self.is_transform_dirty = True
+        self.is_inverse_transform_dirty = True
+    x = property(_get_x, lambda self,x:self._set_x(x), doc="The x coordinate of the object")
+
+    def _get_y(self):
+        return self._y
+    def _set_y(self, y):
+        self._y = y
+        self.is_transform_dirty = True
+        self.is_inverse_transform_dirty = True
+    y = property(_get_y, lambda self,y:self._set_y(y), doc="The y coordinate of the object")
+
     def _get_position(self):
-        return (self.x, self.y)
+        return (self._x, self._y)
     def _set_position(self, (x,y)):
         self.x, self.y = x,y
         self.is_transform_dirty = True
@@ -707,7 +723,7 @@ class CocosNode(object):
 
             matrix = euclid.Matrix3().identity()
 
-            matrix.translate(self.x, self.y)
+            matrix.translate(self._x, self._y)
             matrix.translate( self.transform_anchor_x, self.transform_anchor_y )
             matrix.rotate( math.radians(-self.rotation) )
             matrix.scale(self._scale, self._scale)
