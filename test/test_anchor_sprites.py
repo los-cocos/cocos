@@ -8,28 +8,42 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import cocos
 from cocos.director import director
 from cocos.sprite import Sprite
+from cocos.actions import *
 import pyglet
 
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
-        
+
         sprite1 = Sprite('grossini.png')
-        sprite1.position = x/2, y/2
-        sprite1.children_anchor = 0,-100
+        sprite1.position = x/4, y/2
         self.add( sprite1  )
 
         sprite2 = Sprite('grossini.png')
-        sprite2.position = 50,0
-        sprite1.add( sprite2  )
+        sprite2.position = x/4, y/2
+        self.add( sprite2, z=2  )
+        sprite2.scale = 0.3
+
+        sprite2.do( RotateBy(duration=2, angle=360) )
+        sprite1.do( RotateBy(duration=2, angle=-360) )
+
+        sprite1.transform_anchor = 0, 0
 
         sprite3 = Sprite('grossini.png')
-        sprite3.position = -50,0
-        sprite1.add( sprite3 )
-        
-        
+        sprite3.position = 3*x/4, y/2
+        self.add( sprite3  )
+
+        sprite4 = Sprite('grossini.png')
+        sprite4.position = 3*x/4, y/2
+        self.add( sprite4, z=2  )
+        sprite4.scale = 0.3
+
+        sprite3.do( RotateBy(duration=2, angle=360) )
+        sprite4.do( RotateBy(duration=2, angle=-360) )
+
+        sprite3.transform_anchor = sprite3.image.width/2, sprite3.image.height/2
 
 if __name__ == "__main__":
     director.init()
