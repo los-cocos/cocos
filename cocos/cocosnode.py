@@ -113,14 +113,6 @@ class CocosNode(object):
         self.camera = Camera()
 
 
-        #: offset from (x,0) from where children will have its (0,0) coordinate.
-        #: Default: 0
-        self.children_anchor_x = 0
-
-        #: offset from (x,y) from where children will have its (0,0) coordinate.
-        #: Default: 0
-        self.children_anchor_y = 0
-
         #: offset from (x,0) from where rotation and scale will be applied.
         #: Default: 0
         self.transform_anchor_x = 0
@@ -164,14 +156,11 @@ class CocosNode(object):
     def make_property(attr):
         def set_attr():
             def inner(self, value):
-                setattr(self, "children_"+attr,value)
                 setattr(self, "transform_"+attr,value)
             return inner
         def get_attr():
             def inner(self):
-                if getattr(self,"children_"+attr) != getattr(self, "transform_"+attr):
-                    raise Exception("no consistent value for "+attr)
-                return getattr(self,"children_"+attr)
+                return getattr(self,"transform_"+attr)
             return inner
         return property(
             get_attr(),
@@ -208,10 +197,6 @@ class CocosNode(object):
 
             :type: (int,int)
             ''')
-
-    #: Children anchor point.
-    #: Children will be added relative to this point
-    children_anchor = make_property("children_anchor")
 
     #: Transformation anchor point.
     #: Transformations like scaling and rotation
@@ -521,12 +506,6 @@ class CocosNode(object):
                 - self.transform_anchor_y,
                 0 )
 
-    def transform_children(self):
-        if self.children_anchor != (0,0):
-            glTranslatef(
-                self.children_anchor_x,
-                self.children_anchor_y,
-                 0 )
 
 
     def walk(self, callback, collect=None):
@@ -590,7 +569,6 @@ class CocosNode(object):
         if self.children and self.children[0][0] < 0:
             glPushMatrix()
             self.transform()
-            self.transform_children()
             for z,c in self.children:
                 if z >= 0: break
                 position += 1
@@ -605,7 +583,6 @@ class CocosNode(object):
         if position < len(self.children):
             glPushMatrix()
             self.transform()
-            self.transform_children()
             for z,c in self.children[position:]:
                 c.visit()
             glPopMatrix()

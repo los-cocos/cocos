@@ -25,9 +25,9 @@ if __name__ == "__main__":
 
     red.scale = 0.75
     blue.scale = 0.5
-    blue.children_anchor_y = y/2
+    blue.transform_anchor = 0, 0
     green.scale = 0.25
-    green.children_anchor_y = -y/2
+    green.transform_anchor = x,y
 
     red.add( Sprite( 'grossini.png', (0, y/2) ), z=1 )
     blue.add( Sprite( 'grossini.png', (0, y/2) ), z=1 )

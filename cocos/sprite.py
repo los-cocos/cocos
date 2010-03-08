@@ -49,14 +49,16 @@ And now tell the sprite to execute it::
 '''
 
 __docformat__ = 'restructuredtext'
+import math
+
+import pyglet
+from pyglet import image
+from pyglet.gl import *
 
 import cocosnode
 from batch import *
 import rect
 
-import pyglet
-from pyglet import image
-from pyglet.gl import *
 import euclid
 import math
 
@@ -96,9 +98,15 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         if isinstance(image, str):
             image = pyglet.resource.image(image)
 
+        self.transform_anchor_x = 0
+        self.transform_anchor_y = 0
+        self._image_anchor_x = 0
+        self._image_anchor_y = 0
 
         pyglet.sprite.Sprite.__init__(self, image)
         BatchableNode.__init__(self)
+
+
 
         if anchor is None:
             if isinstance(self.image, pyglet.image.Animation):
@@ -109,14 +117,13 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
 
         self.image_anchor = anchor
-        self.anchor = (0, 0)
 
-        #: group.
-        #: XXX what is this?
+        # group.
+        # This is for batching
         self.group = None
 
-        #: children group.
-        #: XXX what is this ?
+        # children group.
+        # This is for batching
         self.children_group = None
 
         #: position of the sprite in (x,y) coordinates
@@ -136,20 +143,10 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
 
     def get_rect(self):
-#        '''Get a cocos.rect.Rect for this sprite.
+        '''Get a cocos.rect.Rect for this sprite.'''
         x = -self.image_anchor_x
         y = -self.image_anchor_y
         return rect.Rect(x,y,self.width, self.height)
-
-#    def get_rect(self):
-#        '''Get a cocos.rect.Rect for this sprite.
-#        '''
-#        sx, sy = self.position
-#        ax, ay = self.image_anchor
-#        sx -= ax*self.scale
-#        sy -= ay*self.scale
-#        return rect.Rect(sx, sy, self.width*self.scale,
-#            self.height*self.scale)
 
     def get_AABB(self):
         '''Returns a local-coordinates Axis aligned Bounding Box'''
@@ -158,14 +155,6 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         x = v[0], v[2], v[4], v[6]
         y = v[1], v[3], v[5], v[7]
         return rect.Rect(min(x),min(y),max(x)-min(x),max(y)-min(y))
-
-#        p1 = euclid.Point2(0,0)
-#        p2 = euclid.Point2(self.width, self.height)
-#        mat = self.get_transform_matrix()
-#        p1 = mat * p1
-#        p2 = mat * p2
-#        return rect.Rect(p1.x, p1.y, p2.x, p2.y )
-
 
     def _set_rotation( self, a ):
         pyglet.sprite.Sprite._set_rotation(self, a)
@@ -193,40 +182,25 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
 
     def _set_anchor_x(self, value):
-        if isinstance(self.image, pyglet.image.Animation):
-            for img in self.image.frames:
-                img.image.anchor_x = value
-            self._texture.anchor_x = value
-        else:
-            self.image.anchor_x = value
+        self._image_anchor_x = value
         self._update_position()
 
     def _get_anchor_x(self):
-        if isinstance(self.image, pyglet.image.Animation):
-            return self.image.frames[0].image.anchor_x
-        else:
-            return self.image.anchor_x
+        return self._image_anchor_x
     image_anchor_x = property(_get_anchor_x, _set_anchor_x)
 
     def _set_anchor_y(self, value):
-        if isinstance(self.image, pyglet.image.Animation):
-            for img in self.image.frames:
-                img.image.anchor_y = value
-            self._texture.anchor_y = value
-        else:
-            self.image.anchor_y = value
+        self._image_anchor_y = value
         self._update_position()
 
     def _get_anchor_y(self):
-        if isinstance(self.image, pyglet.image.Animation):
-            return self.image.frames[0].image.anchor_y
-        else:
-            return self.image.anchor_y
+        return self._image_anchor_y
     image_anchor_y = property(_get_anchor_y, _set_anchor_y)
 
     def _set_anchor(self, value):
-        self._set_anchor_x(value[0])
-        self._set_anchor_y(value[1])
+        self._image_anchor_x = value[0]
+        self._image_anchor_y = value[1]
+        self._update_position()
 
     def _get_anchor(self):
         return (self._get_anchor_x(), self._get_anchor_y())
@@ -239,27 +213,52 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
             self._vertex_list.draw(GL_QUADS)
         self._group.unset_state()
 
-    #
-    # Custom implementation
-    #
-    def get_local_transform2( self ):
-        '''returns an euclid.Matrix3 with the local transformation matrix'''
-        if self.is_transform_dirty:
+    def _update_position(self):
+        if not self._visible:
+            self._vertex_list.vertices[:] = [0, 0, 0, 0, 0, 0, 0, 0]
+            return
 
-            matrix = euclid.Matrix3().identity()
+        if self.transform_anchor_x == self.transform_anchor_y == 0:
+            img = self._texture
 
-            matrix.translate( self.image_anchor_x, self.image_anchor_y )
+            if self._rotation:
+                x1 = -self._image_anchor_x * self._scale
+                y1 = -self._image_anchor_y * self._scale
+                x2 = x1 + img.width * self._scale
+                y2 = y1 + img.height * self._scale
+                x = self._x
+                y = self._y
 
-            matrix.translate(self.x, self.y)
-            matrix.rotate( math.radians(-self._rotation) )
-            matrix.scale(self._scale, self._scale)
+                r = -math.radians(self._rotation)
+                cr = math.cos(r)
+                sr = math.sin(r)
+                ax = int(x1 * cr - y1 * sr + x)
+                ay = int(x1 * sr + y1 * cr + y)
+                bx = int(x2 * cr - y1 * sr + x)
+                by = int(x2 * sr + y1 * cr + y)
+                cx = int(x2 * cr - y2 * sr + x)
+                cy = int(x2 * sr + y2 * cr + y)
+                dx = int(x1 * cr - y2 * sr + x)
+                dy = int(x1 * sr + y2 * cr + y)
 
-            matrix.translate( -self.image_anchor_x, -self.image_anchor_y )
-            
-            self.is_transform_dirty = False	
-
-            self.transform_matrix = matrix
-	
-        return self.transform_matrix
+                self._vertex_list.vertices[:] = [ax, ay, bx, by, cx, cy, dx, dy]
+            elif self._scale != 1.0:
+                x1 = int(self._x - self._image_anchor_x * self._scale)
+                y1 = int(self._y - self._image_anchor_y * self._scale)
+                x2 = int(x1 + img.width * self._scale)
+                y2 = int(y1 + img.height * self._scale)
+                self._vertex_list.vertices[:] = [x1, y1, x2, y1, x2, y2, x1, y2]
+            else:
+                x1 = int(self._x - self._image_anchor_x)
+                y1 = int(self._y - self._image_anchor_y)
+                x2 = x1 + img.width
+                y2 = y1 + img.height
+                self._vertex_list.vertices[:] = [x1, y1, x2, y1, x2, y2, x1, y2]
+        else:
+            x1 = int(self._x - self._image_anchor_x)
+            y1 = int(self._y - self._image_anchor_y)
+            x2 = x1 + img.width
+            y2 = y1 + img.height
+            self._vertex_list.vertices[:] = [x1, y1, x2, y1, x2, y2, x1, y2]
 
 Sprite.supported_classes = Sprite

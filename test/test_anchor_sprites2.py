@@ -10,7 +10,6 @@ from cocos.director import director
 from cocos.sprite import Sprite
 from cocos.actions import *
 import pyglet
-from pyglet.gl import *
 
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
@@ -19,35 +18,32 @@ class TestLayer(cocos.layer.Layer):
         x,y = director.get_window_size()
 
         sprite1 = Sprite('grossini.png')
+        sprite1.position = x/4, y/2
         self.add( sprite1  )
-        sprite1.position = 300,300
 
         sprite2 = Sprite('grossini.png')
-        sprite1.add( sprite2  )
-        sprite2.position = -50,-50
+        sprite2.position = x/4, y/2
+        self.add( sprite2, z=2  )
+        sprite2.scale = 0.3
+
+        sprite2.do( RotateBy(duration=2, angle=360) )
+        sprite1.do( RotateBy(duration=2, angle=-360) )
+
+        sprite1.transform_anchor = 0, 0
 
         sprite3 = Sprite('grossini.png')
-        sprite2.add( sprite3 )
-        sprite3.position = 150,150
-        sprite3.rotation = 0
-        sprite3.opacity = 128
+        sprite3.position = 3*x/4, y/2
+        self.add( sprite3  )
 
-        self.sprite3 = sprite3
+        sprite4 = Sprite('grossini.png')
+        sprite4.position = 3*x/4, y/2
+        self.add( sprite4, z=2  )
+        sprite4.scale = 0.3
 
-        sprite1.do( ScaleBy(1.5, 10) )
-        sprite2.do( MoveBy((100,-150),5) )
-        sprite3.do( RotateBy(360,20) )
+        sprite3.do( RotateBy(duration=2, angle=360) )
+        sprite4.do( RotateBy(duration=2, angle=-360) )
 
-    def draw( self ):
-
-        p = self.sprite3.point_to_world( (0,0) )
-
-        glPointSize(16)
-        glBegin(GL_POINTS)
-        glColor4f(1, 0, 0, 1)
-        glVertex3f(p.x, p.y, 0)
-        glEnd()
-
+        sprite3.transform_anchor = sprite3.image.width, 0
 
 if __name__ == "__main__":
     director.init()

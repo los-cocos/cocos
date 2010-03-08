@@ -20,7 +20,6 @@ class BackgroundLayer( cocos.layer.Layer ):
         self.img = pyglet.resource.image('background_image.png')
 
         self.anchor = (320,240)
-#        self.do( RotateBy( 360,2) )
 
     def draw( self ):
         glPushMatrix()

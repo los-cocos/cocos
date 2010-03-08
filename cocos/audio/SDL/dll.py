@@ -53,7 +53,7 @@ class SDL_DLL:
             raise ImportError, 'Dynamic library "%s" was not found' % \
                 _platform_library_name(library_name)
         self._dll = getattr(cdll, library)
-        
+
         # Get the version of the DLL we're using
         if version_function_name:
             try:
@@ -68,7 +68,7 @@ class SDL_DLL:
     def version_compatible(self, v):
         '''Returns True iff `v` is equal to or later than the loaded library
         version.'''
-        v = _version_parts(v) 
+        v = _version_parts(v)
         for i in range(3):
             if self._version[i] < v[i]:
                 return False
@@ -91,9 +91,9 @@ class SDL_DLL:
         kwargs['args'] = []
         return self.function(name, **kwargs)
 
-    def function(self, name, doc, args=[], arg_types=[], 
-                 return_type=None, 
-                 dereference_return=False, 
+    def function(self, name, doc, args=[], arg_types=[],
+                 return_type=None,
+                 dereference_return=False,
                  require_return=False,
                  success_return=None,
                  error_return=None,
@@ -143,7 +143,7 @@ class SDL_DLL:
                 import cocos.audio.SDL.error
                 raise cocos.audio.SDL.error.SDL_NotImplementedError, \
                       '%s requires %s %s; currently using version %s' % \
-                      (name, self.library_name, _version_string(since), 
+                      (name, self.library_name, _version_string(since),
                        _version_string(self._version))
             if args:
                 _f._args = args
@@ -199,7 +199,7 @@ class SDL_DLL:
             # None if NULL is returned.
             def _f(*args, **kwargs):
                 result = func(*args, **kwargs)
-                if not result: 
+                if not result:
                     import cocos.audio.SDL.error
                     raise cocos.audio.SDL.error.SDL_Exception, SDL.error.SDL_GetError()
                 return result

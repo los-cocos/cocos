@@ -16,19 +16,17 @@ class Bg(cocos.layer.Layer):
     def __init__(self):
         super(Bg, self).__init__()
         self.image = pyglet.resource.image('grossini.png')
-        self.image.anchor_x = self.image.width / 2
-        self.image.anchor_y = self.image.height / 2
-
+        
     def on_enter(self):
         super(Bg, self).on_enter()
         sprite = Sprite(self.image)
         self.add(sprite)
         sprite.position = 320, 240
         sprite.do(ScaleTo(4,0))
-        
+
         action = MoveTo((640, 480), 4) | ( ScaleTo(2,2) + ScaleTo(4,2) )
 
         sprite.do(action)
-        
+
 director.init()
 director.run(Scene(Bg()))

@@ -7,14 +7,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
+from cocos.actions import JumpTo, JumpBy
 from cocos.sprite import Sprite
 import pyglet
-
-## the following is in case we want to get the images
-## from other directories:
-# pyglet.resource.path.append("/data/other/directory")
-# pyglet.resource.reindex()
-
 
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
@@ -22,11 +17,17 @@ class TestLayer(cocos.layer.Layer):
 
         x,y = director.get_window_size()
 
-        self.sprite = Sprite('grossini.png')
-        self.sprite.position = x/2, y/2
-        self.add( self.sprite  )
-        
+        self.sprite = Sprite( 'grossini.png', (x/5, y/3*2) )
+        self.add( self.sprite )
+        self.sprite.do( JumpTo( (x/5*4, 100), 100, 10, 6 ) )
+
+        self.sprite2 = Sprite( 'grossini.png', (x/5, y/3) )
+        self.add( self.sprite2 )
+        self.sprite2.do( JumpBy( (x/5*4, 100), 100, 10, 6 ) )
+
+
 if __name__ == "__main__":
+    director.set_recorder(25, "tmp/frame-%d.png", 6)
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
