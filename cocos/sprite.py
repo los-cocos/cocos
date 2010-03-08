@@ -136,14 +136,20 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
 
     def get_rect(self):
-        '''Get a cocos.rect.Rect for this sprite.
-        '''
-        sx, sy = self.position
-        ax, ay = self.image_anchor
-        sx -= ax*self.scale
-        sy -= ay*self.scale
-        return rect.Rect(sx, sy, self.width*self.scale,
-            self.height*self.scale)
+#        '''Get a cocos.rect.Rect for this sprite.
+        x = -self.image_anchor_x
+        y = -self.image_anchor_y
+        return rect.Rect(x,y,self.width, self.height)
+
+#    def get_rect(self):
+#        '''Get a cocos.rect.Rect for this sprite.
+#        '''
+#        sx, sy = self.position
+#        ax, ay = self.image_anchor
+#        sx -= ax*self.scale
+#        sy -= ay*self.scale
+#        return rect.Rect(sx, sy, self.width*self.scale,
+#            self.height*self.scale)
 
     def get_AABB(self):
         '''Returns a local-coordinates Axis aligned Bounding Box'''

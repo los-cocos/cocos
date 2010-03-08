@@ -62,6 +62,7 @@ from director import *
 from cocosnode import *
 from actions import *
 from sprite import Sprite
+import rect
 
 __all__ = [ 'Menu',                                         # menu class
 
@@ -424,12 +425,12 @@ class BaseMenuItem( CocosNode ):
 
         x1 = self.get_item_x() + x_diff
         y1 = self.get_item_y() + y_diff
-        x1 += self.parent.x
-        y1 += self.parent.y
-        x2 = x1 + width
-        y2 = y1 + height
-
-        return (x1,y1,x2,y2)
+#        x1 += self.parent.x
+#        y1 += self.parent.y
+#        x2 = x1 + width
+#        y2 = y1 + height
+#        return (x1,y1,x2,y2)
+        return rect.Rect(x1,y1,width,height)
 
     def draw( self ):
         raise NotImplementedError
@@ -447,10 +448,14 @@ class BaseMenuItem( CocosNode ):
 
         :rtype: bool
         """
-        (ax,ay,bx,by) = self.get_box()
-        if( x >= ax and x <= bx and y >= ay and y <= by ):
-            return True
-        return False
+#        (ax,ay,bx,by) = self.get_box()
+#        if( x >= ax and x <= bx and y >= ay and y <= by ):
+#            return True
+#        return False
+        rect = self.get_box()
+        p = self.point_to_local( (x,y) )
+        return rect.contains( p.x, p.y )
+        
 
     def on_selected( self ):
         if self.selected_effect:

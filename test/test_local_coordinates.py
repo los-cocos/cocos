@@ -63,10 +63,13 @@ class TestLayer(cocos.layer.Layer):
         glEnd()
 
     def test_collisions( self, x, y ):
-        print '-----'
         for s in self.sprites:
-            r = s.point_to_local( (x, y) )
-            print r, type(r)
+            rect = s.get_rect()
+            p = s.point_to_local( (x, y) )
+            if rect.contains( p.x, p.y ):
+                s.color = (255,0,0)
+            else:
+                s.color = (255,255,255)
 
     def on_mouse_press(self, x, y, buttons, modifiers):
         x, y = director.get_virtual_coordinates (x, y)
