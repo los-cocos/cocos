@@ -27,8 +27,13 @@ class DummyMusicControl(object):
     def stop(self):
         pass
 
-# Shared singleton
-if audio._working:
-    control = MusicControl()
-else:
-    control = DummyMusicControl()
+def set_control(name):
+    global control
+    assert name in ('dummy', 'pygame')
+    control = globals()["_" + name] 
+
+_dummy = DummyMusicControl()
+_pygame = MusicControl()
+
+set_control('dummy')
+

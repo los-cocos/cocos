@@ -11,7 +11,8 @@ def initialize(arguments={}):
     global _working
     if arguments is None:
         _working = False
-
+        music.set_control('dummy')
     if _working:
-         pygame.mixer.init(**arguments)
+        pygame.mixer.init(**arguments)
+        music.set_control('pygame')
 
