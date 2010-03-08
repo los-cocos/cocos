@@ -213,17 +213,17 @@ from cocos.rect import Rect
 
 # Implement these classes for backwards compatibility; some older code
 # expects ScrollableLayer and ScrollingManager to be in the tiles module.
-from cocos import layers
-class ScrollableLayer(layers.ScrollableLayer):
+from cocos import layer
+class ScrollableLayer(layer.ScrollableLayer):
     def __init__(self, parallax=1):
         import warnings
-        warnings.warn('ScrollableLayer been has moved to cocos.layers',
+        warnings.warn('ScrollableLayer been has moved to cocos.layer',
             DeprecationWarning, stacklevel=2)
         super(ScrollableLayer, self).__init__(parallax=parallax)
-class ScrollingManager(layers.ScrollingManager):
+class ScrollingManager(layer.ScrollingManager):
     def __init__(self, viewport=None):
         import warnings
-        warnings.warn('ScrollingManager been has moved to cocos.layers',
+        warnings.warn('ScrollingManager been has moved to cocos.layer',
             DeprecationWarning, stacklevel=2)
         super(ScrollingManager, self).__init__(viewport=viewport)
 
@@ -589,7 +589,7 @@ def hex_width(height):
     return int(height / math.sqrt(3)) * 2
 
 
-class MapLayer(layers.ScrollableLayer):
+class MapLayer(layer.ScrollableLayer):
     '''Base class for Maps.
 
     Maps are comprised of tiles and can figure out which tiles are required to
