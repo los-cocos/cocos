@@ -49,8 +49,8 @@ The first thing to do, is to initialize the ``director``::
 This will initialize the director, and will create a display area
 (a 640x480 window by default).
 The parameters that are supported by director.init() are the same
-parameters that are supported by pyglet.window.Window(), plus a ``audio``
-argument for audio settigns.
+parameters that are supported by pyglet.window.Window(), plus an ``audio``
+argument for audio settings.
 
 Some of the supported parameters are:
 
@@ -324,22 +324,22 @@ class Director(event.EventDispatcher):
         :returns: The main window, an instance of pyglet.window.Window class.
         """
 
-        # if audio is not working, better to not work at all. Except if
-        # explicitely instructed to continue
-        if not (cocos.audio._working or
-                kwargs.get('noaudio',False) or
-                getenv('COCOS2D_NOSOUND') is not None
-                ):
-            from cocos.audio.exceptions import NoAudioError
-            msg = "cocos.audio isn't able to work without needed dependencies. "
-            msg += "Try installing pygame for fixing it, or forcing no audio "
-            msg += "mode by calling director.init with audio=None, or setting the "
-            msg += "COCOS2D_NOSOUND variable in your env."
-            raise NoAudioError(msg)
-
         # pop out the Cocos-specific flags
         do_not_scale_window = kwargs.pop('do_not_scale', False)
         audio_settings = kwargs.pop('audio', {})
+
+        # Environment variable COCOS2d_NOSOUND=1 overrides audio settings
+        if getenv('COCOS2D_NOSOUND',None) == '1':
+            audio_settings = None
+        # if audio is not working, better to not work at all. Except if
+        # explicitely instructed to continue
+        if not cocos.audio._working and audio_settings is not None:
+            from cocos.audio.exceptions import NoAudioError
+            msg = "cocos.audio isn't able to work without needed dependencies. " \
+                  "Try installing pygame for fixing it, or forcing no audio " \
+                  "mode by calling director.init with audio=None, or setting the " \
+                  "COCOS2D_NOSOUND=1 variable in your env."
+            raise NoAudioError(msg)
 
         #: pyglet's window object
         self.window = window.Window( *args, **kwargs )

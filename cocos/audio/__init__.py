@@ -8,8 +8,10 @@ except ImportError, error:
     _working = False
 
 def initialize(arguments={}):
+    global _working
     if arguments is None:
-        assert False # Null audio not implemented yet
-    else:
-        if _working:
-            pygame.mixer.init(**arguments)
+        _working = False
+
+    if _working:
+         pygame.mixer.init(**arguments)
+
