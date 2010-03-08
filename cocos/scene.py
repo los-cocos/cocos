@@ -42,7 +42,7 @@ from pyglet.gl import *
 import cocos
 from cocos.director import director
 import cocos.cocosnode as cocosnode
-import cocos.audio.pygame.music
+import cocos.audio.music
 
 class EventHandlerMixin(object):
     def add(self, child, *args, **kwargs):
@@ -108,15 +108,15 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
             c.parent = self
         super(Scene, self).on_enter()
         if self.music is not None:
-            cocos.audio.pygame.music.load(self.music)
+            cocos.audio.music.control.load(self.music)
         if self.music_playing:
-            cocos.audio.pygame.music.play()
+            cocos.audio.music.control.play()
 
     def on_exit(self):
         super(Scene, self).on_exit()
         # _apply_music after super, because is_running must be already False
         if self.music_playing:
-            cocos.audio.pygame.music.stop()
+            cocos.audio.music.control.stop()
         
             
     def push_all_handlers(self):
@@ -164,9 +164,9 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         self.music_playing = False
         if self.is_running:
             if filename is not None:
-                cocos.audio.pygame.music.load(filename)
+                cocos.audio.music.control.load(filename)
             else:
-                cocos.audio.pygame.music.stop()
+                cocos.audio.music.control.stop()
     
     def play_music(self):
         """Enable music playback for this scene. Nothing happens if music was already playing
@@ -177,7 +177,7 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         if self.music is not None and not self.music_playing:
             self.music_playing = True
             if self.is_running:
-                cocos.audio.pygame.music.play()                
+                cocos.audio.music.control.play()                
 
     def stop_music(self):
         """Stops music playback for this scene.
