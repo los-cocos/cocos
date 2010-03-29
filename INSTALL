@@ -6,9 +6,7 @@ First,
 
 
 Then:
- Install pyglet 1.1beta or newer ( http://www.pyglet.org )
-   ( If you want to use pyglet 1.0, use cocos v0.1.x instead. )
-
+ Install pyglet 1.1.4 or newer ( http://www.pyglet.org )
 
 Finally:
 

@@ -32,6 +32,7 @@ Two methods are available for setting the map focus:
   x and y values.
 '''
 
+from cocos.director import director
 from cocos.layer.base_layers import Layer
 import pyglet
 

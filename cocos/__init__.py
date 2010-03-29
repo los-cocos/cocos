@@ -52,7 +52,7 @@ Main Features:
 http://cocos2d.org
 '''
 
-__version__ = "0.3.0"
+__version__ = "0.4.0b1"
 __author__ = "cocos2d team"
 version = __version__
 
@@ -81,6 +81,7 @@ def import_all():
     import camera
     import draw
     import skeleton
+    import rect
 
 if not unittesting:
     import_all()
