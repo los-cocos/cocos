@@ -171,7 +171,7 @@ class SDL_DLL:
                     if result:
                         return result.contents
                     import cocos.audio.SDL.error
-                    raise cocos.audio.SDL.error.SDL_Exception, SDL.error.SDL_GetError()
+                    raise cocos.audio.SDL.error.SDL_Exception, cocos.audio.SDL.error.SDL_GetError()
             else:
                 # Construct a function which dereferences the pointer result,
                 # or returns None if NULL is returned.
@@ -187,7 +187,7 @@ class SDL_DLL:
                 result = func(*args, **kwargs)
                 if result != success_return:
                     import cocos.audio.SDL.error
-                    raise cocos.audio.SDL.error.SDL_Exception, SDL.error.SDL_GetError()
+                    raise cocos.audio.SDL.error.SDL_Exception, cocos.audio.SDL.error.SDL_GetError()
                 return result
         elif error_return is not None:
             # Construct a function which returns None, but raises an exception
@@ -196,7 +196,7 @@ class SDL_DLL:
                 result = func(*args, **kwargs)
                 if result == error_return:
                     import cocos.audio.SDL.error
-                    raise cocos.audio.SDL.error.SDL_Exception, SDL.error.SDL_GetError()
+                    raise cocos.audio.SDL.error.SDL_Exception, cocus.audio.SDL.error.SDL_GetError()
                 return result
         elif require_return:
             # Construct a function which returns the usual result, or returns
@@ -205,7 +205,7 @@ class SDL_DLL:
                 result = func(*args, **kwargs)
                 if not result:
                     import cocos.audio.SDL.error
-                    raise cocos.audio.SDL.error.SDL_Exception, SDL.error.SDL_GetError()
+                    raise cocos.audio.SDL.error.SDL_Exception, cocos.audio.SDL.error.SDL_GetError()
                 return result
         else:
             # Construct a function which returns the C function's return
