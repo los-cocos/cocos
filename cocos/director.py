@@ -326,10 +326,11 @@ class Director(event.EventDispatcher):
 
         # pop out the Cocos-specific flags
         do_not_scale_window = kwargs.pop('do_not_scale', False)
+        audio_backend = kwargs.pop('audio_backend', 'pyglet')
         audio_settings = kwargs.pop('audio', {})
 
         # Environment variable COCOS2d_NOSOUND=1 overrides audio settings
-        if getenv('COCOS2D_NOSOUND',None) == '1':
+        if getenv('COCOS2D_NOSOUND', None) == '1' or audio_backend == 'pyglet':
             audio_settings = None
         # if audio is not working, better to not work at all. Except if
         # explicitely instructed to continue
