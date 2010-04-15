@@ -357,8 +357,8 @@ class Director(event.EventDispatcher):
         else:
             self.window.push_handlers(on_resize=self.scaled_resize_window)
         self.window.push_handlers(self.on_draw)
-        self._window_original_width = self.window.width
-        self._window_original_height = self.window.height
+        self._window_virtual_width = self.window.width
+        self._window_virtual_height = self.window.height
         self._window_aspect =  self.window.width / float( self.window.height )
         self._offset_x = 0
         self._offset_y = 0
@@ -514,7 +514,7 @@ class Director(event.EventDispatcher):
         :rtype: (x,y)
         :returns: The size of the window when it was created
         """
-        return ( self._window_original_width, self._window_original_height)
+        return ( self._window_virtual_width, self._window_virtual_height)
 
 
     def get_virtual_coordinates( self, x, y ):
@@ -531,11 +531,11 @@ class Director(event.EventDispatcher):
         :returns: Transformed coordinates from the *real* window to the *virtual* window
         """
 
-        x_diff = self._window_original_width / float( self.window.width - self._offset_x * 2 )
-        y_diff = self._window_original_height / float( self.window.height - self._offset_y * 2 )
+        x_diff = self._window_virtual_width / float( self.window.width - self._offset_x * 2 )
+        y_diff = self._window_virtual_height / float( self.window.height - self._offset_y * 2 )
 
-        adjust_x = (self.window.width * x_diff - self._window_original_width ) / 2
-        adjust_y = (self.window.height * y_diff - self._window_original_height ) / 2
+        adjust_x = (self.window.width * x_diff - self._window_virtual_width ) / 2
+        adjust_y = (self.window.height * y_diff - self._window_virtual_height ) / 2
 
         return ( int( x_diff * x) - adjust_x,   int( y_diff * y ) - adjust_y )
 
@@ -558,13 +558,32 @@ class Director(event.EventDispatcher):
             `height` : Integer
                 New height
         """
+        # physical windows size
+        pw, ph = width, height
+        print 'window size:', pw, ph
+        # virtual (desired) view size
+        vw, vh = self.get_window_size()
+        print 'virtual window size:', vw, vh
+        # desired aspect ratio
+        v_ar = vw/float(vh)
+        # usable width, heigh
+        uw = int(min(pw, ph*v_ar))
+        uh = int(min(ph, pw/v_ar))
+        print 'usable w,h:', uw, uh
+        ox = (pw-uw)//2
+        oy = (ph-uh)//2
+        print 'ox, oy:', ox, oy
+        self._offset_x = ox
+        self._offset_y = oy
+        self._usable_width = uw
+        self._usable_height = uh
         self.set_projection()
         self.dispatch_event("on_resize", width, height)
 
-        # fix offset
-        h_relation = self.window.height  / float(self._window_original_height)
-        should_width = h_relation * self._window_original_width
-        self._offset_x = (self.window.width - should_width) / 2
+##        # fix offset
+##        h_relation = self.window.height  / float(self._window_virtual_height)
+##        should_width = h_relation * self._window_virtual_width
+##        self._offset_x = (self.window.width - should_width) / 2
 
         return pyglet.event.EVENT_HANDLED
 
@@ -586,25 +605,27 @@ class Director(event.EventDispatcher):
             `height` : Integer
                 New height
         """
+        self._usable_width = width
+        self._usable_height = height
         self.dispatch_event("on_resize", width, height)
 
     def set_projection(self):
         '''Sets a 3D projection mantaining the aspect ratio of the original window size'''
+        # virtual (desired) view size
+        vw, vh = self.get_window_size()
 
-        width, height = self.window.width, self.window.height
-        ow, oh = self.get_window_size()
-
-        glViewport(0, 0, width, height)
+        glViewport(self._offset_x, self._offset_y, self._usable_width, self._usable_height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(60, 1.0*width/height, 0.1, 3000.0)
+        gluPerspective(60, self._usable_width/float(self._usable_height), 0.1, 3000.0)
         glMatrixMode(GL_MODELVIEW)
 
         glLoadIdentity()
-        gluLookAt( ow/2.0, oh/2.0, oh/1.1566,       # eye
-                   ow / 2.0, oh / 2.0, 0,           # center
-                   0.0, 1.0, 0.0                    # up vector
+        gluLookAt( vw/2.0, vh/2.0, vh/1.1566,   # eye
+                   vw/2.0, vh/2.0, 0,           # center
+                   0.0, 1.0, 0.0                # up vector
                    )
+
 
     #
     # Misc functions
