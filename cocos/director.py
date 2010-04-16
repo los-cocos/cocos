@@ -49,10 +49,28 @@ The first thing to do, is to initialize the ``director``::
 This will initialize the director, and will create a display area
 (a 640x480 window by default).
 The parameters that are supported by director.init() are the same
-parameters that are supported by pyglet.window.Window(), plus an ``audio``
-argument for audio settings.
+parameters that are supported by pyglet.window.Window(), plus a few
+cocos exclusive ones.
 
-Some of the supported parameters are:
+director.init cocos exclusive parameters:
+    * ``do_not_scale``: Boleean. Defaults to False, when your app can think
+        that the windows size dont change despite resize events.
+        When True, your app must include logic to deal with diferent window
+        sizes along the session.
+    * ``audio_backend``: one in ['pyglet','sdl']. Defaults to 'pyglet' for
+        legacy support.
+    * ``audio``: None or a dict providing parameters for the sdl audio backend.
+        * None: in this case a "null" audio system will be used, where all the
+          sdl sound operations will be no-ops. This may be useful if you do not
+          want to depend on SDL_mixer
+        * A dictionary with string keys; these are the arguments for setting up
+          the audio output (sample rate and bit-width, channels, buffer size).
+          The key names/values should match the positional arguments of
+          http://www.pygame.org/docs/ref/mixer.html#pygame.mixer.init
+        * The default value is {}, which means sound enabled with default
+          settings
+
+director.init parameters passes to pyglet.window.Window (partial list):
 
     * ``fullscreen``: Boolean. Window is created in fullscreen. Default is False
     * ``resizable``: Boolean. Window is resizable. Default is False
@@ -66,18 +84,6 @@ The full list of valid video arguments can be found at the pyglet Window
 documentation:
 
     - http://www.pyglet.org/doc/1.1/api/pyglet.window.Window-class.html
-
-The ``audio`` argument can be:
-
-    * None: in this case a "null" audio system will be used, where all the
-      sound operations will be no-ops. This may be useful if you do not want
-      to depend on SDL_mixer
-    * A dictionary with string keys; these are the arguments for setting up
-      the audio output (sample rate and bit-width, channels, buffer size).
-      The key names/values should match the positional arguments of
-      http://www.pygame.org/docs/ref/mixer.html#pygame.mixer.init
-    * The default value is {}, which means sound enabled with default
-      settings
 
 Example::
 
@@ -558,33 +564,23 @@ class Director(event.EventDispatcher):
             `height` : Integer
                 New height
         """
-        # physical windows size
+        # physical view size
         pw, ph = width, height
-        print 'window size:', pw, ph
         # virtual (desired) view size
         vw, vh = self.get_window_size()
-        print 'virtual window size:', vw, vh
         # desired aspect ratio
         v_ar = vw/float(vh)
         # usable width, heigh
         uw = int(min(pw, ph*v_ar))
         uh = int(min(ph, pw/v_ar))
-        print 'usable w,h:', uw, uh
         ox = (pw-uw)//2
         oy = (ph-uh)//2
-        print 'ox, oy:', ox, oy
         self._offset_x = ox
         self._offset_y = oy
         self._usable_width = uw
         self._usable_height = uh
         self.set_projection()
         self.dispatch_event("on_resize", width, height)
-
-##        # fix offset
-##        h_relation = self.window.height  / float(self._window_virtual_height)
-##        should_width = h_relation * self._window_virtual_width
-##        self._offset_x = (self.window.width - should_width) / 2
-
         return pyglet.event.EVENT_HANDLED
 
     def unscaled_resize_window(self, width, height):
