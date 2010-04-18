@@ -1,12 +1,39 @@
+
 pyglet mockup 1
+
 
 This is work in progress.
 Grown from an empty package to the current form in the spirit of TDD: just
-adding the minimal code that allows to run test_actions.py
-In particular, CocosNode and Actions can be instantiated.
-Other test may need to improve the mockup.
-Keep it simple.
+adding the minimal code that allows to run tests related to actions.
 
-Provides (window) heigh, width needed by director.
-Some GL constants are recognized.
-Some gl functions calls are accepted (with do-nothing body) 
+
+Overview:
+
+Keep the most near to do-nothing, remember-nothing as possible.
+Thus, it accepts the most basic calls from cocos and does nothing nor remembers
+nothing for this calls.
+The only exception is pyglet.window.Window which stores the width, size passed
+by director.init, because director.window.width and director.window.height are
+widely used in cocos code.
+
+
+What not to add:
+
+pyglet objects, functions or methods with low count usage from cocos.
+In general, code that effectively does or memorize something.
+In particular, do not capture or do anything with glZzz calls; it is fine to
+add a signature/pass, but only for commonly used functions.
+
+
+Capabilities:
+
+ pyglet.window.Window can be instantiated, it only provides width and height
+ Director can be instantiated
+ from cocos.director import director works
+ director.get_window_size() works
+ CocosNode and all the actions in BaseActions can be instantiated
+ pyglet.clock.schedule ( also unschedule, etc) acepted (non memorized)
+ some GL constants and gl functions are accepted (if you load them with
+ from pyglet.gl import *).
+
+ 

@@ -4,5 +4,8 @@ import resource
 import app
 #import sprite
 
-class clock(object):
-    pass
+##class Clock(object):
+##    def unschedule(self, *args):
+##        pass
+##
+##clock = Clock()

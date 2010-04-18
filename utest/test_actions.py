@@ -24,9 +24,9 @@ class Actions1(unittest.TestCase):
         node = CocosNode()
         self.assertTrue(len(node.actions)==0)
         action = ac.Action()
-        node.do(action)
+        a_copy = node.do(action)
         self.assertTrue(len(node.actions)==1)
-        node.remove_action(action)
+        node.remove_action(a_copy)
         dt = 0.1
         node._step(dt)# needed to complete delete, will traceback if remove failed
         self.assertTrue(len(node.actions)==0)
