@@ -625,13 +625,16 @@ class CocosNode(object):
 
     def do( self, action, target=None ):
         '''Executes an *action*.
-        When the action finished, it will be removed from the sprite's queue.
+        When the action finished, it will be removed from the node's actions container.
 
         :Parameters:
             `action` : an `Action` instance
                 Action that will be executed.
         :rtype: `Action` instance
         :return: A clone of *action*
+
+        to remove an action you must use the .do return value to
+        call .remove_action
         '''
         a = copy.deepcopy( action )
 
@@ -649,14 +652,23 @@ class CocosNode(object):
                 pyglet.clock.schedule( self._step )
         return a
 
-    def remove_action(self, action ):
-        """Removes an action from the queue
+    def remove_action(self, action):
+        """Removes an action from the node actions container, potentially calling action.stop()
+
+        If action was running, action.stop is called
+        Mandatory interfase to remove actions in the node actions container.
+        When skipping this there is the posibility to double call the action.stop
 
         :Parameters:
             `action` : Action
                 Action to be removed
+                Must be the return value for a .do(...) call
         """
-        self.to_remove.append( action )
+        assert action in self.actions
+        if not action.scheduled_to_remove:
+            action.scheduled_to_remove = True
+            action.stop()
+            self.to_remove.append( action )
 
     def pause(self):
         """
@@ -680,9 +692,12 @@ class CocosNode(object):
     def stop(self):
         """
         Removes all actions from the running action list
+
+        For each action running the stop method will be called,
+        and the action will be retired from the actions container.
         """
         for action in self.actions:
-            self.to_remove.append( action )
+            self.remove_action(action)
 
     def are_actions_running(self):
         """
@@ -691,7 +706,13 @@ class CocosNode(object):
         return bool(set(self.actions) - set(self.to_remove))
 
     def _step(self, dt):
-        """This method is called every frame.
+        """pumps all the actions in the node actions container
+
+            The actions scheduled to be removed are removed
+            Then an action.step() is called for each action in the
+            node actions container, and if the action doenst need any more step
+            calls will be schedulled to remove. When schedulled to remove,
+            the stop method for the action is called.
 
         :Parameters:
             `dt` : delta_time
@@ -711,10 +732,10 @@ class CocosNode(object):
             pyglet.clock.unschedule( self._step )
 
         for action in self.actions:
-            action.step(dt)
-            if action.done():
-                action.stop()
-                self.remove_action( action )
+            if not action.scheduled_to_remove:
+                action.step(dt)
+                if action.done():
+                    self.remove_action( action )
 
     # world to local / local to world methods
     def get_local_transform( self ):
@@ -730,10 +751,10 @@ class CocosNode(object):
             matrix.translate( -self.transform_anchor_x, -self.transform_anchor_y )
 
             
-            self.is_transform_dirty = False	
+            self.is_transform_dirty = False 
 
             self.transform_matrix = matrix
-	
+    
         return self.transform_matrix
 
     def get_world_transform( self ):
@@ -759,8 +780,8 @@ class CocosNode(object):
 
             matrix = self.get_local_transform().inverse()
             self.inverse_transform_matrix = matrix
-            self.is_inverse_transform_dirty = False	
-	
+            self.is_inverse_transform_dirty = False 
+    
         return self.inverse_transform_matrix
 
     def get_world_inverse( self ):

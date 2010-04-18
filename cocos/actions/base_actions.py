@@ -46,25 +46,25 @@ import copy
 
 __all__ = [ 
             'Action',                           # Base Class
-            'IntervalAction', 'InstantAction',  # Important Base classes 
-            'sequence','spawn','Repeat',        # Basic behaviors
+            'IntervalAction', 'InstantAction',  # Important Subclasses 
+            'sequence','spawn','loop', 'Repeat',# Generic Operators
             'Reverse','_ReverseTime',           # Reverse
             ]
-
-
-
-
 
 class Action(object):
     '''Mother of all actions'''
     def __init__(self, *args, **kwargs):
+        self.duration = None # The base action has potentially infinite duration
         self.init(*args, **kwargs)
         self.target = None              #: `CocosNode` object that is the target of the action
-        self._elapsed = None
+        self._elapsed = 0.0
+        self._done = False
+        self.scheduled_to_remove = False # exclusive use by cocosnode.remove_action
 
     def init(self):
         """
-        Gets called at initialization time, before a target is defined
+        Gets called at initialization time, before a target is defined.
+        Typical use is store parameters needed by the action.
         """
         pass
 
@@ -79,9 +79,11 @@ class Action(object):
         """
         After we finish executing an action this method is called.
         It will be called for every execution of the action.
+        It will be called from the entity that pumps the action ( cocosnode,
+        or a compound action)
         """
-        pass
-        
+        self.target = None        
+
     def step(self, dt):
         """
         Gets called every frame. `dt` is the number of seconds that elapsed
@@ -91,21 +93,16 @@ class Action(object):
         This function will only be called by the `Layer`, but interval actions will
         be updated with the `IntervalAction.update` method.
         """
-        if self._elapsed is None:
-            self._elapsed = 0
-
-
         self._elapsed += dt
 
-        if self.duration:
-            self.update( min(1, self._elapsed/self.duration ) )
-        else:
-            self.update( 1 )
-            self.stop()
-
+    def done(self):
+        """
+        False while the step method must be called.
+        """
+        return self._done
 
     def __add__(self, action):
-        """Is the Sequence Action"""
+        """Sequence Action"""
         return sequence(self, action)
 
     def __mul__(self, other):
@@ -113,7 +110,7 @@ class Action(object):
             raise TypeError("Can only multiply actions by ints")
         if other <= 1:
             return self
-        return  Loop(self, other)
+        return  Loop_Action(self, other)
 
     def __or__(self, action):
         """Is the Spawn Action"""
@@ -127,28 +124,59 @@ class IntervalAction( Action ):
     """
     IntervalAction()
 
-    Abstract Class that defines the direction of any Interval
-    Action. Interval Actions are the ones that have a fixed duration,
-    so we can make them go forward or backwards in time.
-
+    Interval Actions are the ones that have fixed duration, known at the
+    instantiation time, and, conceptually, the expected duration must be
+    positive.
+    Degeneratated cases, when a particular instance gets a zero duration are
+    allowed for convenience, and .update(1) is guaranted to be called
+    
     For example: `MoveTo` , `MoveBy` , `RotateBy` are Interval Actions, while
     `Place`, `Show` and `CallFunc` aren't.
 
-    Subclasses must ensure that instances have a duration attribute.
+    While
+    RotateBy(angle, duration) will usually receive a positive duration, it
+    will accept duration = 0, to ease on cases like
+    action = RotateBy( angle, a-b )
     """
-
+    def step(self, dt):
+        """
+        Dont customize this method.
+        It is not guaranted to be called when used with special modifiers.
+        It is guaranted to be called in the usage cocosnode.do(action).
+        You customize the action stepping by overriding .update
+        """
+        self._elapsed += dt
+        try:
+            self.update( min(1, self._elapsed/self.duration ) )
+        except ZeroDivisionError:
+            self.update(1.0)
 
     def update(self, t):
-        """Gets called on every frame.
-        `t` is in [0,1]
+        """Gets called on every frame
+        't' is the time elapsed normalized to [0, 1]
         If this action takes 5 seconds to execute, `t` will be equal to 0
         at 0 seconds. `t` will be 0.5 at 2.5 seconds and `t` will be 1 at 5sec.
+        This method must not use self._elapsed, which
+        is not guaranted to be updated
         """
         pass
 
-
     def done(self):
+        """
+        In the usage cocosnode.do(action) this method is reliable.
+        When the action is used as a component for special modifiers,
+        if the modifier code dont call .step then you cant relly on
+        this method.
+        """
         return self._elapsed >= self.duration
+
+    def __mul__(self, other):
+        if not isinstance(other, int):
+            raise TypeError("Can only multiply actions by ints")
+        if other <= 1:
+            return self
+        return  Loop_IntervalAction(self, other)
+
 
 def Reverse( action ):
     """Reverses the behavior of the action
@@ -163,9 +191,18 @@ def Reverse( action ):
 
 class InstantAction( Action ):
     """
-    Instant actions are actions that happen just one call.
+    Instant actions are actions that promises to do nothing when the
+    methods step, update, and stop are called.
+    Any changes that the action must perform on his target will be done in the
+    .start() method
+    The interface must be keept compatible with IntervalAction to allow using
+    InstantActions with the special operators / modifiers.
     """
-    duration = 0
+    duration = 0.0
+
+    def step(self, dt):
+        """does nothing - dont override"""
+        pass
 
     def start(self):
         """
@@ -177,8 +214,62 @@ class InstantAction( Action ):
         return True
 
     def update(self, t):
+        """does nothing - dont override
+        """
         pass
-class Loop(IntervalAction):
+
+    def stop(self):
+        """does nothing - dont override
+        """
+
+    def __mul__(self, other):
+        if not isinstance(other, int):
+            raise TypeError("Can only multiply actions by ints")
+        if other <= 1:
+            return self
+        return  Loop_InstantAction(self, other)
+
+def loop(action, times):
+    return action * times
+            
+class Loop_Action(Action):
+    def init(self, one, times):
+        self.one = one
+        self.times = times
+
+    def start(self):
+        self.current_action = copy.deepcopy(self.one)
+        self.current_action.target = self.target
+        self.current_action.start()
+
+    def step(self, dt):
+        self._elapsed += dt
+        self.current_action.step(dt)
+        if self.current_action.done():
+            self.current_action.stop()
+            self.times -= 1
+            if self.times == 0:
+                self._done = True
+            else:
+                self.current_action = copy.deepcopy(self.one)
+                self.current_action.target = self.target
+                self.current_action.start()
+
+    def stop(self):
+        if not self._done:
+            self.current_action.stop()
+
+class Loop_Instant_Action(InstantAction):
+    def init(one, times):
+        self.one = one
+        self.times = times
+
+    def start(self):
+        for i in xrange(self.times):
+            cpy = copy.deepcopy(self.one)
+            cpy.start()
+
+class Loop_IntervalAction(IntervalAction):
     """Repeat one action for n times
     You can loop actions using:
 
@@ -259,7 +350,7 @@ class Loop(IntervalAction):
             # feed dt
             self.current_action.update(new_t)
             
-    def stop(self):
+    def stop(self):#todo: need to support early stop 
         self.current_action.update(1)
         self.current_action.stop()
         
@@ -267,13 +358,73 @@ class Loop(IntervalAction):
         return Loop( Reverse(self.one), self.times )
 
 def sequence(action_1, action_2):
-    if (not isinstance(action_1, IntervalAction) or
-        not isinstance(action_1, IntervalAction)):
-        raise NotImplemented
+    if action_1.duration is None or action_2.duration is None:
+        cls = Sequence_Action
+    elif (isinstance(action_1,InstantAction) and
+          isinstance(action_2, InstantAction)):
+        cls = Sequence_InstantAction
     else:
         cls = Sequence_IntervalAction
-    return cls(action_1, action_2)        
+    return cls(action_1, action_2)
+
+class Sequence_Action(Action):
+    """ at least one operand must have duration==None """
+    def init(self,  one, two, **kwargs ):
+        self.one = copy.deepcopy(one)
+        self.two = copy.deepcopy(two)
+        self.first = True
+
+    def start(self):
+        self.one.target = self.target
+        self.two.target = self.target
+        self.current_action = self.one
+        self.current_action.start()
+        if self.current_action.done():
+            self._next_action()
+
+    def step(self, dt):
+        self._elapsed += dt
+        self.current_action.step(dt)
+        if self.current_action.done():
+            self._next_action()
+
+    def _next_action(self):
+        self.current_action.stop()
+        if self.first:
+            self.first = False
+            self.current_action = self.two
+            self.current_action.start()
+            if self.current_action.done():
+                self._done = True
+        else:
+            self.current_action = None
+            self._done = True
+
+    def stop(self):
+        if self.current_action:
+            self.current_action.stop()
+
+    def __reversed__(self):
+        return sequence( Reverse(self.two), Reverse(self.one) )
+
         
+class Sequence_InstantAction(InstantAction):
+    """ both operands must be InstantActions """
+    def init(self,  one, two, **kwargs ):
+        self.one = copy.deepcopy(one)
+        self.two = copy.deepcopy(two)
+
+    def start(self):
+        self.one.target = self.target
+        self.two.target = self.target
+        self.one.start()
+        self.two.start()
+        
+    def __reversed__(self):
+        return Sequence_InstantAction( Reverse(self.two), Reverse(self.one) )
+    
+
+
 class Sequence_IntervalAction(IntervalAction):
     """Run actions sequentially: One after another
     You can sequence actions using:
@@ -307,67 +458,107 @@ class Sequence_IntervalAction(IntervalAction):
         if not hasattr(self.one, "duration") or not hasattr(self.two, "duration"):
             raise Exception("You can only sequence actions with finite duration, not repeats or others like that")
         
-        self.duration = self.one.duration + self.two.duration
-        self.split = self.one.duration / float(self.duration)
-
+        self.duration = float(self.one.duration + self.two.duration)
+        try:
+            self.split = self.one.duration / self.duration
+        except ZeroDivisionError:
+            self.split = 0.0
         self.last = None
 
     def start(self):
-        self.duration = self.one.duration + self.two.duration
-        self.split = self.one.duration / float(self.duration)
-
         self.one.target = self.target
         self.two.target = self.target
+        self.one.start()
+        self.last = 0 #index in self.actions
+        if self.one.duration==0.0:
+            self.one.update(1.0)
+            self.one.stop()
+            self.two.start()
+            self.last = 1
+####            if self.two.duration==0.0:
+####                self.two.update(1.0)
+####                self.two.stop()
+##        else:
+##            self.last = 1
+
 
     def __repr__(self):
         return "( %s + %s )" %( self.one, self.two )
 
     def update(self, t):
-        start_t = 0
-        found = None
-        if t >= self.split:
-            found = 1
-            if self.split == 1:
-                new_t = 1
-            else:
-                new_t = (t-self.split) / (1 - self.split )
-        elif t < self.split:
-            found = 0
-            if self.split != 0:
-                new_t = t / self.split
-            else:
-                new_t = 1
-
-
-        # now we can execute the action and save the state
-        if self.last is None and found == 1:
-            self.one.start()
-            self.one.update(1)
-            self.one.stop()
-
-        if self.last != found:
-            if self.last is not None:
-                self.actions[self.last].update(1)
-                self.actions[self.last].stop()
-                
-            self.actions[ found ].start()
-
-        self.actions[ found ].update( new_t )
-        self.last = found
+        current = t>=self.split
+        if current!=self.last:
+            self.actions[self.last].update(1.0)
+            self.actions[self.last].stop()
+            self.last = current
+            self.actions[self.last].start()
+        if current==0:
+            try:
+                sub_t = t/self.split
+            except ZeroDivisionError:
+                sub_t = 1.0
+        else:
+            try:
+                sub_t = (t - self.split) / (1.0 - self.split)
+            except ZeroDivisionError:
+                sub_t = 1.0
+        self.actions[current].update(sub_t)
 
     def stop(self):
-        self.two.stop()
+        if self.last:
+            self.two.stop()
+        else:
+            self.one.stop()
         
     def __reversed__(self):
-        return Sequence( Reverse(self.two), Reverse(self.one) )
+        return Sequence_IntervalAction( Reverse(self.two), Reverse(self.one) )
 
 def spawn(action_1, action_2):
-    if (not isinstance(action_1, IntervalAction) or
-        not isinstance(action_1, IntervalAction)):
-        raise NotImplemented
+    if action_1.duration is None or action_2.duration is None:
+        cls = Spawn_Action
+    elif (isinstance(action_1,InstantAction) and
+          isinstance(action_2, InstantAction)):
+        cls = Spawn_InstantAction
     else:
         cls = Spawn_IntervalAction
     return cls(action_1, action_2)
+
+
+class Spawn_Action(Action):
+    """ at least one operand must have duration==None """
+    # el Delay podria ser util para revert
+    def init(self, one, two):
+        one = copy.deepcopy(one)
+        two = copy.deepcopy(two)
+        self.actions = [one, two]
+
+    def start(self):
+        for action in self.actions:
+            action.target = self.target
+            action.start()
+
+    def step(self, dt):
+        if len(self.actions)==2:
+            self.actions[0].step(dt)
+            if self.actions[0].done():
+                self.actions[0].stop()
+                self.actions = self.actions[1:]
+        if self.actions:
+            self.actions[-1].step(dt)
+            if self.actions[-1].done():
+                self.actions[-1].stop()
+                self.actions = self.actions[:-1]
+        self._done = len(self.actions)==0
+
+    def stop(self):
+        for e in self.actions:
+            print 'en el loop, name:', e.name
+            e.stop()
+
+    def __reversed__(self):
+        return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )
+
+Spawn_InstantAction = Sequence_InstantAction
 
 class Spawn_IntervalAction(IntervalAction):
     """Spawn a  new action immediately.
@@ -406,21 +597,14 @@ class Spawn_IntervalAction(IntervalAction):
 
         one = copy.deepcopy(one)
         two = copy.deepcopy(two)
+        self.duration = max(one.duration, two.duration)
+
         if one.duration > two.duration:
             two = two + Delay( one.duration-two.duration )
         elif two.duration > one.duration:
             one = one + Delay( two.duration-one.duration )
 
-        self.duration = one.duration
-
         self.actions = [one, two]
-        self.cloned_actions = []
-
-    def done(self):
-        ret = True
-        for i in self.actions:
-            ret = ret and i.done()
-        return ret
 
     def start(self):
         for a in self.actions:
@@ -430,7 +614,10 @@ class Spawn_IntervalAction(IntervalAction):
     def update(self, t):
         self.actions[0].update(t)
         self.actions[1].update(t)
-        
+        self._done = (t >= 1.0)
+        if self._done:
+            self.actions[0].stop()
+            self.actions[1].stop()            
 
     def __reversed__(self):
         return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )
@@ -453,6 +640,7 @@ class Repeat(Action):
             `action` : `Action` instance
                 The action that will be repeated
         """
+        self.duration = None
         self.original = action
         self.action = copy.deepcopy( action )
 
@@ -463,8 +651,9 @@ class Repeat(Action):
     def step(self, dt):
         self.action.step(dt)
         if self.action.done():
+            self.action.stop()
             self.action = copy.deepcopy(self.original)
-            self.start()
+            self.action.start()
 
     def done(self):
         return False

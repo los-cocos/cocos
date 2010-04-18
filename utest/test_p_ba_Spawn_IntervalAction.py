@@ -1,8 +1,5 @@
 # parametrized test, using py.test 
 # see _parametric_test_t_demo.py for a skeletal.
-##run with
-##py.test -v test_t_Spawn_IntervalAction.py
-##(you may need to put pythonxx\scripts in your path)
 
 # important: set cocos_utest=1 in the environment before run.
 # that simplifies the pyglet mockup needed
