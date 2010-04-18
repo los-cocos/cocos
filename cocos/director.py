@@ -382,7 +382,10 @@ class Director(event.EventDispatcher):
         self.window.push_handlers( DefaultHandler() )
 
         # Audio setup:
-        cocos.audio.initialize(audio_settings)
+        #TODO: reshape audio to not screw unittests
+        import os
+        if not os.environ.get('cocos_utest', False):
+            cocos.audio.initialize(audio_settings)
 
         return self.window
 

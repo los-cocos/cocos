@@ -47,7 +47,7 @@ import copy
 __all__ = [ 
             'Action',                           # Base Class
             'IntervalAction', 'InstantAction',  # Important Base classes 
-            'Sequence','Spawn','Repeat',        # Basic behaviors
+            'sequence','spawn','Repeat',        # Basic behaviors
             'Reverse','_ReverseTime',           # Reverse
             ]
 
@@ -106,7 +106,7 @@ class Action(object):
 
     def __add__(self, action):
         """Is the Sequence Action"""
-        return Sequence(self, action)
+        return sequence(self, action)
 
     def __mul__(self, other):
         if not isinstance(other, int):
@@ -117,7 +117,7 @@ class Action(object):
 
     def __or__(self, action):
         """Is the Spawn Action"""
-        return Spawn(self, action)
+        return spawn(self, action)
 
     def __reversed__(self):
         raise Exception("Action %s cannot be reversed"%(self.__class__.__name__))
@@ -265,9 +265,16 @@ class Loop(IntervalAction):
         
     def __reversed__(self):
         return Loop( Reverse(self.one), self.times )
+
+def sequence(action_1, action_2):
+    if (not isinstance(action_1, IntervalAction) or
+        not isinstance(action_1, IntervalAction)):
+        raise NotImplemented
+    else:
+        cls = Sequence_IntervalAction
+    return cls(action_1, action_2)        
         
-        
-class Sequence(IntervalAction):
+class Sequence_IntervalAction(IntervalAction):
     """Run actions sequentially: One after another
     You can sequence actions using:
 
@@ -354,7 +361,15 @@ class Sequence(IntervalAction):
     def __reversed__(self):
         return Sequence( Reverse(self.two), Reverse(self.one) )
 
-class Spawn(IntervalAction):
+def spawn(action_1, action_2):
+    if (not isinstance(action_1, IntervalAction) or
+        not isinstance(action_1, IntervalAction)):
+        raise NotImplemented
+    else:
+        cls = Spawn_IntervalAction
+    return cls(action_1, action_2)
+
+class Spawn_IntervalAction(IntervalAction):
     """Spawn a  new action immediately.
     You can spawn actions using:
 
