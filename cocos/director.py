@@ -434,7 +434,7 @@ class Director(event.EventDispatcher):
         """Callback to draw the window.
         It propagates the event to the running scene."""
 
-        if self.window.width==0 or self.window.height==0:
+        if self.window.width==0 or self.window.height==0: #
             return
         self.window.clear()
 
