@@ -63,13 +63,26 @@ class Test_Repeat_Action:
         global rec, next_done
         node = CocosNode()
         name1 = '1'
-        times = 2
         a1 = UAction(name1)
         composite = ac.Repeat(a1)
 
         rec = []
         a_copy = node.do(composite)
         assert a_copy.action.target==node
+
+    def test_target_set_next_time(self):
+        global rec, next_done
+        node = CocosNode()
+        name1 = '1'
+        a1 = UAction(name1)
+        composite = ac.Repeat(a1)
+
+        a_copy = node.do(composite)
+        dt = 0.1
+        next_done=1
+        node._step(dt)
+        assert a_copy.action.target==node
+
 
     def test_life_cycle(self):
         global rec, next_done

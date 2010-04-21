@@ -653,7 +653,7 @@ class Repeat(Action):
         if self.action.done():
             self.action.stop()
             self.action = copy.deepcopy(self.original)
-            self.action.start()
+            self.start()
 
     def done(self):
         return False
