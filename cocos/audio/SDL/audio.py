@@ -1,4 +1,4 @@
-#!/usr/bin/env pytahon
+#!/usr/bin/env python
 
 '''Access to the raw audio mixing buffer.
 '''
@@ -75,7 +75,7 @@ class SDL_AudioCVT(Structure):
             Given len, final size is len * len_ratio
         `filter_index` : int
             Current audio conversion function
-        
+
     '''
     _fields_ = [('needed', c_int),
                 ('src_format', c_ushort),
@@ -183,7 +183,7 @@ def SDL_OpenAudio(desired, obtained):
             `SDL_LockAudio` and `SDL_UnlockAudio` in your code.
         `desired.userdata`
             passed as the first parameter to your callback function.
-    
+
     The audio device starts out playing silence when it's opened, and should
     be enabled for playing by calling ``SDL_PauseAudio(False)`` when you are
     ready for your audio callback function to be called.  Since the audio
@@ -239,9 +239,9 @@ SDL_PauseAudio = dll.function('SDL_PauseAudio',
     return_type=None)
 
 _SDL_LoadWAV_RW = dll.private_function('SDL_LoadWAV_RW',
-    arg_types=[POINTER(rwops.SDL_RWops), 
-               c_int, 
-               POINTER(SDL_AudioSpec), 
+    arg_types=[POINTER(rwops.SDL_RWops),
+               c_int,
+               POINTER(SDL_AudioSpec),
                POINTER(POINTER(c_ubyte)),
                POINTER(c_uint)],
     return_type=POINTER(SDL_AudioSpec),
@@ -271,7 +271,7 @@ def SDL_LoadWAV_RW(src, freesrc):
     audio_len = c_uint()
     _SDL_LoadWAV_RW(src, freesrc, spec, byref(audio_buf), byref(audio_len))
     ctype = _ctype_audio_format(spec.format)
-    return (spec, 
+    return (spec,
             array.SDL_array(audio_buf, audio_len.value/sizeof(ctype), ctype))
 
 def SDL_LoadWAV(file):
