@@ -30,14 +30,175 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Base actions
+'''Actions
 
-Base Actions
-============
+Actions
+=======
 
-These actions are the 'mother' of all actions.
-They are the building blocks.
+Actions purpose is to modify along the time some trait of an object.
+The object that the action will modify is the action's target.
+Usually the target will be an instance of some CocosNode subclass.
 
+Example:
+    MoveTo(position, duration): the target will move smoothly over the segment
+    (target.position, action position parameter), reaching the final position
+    after duration seconds have elapsed.
+
+Cocos also provide some powerful operators to combine or modify actions, the
+more important s being:
+    sequence operator: action_1 + action_2 -> action_result
+    where action_result performs as:
+    first do all that action_1 would do
+    then perform all that action_2 would do
+    Example use:
+    move_2 = MoveTo((100, 100), 10) + MoveTo((200, 200), 15)
+    When activated, move_2 will move the target first to (100, 100), it will
+    arrive there 10 seconds after departure; then it will move to (200, 200),
+    and will arrive there 10 seconds after having arrived to (100, 100)
+
+    spawn operator: action_1 | action_2 -> action_result
+    where action_result performs as:
+    perform what would do action_1 in parallel with what would perform
+    action_2
+
+    Example use:
+    move_rotate = MoveTo((100,100), 10) | RotateBy(360, 5)
+    When activated, move_rotate will move the target from the position at the
+    time of activation to (100, 100); also in the first 5 seconds target will
+    be rotated 360 degrees
+
+    loop operator: action_1 * n -> action_result
+    Where n non negative integer, and action result would repeat n times in a
+    row the same that action_1 would perform.
+    Example use:
+    rotate_3 = RotateBy(360, 5) * 3
+    When activated, rotate_3 will rotate target 3 times, spending 5 sec in each
+    turn.
+
+Action instance roles
++++++++++++++++++++++
+
+An Action instance can play one of the following roles:
+
+Template Role
+-------------
+
+The instance knows all the details to perform,
+except a target has not be set.
+In this role only __init__ and init should be called.
+It has no access to the concrete action target.
+The most usual way to obtain an action in the template mode is
+by calling the constructor of some Action subclass.
+    
+Example:
+    position = (100, 100); duration = 10
+    move = MoveTo(position, duration)
+    move is playing here the template role.
+
+Worker role
+-----------
+
+Carry on with the changes desired when the action is initiated.
+You obtain an action in the worker role by calling the method
+do in a cocosnode instance, like
+    worker_action = cocosnode.do(template_action, target=...)
+The most usual is to call without the target kw-param, thus by default
+setting target to the same cocosnode that performs the do.
+The worker action begins to perform at the do call, and will carry on
+with the desired modifications to target in subsequent frames.
+If you want the capabilty to stop the changes midway, then you must
+retain the worker_action returned by the do and then, when you want stop
+the changes, call
+    cocosnode.remove_action(worker_action)
+( the cocosnode must be the same as in the do call )
+Also, if your code need access to the action that performs the changes,
+have in mind that you want the worker_action.
+
+Example: 
+     position = (100, 100); duration = 10
+     move = MoveTo(position, duration)
+     blue_bird = Bird_CocosNode_subclass(...)
+     blue_move = blue_bird.do(move)
+Here move plays the template role and blue_move plays the worker role.
+The target for blue_move has been set for the do method.
+When the do call omits the target parameter it defaults to the cocosnode where
+the do is called, so in the example the target for blue_move is blue_bird.
+In subsequents frames after this call, the blue_bird will move to the position
+(100, 100), arriving there 10 seconds after the do was executed.
+
+From the point of view of a worker role action, the actions life
+can be mimicked by:
+
+    worker_action = deepcopy(template_action)
+    worker_action.target = some_obj
+    worker_action.start()
+    for dt in frame.next():
+        worker_action.step(dt)
+        if premature_termination() or worker_action.done():
+            break
+    worker_action.stop()
+
+Component role
+--------------
+
+Such an instance is created and stored into an Action class instance
+that implements an Action operator (a composite action).
+Carries on with the changes desired on behalf of the composite action.
+When the composite action is not instance of IntervalAction, the 
+perceived life can be mimicked as in the worker role.
+When the composite action is instance of IntervalAction, special rules apply.
+For examples look at code used in the implementation of any operator, like
+Sequence_Action
+
+Overview main subclasses
+++++++++++++++++++++++++
+
+All action classes in cocos must be subclasses of one off the following:
+    Action
+    IntervalAction (is itself subclass of Action)
+    InstantAction  (is itself subclass of IntervalAction)
+
+InstantAction
+-------------
+
+The task that must perform happens in only one call, the start method.
+The duration member has the value zero.
+Examples:
+    Place(position) : does target.position <- position 
+    CallFunc(f, *args, **kwargs) : performs the call f(*args,**kwargs)
+
+IntervalAction
+--------------
+
+The task that must perform is spanned over a number of frames.
+The total time needed to complete the task is stored in the member duration.
+The action will cease to perform when the time elapsed from the start call
+reachs duration.
+A proper IntervalAction must adhere to extra rules, look in the details section
+Examples:
+    MoveTo(position, duration)
+    RotateBy(angle, duration)
+
+Action
+------
+
+The most general posible action class.
+The task that must perform is spanned over a number of frames.
+The time that the action would perfom is undefined, and member duration has
+value None.
+Examples:
+    RandomWalk(fastness):
+        selects a random point in the screen
+        moves to it with the required fastness
+        repeat
+    This action will last forever.
+
+    Chase(fastness, chasee):
+        at each frame, move the target toward the chasee with the specified
+        fastness. Declare the action as done when the distance from target to
+        chasee is less than 10.
+    If fastness is greather than the chasee fastness this action will certainly
+    terminate, but we dont know how much time when the action starts.    
 '''
 
 __docformat__ = 'restructuredtext'
@@ -52,8 +213,9 @@ __all__ = [
             ]
 
 class Action(object):
-    '''Mother of all actions'''
+    '''The most general action'''
     def __init__(self, *args, **kwargs):
+        """dont override - use init"""
         self.duration = None # The base action has potentially infinite duration
         self.init(*args, **kwargs)
         self.target = None              #: `CocosNode` object that is the target of the action
@@ -61,37 +223,32 @@ class Action(object):
         self._done = False
         self.scheduled_to_remove = False # exclusive use by cocosnode.remove_action
 
-    def init(self):
+    def init(*args, **kwargs):
         """
-        Gets called at initialization time, before a target is defined.
+        Gets called by __init__ with all the parameteres received,
+        At this time the target for the action is unknown.
         Typical use is store parameters needed by the action.
         """
         pass
 
     def start(self):
         """
-        Before we start executing an action, self.target is assigned and this method is called.
-        It will be called for every execution of the action.
+        External code sets self.target and then calls this method.
+        Perform here any extra initialization needed.
         """
         pass
 
     def stop(self):
         """
-        After we finish executing an action this method is called.
-        It will be called for every execution of the action.
-        It will be called from the entity that pumps the action ( cocosnode,
-        or a compound action)
+        When the action must cease to perform this function is called by
+        external code; after this call no other method should be called.
         """
         self.target = None        
 
     def step(self, dt):
         """
         Gets called every frame. `dt` is the number of seconds that elapsed
-        since the last call. If there was a pause and resume in the middle,
-        the actual elapsed time may be bigger.
-
-        This function will only be called by the `Layer`, but interval actions will
-        be updated with the `IntervalAction.update` method.
+        since the last call.
         """
         self._elapsed += dt
 
@@ -102,10 +259,20 @@ class Action(object):
         return self._done
 
     def __add__(self, action):
-        """Sequence Action"""
+        """sequence operator - concatenates actions
+            action1 + action2 -> action_result
+            where action_result performs as:
+            first do all that action1 would do; then
+            perform all that action2 would do
+        """
         return sequence(self, action)
 
     def __mul__(self, other):
+        """repeats ntimes the action
+        action * n -> action_result
+        where action result performs as:
+        repeat n times the changes that action would do
+        """
         if not isinstance(other, int):
             raise TypeError("Can only multiply actions by ints")
         if other <= 1:
@@ -113,7 +280,9 @@ class Action(object):
         return  Loop_Action(self, other)
 
     def __or__(self, action):
-        """Is the Spawn Action"""
+        """spawn operator -  runs two actions in parallel
+        action1 | action2 -> action_result
+        """
         return spawn(self, action)
 
     def __reversed__(self):
@@ -127,10 +296,19 @@ class IntervalAction( Action ):
     Interval Actions are the ones that have fixed duration, known at the
     instantiation time, and, conceptually, the expected duration must be
     positive.
-    Degeneratated cases, when a particular instance gets a zero duration are
-    allowed for convenience, and .update(1) is guaranted to be called
+    Degeneratated cases, when a particular instance gets a zero duration, are
+    allowed for convenience.
+
+    IntervalAction adds the method update to the public interfase, and it
+    expreses the changes to target as a function of the time elapsed, relative
+    to the duration, ie f(time_elapsed/duration).
+    Also, it is guaranted that in normal termination .update(1.0) is called.
+    Degenerate cases, when a particular instance gets a zero duration, also
+    are guaranted to call .update(1.0)
+    Note that when a premature termination happens stop will be called but
+    update(1.0) is not called.
     
-    For example: `MoveTo` , `MoveBy` , `RotateBy` are Interval Actions, while
+    Examples: `MoveTo` , `MoveBy` , `RotateBy` are Interval Actions, while
     `Place`, `Show` and `CallFunc` aren't.
 
     While
@@ -140,9 +318,10 @@ class IntervalAction( Action ):
     """
     def step(self, dt):
         """
-        Dont customize this method.
-        It is not guaranted to be called when used with special modifiers.
-        It is guaranted to be called in the usage cocosnode.do(action).
+        Dont customize this method: it will not be called when in the component
+        role for certain composite actions (like Sequence_IntervalAction).
+        In such situation the composite will calculate the suitable t and
+        directly call .update(t)
         You customize the action stepping by overriding .update
         """
         self._elapsed += dt
@@ -156,17 +335,18 @@ class IntervalAction( Action ):
         't' is the time elapsed normalized to [0, 1]
         If this action takes 5 seconds to execute, `t` will be equal to 0
         at 0 seconds. `t` will be 0.5 at 2.5 seconds and `t` will be 1 at 5sec.
-        This method must not use self._elapsed, which
-        is not guaranted to be updated
+        This method must not use self._elapsed, which is not guaranted to be
+        updated.
         """
         pass
 
     def done(self):
         """
-        In the usage cocosnode.do(action) this method is reliable.
-        When the action is used as a component for special modifiers,
-        if the modifier code dont call .step then you cant relly on
-        this method.
+        When in the worker role, this method is reliable.
+        When in the component role, if the composite spares the call to
+        step this method cannot be relied (an then the composite must decide
+        by itself when the action is done).
+        Example of later situation is Sequence_IntervalAction.
         """
         return self._elapsed >= self.duration
 
@@ -195,8 +375,9 @@ class InstantAction( Action ):
     methods step, update, and stop are called.
     Any changes that the action must perform on his target will be done in the
     .start() method
-    The interface must be keept compatible with IntervalAction to allow using
-    InstantActions with the special operators / modifiers.
+    The interface must be keept compatible with IntervalAction to allow the
+    basic operators to combine an InstantAction with an IntervalAction and
+    give an IntervalAction as a result.
     """
     duration = 0.0
 
@@ -233,6 +414,8 @@ def loop(action, times):
     return action * times
             
 class Loop_Action(Action):
+    """Repeats one Action for n times
+    """
     def init(self, one, times):
         self.one = one
         self.times = times
@@ -260,6 +443,8 @@ class Loop_Action(Action):
             self.current_action.stop()
 
 class Loop_Instant_Action(InstantAction):
+    """Repeats one InstantAction for n times
+    """
     def init(one, times):
         self.one = one
         self.times = times
@@ -270,20 +455,7 @@ class Loop_Instant_Action(InstantAction):
             cpy.start()
 
 class Loop_IntervalAction(IntervalAction):
-    """Repeat one action for n times
-    You can loop actions using:
-
-        * the Loop() class
-        * the overriden * operator
-
-    Example::
-
-        action = Loop( one, 10 )
-        sprite.do( action )
-
-        or:
-
-        sprite.do( one * 10 )
+    """Repeats one IntervalAction for n times
     """
     def init(self,  one, times ):
         """Init method
@@ -358,6 +530,11 @@ class Loop_IntervalAction(IntervalAction):
         return Loop( Reverse(self.one), self.times )
 
 def sequence(action_1, action_2):
+    """Returns an action that runs first action_1 and then action_2
+       The returned action will be instance of the most narrow class
+       posible in InstantAction, IntervalAction, Action
+    """
+    
     if action_1.duration is None or action_2.duration is None:
         cls = Sequence_Action
     elif (isinstance(action_1,InstantAction) and
@@ -368,7 +545,8 @@ def sequence(action_1, action_2):
     return cls(action_1, action_2)
 
 class Sequence_Action(Action):
-    """ at least one operand must have duration==None """
+    """implements sequence when the result cannot be expresed as IntervalAction
+        At least one operand must have duration==None """
     def init(self,  one, two, **kwargs ):
         self.one = copy.deepcopy(one)
         self.two = copy.deepcopy(two)
@@ -409,7 +587,8 @@ class Sequence_Action(Action):
 
         
 class Sequence_InstantAction(InstantAction):
-    """ both operands must be InstantActions """
+    """implements sequence when the result can be expresed as InstantAction
+        both operands must be InstantActions """
     def init(self,  one, two, **kwargs ):
         self.one = copy.deepcopy(one)
         self.two = copy.deepcopy(two)
@@ -422,25 +601,12 @@ class Sequence_InstantAction(InstantAction):
         
     def __reversed__(self):
         return Sequence_InstantAction( Reverse(self.two), Reverse(self.one) )
-    
 
 
 class Sequence_IntervalAction(IntervalAction):
-    """Run actions sequentially: One after another
-    You can sequence actions using:
-
-        * the Sequence() class
-        * the overriden *+* operator
-
-    Example::
-
-        action = Sequence( one, Sequence( two, three) )
-        sprite.do( action )
-
-        or:
-
-        sprite.do( one + two + three )
-        """
+    """implements sequence when the result can be expresed as IntervalAction but
+        not as InstantAction
+    """
     def init(self,  one, two, **kwargs ):
         """Init method
 
@@ -475,12 +641,6 @@ class Sequence_IntervalAction(IntervalAction):
             self.one.stop()
             self.two.start()
             self.last = 1
-####            if self.two.duration==0.0:
-####                self.two.update(1.0)
-####                self.two.stop()
-##        else:
-##            self.last = 1
-
 
     def __repr__(self):
         return "( %s + %s )" %( self.one, self.two )
@@ -513,7 +673,12 @@ class Sequence_IntervalAction(IntervalAction):
     def __reversed__(self):
         return Sequence_IntervalAction( Reverse(self.two), Reverse(self.one) )
 
+
 def spawn(action_1, action_2):
+    """Returns an action that runs action_1 and action_2 in paralel.
+       The returned action will be instance of the most narrow class
+       posible in InstantAction, IntervalAction, Action
+    """
     if action_1.duration is None or action_2.duration is None:
         cls = Spawn_Action
     elif (isinstance(action_1,InstantAction) and
@@ -525,8 +690,8 @@ def spawn(action_1, action_2):
 
 
 class Spawn_Action(Action):
-    """ at least one operand must have duration==None """
-    # el Delay podria ser util para revert
+    """implements spawn when the result cannot be expresed as IntervalAction
+        At least one operand must have duration==None """
     def init(self, one, two):
         one = copy.deepcopy(one)
         two = copy.deepcopy(two)
@@ -556,43 +721,14 @@ class Spawn_Action(Action):
             e.stop()
 
     def __reversed__(self):
-        return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )
+        return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )    
 
-Spawn_InstantAction = Sequence_InstantAction
 
 class Spawn_IntervalAction(IntervalAction):
-    """Spawn a  new action immediately.
-    You can spawn actions using:
-
-        * the Spawn() class
-        * the overriden *|* operator
-        * call sprite.do() many times
-
-    Example::
-
-        action = Spawn( action1, Spawn( action2, action3 ) )
-        sprite.do( action )
-
-        or:
-
-        sprite.do( action1 | action2 | action3 )
-
-        or:
-
-        sprite.do( action1 )
-        sprite.do( action2 )
-        sprite.do( action3 )
+    """implements spawn when the result cannot be expresed as InstantAction
     """
 
     def init(self, one, two):
-        """Init method
-
-        :Parameters:
-            `one` : `Action`
-                The first action to execute in parallel
-            `two` : `Action`
-                The second action to execute in parallel
-        """
         from cocos.actions.interval_actions import Delay
 
         one = copy.deepcopy(one)
@@ -622,8 +758,23 @@ class Spawn_IntervalAction(IntervalAction):
     def __reversed__(self):
         return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )
 
+
+class Spawn_InstantAction(InstantAction):
+    """implements spawn when the result can be expresed as InstantAction"""
+    def init(self, one, two):
+        one = copy.deepcopy(one)
+        two = copy.deepcopy(two)
+        self.actions = [one, two]
+
+    def start(self):
+        for action in self.actions:
+            action.target = self.target
+            action.start()
+
+
 class Repeat(Action):
     """Repeats an action forever.
+        Applied to InstantAction s means once per frame.
 
     Example::
 
@@ -631,7 +782,7 @@ class Repeat(Action):
         repeat = Repeat( action )
         sprite.do( repeat )
 
-    Note: To repeat just a finite amount of time, just do action * times .
+    Note: To repeat just a finite amount of time, just do action * times.
     """
     def init(self, action):
         """Init method.
