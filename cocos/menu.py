@@ -200,6 +200,7 @@ class Menu(Layer):
         }
 
         self.title_height = 0
+        self.schedule(lambda dt: None)
 
 
     def _generate_title( self ):
