@@ -76,4 +76,4 @@ class FramebufferObject (object):
     def __del__(self):
         '''Delete the framebuffer from the GPU memory'''
         id = GLuint(self._id)
-        glDeleteFramebuffersEXT(1, id)
+        glDeleteFramebuffersEXT(1, byref(id))
