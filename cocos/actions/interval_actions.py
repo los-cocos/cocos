@@ -727,6 +727,12 @@ class RandomDelay(Delay):
         new.duration = self.low + (random.random() * (self.hi - self.low))
         return new
 
+    def __mul__(self, other):
+        if not isinstance(other, int):
+            raise TypeError("Can only multiply actions by ints")
+        if other <= 1:
+            return self
+        return RandomDelay(low*other, hi*other)
 
 
 class Mover(IntervalAction):

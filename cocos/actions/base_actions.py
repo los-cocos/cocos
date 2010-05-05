@@ -534,14 +534,15 @@ def sequence(action_1, action_2):
        The returned action will be instance of the most narrow class
        posible in InstantAction, IntervalAction, Action
     """
-    
-    if action_1.duration is None or action_2.duration is None:
-        cls = Sequence_Action
-    elif (isinstance(action_1,InstantAction) and
+
+    if (isinstance(action_1,InstantAction) and
           isinstance(action_2, InstantAction)):
         cls = Sequence_InstantAction
-    else:
+    elif (isinstance(action_1,IntervalAction) and
+          isinstance(action_2, IntervalAction)):
         cls = Sequence_IntervalAction
+    else:
+        cls = Sequence_Action
     return cls(action_1, action_2)
 
 class Sequence_Action(Action):
@@ -679,11 +680,12 @@ def spawn(action_1, action_2):
        The returned action will be instance of the most narrow class
        posible in InstantAction, IntervalAction, Action
     """
-    if action_1.duration is None or action_2.duration is None:
-        cls = Spawn_Action
-    elif (isinstance(action_1,InstantAction) and
+    if (isinstance(action_1,InstantAction) and
           isinstance(action_2, InstantAction)):
         cls = Spawn_InstantAction
+    if (isinstance(action_1,IntervalAction) and
+          isinstance(action_2, IntervalAction)):
+        cls = Spawn_IntervalAction
     else:
         cls = Spawn_IntervalAction
     return cls(action_1, action_2)
