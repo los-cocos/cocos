@@ -162,12 +162,10 @@ class GridBase(object):
 
     @classmethod
     def _set_3d_projection(cls):
-        width, height = director.window.width, director.window.height
-
-        glViewport(0, 0, width, height)
+        glViewport(director._offset_x, director._offset_y, director._usable_width, director._usable_height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(60, 1.0*width/height, 0.1, 3000.0)
+        gluPerspective(60, 1.0*director._usable_width/director._usable_height, 0.1, 3000.0)
         glMatrixMode(GL_MODELVIEW)
   
     @classmethod
