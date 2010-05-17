@@ -41,22 +41,21 @@ def _platform_library_name(library):
         return 'lib%s.so' % library
     elif sys.platform == 'darwin':
         return '%s.framework' % library
-    elif sys.platform == 'windows':
+    elif sys.platform == 'win32':
         return '%s.dll' % library
     return library
 
 class SDL_DLL:
     def __init__(self, library_name, version_function_name, version=None):
         self.library_name = library_name
-        library = find_library(library_name)
-        if library is None and version is not None:
-            # try to lookup with version. this is useful in linux, sometimes
-            # there is'nt a libSDL.so but a libSDL-1.2.so
-            library = find_library("%s-%s" % (library_name, version))
-        if not library:
-            raise ImportError, 'Dynamic library "%s" was not found' % \
-                _platform_library_name(library_name)
-        self._dll = getattr(cdll, library)
+        if sys.platform=='win32':
+            try:
+                self._load_library_win()
+            except WindowsError:
+                raise ImportError, ('Dynamic library "%s" was not found' %
+                                    library_name)
+        else:
+            self._load_library_nix()
 
         # Get the version of the DLL we're using
         if version_function_name:
@@ -68,6 +67,35 @@ class SDL_DLL:
                 self._version = (0, 0, 0)
         else:
             self._version = (0, 0, 0)
+
+    def _load_library_win(self):
+        '''
+        loads library from the dir cocos.sdl_lib_path
+        Normally it is the path to the pygame package.
+        If set to None will look first in the current working directory,
+        then in system32; that can be handy when using py2exe 
+        '''
+        import os
+        import cocos
+        # we must change cwd because some .dll s will directly load other dlls
+        old_cwd = os.getcwd()
+        if cocos.sdl_lib_path is not None:
+            os.chdir(cocos.sdl_lib_path)
+        try:
+            self._dll = getattr(cdll, self.library_name)
+        finally:
+            os.chdir(old_cwd)
+
+    def _load_library_nix(self):
+        library = find_library(self.library_name)
+        if library is None and version is not None:
+            # try to lookup with version. this is useful in linux, sometimes
+            # there is'nt a libSDL.so but a libSDL-1.2.so
+            library = find_library("%s-%s" % (self.library_name, version))
+        if not library:
+            raise ImportError, 'Dynamic library "%s" was not found' % \
+                _platform_library_name(self.library_name)
+        self._dll = getattr(cdll, library)
 
     def version_compatible(self, v):
         '''Returns True iff `v` is equal to or later than the loaded library

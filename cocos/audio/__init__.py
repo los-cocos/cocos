@@ -1,11 +1,17 @@
 __all__ = ['SDL', 'pygame']
 
+import cocos
 _working = True
 
 try:
     import pygame.mixer
 except ImportError, error:
-    _working = False
+    # set to 0 to debug import errors
+    if 1:
+        _working = False
+    else:
+        raise
+
 
 def initialize(arguments={}):
     global _working

@@ -56,7 +56,7 @@ __version__ = "0.4.0b1"
 __author__ = "cocos2d team"
 version = __version__
 
-
+import sys
 
 # add the cocos resources path
 import os, pyglet
@@ -67,6 +67,16 @@ try:
 except KeyError:
     unittesting = False
 del os, pyglet
+
+# in windows we use the pygame package to get the SDL dlls
+# we must get the path here because the inner pygame module will hide the real
+if sys.platform == 'win32':
+    import imp
+    try:
+        dummy, sdl_lib_path, dummy = imp.find_module('pygame')
+        del dummy
+    except ImportError:
+        sdl_lib_path = None
 
 def import_all():
     import actions
