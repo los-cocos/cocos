@@ -176,7 +176,7 @@ class ParticleSystem( CocosNode ):
 
     def on_enter( self ):
         super( ParticleSystem, self).on_enter()
-        self.add_particle()
+        #self.add_particle()
 
     def draw( self ):
         glPushMatrix()
@@ -260,6 +260,13 @@ class ParticleSystem( CocosNode ):
             self.parent.remove( self )
 
     def add_particle( self ):
+        """
+        Code calling add_particle must be either:
+          be sure there is room for the particle
+          or
+          be prepared to catch the exception Exception("No empty particle")
+          It is acceptable to try: ... except...: pass
+        """
         self.init_particle()
         self.particle_count += 1
 
