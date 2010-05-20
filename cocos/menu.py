@@ -288,7 +288,10 @@ class Menu(Layer):
             self._build_items(layout_strategy)
 
     def draw( self ):
+        glPushMatrix()
+        self.transform()
         self.title_label.draw()
+        glPopMatrix()
 
     def on_text( self, text ):
         if text=='\r':
