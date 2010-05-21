@@ -108,7 +108,7 @@ def verticalMenuLayout (menu):
             pos_y = (height + (len(menu.children) - 2 * idx)
                          * fo_height - menu.title_height) * 0.5
         elif menu.menu_valign == TOP:
-            pos_y = (height - (idx * fo_height )
+            pos_y = (height - ((idx + 0.8) * fo_height )
                          - menu.title_height - menu.menu_vmargin)
         elif menu.menu_valign == BOTTOM:
             pos_y = (0 + fo_height * (len(menu.children) - idx) +
