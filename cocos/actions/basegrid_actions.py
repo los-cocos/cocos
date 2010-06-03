@@ -362,7 +362,7 @@ class StopGrid( InstantAction ):
     
         scene.do( Waves3D( duration=2) + StopGrid() )
     """
-    def update(self, t):
+    def start(self):
         if self.target.grid and self.target.grid.active:
             self.target.grid.active = False
 
