@@ -324,10 +324,68 @@ class Director(event.EventDispatcher):
         :returns: The main window, an instance of pyglet.window.Window class.
         """
 
+        #: whether or not the FPS are displayed
+        self.show_FPS = False
+
+        #: stack of scenes
+        self.scene_stack = []
+
+        #: scene that is being run
+        self.scene = None
+
+        #: this is the next scene that will be shown
+        self.next_scene = None
+
+        # python interpreter
+        self.python_interpreter = None
+
+        #: whether or not to show the python interpreter
+        self.show_interpreter = False
+
         # pop out the Cocos-specific flags
         self.do_not_scale_window = kwargs.pop('do_not_scale', False)
         audio_backend = kwargs.pop('audio_backend', 'pyglet')
         audio_settings = kwargs.pop('audio', {})
+
+        # handle pyglet 1.1.x vs 1.2dev differences in fullscreen
+        self._window_virtual_width = kwargs.get('width', None)
+        self._window_virtual_height = kwargs.get('height', None)
+        if pyglet.version.startswith('1.1') and kwargs.get('fullscreen', False):
+            # pyglet 1.1.x dont allow fullscreen with explicit width or height
+            kwargs.pop('width', 0)
+            kwargs.pop('height', 0)
+
+        #: pyglet's window object
+        self.window = window.Window( *args, **kwargs )
+
+        # complete the viewport geometry info, both virtual and real,
+        # also set the appropiate on_resize handler
+        if self._window_virtual_width is None:
+            self._window_virtual_width = self.window.width
+        if self._window_virtual_height is None:
+            self._window_virtual_height = self.window.height
+
+        self._window_virtual_aspect = (
+            self._window_virtual_width / float( self._window_virtual_height ))
+
+        self._offset_x = 0
+        self._offset_y = 0
+
+        if self.do_not_scale_window:
+            resize_handler = self.unscaled_resize_window
+        else:
+            resize_handler = self.scaled_resize_window
+        self.window.push_handlers(on_resize=resize_handler)
+        # the offsets and size for the viewport will be proper after this 
+        resize_handler(self.window.width, self.window.height)
+
+        self.window.push_handlers(self.on_draw)
+
+        # opengl settings
+        self.set_alpha_blending()
+
+        # default handler
+        self.window.push_handlers( DefaultHandler() )
 
         # Environment variable COCOS2d_NOSOUND=1 overrides audio settings
         if getenv('COCOS2D_NOSOUND', None) == '1' or audio_backend == 'pyglet':
@@ -341,69 +399,6 @@ class Director(event.EventDispatcher):
                   "mode by calling director.init with audio=None, or setting the " \
                   "COCOS2D_NOSOUND=1 variable in your env."
             raise NoAudioError(msg)
-
-        # handle pyglet 1.1.x vs 1.2dev differences in fullscreen
-        self._window_virtual_width = kwargs.get('width', None)
-        self._window_virtual_height = kwargs.get('height', None)
-        if pyglet.version.startswith('1.1') and kwargs.get('fullscreen', False):
-            # pyglet 1.1.x dont allow fullscreen with explicit width or height
-            kwargs.pop('width', 0)
-            kwargs.pop('height', 0)
-
-        #: pyglet's window object
-        self.window = window.Window( *args, **kwargs )
-
-        #: whether or not the FPS are displayed
-        self.show_FPS = False
-
-        #: stack of scenes
-        self.scene_stack = []
-
-        #: scene that is being run
-        self.scene = None
-
-        #: this is the next scene that will be shown
-        self.next_scene = None
-
-        # complete the viewport geometry info, both virtual and real,
-        # also set the appropiate on_resize handler
-        print 'virtual size before ifs:', self._window_virtual_width,self._window_virtual_height
-        if self._window_virtual_width is None:
-            self._window_virtual_width = self.window.width
-        if self._window_virtual_height is None:
-            self._window_virtual_height = self.window.height
-        print 'virtual size after ifs:', self._window_virtual_width,self._window_virtual_height
-        self._window_virtual_aspect = (
-            self._window_virtual_width / float( self._window_virtual_height ))
-
-        self._offset_x = 0
-        self._offset_y = 0
-
-        if self.do_not_scale_window:
-            resize_handler = self.unscaled_resize_window
-            #self.window.push_handlers(on_resize=self.unscaled_resize_window)
-        else:
-            resize_handler = self.scaled_resize_window
-            #self.window.push_handlers(on_resize=self.scaled_resize_window)
-        self.window.push_handlers(on_resize=resize_handler)
-        # the offsets and size for the viewport will be proper after this 
-        resize_handler(self.window.width, self.window.height)
-        print 'window size:', self.window.width, self.window.height
-        print 'window usable size:', self._usable_width, self._usable_height
-
-        self.window.push_handlers(self.on_draw)
-
-        # opengl settings
-        self.set_alpha_blending()
-
-        # python interpreter
-        self.python_interpreter = None
-
-        #: whether or not to show the python interpreter
-        self.show_interpreter = False
-
-        # default handler
-        self.window.push_handlers( DefaultHandler() )
 
         # Audio setup:
         #TODO: reshape audio to not screw unittests
