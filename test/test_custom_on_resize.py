@@ -20,17 +20,17 @@ class BackgroundLayer( cocos.layer.Layer ):
 
     def on_enter(self):
         super(BackgroundLayer,self).on_enter()
-        director.push_handlers(self.on_resize)
+        director.push_handlers(self.on_cocos_resize)
 
     def draw( self ):
         self.img.blit(0,0)
 
-    def on_resize( self, width, height ):
-        # change to custom projection projection
-        glViewport(0, 0, width, height)
+    def on_cocos_resize( self, usable_width, usable_height ):
+        # change to custom projection
+        glViewport(0, 0, usable_width, usable_height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(90, 1.0*width/height, 0.1, 3000.0)
+        gluPerspective(90, 1.0*usable_width/usable_height, 0.1, 3000.0)
         glMatrixMode(GL_MODELVIEW)
 
 if __name__ == '__main__':
