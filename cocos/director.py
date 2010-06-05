@@ -375,9 +375,12 @@ class Director(event.EventDispatcher):
             resize_handler = self.unscaled_resize_window
         else:
             resize_handler = self.scaled_resize_window
-        self.window.push_handlers(on_resize=resize_handler)
-        # the offsets and size for the viewport will be proper after this 
+        # the offsets and size for the viewport will be proper after this
+        self._resize_no_events = True
         resize_handler(self.window.width, self.window.height)
+        self._resize_no_events = False
+
+        self.window.push_handlers(on_resize=resize_handler)
 
         self.window.push_handlers(self.on_draw)
 
@@ -604,7 +607,17 @@ class Director(event.EventDispatcher):
         self._usable_width = uw
         self._usable_height = uh
         self.set_projection()
+
+        if self._resize_no_events:
+            # setting viewport geometry, not handling an event  
+            return
+
+        # deprecated - see issue 154
         self.dispatch_event("on_resize", width, height)
+
+        self.dispatch_event("on_cocos_resize", self._usable_width, self._usable_height)
+
+        # dismiss the pyglet BaseWindow default 'on_resize' handler
         return pyglet.event.EVENT_HANDLED
 
     def unscaled_resize_window(self, width, height):
@@ -627,7 +640,15 @@ class Director(event.EventDispatcher):
         """
         self._usable_width = width
         self._usable_height = height
+
+        if self._resize_no_events:
+            # setting viewport geometry, not handling an event  
+            return
+
+        # deprecated - see issue 154
         self.dispatch_event("on_resize", width, height)
+
+        self.dispatch_event("on_cocos_resize", self._usable_width, self._usable_height)
 
     def set_projection(self):
         '''Sets a 3D projection mantaining the aspect ratio of the original window size'''
@@ -687,3 +708,4 @@ director.interpreter_locals["cocos"] = cocos
 Director.register_event_type('on_push')
 Director.register_event_type('on_pop')
 Director.register_event_type('on_resize')
+Director.register_event_type('on_cocos_resize')
