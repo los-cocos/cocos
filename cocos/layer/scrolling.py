@@ -182,7 +182,7 @@ class ScrollingManager(Layer):
 
         Account for viewport, layer and screen transformations.
         '''
-        raise NotImplementedError('do this some day')
+        #raise NotImplementedError('do this some day')
         # scaling of layer
         x *= self.scale
         y *= self.scale
