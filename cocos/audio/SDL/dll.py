@@ -55,7 +55,7 @@ class SDL_DLL:
                 raise ImportError, ('Dynamic library "%s" was not found' %
                                     library_name)
         else:
-            self._load_library_nix()
+            self._load_library_nix(version)
 
         # Get the version of the DLL we're using
         if version_function_name:
@@ -86,7 +86,7 @@ class SDL_DLL:
         finally:
             os.chdir(old_cwd)
 
-    def _load_library_nix(self):
+    def _load_library_nix(self, version):
         library = find_library(self.library_name)
         if library is None and version is not None:
             # try to lookup with version. this is useful in linux, sometimes
