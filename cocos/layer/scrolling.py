@@ -22,7 +22,7 @@ Two methods are available for setting the map focus:
   contained in the ScrollingManager are moved accordingly. If a layer
   would be moved outside of its define px_width, px_height then the
   scrolling is restricted. The resultant restricted focal point is stored
-  on the ScrollingManager as manager.fx and manager.fy.
+  on the ScrollingManager as restricted_fx and restricted_fy.
 
 **force_focus(x, y)**
   Force setting the focus to the pixel coordinates given. The layer(s)
@@ -35,6 +35,7 @@ Two methods are available for setting the map focus:
 from cocos.director import director
 from cocos.layer.base_layers import Layer
 import pyglet
+from pyglet.gl import *
 
 class ScrollableLayer(Layer):
     '''A Cocos Layer that is scrollable in a Scene.
@@ -67,6 +68,10 @@ class ScrollableLayer(Layer):
         # XXX batch eh?
         self.batch = pyglet.graphics.Batch()
 
+    def on_enter(self):
+        director.push_handlers(self.on_cocos_resize)        
+        super(ScrollableLayer, self).on_enter()
+
     def set_view(self, x, y, w, h):
         x *= self.parallax
         y *= self.parallax
@@ -81,19 +86,17 @@ class ScrollableLayer(Layer):
         super(ScrollableLayer, self).draw()
 
         # XXX overriding draw eh?
-        pyglet.gl.glPushMatrix()
+        glPushMatrix()
         self.transform()
         self.batch.draw()
-        pyglet.gl.glPopMatrix()
+        glPopMatrix()
 
     def set_dirty(self):
         '''The viewport has changed in some way.
         '''
         pass
 
-    is_event_handler = True
-    def on_resize(self, width, height):
-        self.view_w, self.view_h = width, height
+    def on_cocos_resize(self, usable_width, usable_height):
         self.set_dirty()
 
 class ScrollingManager(Layer):
@@ -112,18 +115,20 @@ class ScrollingManager(Layer):
     A ScrollingManager knows how to convert pixel coordinates from its own
     pixel space to the screen space.
     '''
-    def __init__(self, viewport=None):
-        # initialise the viewport stuff
-        if viewport is None:
-            from cocos import director
-            self.view_w, self.view_h = director.director.get_window_size()
-        else:
-            self.view_w, self.view_h = viewport.width, viewport.height
+    def __init__(self, viewport=None, do_not_scale=None):
+        if do_not_scale is None:
+            do_not_scale = director.do_not_scale_window
+        self.autoscale = not do_not_scale and not director.do_not_scale_window
+
+        self.viewport = viewport
 
         # These variables define the Layer-space pixel view which is mapping
         # to the viewport. If the Layer is not scrolled or scaled then this
         # will be a one to one mapping.
         self.view_x, self.view_y = 0, 0
+        self.view_w, self.view_h = 1, 1 
+        self.childs_view_x = 0
+        self.childs_view_y = 0
 
         # Focal point on the Layer
         self.fx = self.fy = 0
@@ -134,18 +139,48 @@ class ScrollingManager(Layer):
         self.transform_anchor_x = 0
         self.transform_anchor_y = 0
 
-    is_event_handler = True
-    def on_resize(self, width, height):
-        self.view_w, self.view_h = width, height
+    def on_enter(self):
+        super(ScrollingManager, self).on_enter()
+        director.push_handlers(self.on_cocos_resize)
+        self.update_view_size()
+        self.refresh_focus()
+
+    def update_view_size(self):
+        if self.viewport is not None:
+            self.view_w, self.view_h = self.viewport.width, self.viewport.height
+            self.view_x, self.view_y = self.viewport.position
+            if director.do_not_scale_window:
+                self._scissor_flat = (self.view_x, self.view_y,
+                                     self.view_w, self.view_h)
+            else:
+                w, h = director.get_window_size()
+                sx = director._usable_width/float(w)
+                sy = director._usable_height/float(h)
+                self._scissor_flat = (int(self.view_x * sx), int(self.view_y * sy),
+                                     int(self.view_w * sx), int(self.view_h * sy))
+        elif self.autoscale:
+            self.view_w, self.view_h = director.get_window_size()
+        else:
+            self.view_w = director._usable_width
+            self.view_h = director._usable_height
+
+    def on_cocos_resize(self, usable_width, usable_height):
+        # when using an explicit viewport you should adjust the viewport for
+        # resize changes here, before the lines that follows.
+        # Also, if your app performs other changes in viewport it should
+        # use the lines that follows to update viewport-related internal state 
+        self.update_view_size()
+        self.refresh_focus()
+
+    def refresh_focus(self):
         if self.children:
+            self._old_focus = None # disable NOP check
             self.set_focus(self.fx, self.fy)
 
-    _scale = 0
+    _scale = 1.0
     def set_scale(self, scale):
-        self._scale = scale
-        self._old_focus = None      # disable NOP check
-        if self.children:
-            self.set_focus(self.fx, self.fy)
+        self._scale = 1.0*scale
+        self.refresh_focus()
     scale = property(lambda s: s._scale, set_scale)
 
     def add(self, child, z=0, name=None):
@@ -162,15 +197,20 @@ class ScrollingManager(Layer):
         Account for viewport, layer and screen transformations.
         '''
         # director display scaling
-        x, y = director.get_virtual_coordinates(x, y)
+        if not director.do_not_scale_window:
+            x, y = director.get_virtual_coordinates(x, y)
 
         # normalise x,y coord
         ww, wh = director.get_window_size()
-        sx = x / ww
-        sy = y / wh
+        sx = x / float(self.view_w)
+        sy = y / float(self.view_h)
 
         # get the map-space dimensions
-        vx, vy, w, h = self.view_x, self.view_y, self.view_w, self.view_h
+        vx, vy = self.childs_view_x, self.childs_view_y
+        
+        # get our scaled view size
+        w = int(self.view_w / self.scale)
+        h = int(self.view_h / self.scale)
 
         #print (int(x), int(y)), (vx, vy, w, h), int(vx + sx * w), int(vy + sy * h)
 
@@ -182,21 +222,10 @@ class ScrollingManager(Layer):
 
         Account for viewport, layer and screen transformations.
         '''
-        #raise NotImplementedError('do this some day')
-        # scaling of layer
-        x *= self.scale
-        y *= self.scale
-
-        # XXX rotation of layer
-
-        # shift for viewport
-        x += self.view_x
-        y += self.view_y
-
-        # XXX director display scaling
-
-        return int(x), int(y)
-
+        screen_x = self.scale*(x-self.childs_view_x)
+        screen_y = self.scale*(y-self.childs_view_y)
+        return int(screen_x), int(screen_y)
+                
     _old_focus = None
     def set_focus(self, fx, fy, force=False):
         '''Determine the viewport based on a desired focus pixel in the
@@ -214,8 +243,8 @@ class ScrollingManager(Layer):
         # therefore also its children).
         # The result is that all chilren will have their viewport set, defining
         # which of their pixels should be visible.
-
         fx, fy = int(fx), int(fy)
+        self.fx, self.fy = fx, fy
 
         a = (fx, fy, self.scale)
 
@@ -244,24 +273,41 @@ class ScrollingManager(Layer):
         h = int(self.view_h / self.scale)
         w2, h2 = w//2, h//2
 
-        # check for the minimum, and then maximum bound
-        if (fx - w2) < b_min_x:
-            fx = b_min_x + w2       # hit minimum X extent
-        elif (fx + w2) > b_max_x:
-            fx = b_max_x - w2       # hit maximum X extent
-        if (fy - h2) < b_min_y:
-            fy = b_min_y + h2       # hit minimum Y extent
-        elif (fy + h2) > b_max_y:
-            fy = b_max_y - h2       # hit maximum Y extent
+        if (b_max_x - b_min_x)<=w:
+            # this branch for prety centered view and no view jump when
+            # crossing the center; both when world width <= view width
+            restricted_fx = (b_max_x + b_min_x)/2
+        else:
+            if (fx - w2) < b_min_x:
+                restricted_fx = b_min_x + w2       # hit minimum X extent
+            elif (fx + w2) > b_max_x:
+                restricted_fx = b_max_x - w2       # hit maximum X extent
+            else:
+                restricted_fx = fx
+        if (b_max_y - b_min_y)<=h:
+            # this branch for prety centered view and no view jump when
+            # crossing the center; both when world height <= view height
+            restricted_fy = (b_max_y + b_min_y)/2
+        else:
+            if (fy - h2) < b_min_y:
+                restricted_fy = b_min_y + h2       # hit minimum Y extent
+            elif (fy + h2) > b_max_y:
+                restricted_fy = b_max_y - h2       # hit maximum Y extent
+            else:
+                restricted_fy = fy
 
         # ... and this is our focus point, center of screen
-        self.fx, self.fy = map(int, (fx, fy))
+        self.restricted_fx = int(restricted_fx)
+        self.restricted_fy = int(restricted_fy)
 
         # determine child view bounds to match that focus point
-        x, y = int(fx - w2), int(fy - h2)
-        self.view_x, self.view_y = x, y
+        x, y = int(restricted_fx - w2), int(restricted_fy - h2)
+
+        self.childs_view_x = x - self.view_x/self.scale
+        self.childs_view_y = y - self.view_y/self.scale
+
         for z, layer in self.children:
-            layer.set_view(x, y, w, h)
+            layer.set_view(self.childs_view_x, self.childs_view_y, w, h)
 
     def force_focus(self, fx, fy):
         '''Force the manager to focus on a point, regardless of any managed layer
@@ -274,18 +320,45 @@ class ScrollingManager(Layer):
         # which of their pixels should be visible.
 
         self.fx, self.fy = map(int, (fx, fy))
+        self.fx, self.fy = fx, fy
 
         # get our scaled view size
         w = int(self.view_w / self.scale)
         h = int(self.view_h / self.scale)
-        cx, cy = w//2, h//2
+        w2, h2 = w//2, h//2
 
         # bottom-left corner of the
-        x, y = fx - cx * self.scale, fy - cy * self.scale
+        x, y = fx - w2, fy - h2
 
-        self.view_x, self.view_y = x, y
+        self.childs_view_x = x - self.view_x/self.scale
+        self.childs_view_y = y - self.view_y/self.scale
 
         # translate the layers to match focus
         for z, layer in self.children:
-            layer.set_view(x, y, w, h)
+            layer.set_view(self.childs_view_x, self.childs_view_y, w, h)
 
+    def set_state(self):
+        # preserve gl scissors info
+        self._scissor_enabled = glIsEnabled(GL_SCISSOR_TEST)
+        self._old_scissor_flat = (GLint * 4)() #4-tuple
+        glGetIntegerv(GL_SCISSOR_BOX, self._old_scissor_flat)
+
+        # set our scissor
+        if not self._scissor_enabled:
+            glEnable(GL_SCISSOR_TEST)
+
+        glScissor(*self._scissor_flat)
+        
+    def unset_state(self):
+        # restore gl scissors info
+        glScissor(*self._old_scissor_flat)
+        if not self._scissor_enabled:
+            glDisable(GL_SCISSOR_TEST)
+
+    def visit(self):
+        if self.viewport is not None:
+            self.set_state()
+            super(ScrollingManager, self).visit()
+            self.unset_state()
+        else:
+            super(ScrollingManager, self).visit()
