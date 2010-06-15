@@ -42,7 +42,6 @@ class TileEditorLayer(tiles.ScrollableLayer):
         self.highlight = None
         self.selector = selector
         self.tileset = selector.tileset
-        w, h = director.get_window_size()
 
     def on_key_press(self, key, modifier):
         if modifier & pyglet.window.key.MOD_ACCEL:
@@ -125,7 +124,8 @@ class TileEditorLayer(tiles.ScrollableLayer):
         if not cell:
             self.highlight = None
             return True
-        x, y = cell.x, cell.y
+        x = cell.x + m.origin_x
+        y = cell.y + m.origin_y
         self.highlight = (x, y, x+m.tw, y+m.th)
         return True
 
@@ -329,7 +329,7 @@ class EditorScene(cocos.scene.Scene):
     def __init__(self, edit_level_xml):
         super(EditorScene, self).__init__()
 
-        self.manager = tiles.ScrollingManager(director.window)
+        self.manager = tiles.ScrollingManager()
         #if bg_level_xml:
             #level = tiles.load(bg_level_xml)[bg_level_id]
             #self.manager.append(level)
