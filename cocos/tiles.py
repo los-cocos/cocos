@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 '''
 Tile Maps
 =========
@@ -231,6 +229,12 @@ class ScrollingManager(layer.ScrollingManager):
 class ResourceError(Exception):
     pass
 
+class TilesPropertyWithoutName(Exception):
+    pass
+
+class TilesPropertyWithoutValue(Exception):
+    pass
+
 class Resource(object):
     '''Load some tile mapping resources from an XML file.
     '''
@@ -387,14 +391,25 @@ _xml_type = {
     float: 'float',
     bool: 'bool',
 }
+
 def _handle_properties(tag):
+    """returns the properties dict reading from the etree node tag
+        :Parameters:
+            `tag` : xml.etree.ElementTree
+                node from which the properties are obtained
+    """
     properties = {}
-    for tag in tag.findall('./property'):
-        name = tag.get('name')
-        type = tag.get('type') or 'unicode'
-        value = tag.get('value')
+    for node in tag.findall('./property'):
+        name = node.get('name')
+        type = node.get('type') or 'unicode'
+        value = node.get('value')
+        if name is None:
+            raise TilesPropertyWithoutName("\nnode:\n%s"%ElementTree.tostring(node))
+        if value is None:
+            raise TilesPropertyWithoutValue("\nnode:\n%s"%ElementTree.tostring(node))
         properties[name] = _xml_to_python[type](value)
     return properties
+
 
 #
 # IMAGE and IMAGE ATLAS
@@ -531,6 +546,8 @@ class TileSet(dict):
 # RECT AND HEX MAPS
 #
 @Resource.register_factory('rectmap')
+# TODO: more diagnostics for malformed files; by example when a columm has less
+# cells than expected
 def rectmap_factory(resource, tag):
     width, height = map(int, tag.get('tile_size').split('x'))
     origin = tag.get('origin')
@@ -740,15 +757,30 @@ class RectMap(RegularTesselationMap):
     (and thus the cell at (0,0) is 'a' and (1, 1) is 'd')
     '''
     def __init__(self, id, tw, th, cells, origin=None, properties=None):
-        properties = properties or {}
+        """
+        :Parameters:
+            `id` : 
+            `tw` : int
+                number of colums in cells
+            `th` : int
+                number of rows in cells
+            `cells` : container that supports cells[i][j] 
+                elements are stored in column-major order with y increasing up
+            `origin` : (int, int, int)
+                cell block offset x,y,z ; default is (0,0,0)
+            `properties` : dict
+                arbitrary properties
+                if saving to XML, keys must be unicode or 8-bit ASCII strings
+        """
+        self.properties = properties or {}
         self.id = id
         self.tw, self.th = tw, th
         if origin is None:
             origin = (0, 0, 0)
         self.origin_x, self.origin_y, self.origin_z = origin
         self.cells = cells
-        self.px_width = len(cells) * tw
-        self.px_height = len(cells[0]) * th
+        self.px_width = len(cells) * tw #? +abs(self.origin_x) ?
+        self.px_height = len(cells[0]) * th # +abs(self.origin_y) ?
 
     def get_in_region(self, x1, y1, x2, y2):
         '''Return cells (in [column][row]) that are within the map-space
@@ -803,7 +835,11 @@ class RectMap(RegularTesselationMap):
             r[direction] = self.get_cell(cell.i + dx, cell.j + dy)
         return r
 
+    # TODO: add checks to ensure good html. By example, what if cell is None?
     def _as_xml(self, root):
+        """stores a XML representation of itself as child of root with type rectmap
+        
+        """
         m = ElementTree.SubElement(root, 'rectmap', id=self.id,
             tile_size='%dx%d'%(self.tw, self.th),
             origin='%s,%s,%s'%(self.origin_x, self.origin_y, self.origin_z))
