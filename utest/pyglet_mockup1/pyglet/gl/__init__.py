@@ -14,8 +14,47 @@ GL_ONE_MINUS_DST_COLOR = 775    # /usr/include/GL/gl.h:160
 GL_SRC_ALPHA_SATURATE = 776     # /usr/include/GL/gl.h:161
 GL_NONE = 0     # /usr/include/GL/gl.h:205
 
+GL_TEXTURE_WRAP_S = 10242 	# /usr/include/GL/gl.h:947
+GL_TEXTURE_WRAP_T = 10243 	# /usr/include/GL/gl.h:948
+GL_CLAMP_TO_EDGE = 33071 	# /usr/include/GL/gl.h:1079
+
+GL_MODELVIEW = 5888 	# /usr/include/GL/gl.h:748
+GL_PROJECTION = 5889 	# /usr/include/GL/gl.h:749
+
+
 def glEnable(arg):
     pass
 
 def glBlendFunc(a1, a2):
     pass
+
+def glViewport(a1, a2, a3, a4):
+    pass
+
+def gluPerspective(a1, a2, a3, a4):
+    pass
+
+def gluLookAt(a1, a2, a3, a4, a5, a6, a7, a8, a9):
+    pass
+
+def glScissor(a1, a2, a3, a4):
+    pass
+
+def glMatrixMode(a1):
+    pass
+
+def glLoadIdentity():
+    pass
+
+def glPushMatrix():
+    pass
+
+def glPopMatrix():
+    pass
+
+def glBindTexture(a1, a2):
+    pass
+
+def glTexParameteri(a1, a2, a3):
+    pass
+

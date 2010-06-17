@@ -28,6 +28,7 @@ add a signature/pass, but only for commonly used functions.
 Capabilities:
 
  pyglet.window.Window can be instantiated, it only provides width and height
+ pyglet.version will return "1.1.4"
  Director can be instantiated
  from cocos.director import director works
  director.get_window_size() works
@@ -35,5 +36,8 @@ Capabilities:
  pyglet.clock.schedule ( also unschedule, etc) acepted (non memorized)
  some GL constants and gl functions are accepted (if you load them with
  from pyglet.gl import *).
+ you can 'import cocos.layer'; the classes ScrollingManager and ScrollableLayer
+ can be imported
+
 
  

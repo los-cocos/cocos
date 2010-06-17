@@ -203,7 +203,7 @@ import weakref
 from xml.etree import ElementTree
 
 import pyglet
-from pyglet.gl import gl
+from pyglet.gl import *
 
 import cocos
 from cocos.director import director
@@ -462,11 +462,11 @@ def imageatlas_factory(resource, tag):
 
         # set texture clamping to avoid mis-rendering subpixel edges
         image.texture.id
-        gl.glBindTexture(image.texture.target, image.texture.id)
-        gl.glTexParameteri(image.texture.target,
-            gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-        gl.glTexParameteri(image.texture.target,
-            gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+        glBindTexture(image.texture.target, image.texture.id)
+        glTexParameteri(image.texture.target,
+            GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(image.texture.target,
+            GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
         # save the image off and set properties
         id = child.get('id')
