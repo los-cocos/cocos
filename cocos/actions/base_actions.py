@@ -687,7 +687,7 @@ def spawn(action_1, action_2):
           isinstance(action_2, IntervalAction)):
         cls = Spawn_IntervalAction
     else:
-        cls = Spawn_IntervalAction
+        cls = Spawn_Action
     return cls(action_1, action_2)
 
 
