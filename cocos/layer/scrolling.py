@@ -72,13 +72,16 @@ class ScrollableLayer(Layer):
         director.push_handlers(self.on_cocos_resize)        
         super(ScrollableLayer, self).on_enter()
 
-    def set_view(self, x, y, w, h):
+    def set_view(self, x, y, w, h, viewport_ox=0, viewport_oy=0):
         x *= self.parallax
         y *= self.parallax
         self.view_x, self.view_y = x, y
         self.view_w, self.view_h = w, h
+        #print 'ScrollableLayer view - x, y, w, h:', self.view_x, self.view_y, self.view_w, self.view_h
         x -= self.origin_x
         y -= self.origin_y
+        x -= viewport_ox
+        y -= viewport_oy
         self.position = (-x, -y)
 
     def draw(self):
@@ -127,8 +130,8 @@ class ScrollingManager(Layer):
         # will be a one to one mapping.
         self.view_x, self.view_y = 0, 0
         self.view_w, self.view_h = 1, 1 
-        self.childs_view_x = 0
-        self.childs_view_y = 0
+        self.childs_ox = 0
+        self.childs_oy = 0
 
         # Focal point on the Layer
         self.fx = self.fy = 0
@@ -206,7 +209,7 @@ class ScrollingManager(Layer):
         sy = y / float(self.view_h)
 
         # get the map-space dimensions
-        vx, vy = self.childs_view_x, self.childs_view_y
+        vx, vy = self.childs_ox, self.childs_oy
         
         # get our scaled view size
         w = int(self.view_w / self.scale)
@@ -222,8 +225,8 @@ class ScrollingManager(Layer):
 
         Account for viewport, layer and screen transformations.
         '''
-        screen_x = self.scale*(x-self.childs_view_x)
-        screen_y = self.scale*(y-self.childs_view_y)
+        screen_x = self.scale*(x-self.childs_ox)
+        screen_y = self.scale*(y-self.childs_oy)
         return int(screen_x), int(screen_y)
                 
     _old_focus = None
@@ -303,11 +306,14 @@ class ScrollingManager(Layer):
         # determine child view bounds to match that focus point
         x, y = int(restricted_fx - w2), int(restricted_fy - h2)
 
-        self.childs_view_x = x - self.view_x/self.scale
-        self.childs_view_y = y - self.view_y/self.scale
+        childs_scroll_x = x #- self.view_x/self.scale
+        childs_scroll_y = y #- self.view_y/self.scale
+        self.childs_ox = childs_scroll_x - self.view_x/self.scale
+        self.childs_oy = childs_scroll_y - self.view_y/self.scale
 
         for z, layer in self.children:
-            layer.set_view(self.childs_view_x, self.childs_view_y, w, h)
+            layer.set_view(childs_scroll_x, childs_scroll_y, w, h,
+                           self.view_x/self.scale, self.view_y/self.scale)
 
     def force_focus(self, fx, fy):
         '''Force the manager to focus on a point, regardless of any managed layer
@@ -330,12 +336,14 @@ class ScrollingManager(Layer):
         # bottom-left corner of the
         x, y = fx - w2, fy - h2
 
-        self.childs_view_x = x - self.view_x/self.scale
-        self.childs_view_y = y - self.view_y/self.scale
+        childs_scroll_x = x #- self.view_x/self.scale
+        childs_scroll_y = y #- self.view_y/self.scale
+        self.childs_ox = childs_scroll_x - self.view_x/self.scale
+        self.childs_oy = childs_scroll_y - self.view_y/self.scale
 
-        # translate the layers to match focus
         for z, layer in self.children:
-            layer.set_view(self.childs_view_x, self.childs_view_y, w, h)
+            layer.set_view(childs_scroll_x, childs_scroll_y, w, h,
+                           self.view_x/self.scale, self.view_y/self.scale)
 
     def set_state(self):
         # preserve gl scissors info

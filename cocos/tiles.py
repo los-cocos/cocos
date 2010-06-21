@@ -650,9 +650,9 @@ class MapLayer(layer.ScrollableLayer):
         self._sprites.clear()
         self._update_sprite_set()
 
-    def set_view(self, x, y, w, h):
+    def set_view(self, x, y, w, h, viewport_x=0, viewport_y=0):
         # invoked by ScrollingManager.set_focus()
-        super(MapLayer, self).set_view(x, y, w, h)
+        super(MapLayer, self).set_view(x, y, w, h, viewport_x, viewport_y)
         self._update_sprite_set()
 
     def get_visible_cells(self):
@@ -795,10 +795,15 @@ class RectMap(RegularTesselationMap):
         y1 = max(0, (y1 - oy) // self.th)
         x2 = min(len(self.cells), (x2 - ox) // self.tw + 1)
         y2 = min(len(self.cells[0]), (y2 - oy) // self.th + 1)
-        return [self.cells[i][j]
+##        return [self.cells[i][j]
+##            for i in range(int(x1), int(x2))
+##                for j in range(int(y1), int(y2))]
+        res =  [self.cells[i][j]
             for i in range(int(x1), int(x2))
                 for j in range(int(y1), int(y2))]
-
+        #print 'get_in_region result:', res
+        return res
+    
     def get_at_pixel(self, x, y):
         ''' Return Cell at pixel px=(x,y) on the map.
 
