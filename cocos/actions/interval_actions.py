@@ -656,8 +656,8 @@ class JumpBy(IntervalAction):
         self.delta = Vector2(*self.position)
         
     def update(self, t):
-        y = int( self.height * abs( math.sin( t * math.pi * self.jumps ) ) )
-        y += self.delta[1] * t
+        y = self.height * abs( math.sin( t * math.pi * self.jumps ) )
+        y = int(y+self.delta[1] * t)
         x = self.delta[0] * t
         self.target.position = self.start_position + Point2(x,y)
         
