@@ -83,11 +83,12 @@ class RandomWalk(ac.Action):
         
 
 class Chase(ac.Action):
-    def init(self, chasee, fastness):
-        self.chasee = chasee
+    def init(self, fastness):
+        #self.chasee = chasee
         self.fastness = fastness
 
-    def init2(self, on_bullet_hit):
+    def init2(self, chasee, on_bullet_hit):
+        self.chasee = chasee
         self.on_bullet_hit = on_bullet_hit
 
     def step(self, dt):
@@ -122,9 +123,9 @@ class TestLayer(cocos.layer.Layer):
         bullet = ProbeQuad(5, (255, 0, 0, 255))
         bullet.position = (0,0)
         bullet.color = (233, 70, 0)
-        chase_worker = bullet.do(Chase(self.green_obj, fastness_bullet))
-        # workaround deepcopy can't handle a bound method
-        chase_worker.init2(self.on_bullet_hit)
+        chase_worker = bullet.do(Chase(fastness_bullet))
+        # workaround deepcopy can't handle a bound method nor a cocosnode
+        chase_worker.init2(self.green_obj, self.on_bullet_hit)
         self.add(bullet)
 
     def on_bullet_hit(self, bullet):
