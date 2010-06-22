@@ -369,7 +369,7 @@ def Reverse( action ):
     """
     return action.__reversed__()
 
-class InstantAction( Action ):
+class InstantAction( IntervalAction ):
     """
     Instant actions are actions that promises to do nothing when the
     methods step, update, and stop are called.
@@ -379,7 +379,9 @@ class InstantAction( Action ):
     basic operators to combine an InstantAction with an IntervalAction and
     give an IntervalAction as a result.
     """
-    duration = 0.0
+    def __init__(self,*args, **kwargs):
+        super(IntervalAction, self).__init__(*args, **kwargs)
+        self.duration = 0.0
 
     def step(self, dt):
         """does nothing - dont override"""
@@ -683,7 +685,7 @@ def spawn(action_1, action_2):
     if (isinstance(action_1,InstantAction) and
           isinstance(action_2, InstantAction)):
         cls = Spawn_InstantAction
-    if (isinstance(action_1,IntervalAction) and
+    elif (isinstance(action_1,IntervalAction) and
           isinstance(action_2, IntervalAction)):
         cls = Spawn_IntervalAction
     else:
