@@ -560,8 +560,6 @@ class Sequence_Action(Action):
         self.two.target = self.target
         self.current_action = self.one
         self.current_action.start()
-        if self.current_action.done():
-            self._next_action()
 
     def step(self, dt):
         self._elapsed += dt
