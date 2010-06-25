@@ -93,7 +93,7 @@ class PauseLayer(Layer):
         self.text.draw()
         
     def on_key_press(self, k, m):
-        if k == pyglet.window.key.P and m == pyglet.window.key.MOD_ACCEL:
+        if k == pyglet.window.key.P and m & pyglet.window.key.MOD_ACCEL:
             director.pop()
             return True
             
