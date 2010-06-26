@@ -529,7 +529,7 @@ class Loop_IntervalAction(IntervalAction):
         self.current_action.stop()
         
     def __reversed__(self):
-        return Loop( Reverse(self.one), self.times )
+        return Loop_IntervalAction( Reverse(self.one), self.times )
 
 def sequence(action_1, action_2):
     """Returns an action that runs first action_1 and then action_2
