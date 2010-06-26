@@ -115,9 +115,9 @@ class TransitionControl(cocos.layer.Layer):
             director.replace( self.scenes[ self.scene_p ] )
         
     def on_key_press(self, keyp, mod):
-        if keyp in (key.PAGEDOWN,):
+        if keyp in (key.RIGHT,):
             self.next_scene()
-        elif keyp in (key.PAGEUP,):
+        elif keyp in (key.LEFT,):
             self.prev_scene()
             
 class RunScene(cocos.layer.Layer):
@@ -183,7 +183,7 @@ if __name__ == "__main__":
         cocos.scene.Scene (
             BulletListLayer("Features (2)", [
                 "Text / HTML",
-                "Tiles"
+                "Tiles",
                 "Well documented",
                 "Embedded python interpreter",
                 "BSD License",
