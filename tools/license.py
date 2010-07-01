@@ -42,6 +42,8 @@ license = '''# cocos2d
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.'''
 
+only_report_missing = True
+
 marker = '# ' + '-' * 76
 
 license_lines = [marker] + license.split('\n') + [marker]
@@ -50,7 +52,7 @@ def update_license(filename):
     '''Open a Python source file and update the license header, writing
     it back in place.'''
     lines = [l.strip('\r\n') for l in open(filename).readlines()]
-    if marker in lines:
+    if marker in lines and not only_report_missing:
         # Update existing license
         try:
             marker1 = lines.index(marker)
@@ -63,15 +65,19 @@ def update_license(filename):
         except ValueError:
             print >> sys.stderr, "Can't update license in %s" % filename
     else:
-        # Add license to unmarked file
-        # Skip over #! if present
-        if not lines:
-            pass # Skip empty files
-        elif lines[0].startswith('#!'):
-            lines = lines[:1] + license_lines + lines[1:]
+        if only_report_missing:
+            print filename
         else:
-            lines = license_lines + lines
-    open(filename, 'wb').write('\n'.join(lines) + '\n')
+            # Add license to unmarked file
+            # Skip over #! if present
+            if not lines:
+                pass # Skip empty files
+            elif lines[0].startswith('#!'):
+                lines = lines[:1] + license_lines + lines[1:]
+            else:
+                lines = license_lines + lines
+    if not only_report_missing:
+        open(filename, 'wb').write('\n'.join(lines) + '\n')
 
 if __name__ == '__main__':
     op = optparse.OptionParser()
