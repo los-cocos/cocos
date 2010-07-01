@@ -761,7 +761,9 @@ class Mover(IntervalAction):
             `acceleration` : float
                 If specified will automatically be added to speed.
                 Specified in pixels per second per second.
-            `max_forward_speed` and `max_reverse_speed` : float (default None)
+            `max_forward_speed` : float (default None)
+                Limits to apply to speed when updating with acceleration.
+            `max_reverse_speed` : float (default None)
                 Limits to apply to speed when updating with acceleration.
         """
         self.speed = speed

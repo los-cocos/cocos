@@ -24,8 +24,8 @@ reference other external XML resource files. This would allow a single
 tile set to be used by multiple tile maps.
 
 
-Tile Maps
----------
+Maps
+----
 
 The RectMapLayer class extends the regular Cocos layer to handle a
 regular grid of tile images, or Cells. The map layer may be manipulated
@@ -92,55 +92,65 @@ XML resource files must contain a document-level tag <resource>::
      ...
     </resource>
 
-You may draw in other resource files by using the <requires> tag:
+You may draw in other resource files by using the <requires> tag::
 
     <requires file="road-tiles.xml" />
 
 This will load "road-tiles.xml" into the resource's namespace.
-If you wish to avoid id clashes you may supply a namespace:
+If you wish to avoid id clashes you may supply a namespace::
 
     <requires file="road-tiles.xml" namespace="road" />
 
 If a namespace is given then the element ids from the "road-tiles.xml"
 will be prefixed by the namespace and a period, e.g. "road:bitumen".
 
-Other tags within <resource> are:
+Other tags within <resource> are::
 
-<image file="" id="">
-    Loads file with pyglet.image.load and gives it the id which is used
-    by tiles to reference the image.
+    <image file="" id="">
+
+Loads file with pyglet.image.load and gives it the id which is used
+by tiles to reference the image.
+
+::
 
 <imageatlas file="" [id="" size="x,y"]>
-    Sets up an image atlas for child <image> tags to use. Child tags are of
-    the form:
 
-        <image offset="" id="" [size=""]>
+Sets up an image atlas for child <image> tags to use. Child tags are of
+the form::
 
-    If the <imageatlas> tag does not provide a size attribute then all
-    child <image> tags must provide one. Image atlas ids are optional as
-    they are currently not reference directly.
+    <image offset="" id="" [size=""]>
 
-<tileset id="">
-    Sets up a TileSet object. Child tags are of the form:
+If the <imageatlas> tag does not provide a size attribute then all
+child <image> tags must provide one. Image atlas ids are optional as
+they are currently not reference directly.
 
-       <tile id="">
-         [<image ...>]
-       </tile>
+::
 
-    The <image> tag is optional; these tiles may have only properties (or be
-    completely empty). The id is used by maps to reference the tile.
+    <tileset id="">
 
-<rectmap id="" tile_size="" [origin=""]>
-    Sets up a RectMap object. Child tags are of the form:
+Sets up a TileSet object. Child tags are of the form::
 
-       <column>
-        <cell tile="" />
-       </column>
+   <tile id="">
+     [<image ...>]
+   </tile>
+
+The <image> tag is optional; these tiles may have only properties (or be
+completely empty). The id is used by maps to reference the tile.
+
+::
+
+    <rectmap id="" tile_size="" [origin=""]>
+
+Sets up a RectMap object. Child tags are of the form::
+
+   <column>
+    <cell tile="" />
+   </column>
 
 Map, Cell and Tile Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Most tags may additionally have properties specified as:
+Most tags may additionally have properties specified as::
 
    <property [type=""] name="" value="" />
 
@@ -394,9 +404,10 @@ _xml_type = {
 
 def _handle_properties(tag):
     """returns the properties dict reading from the etree node tag
-        :Parameters:
-            `tag` : xml.etree.ElementTree
-                node from which the properties are obtained
+
+    :Parameters:
+        `tag` : xml.etree.ElementTree
+            node from which the properties are obtained
     """
     properties = {}
     for node in tag.findall('./property'):
@@ -759,7 +770,8 @@ class RectMap(RegularTesselationMap):
     def __init__(self, id, tw, th, cells, origin=None, properties=None):
         """
         :Parameters:
-            `id` : 
+            `id` : xml id
+                node id
             `tw` : int
                 number of colums in cells
             `th` : int
@@ -1179,12 +1191,14 @@ class HexMapLayer(HexMap, MapLayer):
      tw          -- with of a "tile" in pixels = edge_length * 2
 
     Hexmaps store their cells in an offset array, column-major with y
-    increasing up, such that a map:
-          /d\ /h\
-        /b\_/f\_/
-        \_/c\_/g\
-        /a\_/e\_/
-        \_/ \_/
+    increasing up, such that a map::
+    
+              /d\ /h\
+            /b\_/f\_/
+            \_/c\_/g\
+            /a\_/e\_/
+            \_/ \_/
+
     has cells = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
     '''
     def __init__(self, id, th, cells, origin=None, properties=None):

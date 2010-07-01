@@ -1,3 +1,5 @@
+__docformat__ = 'restructuredtext'
+
 class Rect(object):
     '''Define a rectangular area.
 
@@ -5,22 +7,22 @@ class Rect(object):
     which may be assigned to which will result in altering the position
     and sometimes dimensions of the Rect:
 
-        top         -- y pixel extent
-        bottom      -- y pixel extent
-        left        -- x pixel extent
-        right       -- x pixel extent
-        position    -- (x, y) of bottom-left corner pixel
-        origin      -- (x, y) of bottom-left corner pixel
-        center      -- (x, y) of center pixel
-        topleft     -- (x, y) of top-left corner pixel
-        topright    -- (x, y) of top-right corner pixel
-        bottomleft  -- (x, y) of bottom-left corner pixel
-        bottomright -- (x, y) of bottom-right corner pixel
-        midtop      -- (x, y) of middle of top side pixel
-        midbottom   -- (x, y) of middle of bottom side pixel
-        midleft     -- (x, y) of middle of left side pixel
-        midright    -- (x, y) of middle of right side pixel
-        size        -- (width, height) of rect
+        - top         -- y pixel extent
+        - bottom      -- y pixel extent
+        - left        -- x pixel extent
+        - right       -- x pixel extent
+        - position    -- (x, y) of bottom-left corner pixel
+        - origin      -- (x, y) of bottom-left corner pixel
+        - center      -- (x, y) of center pixel
+        - topleft     -- (x, y) of top-left corner pixel
+        - topright    -- (x, y) of top-right corner pixel
+        - bottomleft  -- (x, y) of bottom-left corner pixel
+        - bottomright -- (x, y) of bottom-right corner pixel
+        - midtop      -- (x, y) of middle of top side pixel
+        - midbottom   -- (x, y) of middle of bottom side pixel
+        - midleft     -- (x, y) of middle of left side pixel
+        - midright    -- (x, y) of middle of right side pixel
+        - size        -- (width, height) of rect
 
     The Rect area includes the bottom and left borders but not the top and
     right borders.

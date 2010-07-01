@@ -580,7 +580,7 @@ class Channel(object):
                 Sound data to play.
             `loops` : int
                 Number of times to repeat the sound after the first play.
-            `maxtime` : int
+            `time` : int
                 Maximum number of milliseconds to play for.
 
         '''

@@ -1,3 +1,5 @@
+__docformat__ = 'restructuredtext'
+
 from cocos import audio
 try:
     from cocos.audio.pygame.mixer import Sound
@@ -21,7 +23,8 @@ class Effect(object):
         """Initialize the effect
 
         :Parameters:
-            `filename` : path of a WAV or Ogg audio file
+            `filename` : fullpath
+                path of a WAV or Ogg audio file
         """
         if audio._working:
             self.sound = Sound(filename)

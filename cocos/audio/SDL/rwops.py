@@ -103,25 +103,25 @@ SDL_RWFromConstMem = dll.function('SDL_RWFromConstMem',
     since=(1,2,7))
 
 """ These functions shouldn't be useful to Pythoners.
-SDL_AllocRW = dll.function('SDL_AllocRW',
-    '''Allocate a blank SDL_Rwops structure.
+    SDL_AllocRW = dll.function('SDL_AllocRW',
+        '''Allocate a blank SDL_Rwops structure.
 
-    :rtype: `SDL_RWops`
-    '''
-    args=[],
-    arg_types=[],
-    return_type=POINTER(SDL_RWops),
-    dereference_return=True,
-    require_return=True)
+        :rtype: `SDL_RWops`
+        '''
+        args=[],
+        arg_types=[],
+        return_type=POINTER(SDL_RWops),
+        dereference_return=True,
+        require_return=True)
 
-SDL_FreeRW = dll.function('SDL_FreeRW',
-    '''Free a SDL_RWops structure.
+    SDL_FreeRW = dll.function('SDL_FreeRW',
+        '''Free a SDL_RWops structure.
 
-    :param area: `SDL_RWops`
-    '''
-    args=['area'],
-    arg_types=[POINTER(SDL_RWops)],
-    return_type=None)
+        :param area: `SDL_RWops`
+        '''
+        args=['area'],
+        arg_types=[POINTER(SDL_RWops)],
+        return_type=None)
 """
 
 # XXX Tested read from open() only so far

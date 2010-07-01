@@ -30,7 +30,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Actions
+'''Foundation for all actions
 
 Actions
 =======
@@ -40,40 +40,51 @@ The object that the action will modify is the action's target.
 Usually the target will be an instance of some CocosNode subclass.
 
 Example:
-    MoveTo(position, duration): the target will move smoothly over the segment
-    (target.position, action position parameter), reaching the final position
-    after duration seconds have elapsed.
+
+    MoveTo(position, duration)
+
+the target will move smoothly over the segment
+(target.position, action position parameter), reaching the final position
+after duration seconds have elapsed.
 
 Cocos also provide some powerful operators to combine or modify actions, the
 more important s being:
-    sequence operator: action_1 + action_2 -> action_result
-    where action_result performs as:
-    first do all that action_1 would do
-    then perform all that action_2 would do
-    Example use:
+
+**sequence operator:** action_1 + action_2 -> action_result
+where action_result performs by first doing all that action_1 would do and        
+then perform all that action_2 would do
+
+Example use::
+
     move_2 = MoveTo((100, 100), 10) + MoveTo((200, 200), 15)
-    When activated, move_2 will move the target first to (100, 100), it will
-    arrive there 10 seconds after departure; then it will move to (200, 200),
-    and will arrive there 10 seconds after having arrived to (100, 100)
 
-    spawn operator: action_1 | action_2 -> action_result
-    where action_result performs as:
-    perform what would do action_1 in parallel with what would perform
-    action_2
+When activated, move_2 will move the target first to (100, 100), it will
+arrive there 10 seconds after departure; then it will move to (200, 200),
+and will arrive there 10 seconds after having arrived to (100, 100)
 
-    Example use:
+**spawn operator:** action_1 | action_2 -> action_result
+where action_result performs by doing what would do action_1 in parallel with
+what would perform action_2
+
+Example use::
+
     move_rotate = MoveTo((100,100), 10) | RotateBy(360, 5)
-    When activated, move_rotate will move the target from the position at the
-    time of activation to (100, 100); also in the first 5 seconds target will
-    be rotated 360 degrees
 
-    loop operator: action_1 * n -> action_result
-    Where n non negative integer, and action result would repeat n times in a
-    row the same that action_1 would perform.
-    Example use:
+When activated, move_rotate will move the target from the position at the
+time of activation to (100, 100); also in the first 5 seconds target will
+be rotated 360 degrees
+
+**loop operator:** action_1 * n -> action_result
+Where n non negative integer, and action result would repeat n times in a
+row the same that action_1 would perform.
+
+Example use::
+
     rotate_3 = RotateBy(360, 5) * 3
-    When activated, rotate_3 will rotate target 3 times, spending 5 sec in each
-    turn.
+
+When activated, rotate_3 will rotate target 3 times, spending 5 sec in each
+turn.
+
 
 Action instance roles
 +++++++++++++++++++++
@@ -90,7 +101,8 @@ It has no access to the concrete action target.
 The most usual way to obtain an action in the template mode is
 by calling the constructor of some Action subclass.
     
-Example:
+Example::
+
     position = (100, 100); duration = 10
     move = MoveTo(position, duration)
     move is playing here the template role.
@@ -101,7 +113,9 @@ Worker role
 Carry on with the changes desired when the action is initiated.
 You obtain an action in the worker role by calling the method
 do in a cocosnode instance, like
+
     worker_action = cocosnode.do(template_action, target=...)
+    
 The most usual is to call without the target kw-param, thus by default
 setting target to the same cocosnode that performs the do.
 The worker action begins to perform at the do call, and will carry on
@@ -109,16 +123,20 @@ with the desired modifications to target in subsequent frames.
 If you want the capabilty to stop the changes midway, then you must
 retain the worker_action returned by the do and then, when you want stop
 the changes, call
+
     cocosnode.remove_action(worker_action)
-( the cocosnode must be the same as in the do call )
+    ( the cocosnode must be the same as in the do call )
+
 Also, if your code need access to the action that performs the changes,
 have in mind that you want the worker_action.
 
-Example: 
+Example:: 
+
      position = (100, 100); duration = 10
      move = MoveTo(position, duration)
      blue_bird = Bird_CocosNode_subclass(...)
      blue_move = blue_bird.do(move)
+
 Here move plays the template role and blue_move plays the worker role.
 The target for blue_move has been set for the do method.
 When the do call omits the target parameter it defaults to the cocosnode where
@@ -127,12 +145,12 @@ In subsequents frames after this call, the blue_bird will move to the position
 (100, 100), arriving there 10 seconds after the do was executed.
 
 From the point of view of a worker role action, the actions life
-can be mimicked by:
+can be mimicked by::
 
     worker_action = deepcopy(template_action)
     worker_action.target = some_obj
     worker_action.start()
-    for dt in frame.next():
+    for dt in frame.next()::
         worker_action.step(dt)
         if premature_termination() or worker_action.done():
             break
@@ -153,17 +171,19 @@ Sequence_Action
 Overview main subclasses
 ++++++++++++++++++++++++
 
-All action classes in cocos must be subclasses of one off the following:
-    Action
-    IntervalAction (is itself subclass of Action)
-    InstantAction  (is itself subclass of IntervalAction)
+All action classes in cocos must be subclass of one off the following:
+
+    - Action
+    - IntervalAction (is itself subclass of Action)
+    - InstantAction  (is itself subclass of IntervalAction)
 
 InstantAction
 -------------
 
 The task that must perform happens in only one call, the start method.
 The duration member has the value zero.
-Examples:
+Examples::
+
     Place(position) : does target.position <- position 
     CallFunc(f, *args, **kwargs) : performs the call f(*args,**kwargs)
 
@@ -175,7 +195,8 @@ The total time needed to complete the task is stored in the member duration.
 The action will cease to perform when the time elapsed from the start call
 reachs duration.
 A proper IntervalAction must adhere to extra rules, look in the details section
-Examples:
+Examples::
+
     MoveTo(position, duration)
     RotateBy(angle, duration)
 
@@ -186,19 +207,31 @@ The most general posible action class.
 The task that must perform is spanned over a number of frames.
 The time that the action would perfom is undefined, and member duration has
 value None.
-Examples:
-    RandomWalk(fastness):
-        selects a random point in the screen
-        moves to it with the required fastness
-        repeat
-    This action will last forever.
+Examples::
 
-    Chase(fastness, chasee):
-        at each frame, move the target toward the chasee with the specified
-        fastness. Declare the action as done when the distance from target to
-        chasee is less than 10.
-    If fastness is greather than the chasee fastness this action will certainly
-    terminate, but we dont know how much time when the action starts.    
+    RandomWalk(fastness)
+
+Performs:
+
+  - selects a random point in the screen
+  - moves to it with the required fastness
+  - repeat
+
+This action will last forever.
+
+::
+
+    Chase(fastness, chasee)
+
+Performs:
+
+  - at each frame, move the target toward the chasee with the specified
+    fastness.
+  - Declare the action as done when the distance from target to
+    chasee is less than 10.
+    
+If fastness is greather than the chasee fastness this action will certainly
+terminate, but we dont know how much time when the action starts.    
 '''
 
 __docformat__ = 'restructuredtext'

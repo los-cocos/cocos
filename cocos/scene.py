@@ -156,9 +156,11 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         Music will be stopped after calling this (even if it was playing before).
         
         :Parameters:
-            `filename`: Filename of music to load. Depending on installed
-            libraries, supported formats may be WAV, MP3, OGG, MOD; You can also
-            use 'None' to unset music
+            `filename` : fullpath
+                Filename of music to load.
+                Depending on installed libraries, supported formats may be
+                WAV, MP3, OGG, MOD;
+                You can also use 'None' to unset music
         """
         self.music = filename
         self.music_playing = False

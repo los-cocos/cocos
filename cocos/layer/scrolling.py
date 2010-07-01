@@ -24,6 +24,7 @@ Two methods are available for setting the map focus:
   scrolling is restricted. The resultant restricted focal point is stored
   on the ScrollingManager as restricted_fx and restricted_fy.
 
+
 **force_focus(x, y)**
   Force setting the focus to the pixel coordinates given. The layer(s)
   contained in the ScrollingManager are moved accordingly regardless of
@@ -31,6 +32,8 @@ Two methods are available for setting the map focus:
   attributes are still set, but they'll *always* be set to the supplied
   x and y values.
 '''
+
+__docformat__ = 'restructuredtext'
 
 from cocos.director import director
 from cocos.layer.base_layers import Layer
