@@ -1,10 +1,18 @@
-v0.4.0 - ??? 2010
+v0.4.0 - July ??? 2010
+  - optional SDL audio support
+  - actions subsystem upgraded: now Actions with duration not know in advance are possible,
+    like the ones that terminates on a collision detection condition.
+	Basic operators support actions with no known inadvance duration, even potentially infinite
+	duration.
   - ScrollableLayer and ScrollingManager moved to cocos.layer from cocos.tiles and
     usable in non-tiled games
-  - ccoos.tiles.RectMapCollider provides a skeleton for handling collisions
+  - cocos.tiles.RectMapCollider provides a skeleton for handling collisions
     between sprites and rectangular tile maps
+  - recorder: video record your app as a series of .png files, at a desired framerate
+  - axis aligned bounding box (AABB) for sprites
+  - more minisamples in the test directories
+  - we begun to do unit tests for some parts ( actions and tilemap basically)
   - Many bugfixes
-
 
 v0.3.0 - September 5th, 2008
   - Added particle systems: Sun, Fire, Fireworks, Meteor, Galaxy, Flower, Exposion, Spiral
