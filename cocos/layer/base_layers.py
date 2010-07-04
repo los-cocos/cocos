@@ -54,44 +54,44 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
     """Class that handles events and other important game's behaviors"""
 
     is_event_handler = False #: if true, the event handlers of this layer will be registered. defaults to false.
-    
+
     def __init__( self ):
         super( Layer, self ).__init__()
         self.scheduled_layer = False
         x,y = director.get_window_size()
         self.transform_anchor_x = x/2
         self.transform_anchor_y = y/2
-        
+
     def push_all_handlers(self):
         if self.is_event_handler:
             director.window.push_handlers( self )
         for child in self.get_children():
             if isinstance(child, Layer):
                 child.push_all_handlers()
-                
+
     def remove_all_handlers(self):
         if self.is_event_handler:
             director.window.remove_handlers( self )
         for child in self.get_children():
             if isinstance(child, Layer):
                 child.remove_all_handlers()
-           
+
     def on_enter(self):
         super(Layer, self).on_enter()
-        
+
         scn = self.get_ancestor(scene.Scene)
         if not scn: return
-        
+
         if scn._handlers_enabled:
             if self.is_event_handler:
                 director.window.push_handlers( self )
-        
+
     def on_exit(self):
         super(Layer, self).on_exit()
-        
+
         scn = self.get_ancestor(scene.Scene)
         if not scn: return
-        
+
         if scn._handlers_enabled:
             if self.is_event_handler:
                 director.window.remove_handlers( self )
@@ -104,11 +104,11 @@ class MultiplexLayer( Layer ):
      This is useful, for example, when you have 3 or 4 menus, but you want to
      show one at the time"""
 
-    
+
     def __init__( self, *layers ):
         super( MultiplexLayer, self ).__init__()
 
-        self.layers = layers 
+        self.layers = layers
         self.enabled_layer = 0
 
         self.add( self.layers[ self.enabled_layer ] )
