@@ -257,7 +257,8 @@ class ParticleSystem( CocosNode ):
 
         self.update_particles( delta )
 
-        if self.particle_count == 0 and self.auto_remove_on_finish == True:
+        if (not self.active and
+            self.particle_count == 0 and self.auto_remove_on_finish == True):
             self.unschedule( self.step )
             self.parent.remove( self )
 
