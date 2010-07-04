@@ -47,43 +47,43 @@ import cocos.audio.music
 class EventHandlerMixin(object):
     def add(self, child, *args, **kwargs):
         super(EventHandlerMixin, self).add(child, *args, **kwargs)
-        
+
         scene = self.get(Scene)
         if not scene: return
-        
-        if (    scene._handlers_enabled and 
-                scene.is_running and 
-                isinstance(child, cocos.layer.Layer) 
+
+        if (    scene._handlers_enabled and
+                scene.is_running and
+                isinstance(child, cocos.layer.Layer)
                 ):
             child.push_all_handlers()
-            
-            
+
+
     def remove(self, child):
         super(EventHandlerMixin, self).remove(child)
-        
+
         scene = self.get(Scene)
         if not scene: return
-        
-        if (    scene._handlers_enabled and 
-                scene.is_running and 
-                isinstance(child, cocos.layer.Layer) 
+
+        if (    scene._handlers_enabled and
+                scene.is_running and
+                isinstance(child, cocos.layer.Layer)
                 ):
             child.remove_all_handlers()
-            
-    
-            
- 
+
+
+
+
 class Scene(cocosnode.CocosNode, EventHandlerMixin):
     """
     """
-   
+
     def __init__(self, *children):
         """
         Creates a Scene with layers and / or scenes.
-        
+
         Responsibilities:
             Control the dispatching of events to its layers; and background music playback
-            
+
         :Parameters:
             `children` : list of `Layer` or `Scene`
                 Layers or Scenes that will be part of the scene.
@@ -95,14 +95,14 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         self._handlers_enabled = False
         for i, c in enumerate(children):
             self.add( c, z=i )
-        
+
         x,y = director.get_window_size()
-        
+
         self.transform_anchor_x = x/2
         self.transform_anchor_y = y/2
         self.music = None
         self.music_playing = False
-            
+
     def on_enter(self):
         for c in self.get_children():
             c.parent = self
@@ -117,18 +117,18 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         # _apply_music after super, because is_running must be already False
         if self.music_playing:
             cocos.audio.music.control.stop()
-        
-            
+
+
     def push_all_handlers(self):
         for child in self.get_children():
             if isinstance(child, cocos.layer.Layer):
                 child.push_all_handlers()
-            
+
     def remove_all_handlers(self):
         for child in self.get_children():
             if isinstance(child, cocos.layer.Layer):
                 child.remove_all_handlers()
-    
+
     def enable_handlers(self, value=True):
         """
         This function makes the scene elegible for receiving events
@@ -138,11 +138,11 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         elif not value and self._handlers_enabled and self.is_running:
             self.remove_all_handlers()
         self._handlers_enabled = value
-        
-        
+
+
     def end(self, value=None):
         """Ends the current scene setting director.return_value with `value`
-        
+
         :Parameters:
             `value` : anything
                 The return value. It can be anything. A type or an instance.
@@ -152,9 +152,9 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
 
     def load_music(self, filename):
         """This prepares a streamed music file to be played in this scene.
-        
+
         Music will be stopped after calling this (even if it was playing before).
-        
+
         :Parameters:
             `filename` : fullpath
                 Filename of music to load.
@@ -169,17 +169,17 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
                 cocos.audio.music.control.load(filename)
             else:
                 cocos.audio.music.control.stop()
-    
+
     def play_music(self):
         """Enable music playback for this scene. Nothing happens if music was already playing
-        
+
         Note that if you call this method on an inactive scene, the music will
         start playing back only if/when the scene gets activated.
         """
         if self.music is not None and not self.music_playing:
             self.music_playing = True
             if self.is_running:
-                cocos.audio.music.control.play()                
+                cocos.audio.music.control.play()
 
     def stop_music(self):
         """Stops music playback for this scene.
