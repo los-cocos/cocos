@@ -45,6 +45,10 @@ import ctypes
 from cocosnode import CocosNode
 from euclid import Point2
 
+class ExceptionNoEmptyParticle(Exception):
+    """particle system have no room for another particle"""
+    pass
+
 rand = lambda: random.random() * 2 - 1
 
 # PointerToNumpy by Gary Herron
@@ -267,7 +271,7 @@ class ParticleSystem( CocosNode ):
         Code calling add_particle must be either:
           be sure there is room for the particle
           or
-          be prepared to catch the exception Exception("No empty particle")
+          be prepared to catch the exception ExceptionNoEmptyParticle
           It is acceptable to try: ... except...: pass
         """
         self.init_particle()
@@ -336,7 +340,7 @@ class ParticleSystem( CocosNode ):
         if len(idxs[0]) > 0:
             idx = idxs[0][0] 
         else:
-            raise Exception("No empty particle")
+            raise ExceptionNoEmptyParticle()
 
         # position
         self.particle_pos[idx][0] = self.pos_var.x * rand()
