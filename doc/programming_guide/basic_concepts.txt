@@ -76,6 +76,10 @@ a map layer: `HexMapLayer`, and more ).
 Layers can have `Sprite`, `Label`, `HTMLLabel` and even other `Layer` objects as
 children.
 
+To make loading of appropriate assets easier you may override the ``init``
+method of your `Layer` subclass. This will be called when your Layer is
+created.
+
 Since layers are subclass of `CocosNode`, they can be transformed manually or 
 by using actions.
 See `Actions, Transformations and Effects` for more detail about actions.
