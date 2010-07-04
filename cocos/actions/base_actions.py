@@ -51,7 +51,7 @@ Cocos also provide some powerful operators to combine or modify actions, the
 more important s being:
 
 **sequence operator:** action_1 + action_2 -> action_result
-where action_result performs by first doing all that action_1 would do and        
+where action_result performs by first doing all that action_1 would do and
 then perform all that action_2 would do
 
 Example use::
@@ -100,7 +100,7 @@ In this role only __init__ and init should be called.
 It has no access to the concrete action target.
 The most usual way to obtain an action in the template mode is
 by calling the constructor of some Action subclass.
-    
+
 Example::
 
     position = (100, 100); duration = 10
@@ -115,7 +115,7 @@ You obtain an action in the worker role by calling the method
 do in a cocosnode instance, like
 
     worker_action = cocosnode.do(template_action, target=...)
-    
+
 The most usual is to call without the target kw-param, thus by default
 setting target to the same cocosnode that performs the do.
 The worker action begins to perform at the do call, and will carry on
@@ -130,7 +130,7 @@ the changes, call
 Also, if your code need access to the action that performs the changes,
 have in mind that you want the worker_action.
 
-Example:: 
+Example::
 
      position = (100, 100); duration = 10
      move = MoveTo(position, duration)
@@ -162,7 +162,7 @@ Component role
 Such an instance is created and stored into an Action class instance
 that implements an Action operator (a composite action).
 Carries on with the changes desired on behalf of the composite action.
-When the composite action is not instance of IntervalAction, the 
+When the composite action is not instance of IntervalAction, the
 perceived life can be mimicked as in the worker role.
 When the composite action is instance of IntervalAction, special rules apply.
 For examples look at code used in the implementation of any operator, like
@@ -184,7 +184,7 @@ The task that must perform happens in only one call, the start method.
 The duration member has the value zero.
 Examples::
 
-    Place(position) : does target.position <- position 
+    Place(position) : does target.position <- position
     CallFunc(f, *args, **kwargs) : performs the call f(*args,**kwargs)
 
 IntervalAction
@@ -229,18 +229,18 @@ Performs:
     fastness.
   - Declare the action as done when the distance from target to
     chasee is less than 10.
-    
+
 If fastness is greather than the chasee fastness this action will certainly
-terminate, but we dont know how much time when the action starts.    
+terminate, but we dont know how much time when the action starts.
 '''
 
 __docformat__ = 'restructuredtext'
 
 import copy
 
-__all__ = [ 
+__all__ = [
             'Action',                           # Base Class
-            'IntervalAction', 'InstantAction',  # Important Subclasses 
+            'IntervalAction', 'InstantAction',  # Important Subclasses
             'sequence','spawn','loop', 'Repeat',# Generic Operators
             'Reverse','_ReverseTime',           # Reverse
             ]
@@ -276,7 +276,7 @@ class Action(object):
         When the action must cease to perform this function is called by
         external code; after this call no other method should be called.
         """
-        self.target = None        
+        self.target = None
 
     def step(self, dt):
         """
@@ -340,7 +340,7 @@ class IntervalAction( Action ):
     are guaranted to call .update(1.0)
     Note that when a premature termination happens stop will be called but
     update(1.0) is not called.
-    
+
     Examples: `MoveTo` , `MoveBy` , `RotateBy` are Interval Actions, while
     `Place`, `Show` and `CallFunc` aren't.
 
@@ -447,7 +447,7 @@ class InstantAction( IntervalAction ):
 
 def loop(action, times):
     return action * times
-            
+
 class Loop_Action(Action):
     """Repeats one Action for n times
     """
@@ -507,19 +507,19 @@ class Loop_IntervalAction(IntervalAction):
 
         if not hasattr(self.one, "duration"):
             raise Exception("You can only loop actions with finite duration, not repeats or others like that")
-        
+
         self.duration = self.one.duration * times
-        
+
         self.current = None
         self.last = None
-        
+
     def start(self):
         self.duration = self.one.duration * self.times
         self.last = 0
         self.current_action = copy.deepcopy(self.one)
         self.current_action.target = self.target
         self.current_action.start()
-        
+
     def __repr__(self):
         return "( %s * %i )" %( self.one, self.times )
 
@@ -537,30 +537,30 @@ class Loop_IntervalAction(IntervalAction):
             # finish the last action
             self.current_action.update(1)
             self.current_action.stop()
-            
+
             for i in range(self.last+1, current):
-                # fast forward the jumped actions            
+                # fast forward the jumped actions
                 self.current_action = copy.deepcopy(self.one)
                 self.current_action.target = self.target
                 self.current_action.start()
                 self.current_action.update(1)
                 self.current_action.stop()
-            
+
             # set new current action
             self.current_action = copy.deepcopy(self.one)
             self.current_action.target = self.target
             self.last = current
-            
+
             # start a new action
             self.current_action.start()
-            
+
             # feed dt
             self.current_action.update(new_t)
-            
-    def stop(self):#todo: need to support early stop 
+
+    def stop(self):#todo: need to support early stop
         self.current_action.update(1)
         self.current_action.stop()
-        
+
     def __reversed__(self):
         return Loop_IntervalAction( Reverse(self.one), self.times )
 
@@ -619,7 +619,7 @@ class Sequence_Action(Action):
     def __reversed__(self):
         return sequence( Reverse(self.two), Reverse(self.one) )
 
-        
+
 class Sequence_InstantAction(InstantAction):
     """implements sequence when the result can be expresed as InstantAction
         both operands must be InstantActions """
@@ -632,7 +632,7 @@ class Sequence_InstantAction(InstantAction):
         self.two.target = self.target
         self.one.start()
         self.two.start()
-        
+
     def __reversed__(self):
         return Sequence_InstantAction( Reverse(self.two), Reverse(self.one) )
 
@@ -657,7 +657,7 @@ class Sequence_IntervalAction(IntervalAction):
 
         if not hasattr(self.one, "duration") or not hasattr(self.two, "duration"):
             raise Exception("You can only sequence actions with finite duration, not repeats or others like that")
-        
+
         self.duration = float(self.one.duration + self.two.duration)
         try:
             self.split = self.one.duration / self.duration
@@ -703,7 +703,7 @@ class Sequence_IntervalAction(IntervalAction):
             self.two.stop()
         else:
             self.one.stop()
-        
+
     def __reversed__(self):
         return Sequence_IntervalAction( Reverse(self.two), Reverse(self.one) )
 
@@ -756,7 +756,7 @@ class Spawn_Action(Action):
             e.stop()
 
     def __reversed__(self):
-        return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )    
+        return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )
 
 
 class Spawn_IntervalAction(IntervalAction):
@@ -788,7 +788,7 @@ class Spawn_IntervalAction(IntervalAction):
         self._done = (t >= 1.0)
         if self._done:
             self.actions[0].stop()
-            self.actions[1].stop()            
+            self.actions[1].stop()
 
     def __reversed__(self):
         return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )
@@ -860,17 +860,17 @@ class _ReverseTime( IntervalAction ):
         super(_ReverseTime, self).init(*args, **kwargs)
         self.other = other
         self.duration = self.other.duration
-        
+
     def start(self):
         self.other.target = self.target
         super(_ReverseTime, self).start()
         self.other.start()
-        
+
     def stop(self):
         super(_ReverseTime,self).stop()
-    
+
     def update(self, t):
         self.other.update(1-t)
-    
+
     def __reversed__(self):
         return self.other
