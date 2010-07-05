@@ -336,6 +336,26 @@ class CocosNode(object):
         if parent:
             return parent.get_ancestor( klass )
 
+    @property
+    def scene(self):
+        '''Get the Scene this cocosnode (eventually) belongs to.
+
+        Is None if there is no Scene ancestor.
+        '''
+        # late import to avoid circular reference
+        from cocos import scene
+        return self.get_ancestor(scene.Scene)
+
+    @property
+    def layer(self):
+        '''Get the Layer this cocosnode (eventually) belongs to.
+
+        Is None if there is no Layer ancestor.
+        '''
+        # late import to avoid circular reference
+        from cocos import layer
+        return self.get_ancestor(layer.Layer)
+
     #
     # Transform properties
     #
@@ -416,6 +436,12 @@ class CocosNode(object):
         if self.is_running:
             child.on_enter()
         return self
+
+    def kill(self):
+        '''Remove this object from its parent, and thus most likely from
+        everything.
+        '''
+        self.parent.remove(self)
 
     def remove( self, obj ):
         """Removes a child from the container given its name or object

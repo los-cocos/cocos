@@ -160,7 +160,7 @@ class DoAction(InstantAction):
     Example::
 
         action = Repeat( dance )
-        sprite.do( go_home + DoAction( dance ) )
+        sprite.do( go_home + DoAction( action ) )
     """
     def init(self, action):
         self.action = action
