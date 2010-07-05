@@ -30,6 +30,8 @@ class TestLayer(cocos.layer.Layer):
         
 
 if __name__ == "__main__":
+    print "starting from midscreen, sprite 1 moves left and then up;"
+    print "sprite2 does the reverse action "
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

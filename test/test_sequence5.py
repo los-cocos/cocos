@@ -24,6 +24,8 @@ class TestLayer(cocos.layer.Layer):
         
 
 if __name__ == "__main__":
+    print "starting from left border, sprites moves"
+    print "two times screen_width/2 to the right."
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

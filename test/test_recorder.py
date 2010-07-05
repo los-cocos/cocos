@@ -27,6 +27,7 @@ class TestLayer(cocos.layer.Layer):
 
 
 if __name__ == "__main__":
+    print "records 6 seconds, snapshots in the tmp subdir"
     director.set_recorder(25, "tmp/frame-%d.png", 6)
     director.init()
     test_layer = TestLayer ()

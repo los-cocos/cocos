@@ -24,6 +24,7 @@ class TestLayer(cocos.layer.Layer):
         
 
 if __name__ == "__main__":
+    print "sprite moves from left border to midscreen,\nteleports down,\nmoves to right border"
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

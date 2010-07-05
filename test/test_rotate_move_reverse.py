@@ -35,6 +35,7 @@ class Logo(cocos.layer.Layer):
             self.sprite.do(action + Reverse(action))
 
 if __name__=="__main__":
+    print "press space to initiate action"
     director.init(fullscreen=0, width=800, height=600)
     scene = cocos.scene.Scene()
     scene.add(Logo())

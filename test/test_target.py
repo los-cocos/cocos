@@ -31,6 +31,7 @@ class TestLayer(cocos.layer.Layer):
         
 
 if __name__ == "__main__":
+    print "two actions at the same time" 
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

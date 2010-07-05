@@ -23,6 +23,8 @@ class TestLayer(cocos.layer.Layer):
         
 
 if __name__ == "__main__":
+    print "Using do_not_scale=True in director.init, content will not"
+    print "be scaled on resize. Use ctrl-f to toggle fullscreen"
     director.init(width=300, height=300, do_not_scale=True)
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
