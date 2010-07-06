@@ -115,8 +115,6 @@ __all__ = [  'Lerp',                            # interpolation
             'Blink',                            # Blink action
 
             'Accelerate','AccelDeccel','Speed', # Time alter actions
-
-            'Mover',
             ]
 
 class Lerp( IntervalAction ):
@@ -733,68 +731,4 @@ class RandomDelay(Delay):
         if other <= 1:
             return self
         return RandomDelay(low*other, hi*other)
-
-
-class Mover(IntervalAction):
-    """Moves a `CocosNode` object around in x, y according to 
-    a direction and speed.
-
-    Example::
-
-        # control the movement of the given sprite
-        mover = Mover(0)
-        sprite.do(mover)
-
-        ...
-        sprite.rotation = 45
-        mover.speed = 100
-
-    """
-    def init(self, speed, acceleration=0, 
-            max_forward_speed=None, max_reverse_speed=None):
-        """Init method.
-
-        :Parameters:
-            `speed` : float
-                Speed to move at in pixels per second in the direction of
-                the target's rotation.
-            `acceleration` : float
-                If specified will automatically be added to speed.
-                Specified in pixels per second per second.
-            `max_forward_speed` : float (default None)
-                Limits to apply to speed when updating with acceleration.
-            `max_reverse_speed` : float (default None)
-                Limits to apply to speed when updating with acceleration.
-        """
-        self.speed = speed
-        self.acceleration = acceleration
-        self.max_forward_speed = max_forward_speed
-        self.max_reverse_speed = max_reverse_speed
-
-    def step(self, dt):
-        if self.acceleration:
-            self.speed += (dt * self.acceleration)
-            if (self.max_forward_speed is not None
-                    and self.speed > self.max_forward_speed):
-                self.speed = self.max_forward_speed
-            if (self.max_reverse_speed is not None
-                    and self.speed < self.max_reverse_speed):
-                self.speed = self.max_reverse_speed
-
-        r = math.radians(self.target.rotation)
-        s = dt * self.speed
-        x, y = self.target.position
-        self.target.position = (x + math.sin(r) * s, y + math.cos(r) * s)
-
-    def __reversed__( self ):
-        return Mover(-self.speed, self.acceleration, self.max_forward_speed, self.max_reverse_speed)
-
-    def done(self):
-        # never done
-        return False
-
-    def __deepcopy__(self, memo):
-        # don't actually produce a copy otherwise the controller of this
-        # action won't have a handle on me any more!
-        return self
 

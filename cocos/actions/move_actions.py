@@ -62,8 +62,10 @@ Typically the sprite would be controlled by the user, so something like::
 __docformat__ = 'restructuredtext'
 
 __all__ = [
-    'Move', 'WrappedMove', 'BoundedMove',
+    'Move', 'WrappedMove', 'BoundedMove', 'Driver',
 ]
+
+import math
 
 from base_actions import Action
 
@@ -162,4 +164,51 @@ class BoundedMove(Move):
         elif y < h/2:
             y = h/2
         self.target.position = (x, y)
+
+
+class Driver(Action):
+    """Moves a `CocosNode` object around in x, y according to
+    a direction and speed.
+
+    Example::
+
+        # control the movement of the given sprite
+        sprite.do(Driver())
+
+        ...
+        sprite.rotation = 45
+        sprite.speed = 100
+        ...
+
+    The sprite MAY have these parameters (beyond the standard position
+    and rotation):
+
+        `speed` : float
+            Speed to move at in pixels per second in the direction of
+            the target's rotation.
+        `acceleration` : float
+            If specified will automatically be added to speed.
+            Specified in pixels per second per second.
+        `max_forward_speed` : float (default None)
+            Limits to apply to speed when updating with acceleration.
+        `max_reverse_speed` : float (default None)
+            Limits to apply to speed when updating with acceleration.
+    """
+    def step(self, dt):
+        accel = getattr(self.target, 'acceleration', 0)
+        speed = getattr(self.target, 'speed', 0)
+        max_forward = getattr(self.target, 'max_forward_speed', None)
+        max_reverse = getattr(self.target, 'max_reverse_speed', None)
+        if accel:
+            speed += dt * accel
+            if max_forward is not None and self.target.speed > max_forward:
+                speed = max_forward
+            if max_reverse is not None and self.target.speed < max_reverse:
+                speed = max_reverse
+
+        r = math.radians(self.target.rotation)
+        s = dt * speed
+        x, y = self.target.position
+        self.target.position = (x + math.sin(r) * s, y + math.cos(r) * s)
+        self.target.speed = speed
 

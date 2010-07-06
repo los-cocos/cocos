@@ -3,8 +3,6 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-import math
-
 import pyglet
 from pyglet.window import key
 from pyglet.gl import *
@@ -15,27 +13,26 @@ pyglet.resource.reindex()
 import cocos
 from cocos import tiles, actions, layer
 
-class CarSprite(cocos.sprite.Sprite):
-    motion = actions.Mover(0, 0, max_forward_speed=200,
-        max_reverse_speed=-100)
-    def update(self, dt):
+class DriveCar(actions.Driver):
+    def step(self, dt):
         # handle input and move the car
-        self.rotation += (keyboard[key.RIGHT] - keyboard[key.LEFT]) * 150 * dt
-        self.motion.acceleration = (keyboard[key.UP] - keyboard[key.DOWN]) * 400
-        if keyboard[key.SPACE]: self.motion.speed = 0
-        scroller.set_focus(self.x, self.y)
+        self.target.rotation += (keyboard[key.RIGHT] - keyboard[key.LEFT]) * 150 * dt
+        self.target.acceleration = (keyboard[key.UP] - keyboard[key.DOWN]) * 400
+        if keyboard[key.SPACE]: self.target.speed = 0
+        super(DriveCar, self).step(dt)
+        scroller.set_focus(self.target.x, self.target.y)
 
 if __name__ == "__main__":
     from cocos.director import director
     director.init(width=600, height=300, do_not_scale=True, resizable=True)
 
     car_layer = layer.ScrollableLayer()
-    car = CarSprite('car.png')
+    car = cocos.sprite.Sprite('car.png')
     car_layer.add(car)
-    car.x = 200
-    car.y = 100
-    car.schedule(car.update)
-    car.do(car.motion)
+    car.position = (200, 100)
+    car.max_forward_speed = 200
+    car.max_reverse_speed = -100
+    car.do(DriveCar())
 
     scroller = layer.ScrollingManager()
     test_layer = tiles.load('road-map.xml')['map0']
