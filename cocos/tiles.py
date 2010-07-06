@@ -937,10 +937,7 @@ class RectMapCollider(object):
     # this should take a *map* to collide with and find all collisions;
     def collide_map(self, map, last, new, dy, dx):
         tested = set()
-        for x, y in (new.bottomleft, new.bottomright, new.topleft,
-                new.topright, new.midleft, new.midright, new.midbottom,
-                new.midtop):
-            cell = map.get((int(x), int(y)))
+        for cell in map.get_in_region(*(new.bottomleft + new.topright)):
             if cell is None or cell.tile is None:
                 continue
             # don't re-test
