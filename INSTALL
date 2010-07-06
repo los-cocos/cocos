@@ -4,34 +4,44 @@ How to install cocos2d
 First,
  Install python 2.4 with ctypes, python 2.5 or python 2.6
 
-
 Then:
  Install pyglet 1.1.4 or newer ( http://www.pyglet.org )
 
-If you want to use the optional SDL audio, you will need
-	- in windows, the pygame package ( http://www.pygame.org/download.shtml )
+ Pyglet audio is included in the Pyglet binary package for windows and mac, see
+ the pyglet page if you are on linux
+
+ If you want to use the optional SDL audio, you will need
+	- in windows, the pygame package, http://www.pygame.org/download.shtml
 	- for other operating systems, ???
  
- Finally:
+Finally:
+ Get the source package at
+ http://code.google.com/p/los-cocos/downloads/list
 
-0) If you want to build and .egg, use the setup.py that comes
-with the distribution, and install that egg using easy_install
+ While you are at it you can download the most up to date docs and samples.
+
+ Cocos is a pure python package, so the usual ways will work.
+ Note that cocos documentation and examples are not included in the source
+ package, there are a separate download.
+ 
+ unpack the source package and run
+ setup.py install
 
 or:
 
-1) Copy "cocos" to your project
+ Copy "cocos" dir to your project
 
 $ cp -r cocos $PROJECT_HOME
 
 or:
 
-2) Or include cocos in your PYTHONPATH
+include cocos in your PYTHONPATH
 
 $ export PYTHONPATH=$PYTHONPATH:/path/to/cocos
 
 or:
 
-3) Or insert cocos in sys.path
+ insert cocos in sys.path
 
 import sys
 sys.path.insert(0, PATH_TO_COCOS))

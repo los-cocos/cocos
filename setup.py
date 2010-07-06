@@ -3,13 +3,13 @@
 
 $Author: eykd $
 $Rev: 1016 $
-$Date: 2008-04-05 16:22:08 -0500 (Sat, 05 Apr 2008) $
+$Date: 2010-07-07 23:00:00 -0300 (Wed, 07 July 2010) $
 """
 
 __author__ = "cocos2d team"
 __author_email__ = "lucio.torre@gmail.com"
-__version__ = "0.4.0b1"
-__date__ = "2008-06-27"
+__version__ = "0.4rc0"
+__date__ = "2010-07-07"
 
 try:
     import setuptools
@@ -45,7 +45,7 @@ setup(
     packages = find_packages(),
     package_data={'cocos': ['resources/*']},
 
-    install_requires=['pyglet>=1.1.1',],
+    install_requires=['pyglet>=1.1.4',],
     dependency_links=['http://code.google.com/p/pyglet/downloads/list',],
 
     include_package_data = True,
