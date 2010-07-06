@@ -808,7 +808,7 @@ class RectMap(RegularTesselationMap):
                 number of colums in cells
             `th` : int
                 number of rows in cells
-            `cells` : container that supports cells[i][j] 
+            `cells` : container that supports cells[i][j]
                 elements are stored in column-major order with y increasing up
             `origin` : (int, int, int)
                 cell block offset x,y,z ; default is (0,0,0)
@@ -847,7 +847,7 @@ class RectMap(RegularTesselationMap):
                 for j in range(int(y1), int(y2))]
         #print 'get_in_region result:', res
         return res
-    
+
     def get_at_pixel(self, x, y):
         ''' Return Cell at pixel px=(x,y) on the map.
 
@@ -887,7 +887,7 @@ class RectMap(RegularTesselationMap):
     # TODO: add checks to ensure good html. By example, what if cell is None?
     def _as_xml(self, root):
         """stores a XML representation of itself as child of root with type rectmap
-        
+
         """
         m = ElementTree.SubElement(root, 'rectmap', id=self.id,
             tile_size='%dx%d'%(self.tw, self.th),
@@ -934,9 +934,21 @@ class RectMapCollider(object):
     def collide_top(self, dy):
         pass
 
-    # XXX this should take a *map* to collide with and find all collisions;
-    # def collide_map(self, map, last, new, dy, dx):
-    #    do this cleverly :)
+    # this should take a *map* to collide with and find all collisions;
+    def collide_map(self, map, last, new, dy, dx):
+        tested = set()
+        for x, y in (new.bottomleft, new.bottomright, new.topleft,
+                new.topright, new.midleft, new.midright, new.midbottom,
+                new.midtop):
+            cell = map.get((int(x), int(y)))
+            if cell is None or cell.tile is None:
+                continue
+            # don't re-test
+            key = (cell.i, cell.j)
+            if key in tested:
+                continue
+            tested.add(cell)
+            self.do_collision(cell, last, new, dy, dx)
 
     # resolve them and re-collide if necessary; make sure the cells
     # colliding the sprite midpoints are done first
@@ -951,7 +963,7 @@ class RectMapCollider(object):
         If there is no collision then nothing is done.
 
         If there is a collision:
-        
+
         1. The "new" rect's position will be modified to its closest position
            to the side of the cell that the collision is on, and
         2. If the "dx" and "dy" values are passed in the methods
@@ -980,7 +992,7 @@ class RectMapCollider(object):
             dy = last.y - new.y
             new.top = cell.bottom
             if dy: self.collide_top(dy)
-    
+
 
 class Cell(object):
     '''Base class for cells from rect and hex maps.
@@ -1100,9 +1112,9 @@ class HexMap(RegularTesselationMap):
     Hexmaps store their cells in an offset array, column-major with y
     increasing up, such that a map::
 
-          /d\ /h\ 
+          /d\ /h\
         /b\_/f\_/
-        \_/c\_/g\ 
+        \_/c\_/g\
         /a\_/e\_/
         \_/ \_/
 
@@ -1224,7 +1236,7 @@ class HexMapLayer(HexMap, MapLayer):
 
     Hexmaps store their cells in an offset array, column-major with y
     increasing up, such that a map::
-    
+
               /d\ /h\
             /b\_/f\_/
             \_/c\_/g\
@@ -1375,5 +1387,3 @@ class HexCell(Cell):
         return (x + self.width // 2 + self.width // 4 + self.width // 8,
             y + self.height // 4)
     midbottomright = property(get_midbottomright)
-
-

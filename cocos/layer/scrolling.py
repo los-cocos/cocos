@@ -186,7 +186,7 @@ class ScrollingManager(Layer):
     def update_view_size(self):
         if self.viewport is not None:
             self.view_w, self.view_h = self.viewport.width, self.viewport.height
-            self.view_x, self.view_y = self.viewport.position
+            self.view_x, self.view_y = getattr(self.viewport, 'position', (0,0))
             if director.do_not_scale_window:
                 self._scissor_flat = (self.view_x, self.view_y,
                                      self.view_w, self.view_h)
