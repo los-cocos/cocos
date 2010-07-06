@@ -694,6 +694,7 @@ class CocosNode(object):
         if not action.scheduled_to_remove:
             action.scheduled_to_remove = True
             action.stop()
+            action.target = None
             self.to_remove.append( action )
 
     def pause(self):

@@ -155,6 +155,7 @@ can be mimicked by::
         if premature_termination() or worker_action.done():
             break
     worker_action.stop()
+    worker_action.target = None
 
 Component role
 --------------
@@ -276,7 +277,7 @@ class Action(object):
         When the action must cease to perform this function is called by
         external code; after this call no other method should be called.
         """
-        self.target = None
+        pass
 
     def step(self, dt):
         """
@@ -437,6 +438,7 @@ class InstantAction( IntervalAction ):
     def stop(self):
         """does nothing - dont override
         """
+        pass
 
     def __mul__(self, other):
         if not isinstance(other, int):
@@ -465,6 +467,7 @@ class Loop_Action(Action):
         self.current_action.step(dt)
         if self.current_action.done():
             self.current_action.stop()
+            self.current_action.target = None
             self.times -= 1
             if self.times == 0:
                 self._done = True
@@ -476,6 +479,7 @@ class Loop_Action(Action):
     def stop(self):
         if not self._done:
             self.current_action.stop()
+            self.current_action.target = None
 
 class Loop_Instant_Action(InstantAction):
     """Repeats one InstantAction for n times
@@ -537,6 +541,7 @@ class Loop_IntervalAction(IntervalAction):
             # finish the last action
             self.current_action.update(1)
             self.current_action.stop()
+            self.current_action.target = None
 
             for i in range(self.last+1, current):
                 # fast forward the jumped actions
@@ -545,6 +550,7 @@ class Loop_IntervalAction(IntervalAction):
                 self.current_action.start()
                 self.current_action.update(1)
                 self.current_action.stop()
+                self.current_action.target = None
 
             # set new current action
             self.current_action = copy.deepcopy(self.one)
@@ -560,6 +566,7 @@ class Loop_IntervalAction(IntervalAction):
     def stop(self):#todo: need to support early stop
         self.current_action.update(1)
         self.current_action.stop()
+        self.current_action.target = None
 
     def __reversed__(self):
         return Loop_IntervalAction( Reverse(self.one), self.times )
@@ -602,6 +609,7 @@ class Sequence_Action(Action):
 
     def _next_action(self):
         self.current_action.stop()
+        self.current_action.target = None
         if self.first:
             self.first = False
             self.current_action = self.two
@@ -615,6 +623,7 @@ class Sequence_Action(Action):
     def stop(self):
         if self.current_action:
             self.current_action.stop()
+            self.current_action.target = None
 
     def __reversed__(self):
         return sequence( Reverse(self.two), Reverse(self.one) )
@@ -673,6 +682,7 @@ class Sequence_IntervalAction(IntervalAction):
         if self.one.duration==0.0:
             self.one.update(1.0)
             self.one.stop()
+            self.one.target = None
             self.two.start()
             self.last = 1
 
@@ -684,6 +694,7 @@ class Sequence_IntervalAction(IntervalAction):
         if current!=self.last:
             self.actions[self.last].update(1.0)
             self.actions[self.last].stop()
+            self.actions[self.last].target = None
             self.last = current
             self.actions[self.last].start()
         if current==0:
@@ -701,8 +712,10 @@ class Sequence_IntervalAction(IntervalAction):
     def stop(self):
         if self.last:
             self.two.stop()
+            self.two.target = None
         else:
             self.one.stop()
+            self.one.target = None
 
     def __reversed__(self):
         return Sequence_IntervalAction( Reverse(self.two), Reverse(self.one) )
@@ -742,11 +755,13 @@ class Spawn_Action(Action):
             self.actions[0].step(dt)
             if self.actions[0].done():
                 self.actions[0].stop()
+                self.actions[0].target = None
                 self.actions = self.actions[1:]
         if self.actions:
             self.actions[-1].step(dt)
             if self.actions[-1].done():
                 self.actions[-1].stop()
+                self.actions[-1].target = None
                 self.actions = self.actions[:-1]
         self._done = len(self.actions)==0
 
@@ -754,6 +769,7 @@ class Spawn_Action(Action):
         for e in self.actions:
             print 'en el loop, name:', e.name
             e.stop()
+            e.target = None
 
     def __reversed__(self):
         return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )
@@ -788,7 +804,9 @@ class Spawn_IntervalAction(IntervalAction):
         self._done = (t >= 1.0)
         if self._done:
             self.actions[0].stop()
+            self.actions[0].target = None
             self.actions[1].stop()
+            self.actions[1].target = None
 
     def __reversed__(self):
         return Reverse( self.actions[0]  ) | Reverse( self.actions[1] )
@@ -838,6 +856,7 @@ class Repeat(Action):
         self.action.step(dt)
         if self.action.done():
             self.action.stop()
+            self.action.target = None
             self.action = copy.deepcopy(self.original)
             self.start()
 
