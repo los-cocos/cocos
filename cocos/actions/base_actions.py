@@ -276,6 +276,9 @@ class Action(object):
         """
         When the action must cease to perform this function is called by
         external code; after this call no other method should be called.
+
+        External code should set ``self.target = None`` after this method
+        call.
         """
         pass
 
