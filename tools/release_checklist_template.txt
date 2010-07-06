@@ -1,0 +1,52 @@
+Early:
+ - Be sure all examples in test dir runs
+ - If possible, unit test in utest should all pass.
+
+Finishing:
+
+- Proper updated license header, care to not target files which needs other license header
+
+- Update text files in the top trunk directory
+	
+	- CHANGELOG
+	- LICENSE
+	- INSTALL
+	- README
+	- compatibilty notes ?
+
+- Make sure version and release date are consitent between diferent files, and reasonable in relation with previous version (ascending order)
+
+	- Version apareances in current trunk:
+
+		- setup.py
+		- changelog
+		- readme
+		- cocos.__init__
+		- docs ?
+		- (also cocos2d.org site)
+
+	- Date apareances:
+
+		- setup.py
+		- changelog
+		- google download page ?
+		- (cocos2d.org site)
+		
+
+- Update setup.py
+
+	- dependencies
+	- version
+	- date
+
+- Test that the package built with setup.py works
+
+- Update cocos2d.org site
+
+	- make local backup (svn ?) just in case
+	- add a 'news' about the release
+  	- update there the docs
+  	- update the 'download' page
+	- (all this, local)
+	- after release in google, upload the changes 
+

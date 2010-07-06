@@ -1,10 +1,15 @@
 #!/usr/bin/python
 # $Id:$
 
-'''report files which not begin with the harcoded license 
+''' changes licence header 
 
 Usage:
-    proper_license.py file.py file.py dir/ dir/ ...
+    dir_license.py file.py file.py dir/ dir/ ...
+
+For cocos 0.4RC0 we need to run over cocos and tools\skeleton
+Be sure to check the hardcoded old_license, new_license, exclude are
+the one intended.
+use svn status to confirm what changed.
 '''
 
 import optparse
@@ -79,28 +84,41 @@ new_license = """# -------------------------------------------------------------
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------"""
 
-def have_proper_license(filename):
+# no proper error handling. If in trouble, svn revert , solve the problem,
+# try again.
+def update_license(filename):
     '''Open a Python source file and check if exactly begins with the
-    text provided in the global license_
-    Side effect: if the global report_no_proper is True will print the filename
+    text provided in the global old_license; if yes, replace that text with
+    the one in the global new_license.
+    Side effect: if the global report_not_changed is True will print the filename
+    if the file dont begins with the old_license text    
     '''
-    global license_
+    global old_license, new_license, report_not_changed
     f = open(filename, 'rb')
     text = f.read()
-    res = text.startswith(license_)
+    res = text.startswith(old_license)
     f.close()
-    if report_no_proper and not res:
+    if report_not_changed and not res:
         print filename
+    else:
+        text = new_license + text[len(old_license):]
+        f = open(filename, 'wb')
+        f.write(text)
+        f.close()
     return res
     
 if __name__ == '__main__':
-    #license_ = old_license
-    license_ = new_license
-    report_no_proper = True
-    
+    report_not_changed = True
     op = optparse.OptionParser()
+    #ignored, edit the hardcoded exclude
     op.add_option('--exclude', action='append', default=[])
     options, args = op.parse_args()
+
+    exclude = set([
+        'pygame',
+        'SDL',
+        'euclid'
+        ])
     
     if len(args) < 1:
         print >> sys.stderr, __doc__
@@ -110,11 +128,11 @@ if __name__ == '__main__':
         if os.path.isdir(path):
             for root, dirnames, filenames in os.walk(path):
                 for dirname in dirnames:
-                    if dirname in options.exclude:
+                    if dirname in exclude:
                         dirnames.remove(dirname)
                 for filename in filenames:
                     if (filename.endswith('.py') and 
-                        filename not in options.exclude):
-                        have_proper_license(os.path.join(root, filename))
+                        filename not in exclude):
+                        update_license(os.path.join(root, filename))
         else:
-            have_proper_license(path)
+            update_license(path)
