@@ -144,9 +144,10 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
     def get_rect(self):
         '''Get a cocos.rect.Rect for this sprite.'''
-        x = -self.image_anchor_x
-        y = -self.image_anchor_y
-        return rect.Rect(x,y,self.width, self.height)
+        x, y = self.position
+        x -= self.image_anchor_x
+        y -= self.image_anchor_y
+        return rect.Rect(x, y, self.width, self.height)
 
     def get_AABB(self):
         '''Returns a local-coordinates Axis aligned Bounding Box'''
