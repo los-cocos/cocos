@@ -97,6 +97,7 @@ def import_all():
     import draw
     import skeleton
     import rect
+    import tiles
 
 if not unittesting:
     import_all()
