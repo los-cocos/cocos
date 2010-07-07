@@ -1,7 +1,6 @@
 # ----------------------------------------------------------------------------
 # cocos2d
-# Copyright (c) 2008-2010 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
-# Lucio Torre
+# Copyright (c) 2008 Daniel Moisset, Ricardo Quesada, Rayentray Tappa, Lucio Torre
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -9,7 +8,7 @@
 #
 #   * Redistributions of source code must retain the above copyright
 #     notice, this list of conditions and the following disclaimer.
-#   * Redistributions in binary form must reproduce the above copyright
+#   * Redistributions in binary form must reproduce the above copyright 
 #     notice, this list of conditions and the following disclaimer in
 #     the documentation and/or other materials provided with the
 #     distribution.
@@ -87,6 +86,7 @@ class TransitionScene(scene.Scene):
             `src` : Scene
                 Outgoing scene. Default: current scene
         '''
+        super(TransitionScene, self).__init__()
 
         self.in_scene = dst                     #: scene that will replace the old one
         if src == None:
@@ -109,10 +109,8 @@ class TransitionScene(scene.Scene):
         if self.out_scene is self.in_scene:
             raise Exception("Incoming scene must be different from outgoing scene")
 
-        super(TransitionScene, self).__init__()
-
         self.start()
-
+        
     def start(self):
         '''Adds the incoming scene with z=1 and the outgoing scene with z=0'''
         self.add( self.in_scene, z=1 )
@@ -247,12 +245,19 @@ class MoveInBTransition(MoveInLTransition):
 class SlideInLTransition(TransitionScene):
     '''Slide in the incoming scene from the left border.
     '''
-    def init(self):
+    def __init__( self, *args, **kwargs ):
+        super(SlideInLTransition, self ).__init__( *args, **kwargs)
+
         self.width, self.height = director.get_window_size()
-        self.in_scene.position=( -self.width,0)
+        self.init()
+
         move = self.get_action()
+
         self.in_scene.do( Accelerate(move,0.5) )
         self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.finish) )
+
+    def init(self):
+        self.in_scene.position=( -self.width,0)
 
     def get_action(self):
         return MoveBy( (self.width,0), duration=self.duration)
@@ -262,11 +267,7 @@ class SlideInRTransition(SlideInLTransition):
     '''Slide in the incoming scene from the right border.
     '''
     def init(self):
-        self.width, self.height = director.get_window_size()
         self.in_scene.position=(self.width,0)
-        move = self.get_action()
-        self.in_scene.do( Accelerate(move,0.5) )
-        self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.finish) )
 
     def get_action(self):
         return MoveBy( (-self.width,0), duration=self.duration)
@@ -276,11 +277,7 @@ class SlideInTTransition(SlideInLTransition):
     '''Slide in the incoming scene from the top border.
     '''
     def init(self):
-        self.width, self.height = director.get_window_size()
         self.in_scene.position=(0,self.height)
-        move = self.get_action()
-        self.in_scene.do( Accelerate(move,0.5) )
-        self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.finish) )
 
     def get_action(self):
         return MoveBy( (0,-self.height), duration=self.duration)
@@ -290,11 +287,7 @@ class SlideInBTransition(SlideInLTransition):
     '''Slide in the incoming scene from the bottom border.
     '''
     def init(self):
-        self.width, self.height = director.get_window_size()
         self.in_scene.position=(0,-self.height)
-        move = self.get_action()
-        self.in_scene.do( Accelerate(move,0.5) )
-        self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.finish) )
 
     def get_action(self):
         return MoveBy( (0,self.height), duration=self.duration)

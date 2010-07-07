@@ -104,13 +104,6 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         self.music = None
         self.music_playing = False
 
-        self.init()
-
-    def init(self):
-        '''Perform scene initialisation at creation time.
-        '''
-        pass
-
     def on_enter(self):
         for c in self.get_children():
             c.parent = self

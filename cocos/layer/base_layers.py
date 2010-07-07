@@ -62,12 +62,6 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
         x,y = director.get_window_size()
         self.transform_anchor_x = x/2
         self.transform_anchor_y = y/2
-        self.init()
-
-    def init(self):
-        '''Perform layer initialisation at creation time.
-        '''
-        pass
 
     def push_all_handlers(self):
         if self.is_event_handler:
