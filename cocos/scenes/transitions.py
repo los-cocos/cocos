@@ -87,7 +87,6 @@ class TransitionScene(scene.Scene):
             `src` : Scene
                 Outgoing scene. Default: current scene
         '''
-        super(TransitionScene, self).__init__()
 
         self.in_scene = dst                     #: scene that will replace the old one
         if src == None:
@@ -110,8 +109,10 @@ class TransitionScene(scene.Scene):
         if self.out_scene is self.in_scene:
             raise Exception("Incoming scene must be different from outgoing scene")
 
+        super(TransitionScene, self).__init__()
+
         self.start()
-        
+
     def start(self):
         '''Adds the incoming scene with z=1 and the outgoing scene with z=0'''
         self.add( self.in_scene, z=1 )
