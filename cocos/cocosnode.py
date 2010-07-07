@@ -337,26 +337,6 @@ class CocosNode(object):
         if parent:
             return parent.get_ancestor( klass )
 
-    @property
-    def scene(self):
-        '''Get the Scene this cocosnode (eventually) belongs to.
-
-        Is None if there is no Scene ancestor.
-        '''
-        # late import to avoid circular reference
-        from cocos import scene
-        return self.get_ancestor(scene.Scene)
-
-    @property
-    def layer(self):
-        '''Get the Layer this cocosnode (eventually) belongs to.
-
-        Is None if there is no Layer ancestor.
-        '''
-        # late import to avoid circular reference
-        from cocos import layer
-        return self.get_ancestor(layer.Layer)
-
     #
     # Transform properties
     #
