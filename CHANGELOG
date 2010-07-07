@@ -12,6 +12,7 @@ v0.4.0rc0 - July 7, 2010
   - optional experimental SDL audio support
   - more minisamples in the test directories
   - we begun to do unit tests for some parts ( actions and tilemap basically)
+  - new Move/BoundedMove/WrappedMove actions for kinematic animation controls
   - Many bugfixes
 
 v0.3.0 - September 5th, 2008
