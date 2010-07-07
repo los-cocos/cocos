@@ -247,19 +247,12 @@ class MoveInBTransition(MoveInLTransition):
 class SlideInLTransition(TransitionScene):
     '''Slide in the incoming scene from the left border.
     '''
-    def __init__( self, *args, **kwargs ):
-        super(SlideInLTransition, self ).__init__( *args, **kwargs)
-
+    def init(self):
         self.width, self.height = director.get_window_size()
-        self.init()
-
+        self.in_scene.position=( -self.width,0)
         move = self.get_action()
-
         self.in_scene.do( Accelerate(move,0.5) )
         self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.finish) )
-
-    def init(self):
-        self.in_scene.position=( -self.width,0)
 
     def get_action(self):
         return MoveBy( (self.width,0), duration=self.duration)
@@ -269,7 +262,11 @@ class SlideInRTransition(SlideInLTransition):
     '''Slide in the incoming scene from the right border.
     '''
     def init(self):
+        self.width, self.height = director.get_window_size()
         self.in_scene.position=(self.width,0)
+        move = self.get_action()
+        self.in_scene.do( Accelerate(move,0.5) )
+        self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.finish) )
 
     def get_action(self):
         return MoveBy( (-self.width,0), duration=self.duration)
@@ -279,7 +276,11 @@ class SlideInTTransition(SlideInLTransition):
     '''Slide in the incoming scene from the top border.
     '''
     def init(self):
+        self.width, self.height = director.get_window_size()
         self.in_scene.position=(0,self.height)
+        move = self.get_action()
+        self.in_scene.do( Accelerate(move,0.5) )
+        self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.finish) )
 
     def get_action(self):
         return MoveBy( (0,-self.height), duration=self.duration)
@@ -289,7 +290,11 @@ class SlideInBTransition(SlideInLTransition):
     '''Slide in the incoming scene from the bottom border.
     '''
     def init(self):
+        self.width, self.height = director.get_window_size()
         self.in_scene.position=(0,-self.height)
+        move = self.get_action()
+        self.in_scene.do( Accelerate(move,0.5) )
+        self.out_scene.do( Accelerate(move,0.5) + CallFunc( self.finish) )
 
     def get_action(self):
         return MoveBy( (0,self.height), duration=self.duration)
