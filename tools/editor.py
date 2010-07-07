@@ -28,10 +28,9 @@ Hit control-q, or escape, or the window close button to quit without saving.
 import pyglet
 from pyglet.gl import *
 import cocos
-from cocos import tiles, actions
 from cocos.director import director
 
-class TileEditorLayer(tiles.ScrollableLayer):
+class TileEditorLayer(cocos.layer.ScrollableLayer):
     is_event_handler = True
 
     def __init__(self, manager, level_to_edit, selector, filename):
@@ -63,7 +62,7 @@ class TileEditorLayer(tiles.ScrollableLayer):
             if self._desired_scale > 2: return True
             self._desired_scale += .1
         if dy:
-            self.manager.do(actions.ScaleTo(self._desired_scale, .1))
+            self.manager.do(cocos.actions.ScaleTo(self._desired_scale, .1))
             return True
 
     def on_text_motion(self, motion):
@@ -149,8 +148,8 @@ class TileSetLayer(cocos.layer.Layer):
     def __init__(self, level_to_edit):
         super(TileSetLayer, self).__init__()
         self.level_to_edit = level_to_edit
-        self.map_layer = level_to_edit.find(tiles.MapLayer).next()[1]
-        self.tileset = level_to_edit.findall(tiles.TileSet).next()[1]
+        self.map_layer = level_to_edit.find(cocos.tiles.MapLayer).next()[1]
+        self.tileset = level_to_edit.findall(cocos.tiles.TileSet).next()[1]
         self.batch = pyglet.graphics.Batch()
 
         # labels
@@ -202,7 +201,7 @@ class TileSetLayer(cocos.layer.Layer):
         self.layer_labels = []
         self.layer_visible = []
         y = 4
-        for k,v in level_to_edit.find(tiles.MapLayer):
+        for k,v in level_to_edit.find(cocos.tiles.MapLayer):
             l = pyglet.text.Label(k, batch=self.layers_batch, y=y,
                     color=(255,255,255,255))
             v.map_layer = l
@@ -215,7 +214,7 @@ class TileSetLayer(cocos.layer.Layer):
         self.tilesets_batch = pyglet.graphics.Batch()
         self.layer_labels = []
         y = 4
-        for id, ts in self.level_to_edit.findall(tiles.TileSet):
+        for id, ts in self.level_to_edit.findall(cocos.tiles.TileSet):
             if id is None: id = '[no id]'
             l = pyglet.text.Label(id, batch=self.tilesets_batch,
                     color=(255,255,255,255), y=y, x=4)
@@ -329,17 +328,17 @@ class EditorScene(cocos.scene.Scene):
     def __init__(self, edit_level_xml):
         super(EditorScene, self).__init__()
 
-        self.manager = tiles.ScrollingManager()
+        self.manager = cocos.layer.ScrollingManager()
         #if bg_level_xml:
-            #level = tiles.load(bg_level_xml)[bg_level_id]
+            #level = cocos.tiles.load(bg_level_xml)[bg_level_id]
             #self.manager.append(level)
             #level.opacity = 100
             #self.add(level, z=0)
 
-        level_to_edit = tiles.load(edit_level_xml)
+        level_to_edit = cocos.tiles.load(edit_level_xml)
 
         mz = 0
-        for id, layer in level_to_edit.find(tiles.MapLayer):
+        for id, layer in level_to_edit.find(cocos.tiles.MapLayer):
             self.manager.add(layer, z=layer.origin_z)
             mz = max(layer.origin_z, mz)
         self.add(self.manager)
@@ -358,22 +357,14 @@ class EditorScene(cocos.scene.Scene):
 if __name__ == '__main__':
     import sys
 
-    import pyglet
-    import cocos
-    from cocos import tiles
-
-    from cocos.director import director
-
     try:
         edit_level_xml = sys.argv[1]
     except:
         print 'Usage: %s <level.xml>'%sys.argv[0]
         sys.exit(0)
 
-    #director.init(width=700, height=440)
-    #director.init(fullscreen=True)
     director.init(width=1024, height=768)
-    director.show_FPS = True
+    #director.show_FPS = True
 
     pyglet.gl.glClearColor(1, 1, 1, 1)
 
