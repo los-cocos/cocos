@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import cocos
 from cocos.director import director
 from cocos.sprite import Sprite
-from cocos.actions import Place, MoveBy, Repeat, DoAction
+from cocos.actions import Place, MoveBy, MoveTo, Repeat, Reverse
 
 import pyglet
 
@@ -18,9 +18,11 @@ class TestLayer(cocos.layer.Layer):
         
         x,y = director.get_window_size()
         
-        self.sprite = Sprite( 'grossini.png', (0,y/2)  )
+        self.sprite = Sprite( 'grossini.png', (x/4,y/2)  )
         self.add( self.sprite )
-        self.sprite.do( MoveBy( (x/2, 0) ) + DoAction( Repeat( MoveBy( (x/2, 0) ) ) ) )
+        shake_part = MoveBy((-10.0, 0.0), 0.1)
+        shake = shake_part + Reverse(shake_part)*2 + shake_part
+        self.sprite.do( MoveTo( (x/2, y/2) ) + Repeat( shake ) )
         
 
 if __name__ == "__main__":

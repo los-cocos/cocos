@@ -50,7 +50,6 @@ __all__ = [
             'Place',                            # placement action
             'CallFunc','CallFuncS',             # Calls a function
             'Hide','Show','ToggleVisibility',   # Visibility actions
-            'DoAction',
             ]
 
 class Place( InstantAction ):
@@ -154,20 +153,3 @@ class CallFuncS(CallFunc):
     def start(self):
         self.func( self.target, *self.args, **self.kwargs)
 
-class DoAction(InstantAction):
-    """Calls the action when executed.
-    Usefull if you want to sequence actions of infinite duration.
-
-    Example::
-
-        action = Repeat( dance )
-        sprite.do( go_home + DoAction( action ) )
-    """
-    def init(self, action):
-        self.action = action
-
-    def start(self):
-        self.target.do( self.action )
-
-    def __reversed__(self):
-        return self

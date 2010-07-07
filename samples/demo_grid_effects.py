@@ -277,7 +277,7 @@ def start():
 
     scene.do( Delay(10) +  OrbitCamera( delta_z=-360*3, duration=10*4 ) )
 
-    firelayer.do( Delay(4) + DoAction( Repeat( RotateBy(360, 10) ) ) )
+    firelayer.do( Delay(4) + Repeat( RotateBy(360, 10) ) )
 
     return scene
 
