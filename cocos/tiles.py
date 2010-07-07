@@ -886,7 +886,7 @@ class RectMap(RegularTesselationMap):
         if diagonals:
             for dx in (-1, 0, 1):
                 for dy in (-1, 0, 1):
-                    if dx and dy:
+                    if dx or dy:
                         direction = (dx, dy)
                         r[direction] = self.get_cell(cell.i + dx, cell.j + dy)
         else:
