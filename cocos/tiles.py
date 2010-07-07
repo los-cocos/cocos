@@ -873,16 +873,26 @@ class RectMap(RegularTesselationMap):
         dx, dy = direction
         return self.get_cell(cell.i + dx, cell.j + dy)
 
-    def get_neighbors(self, cell):
-        '''Get all neighbor cells for the nominated cell.
+    def get_neighbors(self, cell, diagonals=False):
+        '''Get all cells touching the sides of the nominated cell.
+
+        If "diagonals" is True then return the cells touching the corners
+        of this cell too.
 
         Return a dict with the directions (self.UP, self.DOWN, etc) as keys
         and neighbor cells as values.
         '''
         r = {}
-        for direction in (self.UP, self.RIGHT, self.LEFT, self.DOWN):
-            dx, dy = direction
-            r[direction] = self.get_cell(cell.i + dx, cell.j + dy)
+        if diagonals:
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    if dx and dy:
+                        direction = (dx, dy)
+                        r[direction] = self.get_cell(cell.i + dx, cell.j + dy)
+        else:
+            for direction in (self.UP, self.RIGHT, self.LEFT, self.DOWN):
+                dx, dy = direction
+                r[direction] = self.get_cell(cell.i + dx, cell.j + dy)
         return r
 
     # TODO: add checks to ensure good html. By example, what if cell is None?
@@ -935,8 +945,11 @@ class RectMapCollider(object):
     def collide_top(self, dy):
         pass
 
-    # this should take a *map* to collide with and find all collisions;
     def collide_map(self, map, last, new, dy, dx):
+        '''Collide a rect with the given RectMap map.
+
+        Apart from "map" the arguments are as per `do_collision`.
+        '''
         tested = set()
         for cell in map.get_in_region(*(new.bottomleft + new.topright)):
             if cell is None or cell.tile is None:
@@ -1067,7 +1080,7 @@ class RectCell(Rect, Cell):
 
     Cell attributes:
         i, j            -- index of this cell in the map
-        x, y        -- bottom-left pixel
+        x, y            -- bottom-left pixel
         width, height   -- dimensions
         properties      -- arbitrary properties
         cell            -- cell from the MapLayer's cells
