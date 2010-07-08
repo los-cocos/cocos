@@ -1,7 +1,7 @@
 cocos2d: A framework for building 2D games
 http://cocos2d.org
 
-version: 0.4.0b1
+version: 0.4rc0
 
 
 Requirements
@@ -9,7 +9,7 @@ Requirements
 
  Software:
 
- * python 2.4 with ctypes or python 2.5
+ * python 2.4 with ctypes or python 2.5 or python 2.6
  * pyglet 1.1.4 or newer (http://www.pyglet.org)
  * Linux, Windows or Mac OS/X
 
@@ -28,7 +28,7 @@ Installing
 Learning cocos2d
 ----------------
 
- * go the tuturials / documentation page:
+ * go the online tuturials / documentation page:
    http://cocos2d.org/doc.html
 
    you will find:
@@ -36,14 +36,34 @@ Learning cocos2d
     . the API Reference
     . some tutorial videos
 
- * run ( and read ) the samples:
-   $ cd samples
-   $ python RUN_ALL_THE_SAMPLES.py
+   The tutorials are also downloadable at:
+    http://code.google.com/p/los-cocos/downloads/list
 
- * run ( and read ) the test:
+ * miniprograms that demostrates the available objects and posible actions,
+   great starting point while learning and experimenting with cocos: you find
+   a sample with the object that interest you exercising the features that you
+   need, read the code, run, modify and re-run to experiment.
+   
+   Also, handy to know what is available in cocos: run all the tests and by
+   lookng at the code you know what to look at in the docs.
+
+   You can find it in the test directory in the source distribution.
+   After unpacking, to run the tests you can do
+
    $ cd test
    $ python test_*.py
-     ( and read the tests source code )
+
+ * more complex sample programs
+
+   You can find it in the samples directory in the source distribution, and the
+   most complex in subdrectories there, including a presentation done with
+   Cocos himself.
+   
+   After unpacking, to run the tests you can do
+    
+   $ cd samples
+   $ python sample_name.py
+
 
 
 Do you have any doubt ?
@@ -51,4 +71,5 @@ http://groups.google.com/group/cocos-discuss
 
 
 Did you find any bug ?
+http://groups.google.com/group/cocos-discuss
 http://code.google.com/p/los-cocos/issues/list

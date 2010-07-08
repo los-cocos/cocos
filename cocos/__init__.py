@@ -55,7 +55,7 @@ http://cocos2d.org
 
 __docformat__ = 'restructuredtext'
 
-__version__ = "0.4.0b1"
+__version__ = "0.4rc0"
 __author__ = "cocos2d team"
 version = __version__
 
