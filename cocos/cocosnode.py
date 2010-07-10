@@ -293,7 +293,7 @@ class CocosNode(object):
     def resume_scheduler(self):
         """
         Time will continue/start passing for this node and callbacks
-        will be called.
+        will be called, worker actions will be called
         """
         for c, i, a, k in self.scheduled_interval_calls:
             pyglet.clock.schedule_interval(c, i, *a, **k)
@@ -302,8 +302,8 @@ class CocosNode(object):
 
     def pause_scheduler(self):
         """
-        Time will stop passing for this node and callbacks will
-        not be called
+        Time will stop passing for this node: scheduled callbacks will
+        not be called, worker actions will not be called
         """
         for f in set(
                 [ x[0] for x in self.scheduled_interval_calls ] +
@@ -330,6 +330,8 @@ class CocosNode(object):
         """
         Walks the nodes tree upwards until it finds a node of the class `klass`
         or returns None
+
+        :rtype: `CocosNode` or None
         """
         if isinstance(self, klass):
             return self
@@ -394,12 +396,16 @@ class CocosNode(object):
         """Adds a child to the container
 
         :Parameters:
-            `child` : object
+            `child` : CocosNode
                 object to be added
             `z` : float
                 the z index of self
             `name` : str
                 Name of the child
+
+        :rtype: `CocosNode` instance
+        :return: self
+
         """
         # child must be a subclass of supported_classes
         #if not isinstance( child, self.supported_classes ):
@@ -427,6 +433,10 @@ class CocosNode(object):
     def remove( self, obj ):
         """Removes a child from the container given its name or object
 
+        If the node was added with name, it is better to remove by name, else
+        the name will be unavailable for further adds ( and will raise Exception
+        if add with this same name is attempted)
+        
         :Parameters:
             `obj` : string or object
                 name of the reference to be removed
@@ -452,6 +462,12 @@ class CocosNode(object):
             child.on_exit()
 
     def get_children(self):
+        """Return a list with the node's childs
+
+        :rtype: list of CocosNode
+        :return: childs of this node
+
+        """
         return [ c for (z, c) in self.children ]
 
     def __contains__(self, child):
@@ -459,10 +475,17 @@ class CocosNode(object):
 
     def get( self, name ):
         """Gets a child from the container given its name
-
+        
         :Parameters:
             `name` : string
                 name of the reference to be get
+
+        :rtype: CocosNode
+        :return: the child named 'name'. Will raise Exception if not present
+
+        Warning: if a node is added with name, then removed not by name, the name
+        cannot be recycled: attempting to add other node with this name will
+        produce an Exception.
         """
         if name in self.children_names:
             return self.children_names[ name ]
@@ -472,6 +495,14 @@ class CocosNode(object):
     def on_enter( self ):
         """
         Called every time just before the node enters the stage.
+
+        Schedulled calls and worker actions continues to perform
+        
+        Good point to do .push_handlers if you have custom ones
+        Rule: a handler pushed there is near certain to require a .pop_handlers
+        in the .on_exit method (else it will be called even after removed from
+        the active scene, or, if going on stage again will be called multiple
+        times for each event ocurrence)
         """
         self.is_running = True
 
@@ -488,6 +519,15 @@ class CocosNode(object):
     def on_exit( self ):
         """
         Called every time just before the node leaves the stage
+
+        Schedulled calls and worker actions are suspended, that is, will not
+        be called until an on_enter event happens.
+
+        Most of the time you will want to .pop_handlers for all explicit
+        .push_handlers found n on_enter
+
+        Consider to release here openGL resources created by this node, like
+        compiled vertex lists
         """
         self.is_running = False
 
@@ -503,6 +543,7 @@ class CocosNode(object):
     def transform( self ):
         """
         Apply ModelView transformations
+
         you will most likely want to wrap calls to this function with
         glPushMatrix/glPopMatrix
         """
@@ -632,7 +673,8 @@ class CocosNode(object):
 
     def do( self, action, target=None ):
         '''Executes an *action*.
-        When the action finished, it will be removed from the node's actions container.
+        When the action finished, it will be removed from the node's actions
+        container.
 
         :Parameters:
             `action` : an `Action` instance
@@ -747,7 +789,10 @@ class CocosNode(object):
 
     # world to local / local to world methods
     def get_local_transform( self ):
-        '''returns an euclid.Matrix3 with the local transformation matrix'''
+        '''returns an euclid.Matrix3 with the local transformation matrix
+
+        :rtype: euclid.Matrix3
+        '''
         if self.is_transform_dirty:
 
             matrix = euclid.Matrix3().identity()
@@ -766,7 +811,10 @@ class CocosNode(object):
         return self.transform_matrix
 
     def get_world_transform( self ):
-        '''returns an euclid.Matrix3 with the world transformation matrix'''
+        '''returns an euclid.Matrix3 with the world transformation matrix
+
+        :rtype: euclid.Matrix3
+        '''
         matrix = self.get_local_transform()
 
         p = self.parent
@@ -777,13 +825,19 @@ class CocosNode(object):
         return matrix
 
     def point_to_world( self, p ): 
-        '''returns an euclid.Vector2 converted to world space'''
+        '''returns an euclid.Vector2 converted to world space
+
+        :rtype: euclid.Vector2
+        '''
         v = euclid.Point2( p[0], p[1] )
         matrix = self.get_world_transform()
         return matrix *  v
 
     def get_local_inverse( self ):
-        '''returns an euclid.Matrix3 with the local inverse transformation matrix'''
+        '''returns an euclid.Matrix3 with the local inverse transformation matrix
+
+        :rtype: euclid.Matrix3
+        '''
         if self.is_inverse_transform_dirty:
 
             matrix = self.get_local_transform().inverse()
@@ -793,7 +847,10 @@ class CocosNode(object):
         return self.inverse_transform_matrix
 
     def get_world_inverse( self ):
-        '''returns an euclid.Matrix3 with the world inverse transformation matrix'''
+        '''returns an euclid.Matrix3 with the world inverse transformation matrix
+
+        :rtype: euclid.Matrix3
+        '''
         matrix = self.get_local_inverse()
 
         p = self.parent
@@ -804,7 +861,10 @@ class CocosNode(object):
         return matrix
 
     def point_to_local( self, p ): 
-        '''returns an euclid.Vector2 converted to local space'''
+        '''returns an euclid.Vector2 converted to local space
+
+        :rtype: euclid.Vector2
+        '''
         v = euclid.Point2( p[0], p[1] )
         matrix = self.get_world_inverse()
         return matrix *  v
