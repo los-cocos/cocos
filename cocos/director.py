@@ -33,7 +33,7 @@
 # ----------------------------------------------------------------------------
 '''Singleton that handles the logic behind the Scenes
 
-Director
+director
 ========
 
 Initializing
@@ -154,6 +154,7 @@ The director also has some useful attributes:
 
 __docformat__ = 'restructuredtext'
 
+import sys
 from os import getenv
 import pyglet
 from pyglet import window, event
@@ -163,7 +164,10 @@ from pyglet.gl import *
 
 import cocos, cocos.audio
 
-__all__ = ['director', 'DefaultHandler']
+if hasattr(sys, 'is_epydoc') and sys.is_epydoc:
+    __all__ = ['director', 'Director', 'DefaultHandler']
+else:
+    __all__ = ['director', 'DefaultHandler']
 
 class DefaultHandler( object ):
     def __init__(self):
@@ -309,7 +313,12 @@ class ScreenReaderClock(pyglet.clock.Clock):
 
 class Director(event.EventDispatcher):
     """Class that creates and handle the main Window and manages how
-       and when to execute the Scenes"""
+       and when to execute the Scenes
+       
+       You should not directly instantiate the class, instead you do
+            from cocos.director import director 
+       to access the only one Director instance.
+       """
     #: a dict with locals for the interactive python interpreter (fill with what you need)
     interpreter_locals = {}
 
