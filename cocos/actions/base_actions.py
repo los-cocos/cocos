@@ -40,7 +40,7 @@ Actions purpose is to modify along the time some trait of an object.
 The object that the action will modify is the action's target.
 Usually the target will be an instance of some CocosNode subclass.
 
-Example:
+Example::
 
     MoveTo(position, duration)
 
@@ -51,7 +51,8 @@ after duration seconds have elapsed.
 Cocos also provide some powerful operators to combine or modify actions, the
 more important s being:
 
-**sequence operator:** action_1 + action_2 -> action_result
+**sequence operator:**   action_1 + action_2 -> action_result
+
 where action_result performs by first doing all that action_1 would do and
 then perform all that action_2 would do
 
@@ -63,7 +64,8 @@ When activated, move_2 will move the target first to (100, 100), it will
 arrive there 10 seconds after departure; then it will move to (200, 200),
 and will arrive there 10 seconds after having arrived to (100, 100)
 
-**spawn operator:** action_1 | action_2 -> action_result
+**spawn operator:**  action_1 | action_2 -> action_result
+
 where action_result performs by doing what would do action_1 in parallel with
 what would perform action_2
 
@@ -75,7 +77,8 @@ When activated, move_rotate will move the target from the position at the
 time of activation to (100, 100); also in the first 5 seconds target will
 be rotated 360 degrees
 
-**loop operator:** action_1 * n -> action_result
+**loop operator:**   action_1 * n -> action_result
+
 Where n non negative integer, and action result would repeat n times in a
 row the same that action_1 would perform.
 
@@ -90,13 +93,15 @@ turn.
 Action instance roles
 +++++++++++++++++++++
 
-An Action instance can play one of the following roles:
+Action subclass: a detailed cualitative description for a change
+
+An Action instance can play one of the following roles
 
 Template Role
 -------------
 
 The instance knows all the details to perform,
-except a target has not be set.
+except a target has not been set.
 In this role only __init__ and init should be called.
 It has no access to the concrete action target.
 The most usual way to obtain an action in the template mode is
@@ -107,13 +112,14 @@ Example::
     position = (100, 100); duration = 10
     move = MoveTo(position, duration)
     move is playing here the template role.
+    
 
 Worker role
 -----------
 
 Carry on with the changes desired when the action is initiated.
 You obtain an action in the worker role by calling the method
-do in a cocosnode instance, like
+do in a cocosnode instance, like::
 
     worker_action = cocosnode.do(template_action, target=...)
 
@@ -123,13 +129,13 @@ The worker action begins to perform at the do call, and will carry on
 with the desired modifications to target in subsequent frames.
 If you want the capabilty to stop the changes midway, then you must
 retain the worker_action returned by the do and then, when you want stop
-the changes, call
+the changes, call::
 
     cocosnode.remove_action(worker_action)
     ( the cocosnode must be the same as in the do call )
 
 Also, if your code need access to the action that performs the changes,
-have in mind that you want the worker_action.
+have in mind that you want the worker_action (but this is discouraged, 
 
 Example::
 
@@ -151,7 +157,7 @@ can be mimicked by::
     worker_action = deepcopy(template_action)
     worker_action.target = some_obj
     worker_action.start()
-    for dt in frame.next()::
+    for dt in frame.next():
         worker_action.step(dt)
         if premature_termination() or worker_action.done():
             break
@@ -167,7 +173,161 @@ When the composite action is not instance of IntervalAction, the
 perceived life can be mimicked as in the worker role.
 When the composite action is instance of IntervalAction, special rules apply.
 For examples look at code used in the implementation of any operator, like
-Sequence_Action
+Sequence_Action or Sequence_IntervalAction.
+
+Restrictions and Capabilities for the current design and implementation
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Worker Independence
+-------------------
+
+Multiple worker actions can be obtained from a single template action, and
+they wont interfere between them when applied to different targets.
+
+Example::
+
+     position = (100, 0); duration = 10
+     move = MoveBy(position, duration)
+
+     blue_bird = Sprite("blue_bird.png")
+     blue_bird.position = (0, 100)
+     blue_move = blue_bird.do(move)
+
+     red_bird = Sprite("red_bird.png")
+     red_bird.position = (0, 200)
+     red_move = blue_bird.do(move)
+
+    Here we placed two birds at the left screen border, separated vertically
+    by 100.
+    move is the template_action: full details on changes, still no target
+    blue_move, red_move are worker_action 's: obtained by a node.do, have all
+    the details plus the target; they will perform the changes along the time.
+    What we see is both birds moving smooth to right by 100, taking 10 seconds
+    to arrive at final position.
+    Note that even if both worker actions derive for the same template, they
+    don't interfere one with the other. 
+
+
+A worker action instance should not be used as a template
+---------------------------------------------------------
+
+You will not get tracebacks, but the second worker action most surelly will
+have a corrupt workspace, that will produce unexpected behavior.
+
+Posible fights between worker actions over a target member
+----------------------------------------------------------
+
+If two actions that are active at the same time try to change the same
+target's member(s), the resulting change is computationally well defined, but
+can be somewhat unexpected by the programmer.
+
+Example::
+
+    guy = Sprite("grossini.png")
+    guy.position = (100, 100)
+    worker1 = guy.do(MoveTo((400, 100), 3))
+    worker2 = guy.do(MoveBy((0, 300), 3))
+    layer.add(guy)
+
+Here the worker1 action will try to move to (400, 100), while the worker2 action
+will try to move 300 in the up direction.
+Both are changing guy.position in each frame.
+
+What we see on screen, in the current cocos implementation, is the guy moving up,
+like if only worker2 were active.
+And, by physics, the programmer expectation probably guessed more like a
+combination of both movements.
+
+Note that the unexpected comes from two actions trying to control the same target
+member. If the actions were changing diferent members, like position and
+rotation, then no unexpected can happen.
+
+The fighting can result in a behavior that is a combination of both workers, not one
+a 'winning' one. It entirely depends on the implementation from each action.
+It is possible to write actions than in a fight will show additive behavoir,
+by example::
+
+    import cocos.euclid as eu
+    class MoveByAdditive(ac.Action):
+        def init( self, delta_pos, duration ):
+            try:
+                self.delta_pos = eu.Vector2(*delta_pos)/float(duration)
+            except ZeroDivisionError:
+                duration = 0.0
+                self.delta_pos = eu.Vector2(*delta_pos)
+            self.duration = duration
+
+        def start(self):
+            if self.duration==0.0:
+                self.target.position += self.delta_pos
+                self._done = True
+
+        def step(self, dt):
+            old_elapsed = self._elapsed
+            self._elapsed += dt
+            if self._elapsed > self.duration:
+                dt = self.duration - old_elapsed
+                self._done = True
+            self.target.position += dt*self.delta_pos
+
+    guy = Sprite("grossini.png")
+    guy.position = (100, 100)
+    worker1 = guy.do(MoveByAdditive((300, 0), 3))
+    worker2 = guy.do(MoveByAdditive((0, 300), 3))
+    layer.add(guy)
+
+Here the guy will mode in diagonal, ending 300 right and 300 up, the two
+actions have combined. 
+
+
+Action's instances in the template role must be (really) deepcopyiable
+----------------------------------------------------------------------
+
+Beginers note: if you pass in init only floats, ints, strings, dicts or tuples
+of the former you can skip this section and revisit later.
+
+If the action template is not deepcopyiable, you will get a deepcopy exception,
+complaining it can't copy something
+
+If you cheat deepcopy by overriding __deepcopy__ in your class like::
+
+    def __deepcopy__(self):
+        return self
+
+you will not get a traceback, but the Worker Independence will broke, the Loop 
+and Repeat operators will broke, and maybe some more.
+
+The section name states a precise requeriment, but it is a bit concise. Let see
+some common situations where you can be in trouble and how to manage them.
+
+  - you try to pass a CocosNode instance in init, and init stores that in an
+    action member
+
+  - you try to pass a callback f = some_cocosnode.a_method, with the idea that
+    it shoud be called when some condition is meet, and init stores it in an
+    action member
+
+  - You want the action access some big decision table, static in the sense it
+    will not change over program execution. Even if is deepcopyable, there's
+    no need to deepcopy.
+
+Workarounds:
+
+    - store the data that you do not want to deepcopy in some member in the
+      cocosnode
+
+    - use an init2 fuction to pass the params you want to not deepcopy::
+    
+        worker = node.do(template)
+        worker.init2(another_cocosnode)
+
+      (see test_action_non_interval.py for an example)
+ 
+
+Future:
+Next cocos version probably will provide an easier mechanism to designate some
+parameters as references.
+
 
 Overview main subclasses
 ++++++++++++++++++++++++
@@ -327,9 +487,9 @@ class IntervalAction( Action ):
     """
     IntervalAction()
 
-    Interval Actions are the ones that have fixed duration, known at the
-    instantiation time, and, conceptually, the expected duration must be
-    positive.
+    Interval Actions are the ones that have fixed duration, known when the
+    worker instance is created, and, conceptually, the expected duration must
+    be positive.
     Degeneratated cases, when a particular instance gets a zero duration, are
     allowed for convenience.
 
@@ -342,8 +502,8 @@ class IntervalAction( Action ):
     Note that when a premature termination happens stop will be called but
     update(1.0) is not called.
 
-    Examples: `MoveTo` , `MoveBy` , `RotateBy` are Interval Actions, while
-    `Place`, `Show` and `CallFunc` aren't.
+    Examples: `MoveTo` , `MoveBy` , `RotateBy` are strictly Interval Actions,
+    while `Place`, `Show` and `CallFunc` aren't.
 
     While
     RotateBy(angle, duration) will usually receive a positive duration, it

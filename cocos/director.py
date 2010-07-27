@@ -315,8 +315,10 @@ class Director(event.EventDispatcher):
     """Class that creates and handle the main Window and manages how
        and when to execute the Scenes
        
-       You should not directly instantiate the class, instead you do
+       You should not directly instantiate the class, instead you do::
+       
             from cocos.director import director 
+
        to access the only one Director instance.
        """
     #: a dict with locals for the interactive python interpreter (fill with what you need)

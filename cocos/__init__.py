@@ -31,11 +31,11 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''cocos2d
-cocos2d is a framework for building 2D games, demos, and other graphical/interactive applications.
+'''a framework for building 2D games, demos, and other graphical/interactive applications.
 
-Main Features:
---------------
+Main Features
+-------------
+
     * Flow control: Manage the flow control between different scenes in an easy way
     * Sprites: Fast and easy sprites
     * Actions: Just tell sprites what you want them to do. Composable actions like move, rotate, scale and much more

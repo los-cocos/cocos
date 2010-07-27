@@ -524,7 +524,7 @@ class CocosNode(object):
         be called until an on_enter event happens.
 
         Most of the time you will want to .pop_handlers for all explicit
-        .push_handlers found n on_enter
+        .push_handlers found in on_enter
 
         Consider to release here openGL resources created by this node, like
         compiled vertex lists
