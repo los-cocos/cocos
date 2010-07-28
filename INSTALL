@@ -2,7 +2,10 @@ How to install cocos2d
 ----------------------
 
 First,
- Install python 2.4 with ctypes, python 2.5 or python 2.6
+ Install python 2.6, python 2.5 or python 2.4
+ For python 2.4 you will need two extra packages:
+   - ctypes, http://pypi.python.org/pypi/ctypes
+   - elementtree, http://effbot.org/downloads/#elementtree
 
 Then:
  Install pyglet 1.1.4 or newer ( http://www.pyglet.org )

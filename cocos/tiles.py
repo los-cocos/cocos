@@ -243,7 +243,10 @@ __version__ = '$Id: resource.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 import os
 import math
 import weakref
-from xml.etree import ElementTree
+try:
+    from xml.etree import ElementTree
+except ImportError:
+    import elementtree.ElementTree as ElementTree
 
 import pyglet
 from pyglet.gl import *
