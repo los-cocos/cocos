@@ -2,7 +2,7 @@ Scenes & Transitions
 ====================
 
 .. contents::
-	:local:
+    :local:
 
 Using Director's API
 --------------------
@@ -35,7 +35,7 @@ When a new scene is pushed or replaced, these actions will be executed::
     incoming_scene.on_enter()
 
     # enable handlers
-    incoming_scnee.enable_handlers( True )
+    incoming_scene.enable_handlers( True )
 
 
 When an `Scene` is *entered*, it will propagate the *on_enter* message

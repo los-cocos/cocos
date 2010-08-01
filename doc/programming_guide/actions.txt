@@ -2,8 +2,8 @@ Actions, Transformations and Effects
 ====================================
 
 .. contents::
-	:local:
-	
+    :local:
+    
 Actions
 -------
 
@@ -17,18 +17,18 @@ of time, hence, it is an `IntervalAction`.
 
 Example::
 
-	# Move a sprite 50 pixels to the right, and 100 pixel to the top in 2 seconds.
-	sprite.do( MoveBy( (50,100), duration=2 ) )
-	
+    # Move a sprite 50 pixels to the right, and 100 pixel to the top in 2 seconds.
+    sprite.do( MoveBy( (50,100), duration=2 ) )
+    
 The `IntervalAction` actions have some interesting properties:
 
-	- The can be accelerated using the time-altered actions
-		- `Accelerate`
-		- `AccelDeccel`
-		- `Speed`
-	- All the relative actions (the ones ending in 'By') and some
-          absolute actions (the ones ending in 'To')  have a `Reverse` action
-	  that executes the action in the opposite direction.
+    - The can be accelerated using the time-altered actions
+        - `Accelerate`
+        - `AccelDeccel`
+        - `Speed`
+    - All the relative actions (the ones ending in 'By') and some
+      absolute actions (the ones ending in 'To')  have a `Reverse` action
+      that executes the action in the opposite direction.
 
 
 
@@ -38,36 +38,41 @@ Basic actions
 Basic actions are the ones that modifies basic attributes like:
 
  - position
-	- `MoveBy`
-	- `MoveTo`
-	- `JumpBy`
-	- `JumpTo`
-	- `Bezier`
-	- `Place`
+ 
+    - `MoveBy`
+    - `MoveTo`
+    - `JumpBy`
+    - `JumpTo`
+    - `Bezier`
+    - `Place`
 
  - scale
- 	- `ScaleBy`
- 	- `ScaleTo`
+ 
+    - `ScaleBy`
+    - `ScaleTo`
 
  - rotation
- 	- `RotateBy`
- 	- `RotateTo`
+ 
+    - `RotateBy`
+    - `RotateTo`
 
  - visible
- 	- `Show`
- 	- `Hide`
- 	- `Blink`
- 	- `ToggleVisibility`
+ 
+    - `Show`
+    - `Hide`
+    - `Blink`
+    - `ToggleVisibility`
 
  - opacity
- 	- `FadeIn`
- 	- `FadeOut`
- 	- `FadeTo`
- 	
+ 
+    - `FadeIn`
+    - `FadeOut`
+    - `FadeTo`
+    
 
 Example::
 
-	XXX: finish this part
+    XXX: finish this part
   
 
 Effects
@@ -99,7 +104,6 @@ grid, but the effect's speed will decrease.
 A grid of size (16,12) will run fast in most computers but it won't look
 pretty well. And a grid of (32,24) will look pretty well, but in won't
 run fast in some old computers.
-
 
 How they work
 ^^^^^^^^^^^^^
@@ -161,14 +165,14 @@ Examples
 Some examples::
 
     # effect applied on a Scene
-	scene.do( Twirl( grid=(16,12), duration=4) )
+    scene.do( Twirl( grid=(16,12), duration=4) )
 
     # effect applied on a Layer
-	layer1.do( Lens3D( grid=(32,24), duration=5 )
+    layer1.do( Lens3D( grid=(32,24), duration=5 )
 
     # effect applied on a different Layer
-	layer2.do( Waves( grid=(16,12), duration=4) + Liquid( grid=(16,12), duration=5 ) )
-	
+    layer2.do( Waves( grid=(16,12), duration=4) + Liquid( grid=(16,12), duration=5 ) )
+    
 
 Composition
 -----------
@@ -179,27 +183,27 @@ Composition
  
 Example::
 
-	XXX: finish this part
+    XXX: finish this part
 
-	
+    
 Modifiers
 ---------
 
  - Time modifiers
-	- `Accelerate`
-	- `AccelDeccel`
-	- `Speed`
-	- `Reverse`
+    - `Accelerate`
+    - `AccelDeccel`
+    - `Speed`
+    - `Reverse`
 
  - Amplitude modifiers
-	- `AccelAmplitude`
-	- `DeccelAmplitude`
-	- `AccelDeccelAmplitude`
+    - `AccelAmplitude`
+    - `DeccelAmplitude`
+    - `AccelDeccelAmplitude`
    
 Example::
-	
-	XXX: finish this part
-	
+    
+    XXX: finish this part
+    
 
 Special Actions
 ---------------
@@ -215,8 +219,8 @@ Special Actions
  
  Example::
  
- 	XXX: finish this part
-	
+    XXX: finish this part
+    
 Creating your own actions
 -------------------------
 
@@ -226,12 +230,12 @@ because actions are very powerful and can be combined with another actions to cr
 For example, there is the Blink action. It is implemented by subclassing `IntervalAction`, 
 but you could actually do something like::
 
-	def Blink(times, duration): 
-		return (
-			Hide() + Delay(duration/(times*2)) + 
-			Show() + Delay(duration/(times*2)) 
-		) * times
-	
+    def Blink(times, duration): 
+        return (
+            Hide() + Delay(duration/(times*2)) + 
+            Show() + Delay(duration/(times*2)) 
+        ) * times
+    
 Basic Internals
 ^^^^^^^^^^^^^^^
 

@@ -42,7 +42,7 @@ to set the font, position and alignment of the label::
 
 The label position will be the center of the screen::
 
-	label.position = 320,240
+    label.position = 320,240
 
 Since `Label` is a subclass of `CocosNode` it can be added
 as a child. All `CocosNode` objects know how to render itself, perform actions
@@ -92,15 +92,15 @@ Like in our previous example, we import the cocos package::
 If you're going to use several actions, you can import all
 the available actions into the namespace with this import::
 
-	from cocos.actions import *
+    from cocos.actions import *
 
 We subclass `ColorLayer` to have a background color, and then
 we call super() with a blueish color::
 
-	class HelloWorld(cocos.layer.ColorLayer):
-	    def __init__(self):
-	        # blueish color
-	        super( HelloWorld, self ).__init__( 64,64,224,255)
+    class HelloWorld(cocos.layer.ColorLayer):
+        def __init__(self):
+            # blueish color
+            super( HelloWorld, self ).__init__( 64,64,224,255)
 
 As in the previous example, we create and add a label::
 
@@ -143,11 +143,11 @@ We tell the label to:
 
 Notice that the '+' operator is the `Sequence` action::
 
-	label.do( Repeat( scale + Reverse( scale) ) )
+    label.do( Repeat( scale + Reverse( scale) ) )
 
 And we tell the sprite to do the same actions but starting with the 'scale back' action::
 
-	sprite.do( Repeat( Reverse(scale) + scale ) )
+    sprite.do( Repeat( Reverse(scale) + scale ) )
 
 Then we initialize the director, like in the previous example::
 
@@ -172,8 +172,7 @@ Handling Events
 ---------------
 
 All our previous examples are non-interactive. They display something, but do not respond to user input (except for quitting when you press **ESC** or close the window).
-
-All layers are event handlers from the pyglet event framework. When a layer is being shown, its event handlers will be active. You can read more about pyglet events at `The pyglet Event Framework`_
+Cocos obtains inputs by listening to director.window events, and conveniently cocos.layer can automatically listen to director.window events: in your layer subclass set the is_event_handler class member to True and cocos will take care.
 
 In this section we will build step by step the demo provided in `samples/handling_events.py`; this is a very simple cocos app which shows which keys are pressed, and reacts to mouse motion and clicks. Run the app before reading on te get a clearer idea of what we are trying to build.
 
@@ -185,9 +184,8 @@ We start defining the KeyDisplay layer class. As always, we put some initializat
 
         class KeyDisplay(cocos.layer.Layer):
 
-            # If you want that your layer receives events
-            # you must set this variable to 'True',
-            # otherwise it won't receive any event.
+            # If you want that your layer receives director.window events
+            # you must set this variable to 'True'
             is_event_handler = True
 
             def __init__(self):
@@ -244,7 +242,7 @@ Handling mouse input is similar. You have three events of interest: on_mouse_pre
 
         class MouseDisplay(cocos.layer.Layer):
 
-            is_event_handler = True     #: enable pyglet's events
+            is_event_handler = True     #: enable director.window events
 
             def __init__(self):
                 super( MouseDisplay, self ).__init__()
@@ -327,6 +325,6 @@ http://www.cocos2d.org/ for more examples and tutorials as they are written.
 
 .. _The OpenGL Programming Guide: http://opengl.org/documentation/books/#the_opengl_programming_guide_the_official_guide_to_learning_opengl_version
 .. _The OpenGL Shading Language: http://opengl.org/documentation/books/#the_opengl_shading_language_2nd_edition
-.. _pyglet Programming Guide: http://pyglet.org/doc/1.1/programming_guide/
-.. _pyglet API Reference: http://pyglet.org/doc/1.1/api/
-.. _The pyglet Event Framework: http://www.pyglet.org/doc/1.1/programming_guide/the_pyglet_event_framework.html
+.. _pyglet Programming Guide: http://pyglet.org/doc/programming_guide/
+.. _pyglet API Reference: http://pyglet.org/doc/api/
+.. _The pyglet Event Framework: http://www.pyglet.org/doc/programming_guide/the_pyglet_event_framework.html

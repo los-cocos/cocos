@@ -52,8 +52,10 @@ from cocos import scene
 __all__ = [ 'Layer', 'MultiplexLayer']
 
 class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
-    """Class that handles events and other important game's behaviors"""
+    """a CocosNode that automatically handles listening to director.window events"""
 
+    #: if True the layer will listen to director.window events
+    #: Default: False
     is_event_handler = False #: if true, the event handlers of this layer will be registered. defaults to false.
 
     def __init__( self ):
@@ -64,6 +66,9 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
         self.transform_anchor_y = y/2
 
     def push_all_handlers(self):
+        """ registers itself to receive director.window events and propagates
+            the call to childs that are layers.
+            class member is_event_handler must be True for this to work"""
         if self.is_event_handler:
             director.window.push_handlers( self )
         for child in self.get_children():
@@ -71,6 +76,9 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
                 child.push_all_handlers()
 
     def remove_all_handlers(self):
+        """ de-registers itself to receive director.window events and propagates
+            the call to childs that are layers.
+            class member is_event_handler must be True for this to work"""
         if self.is_event_handler:
             director.window.remove_handlers( self )
         for child in self.get_children():

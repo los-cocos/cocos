@@ -2,7 +2,7 @@ Skeletal Animations
 ===================
 
 .. contents::
-	:local:
+    :local:
         
 The skeleton modules provides a way to have 2d skeletal animations in
 your cocos applications. The process of may be a bit complicated to setup, but

@@ -1,14 +1,23 @@
 Installation
 ============
+cocos is a pure python package
 
- 1. Install python 2.4 with ctypes or python 2.5 or pthon 2.6
+ 1.  Install python 2.6, python 2.5 or python 2.4
+     For python 2.4 you will need two extra packages:
+         
+       - `ctypes`
+       - `elementtree`
 
  2. Install pyglet 1.1.4 or newer from `pyglet's homepage`_ . **If you want to use pyglet 1.0, use cocos2d v0.1.x instead.**
 
  3. Finally, choose one of the followings\:
 
- * If you want to build and .egg, use the setup.py that comes with the distribution, and install that egg using easy_install.
-
+ * If you want to install from a source package, download the last version from
+   http://code.google.com/p/los-cocos/ or PyPI, unpack to some temporal dir and
+   run::
+       
+       setup.py install
+   
  * Copy "cocos" to your project::
 
     $ cp -r cocos $PROJECT_HOME
@@ -25,3 +34,5 @@ Installation
 
 
 .. _pyglet's homepage: http://www.pyglet.org
+.. _ctypes: http://pypi.python.org/pypi/ctypes
+.. _elementtree: http://effbot.org/downloads/#elementtree

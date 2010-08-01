@@ -97,3 +97,143 @@ as children. When a parent is transformed, all its children are transformed as w
 Since sprites are subclass of `CocosNode`, they can be transformed manually
 or by using actions.
 See `Actions, Transformations and Effects` for more detail about actions.
+
+
+Events
+------
+
+cocos2d uses `The pyglet Event Framework`_ to handle events.
+
+The pyglet event framework in a pinch
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ - you have **emitters** (instances of pyglet.event.EventDispatcher)
+
+ - each emitter registers as much events as desired, each one identified by a
+   string (the event name)
+
+ - to act over events, you register **listeners** with the emitter.
+   Esentially, you provide the emitter with a (<event name>, callable) and the
+   emitter will call the callable when <event name> happens.
+   Any number of listeners can register for a (emitter, <event name>) pair.
+   A listener can register to any number of emitters.
+
+ - example registration **emitter** events::
+
+        class Bunker(pyglet.event.EventDispatcher):
+            ...
+            def building_update(self, dt):
+                ...
+            if self.elapsed_time>self.building_time:
+                self.dispatch_event('on_building_complete', self)
+
+        def take_damage(self, damage):
+            self.dispatch_event('on_building_under_attack', self)
+            self.life -= damage
+            if self.life<0:
+                self.dispatch_event('on_building_destroyed', self)
+
+        # following lines register the events that Bunker instances can emit
+        Bunker.register_event_type('on_building_complete')
+        Bunker.register_event_type('on_building_under_attack')
+        Bunker.register_event_type('on_building_destroyed')
+
+   Note that an event can carry zero, one or more arguments; here we send the
+   instance emitting the event.
+
+ - example registration **listeners**::
+     
+        class Commander(object):
+            def __init__(self, ...):
+                self.buildings = []
+                ...
+
+            def invest_resources(self):
+                ...
+                bunker = Bunker(...)
+                # register to receive all events from object bunker
+                bunker.push_handlers(self)
+                self.buildings.append(bunker)
+                ...
+
+            # handlers for the events
+
+            def on_building_complete(self, building):
+                ...
+
+            def on_building_under_attack(self, building):
+                ...
+
+            def on_building_destroyed(self, building):
+                ...
+                
+   Note that the handlers accepts the parameters that the event carries.
+   The listener registration here works as:
+
+       - we pass a class instance to push_handlers
+       - pyglet will look at methods in this class instance whose name match
+         <event name> for any <event name> which the emitter registered, and
+         then register ( <event name>, obj.event_name ) for each match.
+
+   With this style of listener registration you should be careful when
+   registering for two emmitters: if both emitters can genereate 'on_cuack'
+   events and you register::
+
+        emitter1.push_handlers(obj)
+        emitter2.push_handlers(obj)
+
+   then obj.on_cuack will be called by both emitters.
+
+   Another listener registration style is pushing explicit handlers::
+
+        bunker.push_handlers(
+            self.on_building_complete,
+            self.on_building_under_attack,
+            self.on_building_destroyed
+            )
+
+ - When you want a listener to stop receiving events from an emitter, you de-register the listener::
+
+        emitter.remove_handlers(...) # params as in push_handlers
+
+ - Event propagation : The event is propagated to all handlers from the top of the emitter stack until one returns EVENT_HANDLED.
+
+
+Cocos and events
+^^^^^^^^^^^^^^^^
+
+Besides using events to get user input ('on_key_press', 'on_mouse_move',...) or window status change ( 'on_activate', ... )
+, you can use events to decouple the model from the view in your app. The game Tetrico, to be found in samples/tetrico is an example of this usage.
+
+Cocos in general will **not** automatically handle listeners registration/de-registration, except for one special case: the emitter is director.window and the listener is a layer or scene
+Thus, for the general case, you must handle the push_handlers - remove_handlers thing by yourself.
+When your listener lives in a CocosNode, a good scheme is pushing handlers in the on_enter method and remove handlers in the on_exit method. This way, you are sure your handlers will not be called when the node is not in the active scene.
+Also, for custom events, it is a good practice to not use event names that director.window uses: that evitates unexpected double calls to the handler(s).
+
+For the special case that emitter is director.window and the listeners are layers or scenes, cocos can handle the registration / de-registration:
+
+ - When a scene becomes active it would walk the scene tree to allow layers autoregistering for director.window events
+   It would not attempt to register itself as a listener except if the scene.enable_handlers is called.
+   The walk begins in the scene, and passes only layer class childs.
+
+ - When prompted from the above walk, a layer whose class member is_event_handler has value True will register itself and as a director.window listener
+   The registration will be on the form::
+          
+        director.window.push_handler(layer)
+
+   so any method whose name matchs a <event name> will be registered as a listener.
+
+ - When the scene becomes inactive ( by director.pop by example ), the matching walk calling::
+
+        director.window.remove_handlers(layer)      
+
+   will be issued.
+
+Events generated by cocos itself:
+
+    - ( director, 'on_push' )
+    - ( director, 'on_pop' )
+    - ( director, 'on_resize' )
+    - ( director, 'on_cocos_resize')
+
+Cocos registers a default key listener that provides handy functionality, see `Default Handlers`
