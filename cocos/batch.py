@@ -36,7 +36,7 @@
 Batches
 =======
 
-Batches allow you to optimize the number of gl calls using pygllets batch
+Batches allow you to optimize the number of gl calls using pyglets batch
 
 """
 

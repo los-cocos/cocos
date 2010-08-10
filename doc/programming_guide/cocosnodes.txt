@@ -55,18 +55,18 @@ For example::
 
     label.do( JumpBy( (100,100), 50, 5, duration=3) )
 
-Another important feature of the **any** `CocosNode` object, is that
+Another important feature common to **any** `CocosNode` object, is that
 is is also a container, it can have children.
 For example::
 
-    # and scene with 2 layers
+    # a scene with 2 layers
     scene.add( background_layer, z=0 )
     scene.add( game_layer, z=1 )
 
     # the layer with 1 sprite
     game_layer.add( sprite )
 
-    # the sprite, with 2 sprite
+    # the sprite, with 2 sprites
     sprite.add( ship1_sprite )
     sprite.add( ship2_sprite )
 
@@ -82,7 +82,10 @@ using *remove*. For example::
     # remove by name
     layer.remove( "car" )
 
-In case you want to obtain a reference a certain child, you can 
+Note that in current cocos if you add with name then you should remove by name,
+else the name will become unusable for new additions.
+
+In case you want to obtain a reference to a certain named child, you can 
 use *get*.
 Example::
 
@@ -96,11 +99,75 @@ Example::
 Sprite
 ^^^^^^
 
- TODO: explain `Sprite`
+Sprites allows to display a image in a rectangular area, which can be rotated,
+scaled and moved.
+The placement in the scene follows the standard CocosNode rules.
+Also, all stock actions will work with sprites.
 
- These properties are not available:
 
-    - camera
+Animating a sprite
+++++++++++++++++++
+
+Animation as in cartoon style animation, that is, replacing the image fast
+enough to give the illusion of movement, can be accomplished by:
+
+ - using an animated .gif file as source for the image
+ - passing a pyglet.image.Animation as image, which collects a number of images
+ - have an array of images and let your code assign to the sprite image member
+
+Performance Considerations
+++++++++++++++++++++++++++
+
+Sprites are not suitable for effects that piles a lot of semitrasnsparent images
+to build an effect like smoke or poissoning fog. Use particle systems or custom
+CocosNode s managing vertex lists for that.
+
+If your scene has less than 25 sprites, you can add directly to the
+scene, like::
+
+    class TLayer(cocos.layer.Layer):
+       is_event_handler = True
+       def __init__(self):
+          cocos.layer.Layer.__init__(self)
+          world_width, world_height = director.get_window_size()
+          rand_color = [255, 0, 0]
+          icolor = 0
+          for i in range(qty_balls):
+             ball = Ball((world_width*random.random(), world_height*random.random()), color=rand_color)
+             rand_color[icolor] = random.randint(50, 255)
+             icolor = (icolor + 1)%len(rand_color)
+             self.add(ball)
+          self.time = 0.0
+          self.schedule(self.update)
+               
+When you have between 25 and 100 visible sprites, moving at each frame, you
+should add one or more BatchNode s at some level in the scene and add the
+sprites to them. Even only one batch can give you 4x fps::
+
+    class TLayer(cocos.layer.Layer):
+       is_event_handler = True
+       def __init__(self):
+          cocos.layer.Layer.__init__(self)
+          batch = cocos.batch.BatchNode()
+          self.add(batch) # we add a batch to the layer ...
+          world_width, world_height = director.get_window_size()
+          rand_color = [255, 0, 0]
+          icolor = 0
+          for i in range(100):
+             ball = Ball((world_width*random.random(), world_height*random.random()), color=rand_color)
+             rand_color[icolor] = random.randint(50, 255)
+             icolor = (icolor + 1)%len(rand_color)
+             batch.add(ball) # see ? we add sprites to the batch, not the layer
+          self.batch = batch
+          self.time = 0.0
+          self.schedule(self.update)
+
+With more than 100 visible, moving at each frame sprites, you will need to
+optimize further to run at 60 fps in weak hardware like netbooks, old desktops,
+cheap new dewstops.
+You can look at cocos particle systems and the section graphics in pyglet
+programing guide for ideas. 
+
 
 Labels
 ^^^^^^

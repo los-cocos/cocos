@@ -31,10 +31,24 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Sprite
+'''
+Sprites allows to display a image in a rectangular area, which can be rotated,
+scaled and moved.
+The placement in the scene follows the standard CocosNode rules.
+Also, all stock actions will work with sprites.
 
 Animating a sprite
 ==================
+
+Animation as in cartoon style animation, that is, replacing the image fast
+enough to give the illusion of movement, can be accomplished by:
+
+ - using an animated .gif file as source for the image
+ - passing a pyglet.image.Animation as image, which collects a number of images
+ - have an array of images and let your code assign to the sprite image member
+
+Changing a sprite by way of actions
+===================================
 
 To execute any action you need to create an action::
 
@@ -69,7 +83,7 @@ __all__ = [ 'Sprite',                     # Sprite class
 
 
 class Sprite( BatchableNode, pyglet.sprite.Sprite):
-    '''Sprites are sprites that can execute actions.
+    '''A CocosNode that displays a rectangular image.
 
     Example::
 
@@ -218,12 +232,18 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
     image_anchor = property(_get_anchor, _set_anchor)
 
     def draw(self):
+        """
+        When the sprite is not into a batch it will be draw with this method.
+        If in a batch, this method is not called, and the draw is done by
+        the batch.
+        """
         self._group.set_state()
         if self._vertex_list is not None:
             self._vertex_list.draw(GL_QUADS)
         self._group.unset_state()
 
     def _update_position(self):
+        """updates vertex list"""
         if not self._visible:
             self._vertex_list.vertices[:] = [0, 0, 0, 0, 0, 0, 0, 0]
             return
