@@ -96,6 +96,46 @@ Example::
     car_sprite = layer.get("car")
 
 
+Scene
+^^^^^
+
+In the common case, contains all elements visible on the app window.
+
+ These properties are not available:
+
+    - color
+    - opacity
+
+
+Layer
+^^^^^
+
+  TODO: explain `Layer`
+
+ These properties are not available:
+
+    - color
+    - opacity
+
+
+ScrollingManager
+^^^^^^^^^^^^^^^^
+
+ These properties are not available:
+
+    - color
+    - opacity
+
+
+ScrollableLayer
+^^^^^^^^^^^^^^^
+
+ These properties are not available:
+
+    - color
+    - opacity
+               
+
 Sprite
 ^^^^^^
 
@@ -118,7 +158,7 @@ enough to give the illusion of movement, can be accomplished by:
 Performance Considerations
 ++++++++++++++++++++++++++
 
-Sprites are not suitable for effects that piles a lot of semitrasnsparent images
+Sprites are not suitable for effects that piles a lot of semitransparent images
 to build an effect like smoke or poissoning fog. Use particle systems or custom
 CocosNode s managing vertex lists for that.
 
@@ -172,32 +212,15 @@ programing guide for ideas.
 Labels
 ^^^^^^
 
- TODO: explain `Label`
+`Label` s provide the most simple text display.
+Font family, font size, position, color, opacity and align can be specified.
 
- TODO: explain `HTMLLabel`
+`HTMLLabel` s is a slightly more powerful label, it can use mixed styles. Uses HTML syntax for text and styles.
 
  These properties are not available:
 
     - camera
 
-Scene
-^^^^^
-
- These properties are not available:
-
-    - color
-    - opacity
-
-
-Layer
-^^^^^
-
-  TODO: explain `Layer`
-
- These properties are not available:
-
-    - color
-    - opacity
 
 ColorLayer
 ^^^^^^^^^^

@@ -47,6 +47,10 @@ from pyglet.gl import *
 from batch import *
 
 class TextElement(cocosnode.CocosNode):
+    """
+    Base class for all cocos text
+    Provides the CocosNode interfase and a pyglet Batch to store parts
+    """
     def __init__(self, text='', position=(0,0), **kwargs):
         super(TextElement, self).__init__()
         self.position = position
