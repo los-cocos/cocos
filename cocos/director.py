@@ -31,64 +31,28 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Singleton that handles the logic behind the Scenes
-
-director
-========
+'''
+cocos.director.director is the singleton that creates and handles the main ``Window``
+and manages the logic behind the ``Scenes``.
 
 Initializing
 ------------
 
-The director is the singleton that creates and handles the main ``Window``
-and manages the logic behind the ``Scenes``.
-
 The first thing to do, is to initialize the ``director``::
 
-    from cocos.director import *
-    director.init( list_of_arguments )
+    from cocos.director import director
+    director.init( parameters )
 
 This will initialize the director, and will create a display area
 (a 640x480 window by default).
 The parameters that are supported by director.init() are the same
 parameters that are supported by pyglet.window.Window(), plus a few
-cocos exclusive ones.
-
-director.init cocos exclusive parameters:
-    * ``do_not_scale``: Boleean. Defaults to False, when your app can think
-        that the windows size dont change despite resize events.
-        When True, your app must include logic to deal with diferent window
-        sizes along the session.
-    * ``audio_backend``: one in ['pyglet','sdl']. Defaults to 'pyglet' for
-        legacy support.
-    * ``audio``: None or a dict providing parameters for the sdl audio backend.
-        * None: in this case a "null" audio system will be used, where all the
-          sdl sound operations will be no-ops. This may be useful if you do not
-          want to depend on SDL_mixer
-        * A dictionary with string keys; these are the arguments for setting up
-          the audio output (sample rate and bit-width, channels, buffer size).
-          The key names/values should match the positional arguments of
-          http://www.pygame.org/docs/ref/mixer.html#pygame.mixer.init
-        * The default value is {}, which means sound enabled with default
-          settings
-
-director.init parameters passes to pyglet.window.Window (partial list):
-
-    * ``fullscreen``: Boolean. Window is created in fullscreen. Default is False
-    * ``resizable``: Boolean. Window is resizable. Default is False
-    * ``vsync``: Boolean. Sync with the vertical retrace. Default is True
-    * ``width``: Integer. Window width size. Default is 640
-    * ``height``: Integer. Window height size. Default is 480
-    * ``caption``: String. Window title.
-    * ``visible``: Boolean. Window is visible or not. Default is True.
-
-The full list of valid video arguments can be found at the pyglet Window
-documentation:
-
-    - http://www.pyglet.org/doc/1.1/api/pyglet.window.Window-class.html
+cocos exclusive ones. They are all named parameters (kwargs).
+See ``Director.init()`` for details.
 
 Example::
 
-    director.init( caption="Hello World", fullscreen=True )
+    director.init( width=800, height=600, caption="Hello World", fullscreen=True )
 
 Running a Scene
 ----------------
@@ -100,8 +64,6 @@ Once you have initialized the director, you can run your first ``Scene``::
 This will run a scene that has only 1 layer: ``MyLayer()``. You can run a scene
 that has multiple layers. For more information about ``Layers`` and ``Scenes``
 refer to the ``Layers`` and ``Scene`` documentation.
-
-`cocos.director.Director`
 
 Once a scene is running you can do the following actions:
 
@@ -325,12 +287,51 @@ class Director(event.EventDispatcher):
     interpreter_locals = {}
 
     def init(self, *args, **kwargs):
-        """Initializes the Director creating the main window.
-        Keyword arguments are passed to pyglet.window.Window().
+        """
+        Initializes the Director creating the main window.
 
-        All the valid arguments can be found here:
+        There are a few cocos exclusive parameters, the rest are the
+        standard pyglet parameters for pyglet.window.Window.__init__
+        This docstring only partially list the pyglet parameteres; a full
+        list is available at pyglet Window API Reference at
+        http://pyglet.org/doc/api/pyglet.window.Window-class.html
 
-            - http://www.pyglet.org/doc/1.1/api/pyglet.window.Window-class.html
+        :Parameters:
+            `do_not_scale` : bool
+                False: on window resizes, cocos will scale the view so that your
+                app don't need to handle resizes.
+                True: your app must include logic to deal with diferent window
+                sizes along the session.
+                Defaults to False
+            `audio_backend` : string
+                one in ['pyglet','sdl']. Defaults to 'pyglet' for legacy support.
+            `audio` : dict or None
+                None or a dict providing parameters for the sdl audio backend.
+                None: in this case a "null" audio system will be used, where all the
+                sdl sound operations will be no-ops. This may be useful if you do not
+                want to depend on SDL_mixer
+                A dictionary with string keys; these are the arguments for setting up
+                the audio output (sample rate and bit-width, channels, buffer size).
+                The key names/values should match the positional arguments of
+                http://www.pygame.org/docs/ref/mixer.html#pygame.mixer.init
+                The default value is {}, which means sound enabled with default
+                settings
+
+
+            `fullscreen` : bool
+                Window is created in fullscreen. Default is False
+            `resizable` : bool
+                Window is resizable. Default is False
+            `vsync` : bool
+                Sync with the vertical retrace. Default is True
+            `width` : int
+                Window width size. Default is 640
+            `height` : int
+                Window height size. Default is 480
+            `caption` : string
+                Window title.
+            `visible` : bool
+                Window is visible or not. Default is True.
 
         :rtype: pyglet.window.Window
         :returns: The main window, an instance of pyglet.window.Window class.
