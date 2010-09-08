@@ -1,3 +1,6 @@
+v0.4.0 - September 8, 2010
+  - fixed compatibility python 2.4
+
 v0.4.0rc0 - July 7, 2010
   - actions subsystem upgraded: now Actions with duration not know in advance are possible,
     like the ones that terminates on a collision detection condition.

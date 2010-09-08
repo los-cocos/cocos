@@ -1,7 +1,7 @@
 cocos2d: A framework for building 2D games
 http://cocos2d.org
 
-version: 0.4rc0
+version: 0.4.0
 
 
 Requirements
@@ -21,8 +21,9 @@ Requirements
 
 Installing
 ----------
-
-   Read INSTALL file
+      
+   Being a pure python package the usual options are available; youu
+   can look at the INSTALL file for details
 
 
 Learning cocos2d
