@@ -1,8 +1,24 @@
-cocos2d: A framework for building 2D games
-http://cocos2d.org
+=======
+cocos2d
+=======
 
-version: 0.4.0
+| A framework for building 2D games, demos, and other graphical/interactive applications.
+| Draws using OpenGL, which is hardware accelerated.
+| It provides some conventions and classes to help you structure a "scene based application".
 
+| A cocos2d application consists of several scenes, and a workflow connecting the different scenes.
+| It provides you with a "director" (a singleton) which handles that workflow between scenes.
+| Each scene is composed of an arbitrary number of layers;
+| layers take care of drawing to the screen (using the pyglet and OpenGL APIs), handling events and in general contain all of the game/application logic.
+
+cocos2d simplifies the game development in these areas:
+
+    * Defining a workflow for your game
+    * Creating special effects in layers
+    * Creating transitions between scenes
+    * Managing sprites
+    * Basic menus
+    * and much more!http://cocos2d.org
 
 Requirements
 ------------
@@ -22,14 +38,14 @@ Requirements
 Installing
 ----------
       
-   Being a pure python package the usual options are available; youu
+   Being a pure python package the usual options are available; you
    can look at the INSTALL file for details
 
 
 Learning cocos2d
 ----------------
 
- * go the online tuturials / documentation page:
+ * go to the online tuturials / documentation page:
    http://cocos2d.org/doc.html
 
    you will find:
@@ -37,18 +53,18 @@ Learning cocos2d
     . the API Reference
     . some tutorial videos
 
-   The tutorials are also downloadable at:
+   The tutorials are included in the source package or can be download from:
     http://code.google.com/p/los-cocos/downloads/list
 
- * miniprograms that demostrates the available objects and posible actions,
-   great starting point while learning and experimenting with cocos: you find
-   a sample with the object that interest you exercising the features that you
-   need, read the code, run, modify and re-run to experiment.
+ * Lot of miniprograms that demostrates the available objects and posible actions.
+   There are a great starting point while learning and experimenting with cocos:
+   you find a sample with the object that interest you exercising the features
+   that you need, read the code, run, modify and re-run to experiment.
    
    Also, handy to know what is available in cocos: run all the tests and by
-   lookng at the code you know what to look at in the docs.
+   looking at the code you know what to look at in the docs.
 
-   You can find it in the test directory in the source distribution.
+   You can find them at the test directory in the source distribution.
    After unpacking, to run the tests you can do
 
    $ cd test
@@ -60,7 +76,7 @@ Learning cocos2d
    most complex in subdrectories there, including a presentation done with
    Cocos himself.
    
-   After unpacking, to run the tests you can do
+   After unpacking, to run the samples you can do
     
    $ cd samples
    $ python sample_name.py

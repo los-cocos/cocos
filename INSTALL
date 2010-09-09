@@ -21,13 +21,17 @@ Finally:
  Get the source package at
  http://code.google.com/p/los-cocos/downloads/list
 
- While you are at it you can download the most up to date docs and samples.
-
  Cocos is a pure python package, so the usual ways will work.
- Note that cocos documentation and examples are not included in the source
- package, there are a separate download.
+ Note that cocos documentation and examples are included in the source
+ package.
  
- unpack the source package and run
+ unpack the source package and:
+
+ from the unpacked directory move the directories doc/html, test, samples,
+ utest to the location when you usually store lib extra info.
+ 
+
+ and then run
  setup.py install
 
 or:

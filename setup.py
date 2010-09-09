@@ -19,29 +19,35 @@ except ImportError:
 
 from setuptools import setup, find_packages
 
-__description__ = """cocos2d: A framework for building 2D games
-
-cocos2d is a framework for building 2D games, demos, and other graphical/interactive applications. It is built over pyglet. It provides some conventions and classes to help you structure a "scene based application".
-
-A cocos2d application consists of several scenes, and a workflow connecting the different scenes. It provides you with a "director" (a singleton) which handles that workflow between scenes. Each scene is composed of an arbitrary number of layers; layers take care of drawing to the screen (using the pyglet and OpenGL APIs), handling events and in general contain all of the game/application logic.
-
-cocos2d simplifies the game development in these areas:
-
-    * Defining a workflow for your game
-    * Creating special effects in layers
-    * Creating transitions between scenes
-    * Managing sprites
-    * Basic menus
-    * and much more!
-"""
+f = open('README','rU')
+long_description = f.read()
+f.close()
 
 setup(
     name = "cocos2d",
     version = __version__,
     author = "cocos2d Team",
-    description = __description__,
+    license="BSD",
+    description = "a 2D framework for games and multimedia",
+    long_description=long_description,
     url = "http://cocos2d.org",
-
+    download_url = "http://code.google.com/p/los-cocos/downloads/list",
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: MacOS X",
+        "Environment :: Win32 (MS Windows)",
+        "Environment :: X11 Applications",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: BSD License",
+        "Natural Language :: English",
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX :: Linux",
+        "Programming Language :: Python",
+        ("Topic :: Software Development :: Libraries :: Python Modules"),
+        ("Topic :: Games/Entertainment"),
+        ],
+ 
     packages = find_packages(),
     package_data={'cocos': ['resources/*']},
 
