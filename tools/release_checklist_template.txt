@@ -1,22 +1,32 @@
+Start:
+    Freeze cocos directory, except for obvious, simple, robust fixes.
+    Freeze existing code in samples and test directories
+    Additions after the freeze should should be listed somewhere so they
+    get tested before release.
+
 Early:
  - Be sure all examples in test dir runs
  - If possible, unit test in utest should all pass.
 
 Finishing:
 
-- Proper updated license header, care to not target files which needs other license header
+- Proper updated license header, care to not target files which needs
+  other license header
 
 - Update text files in the top trunk directory
-	
+  Keep in mind that README it is also used as reST for the pypi page
+  (see 1 in building_release_notes.txt)
+
 	- CHANGELOG
 	- LICENSE
 	- INSTALL
 	- README
-	- compatibilty notes ?
+	- compatibility notes ?
 
-- Make sure version and release date are consitent between diferent files, and reasonable in relation with previous version (ascending order)
+- Make sure version and release date are consistent between different files,
+  and reasonable in relation with previous version
 
-	- Version apareances in current trunk:
+	- Version appearances in current trunk:
 
 		- setup.py
 		- changelog
@@ -25,7 +35,7 @@ Finishing:
 		- docs ?
 		- (also cocos2d.org site)
 
-	- Date apareances:
+	- Date appearances:
 
 		- setup.py
 		- changelog
@@ -39,14 +49,24 @@ Finishing:
 	- version
 	- date
 
+- build the docs (see 2 in building_release_notes.txt)
+
+- build the package
+  example build command in windows
+  setup.py sdist  >build.log
+
+- check log for errors
+
+- verify that non-code resources are included (currently docs\html, cocos\resources)
+
+- install the new package, see 4 in building_release_notes.txt
+
 - Test that the package built with setup.py works
 
-- Update cocos2d.org site
+- upload to googlecode, mark as featured, unmark as featured older packages
 
-	- make local backup (svn ?) just in case
-	- add a 'news' about the release
-  	- update there the docs
-  	- update the 'download' page
-	- (all this, local)
-	- after release in google, upload the changes 
+- Update cocos2d.org site ( see 5 in building_release_notes.txt)
 
+- upload to pypi ( see 6 in building_release_notes.txt )
+
+- tag the release in the repo 
