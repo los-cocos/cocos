@@ -430,7 +430,6 @@ class Director(event.EventDispatcher):
             self.fps_display = clock.ClockDisplay()
         elif not value and self.fps_display is not None:
             self.fps_display.unschedule()
-            self.fps_display.label.delete()
             self.fps_display = None
 
     show_FPS = property(lambda self: self.fps_display is not None,
