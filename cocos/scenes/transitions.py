@@ -583,10 +583,8 @@ class ZoomTransition(TransitionScene):
         screensprite = self._create_out_screenshot()
 
         zoom = ScaleBy(2, self.duration) | FadeOut(self.duration)
-        screensprite.do(zoom)
-
         restore = CallFunc(self.finish)
-        self.in_scene.do(Delay(self.duration * 2) + restore)
+        screensprite.do(zoom + restore)
 
         self.add(screensprite, z=1)
         self.add(self.in_scene, z=0)
