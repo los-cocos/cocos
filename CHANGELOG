@@ -1,3 +1,7 @@
+v0.5dev
+  - issue 160 fixed ZoomTransition traceback when called repeatedly  
+  - issue 158 fixed ctrl + x (toggle show_FPS) not hiding the fps display  
+
 v0.4.0 - September 8, 2010
   - fixed compatibility python 2.4
 
