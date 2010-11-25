@@ -173,24 +173,24 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         return rect.Rect(min(x),min(y),max(x)-min(x),max(y)-min(y))
 
     def _set_rotation( self, a ):
-        pyglet.sprite.Sprite._set_rotation(self, a)
         BatchableNode._set_rotation(self,a)
+        pyglet.sprite.Sprite._set_rotation(self, a)
 
     def _set_scale( self, s ):
-        pyglet.sprite.Sprite._set_scale(self,s)
         BatchableNode._set_scale(self,s)
+        pyglet.sprite.Sprite._set_scale(self,s)
 
     def _set_position( self, p ):
-        pyglet.sprite.Sprite.position = p
         BatchableNode._set_position(self,p)
+        pyglet.sprite.Sprite.position = p
 
     def _set_x(self, x ):
-        pyglet.sprite.Sprite._set_x( self, x )
         BatchableNode._set_x( self, x)
+        pyglet.sprite.Sprite._set_x( self, x )
 
     def _set_y(self, y ):
-        pyglet.sprite.Sprite._set_y( self, y )
         BatchableNode._set_y( self, y)
+        pyglet.sprite.Sprite._set_y( self, y )
 
     def contains(self, x, y):
         '''Test whether this (untransformed) Sprite contains the pixel coordinates
