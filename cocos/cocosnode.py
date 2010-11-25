@@ -361,7 +361,8 @@ class CocosNode(object):
     def _get_position(self):
         return (self._x, self._y)
     def _set_position(self, (x,y)):
-        self.x, self.y = x,y
+        self._x = x
+        self._y = y
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 
