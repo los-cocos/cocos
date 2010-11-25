@@ -182,7 +182,7 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
     def _set_position( self, p ):
         BatchableNode._set_position(self,p)
-        pyglet.sprite.Sprite.position = p
+        pyglet.sprite.Sprite.set_position(self, *p)
 
     def _set_x(self, x ):
         BatchableNode._set_x( self, x)
