@@ -72,7 +72,11 @@ class TransitionScene(scene.Scene):
     """TransitionScene
     A Scene that takes two scenes and makes a transition between them.
     
-    These scenes are children of the transition scene.
+    The input scenes are put into envelopes (Scenes) that are made childs to
+    the transition scene.
+    Proper transitions are allowed to modify any parameter for the envelopes,
+    but must not modify directly the input scenes; that would corrupt the input
+    scenes in the general case.
     """
     
     def __init__(self, dst, duration=1.25, src=None):
@@ -80,7 +84,7 @@ class TransitionScene(scene.Scene):
 
         :Parameters:
             `dst` : Scene
-                Incoming scene
+                Incoming scene, the one that remains visible when the transition ends.
             `duration` : float
                 Duration of the transition in seconds. Default: 1.25
             `src` : Scene
@@ -88,18 +92,22 @@ class TransitionScene(scene.Scene):
         '''
         super(TransitionScene, self).__init__()
 
-        self.in_scene = dst                     #: scene that will replace the old one
+        envelope = scene.Scene()
+        envelope.add(dst, name='dst')
+        self.in_scene = envelope   #: envelope with scene that will replace the old one
         if src == None:
             src = director.scene
 
             # if the director is already running a transition scene then terminate
             # it so we may move on
             if isinstance(src, TransitionScene):
+                src = src.in_scene.get('dst')
                 src.finish()
-                src = src.in_scene
 
-        self.out_scene = src                    #: scene that will be replaced
-        self.duration = duration                #: duration in seconds of the transition
+        envelope = scene.Scene()
+        envelope.add(src, name='src')
+        self.out_scene = envelope   #: envelope with scene that will be replaced
+        self.duration = duration    #: duration in seconds of the transition
         if not self.duration:
             self.duration = 1.25
 
@@ -118,13 +126,11 @@ class TransitionScene(scene.Scene):
 
     def finish(self):
         '''Called when the time is over.
-        It removes both the incoming and the outgoing scenes from the transition scene,
-        and restores the outgoing scene's attributes like: position, visible and scale.
+        Envelopes are discarded and the dst scene will be the one runned by director
         '''
-        self.remove( self.in_scene )
-        self.remove( self.out_scene )
-        self.restore_out()
-        director.replace( self.in_scene )
+        dst = self.in_scene.get('dst')        
+        src = self.out_scene.get('src')
+        director.replace( dst )
 
     def hide_out_show_in( self ):
         '''Hides the outgoing scene and shows the incoming scene'''
@@ -136,12 +142,6 @@ class TransitionScene(scene.Scene):
         self.in_scene.visible = False
         self.out_scene.visible = False
 
-    def restore_out( self ):
-        '''Restore the position, visible and scale attributes of the outgoing scene
-        to the original values'''
-        self.out_scene.visible = True
-        self.out_scene.position = (0,0)
-        self.out_scene.scale = 1
         
 class RotoZoomTransition(TransitionScene):
     '''Rotate and zoom out the outgoing scene, and then rotate and zoom in the incoming 
@@ -577,11 +577,12 @@ class ZoomTransition(TransitionScene):
             raise Exception("ZoomTransition does not accept 'src' parameter.")
 
         super(ZoomTransition, self ).__init__( *args, **kwargs)
+        # fixme: if scene was never run and some drawable need to initialize
+        # in scene on enter the next line will render bad
         self.out_scene.visit()
 
     def start(self):
         screensprite = self._create_out_screenshot()
-
         zoom = ScaleBy(2, self.duration) | FadeOut(self.duration)
         restore = CallFunc(self.finish)
         screensprite.do(zoom + restore)
@@ -590,13 +591,8 @@ class ZoomTransition(TransitionScene):
         self.add(self.in_scene, z=0)
 
     def finish(self):
-        '''Called when the time is over.
-        It removes both the incoming and the outgoing scenes from the transition scene,
-        and restores the outgoing scene's attributes like: position, visible and scale.
-        '''
-        self.remove( self.in_scene )
-        self.restore_out()
-        director.replace( self.in_scene )
+        dst = self.in_scene.get('dst')
+        director.replace( dst )
 
     def _create_out_screenshot(self):
         # TODO: try to use `pyglet.image.get_buffer_manager().get_color_buffer()`
