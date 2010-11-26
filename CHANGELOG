@@ -1,4 +1,6 @@
 v0.5dev
+  - fixed cocos sprites too slow with respect pyglet sprites
+  - issue 159 fixed scene transitions changing some outgoing scene members    
   - issue 160 fixed ZoomTransition traceback when called repeatedly  
   - issue 158 fixed ctrl + x (toggle show_FPS) not hiding the fps display  
 
