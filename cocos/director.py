@@ -355,6 +355,9 @@ class Director(event.EventDispatcher):
         #: whether or not to show the python interpreter
         self.show_interpreter = False
 
+        #: flag requesting app termination
+        self.terminate_app = False
+
         # pop out the Cocos-specific flags
         self.do_not_scale_window = kwargs.pop('do_not_scale', False)
         audio_backend = kwargs.pop('audio_backend', 'pyglet')
@@ -443,7 +446,6 @@ class Director(event.EventDispatcher):
                 The scene that will be run.
         """
 
-        self.scene_stack.append( self.scene )
         self._set_scene( scene )
 
         event_loop.run()
@@ -465,18 +467,39 @@ class Director(event.EventDispatcher):
 
 
     def on_draw( self ):
-        """Callback to draw the window.
-        It propagates the event to the running scene."""
+        """Handles the event 'on_draw' from the pyglet.window.Window
 
-        if self.window.width==0 or self.window.height==0: #
+            Realizes switch to other scene and app termination if needed
+            Clears the window area
+            The windows is painted as:
+                Render the current scene by calling it's visit method
+                Eventualy draw the fps metter
+                Eventually draw the interpreter
+
+            When the window is minimized any pending switch to scene will be
+            delayed to the next de-minimizing time.
+        """
+
+        # typically True when window minimized
+        if ((self.window.width==0 or self.window.height==0) and
+            not self.terminate_app):
+            # if surface area is zero, we don't need to draw; also
+            # we dont't want to allow scene changes in this situation: usually
+            # on_enter does some scaling, which would lead to division by zero
             return
-        self.window.clear()
 
-        if self.next_scene is not None:
+        # handle scene changes and app termination
+        if self.terminate_app:
+            self.next_scene = None
+            
+        if self.next_scene is not None or self.terminate_app:
             self._set_scene( self.next_scene )
 
-        if not self.scene_stack:
+        if self.terminate_app:
             pyglet.app.exit()
+
+
+        self.window.clear()
 
         # draw all the objects
         self.scene.visit()
@@ -504,14 +527,16 @@ class Director(event.EventDispatcher):
         self.scene_stack.append( self.scene )
 
     def pop(self):
-        """Pops out a scene from the queue. This scene will replace the running one.
-           The running scene will be deleted. If there are no more scenes in the stack
-           the execution is terminated.
+        """If the scene stack is empty the appication is terminated.
+            Else pops out a scene from the stack and sets as the running one.
         """
         self.dispatch_event("on_pop")
 
     def on_pop(self):
-        self.next_scene = self.scene_stack.pop()
+        if len(self.scene_stack)==0:
+            self.terminate_app = True
+        else:
+            self.next_scene = self.scene_stack.pop()
 
     def replace(self, scene):
         """Replaces the running scene with a new one. The running scene is terminated.
@@ -523,20 +548,28 @@ class Director(event.EventDispatcher):
         self.next_scene = scene
 
     def _set_scene(self, scene ):
-        """Change to a new scene.
+        """Makes scene the current scene
+
+            Operates on behalf of the public scene switching methods
+            User code must not call directly
         """
+        # Even library code should not call it directly: instead set
+        # ._next_scene and let 'on_draw' call here at the proper time
 
         self.next_scene = None
 
+        # always true except for first scene in the app
         if self.scene is not None:
             self.scene.on_exit()
             self.scene.enable_handlers( False )
 
         old = self.scene
-
         self.scene = scene
-        self.scene.enable_handlers( True )
-        scene.on_enter()
+
+        # always true except when terminating the app
+        if self.scene is not None:
+            self.scene.enable_handlers( True )
+            scene.on_enter()
 
         return old
 

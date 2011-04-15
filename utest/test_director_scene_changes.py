@@ -23,9 +23,7 @@ class Test_run(object):
     def test_0_initial_state(self):
         assert director.scene is None
         assert director.next_scene is None
-        # we want a stack with a dummy bottom set to None, to signal
-        # no more scenes in the stack
-        assert director.scene_stack == [None]
+        assert len(director.scene_stack) == 0
 
     def test_1_run_once_and_twice(self):
         scene0 = Scene()
@@ -37,7 +35,7 @@ class Test_run(object):
         assert director.next_scene is None
         assert director.scene_stack == old_stack 
 
-        # a second run must be rejected, we dont want to run twice
+        # a second run must be rejected, we don't want to call twice
         # event_loop.run
 ##        scene1 = Scene()
 ##
@@ -203,4 +201,4 @@ class Test_run(object):
 
         assert director.scene is scene0
         
-
+##    def test_8_pop_from_empty_stack_termitate_app(self):
