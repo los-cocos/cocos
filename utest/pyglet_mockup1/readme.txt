@@ -28,6 +28,14 @@ add a signature/pass, but only for commonly used functions.
 Capabilities:
 
  pyglet.window.Window can be instantiated, it only provides width and height
+ and accepts call to 'clear' method
+ 
+ pyglet.event.EventHandler accepts calls to method
+ dispatch_event(self, event_type, *args)
+ and it will record the call with
+        self._utest_recorded_events.append((event_type, args))
+(remember to clear the record before the critical section you want to test)
+
  pyglet.version will return "1.1.4"
  Director can be instantiated
  from cocos.director import director works

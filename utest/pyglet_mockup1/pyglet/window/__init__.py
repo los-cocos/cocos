@@ -31,6 +31,10 @@ class Window(object):
 
     def push_handlers(self, *args, **kwargs):
         pass
+
+    def clear(self):
+        pass
+
     
             
         
