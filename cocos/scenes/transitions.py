@@ -92,9 +92,6 @@ class TransitionScene(scene.Scene):
         '''
         super(TransitionScene, self).__init__()
 
-        envelope = scene.Scene()
-        envelope.add(dst, name='dst')
-        self.in_scene = envelope   #: envelope with scene that will replace the old one
         if src == None:
             src = director.scene
 
@@ -104,6 +101,13 @@ class TransitionScene(scene.Scene):
                 tmp = src.in_scene.get('dst')
                 src.finish()
                 src = tmp
+                
+        if src is dst:
+            raise Exception("Incoming scene must be different from outgoing scene")
+
+        envelope = scene.Scene()
+        envelope.add(dst, name='dst')
+        self.in_scene = envelope   #: envelope with scene that will replace the old one
 
         envelope = scene.Scene()
         envelope.add(src, name='src')
@@ -111,12 +115,6 @@ class TransitionScene(scene.Scene):
         self.duration = duration    #: duration in seconds of the transition
         if not self.duration:
             self.duration = 1.25
-
-        if self.out_scene is None:
-            raise Exception("You need to specfy a `src` argument")
-
-        if self.out_scene is self.in_scene:
-            raise Exception("Incoming scene must be different from outgoing scene")
 
         self.start()
         
