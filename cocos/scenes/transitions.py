@@ -101,8 +101,9 @@ class TransitionScene(scene.Scene):
             # if the director is already running a transition scene then terminate
             # it so we may move on
             if isinstance(src, TransitionScene):
-                src = src.in_scene.get('dst')
+                tmp = src.in_scene.get('dst')
                 src.finish()
+                src = tmp
 
         envelope = scene.Scene()
         envelope.add(src, name='src')
