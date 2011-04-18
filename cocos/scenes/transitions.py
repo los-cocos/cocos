@@ -125,8 +125,14 @@ class TransitionScene(scene.Scene):
 
     def finish(self):
         '''Called when the time is over.
-        Envelopes are discarded and the dst scene will be the one runned by director
+        Envelopes are discarded and the dst scene will be the one runned by director.
         '''
+        # devs:
+        # try to not override this method
+        # if you should, try to remain compatible with the recipe TransitionsWithPop
+        # if you can't, add in the docstring for your class that is not usable
+        # for that recipe, and bonus points if you add to the recipe that
+        # your class is not elegible for pop transitions
         dst = self.in_scene.get('dst')        
         src = self.out_scene.get('src')
         director.replace( dst )
@@ -590,6 +596,7 @@ class ZoomTransition(TransitionScene):
         self.add(self.in_scene, z=0)
 
     def finish(self):
+        # tested with the recipe TransitionsWithPop, works.
         dst = self.in_scene.get('dst')
         director.replace( dst )
 

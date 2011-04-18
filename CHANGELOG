@@ -1,9 +1,10 @@
 v0.5dev
+  - added test_transitions_with_pop_recipe.py
   - fixed small bug in TransitionScene when a transition begins amidst another
     transition
   - changed implementation detail in code related to scene changes. User code
-    shouldn't notice except if using len(director.scene_stack
-  - fixed cocos sprites too slow with respect pyglet sprites
+    shouldn't notice except if using len(director.scene_stack)
+  - fixed cocos sprites too slow compared to pyglet sprites
   - issue 159 fixed scene transitions changing some outgoing scene members    
   - issue 160 fixed ZoomTransition traceback when called repeatedly  
   - issue 158 fixed ctrl + x (toggle show_FPS) not hiding the fps display  
