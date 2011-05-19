@@ -1,0 +1,4 @@
+branch of trunk to investigate adding collision functionality to cocos
+see ongoing_collision_work.txt for goals, decisions, progress
+
+r1071 created trunk's branch https://los-cocos.googlecode.com/svn/branches/collision1

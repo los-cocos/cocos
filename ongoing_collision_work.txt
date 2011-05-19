@@ -1,0 +1,218 @@
+(this file best viewed with a text editor that folds longs lines)
+
+Goal
+==== 
+
+The goal for this branch is to add useful collision detection to cocos.
+
+General Approach
+===============
+ 
+I will go sort of TDD style, refining design and implementation along work.
+The file current_design.txt will have the latest requirements \ design decisions.
+
+I will follow this
+
+General guidelines for lib additions
+------------------------------------
+
+	common user use cases should be easy to code
+
+	but uncommon ones should not be impossible, or in general require desperate code contortions to express
+
+	if user code don't need some functionality, then:
+		user should know nothing about the functionality API. Except for reserved names, if applicable.
+	
+	cost (cpu, memory) of unused functionality should be very low
+		
+	avoid API bloat
+	
+Spec, take 1
+============
+
+Delegate to physics engine ?
+----------------------------
+	
+At this moment I discard physics engines (Box2D, chipmunk, ...) because:
+	Unrealistic physics can be desired for a game, which is hard to explain to the engine, yet it is a fairly common situation.
+	
+	For most games the user has simple answers:
+		which actors touch the goodBoyActor ?
+		which actors are near nastyYellowMonster ?
+	I don't think the answer should start with 'well, you learn engine X, ask nicely in terms of engine X, and if your physic models are well set then you will receive a reasonable answer'.
+
+	Despite how simple the user code can be, it will be hurt by binary incompatibilities.
+	
+decision:
+	no physics, only actor overlap.
+
+Underlaying data structures, algorithms to use
+----------------------------------------------
+
+Common in the subject literature are
+
+	quadtree
+
+	cell-partitioning
+
+Particular use cases can perform better with certain collision detection algorithm.
+Each algorithm have tweaking parameters with impact in performance, by example cell size, max tree depth.
+Also, each technique admits some qualitative variants, like what basic geometric shape use for approximate results.  
+
+decision:
+	define a general API that not depends on any underlaying algorithm
+	
+	at least to explore the solution space the code stack should be flexible to accommodate variants and different base algorithms. but don't do too much indirection
+
+	define how to select and initialize a concrete implementation, including pass of algorithm's tweak parameters
+
+	when user code switchs to another algorithm, the only code that needs updating is the line selecting and initializing the concrete implementation
+
+	A reference implementation using brute force method will be written first, allowing to concentrate in the API design, and later retained for testing purposes
+	
+
+First exploration at general API
+--------------------------------
+
+The questions that the collision subsystem should answer are
+
+most important:
+	actor1 and actor2 overlap ?
+	which actors collide with actor1 ?
+	which actors are near actor1 ?
+	
+bonus points:
+	for mouse hit detection: which actor(s) overlaps point (x,y) ?
+	for instant bullet collision and navigation: get first actor (if any) that collides with a ray of origin (x0, y0) and direction (d0, d0) 
+	if actor1 collides with actor2, at user request estimate:
+		contact point
+		contact normal
+		how much overlap
+	
+not known how valuable:
+	which subparts of actor1 overlaps which subpart of actor2 ?
+	give me a list of (actor1, actor2) that includes all collisions in world
+
+We need an entity that will answer that questions, let me call it 'collision manager', an instance of CollisionManager 
+	
+decision:
+	Have a (loosely speaking) abstract base class CollisionManager, its responsibility is define with certain detail the interface answering collision questions.
+	Work will start focusing at most important questions, when that is fleshed out, upgrade to bonus points will follow.
+	The "don't know how valuable" will receive no attention at the moment, but that can change as work progress.
+	
+	
+Collision detail, subactor collision
+------------------------------------
+
+While exact collision will detect if any visible pixel of actor1 overlaps any visible pixel of actor2 is ideal, this is not cheap to calculate.
+
+The usual technique is to decompose each actor in one or more simple geometrical shapes and define (actor1 collides actor2) by LOGICAL_OR{(shape1 overlaps shape2) where shape1 in the actor1 shape decomposition, shape2 in the actor2 shape decomposition}.
+
+That technique is sometimes augmented by Level of Detail collision, where an actor have multiple decomposition in simple shapes, each one with increasing detail. To test for collisions, the more simpler decomposition is tried first, if that gives 'no collision' the test terminates with 'no collision' result, else the next decomposition is tried.
+
+Sometimes we want 'localized collisions', where an actor is logically composed by parts, and we can have questions about parts, like:
+	which subpart of actor1 collides with which subpart of actor2 ?
+
+Use cases:
+		
+Boss which takes damage only if hit on certain areas
+
+Player depicted as a body sprite and an aura sprite hinting which powerup is in use. When powerup is shield, the aura will collide with bullets.
+
+Here they are a lot of decision to do:
+	. should we allow multiple geometrical shapes (circles, rectangles, etc) or mandate a unique geometrical shape ?
+	. which shape(s)
+	. should we support level of detail collisions ?
+	. should we support parts ?
+	
+decision:
+	For the first release version:
+		No parts support
+		No level of detail collision
+		Unique shape for each instance of collision manager
+		First shape of interest is disc
+		Second shape of interest can be a quad or a rotated rectangle
+
+
+Model - View separation
+-----------------------	
+
+When writing his/her app a user can choose between
+	Separate to a certain extent the model and the view. This style can bring better decoupling, more flexibility, easier testing. The con is more indirection, bigger code size, more time spent in design. Powerful, but not first choice to cocos users.
+	
+	Create actor classes by specializing some CocosNode subclass:
+		the subclass defines concrete values (color, image, ...)
+		the subclass adds behavior
+		the subclass can add components as offspring nodes to delegate some of the visuals or behavior, making for mode modular code 
+	Concise, works well if the underlaying model is not too complex. Easier to familiarize with cocos functionality. Probably the better choice for fast prototyping.
+
+Both two styles are important.
+
+decision:
+	have a module collision_model supporting the first style
+	have a node_collision module supporting the second style, where core functionality is delegated to collision_model. Here a collidable is known to be a CocosNode, and that it is included in the world by being added to the scene tree.
+	Work will focus on collision_model until is usable, then node_collision should enter the dev stage.
+	
+Milestone 1
+===========
+
+Work on collision_model only.
+
+Define interfaces
+-----------------
+
+status:
+	Cshape defined, simple geometric shape with methods of interest for	collision
+	CollisionManager defined, answer questions about collisions and proximity
+	Both can be later augmented
+
+	
+Implement interfaces
+--------------------
+
+status:
+	CircleShape implemented
+	CollisionManagerBruteForce implemented
+	CollisionManagerGrid implemented
+	RectShape still not implemented
+	After doing RectShape some tweaking in the CollisionManagers may be necessary
+	After that, CollisionManagerQuadtree can be interesting. 
+
+	
+Unit Testing
+------------
+
+status:
+	basic tests that any CollisionManager must pass, done
+	some additional tests that apply to CollisionManagerGrid done, a few more seems
+	desirable.
+
+	
+Benchmarks and code exercising the collision code
+-------------------------------------------------
+
+status:
+	A simple bouncing ball benchmark done (collects pure model stats), see pic bouncing_balls_time_per_frame.png
+		
+	A cocos visualization for the above model done, to get some ballpark fps numbers ( at the moment 175 objects, all in view, all in movement, handling all collision, runs at around 60 fps )
+		
+	A crash and burn cars script using CocosNode actors, still don't handles collisions
+	A crash and burn model script, handles collision, unfinished
+		
+	Wanted demos that fit well the capabilities of current code, by example:
+		
+		scroller with spaceships / airplanes
+		arcade pac-man like
+		platformer
+
+
+Collect feedback about
+----------------------
+
+Method names are intuitive ?
+
+Any defect / weakness perceived in actual code ?
+
+Important use cases missing ?
+
+Suggestions for better implementation ?

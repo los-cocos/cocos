@@ -1,0 +1,77 @@
+Here ideas for upgrade - augment the collision subsystem that showed when exploring the design, but deemed unessential for the current project stage.
+There is absolutely no promise that any of them will be implemented.
+
+Help optimize a concrete use case
+=================================
+
+Each algorithm / data structure can have tweaking parameters with impact in performance, by example cell size, max tree depth.
+Help the user to tweak those parameters would be good.
+Not talking about adaptive algos here, but choosing 'good' constant values. 
+Something like
+
+	for optimization purposes a 'collect stats' mode should be activable
+	a function to compare two stats for the same algo and tell which is better is desirable
+	a function to suggest better algo parameters from a set of stats is desirable
+
+
+Query collision details
+=======================
+
+By analysis of the intersection shape it should be possible to estimate some collision details like
+	contact point
+	contact normal
+	how much overlap
+
+With rectangular shapes by example:
+	contact point -> center of intersection polygon
+	contact normal -> at least in some cases where the intersection polygon is a quadrangle, one of the diagonals would do
+	how much overlap -> 2 * (area of intersection) / (shape1 area + shape2 area)
+
+The first two seems handy for bounce interactions or graphical effects propagating from the contact point
+	
+	
+actor's  subparts
+=================
+and which actor's implementation should the collision subsystem support ? 
+
+When writing his app a user can choose between
+	Separate to a certain extent the model and the view. This style can bring better decoupling, more flexibility, easier testing. The con is more indirection, bigger code size, more time spent in design. Powerful, but not first choice to cocos users.
+	
+	Create actor classes by specializing some CocosNode subclass:
+		the subclass defines concrete values (color, image, ...)
+		the subclass adds behavior
+		the subclass can add components as offspring nodes to delegate some of the visuals or behavior, making for mode modular code 
+	Concise, works well if the underlaying model is not too complex. Easier to familiarize with cocos functionality.
+
+Examples of the later style are:
+
+		pacman_player_avatar : the visual is a simple rectangle painted with the current animation image. Monsters are in the same style. A single shape per actor will suffice, and either a rectangle a bit smaller that the visual representation will work fine.
+		
+		small_starships_with_orbiters : think a scroller with attacking waves of spaceships, player controls his own spaceship. Visually, a spaceship can have a body, rendered as a image at the position, zero, one or more orbiters, small images circling the position at a certain distance. There can be other visual elements in the render of spaceship, like fire tails from the rockets, auras showing powerups states, etc.
+		As all elements should maintain a spatial relation with the spaceship position, a natural representation of the visuals in cocos would be a tree of CocosNodes
+			spaceship visuals:
+			  CocosNode actor_root (no visual)
+				CocosNode spaceship_body ( Sprite )
+				CocosNode rocket_tail ( Sprite or Particles )
+				CocosNode powerup_aura ( Sprite , Particles )
+				CocosNode orbiter1 ( Sprite )
+				CocosNode orbiter2 ( Sprite )
+
+The gameplay can stipulate collisions as:
+	rocket_tail don't count for collision
+	powerup_aura don't count for collision except if shield_powerup
+	is_collision( actor1, actor2 ) is true if any visual node of actor1 overlaps any node of actor2, except if rules 1 or 2 applies.
+
+It is tempting to use the visual parts to define the collision parts: the user won't need to specify both the visual and collision trees. Also, if it is easier to specify the visuals as a tree of CocosNodes, it will probably be easy to specify the concrete shape (which rectangle or circle) related to collision should use each part.
+
+For each CocosNode we will need two pieces of information:
+
+is the node collidable ?
+what is the concrete shape that the node will use for collision ?
+
+There is a third information that can be convenient: is this CocosNode the top node for the tree description of an actor ?
+This can come handy when there are composite actors as depicted, and the game logic needs to ask:
+	which actors collide with actor1 ?
+	which actors are near actor1 ?
+
+	
