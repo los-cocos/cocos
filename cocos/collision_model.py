@@ -195,6 +195,37 @@ class CircleShape(object):
 ##
 ##        return contact_point, contact_normal, overlapping_measure 
 
+
+class AARectShape(object):
+    """
+    Rectangles with sides paralell to the coordinate axis.
+    Good if actors don't rotate.
+    """
+    def __init__(self, center, half_width, half_height):
+        self.center = center
+        self.rx = half_width
+        self.ry = half_height
+        
+    def overlaps(self, other):
+        return ( abs(self.center[0] - other.center[0]) < self.rx + other.rx and
+                 abs(self.center[1] - other.center[1]) < self.ry + other.ry )
+
+    def distance(self, other):
+        d = max((abs(self.center[0] - other.center[0])-self.rx - other.rx,
+                abs(self.center[1] - other.center[1])-self.ry - other.ry ))
+        if d<0.0:
+            d = 0.0
+        return d
+    
+    def near_than(self, other, near_distance):
+        return ( abs(self.center[0] - other.center[0]) - self.rx - other.rx < near_distance and
+                 abs(self.center[1] - other.center[1]) - self.ry - other.ry < near_distace)
+
+    def minmax(self):
+        return (self.center[0] - self.rx, self.center[0] + self.rx,
+                self.center[1] - self.ry, self.center[1] + self.ry)
+
+
 ###### CollisionManager implementations #######################################
 
 
