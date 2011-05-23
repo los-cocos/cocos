@@ -23,17 +23,35 @@ import cocos.euclid as eu
 fe = 1.0e-4
 
 class Ball(object):        
-    def __init__(self, center, radius, velocity):
-        self.cshape = cm.CircleShape(center, radius)
+    def __init__(self, cshape, velocity):
+        self.cshape = cshape
         self.vel = velocity
         self.accel = eu.Vector2(0.0, 0.0)
         self.colliding = False
 
 
+def get_ball_maker(cshape_cls_name, radius):
+    def with_CircleShape(center, velocity):
+        cshape = cm.CircleShape(center, radius)
+        return Ball(cshape, velocity)
+
+    def with_AARectShape(center, velocity):
+        rx = 0.8 * radius
+        cshape = cm.AARectShape(center, rx, rx)
+        return Ball(cshape, velocity)
+    
+    if cshape_cls_name == 'CircleShape':
+        return with_CircleShape
+    elif cshape_cls_name == 'AARectShape':
+        return with_AARectShape
+    else:
+        print "\n Error, unknown cshape class name:", cshape_cls_name
+
+
 class World(object):
     def __init__(self, world_width=0, world_height=0, border_thickness=0,
                  ball_radius=0, fastness=0, k_border=0, k_ball=0,
-                 collision_manager=0):
+                 cshape_cls_name=0, collision_manager=0):
         # all parameters are required, default values are set only to allow
         # call with **kwargs
         self.width = world_width
@@ -43,6 +61,7 @@ class World(object):
         self.fastness = fastness
         self.k_border = k_border
         self.k_ball = k_ball
+        self.fn_ball_maker = get_ball_maker(cshape_cls_name, ball_radius)
         self.collman = collision_manager
 
         self.actors = []
@@ -54,13 +73,12 @@ class World(object):
     def set_actor_quantity(self, n):
         random_uniform = random.uniform
         pi2 = 2*math.pi
-        r = self.ball_radius
         while n > len(self.actors):
             x = random_uniform(self.x_lo, self.x_hi)
             y = random_uniform(self.y_lo, self.y_hi)
             a = random_uniform(0.0, pi2)
             vel = self.fastness * eu.Vector2(math.cos(a), math.sin(a))
-            actor = Ball(eu.Vector2(x, y), self.ball_radius, vel)
+            actor = self.fn_ball_maker(eu.Vector2(x, y), vel)
             self.actors.append(actor)
             try:
                 self.collman.add(actor)
@@ -148,7 +166,10 @@ def cocos_visualization():
         'ball_radius': 16.0,
         'fastness': 64.0,
         'k_border': 10.0,
-        'k_ball': 10.0
+        'k_ball': 10.0,
+        
+        'cshape_cls_name': 'CircleShape', #'AARectShape'
+        'collision_manager': None # must be filled, see below
         }
     ball_quantity = 40 # 175
 

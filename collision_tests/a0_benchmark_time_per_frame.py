@@ -4,7 +4,7 @@ import time
 import gc
 
 import cocos.collision_model as cm
-import c0_bouncing_balls_Model as m
+import a0_bouncing_balls_Model as m
 
 base_demo_world_params = {
     'seed': 123456,
@@ -14,17 +14,88 @@ base_demo_world_params = {
     'ball_radius': 16.0,
     'fastness': 64.0,
     'k_border': 10.0,
-    'k_ball': 10.0
+    'k_ball': 10.0,
+    
+    'cshape_cls_name': None, # must be filled 'CircleShape' #'AARectShape'
+    'collision_manager': None # must be filled, see below
     }
 
-interesting_ball_quantities = [50, 100, 250, 500]
-
-stats_fixed_params = {
+stats_params = {
+    'ball_quantities': [50, 100, 250, 500],
     'num_frames': 100,
     'dt': 1.0 / 60.0
 }
 
-def benchmark_time_per_frame():
+# how to specify cases
+##cases = {
+##    '<name case>': {
+##        'collman_cls_name':'hjhjg',
+##        'cshape_cls_name': 'dsdas',
+##        'collman_gen_args': [...]
+##        }
+##    ...
+##    }
+
+# BruteForce vs Grid, shape is always CircleShape
+collman_cases = { 
+    'BruteForce': {
+        'collman_cls_name': 'CollisionManagerBruteForce',
+        'cshape_cls_name': 'CircleShape',
+        'collman_gen_args': []
+        },
+    'Grid, cell width to ball width ratio 1.25': {
+        'collman_cls_name': 'CollisionManagerGrid',
+        'cshape_cls_name': 'CircleShape',
+        'collman_gen_args': [1.25] # desired (cell width) / (obj width) ratio
+        },
+    'Grid, cell width to ball width ratio 1.50': {
+        'collman_cls_name': 'CollisionManagerGrid',
+        'cshape_cls_name': 'CircleShape',
+        'collman_gen_args': [1.50]
+        },
+    'Grid, cell width to ball width ratio 2.00': {
+        'collman_cls_name': 'CollisionManagerGrid',
+        'cshape_cls_name': 'CircleShape',
+        'collman_gen_args': [2.0]
+        },
+    'Grid, cell width to ball width ratio 3.00': {
+        'collman_cls_name': 'CollisionManagerGrid',
+        'cshape_cls_name': 'CircleShape',
+        'collman_gen_args': [3.0]
+        }
+    }
+
+# Always Grid, CircleShape vs AARectShape
+cshape_cases = {
+    'Grid, cshape CircleShape, cell to ball 1.25': {
+        'collman_cls_name': 'CollisionManagerGrid',
+        'cshape_cls_name': 'CircleShape',
+        'collman_gen_args': [1.25] # desired (cell width) / (obj width) ratio
+        },
+    'Grid, cshape CircleShape, cell to ball 2.00': {
+        'collman_cls_name': 'CollisionManagerGrid',
+        'cshape_cls_name': 'CircleShape',
+        'collman_gen_args': [2.0]
+        },
+    'Grid, cshape AARectShape, cell to ball 1.25': {
+        'collman_cls_name': 'CollisionManagerGrid',
+        'cshape_cls_name': 'AARectShape',
+        'collman_gen_args': [1.25]
+        },
+    'Grid, cshape AARectShape, cell to ball 2.00': {
+        'collman_cls_name': 'CollisionManagerGrid',
+        'cshape_cls_name': 'AARectShape',
+        'collman_gen_args': [2.0]
+        }
+    }
+
+def benchmark_time_per_frame(cases, base_world_params, stats_params):
+    fixed_world_params = dict(base_world_params)
+    fixed_world_params.pop('collision_manager')
+    fixed_world_params.pop('cshape_cls_name')
+
+    stats_fixed_params = dict(stats_params) 
+    ball_quantities = stats_fixed_params.pop('ball_quantities')
     benchmark = {
         'description':
             """
@@ -34,8 +105,8 @@ def benchmark_time_per_frame():
             boundaries, and a number of balls that should do elastic
             collisions (not physically accurate).
             The initial condition is uniform distribution of balls in the
-            rectangle, and velocity with uniform angle distribution and fixed
-            modulus.
+            rectangle, and velocity with uniform angle distribution and
+            fixed modulus.
             The time per frame is estimated as
             (time needed to calculate num_frames) / num_frames
 
@@ -51,45 +122,44 @@ def benchmark_time_per_frame():
                 num_frames: number of physic frames to calculate
                 dt: time step between frames
             """,
-        'name': 'bouncing balls time_per_frame',
+        'name': 'bouncing balls model time_per_frame',
         'fixed_params': {
-            'world': base_demo_world_params,
+            'world': fixed_world_params,
             'stats_aquisition': stats_fixed_params,
-            }
+            },
+        'ball_quantities': ball_quantities,
+        'cases':cases,
         }
-        
-                
-    stats = {}    
 
-    case_name = 'BruteForce'
-    times = []
-    for quantity in interesting_ball_quantities:
-        world_params = dict(base_demo_world_params)
+    stats = {}
+    for case_name in cases:
+        case_params = cases[case_name]
+        world_params = dict(base_world_params)
         random.seed(world_params.pop('seed'))
-        world_params['collision_manager'] = cm.CollisionManagerBruteForce()
-        world = m.World(**world_params)
-        world.set_actor_quantity(quantity)
-        times.append(time_per_frame(stats_fixed_params, world))
-    stats[case_name] = times
+        world_params['cshape_cls_name'] = case_params['cshape_cls_name']
+        
+        collman_cls_name = case_params['collman_cls_name']
+        collman_cls = getattr(cm, collman_cls_name)
+        collman_args = []
+        if collman_cls_name == 'CollisionManagerGrid':
+            cell_width_to_obj_width_ratio = case_params['collman_gen_args'][0]
+            d = world_params
+            cell_side = 2.0 * d['ball_radius'] * cell_width_to_obj_width_ratio
+            collman_args = (0.0, d['world_width'],
+                            0.0, d['world_height'],
+                            cell_side, cell_side)
+        world_params['collision_manager'] = collman_cls(*collman_args)
 
-    for cell_width_to_obj_width_ratio in [1.25, 1.5, 2.0, 3.0]:
-        d = dict(base_demo_world_params)
-        case_name = 'Grid, cell width to ball width ratio %4.2f'%cell_width_to_obj_width_ratio
-        cell_side = 2.0 * d['ball_radius'] * cell_width_to_obj_width_ratio
-        collman_args = (0.0, d['world_width'],
-                        0.0, d['world_height'],
-                        cell_side, cell_side)
         times = []
-        for quantity in interesting_ball_quantities:
-            world_params = dict(base_demo_world_params)
-            random.seed(world_params.pop('seed'))
-            world_params['collision_manager'] = cm.CollisionManagerGrid(*collman_args)
+
+        for quantity in ball_quantities:
             world = m.World(**world_params)
             world.set_actor_quantity(quantity)
             times.append(time_per_frame(stats_fixed_params, world))
+
         stats[case_name] = times
 
-    pprint_stats(stats)
+    #pprint_stats(stats)
     return stats    
         
 def time_per_frame(stats_fixed_params, world):
@@ -112,15 +182,15 @@ def pprint_stats(stats):
         print "        %s],"%repr(res[3])
     print "    }"
 
-def plot_benchmark_time_per_frame(ball_quantities, benchmark_results):
+def plot_benchmark_time_per_frame(ball_quantities, benchmark_results,
+                                  title, pic_filename):
     import pylab
     fig = pylab.figure(figsize=(6.0, 11.0)) #size in inches
-    fig.suptitle('bouncing balls time per model frame', fontsize=12)
+    fig.suptitle(title, fontsize=12)
 
-    # thickening axes
-    pylab.axis([0.0, 500, -50 , 150])
-    pylab.rc('axes', linewidth=3)
-
+    pylab.axis([0.0, 500, -10 * len(benchmark_results), 150]) # axis extension
+    pylab.rc('axes', linewidth=3)     # thickening axes
+ 
     # axis labels
     pylab.xlabel(r"num balls", fontsize = 12, fontweight='bold')
     pylab.ylabel(r"time per frame in ms", fontsize = 12, fontweight='bold')
@@ -135,37 +205,78 @@ def plot_benchmark_time_per_frame(ball_quantities, benchmark_results):
         res = [ v*1000 for v in benchmark_results[case]] 
         pylab.plot(x, res, color=color, label=case)
 
-    # show the plots labels
+    # show the plot labels
     pylab.legend(loc='lower center')
 
     #pylab.show() # show the figure in a new window
-    pylab.savefig('bouncing_balls_time_per_frame.png')
+    pylab.savefig(pic_filename)
 
-print '\nworking...'
-stats = benchmark_time_per_frame()            
-plot_benchmark_time_per_frame(interesting_ball_quantities, stats)
-print '\n*** Done ***
+def sample_plot():
+    title = '(sample) bouncing balls model - time per frame'
+    fname = '@sample_bouncing_balls_time_per_frame.png'
 
-## sample output: testbed windows xp sp3 32 bits, python 2.6.5, AMD athlon dual
-## core 5200+, memory DDR2 800 single channel
+    fast_stats_params = dict(stats_params)
+    # let be fast in the sample plot, dont do this for real stats
+    fast_stats_params['num_frames'] = 2
+    ball_quantities = fast_stats_params['ball_quantities'] 
+    stats = benchmark_time_per_frame(collman_cases, base_demo_world_params,
+                                     fast_stats_params)    
+    plot_benchmark_time_per_frame(ball_quantities, stats, title, fname)
+    print '\nPloting sample. For fastness a low frame number was chosen,'
+    print 'so the numbers obtained are incorrect.'
+    print 'For real runs, use num_frames = 100 .'
+    print 'Resulting plot saved in file:', fname
+
+def plot_collman_cases():
+    title = 'bouncing balls model - time per frame'
+    fname = 'comparing_collision_managers.png'
+    print '\nWorking, it will take around five minutes to complete.'
+
+    ball_quantities = stats_params['ball_quantities'] 
+    stats = benchmark_time_per_frame(collman_cases, base_demo_world_params,
+                                     stats_params)    
+    plot_benchmark_time_per_frame(ball_quantities, stats, title, fname)
+    print 'Done. Resulting plot saved in file:', fname
+
+def plot_cshape_cases():
+    title = 'bouncing balls model - time per frame'
+    fname = 'comparing_shapes.png'
+    print '\nWorking, it will take around five minutes to complete.'
+
+    ball_quantities = stats_params['ball_quantities'] 
+    stats = benchmark_time_per_frame(cshape_cases, base_demo_world_params,
+                                     stats_params)    
+    plot_benchmark_time_per_frame(ball_quantities, stats, title, fname)
+    print 'Done. Resulting plot saved in file:', fname
+
+plot_collman_cases()
+#plot_cshape_cases()
+
+##if __name__ == '__main__':
+##    sample_plot()
+
+## sample stats output: testbed windows xp sp3 32 bits, python 2.6.5,
+## AMD athlon dual core 5200+, memory DDR2 800 single channel
 ## parameters were:
-##base_demo_world_params = {
-##    'seed': 123456,
-##    'world_width': 800.0,
-##    'world_height': 600.0,
-##    'border_thickness': 50.0, 
-##    'ball_radius': 16.0,
-##    'fastness': 64.0,
-##    'k_border': 10.0,
-##    'k_ball': 10.0
+##    base_demo_world_params = {
+##        'seed': 123456,
+##        'world_width': 800.0,
+##        'world_height': 600.0,
+##        'border_thickness': 50.0, 
+##        'ball_radius': 16.0,
+##        'fastness': 64.0,
+##        'k_border': 10.0,
+##        'k_ball': 10.0
+##        
+##        'cshape_cls_name': None # must be filled 'CircleShape' #'AARectShape'
+##        'collision_manager': None # must be filled, see below
+##        }
+##
+##    stats_params = {
+##        'ball_quantities' = [50, 100, 250, 500],
+##        'num_frames': 100,
+##        'dt': 1.0 / 60.0
 ##    }
-##
-##interesting_ball_quantities = [50, 100, 250, 500]
-##
-##stats_fixed_params = {
-##    'num_frames': 100,
-##    'dt': 1.0 / 60.0
-##}
 ##results:      
 ##stats = {
 ##    'Grid, cell width to ball width ratio 2.00':
