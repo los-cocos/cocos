@@ -1,10 +1,17 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
-r1072 Initial checkin.
+r1073-r1075
+Added AARectShape, modified benchmark code to parametrize over cshapes
+Explored implementation for RectShape in collision_tests\interactive_test_RectShape_overlaps.py
+Decided RectShape not worthwhile
+Updated informative text files for collision dev 
+
+r1072 Initial code checkin.
 Look ongoing_collision_work.txt for discussion about the how and why and the
 decisions taken.
 Look at end of the same file for description of Milestone 1 and completion
 status.
 
 r1071 created trunk's branch https://los-cocos.googlecode.com/svn/branches/collision1
+

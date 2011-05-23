@@ -174,8 +174,15 @@ status:
 	CircleShape implemented
 	CollisionManagerBruteForce implemented
 	CollisionManagerGrid implemented
-	RectShape still not implemented
-	After doing RectShape some tweaking in the CollisionManagers may be necessary
+	AARectShape implemented (axis aligned rect) 
+	RectShape :
+		Implemented overlaps, see collision_tests\interactive_test_RectShape_overlaps.py
+		Looking at that test I conclude that:
+			It will be comparatively slow (too much cases * mults)
+			User code driving the shape and the associated view will be not pretty, also slow.
+			At this point of complexity it may pay to switch to a physic2D engine
+		Decision: RectShape will not be targeted by cocos.collision_model
+
 	After that, CollisionManagerQuadtree can be interesting. 
 
 	
@@ -183,9 +190,11 @@ Unit Testing
 ------------
 
 status:
-	basic tests that any CollisionManager must pass, done
+	basic tests that any CollisionManager must pass (using CirclesShape), done
 	some additional tests that apply to CollisionManagerGrid done, a few more seems
 	desirable.
+	a variation for basic tests using AARectShape wanted
+	
 
 	
 Benchmarks and code exercising the collision code
@@ -204,6 +213,12 @@ status:
 		scroller with spaceships / airplanes
 		arcade pac-man like
 		platformer
+
+	An interactive test for RectShape.overlaps done
+		It shows the implementation is correct
+		Hints that it will be comparatively slow (two much mults and cases)
+		Hints that user code driving the shape and the associated view will be not pretty,
+		also slow.
 
 
 Collect feedback about

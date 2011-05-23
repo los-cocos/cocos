@@ -49,9 +49,8 @@ The first implementation will have the restrictions:
 
 	(actor1 collides with actor2) would be equivalent to (shape1 overlaps shape2)
 
-	We allow a unique general shape: a rect, which don't need to be axis aligned
+	Supported Shapes: CircleShape, AARectShape (axis aligned rectangle)
 
-	A variant where shape is disc will be targeted first (more compact code, still useful in real cases); in parallel or tailing near a variant using rotating rectangles or quads (more accurate collisions in the general case)
 	
 A reference implementation using brute force will be written first, and be retained for unit testing purposes
 
