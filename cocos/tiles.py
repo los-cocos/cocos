@@ -1261,7 +1261,7 @@ class HexMapLayer(HexMap, MapLayer):
     '''
     def __init__(self, id, th, cells, origin=None, properties=None):
         HexMap.__init__(self, id, th, cells, origin, properties)
-        HexMapLayer.__init__(self, properties)
+        MapLayer.__init__(self, properties)
 
 
 # Note that we always add below (not subtract) so that we can try to
