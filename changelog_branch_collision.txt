@@ -1,6 +1,8 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
+r1077 added functionality related to mouse selection
+
 r1073-r1075
 Added AARectShape, modified benchmark code to parametrize over cshapes
 Explored implementation for RectShape in collision_tests\interactive_test_RectShape_overlaps.py

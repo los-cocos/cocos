@@ -25,6 +25,19 @@ class Cshape(object):
         """
         pass
 
+    def touchs_point(self, x, y):
+        """
+        Returns a boolean, True if the point (x,y) overlaps the shape
+        """
+        pass
+
+    def fits_in_box(self, packed_box):
+        """
+        Returns a boolean, True if the shape fully fits into the axis aligned
+        box defined by packed_box (== minx, maxx, miny, maxy)
+        """
+        pass
+
     def minmax(self):
         """
         Returns a four float tuple  xmin, xmax, ymin, ymax definning the
@@ -36,6 +49,7 @@ class Cshape(object):
         Useful for a generic 'which buckets overlaps itself'
         """
         pass
+
 
 ##    def collision_details(self, other):
 ##        """
@@ -147,6 +161,20 @@ class CollisionManager(object):
         """
         pass
 
+    def objs_touching_point(self, x, y):
+        """ -> container with known objects touching point (x, y)
+
+        Useful for mouse pick
+        """
+        pass
+
+    def objs_into_box(self, minx, maxx, miny, maxy):
+        """-> container with know objects that fully fits into the aabb defined by params
+
+        Useful for elastic box selection
+        """
+
+
 ###### Cshape implementations #################################################
 
 
@@ -167,11 +195,19 @@ class CircleShape(object):
     def near_than(self, other, near_distance):
         return abs(self.center - other.center) <= self.r + other.r + near_distance
 
+    def touchs_point(self, x, y):
+        return (self.center - (x,y)).magnitude() <= self.r
+
+    def fits_in_box(self, packed_box):
+        r = self.r
+        return ( ((packed_box[0] + r) <= self.center[0] <= (packed_box[1] - r)) and
+                 ((packed_box[2] + r) <= self.center[1] <= (packed_box[3] - r)) )
+
     def minmax(self):
         r = self.r
         return (self.center[0]-r, self.center[0]+r,
                 self.center[1]-r, self.center[1]+r)
-
+        
 ##    def collision_details(self, other):
 ##        r1 = self.r
 ##        r2 = other.r
@@ -220,6 +256,14 @@ class AARectShape(object):
     def near_than(self, other, near_distance):
         return ( abs(self.center[0] - other.center[0]) - self.rx - other.rx < near_distance and
                  abs(self.center[1] - other.center[1]) - self.ry - other.ry < near_distace)
+
+    def touchs_point(self, x, y):
+        return ( abs(self.center[0] - x) < self.rx and
+                 abs(self.center[1] - y) < self.ry )
+
+    def fits_in_box(self, packed_box):
+        return ( (packed_box[0] + self.rx <= self.center[0] <= packed_box[1] - self.rx) and
+                 (packed_box[2] + self.ry <= self.center[1] <= packed_box[3] - self.ry) )
 
     def minmax(self):
         return (self.center[0] - self.rx, self.center[0] + self.rx,
@@ -305,6 +349,21 @@ class CollisionManagerBruteForce(object):
         Used for debug and testing.
         """
         return self.objs
+
+    def objs_touching_point(self, x, y):
+        touching = set()
+        for obj in self.objs:
+            if obj.cshape.touchs_point(x, y):
+                touching.add(obj)
+        return touching
+
+    def objs_into_box(self, minx, maxx, miny, maxy):
+        into = set()
+        packed_box = minx, maxx, miny, maxy
+        for obj in self.objs:
+            if obj.cshape.fits_in_box(packed_box):
+                into.add(obj)
+        return into
 
 
 class CollisionManagerGrid(object):
@@ -437,6 +496,24 @@ class CollisionManagerGrid(object):
             objs |= bucket
         return objs
 
+    def objs_touching_point(self, x, y):
+        touching = set()
+        for cell_id in self._iter_cells_for_aabb((x, x, y, y)):
+            for obj in self.buckets[cell_id]:
+                if obj.cshape.touchs_point(x, y):
+                    touching.add(obj)
+        return touching
+
+    def objs_into_box(self, minx, maxx, miny, maxy):
+        into = set()
+        buckets = self.buckets
+        packed_box = (minx, maxx, miny, maxy)
+        for cell_idx in self._iter_cells_for_aabb(packed_box):
+            for obj in buckets[cell_idx]:
+                if (obj not in into) and (obj.cshape.fits_in_box(packed_box)):
+                    into.add(obj)
+        return into
+
     def _iter_cells_for_aabb(self, aabb):
         # iterate all buckets overlapping the rectangle minmax
         minx, maxx, miny, maxy = aabb
@@ -460,6 +537,3 @@ class CollisionManagerGrid(object):
             for ix in xrange(ix_lo, ix_sup):
                 cell_id = ix + contrib_y
                 yield cell_id
-
-
-        

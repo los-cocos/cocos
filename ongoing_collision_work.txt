@@ -164,7 +164,7 @@ Define interfaces
 status:
 	Cshape defined, simple geometric shape with methods of interest for	collision
 	CollisionManager defined, answer questions about collisions and proximity
-	Both can be later augmented
+	Both augmented with mouse related functionality
 
 	
 Implement interfaces
@@ -194,7 +194,7 @@ status:
 	some additional tests that apply to CollisionManagerGrid done, a few more seems
 	desirable.
 	a variation for basic tests using AARectShape wanted
-	
+	no tests for mouse related methods
 
 	
 Benchmarks and code exercising the collision code
@@ -220,6 +220,7 @@ status:
 		Hints that user code driving the shape and the associated view will be not pretty,
 		also slow.
 
+	Three interactive tests (d0, d1, d2) for the mouse related functionality: Cshape.touchs_point, Cshape.fits_in_box, CollisionManager.objs_touching_point, CollisionManager.objs_into_box
 
 Collect feedback about
 ----------------------
