@@ -1,6 +1,8 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
+r1078 minor change to test d2
+
 r1077 added functionality related to mouse selection
 
 r1073-r1075

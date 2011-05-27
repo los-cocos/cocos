@@ -205,14 +205,12 @@ class TestLayer(cocos.layer.Layer):
         self.elastic_box.visible = True
         self.elastic_box.set_vertexes_from_minmax(x, x, y, y)
         
-        # calc selection using collman
-        self.selection.clear()
-        self.selection = self.collman.objs_touching_point(x, y)
-
-        # set selected flag for actors in selection
+        # reset selected flag for actors in old selection
         for actor in self.selection:
-            actor.set_selected(True)
+            actor.set_selected(False)
 
+        #empty selection
+        self.selection.clear()
 
 
 print """
