@@ -164,7 +164,7 @@ Define interfaces
 status:
 	Cshape defined, simple geometric shape with methods of interest for	collision
 	CollisionManager defined, answer questions about collisions and proximity
-	Both augmented with mouse related functionality
+	API deemed complete - r1079
 
 	
 Implement interfaces
@@ -195,6 +195,7 @@ status:
 	desirable.
 	a variation for basic tests using AARectShape wanted
 	no tests for mouse related methods
+	no tests for CollisionManager.remove_tricky
 
 	
 Benchmarks and code exercising the collision code

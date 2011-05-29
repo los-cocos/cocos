@@ -66,22 +66,71 @@ class Cshape(object):
 # collision manager interfase
 class CollisionManager(object):
     """
-    Role: answer questions about proximity or collision of known objects
+    Role: answer questions about proximity or collision with known objects
 
     Objects must comply with:
         . obj has a member called cshape
-        . obj.cshape supports the interfase Cshape
+        . obj.cshape supports the interface Cshape
         . as a limitation imposed by the current Cshapes implementations, a
         unique concrete Cshape is allowed across all objects know by a
         CollisionManager instance.
         By example, all objects should have a CircleShape cshape, or all
-        objects should have a RectShape cshape.
+        objects should have a AARectShape cshape.
+
+    CollisionManager don't automatically tracks changes in obj.cshape, it is
+    user code responsability to update the collision manager instance when
+    obj.cshape values changes. (By example, if obj position changes) 
+    Eficient ways of doing this are:
+
+    General use case:
+
+    The game level will have a CollisionManager instance, lets call it collman.
+    Then at each frame you do:
+        . call collman.clear  (it will empty collision manager)
+        . call collman.add for all collidable actors still alive
+        . do the game logic, asking all the questions you want about collision;
+        . as part of the frame update, each object should end with an updated
+        cshape.
+
+    Special case optimization:
+    
+    If lot of the objects are static and only a *few* dynamic ones needs to
+    interact with the statics, the best is to have two collision managers:
+    one for the static objects, the other for all dynamics objects.
+    Then, when starting a level:
+        add the static collidables to collman_static
+    In each frame:
+        . call collman_dynamic.clear
+        . add to collman_dynamic all the dynamic collidables
+        . do the game logic, use remove_tricky to remove in collman_static
+        . as part of the frame update, each dynamic should end with an updated
+        cshape.
+
+    An example of this situation is an arcade game with lots of enemies and
+    lots of goodies (food, coins, powerups) where the goodies are static and
+    only interacts with player.
+    goodies-player interaction will use collman_goodies.objs_colliding(player),
+    player-enemies interactions will use collman_dynamic.
+
+    Note that the few dynamics that interacts with statics are not added to
+    collman_static.
+    Also, there can be lots of dynamics, whenever only a few interacts with the
+    statics.
+
     """
     def add(obj):
         """
         Makes obj a know entity
         """
         pass
+
+    def remove_tricky(obj):
+        """*(obj should have the same .cshape value that when added)*
+        Makes CollisionManager forget about obj, thus no further query will
+        return obj.
+
+        Should only be used in a collman that most of the frames don't changes.
+        """
 
     def clear(self):
         """
@@ -92,6 +141,8 @@ class CollisionManager(object):
     def they_collide(self, obj1, obj2):
         """
         Returns a boolean, True if obj1 overlaps objs2
+
+        obj1, obj2 are not required to be known objects 
         """
         pass
 
@@ -99,6 +150,8 @@ class CollisionManager(object):
         """
         Returns a container with known objects that overlaps obj,
         excluding obj itself
+
+        obj is not required to be a known object
         """
         pass
 
@@ -107,9 +160,12 @@ class CollisionManager(object):
         A lazy iterator over objects colliding with obj, allows to spare some
         CPU when the loop procesing the colissions breaks before exausting
         the collisions.
+
         Usage:
         for other in collision_manager.iter_colliding(obj):
             # process event 'obj touches other'
+
+        obj is not required to be a known object
         """
         pass
 
@@ -118,6 +174,7 @@ class CollisionManager(object):
         Returns a container the objects known by collision manager that are at
         distance to obj less or equal than near_distance, excluding itself.
         Notice that it includes the ones colliding with obj.
+        obj is not required to be a known object
         """
         pass
 
@@ -128,14 +185,16 @@ class CollisionManager(object):
         registered objects at distance less or equal than near_distance to obj,
         except obj itself.
         Notice that it includes the ones colliding with obj.
-        If the game logic wants the list ordered by ascending distances, do
-        
+        obj is not required to be a known object
+        If the game logic wants the list ordered by ascending distances, use
+        ranked_objs_near instead.        
         """
         pass
 
     def ranked_objs_near(self, obj, near_distance):
         """
         Same as objs_near_wdistance but the list is ordered in increasing distance
+        obj is not required to be a known object
         """
         pass
 
@@ -281,6 +340,9 @@ class CollisionManagerBruteForce(object):
         #? use weakref ? python 2.7 has weakset
         self.objs.add(obj)
 
+    def remove_tricky(obj):
+        self.objs.remove(obj)
+
     def clear(self):
         self.objs.clear()
 
@@ -390,6 +452,10 @@ class CollisionManagerGrid(object):
         # 'buckets_for_objects' at the cost of potentially some extra buckets
         for cell_idx in self._iter_cells_for_aabb(obj.cshape.minmax()):
             self.buckets[cell_idx].add(obj)
+
+    def remove_tricky(obj):
+        for cell_idx in self._iter_cells_for_aabb(obj.cshape.minmax()):
+            self.buckets[cell_idx].remove(obj)
 
     def clear(self):
         for bucket in self.buckets:
