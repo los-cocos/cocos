@@ -497,6 +497,7 @@ class Director(event.EventDispatcher):
 
         if self.terminate_app:
             pyglet.app.exit()
+            return
 
 
         self.window.clear()
