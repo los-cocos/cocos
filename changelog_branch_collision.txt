@@ -1,7 +1,9 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
-r1079 added .removed_tricky - API collision model deemes complete
+r1081 added .any_near to collman API - added balldrive toy game
+
+r1079 added .removed_tricky - API collision model deemed complete
 
 r1078 minor change to test d2
 

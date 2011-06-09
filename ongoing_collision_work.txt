@@ -161,10 +161,12 @@ Work on collision_model only.
 Define interfaces
 -----------------
 
+Look at top of cocos.collision_model for the API
+
 status:
 	Cshape defined, simple geometric shape with methods of interest for	collision
 	CollisionManager defined, answer questions about collisions and proximity
-	API deemed complete - r1079
+	API deemed complete - r1081
 
 	
 Implement interfaces
@@ -194,8 +196,9 @@ status:
 	some additional tests that apply to CollisionManagerGrid done, a few more seems
 	desirable.
 	a variation for basic tests using AARectShape wanted
-	no tests for mouse related methods
-	no tests for CollisionManager.remove_tricky
+	no utests for mouse related methods
+	no utests for CollisionManager.remove_tricky
+	no utests for CollisionManager.any_near
 
 	
 Benchmarks and code exercising the collision code
@@ -220,6 +223,12 @@ status:
 		Hints that it will be comparatively slow (two much mults and cases)
 		Hints that user code driving the shape and the associated view will be not pretty,
 		also slow.
+		
+	A mini game, balldrive_toy_game
+		Shows that you can use cocos.collision_model without MVC formalities.
+		Shows use of collision manager in a typical frame update (albeit not having
+		moving enemies is a little weak)
+		Also introduces the new CollisionManager.any_near method.
 
 	Three interactive tests (d0, d1, d2) for the mouse related functionality: Cshape.touchs_point, Cshape.fits_in_box, CollisionManager.objs_touching_point, CollisionManager.objs_into_box
 
