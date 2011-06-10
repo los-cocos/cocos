@@ -109,7 +109,7 @@ def aarect_data1(offset):
     ring_touching = get_ring("ring_touching", rx_1, ry_1, child_scale,
                              distance, offset)
 
-    near_distance = 0.05
+    near_distance = -distance
     ring_near = get_ring("ring_near", rx_1, ry_1, child_scale,
                              near_distance, offset)
     
@@ -125,6 +125,12 @@ def aarect_data1(offset):
 def plot_aarect_data1(offset):
     (center_aarect, ring_touching, ring_near, ring_far,
      near_distance, far_distance, rays) = aarect_data1(offset)
+
+    rx = center_aarect.cshape.rx
+    ry = center_aarect.cshape.ry
+    small = create_obj_with_aarect('small', center_aarect.cshape.center,
+                                rx - near_distance*2.0, ry - near_distance*2.0)
+    
 
     def get_params(obj):
         x, y = obj.cshape.center
@@ -146,6 +152,15 @@ def plot_aarect_data1(offset):
     xmax = x + w
     ymin = y
     ymax = y + h  
+
+##    rx = center_aarect.cshape.rx
+##    ry = center_aarect.cshape.ry
+##    small = create_obj_with_aarect('small', center_aarect.cshape.center,
+##                                rx - near_distance*2.0, ry - near_distance*2.0)
+##    name, x, y, w, h = get_params(small)
+##    rect = pylab.Rectangle((x,y), w, h,  ec='g', fc='none')
+##    pylab.gca().add_patch(rect)
+
 
     for ring, color in [ (ring_touching, 'r'), (ring_near, 'g'),
                          (ring_far, 'b') ]:
@@ -336,18 +351,26 @@ def test_collman_aarects(variant, ctor_args, offset):
         # no repetitions
         li = d[k]; si = set(li)
         assert len(li) == len(si)
-##        print "\nk, li:",k
-##        for obj, other in li:
-##            print obj.name, other.name
-##            print "\t(%5.3f, %5.3f), %5.3f, %5.3f"%(obj.cshape.center.x,
-##                            obj.cshape.center.y, obj.cshape.rx, obj.cshape.ry),
-##            print "\t(%5.3f, %5.3f), %5.3f, %5.3f"%(other.cshape.center.x,
-##                            other.cshape.center.y, other.cshape.rx, other.cshape.ry)
         # all collisions for the ray
         assert len(si) == 2
     
 
-                                          
-            
+    # removing center_aarect
+    collman.remove_tricky(center_aarect)
+    assert not collman.knows(center_aarect)
+    assert center_aarect not in collman.known_objs()
+    assert collman.known_objs() == (ring_touching | ring_near | ring_far)
 
+    # any_near, with obj not known
+    rx = center_aarect.cshape.rx
+    ry = center_aarect.cshape.ry
+    small = create_obj_with_aarect('small', center_aarect.cshape.center,
+                                rx - near_distance*2.0, ry - near_distance*2.0)
+    #   param 'near_distance' selected to obtain return None
+    assert collman.any_near(small, near_distance/2.0) is None
+
+    #   param 'near_distance' selected to obtain  a known object (weak)
+    assert collman.any_near(small, near_distance*2.1) is not None
+
+    
 #plot_aarect_data1(eu.Vector2(0.0, 0.0))  

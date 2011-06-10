@@ -118,13 +118,13 @@ class CollisionManager(object):
     statics.
 
     """
-    def add(obj):
+    def add(self, obj):
         """
         Makes obj a know entity
         """
         pass
 
-    def remove_tricky(obj):
+    def remove_tricky(self, obj):
         """*(obj should have the same .cshape value that when added)*
         Makes CollisionManager forget about obj, thus no further query will
         return obj.
@@ -347,7 +347,7 @@ class CollisionManagerBruteForce(object):
         #? use weakref ? python 2.7 has weakset
         self.objs.add(obj)
 
-    def remove_tricky(obj):
+    def remove_tricky(self, obj):
         self.objs.remove(obj)
 
     def clear(self):
@@ -467,7 +467,7 @@ class CollisionManagerGrid(object):
         for cell_idx in self._iter_cells_for_aabb(obj.cshape.minmax()):
             self.buckets[cell_idx].add(obj)
 
-    def remove_tricky(obj):
+    def remove_tricky(self, obj):
         for cell_idx in self._iter_cells_for_aabb(obj.cshape.minmax()):
             self.buckets[cell_idx].remove(obj)
 

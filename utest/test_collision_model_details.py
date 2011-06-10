@@ -1,4 +1,4 @@
-# tests specific to CollisionManagerGrid
+# tests implementation details
 
 import cocos.collision_model as cm
 import cocos.euclid as eu
@@ -16,6 +16,7 @@ def create_obj_with_circle(name, center, r):
     return obj
 
 def test_ops_near_boundaries():
+    # applies only to CollisionManagerGrid, boundaries are the grid boundaries
     w_width = 200.0
     w_height = 100.0
     cell_side = 20.00

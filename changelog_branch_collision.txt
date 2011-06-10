@@ -1,8 +1,9 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
-r1082 basic tests that any CollisionManager must pass using AARectShape
+r1083 utest remove_tricky and any_near
 
+r1082 basic tests that any CollisionManager must pass using AARectShape
 
 r1081 added .any_near to collman API - added balldrive toy game
 

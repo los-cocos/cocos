@@ -270,7 +270,22 @@ def test_collman_circles(variant, ctor_args, offset):
         assert len(si) == 3
     
 
-                                          
+    # removing center_circle
+    collman.remove_tricky(center_circle)
+    assert not collman.knows(center_circle)
+    assert center_circle not in collman.known_objs()
+    assert collman.known_objs() == (ring_touching | ring_near | ring_far)
+
+    # any_near, with obj not known
+    r = center_circle.cshape.r
+    small = create_obj_with_circle('small', center_circle.cshape.center,
+                                    r - near_distance*2.0)
+    #   param 'near_distance' selected to obtain return None
+    assert collman.any_near(small, near_distance/2.0) is None
+
+    #   param 'near_distance' selected to obtain  a known object (weak)
+    assert collman.any_near(small, near_distance*2.1) is not None
+                                              
             
 
 #plot_circle_data1(eu.Vector2(0.0, 0.0))  

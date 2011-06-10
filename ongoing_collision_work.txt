@@ -197,10 +197,10 @@ status:
 	desirable.
 	basic tests that any CollisionManager must pass (using AARectShape), done
 	no utests for mouse related methods
-	no utests for CollisionManager.remove_tricky
-	no utests for CollisionManager.any_near
+	partial utests for CollisionManager.any_near  , remains to decide and test what to
+	do if provided a known object. Should ignore obj near obj, as in other api calls ?
+(hacer para circle los extra tests para remove y any_near)
 
-	
 Benchmarks and code exercising the collision code
 -------------------------------------------------
 
