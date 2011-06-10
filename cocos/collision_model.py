@@ -171,8 +171,11 @@ class CollisionManager(object):
 
     def any_near(self, obj, near_distance):
         """
-        Returns None if no know object is near than near_distance, else an
-        arbitrary known object with distance less than near_distance
+        Returns None if no know object (except itself) is near than
+        near_distance, else an arbitrary known object with distance
+        less than near_distance
+
+        obj is not required to be a known object
         """
         pass
 
@@ -370,7 +373,7 @@ class CollisionManagerBruteForce(object):
     def any_near(self, obj, near_distance):
         f_near_than = obj.cshape.near_than
         for other in self.objs:
-            if f_near_than(other.cshape,near_distance):
+            if other is not obj and f_near_than(other.cshape,near_distance):
                 return other
         return None
         
@@ -513,7 +516,7 @@ class CollisionManagerGrid(object):
         # do brute force with others in all the buckets inflated shape overlaps
         for cell_id in self._iter_cells_for_aabb((minx, maxx, miny, maxy)):
             for other in self.buckets[cell_id]:
-                if f_distance(other.cshape) < near_distance:
+                if other is not obj and f_distance(other.cshape) < near_distance:
                     return other
         return None
 
