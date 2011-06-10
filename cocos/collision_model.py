@@ -321,7 +321,7 @@ class AARectShape(object):
     
     def near_than(self, other, near_distance):
         return ( abs(self.center[0] - other.center[0]) - self.rx - other.rx < near_distance and
-                 abs(self.center[1] - other.center[1]) - self.ry - other.ry < near_distace)
+                 abs(self.center[1] - other.center[1]) - self.ry - other.ry < near_distance)
 
     def touchs_point(self, x, y):
         return ( abs(self.center[0] - x) < self.rx and

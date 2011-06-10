@@ -195,7 +195,7 @@ status:
 	basic tests that any CollisionManager must pass (using CirclesShape), done
 	some additional tests that apply to CollisionManagerGrid done, a few more seems
 	desirable.
-	a variation for basic tests using AARectShape wanted
+	basic tests that any CollisionManager must pass (using AARectShape), done
 	no utests for mouse related methods
 	no utests for CollisionManager.remove_tricky
 	no utests for CollisionManager.any_near
