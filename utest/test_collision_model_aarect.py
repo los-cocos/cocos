@@ -372,5 +372,10 @@ def test_collman_aarects(variant, ctor_args, offset):
     #   param 'near_distance' selected to obtain  a known object (weak)
     assert collman.any_near(small, near_distance*2.1) is not None
 
+    # any near with known object
+    collman.add(small)
+    assert collman.any_near(small, near_distance/2.0) is None
     
+
+
 #plot_aarect_data1(eu.Vector2(0.0, 0.0))  

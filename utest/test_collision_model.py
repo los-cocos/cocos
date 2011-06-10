@@ -268,7 +268,6 @@ def test_collman_circles(variant, ctor_args, offset):
         assert len(li) == len(si)
         # all collisions for the angle
         assert len(si) == 3
-    
 
     # removing center_circle
     collman.remove_tricky(center_circle)
@@ -285,7 +284,11 @@ def test_collman_circles(variant, ctor_args, offset):
 
     #   param 'near_distance' selected to obtain  a known object (weak)
     assert collman.any_near(small, near_distance*2.1) is not None
-                                              
+
+    # any near with known object
+    collman.add(small)
+    assert collman.any_near(small, near_distance/2.0) is None
+    
             
 
 #plot_circle_data1(eu.Vector2(0.0, 0.0))  
