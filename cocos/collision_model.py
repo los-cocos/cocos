@@ -50,6 +50,9 @@ class Cshape(object):
         """
         pass
 
+    def copy(self):
+        """Returns a copy of itself"""
+        pass
 
 ##    def collision_details(self, other):
 ##        """
@@ -242,6 +245,7 @@ class CollisionManager(object):
 
         Useful for elastic box selection
         """
+        pass
 
 
 ###### Cshape implementations #################################################
@@ -276,6 +280,10 @@ class CircleShape(object):
         r = self.r
         return (self.center[0]-r, self.center[0]+r,
                 self.center[1]-r, self.center[1]+r)
+
+    def copy(self):
+        return CircleShape(eu.Vector2(*self.center), self.r)
+        
         
 ##    def collision_details(self, other):
 ##        r1 = self.r
@@ -337,6 +345,9 @@ class AARectShape(object):
     def minmax(self):
         return (self.center[0] - self.rx, self.center[0] + self.rx,
                 self.center[1] - self.ry, self.center[1] + self.ry)
+
+    def copy(self):
+        return AARectShape(eu.Vector2(*self.center), self.rx, self.ry)
 
 
 ###### CollisionManager implementations #######################################

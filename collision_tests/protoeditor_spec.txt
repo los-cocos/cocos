@@ -1,0 +1,73 @@
+Editor rules for selection, move selection, zoom, scroll
+
+The operation is modeled after the Inkscape way.
+
+Modifiers Keys:
+    Two programmable keys act as modifiers.
+	For convenience we call them mod_accel and mod_shift.
+	Default values are
+		mod_accel : CTRL in windows, COMMAND in mac
+		mod_shift : SHIFT
+		
+Mouse Operation:
+
+Autoscroll
+If the mouse pointer is near the border of client window and world constraints allow, then the worldview is scrolled to show parts of world previously beyond that border(s)
+Autoscroll is always enabled, even if doing some drag operation.
+
+Zoom
+Mouse wheel commands zoom; keys can also request zoom
+	
+Click selection
+Left-clicking on an actor does selection = {actor}
+
+Empty selection
+Left-clicking outside any actor does selection = {} (empty set)
+
+Click modify selection
+Left-clicking on an actor while holding mod_shift toggles the actors selected status, that is selection = selection ^ {actor}  (symmetrical difference)
+
+Drag_move
+When a left mouse drag begins, if under the mouse pointer there is a selected object and the mod_shift is not pressed, then a drag_move begins, that is, the actors in the selection follows the mouse movement.
+	
+Restricted drag move
+If the mod_accel is pressed at any time in a drag move, the selection position will change to reflect a movement beginning at the initial drag position and parallel to the canonical axis; if the modifier is released then it returns to the normal, unrestricted position. 
+	
+Elastic box selection / modify selection
+When a left mouse drag begins, if under the mouse pointer there is not a selected object, then an elastic box selection begins, and the initial selection is empty.
+
+When a left mouse drag begins, if under the mouse pointer there is a selected object, or if the mod_shift is pressed, then an elastic box modify selection begins, and the current selection is kept as the initial selection
+
+The point under the mouse pointer when the drag begins is elastic box's corner0, the point under the mouse pointer after that will be corner1.
+The elastic box will be displayed as a rectangle outline with corner0 and corner1.
+When the mouse drag ends, actors that are fully into the elastic box area will be added to the initial selection, and the result becomes the current selection. 
+ 
+mod_accel does nothing while doing elastic box selection / modify selection
+
+
+Zoom keys operation
+Two programmable keys can request zoom-in or zoom-out.
+Default binding:
+	zoom-in : '+' in numeric keypad
+	zoom-out : '-' in numeric keypad
+
+Move / Scroll keys operation
+Four programmable keys are associated to directions 'left', 'right', 'up', 'down'
+Default bindings are the arrow keys, in the natural order.
+
+The operation performed by the direction keys is determined by the modifiers:
+	do nothing				mod_accel & mod_shift
+	scroll					mod_accel
+	move selection slow		(no modifier pressed)
+	move selection fast		mod_shift
+
+Hot mode change: changes in modifier(s) pressed don't need a release-then-press for current pressed direction keys to be recognized.
+
+While doing a mouse drag operation direction keys are ignored.
+
+Zoom center
+If possible, make the world point under the mouse pointer the same before and after zoom; that minimizes mouse movements and 'seeks where my actor has gone'
+
+Selection visual hint
+Actors in the selection will be shown with an outline rectangle around its normal view.
+  

@@ -207,19 +207,13 @@ status:
 	A cocos visualization for the above model done, to get some ballpark fps numbers ( at the moment 175 objects, all in view, all in movement, handling all collision, runs at around 60 fps )
 		
 	A crash and burn cars script using CocosNode actors, still don't handles collisions
+	
 	A crash and burn model script, handles collision, unfinished
 		
-	Wanted demos that fit well the capabilities of current code, by example:
-		
-		scroller with spaceships / airplanes
-		arcade pac-man like
-		platformer
-
 	An interactive test for RectShape.overlaps done
 		It shows the implementation is correct
 		Hints that it will be comparatively slow (two much mults and cases)
-		Hints that user code driving the shape and the associated view will be not pretty,
-		also slow.
+		Hints that user code driving the shape and the associated view will be not pretty, also slow.
 		
 	A mini game, balldrive_toy_game
 		Shows that you can use cocos.collision_model without MVC formalities.
@@ -227,8 +221,20 @@ status:
 		moving enemies is a little weak)
 		Also introduces the new CollisionManager.any_near method.
 
-	Three interactive tests (d0, d1, d2) for the mouse related functionality: Cshape.touchs_point, Cshape.fits_in_box, CollisionManager.objs_touching_point, CollisionManager.objs_into_box
+	Three interactive tests (d0, d1, d2) for the mouse related functionality:
+		Cshape.touchs_point, Cshape.fits_in_box, CollisionManager.objs_touching_point, CollisionManager.objs_into_box
 
+	An editor helper, e0_protoeditor.py, that handles scroll / zoom / selection in a way strongly based on Inkscape.
+	See detailed description in protoeditor_spec.txt
+
+
+	Wanted demos that fit well the capabilities of current code, by example:
+		
+		scroller with spaceships / airplanes
+		arcade pac-man like
+		platformer
+
+	
 Collect feedback about
 ----------------------
 
