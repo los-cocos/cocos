@@ -59,28 +59,12 @@ consts = {
         "zoom_max": 2.0,
         "zoom_fastness": 1.0
         },
-    "view": {
-        # size visible area, measured in world 
-        'width': 400,
-        'height': 300,
-        # as the font file is not provided it will decay to the default font;
-        # the setting is retained anyway to not downgrade the code 
-        "font_name": 'Axaxax',
-        "palette": {
-            'bg': (0, 65, 133),
-            'player': (237, 27, 36),
-            'wall': (247, 148, 29),
-            'gate': (140, 198, 62),
-            'food': (140, 198, 62)
-            }
-        }
     }
 
 class Actor(cocos.sprite.Sprite):
     colors = [(255, 255, 255), (0, 80, 0) ] 
     def __init__(self):
         super(Actor, self).__init__('ball32.png')
-        self._selected = True
         radius = self.image.width / 2.0
         assert abs(radius-16.0)<fe
         self.cshape = cm.CircleShape(eu.Vector2(0.0, 0.0), radius)
@@ -89,10 +73,6 @@ class Actor(cocos.sprite.Sprite):
     def update_position(self, new_position):
         self.position = new_position
         self.cshape.center = new_position
-
-    def set_selected(self, value):
-        self._set_selected = value
-        self.color = Actor.colors[1 if value else 0]
 
 class ProbeQuad(cocos.cocosnode.CocosNode):
     def __init__(self, r, color4):
@@ -616,7 +596,6 @@ class ColorRect(cocos.cocosnode.CocosNode):
         glPopMatrix()
 
 class Worldview(cocos.layer.ScrollableLayer):
-    is_event_handler = True
     def __init__(self, width=None, height=None, rPlayer=None):
         super(Worldview, self).__init__()
         self.width = width
