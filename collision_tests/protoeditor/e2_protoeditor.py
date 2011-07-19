@@ -12,8 +12,11 @@ Details:
     scroll by keys: default ctrol + arrows (win), COMMAND + arrows (mac)
     autoscroll when mouse pointer near border
 """
+import sys
+import os
 import random
 import weakref
+import pprint
 
 import pyglet
 from pyglet.window import key
@@ -33,10 +36,42 @@ consts = {
         "vsync": True,
         "resizable": True
         },
-    "world": {
-        "width": 1200,
-        "height": 1000,
-        "rPlayer": 8.0,
+    "game": {
+        "name": "test",
+        "max_width": 1200,
+        "max_height": 1000,
+        "min_actor_diameter": 16.0,
+        "max_actor_diameter": 64.0,
+        "max_jewels": 5, 
+        "level_type_descriptor": 'Level 00.01', 
+        "available_actor_types": {
+            "Player 00.01": {
+                'img': 'goodguy.png',
+                'visible_width':  32.0,
+                'others': {},
+                },
+            "Enemy normal 00.01": {
+                'img': 'badguy_1.png',
+                'visible_width':  32.0,
+                'others': {},
+                },
+            "Enemy charger 00.01": {
+                'img': 'badguy_2.png',
+                'visible_width':  32.0,
+                'others': {},
+                },
+            "Tree 00.01": {
+                'img': 'tree.png',
+                'visible_width':  32.0,
+                'others': {},       
+                },
+            "Jewel 00.01" : {
+                'img': 'jewel_generic.png',
+                'visible_width':  32.0,
+                'others': {},
+                },
+            },
+                    
         },
     "edit": {
         "bindings": {
@@ -61,18 +96,96 @@ consts = {
         },
     }
 
-class Actor(cocos.sprite.Sprite):
-    colors = [(255, 255, 255), (0, 80, 0) ] 
-    def __init__(self):
-        super(Actor, self).__init__('ball32.png')
-        radius = self.image.width / 2.0
-        assert abs(radius-16.0)<fe
-        self.cshape = cm.CircleShape(eu.Vector2(0.0, 0.0), radius)
-#        self.cshape = cm.AARectShape(eu.Vector2(0.0, 0.0), radius, radius)
+class ActorProxy(cocos.sprite.Sprite):
+    def __init__(self, object_type_descriptor, cx, cy, visible_width,
+                 ed_image, **others):
+        super(ActorProxy, self).__init__(ed_image)
+        self.object_type_descriptor = object_type_descriptor
+        # measured in world units
+        self.visible_width = visible_width
+        self.others = others
+        self.scale =  float(visible_width) / self.width
+        rx = visible_width / 2.0
+        ry = self.height / 2.0 * self.scale
+        center = eu.Vector2(cx, cy)
+        self.cshape = cm.AARectShape(center, rx, ry)
+        self.update_center(center)
 
-    def update_position(self, new_position):
-        self.position = new_position
-        self.cshape.center = new_position
+    def update_center(self, new_center):
+        assert isinstance(new_center, eu.Vector2) 
+        self.position = new_center
+        self.cshape.center = new_center
+
+    def as_dict(self):
+        d = dict(self.others)
+        d['object_type_descriptor'] = self.object_type_descriptor
+        d['visible_width'] = self.visible_width
+        d['cx'] , d['cy'] = self.cshape.center
+        return d
+
+    def pprint(self):
+        # useful when using the interactive interpreter
+        pass
+
+class LevelProxy(cocos.layer.ScrollableLayer):
+    def __init__(self, object_type_descriptor,
+                 world_width, world_height, **others):
+        super(LevelProxy, self).__init__()
+        self.object_type_descriptor = object_type_descriptor
+        # all measured in world units
+        self.width = world_width
+        self.height = world_height
+        self.others = others
+        self.px_width = world_width
+        self.px_height = world_height
+
+        self.batch = cocos.batch.BatchNode()
+        self.add(self.batch)
+
+        #actors
+        self.actors = set()
+
+        # sample actors, a temporary addition
+        actor_types = consts['game']['available_actor_types']
+        x0 = 400.0
+        dx = 32.0
+        i = 0
+        for actor_type_descriptor in actor_types:
+            params = actor_types[actor_type_descriptor]
+            img = params['img']
+            visible_width = params['visible_width']
+            others = dict(params['others'])
+            actor = ActorProxy(actor_type_descriptor, x0, x0, visible_width,
+                               img, **others)
+            self.add_actor(actor, z=i)
+            i += 1
+            x0 += 32
+
+    def on_enter(self):
+        super(LevelProxy, self).on_enter()
+        scroller = self.get_ancestor(cocos.layer.ScrollingManager)
+        scroller.set_focus(self.width/2.0, self.height/2.0) 
+
+    def add_actor(self, actor, z=None):
+        self.actors.add(actor)
+        self.batch.add(actor, z=z)
+
+    def remove_actor(self, actor):
+        self.actors.remove(actor)
+        self.batch.remove(actor)
+
+    def as_dict(self):
+        d = dict(others)
+        d['object_type_descriptor'] = object_type_descriptor
+        d['width'] = self.width
+        d['height'] = self.height
+        return d
+
+def save_level(level_proxy, level_filename):
+    pass
+
+def load_level(level_filename):
+    return None
 
 class MinMaxRect(cocos.cocosnode.CocosNode):
     """ WARN: it is not a real CocosNode, it pays no attention to position,
@@ -328,7 +441,7 @@ class EditLayer(cocos.layer.Layer):
             old_pos = self.selection[actor].center
             new_pos = old_pos + dpos
             #? clamp new_pos so actor into world boundaries ?
-            actor.update_position(new_pos)
+            actor.update_center(new_pos)
 
     def update_mouse_position(self, sx, sy):
         self.screen_mouse = sx, sy
@@ -577,53 +690,17 @@ class ColorRect(cocos.cocosnode.CocosNode):
         glEnd()
         glPopMatrix()
 
-class Worldview(cocos.layer.ScrollableLayer):
-    def __init__(self, width=None, height=None, rPlayer=None):
-        super(Worldview, self).__init__()
-        self.width = width
-        self.height = height
-        self.px_width = width
-        self.px_height = height
+class DefaultBg(cocos.layer.ScrollableLayer):
+    def __init__(self, width=None, height=None):
+        super(DefaultBg, self).__init__()
+        # dont need to set px_width, px_height, worldview controls scroll limits
 
         # background
-        self.add( ColorRect(width, height, (0,0,255,255)), z=-2)
+        self.add( ColorRect(width, height, (128, 0, 0, 255)), z=-2)
         border_size = 10
-        inner = ColorRect(width-2*border_size, height-2*border_size, (255,0,0,255))
+        inner = ColorRect(width-2*border_size, height-2*border_size, (205, 133, 63, 255))
         inner.position = (border_size, border_size)
         self.add(inner, z=-1 )
-
-        #actors
-        use_batch = True
-        if use_batch:
-            self.batch = cocos.batch.BatchNode()
-            self.add(self.batch)
-        self.actors = []
-        m = height/float(width)
-        i = 0
-        #? issue: modifying step to 4*rPlayer*2 breaks keyscrolling (?)(!)
-        # Quack!!! . The problem happens because:
-        #   . more separation implies less visible actors
-        #   . which renders faster
-        #   . intel chipset don't honors pyglet vsync=True
-        #   . produces small dt
-        #   . ScrollerManager intifies focus at enter and exit
-        #   . thus the small moves required by update_autoscroll are lost
-        for x in xrange(0, int(width), int(4*rPlayer)):
-            y = m*x
-            actor = Actor()
-            actor.update_position(eu.Vector2(float(x), float(y)))
-            if use_batch:
-                self.batch.add(actor, z=i)
-            else:
-                self.add(actor, z=i)
-            self.actors.append(actor)
-            i += 1
-
-    def on_enter(self):
-        super(Worldview, self).on_enter()
-        scroller = self.get_ancestor(cocos.layer.ScrollingManager)
-        scroller.set_focus(self.width/2.0, self.height/2.0) 
-        
 
 class SelectionOutlines(cocos.layer.ScrollableLayer):
     def __init__(self):
@@ -656,14 +733,39 @@ class SelectionOutlines(cocos.layer.ScrollableLayer):
         self.unset_glstate()
 
 print __doc__
+
+try:
+    level_filename = sys.argv[1]
+except:
+    print """
+    Edits a level, if filename don't exists creates a new one with that name.
+
+    Usage:
+        %s levelfilename
+    """%os.path.basename(sys.argv[0])
+    sys.exit(0)
+director.interpreter_locals["level_filename"] = level_filename
+
 director.init(**consts["window"])
 scene = cocos.scene.Scene()
 scrolling_manager = cocos.layer.ScrollingManager()
 scene.add(scrolling_manager)
-playview = Worldview(**consts['world'])
-scrolling_manager.add(playview, z=0)
+
+# get level
+if not os.path.exists(level_filename):
+    # new level
+    zwidth = consts['game']['max_width']
+    zheight = consts['game']['max_height']
+    object_type_descriptor = consts['game']['level_type_descriptor']
+    worldview = LevelProxy(object_type_descriptor, zwidth, zheight)
+    save_level(worldview, level_filename)    
+#worldview = load_level(level_filename)
+
+bg = DefaultBg(worldview.width, worldview.height)
+scrolling_manager.add(bg, z=0)
+scrolling_manager.add(worldview, z=2)
 world_to_screen = scrolling_manager.pixel_to_screen
 screen_to_world = scrolling_manager.pixel_from_screen
-editor = EditLayer(scrolling_manager, playview, **consts['edit'])
+editor = EditLayer(scrolling_manager, worldview, **consts['edit'])
 scene.add(editor)
 director.run(scene)
