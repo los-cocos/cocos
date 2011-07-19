@@ -74,22 +74,6 @@ class Actor(cocos.sprite.Sprite):
         self.position = new_position
         self.cshape.center = new_position
 
-class ProbeQuad(cocos.cocosnode.CocosNode):
-    def __init__(self, r, color4):
-        super(ProbeQuad,self).__init__()
-        self.color4 = color4
-        self.vertexes = [(r,0,0),(0,r,0),(-r,0,0),(0,-r,0)]
-
-    def draw(self):
-        glPushMatrix()
-        self.transform()
-        glBegin(GL_QUADS)
-        glColor4ub( *self.color4 )
-        for v in self.vertexes:
-            glVertex3i(*v)
-        glEnd()
-        glPopMatrix()
-
 class MinMaxRect(cocos.cocosnode.CocosNode):
     """ WARN: it is not a real CocosNode, it pays no attention to position,
         rotation, etc. It only draws the quad depicted by the vertexes.
@@ -158,6 +142,7 @@ class EditLayer(cocos.layer.Layer):
         self.wwidth = worldview.width
         self.wheight = worldview.height
 
+        self.screen_mouse = 1, 2
         self.autoscrolling = False
         self.drag_selecting = False
         self.drag_moving = False
@@ -200,17 +185,12 @@ class EditLayer(cocos.layer.Layer):
         if self.elastic_box is None:
             self.elastic_box = MinMaxRect()
             scene.add(self.elastic_box, z=10)
-            self.mouse_mark = ProbeQuad(4, (0,0,0,255))
-            scene.add(self.mouse_mark, z=11)
             self.selection_outlines = SelectionOutlines()
             scroller = self.weak_scroller()
             z = len(scroller.children)+1
             scroller.add(self.selection_outlines, z=z)            
         
     def update(self, dt):
-        mx = self.buttons['right'] - self.buttons['left'] 
-        my = self.buttons['up'] - self.buttons['down']
-        dz = self.buttons['zoomin'] - self.buttons['zoomout']
 
         # autoscroll
         if self.autoscrolling:
@@ -295,7 +275,6 @@ class EditLayer(cocos.layer.Layer):
                 elif self.keymoving:
                     self.move_key_dpos += dt*self.move_key_vel
                     self.move_selection(self.move_key_dpos)
-                    
 
         # drag move
         if self.drag_moving:
@@ -312,33 +291,37 @@ class EditLayer(cocos.layer.Layer):
             self.move_selection(dpos)
 
         # zoom
-        zoom_change = (dz != 0 or self.wheel != 0) 
+        dz = self.buttons['zoomin'] - self.buttons['zoomout']
+        zoom_change = (dz != 0 or self.wheel != 0)
         if zoom_change:
-            if self.mouse_into_world():
-                wzoom_center = self.world_mouse
-                szoom_center = self.screen_mouse
-            else:
-                # decay to scroller unadorned
-                wzoom_center = None
-            if self.wheel !=0:
-                dt_dz = 0.01666666 * self.wheel
-                self.wheel = 0
-            else:
-                dt_dz = dt * dz
-            scroller = self.weak_scroller()
-            zoom = scroller.scale + dt_dz * self.zoom_fastness
-            if zoom < self.zoom_min:
-                zoom = self.zoom_min
-            elif zoom > self.zoom_max:
-                zoom = self.zoom_max
-            scroller.scale = zoom
-            if wzoom_center is not None:
-                # postprocess toward 'world point under mouse the same before
-                # and after zoom' ; other restrictions may prevent fully comply
-                wx1, wy1 = screen_to_world(*szoom_center)
-                fx = scroller.restricted_fx + (wzoom_center[0] - wx1)
-                fy = scroller.restricted_fy + (wzoom_center[1] - wy1)
-                scroller.set_focus(fx, fy)
+            self.update_zoom(dz)
+
+    def update_zoom(self, dz):
+        if self.mouse_into_world():
+            wzoom_center = self.world_mouse
+            szoom_center = self.screen_mouse
+        else:
+            # decay to scroller unadorned
+            wzoom_center = None
+        if self.wheel !=0:
+            dt_dz = 0.01666666 * self.wheel
+            self.wheel = 0
+        else:
+            dt_dz = dt * dz
+        scroller = self.weak_scroller()
+        zoom = scroller.scale + dt_dz * self.zoom_fastness
+        if zoom < self.zoom_min:
+            zoom = self.zoom_min
+        elif zoom > self.zoom_max:
+            zoom = self.zoom_max
+        scroller.scale = zoom
+        if wzoom_center is not None:
+            # postprocess toward 'world point under mouse the same before
+            # and after zoom' ; other restrictions may prevent fully comply
+            wx1, wy1 = screen_to_world(*szoom_center)
+            fx = scroller.restricted_fx + (wzoom_center[0] - wx1)
+            fy = scroller.restricted_fy + (wzoom_center[1] - wy1)
+            scroller.set_focus(fx, fy)
 
     def move_selection(self, dpos):
         for actor in self.selection:
@@ -370,7 +353,6 @@ class EditLayer(cocos.layer.Layer):
             if self.autoscrolling:
                 self.autoscrolling_relative_fastness = (sdx / border,
                                                         sdy / border)
-        self.mouse_mark.position = world_to_screen(*self.world_mouse) 
 
     def update_autoscroll(self, dt):
         fraction_sdx, fraction_sdy = self.autoscrolling_relative_fastness
@@ -618,6 +600,14 @@ class Worldview(cocos.layer.ScrollableLayer):
         self.actors = []
         m = height/float(width)
         i = 0
+        #? issue: modifying step to 4*rPlayer*2 breaks keyscrolling (?)(!)
+        # Quack!!! . The problem happens because:
+        #   . more separation implies less visible actors
+        #   . which renders faster
+        #   . intel chipset don't honors pyglet vsync=True
+        #   . produces small dt
+        #   . ScrollerManager intifies focus at enter and exit
+        #   . thus the small moves required by update_autoscroll are lost
         for x in xrange(0, int(width), int(4*rPlayer)):
             y = m*x
             actor = Actor()

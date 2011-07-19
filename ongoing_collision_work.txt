@@ -206,7 +206,7 @@ status:
 		
 	A cocos visualization for the above model done, to get some ballpark fps numbers ( at the moment 175 objects, all in view, all in movement, handling all collision, runs at around 60 fps )
 		
-	A crash and burn cars script using CocosNode actors, still don't handles collisions
+	A crash and burn cars script using CocosNode actors, b1_crash_and_burn_cocosnode.py
 	
 	A crash and burn model script, handles collision, unfinished
 		
@@ -226,7 +226,17 @@ status:
 
 	An editor helper, e0_protoeditor.py, that handles scroll / zoom / selection in a way strongly based on Inkscape.
 	See detailed description in protoeditor_spec.txt
-
+	While upgrading e0 to support persistence, scrolling by keys broke: up and right will work seemingly ok, down and left will not respond.
+	Strange, because the event handling was not changed.
+	Morphing the code in small steps from e0 to the problematic version showed that increasing separation between sprites in initial population activated the bad behavior
+	Causality chain was discovered to be:  
+		. more separation implies less visible actors
+		. which renders faster
+		. intel chipset don't honors pyglet vsync=True
+		. produces small dt
+		. ScrollerManager intifies focus at enter and exit
+		. thus the small moves required by update_autoscroll are lost
+	issue is not fixed atm.
 
 	Wanted demos that fit well the capabilities of current code, by example:
 		

@@ -1,6 +1,20 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
+r1089 e0_protoeditor.py : cleanup, strange bug in keyscrolling discovered, bug cause chain determined.
+While upgrading e0 to support persistence, scrolling by keys broke: up and right will work seemingly ok, down and left will not respond.
+Strange, because the event handling was not changed.
+Morphing the code in small steps from e0 to the problematic version showed that increasing separation between sprites in initial population activated the bad behavior
+Causality chain was discovered to be:  
+    . more separation implies less visible actors
+    . which renders faster
+    . intel chipset don't honors pyglet vsync=True
+    . produces small dt
+    . ScrollerManager intifies focus at enter and exit
+    . thus the small moves required by update_autoscroll are lost
+
+r1088 added collisions to b0 (b1_crash_and_burn_cocosnode.py)
+
 r1087 cleanup e0_protoeditor.py
 
 r1086 added CShape.copy  - refined example d3 to e0_protoeditor.py, an editor helper that handles scroll / zoom / selection. See detailed description in protoeditor_spec.txt
