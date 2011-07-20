@@ -1,3 +1,5 @@
+User Interactions
+
 Editor rules for selection, move selection, zoom, scroll
 
 The operation is modeled after the Inkscape way.
@@ -70,4 +72,23 @@ If possible, make the world point under the mouse pointer the same before and af
 
 Selection visual hint
 Actors in the selection will be shown with an outline rectangle around its normal view.
-  
+
+
+Persistence
+
+Overview
+
+At present the focus is in editor save level <-> in game start level instantiation, the problem of in game save game is left for further milestones.   
+
+Editor should be easy to adapt to different games.
+
+Upgrading saved data when the game code evolves needs to be easy.
+
+A level editor needs to collect enough information on actors and level that allows  instantiation at play game time.
+
+Editor should store that info so that the in-game level loader can read it and instantiate entities at play game time.
+
+For simplicity and separation of concerns editor with handle only proxies to game entities. A game must define the proxies to the real, in game entities.
+
+The proxies will be basically dictionaries containing the necessary information as simple values, including versionning info and default values to take when added to the level in the editor.
+

@@ -36,43 +36,6 @@ consts = {
         "vsync": True,
         "resizable": True
         },
-    "game": {
-        "name": "test",
-        "max_width": 1200,
-        "max_height": 1000,
-        "min_actor_diameter": 16.0,
-        "max_actor_diameter": 64.0,
-        "max_jewels": 5, 
-        "level_type_descriptor": 'Level 00.01', 
-        "available_actor_types": {
-            "Player 00.01": {
-                'img': 'goodguy.png',
-                'visible_width':  32.0,
-                'others': {},
-                },
-            "Enemy normal 00.01": {
-                'img': 'badguy_1.png',
-                'visible_width':  32.0,
-                'others': {},
-                },
-            "Enemy charger 00.01": {
-                'img': 'badguy_2.png',
-                'visible_width':  32.0,
-                'others': {},
-                },
-            "Tree 00.01": {
-                'img': 'tree.png',
-                'visible_width':  32.0,
-                'others': {},       
-                },
-            "Jewel 00.01" : {
-                'img': 'jewel_generic.png',
-                'visible_width':  32.0,
-                'others': {},
-                },
-            },
-                    
-        },
     "edit": {
         "bindings": {
             key.LEFT: 'left',
@@ -146,7 +109,7 @@ class LevelProxy(cocos.layer.ScrollableLayer):
         self.actors = set()
 
         # sample actors, a temporary addition
-        actor_types = consts['game']['available_actor_types']
+        actor_types = game['available_actor_types']
         x0 = 400.0
         dx = 32.0
         i = 0
@@ -746,6 +709,9 @@ except:
     sys.exit(0)
 director.interpreter_locals["level_filename"] = level_filename
 
+# get game defs
+from gamedef import game
+
 director.init(**consts["window"])
 scene = cocos.scene.Scene()
 scrolling_manager = cocos.layer.ScrollingManager()
@@ -754,9 +720,9 @@ scene.add(scrolling_manager)
 # get level
 if not os.path.exists(level_filename):
     # new level
-    zwidth = consts['game']['max_width']
-    zheight = consts['game']['max_height']
-    object_type_descriptor = consts['game']['level_type_descriptor']
+    zwidth = game['max_width']
+    zheight = game['max_height']
+    object_type_descriptor = game['level_type_descriptor']
     worldview = LevelProxy(object_type_descriptor, zwidth, zheight)
     save_level(worldview, level_filename)    
 #worldview = load_level(level_filename)
