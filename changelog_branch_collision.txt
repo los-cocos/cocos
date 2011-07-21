@@ -1,6 +1,8 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
+r1095 protoeditor load - save - new first sketch. Working, code needs reorganization.
+
 r1094 separate game specific settings from editor code
 
 r1090-r1093 moved e0 to its own directory, renamed, added resources, added ActorProxy and LevelProxy in the way to add load-save 

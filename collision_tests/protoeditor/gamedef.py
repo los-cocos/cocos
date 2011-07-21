@@ -9,27 +9,27 @@ game = {
     "level_type_descriptor": 'Level 00.01', 
     "available_actor_types": {
         "Player 00.01": {
-            'img': 'goodguy.png',
+            'editor_img': 'goodguy.png',
             'visible_width':  32.0,
             'others': {},
             },
         "Enemy normal 00.01": {
-            'img': 'badguy_1.png',
+            'editor_img': 'badguy_1.png',
             'visible_width':  32.0,
             'others': {},
             },
         "Enemy charger 00.01": {
-            'img': 'badguy_2.png',
+            'editor_img': 'badguy_2.png',
             'visible_width':  32.0,
             'others': {},
             },
         "Tree 00.01": {
-            'img': 'tree.png',
+            'editor_img': 'tree.png',
             'visible_width':  32.0,
             'others': {},       
             },
         "Jewel 00.01" : {
-            'img': 'jewel_generic.png',
+            'editor_img': 'jewel_generic.png',
             'visible_width':  32.0,
             'others': {},
             },

@@ -1,0 +1,68 @@
+(dp0
+S'width'
+p1
+I1200
+sS'actors'
+p2
+(lp3
+(dp4
+S'cy'
+p5
+F526.0
+sS'cx'
+p6
+F461.0
+sS'visible_width'
+p7
+F32.0
+sS'object_type_descriptor'
+p8
+S'Enemy normal 00.01'
+p9
+sa(dp10
+g5
+F459.0
+sg6
+F524.0
+sg7
+F32.0
+sg8
+S'Player 00.01'
+p11
+sa(dp12
+g5
+F459.0
+sg6
+F461.0
+sg7
+F32.0
+sg8
+S'Tree 00.01'
+p13
+sa(dp14
+g5
+F496.0
+sg6
+F496.0
+sg7
+F32.0
+sg8
+S'Enemy charger 00.01'
+p15
+sa(dp16
+g5
+F528.0
+sg6
+F528.0
+sg7
+F32.0
+sg8
+S'Jewel 00.01'
+p17
+sasg8
+S'Level 00.01'
+p18
+sS'height'
+p19
+I1000
+s.

@@ -16,6 +16,7 @@ import sys
 import os
 import random
 import weakref
+import operator 
 import pprint
 
 import pyglet
@@ -27,6 +28,8 @@ import cocos
 from cocos.director import director
 import cocos.collision_model as cm
 import cocos.euclid as eu
+
+import persistence as pe
 
 fe = 1.0e-4
 consts = {
@@ -44,6 +47,7 @@ consts = {
             key.DOWN: 'down',            
             key.NUM_ADD: 'zoomin',
             key.NUM_SUBTRACT: 'zoomout',
+            key.W: 'save',
             },
         "mod_modify_selection": key.MOD_SHIFT,
         "mod_restricted_mov": key.MOD_ACCEL,
@@ -108,22 +112,6 @@ class LevelProxy(cocos.layer.ScrollableLayer):
         #actors
         self.actors = set()
 
-        # sample actors, a temporary addition
-        actor_types = game['available_actor_types']
-        x0 = 400.0
-        dx = 32.0
-        i = 0
-        for actor_type_descriptor in actor_types:
-            params = actor_types[actor_type_descriptor]
-            img = params['img']
-            visible_width = params['visible_width']
-            others = dict(params['others'])
-            actor = ActorProxy(actor_type_descriptor, x0, x0, visible_width,
-                               img, **others)
-            self.add_actor(actor, z=i)
-            i += 1
-            x0 += 32
-
     def on_enter(self):
         super(LevelProxy, self).on_enter()
         scroller = self.get_ancestor(cocos.layer.ScrollingManager)
@@ -138,17 +126,66 @@ class LevelProxy(cocos.layer.ScrollableLayer):
         self.batch.remove(actor)
 
     def as_dict(self):
-        d = dict(others)
-        d['object_type_descriptor'] = object_type_descriptor
+        d = dict(self.others)
+        d['object_type_descriptor'] = self.object_type_descriptor
         d['width'] = self.width
         d['height'] = self.height
+        zactors = list(self.batch.children)
+        zactors.sort(key=operator.itemgetter(0))
+        f = operator.itemgetter(1)
+        d['actors'] = [ f(zactor).as_dict() for zactor in zactors ]
         return d
 
+def add_sample_actors_to_level(level_proxy):
+    actor_types = game['available_actor_types']
+    x0 = 400.0
+    dx = 32.0
+    i = 0
+    for actor_type_descriptor in actor_types:
+        params = actor_types[actor_type_descriptor]
+        img = params['editor_img']
+        visible_width = params['visible_width']
+        others = dict(params['others'])
+        actor = ActorProxy(actor_type_descriptor, x0, x0, visible_width,
+                           img, **others)
+        level_proxy.add_actor(actor, z=i)
+        i += 1
+        x0 += 32
+        
 def save_level(level_proxy, level_filename):
-    pass
+    level_dict = level_proxy.as_dict()
+    f = open(level_filename, 'wb')
+    pickler = pe.RestrictedPickler(f)
+    pickler.dump(level_dict)
+    f.close()
 
 def load_level(level_filename):
-    return None
+    f = open(level_filename, 'rb')
+    unpickler = pe.RestrictedUnpickler(f)
+    level_dict = unpickler.load()
+    f.close()
+    object_type_descriptor = level_dict.pop('object_type_descriptor')
+    # if needed, handle here versionning
+    # ...
+    actors = level_dict.pop('actors')
+    width = level_dict.pop('width')
+    height = level_dict.pop('height')
+    others = level_dict
+    level = LevelProxy(object_type_descriptor, width, height, **others)
+    z = 0
+    for desc in actors:
+        object_type_descriptor = desc.pop('object_type_descriptor')
+        editor_img = game['available_actor_types'][object_type_descriptor]['editor_img']
+        cx = desc.pop('cx')
+        cy = desc.pop('cy')
+        visible_width = desc.pop('visible_width')
+        actor = ActorProxy(object_type_descriptor, cx, cy, visible_width,
+                           editor_img, **others)
+        level.add_actor(actor, z=z)
+        z += 1
+    
+    return level
+
 
 class MinMaxRect(cocos.cocosnode.CocosNode):
     """ WARN: it is not a real CocosNode, it pays no attention to position,
@@ -267,6 +304,11 @@ class EditLayer(cocos.layer.Layer):
             scroller.add(self.selection_outlines, z=z)            
         
     def update(self, dt):
+        # save ?
+        if self.buttons['save']:
+            worldview = self.weak_worldview()
+            save_level(worldview, level_filename)
+            return
 
         # autoscroll
         if self.autoscrolling:
@@ -724,8 +766,11 @@ if not os.path.exists(level_filename):
     zheight = game['max_height']
     object_type_descriptor = game['level_type_descriptor']
     worldview = LevelProxy(object_type_descriptor, zwidth, zheight)
-    save_level(worldview, level_filename)    
-#worldview = load_level(level_filename)
+    # add sample actors, a temporary addition while developing
+    add_sample_actors_to_level(worldview)
+    save_level(worldview, level_filename)
+
+worldview = load_level(level_filename)
 
 bg = DefaultBg(worldview.width, worldview.height)
 scrolling_manager.add(bg, z=0)
