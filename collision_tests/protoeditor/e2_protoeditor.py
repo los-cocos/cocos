@@ -11,6 +11,12 @@ Details:
     zoom by mouse wheel or keys (default '+', '-' in keypad)
     scroll by keys: default ctrol + arrows (win), COMMAND + arrows (mac)
     autoscroll when mouse pointer near border
+    'w' saves the level to same name as loaded
+    Warn: make sure your version control software treats the level files as
+    binary, or you could get corrupted levels in soe OSes.
+    By example, if you use subversion and the extension .lvl for levels,
+    you can set the autoprop line
+    *.lvl = mime-type=application/octet-stream
 """
 import sys
 import os

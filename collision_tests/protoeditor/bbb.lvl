@@ -8,10 +8,10 @@ p2
 (dp4
 S'cy'
 p5
-F526.0
+F482.0
 sS'cx'
 p6
-F461.0
+F540.0
 sS'visible_width'
 p7
 F32.0
@@ -21,9 +21,9 @@ S'Enemy normal 00.01'
 p9
 sa(dp10
 g5
-F459.0
+F447.0
 sg6
-F524.0
+F506.0
 sg7
 F32.0
 sg8
@@ -31,9 +31,9 @@ S'Player 00.01'
 p11
 sa(dp12
 g5
-F459.0
+F464.0
 sg6
-F461.0
+F464.0
 sg7
 F32.0
 sg8
