@@ -13,7 +13,7 @@ Details:
     autoscroll when mouse pointer near border
     'w' saves the level to same name as loaded
     Warn: make sure your version control software treats the level files as
-    binary, or you could get corrupted levels in soe OSes.
+    binary, or you could get corrupted levels in some OSes.
     By example, if you use subversion and the extension .lvl for levels,
     you can set the autoprop line
     *.lvl = mime-type=application/octet-stream
@@ -36,6 +36,7 @@ import cocos.collision_model as cm
 import cocos.euclid as eu
 
 import persistence as pe
+import some_proxies as sp
 
 fe = 1.0e-4
 consts = {
@@ -68,95 +69,6 @@ consts = {
         "zoom_fastness": 1.0
         },
     }
-
-class ActorProxy(cocos.sprite.Sprite):
-    def __init__(self, object_type_descriptor, cx, cy, visible_width,
-                 ed_image, **others):
-        super(ActorProxy, self).__init__(ed_image)
-        self.object_type_descriptor = object_type_descriptor
-        # measured in world units
-        self.visible_width = visible_width
-        self.others = others
-        self.scale =  float(visible_width) / self.width
-        rx = visible_width / 2.0
-        ry = self.height / 2.0 * self.scale
-        center = eu.Vector2(cx, cy)
-        self.cshape = cm.AARectShape(center, rx, ry)
-        self.update_center(center)
-
-    def update_center(self, new_center):
-        assert isinstance(new_center, eu.Vector2) 
-        self.position = new_center
-        self.cshape.center = new_center
-
-    def as_dict(self):
-        d = dict(self.others)
-        d['object_type_descriptor'] = self.object_type_descriptor
-        d['visible_width'] = self.visible_width
-        d['cx'] , d['cy'] = self.cshape.center
-        return d
-
-    def pprint(self):
-        # useful when using the interactive interpreter
-        pass
-
-class LevelProxy(cocos.layer.ScrollableLayer):
-    def __init__(self, object_type_descriptor,
-                 world_width, world_height, **others):
-        super(LevelProxy, self).__init__()
-        self.object_type_descriptor = object_type_descriptor
-        # all measured in world units
-        self.width = world_width
-        self.height = world_height
-        self.others = others
-        self.px_width = world_width
-        self.px_height = world_height
-
-        self.batch = cocos.batch.BatchNode()
-        self.add(self.batch)
-
-        #actors
-        self.actors = set()
-
-    def on_enter(self):
-        super(LevelProxy, self).on_enter()
-        scroller = self.get_ancestor(cocos.layer.ScrollingManager)
-        scroller.set_focus(self.width/2.0, self.height/2.0) 
-
-    def add_actor(self, actor, z=None):
-        self.actors.add(actor)
-        self.batch.add(actor, z=z)
-
-    def remove_actor(self, actor):
-        self.actors.remove(actor)
-        self.batch.remove(actor)
-
-    def as_dict(self):
-        d = dict(self.others)
-        d['object_type_descriptor'] = self.object_type_descriptor
-        d['width'] = self.width
-        d['height'] = self.height
-        zactors = list(self.batch.children)
-        zactors.sort(key=operator.itemgetter(0))
-        f = operator.itemgetter(1)
-        d['actors'] = [ f(zactor).as_dict() for zactor in zactors ]
-        return d
-
-def add_sample_actors_to_level(level_proxy):
-    actor_types = game['available_actor_types']
-    x0 = 400.0
-    dx = 32.0
-    i = 0
-    for actor_type_descriptor in actor_types:
-        params = actor_types[actor_type_descriptor]
-        img = params['editor_img']
-        visible_width = params['visible_width']
-        others = dict(params['others'])
-        actor = ActorProxy(actor_type_descriptor, x0, x0, visible_width,
-                           img, **others)
-        level_proxy.add_actor(actor, z=i)
-        i += 1
-        x0 += 32
         
 def save_level(level_proxy, level_filename):
     level_dict = level_proxy.as_dict()
@@ -170,26 +82,11 @@ def load_level(level_filename):
     unpickler = pe.RestrictedUnpickler(f)
     level_dict = unpickler.load()
     f.close()
-    object_type_descriptor = level_dict.pop('object_type_descriptor')
+    editor_type_id = level_dict.pop('editor_type_id')
     # if needed, handle here versionning
     # ...
-    actors = level_dict.pop('actors')
-    width = level_dict.pop('width')
-    height = level_dict.pop('height')
-    others = level_dict
-    level = LevelProxy(object_type_descriptor, width, height, **others)
-    z = 0
-    for desc in actors:
-        object_type_descriptor = desc.pop('object_type_descriptor')
-        editor_img = game['available_actor_types'][object_type_descriptor]['editor_img']
-        cx = desc.pop('cx')
-        cy = desc.pop('cy')
-        visible_width = desc.pop('visible_width')
-        actor = ActorProxy(object_type_descriptor, cx, cy, visible_width,
-                           editor_img, **others)
-        level.add_actor(actor, z=z)
-        z += 1
-    
+    assert editor_type_id == sp.LevelProxy.editor_type_id
+    level = sp.LevelProxy.new_from_dict(level_dict)
     return level
 
 
@@ -771,9 +668,9 @@ if not os.path.exists(level_filename):
     zwidth = game['max_width']
     zheight = game['max_height']
     object_type_descriptor = game['level_type_descriptor']
-    worldview = LevelProxy(object_type_descriptor, zwidth, zheight)
+    worldview = sp.LevelProxy(zwidth, zheight)
     # add sample actors, a temporary addition while developing
-    add_sample_actors_to_level(worldview)
+    sp.add_sample_actors_to_level(worldview)
     save_level(worldview, level_filename)
 
 worldview = load_level(level_filename)
