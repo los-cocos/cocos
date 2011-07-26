@@ -55,6 +55,8 @@ consts = {
             key.NUM_ADD: 'zoomin',
             key.NUM_SUBTRACT: 'zoomout',
             key.W: 'save',
+            key.P: 'pprint',
+            key.D: 'dup',
             },
         "mod_modify_selection": key.MOD_SHIFT,
         "mod_restricted_mov": key.MOD_ACCEL,
@@ -208,10 +210,22 @@ class EditLayer(cocos.layer.Layer):
         
     def update(self, dt):
         # save ?
-        if self.buttons['save']:
+        if self.buttons['save'] and self.modifiers['save']:
+            # assumption: event provider dont autorepeat,  true for pyglet 
+            self.buttons['save'] = 0
             worldview = self.weak_worldview()
             save_level(worldview, level_filename)
             return
+
+        # pprint selection ?
+        if self.buttons['pprint'] and self.modifiers['pprint']:
+            self.buttons['pprint'] = 0
+            self.pprint_selection()
+
+        # duplicate selection ?
+        if self.buttons['dup'] and self.modifiers['dup']:
+            self.buttons['dup'] = 0
+            self.cmd_duplicate_selection()
 
         # autoscroll
         if self.autoscrolling:
@@ -579,6 +593,18 @@ class EditLayer(cocos.layer.Layer):
 
     def selection_changed(self):
         self.selection_outlines.selection = self.selection
+
+    def pprint_selection(self):
+        for actor in self.selection:
+            print
+            actor.pprint()
+
+    def cmd_duplicate_selection(self):
+        worldview = self.weak_worldview()
+        for actor in self.selection:
+            dup = sp.ActorProxy.new_from_dict(actor.as_dict())
+            worldview.add_actor(dup)
+            self.collman.add(dup)
 
 class ColorRect(cocos.cocosnode.CocosNode):
     def __init__(self, width, height, color4):

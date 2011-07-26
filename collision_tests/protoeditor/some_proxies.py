@@ -1,4 +1,5 @@
 import operator
+import pprint
 
 import cocos
 import cocos.euclid as eu
@@ -47,8 +48,7 @@ class ActorProxy(cocos.sprite.Sprite):
         return d
 
     def pprint(self):
-        # useful when using the interactive interpreter
-        pass
+        pprint.pprint(self.as_dict())
 
 class LevelProxy(cocos.layer.ScrollableLayer):
     editor_type_id = 'LevelProxy 00.01' # here vs refers to ed proxy version
@@ -81,6 +81,7 @@ class LevelProxy(cocos.layer.ScrollableLayer):
         self.others = others
         self.px_width = world_width
         self.px_height = world_height
+        self.maxz = -1
 
         self.batch = cocos.batch.BatchNode()
         self.add(self.batch)
@@ -95,6 +96,10 @@ class LevelProxy(cocos.layer.ScrollableLayer):
 
     def add_actor(self, actor, z=None):
         self.actors.add(actor)
+        if z is None:
+            z = self.maxz + 1
+        if z > self.maxz:
+            self.maxz = z
         self.batch.add(actor, z=z)
 
     def remove_actor(self, actor):
