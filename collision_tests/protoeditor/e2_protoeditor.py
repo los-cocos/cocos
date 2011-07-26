@@ -57,6 +57,8 @@ consts = {
             key.W: 'save',
             key.P: 'pprint',
             key.D: 'dup',
+            key.Q: 'quit',
+            key.ESCAPE: '' # ignore this key to avoid unwanted quit
             },
         "mod_modify_selection": key.MOD_SHIFT,
         "mod_restricted_mov": key.MOD_ACCEL,
@@ -167,6 +169,7 @@ class EditLayer(cocos.layer.Layer):
         self.restricted_mov = False
         self.wheel = 0
         self.dragging = False
+        self.saved = True
 
         self.mod_mask = mod_modify_selection | mod_restricted_mov
         # initialize move keys subsystem as inactive / oper do_nothing
@@ -209,23 +212,39 @@ class EditLayer(cocos.layer.Layer):
             scroller.add(self.selection_outlines, z=z)            
         
     def update(self, dt):
+        # dont update while in interpreter
+        if director.show_interpreter:
+            self.saved = False # cautious
+            return
+            
         # save ?
-        if self.buttons['save'] and self.modifiers['save']:
+        if self.buttons['save'] and (self.modifiers['save'] & self.mod_mask):
             # assumption: event provider dont autorepeat,  true for pyglet 
             self.buttons['save'] = 0
             worldview = self.weak_worldview()
             save_level(worldview, level_filename)
+            self.saved = True
             return
 
         # pprint selection ?
-        if self.buttons['pprint'] and self.modifiers['pprint']:
+        if self.buttons['pprint'] and (self.modifiers['pprint'] & self.mod_mask):
             self.buttons['pprint'] = 0
             self.pprint_selection()
 
         # duplicate selection ?
-        if self.buttons['dup'] and self.modifiers['dup']:
+        if self.buttons['dup'] and (self.modifiers['dup'] & self.mod_mask):
             self.buttons['dup'] = 0
             self.cmd_duplicate_selection()
+
+        # quit ?
+        if self.buttons['quit']:
+            # note: self.modifiers['quit'] dont work due to pyglet one time capture 
+            if (self.last_modifiers & self.mod_mask) == self.mod_mask:
+                self.buttons['quit'] = 0
+                self.cmd_force_quit()
+            elif self.modifiers['quit'] & self.mod_mask:
+                self.buttons['quit'] = 0
+                self.cmd_quit()
 
         # autoscroll
         if self.autoscrolling:
@@ -558,7 +577,8 @@ class EditLayer(cocos.layer.Layer):
     def end_selection_move(self):
         self.set_selection_in_collman(True)
         for actor in self.selection:
-            self.selection[actor] = actor.cshape.copy()        
+            self.selection[actor] = actor.cshape.copy()
+        self.saved = False
 
     def single_actor_from_mouse(self):
         under_mouse = self.collman.objs_touching_point(*self.world_mouse)
@@ -605,6 +625,24 @@ class EditLayer(cocos.layer.Layer):
             dup = sp.ActorProxy.new_from_dict(actor.as_dict())
             worldview.add_actor(dup)
             self.collman.add(dup)
+        self.saved = False
+
+    def cmd_quit(self):
+        if self.saved:
+            director.pop()
+        else:
+            print "\nERR: try to quit with level unsaved. Use both modifiers to force."
+
+    def cmd_force_quit(self):
+        director.pop()
+
+    def sel(self):
+        if len(self.selection)!=1:
+            print 'sel() error: expected exactly 1 object in seleccion, there are', len(self.selection)
+            actor = None
+        for actor in self.selection:
+            break
+        return actor
 
 class ColorRect(cocos.cocosnode.CocosNode):
     def __init__(self, width, height, color4):
@@ -668,6 +706,9 @@ class SelectionOutlines(cocos.layer.ScrollableLayer):
 
 print __doc__
 
+# helper to assign members of selected actor in interpreter layer, ensuring only
+# one actor is selected
+
 try:
     level_filename = sys.argv[1]
 except:
@@ -678,7 +719,6 @@ except:
         %s levelfilename
     """%os.path.basename(sys.argv[0])
     sys.exit(0)
-director.interpreter_locals["level_filename"] = level_filename
 
 # get game defs
 from gamedef import game
@@ -707,5 +747,12 @@ scrolling_manager.add(worldview, z=2)
 world_to_screen = scrolling_manager.pixel_to_screen
 screen_to_world = scrolling_manager.pixel_from_screen
 editor = EditLayer(scrolling_manager, worldview, **consts['edit'])
+
+director.interpreter_locals["game"] = game
+director.interpreter_locals["level"] = worldview
+director.interpreter_locals["level_filename"] = level_filename
+director.interpreter_locals["sel"] = editor.sel 
+director.interpreter_locals["msel"] = editor.selection
+
 scene.add(editor)
 director.run(scene)
