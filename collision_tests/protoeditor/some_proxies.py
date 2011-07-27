@@ -22,22 +22,27 @@ class ActorProxy(cocos.sprite.Sprite):
 
     def __init__(self, ingame_type_id, cx, cy, visible_width,
                  ed_image, **others):
+        # cx, cy, visible_width in world units
         super(ActorProxy, self).__init__(ed_image)
         self.ingame_type_id = ingame_type_id
-        # measured in world units
-        self.visible_width = visible_width
         self.others = others
-        self.scale =  float(visible_width) / self.width
-        rx = visible_width / 2.0
-        ry = self.height / 2.0 * self.scale
         center = eu.Vector2(cx, cy)
-        self.cshape = cm.AARectShape(center, rx, ry)
+        self.cshape = cm.AARectShape(center, 1.0, 1.0)
+        self.update_visible_width(visible_width)
         self.update_center(center)
 
     def update_center(self, new_center):
         assert isinstance(new_center, eu.Vector2) 
         self.position = new_center
         self.cshape.center = new_center
+
+    def update_visible_width(self, visible_width):
+        self.visible_width = visible_width
+        self.scale =  float(visible_width) / self.image.width
+        rx = visible_width / 2.0
+        ry = self.image.height / 2.0 * self.scale
+        self.cshape.rx = rx
+        self.cshape.ry = ry
 
     def as_dict(self):
         d = dict(self.others)

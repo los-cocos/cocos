@@ -1,6 +1,10 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
+r1100 protoeditor: added del, help, resize actors with interpreter
+
+r1099 editor: more interpreter friendly, new commands quit, force quit. Disregard quit if file not saved 
+
 r1098 added cmds duplicate_selection, pprint_selection  
 
 r1097 editor proxies got their own file

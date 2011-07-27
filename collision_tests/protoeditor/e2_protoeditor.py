@@ -1,4 +1,4 @@
-"""
+outdated_doc_see_help_f1 = """
 Implements some basic functionalities for level edition:
     select, change selection, move selection, scroll, zoom
 Details:
@@ -39,6 +39,50 @@ import persistence as pe
 import some_proxies as sp
 
 fe = 1.0e-4
+
+help_f1 = """
+Warnings
+This is pre-alpha software; in fact an intermediate sketch toward a real spec
+and alpha.
+    No undo (save frequently)
+    Save silently overwrites target (commit frequently, use interpreter layer
+    to change target filename)
+    No copy & paste ( 'duplicate' partially replaces those)
+    No gui editor for actor properties (use interpreter layer)
+    No validation.
+Keep an eye on the OS console to catch tracebacks and then repair data from
+the interpreter layer.
+    
+Selection, scroll, zoom, move
+Inspired in Inkscape behavior, in short:
+    L-click or L-drag replaces current selection
+    holding modifier shift while select, will modify selection
+    if drag begins over a selected object, selected actor will move
+    arrow keys will move current selection slow; adding shift moves faster
+    scroll by aproaching the mouse to screen border or doing ctrl + arrows
+    zoom with mouse wheel or numeric keypad '+' or '-'
+
+Command keys while in worldview
+    F1 : displays this help in OS console
+    <modifier> + W : save level, filename from 'level_filename'
+    <modifier> + P : pprint selection in OS console 
+    <modifier> + D : duplicate selection (at same position)
+    <ctrl> + I : toggle interpreter view
+    <del> : delete selection
+    <modifier> + Q : quits if level saved
+    <both modifiers> + Q : quits even if level unsaved 
+
+Interpreter preloaded locals:
+    f1 : print f1 displays this help on interpreter layer
+    game
+    level
+    level_filename : filename used for save level command
+    sel : sel() -> actor selected, fails if more than one actor selected
+    msel : msel() -> set with actors selected
+    rz : rz(value) -> updates visible_width for the only one actor in selection
+    mrz: mrz(value) -> updates visible_width for all actors in selection
+"""
+
 consts = {
     "window": {
         "width": 640,
@@ -58,8 +102,11 @@ consts = {
             key.P: 'pprint',
             key.D: 'dup',
             key.Q: 'quit',
+            key.F1: 'help',
+            key.DELETE: 'delete',
             key.ESCAPE: '' # ignore this key to avoid unwanted quit
             },
+        "help_txt": help_f1,
         "mod_modify_selection": key.MOD_SHIFT,
         "mod_restricted_mov": key.MOD_ACCEL,
         "keyscroll_relative_fastness": 0.5, # relative to autoscrolling_max_fastness
@@ -129,11 +176,12 @@ class EditLayer(cocos.layer.Layer):
     is_event_handler = True
 
     def __init__(self, scroller, worldview,
-                 bindings=None, keyscroll_relative_fastness=None, autoscroll_border=10,
-                 autoscrolling_max_fastness=None, wheel_multiplier=None,
-                 zoom_min=None, zoom_max=None, zoom_fastness=None,
-                 mod_modify_selection=None, mod_restricted_mov=None,
-                 keymove_fastness_slow=None, keymove_fastness_fast=None):
+                 bindings=None, help_txt=None, keyscroll_relative_fastness=None,
+                 autoscroll_border=10, autoscrolling_max_fastness=None,
+                 wheel_multiplier=None, zoom_min=None, zoom_max=None,
+                 zoom_fastness=None, mod_modify_selection=None,
+                 mod_restricted_mov=None, keymove_fastness_slow=None,
+                 keymove_fastness_fast=None):
         super(EditLayer, self).__init__()
 
         self.bindings = bindings
@@ -145,6 +193,7 @@ class EditLayer(cocos.layer.Layer):
         self.buttons = buttons
         self.modifiers = modifiers
 
+        self.help_txt = help_txt
         self.keyscroll_relative_fastness = keyscroll_relative_fastness
         self.autoscroll_border = autoscroll_border
         self.autoscrolling_max_fastness = autoscrolling_max_fastness
@@ -245,6 +294,16 @@ class EditLayer(cocos.layer.Layer):
             elif self.modifiers['quit'] & self.mod_mask:
                 self.buttons['quit'] = 0
                 self.cmd_quit()
+
+        # help ?
+        if self.buttons['help']:
+            self.buttons['help'] = 0
+            print self.help_txt
+
+        # del ?
+        if self.buttons['delete']:
+            self.buttons['delete'] = 0
+            self.cmd_delete_selection()
 
         # autoscroll
         if self.autoscrolling:
@@ -621,11 +680,35 @@ class EditLayer(cocos.layer.Layer):
 
     def cmd_duplicate_selection(self):
         worldview = self.weak_worldview()
+        self.saved = False
         for actor in self.selection:
             dup = sp.ActorProxy.new_from_dict(actor.as_dict())
             worldview.add_actor(dup)
             self.collman.add(dup)
+
+    def cmd_resize_selection(self, new_visible_width):
+        new_visible_width = float(new_visible_width)
         self.saved = False
+        old = self.selection_in_collman
+        if old:
+            self.set_selection_in_collman(False)
+        for actor in self.selection:
+            actor.update_visible_width(new_visible_width)
+        if old:
+            self.set_selection_in_collman(True)
+
+    #for interpreter easyness
+    def cmd_resize_selection_unique(self, new_visible_width):
+        assert len(self.selection)==1
+        self.cmd_resize_selection(new_visible_width)
+
+    def cmd_delete_selection(self):
+        self.saved = False
+        self.set_selection_in_collman(False)
+        worldview = self.weak_worldview()
+        for actor in list(self.selection):
+            worldview.remove_actor(actor)
+            self.selection_remove(actor)
 
     def cmd_quit(self):
         if self.saved:
@@ -704,8 +787,6 @@ class SelectionOutlines(cocos.layer.ScrollableLayer):
         glPopMatrix()
         self.unset_glstate()
 
-print __doc__
-
 # helper to assign members of selected actor in interpreter layer, ensuring only
 # one actor is selected
 
@@ -713,10 +794,11 @@ try:
     level_filename = sys.argv[1]
 except:
     print """
-    Edits a level, if filename don't exists creates a new one with that name.
-
     Usage:
         %s levelfilename
+
+    Edits a level, if filename don't exists creates a new one with that name.
+    Once the program starts, use key F1 for help.
     """%os.path.basename(sys.argv[0])
     sys.exit(0)
 
@@ -752,7 +834,10 @@ director.interpreter_locals["game"] = game
 director.interpreter_locals["level"] = worldview
 director.interpreter_locals["level_filename"] = level_filename
 director.interpreter_locals["sel"] = editor.sel 
-director.interpreter_locals["msel"] = editor.selection
+director.interpreter_locals["msel"] = lambda : set([e for e in editor.selection])
+director.interpreter_locals["mrz"] = editor.cmd_resize_selection
+director.interpreter_locals["rz"] = editor.cmd_resize_selection_unique
+director.interpreter_locals["f1"] = help_f1
 
 scene.add(editor)
 director.run(scene)
