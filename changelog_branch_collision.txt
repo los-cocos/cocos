@@ -1,6 +1,10 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
+r1102-1103 protoeditor code detached from game specific details - use runner\start_editor.py to do a sample session.
+
+r1101 begin to detach game specific from protoeditor - create gamedir
+
 r1100 protoeditor: added del, help, resize actors with interpreter
 
 r1099 editor: more interpreter friendly, new commands quit, force quit. Disregard quit if file not saved 

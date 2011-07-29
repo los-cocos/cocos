@@ -20,6 +20,7 @@ Details:
 """
 import sys
 import os
+import imp
 import random
 import weakref
 import operator 
@@ -719,6 +720,8 @@ class EditLayer(cocos.layer.Layer):
     def cmd_force_quit(self):
         director.pop()
 
+    # helper to assign members of selected actor in interpreter layer, ensuring
+    # only one actor is selected
     def sel(self):
         if len(self.selection)!=1:
             print 'sel() error: expected exactly 1 object in seleccion, there are', len(self.selection)
@@ -787,30 +790,73 @@ class SelectionOutlines(cocos.layer.ScrollableLayer):
         glPopMatrix()
         self.unset_glstate()
 
-# helper to assign members of selected actor in interpreter layer, ensuring only
-# one actor is selected
+
+# main #####################################################################
 
 try:
-    level_filename = sys.argv[1]
+    gamedef_filename = sys.argv[1]
+    path_to_resources_provided_by_game = sys.argv[2]
+    level_filename = sys.argv[3]
 except:
     print """
     Usage:
-        %s levelfilename
+        %s gamedef_filename gameresources_path level_filename
 
-    Edits a level, if filename don't exists creates a new one with that name.
+    Edits a level, if level filename don't exists creates a new one.
+
+    gamedef_filename points to a *.py file file with a 'game' dictionary.
+
+    gameresources_path points to a directory with the resources game provides
+    to editor; at least pics for each actor.
+    
     Once the program starts, use key F1 for help.
     """%os.path.basename(sys.argv[0])
     sys.exit(0)
 
-# get game defs
-from gamedef import game
+# ensure editor can import his own modules
+edpath = os.path.dirname(os.path.abspath(sys.argv[0]))
+sys.path.insert(0, edpath)
 
+# get game defs
+def get_game_defs(gamedef_filename):
+    dirname, basename = os.path.split(os.path.abspath(gamedef_filename))
+    basename = basename.replace('.py', '')
+    file, pathname, description = imp.find_module(basename, [dirname])
+    try:
+        gamedef = imp.load_module(basename, file, pathname, description)
+    finally:
+        file.close()
+    return gamedef.game
+
+game = get_game_defs(gamedef_filename)
+
+# get access to resources
+# specify absolute paths in pyglet.resource.path because pyglet asumes a
+# common parentdir for al relpaths
+# caveat: all the resources share the same namespace, so a name below path2
+# can hide names below path1
+pyglet.resource.path = []
+#    add resources provided by game
+abs_path1 = os.path.abspath(path_to_resources_provided_by_game)
+pyglet.resource.path.append(abs_path1)
+#    add editor resources
+abs_path2 = os.path.join(edpath, 'data')
+pyglet.resource.path.append(abs_path2)
+#    add cocos resources
+abs_path3 = os.path.join(os.path.dirname(
+                              os.path.realpath(cocos.__file__)), "resources")
+pyglet.resource.path.append(abs_path3)
+pyglet.resource.reindex()
+
+# ensure we have a context
 director.init(**consts["window"])
+
+# build the scene
 scene = cocos.scene.Scene()
 scrolling_manager = cocos.layer.ScrollingManager()
 scene.add(scrolling_manager)
 
-# get level
+#     get level
 if not os.path.exists(level_filename):
     # new level
     zwidth = game['max_width']
@@ -820,7 +866,6 @@ if not os.path.exists(level_filename):
     # add sample actors, a temporary addition while developing
     sp.add_sample_actors_to_level(worldview)
     save_level(worldview, level_filename)
-
 worldview = load_level(level_filename)
 
 bg = DefaultBg(worldview.width, worldview.height)
