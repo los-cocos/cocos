@@ -15,10 +15,10 @@ S'ActorProxy 00.01'
 p7
 sS'cy'
 p8
-F400.0
+F498.0
 sS'cx'
 p9
-F400.0
+F431.0
 sS'ingame_type_id'
 p10
 S'Enemy normal 00.01'
@@ -68,7 +68,7 @@ g7
 sg8
 F528.0
 sg9
-F528.0
+F462.0
 sg10
 S'Jewel 00.01'
 p20

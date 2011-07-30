@@ -182,7 +182,8 @@ class EditLayer(cocos.layer.Layer):
                  wheel_multiplier=None, zoom_min=None, zoom_max=None,
                  zoom_fastness=None, mod_modify_selection=None,
                  mod_restricted_mov=None, keymove_fastness_slow=None,
-                 keymove_fastness_fast=None):
+                 keymove_fastness_fast=None,
+                 editor_picker_cell_width=None):
         super(EditLayer, self).__init__()
 
         self.bindings = bindings
@@ -206,6 +207,7 @@ class EditLayer(cocos.layer.Layer):
         self.mod_restricted_mov = mod_restricted_mov
         self.keymove_fastness_slow = keymove_fastness_slow
         self.keymove_fastness_fast = keymove_fastness_fast
+        self.collman_cell_lenght = editor_picker_cell_width
 
         self.weak_scroller = weakref.ref(scroller)
         self.weak_worldview = weakref.ref(worldview)
@@ -873,6 +875,7 @@ scrolling_manager.add(bg, z=0)
 scrolling_manager.add(worldview, z=2)
 world_to_screen = scrolling_manager.pixel_to_screen
 screen_to_world = scrolling_manager.pixel_from_screen
+consts['edit']['editor_picker_cell_width'] = game['editor_picker_cell_width']
 editor = EditLayer(scrolling_manager, worldview, **consts['edit'])
 
 director.interpreter_locals["game"] = game
