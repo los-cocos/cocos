@@ -1,24 +1,24 @@
 (dp0
 S'editor_type_id'
 p1
-S'LevelProxy 00.01'
+S'levelproxy 00.01'
 p2
 sS'width'
 p3
-I1200
+F1200.0
 sS'actors'
 p4
 (lp5
 (dp6
 g1
-S'ActorProxy 00.01'
+S'actorproxy 00.01'
 p7
 sS'cy'
 p8
-F498.0
+F577.0
 sS'cx'
 p9
-F431.0
+F632.0
 sS'ingame_type_id'
 p10
 S'Enemy normal 00.01'
@@ -30,11 +30,11 @@ sa(dp13
 g1
 g7
 sg8
-F432.0
+F538.0
 sg9
-F432.0
+F716.0
 sg10
-S'Player 00.01'
+S'Tree 00.01'
 p14
 sg12
 F32.0
@@ -42,11 +42,11 @@ sa(dp15
 g1
 g7
 sg8
-F464.0
+F570.0
 sg9
-F464.0
+F748.0
 sg10
-S'Tree 00.01'
+S'Enemy charger 00.01'
 p16
 sg12
 F32.0
@@ -54,11 +54,11 @@ sa(dp17
 g1
 g7
 sg8
-F496.0
+F602.0
 sg9
-F496.0
+F780.0
 sg10
-S'Enemy charger 00.01'
+S'Player 00.01'
 p18
 sg12
 F32.0
@@ -66,15 +66,29 @@ sa(dp19
 g1
 g7
 sg8
-F528.0
+F628.0
 sg9
-F462.0
+F741.0
 sg10
 S'Jewel 00.01'
 p20
 sg12
 F32.0
-sasS'height'
-p21
-I1000
+sa(dp21
+g1
+g7
+sg8
+F608.0
+sg9
+F705.0
+sg10
+g11
+sg12
+F32.0
+sasg10
+S'level 00.01'
+p22
+sS'height'
+p23
+F1000.0
 s.

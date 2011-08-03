@@ -6,13 +6,14 @@ import cocos.euclid as eu
 import cocos.collision_model as cm
 
 class ActorProxy(cocos.sprite.Sprite):
-    editor_type_id = 'ActorProxy 00.01'
+    editor_type_id = 'actorproxy 00.01'
 
     @classmethod
-    def new_from_dict(cls, description_dict):
+    def new_from_dict(cls, game, description_dict):
         desc = description_dict
         ingame_type_id = desc.pop('ingame_type_id')
-        editor_img = game['available_actor_types'][ingame_type_id]['editor_img']
+        key = (cls.editor_type_id, ingame_type_id)
+        editor_img = game['roles']['actor'][key]['editor_img']
         cx = desc.pop('cx')
         cy = desc.pop('cy')
         visible_width = desc.pop('visible_width')
@@ -56,30 +57,33 @@ class ActorProxy(cocos.sprite.Sprite):
         pprint.pprint(self.as_dict())
 
 class LevelProxy(cocos.layer.ScrollableLayer):
-    editor_type_id = 'LevelProxy 00.01' # here vs refers to ed proxy version
+    editor_type_id = 'levelproxy 00.01'
 
     @classmethod
-    def new_from_dict(cls, description_dict):
+    def new_from_dict(cls, game, description_dict):
+        ingame_type_id = description_dict.pop('ingame_type_id')
+        actor_variants = game['roles']['actor']
         actors = description_dict.pop('actors')
         width = description_dict.pop('width')
         height = description_dict.pop('height')
         others = description_dict
-        level = LevelProxy(width, height, **others)
+        level = LevelProxy(ingame_type_id, width, height, **others)
         z = 0
         for desc in actors:
             editor_type_id = desc.pop('editor_type_id')
+            combo_type = (editor_type_id, desc['ingame_type_id'])
             # if needed, handle here editor versionning
             # ...
-            assert editor_type_id == ActorProxy.editor_type_id
-            actor = ActorProxy.new_from_dict(desc)
+            assert combo_type in actor_variants
+            actor = ActorProxy.new_from_dict(game, desc)
             level.add_actor(actor, z=z)
             z += 1
 
         return level
 
-    def __init__(self,
-                 world_width, world_height, **others):
+    def __init__(self, ingame_type_id, world_width, world_height, **others):
         super(LevelProxy, self).__init__()
+        self.ingame_type_id = ingame_type_id
         # all measured in world units
         self.width = world_width
         self.height = world_height
@@ -114,6 +118,7 @@ class LevelProxy(cocos.layer.ScrollableLayer):
     def as_dict(self):
         d = dict(self.others)
         d['editor_type_id'] = self.editor_type_id
+        d['ingame_type_id'] = self.ingame_type_id
         d['width'] = self.width
         d['height'] = self.height
         zactors = list(self.batch.children)
@@ -123,18 +128,19 @@ class LevelProxy(cocos.layer.ScrollableLayer):
         return d
 
 # el que conoce los available actors es game
-from gamedef import game
-def add_sample_actors_to_level(level_proxy):
-    actor_types = game['available_actor_types']
+def add_sample_actors_to_level(game, level_proxy):
+    actor_types = game['roles']['actor']
     x0 = 400.0
     dx = 32.0
     i = 0
-    for actor_type_descriptor in actor_types:
-        params = actor_types[actor_type_descriptor]
+    for combo_type in actor_types:
+        editor_type_id, ingame_type_id = combo_type
+        assert editor_type_id == ActorProxy.editor_type_id
+        params = actor_types[combo_type]
         img = params['editor_img']
         visible_width = params['visible_width']
         others = dict(params['others'])
-        actor = ActorProxy(actor_type_descriptor, x0, x0, visible_width,
+        actor = ActorProxy(ingame_type_id, x0, x0, visible_width,
                            img, **others)
         level_proxy.add_actor(actor, z=i)
         i += 1

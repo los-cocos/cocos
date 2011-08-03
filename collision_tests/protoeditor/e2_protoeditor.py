@@ -135,10 +135,14 @@ def load_level(level_filename):
     level_dict = unpickler.load()
     f.close()
     editor_type_id = level_dict.pop('editor_type_id')
+    ingame_type_id = level_dict['ingame_type_id']
+    combo_type = (editor_type_id, ingame_type_id)
     # if needed, handle here versionning
     # ...
-    assert editor_type_id == sp.LevelProxy.editor_type_id
-    level = sp.LevelProxy.new_from_dict(level_dict)
+    assert combo_type in game['roles']['level']
+    # at present we know the only available variant for level maps to
+    # sp.LevelProxy
+    level = sp.LevelProxy.new_from_dict(game, level_dict)
     return level
 
 
@@ -685,7 +689,7 @@ class EditLayer(cocos.layer.Layer):
         worldview = self.weak_worldview()
         self.saved = False
         for actor in self.selection:
-            dup = sp.ActorProxy.new_from_dict(actor.as_dict())
+            dup = sp.ActorProxy.new_from_dict(game, actor.as_dict())
             worldview.add_actor(dup)
             self.collman.add(dup)
 
@@ -863,14 +867,19 @@ if not os.path.exists(level_filename):
     # new level
     zwidth = game['max_width']
     zheight = game['max_height']
-    object_type_descriptor = game['level_type_descriptor']
-    worldview = sp.LevelProxy(zwidth, zheight)
+    level_variants = game['roles']['level']
+    #   atm asume only one variant of 'level' and select that
+    for combo_type in level_variants:
+        break
+    editor_type_id, ingame_type_id = combo_type
+    assert editor_type_id == sp.LevelProxy.editor_type_id
+    worldview = sp.LevelProxy(ingame_type_id, zwidth, zheight)
     # add sample actors, a temporary addition while developing
-    sp.add_sample_actors_to_level(worldview)
+    sp.add_sample_actors_to_level(game, worldview)
     save_level(worldview, level_filename)
 worldview = load_level(level_filename)
 
-bg = DefaultBg(worldview.width, worldview.height)
+bg = DefaultBg(int(worldview.width), int(worldview.height))
 scrolling_manager.add(bg, z=0)
 scrolling_manager.add(worldview, z=2)
 world_to_screen = scrolling_manager.pixel_to_screen
