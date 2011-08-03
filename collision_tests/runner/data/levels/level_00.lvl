@@ -15,10 +15,10 @@ S'actorproxy 00.01'
 p7
 sS'cy'
 p8
-F577.0
+F400.0
 sS'cx'
 p9
-F632.0
+F400.0
 sS'ingame_type_id'
 p10
 S'Enemy normal 00.01'
@@ -30,9 +30,9 @@ sa(dp13
 g1
 g7
 sg8
-F538.0
+F432.0
 sg9
-F716.0
+F432.0
 sg10
 S'Tree 00.01'
 p14
@@ -42,9 +42,9 @@ sa(dp15
 g1
 g7
 sg8
-F570.0
+F432.53049868878861
 sg9
-F748.0
+F507.10619536031538
 sg10
 S'Enemy charger 00.01'
 p16
@@ -54,9 +54,9 @@ sa(dp17
 g1
 g7
 sg8
-F602.0
+F496.0
 sg9
-F780.0
+F496.0
 sg10
 S'Player 00.01'
 p18
@@ -66,9 +66,9 @@ sa(dp19
 g1
 g7
 sg8
-F628.0
+F528.0
 sg9
-F741.0
+F528.0
 sg10
 S'Jewel 00.01'
 p20
@@ -78,11 +78,11 @@ sa(dp21
 g1
 g7
 sg8
-F608.0
+F506.0
 sg9
-F705.0
+F428.0
 sg10
-g11
+g16
 sg12
 F32.0
 sasg10

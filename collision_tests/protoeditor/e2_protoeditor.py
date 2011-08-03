@@ -140,7 +140,7 @@ def load_level(level_filename):
     # if needed, handle here versionning
     # ...
     assert combo_type in game['roles']['level']
-    # at present we know the only available variant for level maps to
+    # at present we know the only available variant for level maps to be
     # sp.LevelProxy
     level = sp.LevelProxy.new_from_dict(game, level_dict)
     return level
@@ -689,7 +689,9 @@ class EditLayer(cocos.layer.Layer):
         worldview = self.weak_worldview()
         self.saved = False
         for actor in self.selection:
-            dup = sp.ActorProxy.new_from_dict(game, actor.as_dict())
+            as_dict = actor.as_dict()
+            as_dict.pop('editor_type_id')
+            dup = sp.ActorProxy.new_from_dict(game, as_dict)
             worldview.add_actor(dup)
             self.collman.add(dup)
 
@@ -740,9 +742,9 @@ class ColorRect(cocos.cocosnode.CocosNode):
     def __init__(self, width, height, color4):
         super(ColorRect,self).__init__()
         self.color4 = color4
-        w2 = int(width/2)
-        h2 = int(height/2)
-        self.vertexes = [(0,0,0),(0,height,0), (width,height,0),(width,0,0)]
+        w = int(width)
+        h = int(height)
+        self.vertexes = [(0,0,0),(0,h,0), (w,h,0),(w,0,0)]
 
     def draw(self):
         glPushMatrix()
@@ -865,21 +867,19 @@ scene.add(scrolling_manager)
 #     get level
 if not os.path.exists(level_filename):
     # new level
-    zwidth = game['max_width']
-    zheight = game['max_height']
     level_variants = game['roles']['level']
     #   atm asume only one variant of 'level' and select that
     for combo_type in level_variants:
         break
     editor_type_id, ingame_type_id = combo_type
     assert editor_type_id == sp.LevelProxy.editor_type_id
-    worldview = sp.LevelProxy(ingame_type_id, zwidth, zheight)
+    worldview = sp.LevelProxy.new_default(game, ingame_type_id)
     # add sample actors, a temporary addition while developing
     sp.add_sample_actors_to_level(game, worldview)
     save_level(worldview, level_filename)
 worldview = load_level(level_filename)
 
-bg = DefaultBg(int(worldview.width), int(worldview.height))
+bg = DefaultBg(worldview.width, worldview.height)
 scrolling_manager.add(bg, z=0)
 scrolling_manager.add(worldview, z=2)
 world_to_screen = scrolling_manager.pixel_to_screen
