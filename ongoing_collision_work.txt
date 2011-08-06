@@ -221,9 +221,10 @@ status:
 		moving enemies is a little weak)
 		Also introduces the new CollisionManager.any_near method.
 
-	Three interactive tests (d0, d1, d2) for the mouse related functionality:
+	Three interactive tests (d0, d1, d2, d3) for the mouse related functionality:
 		Cshape.touchs_point, Cshape.fits_in_box, CollisionManager.objs_touching_point, CollisionManager.objs_into_box
-
+	d3 works with scroller manager.
+	
 	An editor helper, e0_protoeditor.py, that handles scroll / zoom / selection in a way strongly based on Inkscape.
 	See detailed description in protoeditor_spec.txt
 	While upgrading e0 to support persistence, scrolling by keys broke: up and right will work seemingly ok, down and left will not respond.

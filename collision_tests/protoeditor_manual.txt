@@ -1,0 +1,178 @@
+protoeditor manual
+==================
+
+overview
+--------
+
+I wanted to write a mini-game with some levels to demonstrate use cases for the new collision module, and disliked the idea of random level generators or text descriptions with custom parser.
+Having coded mouse selection as part of collision development, I was tempted to coble up a very basic editor, and that is protoeditor.
+
+Be warned that it is an intermediate sketch toward a real spec and real editor.
+
+The goodies:
+	quickly define which actors are available and how they should look in editor
+	editor not forces any particular implementation of ingame actors
+	can edit even when game code has not been written (or it is broken)
+	zoom, scroll, select by mouse pick or elastic box, drag selection, duplicate selection, delete selection (interactions in the Inkscape way) 
+	supports versioning: growing a game implies successive upgrades to your classes, which sometimes requires to upgrade stored levels. protoeditor can help with that, see the section 'upgrading the ingame classes'
+	
+The shortcomings are:
+    No undo (save frequently)
+    Save silently overwrites target (commit frequently, use interpreter layer
+    to change target filename)
+    No copy & paste ('duplicate' partially replaces those)
+    No gui editor for actor properties (use interpreter layer)
+    No validation.
+
+Should you use this tool ?
+If you want to make something simple, in a short time span, can't wait for more complete versions, and you like the description, then maybe yes.
+If you expect to use at pyweek 13 ( 2011 September 11 ), I strongly suggest to make a mini-game before, both to know if it feels good for you, and to familiarize with the persistence format.
+
+Setting up protoeditor to work with a new game
+----------------------------------------------
+
+1. do initial directory layout. I choose
+
+gamedir
+	data
+		editor : images used by editor to show actors
+		levels : game levels
+		
+The *.py in your game will go under gamedir
+Copy there start_editor.py, you can get it from the runner example
+
+2. put some placeholder images for your actors in gamedir/data/editor
+		
+3. Decide if you want to include the editor into gamedir or not. Incorporation allows to adjust one time the paths in start_editor.py and then anyone who does a checkout is done with the path; also if you need to hack the editor you can commit along the game.
+
+Adapt start_editor.py to your use case; you will need some adjustments, basically paths. The script is short and commented.
+
+If you bundle the editor into the working copy, the protoeditor path should be relative to the start_editor.py working dir. This way, you need no adjusts after doing a check out
+If not bundling the editor, adjustments to protoeditor_path may be necessary when checking out to different boxes.
+
+The other paths needed should be relative to the start_editor.py working dir
+
+Also, depending on your OS, or if you want to use a specific python between many in your system, you may need to adjust in start_editor.py how the string for os.system call is built.
+
+4.  Now you should tell the editor a few specific things about the game; this is done by filling a 'game' dict in your gamedef.py module.
+The exact values are not critical, you can tweak later whatever needs adjust. 
+You can start with a copy of gamedef_sample_00_01.py, found in the protoeditor directory. The sample looks like:
+
+game = {
+    "unversioned_name": "Alien Cowboy Zombies",
+    "max_width": 1200.0,
+    "max_height": 1000.0,
+    "editor_picker_cell_width": 32.0 * 1.25,
+    "roles" : {
+        "level": {
+            ('levelproxy 00.01', 'level 00.01'): {
+                'width': 1200.0,
+                'height': 1000.0,
+                'others': {
+                    }
+                }
+            },
+        "actor": {
+            ('actorproxy 00.01', 'player 00.01'): {
+                'editor_img': 'goodguy.png',
+                'visible_width':  32.0,
+                'others': {
+                    },
+                }
+            ,
+            ('actorproxy 00.01', 'enemy 00.01'): {
+                'editor_img': 'badguy.png',
+                'visible_width':  32.0,
+                'others': {
+                    },
+                }
+            ,
+            # other actors
+        }
+    }
+}
+
+To customize this sample you adjust
+
+"unversioned_name" : a string with your game name, say it is "Crazy Alien"
+
+"max_width", "max_height" : Maximum width and size for your world, in world coordinates, say it is 1300.0 and 900.0
+	
+ingame_type_id : String identifiers for each of the actor variants, and for the only one level variant. For convenience it should bring to mind which role plays in the game and what version it its.
+The ingame_type_id goes as the second member in the tuples under each variant of "role" 
+Say you choose the identifiers
+	'level 00.01' # for levels
+	'player 00.01' # actor, player
+	'purple monster 00.01' # actor, a type of enemy
+	'flaming devil 00.01' # actor, a type of enemy
+		
+"width" and "height" for the 'level 00.01' variant, they are the default values editor will use when instantiating like 'new', as opposed to 'load'; say you chose 1100.0 and 800.0 
+		
+"editor_img" for each variant of actor. This is the name of image files that represent actors in the editor, the ones that you provide in 2.
+Paths are relative to the 'path to resources that game provides to editor' that you adjusted for start_editor.py in 3; supposing you set it as 'gamedir/data/editor', then example names can be
+	'player9.png'
+	'purplemonster.png'
+	'devil.png'
+	
+"visible_width" for each actor variant.	The default actor width in world units. Notice there is not a visible_height because the editor will scale maintaining the aspect ratio. Say you chose 32.0, 40.0, 64.0 for player, purple and devil 
+
+"editor_picker_cell_width" .
+	Here you do a rough guess, which can be
+		k ~ max {actor.visible_width * 1.25 : all actors}
+    This can be too big if there are few instances with big visible_width, then you can exclude those before taking max.
+    Don't spend time here except if the editor mouse selection seems too laggy.
+	In the example case that would be 
+	something like 1.25 * max {32.0, 40.0, 64.0} = 80.0 
+	
+All right, the final gamedef.py should look like:
+
+game = {
+    "unversioned_name": "Crazy Alien",
+    "max_width": 1300.0,
+    "max_height": 900.0,
+    "editor_picker_cell_width": 80.0,
+    "roles" : {
+        "level": {
+            ('levelproxy 00.01', 'level 00.01'): {
+                'width': 1100.0,
+                'height': 800.0,
+                'others': {
+                    }
+                }
+            },
+        "actor": {
+            ('actorproxy 00.01', 'player 00.01'): {
+                'editor_img': 'player9.png',
+                'visible_width':  32.0,
+                'others': {
+                    },
+                }
+            ,
+            ('actorproxy 00.01', 'purple monster 00.01'): {
+                'editor_img': 'purplemonster.png',
+                'visible_width':  40.0,
+                'others': {
+                    },
+                }
+            ,
+            ('actorproxy 00.01', 'flaming devil 00.01'): {
+                'editor_img': 'devil.png',
+                'visible_width':  64.0,
+                'others': {
+                    },
+                }
+            ,
+            # other actors
+        }
+    }
+}
+
+5. You are ready to edit levels now.
+
+Starting to code the game
+-------------------------
+
+Code to load the level
+______________________
+
+ 

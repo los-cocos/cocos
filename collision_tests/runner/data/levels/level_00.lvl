@@ -15,13 +15,13 @@ S'actorproxy 00.01'
 p7
 sS'cy'
 p8
-F400.0
+F564.0
 sS'cx'
 p9
-F400.0
+F585.0
 sS'ingame_type_id'
 p10
-S'Enemy normal 00.01'
+S'wanderer 00.01'
 p11
 sS'visible_width'
 p12
@@ -30,11 +30,11 @@ sa(dp13
 g1
 g7
 sg8
-F432.0
+F493.0
 sg9
-F432.0
+F606.0
 sg10
-S'Tree 00.01'
+S'tree 00.01'
 p14
 sg12
 F32.0
@@ -42,11 +42,11 @@ sa(dp15
 g1
 g7
 sg8
-F432.53049868878861
+F525.0
 sg9
-F507.10619536031538
+F638.0
 sg10
-S'Enemy charger 00.01'
+S'jewel 00.01'
 p16
 sg12
 F32.0
@@ -54,11 +54,11 @@ sa(dp17
 g1
 g7
 sg8
-F496.0
+F557.0
 sg9
-F496.0
+F670.0
 sg10
-S'Player 00.01'
+S'player 00.01'
 p18
 sg12
 F32.0
@@ -66,29 +66,18 @@ sa(dp19
 g1
 g7
 sg8
-F528.0
+F588.0
 sg9
-F528.0
+F631.0
 sg10
-S'Jewel 00.01'
+S'chained mons 00.01'
 p20
-sg12
-F32.0
-sa(dp21
-g1
-g7
-sg8
-F506.0
-sg9
-F428.0
-sg10
-g16
 sg12
 F32.0
 sasg10
 S'level 00.01'
-p22
+p21
 sS'height'
-p23
+p22
 F1000.0
 s.

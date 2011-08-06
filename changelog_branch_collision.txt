@@ -1,6 +1,8 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
+r1107 protoeditor: tutorial started
+
 r1106 protoeditor: simplify parameters flow to instantiate
 
 r1105 protoeditor: better separation of ingame vs editor types
