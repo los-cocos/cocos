@@ -19,8 +19,14 @@ def make_cmd(path_to_cmd, paramlist):
     paramlist.insert(0, path_to_cmd)
     quoted_parts = [ quote(s) for s in paramlist ]
     cmd = ' '.join(quoted_parts)
-    # needed in win xp sp3, dont know if it works in other OSes
-    cmd = quote(cmd)
+    # assumes:
+    #   in windows: the *.py extension associates with (the desired) python.exe
+    #   in unix-like: the desired python is invoked with 'python script_name params'
+    if sys.platform == 'win32':
+        # needed in win xp sp3
+        cmd = quote(cmd)
+    else:
+        cmd = 'python ' + cmd
     return cmd
 
 def main():
