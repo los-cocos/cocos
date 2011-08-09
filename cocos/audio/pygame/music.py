@@ -58,7 +58,7 @@ def _free_loaded(current=True, queue=True):
 
     if queue and _queue_music:
         Mix_FreeMusic(_queue_music)
-        _current_music = None 
+        _current_music = None
 
 def load(filename):
     '''Load a music file for playback.
@@ -69,7 +69,7 @@ def load(filename):
 
     Music can only be loaded from filenames, not python file objects like the
     other pygame loading functions.
-    
+
     :Parameters:
         `filename` : str
             Filename of music to load.
@@ -103,7 +103,7 @@ def play(loops=0, start=0.0):
         `start` : float
             Starting time within music track to play from, in seconds.
 
-    '''    
+    '''
     global _frequency, _format, _channels
 
     mixer._mixer_init_check()
@@ -129,7 +129,7 @@ def rewind():
     '''Restart music.
 
     Resets playback of the current music to the beginning.
-    '''    
+    '''
     mixer._mixer_init_check()
     Mix_RewindMusic()
 
@@ -138,7 +138,7 @@ def stop():
 
     Stops the current music if it is playing.  Any queued music will be
     unqueued.
-    '''    
+    '''
     mixer._mixer_init_check()
     Mix_HaltMusic()
     _free_loaded(False, True)
@@ -156,9 +156,9 @@ def unpause():
     '''Resume paused music.
 
     This will resume the playback of a music stream after it has been paused.
-    '''    
+    '''
     mixer._mixer_init_check()
-    Mix_UnpauseMusic()
+    Mix_ResumeMusic()
 
 def fadeout(time):
     '''Stop music playback after fading out.
@@ -168,7 +168,7 @@ def fadeout(time):
     unqueued.
 
     Note, that this function blocks until the music has faded out.
-    
+
     :Parameters:
         `time` : int
             Time to fade out over, in milliseconds.
@@ -184,7 +184,7 @@ def set_volume(volume):
 
     Set the volume of the music playback. The value argument is between
     0.0 and 1.0. When new music is loaded the volume is reset.
-    
+
     :Parameters:
         `volume` : float
             Volume of music playback, in range [0.0, 1.0].
@@ -198,7 +198,7 @@ def get_volume():
 
     Returns the current volume for the mixer. The value will be between 0.0
     and 1.0.
-    
+
     :rtype: float
     '''
     mixer._mixer_init_check()
@@ -209,7 +209,7 @@ def get_busy():
 
     Returns True when the music stream is actively playing. When the music
     is idle this returns False.
-    
+
     :rtype: bool
     '''
     mixer._mixer_init_check()
@@ -223,7 +223,7 @@ def get_pos():
     does not take into account any starting position offsets.
 
     Returns -1 if the position is unknown.
-    
+
     :rtype: int
     '''
     mixer._mixer_init_check()
@@ -248,7 +248,7 @@ def queue(filename):
         pygame.mixer.music.load('bach.ogg')
         pygame.mixer.music.play(5)        # Plays six times, not five
         pygame.mixer.music.queue('mozart.ogg')
-    
+
     :Parameters:
         `filename` : str
             Filename of music file to queue.
@@ -273,14 +273,14 @@ def set_endevent(eventtype=None):
     The event will be queued every time the music finishes, not just
     the first time. To stop the event from being queued, call this
     method with no argument.
-    
+
     :Parameters:
         `eventtype` : int
             Type of event to post.  For example, ``SDL_USEREVENT + n``
 
     '''
     global _endmusic_event
-    
+
     if eventtype is None:
         eventtype = SDL_NOEVENT
     _endmusic_event = eventtype
@@ -290,7 +290,7 @@ def get_endevent():
 
     Returns the event type to be sent every time the music finishes playback.
     If there is no endevent the function returns pygame.NOEVENT.
-    
-    :rtype: int 
+
+    :rtype: int
     '''
     return _endmusic_event
