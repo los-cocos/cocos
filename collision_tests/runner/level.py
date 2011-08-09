@@ -61,8 +61,9 @@ class Level(cocos.layer.ScrollableLayer):
         self.batch = cocos.batch.BatchNode()
         self.add(self.batch)
 
-        #actors
-        self.actors = set()
+        #some groups of actors
+        self.enemies = []
+        self.jewels = []
 
     def on_enter(self):
         super(Level, self).on_enter()
@@ -88,7 +89,6 @@ class Level(cocos.layer.ScrollableLayer):
         pass
 
     def add_actor(self, actor, z=None):
-        self.actors.add(actor)
         if z is None:
             z = self.maxz + 1
         if z > self.maxz:
@@ -96,7 +96,6 @@ class Level(cocos.layer.ScrollableLayer):
         self.batch.add(actor, z=z)
 
     def remove_actor(self, actor):
-        self.actors.remove(actor)
         self.batch.remove(actor)
 
 
@@ -118,5 +117,25 @@ class Level(cocos.layer.ScrollableLayer):
             # <- ends sensitive block
             args = [self]
             actor = cls.new_from_dict(game, args, desc)
+
+            # procees the actor entering to level
+
+            #   make it be draw
             self.add_actor(actor, z=z)
+
+            class_name = cls.__name__ 
+            #   additonal processing not common to all actors
+            #   I'm using the class name as a sort of ingame role
+            if class_name == 'Player':
+                self.player = actor
+                self.player.controller = self.controller
+            elif class_name == 'Tree':                
+                self.collman_static.add(actor)
+            elif class_name == 'Jewel':
+                self.jewels.append(actor)
+            elif class_name == 'Exit':
+                pass
+            else:
+                # enemies
+                self.enemies.append(actor)
             z += 1

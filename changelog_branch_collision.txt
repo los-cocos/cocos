@@ -1,7 +1,14 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
-r1113: recordar update de load sample w/resp positional params en level
+r1115: runner: upgraded actors check-in
+tasks performed at actors check-in now conditional to cls name, which informaly indicates the ingame role.
+replaced generic actor containers with enemies, jewels, player
+player receives controller at check-in
+
+r1114: runner: added wconsts arg for level instantiation - added mising controller.py
+
+r1113: runner: pass runtime params to level, added 'args' to loader.load_level to carry runtime params, this allows to no edit loader module to pass runtime params
 
 r1112 runner ads 'level' as non stored param in actor creation 
 
