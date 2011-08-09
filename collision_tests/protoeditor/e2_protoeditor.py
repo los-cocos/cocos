@@ -862,6 +862,8 @@ director.init(**consts["window"])
 # build the scene
 scene = cocos.scene.Scene()
 scrolling_manager = cocos.layer.ScrollingManager()
+world_to_screen = scrolling_manager.pixel_to_screen
+screen_to_world = scrolling_manager.pixel_from_screen
 scene.add(scrolling_manager)
 
 #     get level
@@ -882,8 +884,6 @@ worldview = load_level(level_filename)
 bg = DefaultBg(worldview.width, worldview.height)
 scrolling_manager.add(bg, z=0)
 scrolling_manager.add(worldview, z=2)
-world_to_screen = scrolling_manager.pixel_to_screen
-screen_to_world = scrolling_manager.pixel_from_screen
 consts['edit']['editor_picker_cell_width'] = game['editor_picker_cell_width']
 editor = EditLayer(scrolling_manager, worldview, **consts['edit'])
 
@@ -897,4 +897,6 @@ director.interpreter_locals["rz"] = editor.cmd_resize_selection_unique
 director.interpreter_locals["f1"] = help_f1
 
 scene.add(editor)
+
+# run the scene
 director.run(scene)

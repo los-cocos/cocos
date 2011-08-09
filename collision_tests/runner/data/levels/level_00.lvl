@@ -15,10 +15,10 @@ S'actorproxy 00.01'
 p7
 sS'cy'
 p8
-F564.0
+F438.0
 sS'cx'
 p9
-F585.0
+F558.0
 sS'ingame_type_id'
 p10
 S'wanderer 00.01'
@@ -30,9 +30,9 @@ sa(dp13
 g1
 g7
 sg8
-F493.0
+F470.0
 sg9
-F606.0
+F590.0
 sg10
 S'tree 00.01'
 p14
@@ -42,9 +42,9 @@ sa(dp15
 g1
 g7
 sg8
-F525.0
+F502.0
 sg9
-F638.0
+F622.0
 sg10
 S'jewel 00.01'
 p16
@@ -54,9 +54,9 @@ sa(dp17
 g1
 g7
 sg8
-F557.0
+F534.0
 sg9
-F670.0
+F654.0
 sg10
 S'player 00.01'
 p18
@@ -66,9 +66,9 @@ sa(dp19
 g1
 g7
 sg8
-F588.0
+F566.0
 sg9
-F631.0
+F686.0
 sg10
 S'chained mons 00.01'
 p20

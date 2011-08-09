@@ -31,6 +31,11 @@ If you expect to use at pyweek 13 ( 2011 September 11 ), I strongly suggest to m
 Setting up protoeditor to work with a new game
 ----------------------------------------------
 
+The section's goal is to learn 
+
+	+ how to setup all neccesary things to start editing maps for your game idea.
+	  You don't need to have any code for the game to start.
+
 1. do initial directory layout. I choose
 
 gamedir
@@ -47,10 +52,10 @@ Copy there start_editor.py, you can get it from the runner example
 
 Adapt start_editor.py to your use case; you will need some adjustments, basically paths. The script is short and commented.
 
-If you bundle the editor into the working copy, the protoeditor path should be relative to the start_editor.py working dir. This way, you need no adjusts after doing a check out
+If you bundle the editor into the working copy, the protoeditor path should be relative to the start_editor.py working dir. This way, you need no adjusts after doing a check out.
 If not bundling the editor, adjustments to protoeditor_path may be necessary when checking out to different boxes.
 
-The other paths needed should be relative to the start_editor.py working dir
+The other paths needed should be relative to the start_editor.py working dir.
 
 Also, depending on your OS, or if you want to use a specific python between many in your system, you may need to adjust in start_editor.py how the string for os.system call is built.
 
@@ -169,10 +174,163 @@ game = {
 
 5. You are ready to edit levels now.
 
+Editing a map
+-------------
+
+The section's goal is to learn 
+	+ how to create or load a map
+	+ how to save a modified map
+	+ how to modify a map
+
 Starting to code the game
--------------------------
+-------------------------		
 
-Code to load the level
-______________________
+The section's goal is to learn
 
+ + how to load a level
+ + how to customize the level and actor classes
+ + how to manage code upgrades that mandates upgrades in stored data
+
+Loading
  
+The directory level_loader_demo has all the code you need to begin with.
+You can run the demo to see that it loads a level, albeit not the one you edited before. To straighten that,
+
+1. In your own gamedir copy the directory 'data/editor' to 'data/images'. This will made placeholder images for your actors available for the gamecode, and the resource names or paths will point to ingame resources
+
+2. From the directory level_loader_demo copy the files
+actors.py
+level.py
+loader.py
+loader_demo.py
+persistence.py
+
+to your gamedir directory; do not copy other files or you can be in trouble.
+
+3. The demo uses ingame_type_id s and class names for actors and level that surely will not match the ones you want. So, in your gamedir:
+	i. edit level.py to change the class name associated to ingame level if you want; you should then update the name in loader.py , function ingame_cls_from_combo_type
+	
+	ii. In actors.py change the class names for actors to the ones you want, adding or deleting classes if necessary. Update loader.py, function ingame_cls_from_combo_type with the new names, adding or deleting if necessary.
+
+4. If you named your level other than 'level_00.lvl' adjust the name in loader_demo.py
+
+5. Run in your gamedir loader_demo.py . It should show the level you have designed,
+without the default background, and at a scale different than the one seen in editor. Look at the docstring if you want to adjust the scale.
+
+6. Rename loader_demo.py to start_game.py 
+This is the initial version of your game.
+It only loads a level and show it on screen, so you will want to add code that make things happen.
+There are a few things that you must know to maintain compatibility between your ingame code, protoeditor code and the stored levels along the changes you will be doing.
+Look at the following sections for that.
+
+Customizing the level and actor classes
+
+First of all, classes for game entities that will not be stored in files saved by the editor don't need to follow any special rule. Examples are bullets or auras for actors. And of course they can be added to the level instance while ingame.
+In what follows, then, the world 'actor' would refer only to entities that needs to be stored in a map file.
+
+The classes for entities stored in maps are special and need to follow certain rules while upgrading.
+The rules are meant to allow upgrade your code while at the same time
+	ensure editor can save the state required by your updated code
+	ensure loader.py can handle the new stored format
+	ensure you can upgrade your stored levels to the new format
+	ensure you can mix in the call to __init__ the stored parameters with others produced on the fly 
+	
+Renaming classes and/or changing the module where a class lives (level or actor)
+
+Rename class names at will, but update the names in loader.py, function ingame_cls_from_combo_type
+If you move a class to another module, you should update the module name in loader.py, function ingame_cls_from_combo_type
+	
+Changing base classes for actors	
+
+You are not forced to use the same base class for all actors, and you are not forced to use cocos.sprite.Sprite as base class for actor.
+
+To produce an alternative BaseActor to use as base of some of your actors you can:
+
+    Make a copy of the original BaseActor
+
+    Rename BaseActor to whatever you want
+	
+	Change the parent class for the actors you want to use the new actors base class.
+	
+	You are done with the separation. Stored levels dont need upgrade.
+	Obviusly you then want to change the code in the new base class, but read ahead before you do.
+
+To change the BaseActor base class from Sprite to something else you need to:
+
+	Change cocos.sprite.Sprite in the BaseActor declaration to the base class you want.
+
+    Adjust the __init__ code and signature if necessary, but to do so read the other sections about changes in code and in __init__ parameters 
+
+	The only extra changes you need to do will be mandated by the previus step.
+	
+Changing code when you don't need to receive extra info in the __init__:
+
+	Straightforwad, change the code and you are done. But dont touch sections marked 'dont edit'.
+	
+Changing code when you need to receive extra info in the __init__, and this info will not be stored in the saved level:
+A common case for this is passing the level instance to actor, so that actor can use services like navigation, collision, spawn bullets.
+Another example is wanting to pass some value generated on the fly, at the instantiation moment.
+
+For most cases you can use an easier approach: pass the standard info to the __init__, and follow inmediatelly with a .set_extra_info(<your info>): this way you are in the easiest case of code change, see above.
+
+If really really you need to have that info available at init time then you do: 
+
+	The new info must be passed as a positional argument, not a keyword argument
+	
+	The proper order for positional arguments is
+		self,
+		<positional arguments for level (resp BaseActor) as seen in the demo>
+		<custom positional arguments for level (resp the ones that all subclasses of a BaseActor share)>
+		<custom positional arguments for actors not shared for all subclasses of a BaseActor>
+	
+	Insert your new argument, respecting the above mentioned order
+	
+	Now you must update code calling the changed __init__ : when your code calls directly __init__ you know how to do it, but the calls comming indirectly from the loader are a bit different.
+	Those calls are in forbiden territory, and are made by methods with the signature
+	    def new_from_dict(cls, game, args, description_dict):
+	Here 'args' carry the values for all your custom positional parameters, that is, the last two categories in the above 'proper order list'.
+
+	For level class the one call to this method lives in loader.py, function load_level; locate the call to new_from_dict; above it is the preparation of args params for the call. Edit as necesary to add the value required by the new positional argument.
+	
+	For actor classes the thing is similar, but along the time it can complicate:
+	At first, theres only one point in code where new_from_dict is called for actors, and it is in level.py, method fill.
+	In that situation, if you are adding the same parameter to all your classes, you work as in level: modifing the code above the call to add the extra value needed.
+	But if you are adding a parameter only to some clases, then you need to add some logic to prepare different args for diferent classes.
+
+	Allright, after you fixed the code to pass the correct args to new_from_dict you are done.
+
+Changing code when you need to receive extra info in the __init__, and this info will be stored in the saved level
+
+By example, you want to specify which music theme will sound in each level, and want that info stored in saved map.
+
+	__init__ py receives a dictionary in the keyword param 'others'; your info will come there as a keyword value pair
+	Notice that value is allowed to be : All scalars (None, int, bool, float, etc), tuples, list, dict and any nesting of them.  
+	Choose which key you want to use for your info, by example 'music'.
+	
+	The __init__ signature does not change
+	
+	Add code in __init__ to extract your info (ex: music = others['music']) and then use it.
+	
+	Bump the version in the ingame_type_id for your class, in your class definition
+	
+	Edit gamedef.py in the section that maps your class:
+		Update the ingame_type_id.
+		In the sub-section 'others', add the new key and the default value that will be used by editor when doing a 'new object'
+		By example
+		others: {
+			'music': 'Twist and Shout'
+			}
+			
+	Edit loader.py, function combo_type_to_cls: update the ingame_type_id for your class  
+
+	Bump version numbers, notice that if you are adding to a BaseActor then you must bump versions for all subclasses
+	
+	Adjust for the bumped version numbers in loader.py, function ingame_cls_from_combo_type
+	
+	Upgrade conversions.py so it can handle dictionary conversion between versions, see below
+
+	
+
+
+	
+	
