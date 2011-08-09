@@ -104,7 +104,7 @@ class Level(cocos.layer.ScrollableLayer):
             assert combo_type in actor_variants
             cls = fn_cls_from_combo_type(_editor_type_id, _ingame_type_id)
             # <- ends sensitive block
-            args = []
+            args = [self]
             actor = cls.new_from_dict(game, args, desc)
             self.add_actor(actor, z=z)
             z += 1

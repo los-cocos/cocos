@@ -37,6 +37,9 @@ class BaseActor(cocos.sprite.Sprite):
         return actor
 
     def __init__(self, default_img, cx, cy,
+                 # custom, all-subclasses, provided at run-time arguments
+                 level,
+                 # editor mandated, dont touch 
                  visible_width=32, others={}):
         """
         Adding or removing parameters must follow special rules to not break
@@ -48,6 +51,7 @@ class BaseActor(cocos.sprite.Sprite):
         self.cshape = cm.AARectShape(center, 1.0, 1.0)
         self.update_visible_width(visible_width)
         self.update_center(center)
+        self.level = level
         # process 'others' if necesary
         #...
 
