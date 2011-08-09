@@ -30,7 +30,7 @@ class Level(cocos.layer.ScrollableLayer):
 
     def __init__(self,
                  # provided ar runtime
-                 controller,
+                 controller, wconsts,
                  # editor mandated, dont touch 
                  width=1200.0, height=1000.0, others={}):
         """
@@ -48,7 +48,12 @@ class Level(cocos.layer.ScrollableLayer):
 
         # handle 'provided at runtime'
         self.controller = controller
-        print 'controller:', controller
+        gsize = wconsts['collman_static_cell_width']
+        self.collman_static = cm.CollisionManagerGrid(0.0, width, 0.0, height,
+                                                      gsize, gsize)
+        gsize = wconsts['collman_dynamic_cell_width']
+        self.collman_static = cm.CollisionManagerGrid(0.0, width, 0.0, height,
+                                                      gsize, gsize)
         
         # process 'others' if necesary
         #...

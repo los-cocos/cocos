@@ -44,6 +44,11 @@ consts = {
             key.DOWN: 'down',
             },
         },
+    "world": {
+        # tweak later those two
+        "collman_dynamic_cell_width": 1.25 * 32,
+        "collman_static_cell_width": 65.0
+        },
     }
 
 print __doc__
@@ -64,9 +69,10 @@ scene = cocos.scene.Scene()
 scroller = cocos.layer.ScrollingManager()
 scene.add(scroller)
 
+wconsts = consts["world"]
 bindings = consts["controller"]["bindings"]
 controller = co.ButtonsKBDController(bindings)
-args = [controller]
+args = [controller, wconsts]
 worldview = lo.load_level('data/levels/level_00.lvl', args)
 zoom = 1.0
 scroller.scale = zoom * consts['window']['width'] / float(consts['view']['width'])
