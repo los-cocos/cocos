@@ -29,6 +29,9 @@ class Level(cocos.layer.ScrollableLayer):
         return level
 
     def __init__(self,
+                 # provided ar runtime
+                 controller,
+                 # editor mandated, dont touch 
                  width=1200.0, height=1000.0, others={}):
         """
         Adding or removing parameters must follow special rules to not break
@@ -43,6 +46,10 @@ class Level(cocos.layer.ScrollableLayer):
         self.px_height = height
         self.maxz = -1
 
+        # handle 'provided at runtime'
+        self.controller = controller
+        print 'controller:', controller
+        
         # process 'others' if necesary
         #...
         

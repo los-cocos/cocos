@@ -290,7 +290,7 @@ If really really you need to have that info available at init time then you do:
 	    def new_from_dict(cls, game, args, description_dict):
 	Here 'args' carry the values for all your custom positional parameters, that is, the last two categories in the above 'proper order list'.
 
-	For level class the one call to this method lives in loader.py, function load_level; locate the call to new_from_dict; above it is the preparation of args params for the call. Edit as necesary to add the value required by the new positional argument.
+	For level class you provide the args in the call to load_level; locate the call to load_level; above it is the preparation of args params for the call. Edit as necesary to add the value required by the new positional argument.
 	
 	For actor classes the thing is similar, but along the time it can complicate:
 	At first, theres only one point in code where new_from_dict is called for actors, and it is in level.py, method fill.
@@ -329,8 +329,19 @@ By example, you want to specify which music theme will sound in each level, and 
 	
 	Upgrade conversions.py so it can handle dictionary conversion between versions, see below
 
-	
+nota: los primeros cambios en codigo no requieren mantener conversions.py si no tenemos niveles salvados, o si no nos importa perderlos. Se puede borrar el nivel de prueba y regenerarlo para poder probar si el codigo esta roto. 
 
+[
+runner y demo_loader varrancan igual en r1111
+
+En r1112 agrego el run-time param 'level' a actors
+
+En r1113 agrego 'controller' como run-time parametro a level 
+
+para r1113 : customizo el proceso de agregar actores en base al class name del actor; aqui el classname se esta utilizando como un identificador de 'rol ingame'; acores son ingresados en diferentes containers basado en class, tambien en el collision subsystem
+
+
+ 
 
 	
 	

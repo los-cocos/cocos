@@ -55,7 +55,8 @@ scene = cocos.scene.Scene()
 scroller = cocos.layer.ScrollingManager()
 scene.add(scroller)
 
-worldview = lo.load_level('data/levels/level_00.lvl')
+args = []
+worldview = lo.load_level('data/levels/level_00.lvl', args)
 zoom = 1.0
 scroller.scale = zoom * consts['window']['width'] / float(consts['view']['width'])
 

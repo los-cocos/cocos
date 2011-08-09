@@ -28,8 +28,12 @@ def ingame_cls_from_combo_type(editor_type_id, ingame_type_id):
     return cls
         
 
-def load_level(level_filename):
-    """ reads a level saved by protoeditor and returns a <level> instance
+def load_level(level_filename, args):
+    """ Reads a level saved by protoeditor and returns a <level> instance
+
+    args is an iterable that provides your custom positional arguments to
+    use at instantiation (see in manual, sections about changing code)
+
     can raise KeyError if version mistmatch,
     conversions are expected to be handled not at game run time.
     """
@@ -44,7 +48,6 @@ def load_level(level_filename):
     # conversions are expected to be handled not at game run time
     assert combo_type in game['roles']['level']
     cls = ingame_cls_from_combo_type(editor_type_id, ingame_type_id)
-    args = []
     level = cls.new_from_dict(game, ingame_cls_from_combo_type,
                               args, level_dict)
     return level

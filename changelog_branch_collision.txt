@@ -1,7 +1,12 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
-r1109 protoeditor: upgraded runner to be a load level demo
+r1113: recordar update de load sample w/resp positional params en level
+
+r1112 runner ads 'level' as non stored param in actor creation 
+
+r1109-r1111 protoeditor: upgraded runner to be a load level demo, copied
+final result to dir level_loader_demo to allow further fleshing of runner
 
 r1108 protoeditor: more correct start_editor for unix like OS
 

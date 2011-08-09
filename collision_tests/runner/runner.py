@@ -21,6 +21,7 @@ from cocos.director import director
 import loader as lo
 
 from gamedef import game
+import controllers as co
 
 consts = {
     "window": {
@@ -34,7 +35,15 @@ consts = {
         # how much of world can be seen at every time, in world units
         "width": 400.0,
         "height": 300.0
-        }
+        },
+    "controller": {
+        "bindings": {
+            key.LEFT: 'left',
+            key.RIGHT: 'right',
+            key.UP: 'up',
+            key.DOWN: 'down',
+            },
+        },
     }
 
 print __doc__
@@ -55,7 +64,10 @@ scene = cocos.scene.Scene()
 scroller = cocos.layer.ScrollingManager()
 scene.add(scroller)
 
-worldview = lo.load_level('data/levels/level_00.lvl')
+bindings = consts["controller"]["bindings"]
+controller = co.ButtonsKBDController(bindings)
+args = [controller]
+worldview = lo.load_level('data/levels/level_00.lvl', args)
 zoom = 1.0
 scroller.scale = zoom * consts['window']['width'] / float(consts['view']['width'])
 
