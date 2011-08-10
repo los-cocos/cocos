@@ -30,7 +30,7 @@ class Level(cocos.layer.ScrollableLayer):
         return level
 
     def __init__(self,
-                 # provided ar runtime
+                 # custom, provided at runtime
                  controller, wconsts,
                  # editor mandated, dont touch 
                  width=1200.0, height=1000.0, others={}):
@@ -49,12 +49,15 @@ class Level(cocos.layer.ScrollableLayer):
 
         # handle 'provided at runtime'
         self.controller = controller
+        self.add(controller)
         gsize = wconsts['collman_static_cell_width']
         self.collman_static = cm.CollisionManagerGrid(0.0, width, 0.0, height,
                                                       gsize, gsize)
         gsize = wconsts['collman_dynamic_cell_width']
         self.collman_static = cm.CollisionManagerGrid(0.0, width, 0.0, height,
                                                       gsize, gsize)
+        # store to pass consts to actors
+        self.wconsts = wconsts
         
         # process 'others' if necesary
         #...
@@ -65,6 +68,8 @@ class Level(cocos.layer.ScrollableLayer):
         #some groups of actors
         self.enemies = []
         self.jewels = []
+
+        self.schedule(self.update)
 
     def on_enter(self):
         super(Level, self).on_enter()
@@ -129,6 +134,7 @@ class Level(cocos.layer.ScrollableLayer):
             #   I'm using the class name as a sort of ingame role
             if class_name == 'Player':
                 self.player = actor
+                actor.set_consts(self.wconsts['player'])
                 self.player.controller = self.controller
             elif class_name == 'Tree':                
                 self.collman_static.add(actor)
@@ -144,3 +150,7 @@ class Level(cocos.layer.ScrollableLayer):
                 # enemies
                 self.enemies.append(actor)
             z += 1
+
+    def update(self, dt):
+        print "dt:", dt
+        self.player.update(dt)

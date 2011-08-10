@@ -27,6 +27,7 @@ class ButtonsKBDController(cocos.layer.Layer):
             key.RIGHT: 'right',
             }        
         """
+        super(ButtonsKBDController, self).__init__()
         self.bindings = bindings
         buttons = {}
         for k in bindings:

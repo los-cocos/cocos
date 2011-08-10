@@ -1,7 +1,55 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
-r1117: podria seguir agregando color como storable de Tree; el tamaño lo deducimos de visible width. Otros storables: hints para background the level ?
+r1118: runner: player moves, but theres a defect: movement looks chopy
+About the issue:
+All the user code is float, 
+At present scroller set focus is not called, so intify problems comming from focus is not the issue
+Framerates, with vsync enabled move between 57-60, chopiness seem worse than that
+But there are some instability in the dt stream:
+dt: 0.0165353417823
+dt: 0.0174390879288
+dt: 0.0156268464288
+dt: 0.0167842560996
+dt: 0.0169189100849
+dt: 0.0167127386302
+dt: 0.0306580864328
+dt: 0.00280454638788
+dt: 0.0163652084273
+dt: 0.0164216401805
+dt: 0.0168060465785
+dt: 0.0168957227804
+dt: 0.0165794814704
+dt: 0.0185752658508
+dt: 0.0143336653122
+Switching from pyglet 1.1.4 release to current 1.2dev fixes the issue
+with 1.2dev dt is more stable:
+dt: 0.0163998497016
+dt: 0.016668598942
+dt: 0.0165618814682
+dt: 0.0168247640412
+dt: 0.0168225291203
+dt: 0.0163165988973
+dt: 0.0167345291091
+dt: 0.0176885609763
+dt: 0.0165138306684
+dt: 0.0159159893227
+dt: 0.0167540846672
+dt: 0.0167834180042
+dt: 0.0164889671732
+dt: 0.0164613100268
+dt: 0.0178114816269
+
+upgrading the step style from
+v = a*dt , x = x0 + dt*v
+to
+v = a*dt , x = 1/2 a dt**2 + v*dt + x0
+
+which should be more stable shows litle (or none) improvement
+
+Theres also an issue on pyglet tracker about inestable dt with some ati drivers, but I cannot upgrade just now (theres the risk to render 1.2dev unrunable with certain ATI drivers, another issue)
+
+r1117: runner: spice up visuals with tree color variations
 
 r1115: runner: upgraded actors check-in
 tasks performed at actors check-in now conditional to cls name, which informaly indicates the ingame role.

@@ -47,7 +47,11 @@ consts = {
     "world": {
         # tweak later those two
         "collman_dynamic_cell_width": 1.25 * 32,
-        "collman_static_cell_width": 65.0
+        "collman_static_cell_width": 65.0,
+        "player": {
+            "max_fastness": 150.0,
+            "accel": 400.0,
+            }
         },
     }
 
@@ -55,7 +59,7 @@ print __doc__
 
 # ensure we have a context
 director.init(**consts["window"])
-
+director.show_FPS = True
 # get access to game resources
 # tip: don't change the location of starting script relative to gamedir along
 # the development

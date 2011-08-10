@@ -1,9 +1,12 @@
 import operator
 import pprint
+from math import radians, sin, cos
 
 import cocos
 import cocos.euclid as eu
 import cocos.collision_model as cm
+
+fe = 1.0e-4
 
 class BaseActor(cocos.sprite.Sprite):
     # loadable subclasses should set
@@ -71,6 +74,45 @@ class BaseActor(cocos.sprite.Sprite):
 
 class Player(BaseActor):
     ingame_type_id = 'player 00.01'
+
+    def set_consts(self, consts):
+        self.max_fastness = consts['max_fastness']
+        self.accel = consts['accel']
+        # not proper, but short. Move to init when overriden
+        self.vel = eu.Vector2(0.0, 0.0)
+        self.heading = eu.Vector2(0.0, 1.0)
+        self.fastness = 0.0
+
+    def update(self, dt):
+        buttons = self.controller.buttons
+        mx = (buttons['right'] - buttons['left'])
+        my = (buttons['up'] - buttons['down'])
+        old_vel = self.vel
+        if mx!=0 or my!=0:
+            vel = old_vel + (dt * self.accel )* eu.Vector2(mx, my)
+            fastness = vel.magnitude()
+            if fastness > fe:
+                self.heading = vel / fastness
+            if fastness > self.max_fastness:
+                vel = self.heading * self.max_fastness
+            self.vel = vel
+        # chopiness with pyglet 1.1.4 release, looks right with 1.2dev
+        # I see dt more inestable with 1.1.4, even if fps ~57-60 with vsync
+        # I know there have been code changes related to dt, also the pyglet
+        # issue tracker shows a report about dt instability with some ATI
+        # divers which can apply here. I will not upgrade just now, must be
+        # further investigated
+
+        # simpler, more sensitive to irregular dt, looks right with pyglet 1.2dev 
+        new_pos = self.cshape.center + dt * self.vel
+
+        # teoricaly more stable with dt variations, at least when releasing
+        # keys after accelerating, but remains chopy with pyglet 1.1.4
+        #new_pos = self.cshape.center + dt * (old_vel + (0.5 * dt * self.accel) * self.heading)
+
+        # new_pos not clamped, maps should protect the borders with trees
+        self.update_center(new_pos)
+        
 
 class EnemyWanderer(BaseActor):
     ingame_type_id = 'wanderer 00.01'
