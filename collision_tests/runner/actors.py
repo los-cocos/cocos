@@ -104,11 +104,11 @@ class Player(BaseActor):
         # further investigated
 
         # simpler, more sensitive to irregular dt, looks right with pyglet 1.2dev 
-        new_pos = self.cshape.center + dt * self.vel
+        #new_pos = self.cshape.center + dt * self.vel
 
-        # teoricaly more stable with dt variations, at least when releasing
-        # keys after accelerating, but remains chopy with pyglet 1.1.4
-        #new_pos = self.cshape.center + dt * (old_vel + (0.5 * dt * self.accel) * self.heading)
+        # teoricaly more stable with dt variations, at least when accelerating
+        # paralell to the axis, but remains chopy with pyglet 1.1.4
+        new_pos = self.cshape.center + dt * (old_vel + (0.5 * dt * self.accel) * self.heading)
 
         # new_pos not clamped, maps should protect the borders with trees
         self.update_center(new_pos)
