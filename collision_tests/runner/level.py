@@ -1,3 +1,4 @@
+import random
 import operator
 import pprint
 
@@ -131,6 +132,10 @@ class Level(cocos.layer.ScrollableLayer):
                 self.player.controller = self.controller
             elif class_name == 'Tree':                
                 self.collman_static.add(actor)
+                # to spice the visuals lets have variations in tree colors
+                # as current protoeditor don't handles color for actors
+                # lets asign a random lerp between two good colors
+                actor.set_color_lerp_fraction(random.random())
             elif class_name == 'Jewel':
                 self.jewels.append(actor)
             elif class_name == 'Exit':

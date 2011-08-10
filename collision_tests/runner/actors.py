@@ -80,6 +80,13 @@ class EnemyChained(BaseActor):
 
 class Tree(BaseActor):
     ingame_type_id = 'tree 00.01'
+    # old lime, best green
+    eu_colors = [eu.Vector3(149,171,63), eu.Vector3(9,216,6)]
+
+    def set_color_lerp_fraction(self, r):
+        eu_color3 = r*Tree.eu_colors[0] + (1.0 - r)*Tree.eu_colors[1]
+        color3 = [int(c) for c in eu_color3]
+        self.color = color3
 
 class Jewel(BaseActor):
     ingame_type_id = 'jewel 00.01'

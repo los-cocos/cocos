@@ -1,6 +1,8 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
+r1117: podria seguir agregando color como storable de Tree; el tamaño lo deducimos de visible width. Otros storables: hints para background the level ?
+
 r1115: runner: upgraded actors check-in
 tasks performed at actors check-in now conditional to cls name, which informaly indicates the ingame role.
 replaced generic actor containers with enemies, jewels, player
