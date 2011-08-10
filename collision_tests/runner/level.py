@@ -54,7 +54,7 @@ class Level(cocos.layer.ScrollableLayer):
         self.collman_static = cm.CollisionManagerGrid(0.0, width, 0.0, height,
                                                       gsize, gsize)
         gsize = wconsts['collman_dynamic_cell_width']
-        self.collman_static = cm.CollisionManagerGrid(0.0, width, 0.0, height,
+        self.collman_dynamic = cm.CollisionManagerGrid(0.0, width, 0.0, height,
                                                       gsize, gsize)
         # store to pass consts to actors
         self.wconsts = wconsts
@@ -152,5 +152,19 @@ class Level(cocos.layer.ScrollableLayer):
             z += 1
 
     def update(self, dt):
-        print "dt:", dt
+        # prepare collision data for the frame.
+        self.update_collision_data()
+        
         self.player.update(dt)
+
+    def update_collision_data(self):
+        # things in collman_static don't change pos or rx, ry so only
+        # collman_dynamic should be updated
+        collman = self.collman_dynamic
+        collman.clear()
+        collman.add(self.player)
+        for actor in self.enemies:
+            collman.add(actor)
+        for actor in self.jewels:
+            collman.add(actor)
+
