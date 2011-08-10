@@ -83,6 +83,10 @@ class Player(BaseActor):
         self.heading = eu.Vector2(0.0, 1.0)
         self.fastness = 0.0
 
+    def on_enter(self):
+        super(Player, self).on_enter()
+        self.scroller = self.get_ancestor(cocos.layer.ScrollingManager)
+
     def update(self, dt):
         buttons = self.controller.buttons
         mx = (buttons['right'] - buttons['left'])
@@ -112,6 +116,10 @@ class Player(BaseActor):
 
         # new_pos not clamped, maps should protect the borders with trees
         self.update_center(new_pos)
+
+        # this should be upgraded to something like the autoscroll in protoeditor
+        # but that should probably wait till the fix for scroller intifier prob.
+        self.scroller.set_focus(*new_pos)
         
 
 class EnemyWanderer(BaseActor):
