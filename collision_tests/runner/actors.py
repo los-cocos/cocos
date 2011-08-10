@@ -123,9 +123,60 @@ class Player(BaseActor):
         
 
 class EnemyWanderer(BaseActor):
+    """
+    The most simplest behavior. (im late to release deadline)
+    The bot has two states:
+        wandering : choses a random direction, walks in that direction,
+                    if it sees player changes to the state chasing
+        chasing : walk heading to the current player position, if player goes
+                  out of sight change to state wandering
+
+    The states would update heading and maybe fastness, which will be used
+    by update_position
+    """
     ingame_type_id = 'wanderer 00.01'
 
+    def __init__(self, *args, **kwargs):
+        super(EnemyWanderer, self).__init__(*args, **kwargs)
+        self.state = None
+        self.go_state('wandering', *args)
+
+    def enter_wandering(self):
+        """
+        chose a random direction to start to walk
+        set fastness goal as max_wandering_fastness. A bit of random here ?  
+        """
+        pass
+
+    def e_wandering(self):
+        """
+        if player near than Z and visible, go state chasing
+        if collision with tree, do an enter wandering
+        --
+        looking for player may be better if done in reverse form:
+        player call for all enemies near than Z and calls a player_near method
+        in enemy
+        """
+        pass
+
+    def enter_chasing(self):
+        """
+        set fastness goal as max_chasing_fastness
+        """
+        pass
+
+    def e_chasing(self)
+        """
+        if player out of sight, go state wandering
+        if collision with tree, go state wandering
+        """
+        pass
+
 class EnemyChained(BaseActor):
+    """
+    Same as wanderer, but don't moves away of it spawn point
+    more than certain distance
+    """
     ingame_type_id = 'chained mons 00.01'
 
 class Tree(BaseActor):
