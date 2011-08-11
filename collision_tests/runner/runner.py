@@ -33,8 +33,8 @@ consts = {
         },
     "view": {
         # how much of world can be seen at every time, in world units
-        "width": 400.0,
-        "height": 300.0
+        "width": 640.0, # 400,
+        "height": 480.0, # 300
         },
     "controller": {
         "bindings": {
@@ -48,10 +48,19 @@ consts = {
         # tweak later those two
         "collman_dynamic_cell_width": 1.25 * 32,
         "collman_static_cell_width": 65.0,
+        # ~ 1.1 * max k for all questions dist(player, other) > k
+        "max_proximity_distance": 1.1 * 110.0,
         "player": {
             "max_fastness": 150.0,
             "accel": 400.0,
-            }
+            },
+        "wanderer": {
+            "max_wandering_fastness": 100.0,
+            "min_wandering_fastness": 80.0,
+            "chasing_fastness": 150,
+            "start_chase_distance": 60.0,
+            "end_chase_distance": 64.0,
+            },
         },
     }
 

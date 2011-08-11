@@ -74,4 +74,23 @@ This can come handy when there are composite actors as depicted, and the game lo
 	which actors collide with actor1 ?
 	which actors are near actor1 ?
 
+==================================
+t0, other = collman.ray_to_object(obj, normalized_heading)
+
+ray starts at obj.cshape.center
+collision with itself must be ignored
+
+t0 such that
+	obj.set_center(old_pos + t * normalized_heading) dont collides with any obj for t<t0
 	
+	and at t0 it touches other
+	
+returns t>0 (width + height ?) and None if no (t0, other) exists
+
+if thereis a collision at t0 ? ...
+
+use cases:
+		lasers
+		instant bullets
+		bots walking over a line precalcultes end of walk in advance, sparing collision calculations with static abjects at each frame
+==================================

@@ -1,7 +1,15 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
-r1118: runner: player moves, but theres a defect: movement looks chopy
+r1124 runner: EnemyWanderer with basic behavior
+
+r1123: runner: sketch enemy behavior
+
+r1122: runner: spec for enemies, updating collision data in the level loop
+
+r1121: runner: basic, nonfinal scroll following player movement"
+
+r1118-1120: runner: player moves, but theres a defect: movement looks chopy
 About the issue:
 All the user code is float, 
 At present scroller set focus is not called, so intify problems comming from focus is not the issue

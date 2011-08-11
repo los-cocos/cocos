@@ -6,6 +6,7 @@ import cocos
 import cocos.euclid as eu
 import cocos.collision_model as cm
 
+fe = 1.0e-4
 
 class Level(cocos.layer.ScrollableLayer):
     ingame_type_id = 'level 00.01'
@@ -56,6 +57,7 @@ class Level(cocos.layer.ScrollableLayer):
         gsize = wconsts['collman_dynamic_cell_width']
         self.collman_dynamic = cm.CollisionManagerGrid(0.0, width, 0.0, height,
                                                       gsize, gsize)
+        self.max_proximity_distance = wconsts["max_proximity_distance"]
         # store to pass consts to actors
         self.wconsts = wconsts
         
@@ -149,13 +151,29 @@ class Level(cocos.layer.ScrollableLayer):
             else:
                 # enemies
                 self.enemies.append(actor)
+                if class_name == "EnemyWanderer":
+                    actor.set_consts(self.wconsts["wanderer"])
             z += 1
 
     def update(self, dt):
+        player = self.player
         # prepare collision data for the frame.
         self.update_collision_data()
         
-        self.player.update(dt)
+        player.update(dt)
+        for actor in self.enemies:
+            actor.update(dt)
+
+        # player vs dynamic actors collision - proximity checks 
+        for actor, d in self.collman_dynamic.ranked_objs_near(player,
+                                                self.max_proximity_distance):
+            class_name = actor.__class__.__name__
+            if d < fe:
+                # declare touch
+                pass
+            elif class_name == 'EnemyWanderer' or class_name == 'EnemyChained':
+                actor.player_near(d)
+                
 
     def update_collision_data(self):
         # things in collman_static don't change pos or rx, ry so only
