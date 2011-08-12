@@ -260,22 +260,31 @@ class EnemyWanderer(BaseActor):
 
 
 
-class EnemyChained(BaseActor):
+class EnemyChained(EnemyWanderer):
     """
     Same as wanderer, but don't moves away of it spawn point
     more than certain distance
     """
     ingame_type_id = 'chained mons 00.01'
 
-    def update(self, dt):
-        pass
+    def __init__(self, *args, **kwargs):
+        # added persistent param chain_lenght
+        self.chain_lenght = kwargs["others"].pop('chain_lenght')
+        super(EnemyChained, self).__init__(*args, **kwargs)
+        self.chain_pin = self.cshape.center
 
-    def player_near(self, d):
-        """
-        called by level if d=distance to player less than a threhold
-        Placeholder code - will be replaced by player_near_* as needed
-        """
-        pass
+    def update(self, dt):
+        old_pos = self.cshape.center
+        new_pos = old_pos + dt * self.vel
+        if abs(new_pos - self.chain_pin) < self.chain_lenght:
+            self.update_center(new_pos)
+            if self.level.collman_static.any_near(self, fe):
+                # touching a tree
+                self.update_center(old_pos)
+                self.go_state('wandering', True)
+
+        self.update_state()
+
 
 class Tree(BaseActor):
     ingame_type_id = 'tree 00.01'

@@ -11,7 +11,8 @@ game = {
                 'height': 1000.0,
 
                 "others": {
-                    # ingame required, excluding position and *_type_id 
+                    # ingame required, excluding position and *_type_id
+                    'title': 'untitled level',
                     }
                 }
             },
@@ -34,7 +35,9 @@ game = {
             ('actorproxy 00.01', 'chained mons 00.01'): {
                 'editor_img': 'badguy_2.png',
                 'visible_width':  32.0,
-                'others': {},
+                'others': {
+                    'chain_lenght': 64.0,
+                    },
                 }
             ,
             ('actorproxy 00.01', 'tree 00.01'): {

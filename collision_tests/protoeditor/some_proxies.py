@@ -62,11 +62,12 @@ class ActorProxy(cocos.sprite.Sprite):
         self.cshape.ry = ry
 
     def as_dict(self):
-        d = dict(self.others)
+        d = {}
         d['editor_type_id'] = self.editor_type_id
         d['ingame_type_id'] = self.ingame_type_id
         d['visible_width'] = self.visible_width
         d['cx'] , d['cy'] = self.cshape.center
+        d['others'] = self.others
         return d
 
     def pprint(self):
@@ -144,11 +145,12 @@ class LevelProxy(cocos.layer.ScrollableLayer):
         self.batch.remove(actor)
 
     def as_dict(self):
-        d = dict(self.others)
+        d = {}
         d['editor_type_id'] = self.editor_type_id
         d['ingame_type_id'] = self.ingame_type_id
         d['width'] = self.width
         d['height'] = self.height
+        d['others'] = self.others
         zactors = list(self.batch.children)
         zactors.sort(key=operator.itemgetter(0))
         f = operator.itemgetter(1)

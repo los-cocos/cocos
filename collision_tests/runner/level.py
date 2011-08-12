@@ -44,6 +44,7 @@ class Level(cocos.layer.ScrollableLayer):
         self.width = width
         self.height = height
         self.others = others
+        assert 'title' in others
         self.px_width = width
         self.px_height = height
         self.maxz = -1
@@ -115,6 +116,7 @@ class Level(cocos.layer.ScrollableLayer):
         actor_variants = game['roles']['actor']
         z = 0
         for desc in actors:
+            assert "others" in desc
             # -> don't modify this block, dont use *_type_id after the block:
             # remember they will change when you upgrade your classes
             _editor_type_id = desc['editor_type_id']
@@ -153,6 +155,10 @@ class Level(cocos.layer.ScrollableLayer):
                 self.enemies.append(actor)
                 if class_name == "EnemyWanderer":
                     actor.set_consts(self.wconsts["wanderer"])
+                else:
+                    # must be EnemyChained
+                    actor.set_consts(self.wconsts["chained"])
+                    
             z += 1
 
     def update(self, dt):

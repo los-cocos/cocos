@@ -27,6 +27,16 @@ def ingame_cls_from_combo_type(editor_type_id, ingame_type_id):
     cls = getattr(module, clsname)
     return cls
         
+def load_level_raw(level_filename):
+    """ Reads a level saved by protoeditor as a dictionary, no interpretation
+    nor checks
+    """
+    f = open(level_filename, 'rb')
+    unpickler = pe.RestrictedUnpickler(f)
+    level_dict = unpickler.load()
+    f.close()
+    return level_dict
+
 
 def load_level(level_filename, args):
     """ Reads a level saved by protoeditor and returns a <level> instance
@@ -41,6 +51,7 @@ def load_level(level_filename, args):
     unpickler = pe.RestrictedUnpickler(f)
     level_dict = unpickler.load()
     f.close()
+    assert 'others' in level_dict
     editor_type_id = level_dict.pop('editor_type_id')
     ingame_type_id = level_dict['ingame_type_id']
     combo_type = (editor_type_id, ingame_type_id)

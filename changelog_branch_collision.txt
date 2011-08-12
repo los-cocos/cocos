@@ -1,7 +1,10 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
-r1124 runner: EnemyWanderer with basic behavior
+r1125: protoeditor: fixed bad 'others' section saving, both for level and actor
+runner: EnemyChained with basic behavior 
+
+r1124: runner: EnemyWanderer with basic behavior
 
 r1123: runner: sketch enemy behavior
 

@@ -57,9 +57,16 @@ consts = {
         "wanderer": {
             "max_wandering_fastness": 100.0,
             "min_wandering_fastness": 80.0,
-            "chasing_fastness": 150,
+            "chasing_fastness": 120,
             "start_chase_distance": 60.0,
             "end_chase_distance": 64.0,
+            },
+        "chained": {
+            "max_wandering_fastness": 70.0,
+            "min_wandering_fastness": 50.0,
+            "chasing_fastness": 150,
+            "start_chase_distance": 120.0,
+            "end_chase_distance": 128.0,
             },
         },
     }
