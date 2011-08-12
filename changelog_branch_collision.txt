@@ -1,6 +1,28 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
+r1127 : begin merge preparation for collision 
+working copy clean and fully checked-in to begin pre merge preparation
+				
+*** This is the last natural revision in the collision1 branch, later ones will be moving and deleting things to merge collision with trunk ***
+
+Merge will have some quirks:
+	I want to merge only some parts of collision, and nothing from editor, runner nor level_loader_demo
+	For convenience along develpment I used dir collision_test to hold all related test scripts and notes, not the canonical cocos locations
+
+My merge plan is:
+	move files in branch to canonical locations
+	rename files if necessary
+	delete all unwanted files
+	update from trunk, commit
+	--reintegrate
+	delete branch
+	
+	(after release work in protoeditor and persistence should need new branches, 
+and deleted files will be added if deemed necesary; history will be lost for this files but it is acceptable)
+	
+
+
 --------------------------suspend runner------------------------------------------
 
 r1126 : runner: added exit actor
