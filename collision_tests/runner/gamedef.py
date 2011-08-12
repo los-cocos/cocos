@@ -52,6 +52,12 @@ game = {
                 'others': {},
                 }
             ,
+            ('actorproxy 00.01', 'exit 00.01'): {
+                'editor_img': 'exit.png',
+                'visible_width':  32.0,
+                'others': {},
+                }
+            ,
         }
     }
 }

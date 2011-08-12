@@ -1,8 +1,14 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
+--------------------------suspend runner------------------------------------------
+
+r1126 : runner: added exit actor
+
 r1125: protoeditor: fixed bad 'others' section saving, both for level and actor
 runner: EnemyChained with basic behavior 
+
+--------------------------loader sample becomes outdated here----------------------
 
 r1124: runner: EnemyWanderer with basic behavior
 

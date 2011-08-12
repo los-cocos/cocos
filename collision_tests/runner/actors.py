@@ -298,4 +298,7 @@ class Tree(BaseActor):
 
 class Jewel(BaseActor):
     ingame_type_id = 'jewel 00.01'
-    
+
+class Exit(BaseActor):
+    ingame_type_id = 'exit 00.01'
+

@@ -49,13 +49,16 @@ F432.0
 sg16
 F432.0
 sg5
-S'tree 00.01'
+S'chained mons 00.01'
 p21
 sg7
 (dp22
-sg19
+S'chain_lenght'
+p23
+F64.0
+ssg19
 F32.0
-sa(dp23
+sa(dp24
 g2
 g14
 sg15
@@ -63,13 +66,13 @@ F464.0
 sg16
 F464.0
 sg5
-S'jewel 00.01'
-p24
+S'tree 00.01'
+p25
 sg7
-(dp25
+(dp26
 sg19
 F32.0
-sa(dp26
+sa(dp27
 g2
 g14
 sg15
@@ -78,12 +81,12 @@ sg16
 F496.0
 sg5
 S'player 00.01'
-p27
+p28
 sg7
-(dp28
+(dp29
 sg19
 F32.0
-sa(dp29
+sa(dp30
 g2
 g14
 sg15
@@ -91,13 +94,24 @@ F528.0
 sg16
 F528.0
 sg5
-S'chained mons 00.01'
-p30
+S'jewel 00.01'
+p31
 sg7
-(dp31
-S'chain_lenght'
-p32
-F64.0
-ssg19
+(dp32
+sg19
+F32.0
+sa(dp33
+g2
+g14
+sg15
+F560.0
+sg16
+F560.0
+sg5
+S'exit 00.01'
+p34
+sg7
+(dp35
+sg19
 F32.0
 sas.

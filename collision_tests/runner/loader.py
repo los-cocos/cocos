@@ -19,6 +19,7 @@ def ingame_cls_from_combo_type(editor_type_id, ingame_type_id):
         ('actorproxy 00.01', 'chained mons 00.01'): ("actors", "EnemyChained"),
         ('actorproxy 00.01', 'tree 00.01'): ("actors", "Tree"),
         ('actorproxy 00.01', 'jewel 00.01'): ("actors", "Jewel"), 
+        ('actorproxy 00.01', 'exit 00.01'): ("actors", "Exit"), 
         }
     combo_type = (editor_type_id, ingame_type_id)
     modname, clsname = combo_type_to_cls[combo_type]
