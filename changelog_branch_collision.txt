@@ -1,6 +1,8 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
+r1128: collision merge preparation, moves and renames
+
 r1127 : begin merge preparation for collision 
 working copy clean and fully checked-in to begin pre merge preparation
 				
