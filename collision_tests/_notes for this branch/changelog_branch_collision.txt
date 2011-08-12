@@ -1,7 +1,9 @@
 branch of trunk to investigate adding collision functionality to cocos
 see ongoing_collision_work.txt for goals, decisions, progress
 
-r1128: collision merge preparation, moves and renames
+r1131: collision merge preparation: all things than shouldn't go to trunk but have future use are in dir collision_tests. Next commit will delete the dir in the way to merge.
+
+r1128-1130: collision merge preparation, moves and renames, deleting files with no further use
 
 r1127 : begin merge preparation for collision 
 working copy clean and fully checked-in to begin pre merge preparation
@@ -23,7 +25,7 @@ My merge plan is:
 	(after release work in protoeditor and persistence should need new branches, 
 and deleted files will be added if deemed necesary; history will be lost for this files but it is acceptable)
 	
-
+svn commit -m "collision merge preparation - deleting things with no further use"
 
 --------------------------suspend runner------------------------------------------
 
