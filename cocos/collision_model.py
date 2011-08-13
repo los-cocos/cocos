@@ -1,3 +1,36 @@
+# ----------------------------------------------------------------------------
+# cocos2d
+# Copyright (c) 2008-2010 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
+# Lucio Torre
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#   * Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#   * Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in
+#     the documentation and/or other materials provided with the
+#     distribution.
+#   * Neither the name of cocos2d nor the names of its
+#     contributors may be used to endorse or promote products
+#     derived from this software without specific prior written
+#     permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+# ----------------------------------------------------------------------------
 import operator as op
 import math
 import cocos.euclid as eu
@@ -6,47 +39,73 @@ import cocos.euclid as eu
 
 # cshape reference interfase 
 class Cshape(object):
+    """
+    Represents an abstract geometric shape in the 2D space, and can 
+    answer questions about proximity or intersection with other shapes.
+
+    Implementations are free to restrict the type of geometrical shapes
+    that will accept, by example circles or axis aligned rectangles.
+    """
+    
     def overlaps(self, other):
         """
-        Returns a boolean, True if itself overlaps other
+        Returns True if overlapping other, False otherwise
+
+        :Parameters:
+            `other` : same class as self
         """
         pass
 
     def distance(self, other):
         """
         Returns a float, distance from itself to other;
-        not necesarily euclidean distance
+
+        Not necessarily  euclidean distance.
+        It is distances between boundaries.
+
+        :Parameters:
+            `other` : same class as self
         """
         pass
 
     def near_than(self, other, near_distance):
         """
         Returns a boolean, True if distance(self, other)<=near_distance
+
+        :Parameters:
+            `other` : same class as self
+            `near_distance` : float
         """
         pass
 
     def touchs_point(self, x, y):
         """
-        Returns a boolean, True if the point (x,y) overlaps the shape
+        Returns True if the point (x,y) overlaps the shape, False otherwise
+
+        :Parameters:
+            `x` : float 
+            `y` : float
         """
         pass
 
     def fits_in_box(self, packed_box):
         """
         Returns a boolean, True if the shape fully fits into the axis aligned
-        box defined by packed_box (== minx, maxx, miny, maxy)
+        rectangle defined by packed_box, False otherwise.
+        
+        :Parameters:
+            `packed_box` : 4-tuple floats
+                An axis aligned rectangle expressed as (minx, maxx, miny, maxy)
         """
         pass
 
     def minmax(self):
         """
-        Returns a four float tuple  xmin, xmax, ymin, ymax definning the
-        axis aligned bounding box for itself
-        
-        That's equivalent to
-        x,y hits the shape implies (xmin <= x <= xmax and ymin <= y <= ymax)
+        Returns the smallest axis aligned rectangle that contains al shape points.
 
-        Useful for a generic 'which buckets overlaps itself'
+        The rectangle is expresed as a 4-tuple of floats (minx, maxx, miny, maxy)
+        Such a rectangle is also know as the Axis Aligned Bonuding Box for shape;
+        AABB for short.        
         """
         pass
 
@@ -54,85 +113,120 @@ class Cshape(object):
         """Returns a copy of itself"""
         pass
 
-##    def collision_details(self, other):
-##        """
-##        returns collision_point, collision_normal, overlap_mesure 
-##        """
-##        pass
-
-# collidable reference
-# an object obj is collidable if and only if:
-#   . it has a member called 'cshape'
-#   . obj.cshape supports the interfase Cshape
-
 
 # collision manager interfase
 class CollisionManager(object):
     """
-    Role: answer questions about proximity or collision with known objects
+    Answers questions about proximity or collision with known objects.
 
-    Objects must comply with:
-        . obj has a member called cshape
-        . obj.cshape supports the interface Cshape
-        . as a limitation imposed by the current Cshapes implementations, a
-        unique concrete Cshape is allowed across all objects know by a
-        CollisionManager instance.
-        By example, all objects should have a CircleShape cshape, or all
-        objects should have a AARectShape cshape.
+    After instantiation or after calling it's 'clear' method the instance
+    don't knowns any object.
 
-    CollisionManager don't automatically tracks changes in obj.cshape, it is
-    user code responsability to update the collision manager instance when
-    obj.cshape values changes. (By example, if obj position changes) 
-    Eficient ways of doing this are:
+    An object is made known to the CollisionManager instance by calling it's
+    'add' method with the object instance.
 
-    General use case:
+    Example questions are:
+        - which known objects collides with <this object> ?
+        - which known objects are near than 6.0 from <this object> ?
 
-    The game level will have a CollisionManager instance, lets call it collman.
-    Then at each frame you do:
-        . call collman.clear  (it will empty collision manager)
-        . call collman.add for all collidable actors still alive
-        . do the game logic, asking all the questions you want about collision;
-        . as part of the frame update, each object should end with an updated
-        cshape.
+    Note that explicit objects in the question (call) don't need to be known to
+    the collisiion manager answering the question.
+    If the explicit object indeed is known, then it is omited in the answer as a
+    trivial case. 
 
-    Special case optimization:
+    There can be multiple CollisionManager instances in the same scope, and
+    an object can be known to many collision managers at the same time.
+
+    Objects that can be known or can be presented to a Collision Manager in
+    a question must comply with:
+        - obj has a member called cshape
+        - obj.cshape supports the interface Cshape
+
+    Such an object can be called 'a collidable' in the documentation, and when
+    'obj' or 'other' is seen in the code you can assume it means collidable.
+
+    As a limitation imposed by the current Cshapes implementations, all the
+    collidables that interacts with a particular instance of CollisionManager
+    must share the same concrete Cshape subclases: by example, all
+    objects should have a CircleShape cshape, or all objects should have a
+    AARectShape cshape.
+
+    The known objects collective for each CollisionManager instance is
+    manipulated by calling the methods
+        - clean() : forgets all objects and empties internal data structures
+        - add(obj) : remember obj as a known object
+        - remove_tricky(obj) : forgets obj
+        
+    When objects are made known to a collision manager, internal data structures
+    are updated based on the obj.cshape value at the 'add' moment.
+    In particular, the obj.cshape indirectly tells where in the internal
+    structures certain info will be stored. 
+    Later, the internal data structures are used to accelerate answers.
     
-    If lot of the objects are static and only a *few* dynamic ones needs to
-    interact with the statics, the best is to have two collision managers:
-    one for the static objects, the other for all dynamics objects.
-    Then, when starting a level:
-        add the static collidables to collman_static
-    In each frame:
-        . call collman_dynamic.clear
-        . add to collman_dynamic all the dynamic collidables
-        . do the game logic, use remove_tricky to remove in collman_static
-        . as part of the frame update, each dynamic should end with an updated
-        cshape.
+    This  means that modifing obj.cshape after an 'add' can produce a memory
+    leak in the next 'remove_tricky', and that in the same situation some
+    answers can be partially wrong.
+    What type of wrong ? It can sometimes miss a collision with a know
+    object that changed it cshape.
 
-    An example of this situation is an arcade game with lots of enemies and
-    lots of goodies (food, coins, powerups) where the goodies are static and
-    only interacts with player.
-    goodies-player interaction will use collman_goodies.objs_colliding(player),
-    player-enemies interactions will use collman_dynamic.
+    It is user code responsability to drive the know objects update when
+    obj.cshape values changes.
 
-    Note that the few dynamics that interacts with statics are not added to
-    collman_static.
-    Also, there can be lots of dynamics, whenever only a few interacts with the
-    statics.
+    Common use patterns that are safe and efficient:
 
+    When most of the known objects update cshape each frame
+
+    You do::
+
+        # updating collision info
+        collision_manager.clear() # fast, no leaks even if changed cshapes
+        for actor in moving_actors:
+            collision_manager.add(actor)
+            
+        # game logic
+        # do what you need, but defer changes in cshape to next block
+        # by example
+        for actor in moving_actors:
+            actor.new_pos = actor.cshape.center + dt * vel  
+            #other logic that potentially needs collision info;
+            #it will be accurate because you have not changed cshapes 
+            ...
+
+        # update cshapes for next frame
+        for actor in moving actors:
+            actor.cshape.center = new_pos
+
+    Example actors for this case are player, enemies, soldiers.
+
+    All of the known objects don't change cshapes
+
+        - At level start you add all objects
+        - When an actor reachs end of life use 'remove_tricky' to
+        make it not known, no problem because his cshape has not changed
+
+    Examples actors for this case are food, coins, trees, rocks.
     """
+    
     def add(self, obj):
         """
         Makes obj a know entity
+
+        :Parameters:
+            `obj` : collidable 
         """
         pass
 
     def remove_tricky(self, obj):
         """*(obj should have the same .cshape value that when added)*
-        Makes CollisionManager forget about obj, thus no further query will
+        Makes collision manager forget about obj, thus no further query will
         return obj.
+        obj is required to be a known object.
 
         Should only be used in a collman that most of the frames don't changes.
+        :Parameters:
+            `obj` : collidable
+                obj is required to be a known object
+                *(obj should have the same .cshape value that when added)*
         """
 
     def clear(self):
@@ -144,8 +238,13 @@ class CollisionManager(object):
     def they_collide(self, obj1, obj2):
         """
         Returns a boolean, True if obj1 overlaps objs2
-
         obj1, obj2 are not required to be known objects 
+
+        :Parameters:
+            `obj1` : collidable
+                not required to be a known object 
+            `obj2` : collidable
+                not required to be a known object 
         """
         pass
 
@@ -153,8 +252,11 @@ class CollisionManager(object):
         """
         Returns a container with known objects that overlaps obj,
         excluding obj itself
-
         obj is not required to be a known object
+
+        :Parameters:
+            `obj` : collidable 
+                not required to be a known object
         """
         pass
 
@@ -163,12 +265,15 @@ class CollisionManager(object):
         A lazy iterator over objects colliding with obj, allows to spare some
         CPU when the loop procesing the colissions breaks before exausting
         the collisions.
+        obj is not required to be a known object
 
         Usage:
         for other in collision_manager.iter_colliding(obj):
             # process event 'obj touches other'
 
-        obj is not required to be a known object
+        :Parameters:
+            `obj` : collidable 
+                not required to be a known object
         """
         pass
 
@@ -177,8 +282,12 @@ class CollisionManager(object):
         Returns None if no know object (except itself) is near than
         near_distance, else an arbitrary known object with distance
         less than near_distance
-
         obj is not required to be a known object
+
+        :Parameters:
+            `obj` : collidable 
+                obj is not required to be a known object
+            `near_distance` : float
         """
         pass
 
@@ -188,19 +297,29 @@ class CollisionManager(object):
         distance to obj less or equal than near_distance, excluding itself.
         Notice that it includes the ones colliding with obj.
         obj is not required to be a known object
+
+        :Parameters:
+            `obj` : collidable 
+                not required to be a known object
+            `near_distance` : float
         """
         pass
 
 
     def objs_near_wdistance(self, obj, near_distance):
         """
-        Returns a list of the (other, distance) pairs that mentions all the
-        registered objects at distance less or equal than near_distance to obj,
+        Returns a list with the (other, distance) pairs that with all the
+        known objects at distance less or equal than near_distance to obj,
         except obj itself.
         Notice that it includes the ones colliding with obj.
         obj is not required to be a known object
         If the game logic wants the list ordered by ascending distances, use
         ranked_objs_near instead.        
+
+        :Parameters:
+            `obj` : collidable 
+                not required to be a known object
+            `near_distance` : float
         """
         pass
 
@@ -208,6 +327,11 @@ class CollisionManager(object):
         """
         Same as objs_near_wdistance but the list is ordered in increasing distance
         obj is not required to be a known object
+        
+        :Parameters:
+            `obj` : collidable 
+                not required to be a known object
+            `near_distance` : float
         """
         pass
 
@@ -224,6 +348,9 @@ class CollisionManager(object):
     def knows(self, obj):
         """-> True if obj was added to the collision manager
         Used for debug and testing.
+
+        :Parameters:
+            `obj` : collidable 
         """
         pass
 
@@ -237,6 +364,10 @@ class CollisionManager(object):
         """ -> container with known objects touching point (x, y)
 
         Useful for mouse pick
+
+        :Parameters:
+            `x` : float 
+            `y` : float
         """
         pass
 
@@ -244,6 +375,11 @@ class CollisionManager(object):
         """-> container with know objects that fully fits into the aabb defined by params
 
         Useful for elastic box selection
+        :Parameters:
+        `minx` : float
+        `maxx` : float
+        `miny` : float
+        `maxy` : float
         """
         pass
 
@@ -252,7 +388,22 @@ class CollisionManager(object):
 
 
 class CircleShape(object):
+    """
+    Implementation for the Cshape interface that uses discs as geometric shape.
+    
+    Distance is the euclidean distance.
+    
+    Look at Cshape documentation for other class and methods documentation.
+    """
+    
     def __init__(self, center, r):
+        """
+        :Parameters:
+            `center` : euclid.Vector2
+                rectangle center
+            `r` : float
+                disc radius
+        """
         self.center = center
         self.r = r
 
@@ -269,7 +420,7 @@ class CircleShape(object):
         return abs(self.center - other.center) <= self.r + other.r + near_distance
 
     def touchs_point(self, x, y):
-        return (self.center - (x,y)).magnitude() <= self.r
+        return abs(self.center - (x,y)) <= self.r
 
     def fits_in_box(self, packed_box):
         r = self.r
@@ -283,38 +434,29 @@ class CircleShape(object):
 
     def copy(self):
         return CircleShape(eu.Vector2(*self.center), self.r)
-        
-        
-##    def collision_details(self, other):
-##        r1 = self.r
-##        r2 = other.r
-##        R = r1 + r2
-##        d = abs(self.center - other.center)
-##
-##        # midle point in the segment over the line passing by both centers,
-##        # with extremes in the intersection with each circle 
-##        contact_point =  ...
-##
-##        # normal to self.center-other.center; prefered sign (?)
-##        # also it can be normal to contact_point - self.center
-##        contact_normal = ...
-##
-##        # R-d is an absolute mesure; (R-d)/R would be a relative mesure
-##        # typical use related to elastic force / overlapping avoidance
-##        overlapping_measure = ...
-##
-##        # They will be harder to define and costly to calculate for
-##        # CshapeRect
-##
-##        return contact_point, contact_normal, overlapping_measure 
 
 
 class AARectShape(object):
     """
-    Rectangles with sides paralell to the coordinate axis.
+    Implementation for the Cshape interface that uses rectangles with sides
+    paralell to the coordinate axis as geometric shape.
+    
+    Distance is not the euclidean distance but the rectangular or max-min
+    distance, max( min(x0 - x1), min(y0 - y1) : (xi, yi) in recti )
+    
     Good if actors don't rotate.
+
+    Look at Cshape documentation for other class and methods documentation.
     """
+    
     def __init__(self, center, half_width, half_height):
+        """
+        :Parameters:
+            `center` : euclid.Vector2
+                rectangle center
+            `half_width` : float
+            `half_height` : float            
+        """
         self.center = center
         self.rx = half_width
         self.ry = half_height
@@ -354,6 +496,12 @@ class AARectShape(object):
 
 
 class CollisionManagerBruteForce(object):
+    """
+    Implementation for the CollisionManager interface
+
+    Intended for reference and debuging, it has very bad performance. 
+    """
+    
     def __init__(self):
         self.objs = set()
 
@@ -429,15 +577,9 @@ class CollisionManagerBruteForce(object):
                     yield (obj, other)
                 
     def knows(self, obj):
-        """-> True if obj was added to the collision manager
-        Used for debug and testing.
-        """
         return obj in self.objs
 
     def known_objs(self):
-        """-> set of objects known by the CollisionManager
-        Used for debug and testing.
-        """
         return self.objs
 
     def objs_touching_point(self, x, y):
@@ -457,7 +599,46 @@ class CollisionManagerBruteForce(object):
 
 
 class CollisionManagerGrid(object):
+    """
+    Implementation for the CollisionManager interface based on the scheme
+    known as spatial hashing.
+
+    The idea behind is to divide the space in rectangles with a given width and
+    height, and have a table telling which objects overlaps each rectangle.
+
+    When new objects are made know to the collision manager, it is noted which
+    rectangles overlaps.
+
+    Later, when the question 'which know objects has such and such spatial
+    relation with <some object>' arrives, only the objects in rectangles
+    overlaping <some object> (or nearby ones) needs to be examined for the
+    condition.
+
+    Look at Cshape documentation for other class and methods documentation.
+    """
+
     def __init__(self, xmin, xmax, ymin, ymax, cell_width, cell_height):
+        """
+        Cell width and height have impact on performance.
+        For objects with same with, and with width==height, a good value
+        is 1.25 * (object width).
+        For mixed widths, a good guess can be
+        ~ 1.25 * { width(object): all objects not exceptionlly big}
+
+        :Parameters:
+            `xmin` : float
+                minimun x coordinate for a point in world
+            `xmax` : float
+                maximun x coordinate for a point in world
+            `ymin` : float
+                minimun y coordinate for a point in world
+            `ymax` : float
+                maximun y coordinate for a point in world
+            `cell_width` : float
+                width for the rectangles the space will be broken
+            `cell_height` : float
+                heigh for the rectangles the space will be broken
+        """
         self.xmin = xmin
         self.xmax = xmax
         self.ymin = ymin
