@@ -497,7 +497,7 @@ class CocosNode(object):
         """
         Called every time just before the node enters the stage.
 
-        Schedulled calls and worker actions continues to perform
+        scheduled calls and worker actions continues to perform
         
         Good point to do .push_handlers if you have custom ones
         Rule: a handler pushed there is near certain to require a .pop_handlers
@@ -521,7 +521,7 @@ class CocosNode(object):
         """
         Called every time just before the node leaves the stage
 
-        Schedulled calls and worker actions are suspended, that is, will not
+        scheduled calls and worker actions are suspended, that is, will not
         be called until an on_enter event happens.
 
         Most of the time you will want to .pop_handlers for all explicit
@@ -762,7 +762,7 @@ class CocosNode(object):
             The actions scheduled to be removed are removed
             Then an action.step() is called for each action in the
             node actions container, and if the action doenst need any more step
-            calls will be schedulled to remove. When schedulled to remove,
+            calls will be scheduled to remove. When scheduled to remove,
             the stop method for the action is called.
 
         :Parameters:
