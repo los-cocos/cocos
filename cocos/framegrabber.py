@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------------
 # cocos2d
-# Copyright (c) 2008-2010 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
+# Copyright (c) 2008-2011 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
 # All rights reserved.
 #
