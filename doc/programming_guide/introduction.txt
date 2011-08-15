@@ -11,6 +11,7 @@ cocos2d simplifies the game development in these areas:
     - **Effects:** Effects like waves, twirl, lens and much more
     - **Particle Systems:** Explosions, fireworks, meteors, smoke and more
     - **Tiled maps:** Support for rectangular and hexagonal tiled maps
+    - **Collision:** Basic pure python support for collisions
     - **Transitions:** Move from scene to scene with style
     - **Menus:** Built in classes to create menus
     - **Text rendering**

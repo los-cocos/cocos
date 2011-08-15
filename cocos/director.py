@@ -472,9 +472,10 @@ class Director(event.EventDispatcher):
             Realizes switch to other scene and app termination if needed
             Clears the window area
             The windows is painted as:
-                Render the current scene by calling it's visit method
-                Eventualy draw the fps metter
-                Eventually draw the interpreter
+            
+                - Render the current scene by calling it's visit method
+                - Eventualy draw the fps metter
+                - Eventually draw the interpreter
 
             When the window is minimized any pending switch to scene will be
             delayed to the next de-minimizing time.

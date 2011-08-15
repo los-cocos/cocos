@@ -13,41 +13,41 @@ Finishing:
 - Proper updated license header, care to not target files which needs
   other license header
 
+- decide version and date; write it down.
+  They should be consistent with previous releases, to not confuse
+  users and installers like easy_install or pip
+  
+  update version and date in
+      cocos/__init__.py
+      setup.py
+
+  additionally, update version in
+      doc/index.txt
+      CHANGELOG
+
+- new big capabilities should be updated in
+    cocos/__init__.py docstring
+    README    
+    doc/programming_guide/introduction.txt
+    
 - Update text files in the top trunk directory
-  Keep in mind that README it is also used as reST for the pypi page
-  (see 1 in building_release_notes.txt)
+  Keep in mind that
+      - README it is also used as reST for the pypi page
+        (see 1 in building_release_notes.txt)
+
+      - INSTALL is also used as docs/programming_guide/installation.txt
+        (manual copy atm), so use reST- epydoc compatible markup
 
 	- CHANGELOG
 	- LICENSE
 	- INSTALL
-	- README
-	- compatibility notes ?
+	- README		
 
-- Make sure version and release date are consistent between different files,
-  and reasonable in relation with previous version
+- Others updates to setup.py
 
-	- Version appearances in current trunk:
+    - dependencies if needed.
 
-		- setup.py
-		- changelog
-		- readme
-		- cocos.__init__
-		- docs ?
-		- (also cocos2d.org site)
-
-	- Date appearances:
-
-		- setup.py
-		- changelog
-		- google download page ?
-		- (cocos2d.org site)
-		
-
-- Update setup.py
-
-	- dependencies
-	- version
-	- date
+- adjust MANIFEST.in if needed
 
 - build the docs (see 2 in building_release_notes.txt)
 
@@ -63,9 +63,12 @@ Finishing:
 
 - Test that the package built with setup.py works
 
-- upload to googlecode, mark as featured, unmark as featured older packages
+- upload to googlecode, mark as featured; if this is a final release
+unmark as featured older packages
 
 - Update cocos2d.org site ( see 5 in building_release_notes.txt)
+
+For Release Candidates, alphas, betas we dont upload to pypi, nor tag the version
 
 - upload to pypi ( see 6 in building_release_notes.txt )
 

@@ -1,4 +1,7 @@
-v0.5dev
+v0.5rc0
+  - basic pure python collision support added, see cocos/collision_model.py
+  - fixed __init__ for hexmaps 
+  - fixed unpause not working in SDL audio
   - added test_transitions_with_pop_recipe.py
   - fixed small bug in TransitionScene when a transition begins amidst another
     transition
@@ -12,7 +15,7 @@ v0.5dev
 v0.4.0 - September 8, 2010
   - fixed compatibility python 2.4
 
-v0.4.0rc0 - July 7, 2010
+v0.4rc0 - July 7, 2010
   - actions subsystem upgraded: now Actions with duration not know in advance are possible,
     like the ones that terminates on a collision detection condition.
     Also new Move/BoundedMove/WrappedMove actions for kinematic animation controls

@@ -1,41 +1,116 @@
-Installation
-============
-cocos is a pure python package
+Installation, Dependencies and Compatibility 
+============================================
 
-1.  Install python 2.6, python 2.5 or python 2.4
-    For python 2.4 you will need two extra packages:
-         
-       - `ctypes`
-       - `elementtree`
+.. contents::
+    :local:
 
-2. Install pyglet 1.1.4 or newer from `pyglet's homepage`_ . **If you want to use pyglet 1.0, use cocos2d v0.1.x instead.**
+Installation, Dependencies and Compatibility 
+--------------------------------------------
 
-3. Download the last version from
-   http://code.google.com/p/los-cocos/ or PyPI,
-   unpack to some temporal dir
-   and cd to it
+Dependencies
+^^^^^^^^^^^^
 
-4. Finally, choose one of the followings\:
+A quick rundown about dependencies, see also compatibility notes below
 
-     * run::
-       
-         setup.py install
-   
-     * or copy "cocos" to your project::
+Cocos and Pyglet both are pure python packages, both using ctypes to bind
+other libraries.
 
-         $ cp -r cocos $PROJECT_HOME
+    . for python 2.4 only, you need
+       - ctypes, http://pypi.python.org/pypi/ctypes
+       - elementtree, http://effbot.org/downloads/#elementtree
 
-     * or include cocos in your PYTHONPATH::
+    . If you stash the source cocos and pyglet directories under
+      site-packages, you have most of functionality.
+      What you (maybe) don't have is:
+      
+            - cocos particles
+            - SDL audio backend
+            - AVBin (pyglet) audio-video backend 
 
-         $ export PYTHONPATH=$PYTHONPATH:/path/to/cocos
+    . For particles to work you need the python package Numpy
+      http://new.scipy.org/download.html
 
-     * or insert cocos in sys.path::
+    . For SDL audio backend:
+        
+         - Numpy
+         - in windows, the pygame binaries (http://www.pygame.org/download.shtml)
+         - in unix like OSes, libraries sdl 1.2 and sdl-mixer 1.2;
+           in debian/ubuntu their packages are libsdl1.2 and libsdl-mixer1.2
+         - in Mac, theres no confirmed info. Should be similar to unix.
+            
+    . For AVBin (pyglet) audio backend:
+        
+        - For windows and Mac, if you installed pyglet using the *binaries*
+          provided by pyglet you have all you need.
+        - For unix like systems: add AVBin, http://code.google.com/p/avbin/
 
-         import sys
-         sys.path.insert(0, PATH_TO_COCOS))
+What explicit dependencies are declared in the setup.py ?
+    pyglet 1.1.4+
+        
+
+Compatibility
+^^^^^^^^^^^^^
+
+Compatibility notes at the time of writing, August 2011
+
+    . python : cocos needs python 2.4+, is not compatible with 3.x 
+
+    . pyglet : The last released pyglet is 1.1.4 and
+    
+        . don't runs on 64bits windows. Theres a patch in the issue tracker
+         (http://code.google.com/p/pyglet/issues/detail?id=510) that can fix
+         this; notice that the patch is for the pyglet 1.2dev that you must
+         fetch from the repository, not the current 1.1.4 release
+        
+        . Macs: The 1.1.4  release needs a 32bit python, not a 64bits
+        
+        . Macs: The 1.2dev (repo default) received much work about Cocoa
+         integration, it is probably in alpha state. You should ask in
+         the pyglet mailing list about status and instructions.
 
 
+Installing from source
+^^^^^^^^^^^^^^^^^^^^^^
 
-.. _pyglet's homepage: http://www.pyglet.org
-.. _ctypes: http://pypi.python.org/pypi/ctypes
-.. _elementtree: http://effbot.org/downloads/#elementtree
+Install setuptools if you don't have it.( http://pypi.python.org/pypi/setuptools )
+
+Download cocos2d-0.5.0.zip, unzip to a temporary directory
+
+In the command line do::
+
+    cd <temporal_directory>
+    python setup.py install
+    (note that in windows the last line should be)
+    setup.py install
+
+Move from the temporary directory to your preferred locations the docs,
+examples, tests and unitests
+
+Done, you can delete the temporal directory.
+All of cocos should be usable now, with the possible exceptions
+
+    - cocos particles
+    - SDL audio backend
+    - AVBin (pyglet) audio-video backend 
+
+If you need to add these, look at the dependencies and compatibility section.
+
+
+Installing with easy_install
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Install setuptools if you don't have it.( http://pypi.python.org/pypi/setuptools )
+
+at the command line enter
+    easy_install cocos
+    
+All of cocos should be usable now, with the possible exceptions
+
+    - cocos particles
+    - SDL audio backend
+    - AVBin (pyglet) audio-video backend 
+
+If you need to add these, look at the dependencies and compatibility section
+    
+You also will want to download the zip that contains the documentation, samples
+and demo, and unzip to a convenient location.

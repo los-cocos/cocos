@@ -13,11 +13,17 @@ cocos2d
 
 cocos2d simplifies the game development in these areas:
 
-    * Defining a workflow for your game
-    * Creating special effects in layers
-    * Creating transitions between scenes
-    * Managing sprites
-    * Basic menus
+    * Flow control: Manage the flow control between different scenes in an easy way
+    * Sprites: Fast and easy sprites
+    * Actions: Just tell sprites what you want them to do. Composable actions like move, rotate, scale and much more
+    * Effects: Effects like waves, twirl, lens and much more
+    * Tiled Maps: Support for rectangular and hexagonal tiled maps
+    * Collision: Basic pure python support for collisions
+    * Transitions: Move from scene to scene with style
+    * Menus: Built in classes to create menus
+    * Text Rendering: Label and HTMLLabel with action support
+    * Built-in Python Interpreter: For debugging purposes
+    * Acces to OpenGL functionality
     * and much more!http://cocos2d.org
 
 Requirements
@@ -25,7 +31,7 @@ Requirements
 
  Software:
 
- * python 2.6, python 2.5 or python 2.4 with ctypes and elementtree 
+ * python 2.4 or newer; dont work with 3.x
  * pyglet 1.1.4 or newer (http://www.pyglet.org)
  * Linux, Windows or Mac OS/X
 
@@ -39,7 +45,7 @@ Installing
 ----------
       
    Being a pure python package the usual options are available; you
-   can look at the INSTALL file for details
+   can look at the INSTALL file for some details
 
 
 Learning cocos2d

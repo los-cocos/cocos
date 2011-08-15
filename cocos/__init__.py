@@ -41,6 +41,7 @@ Main Features
     * Actions: Just tell sprites what you want them to do. Composable actions like move, rotate, scale and much more
     * Effects: Effects like waves, twirl, lens and much more
     * Tiled Maps: Support for rectangular and hexagonal tiled maps
+    * Collision: Basic pure python support for collisions
     * Transitions: Move from scene to scene with style
     * Menus: Built in classes to create menus
     * Text Rendering: Label and HTMLLabel with action support
@@ -55,7 +56,7 @@ http://cocos2d.org
 
 __docformat__ = 'restructuredtext'
 
-__version__ = "0.5dev"
+__version__ = "0.5rc0"
 __author__ = "cocos2d team"
 version = __version__
 
