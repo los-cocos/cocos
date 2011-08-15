@@ -52,6 +52,8 @@ Finishing:
 - build the docs (see 2 in building_release_notes.txt)
 
 - build the package
+  ( *.py line endings to unix if building in windows ? careful with
+    samples/tetrico/data/block_rotate.py , marked as octet/stream)
   example build command in windows
   setup.py sdist  >build.log
 
