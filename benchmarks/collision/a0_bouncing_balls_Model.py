@@ -171,7 +171,7 @@ def cocos_visualization():
         'cshape_cls_name': 'CircleShape', #'AARectShape'
         'collision_manager': None # must be filled, see below
         }
-    ball_quantity = 40 # 175
+    ball_quantity = 40 # 175 # 300
 
     random.seed(world_params.pop('seed'))
     cell_side = world_params['ball_radius'] * 2.0

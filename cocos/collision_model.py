@@ -275,8 +275,9 @@ class CollisionManager(object):
 
     def objs_near(self, obj, near_distance):
         """
-        Returns a container the objects known by collision manager that are at
-        distance to obj less or equal than near_distance, excluding itself.
+        Returns a container with the objects known by collision manager that
+        are at distance to obj less or equal than near_distance, excluding
+        itself.
         Notice that it includes the ones colliding with obj.
         obj is not required to be a known object
         """

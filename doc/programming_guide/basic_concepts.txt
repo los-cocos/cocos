@@ -10,7 +10,7 @@ need to know when developing a cocos2d application:
 Scenes
 ------
 
-An scene (implemented with the `Scene` object) is a more or less an
+A scene (implemented with the `Scene` object) is a more or less
 independent piece of the app workflow.
 Some people may call them "screens" or "stages". Your app can have
 many scenes, but only one of them is active at a given time.
@@ -19,7 +19,7 @@ For example, you could have a game with the following scenes:
 Intro, Menu, Level 1, Cutscene 1, Level 2, Winning cutscene,
 losing cutscene, High scores screen.
 
-You can define every of one of these scenes more or less as separate apps;
+You can define every one of these scenes more or less as separate apps;
 there is a bit of glue between them containing the logic for connecting
 scenes (the intro goes to the menu when interrupted or finishing,
 Level 1 can lead you to the cutscene 1 if finished or to the losing
@@ -27,12 +27,28 @@ cutscene if you lose, etc.).
 
 .. figure:: scenes.png
 
-A cocos2d `Scene` is composed of one or more layers (implemented with the
-`Layer` object), all of them piled up.
-Layers give the scene an appearance and behavior; the normal use case is to
-just make instances of `Scene` with the layers that you want. 
+A scene is described in cocos2d as a tree of CocosNodes where the root is
+a `Scene` node, the most near descendants usually are `Layers`, and they
+hold and organize individual elements.
 
-There is also a family of `Scene` classes called transitions (implemented with
+Example for the main menu screen::
+
+	main_menu_scene : Scene node holding all the main menu elements
+		animated_background : Layer depicting an animated background
+			static_background : Sprite with a nice draw covering all the screen
+			far_trees : Layer holding the most distant trees
+				tree_1..tree_k : Sprites showing trees 
+			birds : Layer holding flying birds
+				bird_1..bird_n : Sprites showing birds
+			near_trees : Layer holding the most near trees
+				tree_1..tree_m : Sprites showing trees
+		main_menu : Menu, a Layer subclass provided by cocos that handles all the behavior
+					related to menu (key listening, highlight, select...)
+			item1 : MenuItem , 'play'
+			item2 : MenuItem , 'options'
+			item3 : MenuItem , 'quit'
+
+There is also a family of `Scene` subclasses called transitions (implemented with
 the `TrasitionScene` object) which allow you to
 make transitions between two scenes (fade out/in, slide from a side, etc).
 
@@ -49,32 +65,42 @@ between scenes.
 The `Director` is a shared (singleton) object. It knows which scene is currently
 active, and it handles a stack of scenes to allow things like "scene calls"
 (pausing a `Scene` and putting it on hold while other enters, and then returning
-to the original). Is the one who will actually change the `Scene`, after a
-`Layer` has asked for push, replacement or end of the current scene.
+to the original). The push, replacement or end of the current scene is made by director.
 
 The `Director` is also responsible of initializing the main window.
 
 Layers
 ------
 
-A `Layer` has as size the whole drawable area (window or screen), and knows how to
-draw itself. It can be semi transparent (having holes and/or partial
-transparency in some/all places), allowing to see other layers behind it.
-Layers are the ones defining appearance and behavior, so most of your programming
-time will be spent coding `Layer` subclasses that do what you need. 
+Layers helps you organize the scene in the back to front axis, by example
+
+	- background : a fixed draw of landscape
+	- far : decorative trees and birds
+	- middle : platforms
+	- near : player, enemies, coins
+	- HUD : Heads Up Display to show game stats like life, energy
+
+You can think layers as (usually) transparent sheets where the children are drawn, and the scene as the stack of sheets
 
 .. image:: layers.png
+
+In non MVC design style some code related to nodes interaction tends to float at the layer holding the entities, providing higher functional units.
+By example, `Menu` is a Layer subclass that knows how to layout and animate items, read user input and do control flow.
+
+Layers are the ones defining appearance and behavior, so most of your programming
+time will be spent coding `Layer` subclasses that do what you need. 
 
 The `Layer` is where you define event handlers. Events are propagated to layers
 (from front to back) until some layer catches the event and accepts it.
 
-Even if any serious app will require you to define some `Layer` classes, cocos2d
-provides a library of useful predefined layers (a simple menu layer: `Menu`,
-a color layer: `ColorLayer`, a multiplexor between other layers: `MultiplexLayer`,
-a map layer: `HexMapLayer`, and more ).
-
-Layers can have `Sprite`, `Label`, `HTMLLabel` and even other `Layer` objects as
-children.
+Even if any serious app will require you to define some `Layer` subclasses, cocos2d
+provides some useful specialized layers
+	- `MultiplexLayer`, a group of layers where only one is seen at a time
+	- `ScrollerManager`, `ScrollableLayer`; does the logic to limit scroll to viewable areas
+	- `RectMapLayer`, `HexMapLayer`; displays a group of rectangular or hexagonal tiles
+	- `Menu`, implements simple menus
+	- `ColorLayer`, a solid color rectangle
+	- `InterpreterLayer`, used by director to pop up an interactive console to peek and poke at the objects in our scene ( ctrl + I to toggle on-off)
 
 To make loading of appropriate assets easier you may override the ``init``
 method of your `Layer` subclass. This will be called when your Layer is
@@ -113,7 +139,7 @@ The pyglet event framework in a pinch
    string (the event name)
 
  - to act over events, you register **listeners** with the emitter.
-   Esentially, you provide the emitter with a (<event name>, callable) and the
+   Essentially, you provide the emitter with a (<event name>, callable) and the
    emitter will call the callable when <event name> happens.
    Any number of listeners can register for a (emitter, <event name>) pair.
    A listener can register to any number of emitters.
@@ -176,7 +202,7 @@ The pyglet event framework in a pinch
          then register ( <event name>, obj.event_name ) for each match.
 
    With this style of listener registration you should be careful when
-   registering for two emmitters: if both emitters can genereate 'on_cuack'
+   registering for two emitters: if both emitters can generate 'on_cuack'
    events and you register::
 
         emitter1.push_handlers(obj)
@@ -208,15 +234,15 @@ Besides using events to get user input ('on_key_press', 'on_mouse_move',...) or 
 Cocos in general will **not** automatically handle listeners registration/de-registration, except for one special case: the emitter is director.window and the listener is a layer or scene
 Thus, for the general case, you must handle the push_handlers - remove_handlers thing by yourself.
 When your listener lives in a CocosNode, a good scheme is pushing handlers in the on_enter method and remove handlers in the on_exit method. This way, you are sure your handlers will not be called when the node is not in the active scene.
-Also, for custom events, it is a good practice to not use event names that director.window uses: that evitates unexpected double calls to the handler(s).
+Also, for custom events, it is a good practice to not use event names that director.window uses: that prevents unexpected double calls to the handler(s).
 
 For the special case that emitter is director.window and the listeners are layers or scenes, cocos can handle the registration / de-registration:
 
  - When a scene becomes active it would walk the scene tree to allow layers autoregistering for director.window events
    It would not attempt to register itself as a listener except if the scene.enable_handlers is called.
-   The walk begins in the scene, and passes only layer class childs.
+   The walk begins in the scene, and passes only to layer class childs.
 
- - When prompted from the above walk, a layer whose class member is_event_handler has value True will register itself and as a director.window listener
+ - When prompted from the above walk, a layer whose class member is_event_handler has value True will register itself as a director.window listener
    The registration will be on the form::
           
         director.window.push_handler(layer)

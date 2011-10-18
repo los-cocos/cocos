@@ -72,7 +72,7 @@ class CocosNode(object):
     def __init__(self):
         # composition stuff
 
-        #: list of children. each item is (int, child-reference) where int is the z-order
+        #: list of (int, child-reference) where int is the z-order, sorted by ascending z (back to front order)
         self.children = []
 
         #: dictionary that maps children names with children references
@@ -394,7 +394,7 @@ class CocosNode(object):
 
 
     def add(self, child, z=0, name=None ):
-        """Adds a child to the container
+        """Adds a child and if it becomes part of the active scene calls its on_enter method
 
         :Parameters:
             `child` : CocosNode
@@ -432,12 +432,14 @@ class CocosNode(object):
         self.parent.remove(self)
 
     def remove( self, obj ):
-        """Removes a child from the container given its name or object
+        """Removes a child given its name or object
 
         If the node was added with name, it is better to remove by name, else
         the name will be unavailable for further adds ( and will raise Exception
         if add with this same name is attempted)
         
+        If the node was part of the active scene, its on_exit method will be called.
+
         :Parameters:
             `obj` : string or object
                 name of the reference to be removed
@@ -463,10 +465,10 @@ class CocosNode(object):
             child.on_exit()
 
     def get_children(self):
-        """Return a list with the node's childs
+        """Return a list with the node's childs, order is back to front
 
         :rtype: list of CocosNode
-        :return: childs of this node
+        :return: childs of this node, ordered back to front
 
         """
         return [ c for (z, c) in self.children ]
@@ -475,7 +477,7 @@ class CocosNode(object):
         return child in self.get_children()
 
     def get( self, name ):
-        """Gets a child from the container given its name
+        """Gets a child given its name
         
         :Parameters:
             `name` : string
@@ -497,7 +499,7 @@ class CocosNode(object):
         """
         Called every time just before the node enters the stage.
 
-        scheduled calls and worker actions continues to perform
+        scheduled calls and worker actions begins or continues to perform
         
         Good point to do .push_handlers if you have custom ones
         Rule: a handler pushed there is near certain to require a .pop_handlers
