@@ -35,6 +35,8 @@
 
 __docformat__ = 'restructuredtext'
 
+import ctypes as ct
+
 from pyglet.gl import *
 
 class FramebufferObject (object):
@@ -48,7 +50,7 @@ class FramebufferObject (object):
     def __init__ (self):
         """Create a new framebuffer object"""
         id = GLuint(0)
-        glGenFramebuffersEXT (1, byref(id))
+        glGenFramebuffersEXT (1, ct.byref(id))
         self._id = id.value
 
     def bind (self):
@@ -77,4 +79,4 @@ class FramebufferObject (object):
     def __del__(self):
         '''Delete the framebuffer from the GPU memory'''
         id = GLuint(self._id)
-        glDeleteFramebuffersEXT(1, byref(id))
+        glDeleteFramebuffersEXT(1, ct.byref(id))
