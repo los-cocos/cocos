@@ -95,6 +95,7 @@ The `Layer` is where you define event handlers. Events are propagated to layers
 
 Even if any serious app will require you to define some `Layer` subclasses, cocos2d
 provides some useful specialized layers
+
 	- `MultiplexLayer`, a group of layers where only one is seen at a time
 	- `ScrollerManager`, `ScrollableLayer`; does the logic to limit scroll to viewable areas
 	- `RectMapLayer`, `HexMapLayer`; displays a group of rectangular or hexagonal tiles

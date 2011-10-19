@@ -159,7 +159,7 @@ Performance Considerations
 ++++++++++++++++++++++++++
 
 Sprites are not suitable for effects that piles a lot of semitransparent images
-to build an effect like smoke or poissoning fog. Use particle systems or custom
+to build an effect like smoke or poisoning fog. Use particle systems or custom
 CocosNode s managing vertex lists for that.
 
 If your scene has less than 25 sprites, you can add directly to the
@@ -204,10 +204,20 @@ sprites to them. Even only one batch can give you 4x fps::
 
 With more than 100 visible, moving at each frame sprites, you will need to
 optimize further to run at 60 fps in weak hardware like netbooks, old desktops,
-cheap new dewstops.
+cheap new desktops.
 You can look at cocos particle systems and the section graphics in pyglet
 programing guide for ideas. 
 
+
+ParticleSystems
+^^^^^^^^^^^^^^^
+
+Certain effects are best rendered as a big number of translucent, colored images, by example explosions and smoke.
+Cocos provides the base class `ParticleSystems` to efficiently render those entities, and some specialized subclasses like `Fireworks`, `Spiral`, `Meteor`, `Sun`, `Fire`, `Galaxy`, `Flower`, `Explosion`, `Smoke`.
+
+The most common method to customize particle systems is to subclass one of the cocos particle systems and modify some of the class members defining its behavior.
+If you change the particle texture remember to load it with pyglet.image.load, not pyglet.resource.image
+Of course, deeper customization can be achieved with subclassing and code customization.
 
 Labels
 ^^^^^^

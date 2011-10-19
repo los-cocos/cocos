@@ -70,6 +70,18 @@ class Color( object ):
 
 
 class ParticleSystem( CocosNode ):
+    """
+    Base class for many flawors of cocos particle systems
+
+    The most easy way to customize is subclass and redefine some class members;
+    see particle_systems by example.
+
+    If you want to use a custom texture remember it should hold only one image,
+    so don't use texture = pyglet.resource.image(...) (it would produce an atlas,
+    ie multiple images in a texture); using texture = pyglet.image.load(...) is fine
+
+    This implementation uses openGL PointSprites, which some systems dont support.
+    """
 
     # type of particle
     POSITION_FREE, POSITION_GROUPED = range(2)
@@ -132,8 +144,31 @@ class ParticleSystem( CocosNode ):
     #: Maximum particles
     total_particles = 0
 
-    #:texture of the particles
-    texture = pyglet.resource.image('fire.png').texture
+    #:texture for the particles
+    texture = None
+
+    if True:
+        # compatible with cocos < 0.5, bad behavior, see issue 168
+        # for particles is wrong to use pyglet.resouce.image
+        texture = pyglet.resource.image('fire.png').texture
+        print """
+        cocos 0.5 deprecation warning:
+        particles.py loading image with 'pyglet.resource.image(...)'
+        Next cocos version will use 'pyglet.image.load(...) which fixes
+        issue 168 and can change the rendered size for particles.
+        New code should bundle cocos and switch to the correct behavior.
+        """
+    else:
+        # correct behavior, will be the one for cocos > 0.5
+        # always use pyglet.resource.image to get the particle texture
+        import os
+        from pyglet import image
+        # this in not zip safe for py2exe
+        ppath = os.path.abspath(__file__).split(os.sep)
+        ppath = ppath[:-1] + ['resources', 'fire.png']
+        fname = os.path.join(*ppath)
+        pic = image.load(fname)
+        texture = pic.get_texture()        
 
     #:blend additive
     blend_additive = False
