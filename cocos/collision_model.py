@@ -77,7 +77,7 @@ class Cshape(object):
         """
         pass
 
-    def touchs_point(self, x, y):
+    def touches_point(self, x, y):
         """
         Returns True if the point (x,y) overlaps the shape, False otherwise
 
@@ -376,7 +376,7 @@ class CircleShape(object):
     def near_than(self, other, near_distance):
         return abs(self.center - other.center) <= self.r + other.r + near_distance
 
-    def touchs_point(self, x, y):
+    def touches_point(self, x, y):
         return abs(self.center - (x,y)) <= self.r
 
     def fits_in_box(self, packed_box):
@@ -435,7 +435,7 @@ class AARectShape(object):
         return ( abs(self.center[0] - other.center[0]) - self.rx - other.rx < near_distance and
                  abs(self.center[1] - other.center[1]) - self.ry - other.ry < near_distance)
 
-    def touchs_point(self, x, y):
+    def touches_point(self, x, y):
         return ( abs(self.center[0] - x) < self.rx and
                  abs(self.center[1] - y) < self.ry )
 
@@ -546,7 +546,7 @@ class CollisionManagerBruteForce(object):
     def objs_touching_point(self, x, y):
         touching = set()
         for obj in self.objs:
-            if obj.cshape.touchs_point(x, y):
+            if obj.cshape.touches_point(x, y):
                 touching.add(obj)
         return touching
 
@@ -747,7 +747,7 @@ class CollisionManagerGrid(object):
         touching = set()
         for cell_id in self._iter_cells_for_aabb((x, x, y, y)):
             for obj in self.buckets[cell_id]:
-                if obj.cshape.touchs_point(x, y):
+                if obj.cshape.touches_point(x, y):
                     touching.add(obj)
         return touching
 

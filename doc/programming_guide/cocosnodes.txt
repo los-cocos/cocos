@@ -2,139 +2,188 @@ CocosNodes
 ==========
 
 .. contents::
-    :local:
+:local:
 
-
-Built-in cocosnode objects
---------------------------
-
-CocosNode
-^^^^^^^^^
+CocosNode Overview
+------------------
 
 In cocos2d, every object that is part of a scene is a `CocosNode` object.
 For example:
 
-    - sprites
-    - labels
-    - menus
-    - layers
-    - scenes
+- sprites
+- labels
+- menus
+- layers
+- scenes
 
 Every `CocosNode` object has these attributes
 *(see below for some exceptions)* :
 
-    - position
-    - color
-    - opacity
-    - scale
-    - rotation
-    - visible
-    - camera
-    - grid
+placement
+
+	position : property that get/sets _x and _y
+	anchor, anchor_x, anchor_y
+	transform_anchor, transform_anchor_x, transform_anchor_y
+	scale
+	rotation
+
+
+
+- position
+- color
+- opacity
+- scale
+- rotation
+- visible
+- camera
+- grid
 
 and these attributes can be modified manually.
 Example::
 
-    # place the sprite in 320,240
-    sprite.position = (320,240)
+# place the sprite in 320,240
+sprite.position = (320,240)
 
 or by using actions.
 Example::
 
-    # move the sprite to 320,240 in 5 seconds
-    sprite.do( MoveTo( (320,240, duration=2 ) )
+# move the sprite to 320,240 in 5 seconds
+sprite.do( MoveTo( (320,240, duration=2 ) )
 
 You can modify these attributes to **any** `CocosNode` object.
 For example::
 
-    scene.do( ScaleTo(2, duration=2) )
+scene.do( ScaleTo(2, duration=2) )
 
-    layer.do( RotateBy(360, duration=3) )
+layer.do( RotateBy(360, duration=3) )
 
-    sprite.do( Blink(5, duration=1 ) )
+sprite.do( Blink(5, duration=1 ) )
 
-    label.do( JumpBy( (100,100), 50, 5, duration=3) )
+label.do( JumpBy( (100,100), 50, 5, duration=3) )
 
 Another important feature common to **any** `CocosNode` object, is that
 is is also a container, it can have children nodes.
 For example::
 
-    # a scene with 2 layers
-    scene.add( background_layer, z=0 )
-    scene.add( game_layer, z=1 )
+# a scene with 2 layers
+scene.add( background_layer, z=0 )
+scene.add( game_layer, z=1 )
 
-    # the layer with 1 sprite
-    game_layer.add( sprite )
+# the layer with 1 sprite
+game_layer.add( sprite )
 
-    # the sprite, with 2 sprites
-    sprite.add( ship1_sprite )
-    sprite.add( ship2_sprite )
+# the sprite, with 2 sprites
+sprite.add( ship1_sprite )
+sprite.add( ship2_sprite )
 
-and you can remove any children from any `CocosNode` object 
+and you can remove any children from any `CocosNode` object
 using *remove*. For example::
 
-    layer.add( sprite1 )
-    layer.add( sprite2, name="car" )
+layer.add( sprite1 )
+layer.add( sprite2, name="car" )
 
-    # remove by reference
-    layer.remove( sprite )
+# remove by reference
+layer.remove( sprite )
 
-    # remove by name
-    layer.remove( "car" )
+# remove by name
+layer.remove( "car" )
 
 Note that in current cocos if you add with name then you should remove by name,
 else the name will become unusable for new additions.
 
-In case you want to obtain a reference to a certain named child, you can 
+In case you want to obtain a reference to a certain named child, you can
 use *get*.
 Example::
 
-    layer.add( sprite1, name="car")
+layer.add( sprite1, name="car")
 
-    ...
+...
 
-    car_sprite = layer.get("car")
+car_sprite = layer.get("car")
 
+
+Brief tour of built-in cocosnode objects
+----------------------------------------
 
 Scene
 ^^^^^
 
+The root of the tree depicting the full content of the window.
+
 In the common case, contains all elements visible on the app window.
 
- These properties are not available:
+These properties are not available:
 
-    - color
-    - opacity
+- color
+- opacity
 
+TransitionScene
+^^^^^^^^^^^^^^^
+
+'TransitionScene',
+
+Base class to implement a gradual change from one screen (scene) to other. Typical examples are fade in and fade out.
+
+Cocos provides a bunch of ready made scene transitions (sample code in test/test_transition_*.py), the more simpler and supported for nearly any hardware / openGL drivers are:
+
+`RotoZoomTransition`, `JumpZoomTransition`, `MoveInLTransition`, `MoveInRTransition`,
+`MoveInBTransition`,`MoveInTTransition`, `SlideInLTransition`,`SlideInRTransition`,
+`SlideInBTransition`, `SlideInTTransition`, `ShrinkGrowTransition`, `FadeTransition`, `ZoomTransition`
+
+Other transitions available, requiring FBO (Frame Buffer Object) support from openGL which is nearly universal these days are:
+
+`FlipX3DTransition`, `FlipY3DTransition`, `FlipAngular3DTransition`, `ShuffleTransition`, `TurnOffTilesTransition`, `FadeTRTransition`, `FadeBLTransition`, `FadeUpTransition`,
+`FadeDownTransition`, `CornerMoveTransition`, `EnvelopeTransition`, `SplitRowsTransition`,
+`SplitColsTransition`
 
 Layer
 ^^^^^
 
-  TODO: explain `Layer`
+TODO: explain `Layer`
 
- These properties are not available:
+These properties are not available:
 
-    - color
-    - opacity
+- color
+- opacity
 
+
+MultiplexLayer
+^^^^^^^^^^^^^^
+
+asdasdasd
 
 ScrollingManager
 ^^^^^^^^^^^^^^^^
 
- These properties are not available:
+These properties are not available:
 
-    - color
-    - opacity
+- color
+- opacity
 
 
 ScrollableLayer
 ^^^^^^^^^^^^^^^
 
- These properties are not available:
+These properties are not available:
 
-    - color
-    - opacity
-               
+- color
+- opacity
+
+
+ColorLayer
+^^^^^^^^^^
+
+TODO: explain `ColorLayer`
+
+
+RectMapLayer and HexMapLayer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+InterpreterLayer
+^^^^^^^^^^^^^^^^
+
 
 Sprite
 ^^^^^^
@@ -151,62 +200,62 @@ Animating a sprite
 Animation as in cartoon style animation, that is, replacing the image fast
 enough to give the illusion of movement, can be accomplished by:
 
- - using an animated .gif file as source for the image
- - passing a pyglet.image.Animation as image, which collects a number of images
- - have an array of images and let your code assign to the sprite image member
+- using an animated .gif file as source for the image
+- passing a pyglet.image.Animation as image, which collects a number of images
+- have an array of images and let your code assign to the sprite image member
 
 Performance Considerations
 ++++++++++++++++++++++++++
 
 Sprites are not suitable for effects that piles a lot of semitransparent images
-to build an effect like smoke or poisoning fog. Use particle systems or custom
+to render things like smoke or poisoning fog. Use particle systems or custom
 CocosNode s managing vertex lists for that.
 
 If your scene has less than 25 sprites, you can add directly to the
 scene, like::
 
-    class TLayer(cocos.layer.Layer):
-       is_event_handler = True
-       def __init__(self):
-          cocos.layer.Layer.__init__(self)
-          world_width, world_height = director.get_window_size()
-          rand_color = [255, 0, 0]
-          icolor = 0
-          for i in range(qty_balls):
-             ball = Ball((world_width*random.random(), world_height*random.random()), color=rand_color)
-             rand_color[icolor] = random.randint(50, 255)
-             icolor = (icolor + 1)%len(rand_color)
-             self.add(ball)
-          self.time = 0.0
-          self.schedule(self.update)
-               
+class TLayer(cocos.layer.Layer):
+is_event_handler = True
+def __init__(self):
+cocos.layer.Layer.__init__(self)
+world_width, world_height = director.get_window_size()
+rand_color = [255, 0, 0]
+icolor = 0
+for i in range(qty_balls):
+ball = Ball((world_width*random.random(), world_height*random.random()), color=rand_color)
+rand_color[icolor] = random.randint(50, 255)
+icolor = (icolor + 1)%len(rand_color)
+self.add(ball)
+self.time = 0.0
+self.schedule(self.update)
+
 When you have between 25 and 100 visible sprites, moving at each frame, you
 should add one or more BatchNode s at some level in the scene and add the
 sprites to them. Even only one batch can give you 4x fps::
 
-    class TLayer(cocos.layer.Layer):
-       is_event_handler = True
-       def __init__(self):
-          cocos.layer.Layer.__init__(self)
-          batch = cocos.batch.BatchNode()
-          self.add(batch) # we add a batch to the layer ...
-          world_width, world_height = director.get_window_size()
-          rand_color = [255, 0, 0]
-          icolor = 0
-          for i in range(100):
-             ball = Ball((world_width*random.random(), world_height*random.random()), color=rand_color)
-             rand_color[icolor] = random.randint(50, 255)
-             icolor = (icolor + 1)%len(rand_color)
-             batch.add(ball) # see ? we add sprites to the batch, not the layer
-          self.batch = batch
-          self.time = 0.0
-          self.schedule(self.update)
+class TLayer(cocos.layer.Layer):
+is_event_handler = True
+def __init__(self):
+cocos.layer.Layer.__init__(self)
+batch = cocos.batch.BatchNode()
+self.add(batch) # we add a batch to the layer ...
+world_width, world_height = director.get_window_size()
+rand_color = [255, 0, 0]
+icolor = 0
+for i in range(100):
+ball = Ball((world_width*random.random(), world_height*random.random()), color=rand_color)
+rand_color[icolor] = random.randint(50, 255)
+icolor = (icolor + 1)%len(rand_color)
+batch.add(ball) # see ? we add sprites to the batch, not the layer
+self.batch = batch
+self.time = 0.0
+self.schedule(self.update)
 
 With more than 100 visible, moving at each frame sprites, you will need to
 optimize further to run at 60 fps in weak hardware like netbooks, old desktops,
 cheap new desktops.
 You can look at cocos particle systems and the section graphics in pyglet
-programing guide for ideas. 
+programing guide for ideas.
 
 
 ParticleSystems
@@ -219,59 +268,54 @@ The most common method to customize particle systems is to subclass one of the c
 If you change the particle texture remember to load it with pyglet.image.load, not pyglet.resource.image
 Of course, deeper customization can be achieved with subclassing and code customization.
 
-Labels
-^^^^^^
+Label
+^^^^^
 
 `Label` s provide the most simple text display.
 Font family, font size, position, color, opacity and align can be specified.
 
 `HTMLLabel` s is a slightly more powerful label, it can use mixed styles. Uses HTML syntax for text and styles.
 
- These properties are not available:
+These properties are not available:
 
-    - camera
+- camera
 
-
-ColorLayer
-^^^^^^^^^^
-
-  TODO: explain `ColorLayer`
 
 Menu
 ^^^^
-  
-  TODO: explain `Menu`
 
-  TODO: explain `MultiplexLayer`
+TODO: explain `Menu`
 
- These properties are not available:
+TODO: explain `MultiplexLayer`
 
-    - color
-    - opacity
+These properties are not available:
+
+- color
+- opacity
 
 
 MenuItem
 ^^^^^^^^
 
-  TODO: explain `MenuItem`
+TODO: explain `MenuItem`
 
-  TODO: explain `MultipleMenuItem`
+TODO: explain `MultipleMenuItem`
 
-  TODO: explain `ToggleMenuItem`
+TODO: explain `ToggleMenuItem`
 
-  TODO: explain `EntryMenuItem`
+TODO: explain `EntryMenuItem`
 
-  TODO: explain pre-defined actions: `shake` , `shake_back` ,
-  `zoom_in` and `zoom_out`
+TODO: explain pre-defined actions: `shake` , `shake_back` ,
+`zoom_in` and `zoom_out`
 
- These properties are not available:
+These properties are not available:
 
-    - color
-    - opacity
+- color
+- opacity
 
 
-Creating your own objects 
--------------------------
+Creating your own objects
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 TODO: explain how to build custom cocosnode objects,
 how to use `transform` , etc.

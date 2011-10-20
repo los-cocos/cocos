@@ -1,8 +1,10 @@
 
 v0.5.0
+  - emit message in console warning about incompatible change coming in next cocos version
+    ParticleSystem is the target code, see issue 168
   - fix trivial compatibility with pyglet repo related to FBOs, issue 170
 
-v0.5rc0 August 14, 2011
+v0.5rc0 - August 14, 2011
   - basic pure python collision support added, see cocos/collision_model.py
   - fixed __init__ for hexmaps 
   - fixed unpause not working in SDL audio
