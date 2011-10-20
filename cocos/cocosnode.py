@@ -621,7 +621,6 @@ class CocosNode(object):
         the `transform` method to apply any possible
         transformation.
         '''
-
         if not self.visible:
             return
 

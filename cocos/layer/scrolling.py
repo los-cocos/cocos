@@ -113,7 +113,7 @@ class ScrollableLayer(Layer):
         y *= self.parallax
         self.view_x, self.view_y = x, y
         self.view_w, self.view_h = w, h
-        #print 'ScrollableLayer view - x, y, w, h:', self.view_x, self.view_y, self.view_w, self.view_h
+        #print self, 'set_view - x, y, w, h:', self.view_x, self.view_y, self.view_w, self.view_h
         x -= self.origin_x
         y -= self.origin_y
         x -= viewport_ox

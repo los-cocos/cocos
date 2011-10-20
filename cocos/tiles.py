@@ -31,210 +31,10 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''
-Tile Maps
-=========
+'''Tile map management and rendering.
 
-Tile maps are made of three components:
-
-images
-   Images are from individual files for from image atlases in a single file.
-tiles
-   Tiles may be stand-alone or part of a TileSet.
-maps
-   MapLayers are made of either rectangular or hexagonal Cells which
-   reference the tiles used to draw the cell.
-
-The intent is that you may have a tile set defined in one XML file
-which is shared amongst many map files (or indeed within a single
-XML file). Images may be shared amongst multiple tiles with the tiles
-adding different meta-data in each case.
-
-These may be constructed manually or loaded from XML resource files which
-are used to store the specification of tile sets and tile maps. A given
-resource XML file may define multiple tile sets and maps and may even
-reference other external XML resource files. This would allow a single
-tile set to be used by multiple tile maps.
-
-
-Maps
-----
-
-The RectMapLayer class extends the regular Cocos layer to handle a
-regular grid of tile images, or Cells. The map layer may be manipulated
-like any other Cocos layer. It also provides methods for interrogating
-the map contents to find cells (eg. under the mouse) or neighboring
-cells (up, down, left, right.)
-
-Maps may be defined in Python code, but it is a little easier to do so
-in XML. To support map editing the maps support round-tripping to XML.
-
-
-The XML File Specification
---------------------------
-
-Assuming the following XML file called "example.xml"::
-
-    <?xml version="1.0"?>
-    <resource>
-      <requires file="ground-tiles.xml" namespace="ground" />
-
-      <rectmap id="level1">
-       <column>
-        <cell tile="ground:grass" />
-        <cell tile="ground:house">
-          <property type="bool" name="secretobjective" value="True" />
-        </cell>
-       </column>
-      </map>
-    </resource>
-
-You may load that resource and examine it::
-
-  >>> r = load('example.xml')
-  >>> map = r['level1']
-
-and then, assuming that level1 is a map::
-
-  >>> scene = cocos.scene.Scene(map)
-
-and then either manually select the tiles to display:
-
-  >>> map.set_view(0, 0, window_width, window_height)
-
-or if you wish for the level to scroll, you use the ScrollingManager::
-
-  >>> from cocos import layers
-  >>> manager = layers.ScrollingManager()
-  >>> manager.add(map)
-
-and later set the focus with::
-
-  >>> manager.set_focus(focus_x, focus_y)
-
-See the section on `controlling map scrolling`_ below for more detail.
-
-
-XML file contents
------------------
-
-XML resource files must contain a document-level tag <resource>::
-
-    <?xml version="1.0"?>
-    <resource>
-     ...
-    </resource>
-
-You may draw in other resource files by using the <requires> tag::
-
-    <requires file="road-tiles.xml" />
-
-This will load "road-tiles.xml" into the resource's namespace.
-If you wish to avoid id clashes you may supply a namespace::
-
-    <requires file="road-tiles.xml" namespace="road" />
-
-If a namespace is given then the element ids from the "road-tiles.xml"
-will be prefixed by the namespace and a period, e.g. "road:bitumen".
-
-Other tags within <resource> are::
-
-    <image file="" id="">
-
-Loads file with pyglet.image.load and gives it the id which is used
-by tiles to reference the image.
-
-::
-
-<imageatlas file="" [id="" size="x,y"]>
-
-Sets up an image atlas for child <image> tags to use. Child tags are of
-the form::
-
-    <image offset="" id="" [size=""]>
-
-If the <imageatlas> tag does not provide a size attribute then all
-child <image> tags must provide one. Image atlas ids are optional as
-they are currently not reference directly.
-
-::
-
-    <tileset id="">
-
-Sets up a TileSet object. Child tags are of the form::
-
-   <tile id="">
-     [<image ...>]
-   </tile>
-
-The <image> tag is optional; these tiles may have only properties (or be
-completely empty). The id is used by maps to reference the tile.
-
-::
-
-    <rectmap id="" tile_size="" [origin=""]>
-
-Sets up a RectMap object. Child tags are of the form::
-
-   <column>
-    <cell tile="" />
-   </column>
-
-Map, Cell and Tile Properties
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Most tags may additionally have properties specified as::
-
-   <property [type=""] name="" value="" />
-
-Where type is one of "unicode", "int", "float" or "bool". The property will
-be a unicode string by default if no type is specified.
-
-Properties are accessed on the map, cell or tile using common dict operations
-with some extensions. Accessing a property on a **cell** will fall back to look
-on the **tile** if it's not found on the cell.
-
-If a cell has a property ``player-spawn`` (boolean) and the tile that the cell
-uses has a property ``move-cost=1`` (int) then the following are true::
-
-    'player-spawn' in cell == True
-    cell.get('player-spawn') == True
-    cell['player-spawn'] == True
-
-    'player-spawn' in tile == False
-    tile.get('player-spawn') == None
-    tile['player-spawn'] --> raises KeyError
-
-    cell['move-cost'] == 1
-
-You may additionally set properties on cells and tiles::
-
-    cell['player-postion'] = True
-    cell['burnt-out'] = True
-
-and when the map is exported to XML these properties will also be exported.
-
-
-Controlling Map Scrolling
--------------------------
-
-You have three options for map scrolling:
-
-1. never automatically scroll the map,
-2. automatically scroll the map but stop at the map edges, and
-3. scroll the map an allow the edge of the map to be displayed.
-
-The first is possibly the easiest since you don't need to use a
-ScrollingManager layer. You simple call map.set_view(x, y, w, h) on your
-map layer giving the bottom-left corner coordinates and the dimensions
-to display. This could be as simple as::
-
-   map.set_view(0, 0, map.px_width, map.px_height)
-
-If you wish to have the map scroll around in response to player
-movement the ScrollingManager from the cocos.scrolling module
-may be used.
-
+This module provides an API for loading, saving and rendering a map
+constructed of image tiles.
 '''
 
 __docformat__ = 'restructuredtext'
@@ -249,7 +49,7 @@ except ImportError:
     import elementtree.ElementTree as ElementTree
 
 import pyglet
-from pyglet.gl import *
+from pyglet import gl
 
 import cocos
 from cocos.director import director
@@ -509,11 +309,11 @@ def imageatlas_factory(resource, tag):
 
         # set texture clamping to avoid mis-rendering subpixel edges
         image.texture.id
-        glBindTexture(image.texture.target, image.texture.id)
-        glTexParameteri(image.texture.target,
-            GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(image.texture.target,
-            GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        gl.glBindTexture(image.texture.target, image.texture.id)
+        gl.glTexParameteri(image.texture.target,
+            gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+        gl.glTexParameteri(image.texture.target,
+            gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
 
         # save the image off and set properties
         id = child.get('id')
@@ -801,7 +601,7 @@ class RectMap(RegularTesselationMap):
 
     Thus cells = [['a', 'd'], ['b', 'e'], ['c', 'f']]
 
-    (and thus the cell at (0,0) is 'a' and (1, 1) is 'd')
+    (and thus the cell at (0, 0) is 'a' and (0, 1) is 'd')
     '''
     def __init__(self, id, tw, th, cells, origin=None, properties=None):
         """
@@ -1001,7 +801,6 @@ class RectMapCollider(object):
             dx = last.x - new.x
             new.left = cell.right
             if dx: self.collide_left(dx)
-            self.dx = 0
         if (g('bottom') and last.top <= cell.bottom and new.top > cell.bottom):
             dy = last.y - new.y
             new.top = cell.bottom
