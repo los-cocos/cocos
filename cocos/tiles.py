@@ -572,6 +572,25 @@ class MapLayer(layer.ScrollableLayer):
                 self._sprites[k]._label = None
                 del self._sprites[k]
 
+    def find_cells(self, **requirements):
+        '''Find all cells that match the properties specified.
+
+        For example:
+
+           map.find_cells(player_start=True)
+
+        Return a list of Cell instances.
+        '''
+        r = []
+        for col in self.cells:
+            for cell in col:
+                for k in requirements:
+                    if cell.properties.get(k) != requirements[k]:
+                        break
+                else:
+                    r.append(cell)
+        return r
+
 class RegularTesselationMap(object):
     '''A regularly tesselated map that allows access to its cells by index
     (i, j).
@@ -752,6 +771,10 @@ class RectMapCollider(object):
         '''Collide a rect with the given RectMap map.
 
         Apart from "map" the arguments are as per `do_collision`.
+
+        Mutates the new rect to conform with the map.
+
+        Returns the (possibly modified) (dx, dy)
         '''
         tested = set()
         for cell in map.get_in_region(*(new.bottomleft + new.topright)):
@@ -762,7 +785,8 @@ class RectMapCollider(object):
             if key in tested:
                 continue
             tested.add(cell)
-            self.do_collision(cell, last, new, dy, dx)
+            dx, dy = self.do_collision(cell, last, new, dy, dx)
+        return dx, dy
 
     # resolve them and re-collide if necessary; make sure the cells
     # colliding the sprite midpoints are done first
@@ -786,6 +810,10 @@ class RectMapCollider(object):
            passed to the collide method will be a *modified* distance based
            on the position of the rect after collision (according to step
            #1).
+
+        Mutates the new rect to conform with the map.
+
+        Returns the (possibly modified) (dx, dy)
         '''
         g = cell.tile.properties.get
         self.resting = False
@@ -805,6 +833,7 @@ class RectMapCollider(object):
             dy = last.y - new.y
             new.top = cell.bottom
             if dy: self.collide_top(dy)
+        return dx, dy
 
 
 class Cell(object):

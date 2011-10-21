@@ -267,35 +267,33 @@ a single moving actor with a RectMapLayer.
 You would typically override RectMapCollider to provide implementations
 of its collision methods, for example:
 
- class PlayerCollider(RectMapCollider):
+ class PlayerCollider(tiles.RectMapCollider):
     def __init__(self, player):
         self.player = player
 
     def collide_bottom(self, dy):
         if self.player.dy:
             self.player.do_landed()
-        self.player.dy = 0
 
     def collide_left(self, dx):
-        self.player.dx = 0
+        self.player.stop_walk()
 
     def collide_right(self, dx):
-        self.player.dx = 0
+        self.player.stop_walk()
 
     def collide_top(self, dy):
         if self.player.dy:
             self.player.do_ouch()
-        self.player.dy = 0
 
 Then you would instantiate the collider (possibly only once) passing in the
 object representing the player which manages the player's velocity (dx and
-dy). Once per update you would do something like:
+dy). Once per update you would could something like:
 
     collider = PlayerCollider(player)
-    dx, dy = player.dx, player.dy
+    dx, dy = player.velocity
 
-    # using the player controls, gravity and other influences update the dx
-    # and dy values
+    # using the player controls, gravity and other acceleration influences
+    # update the velocity
     dx = ...
     dy = dy - gravity
 
@@ -307,4 +305,15 @@ dy). Once per update you would do something like:
 
     # run the collider
     collider.collide_map(map, last, new, dy, dx)
+
+    # move the player
+    player.position = new.position
+
+Another approach which may be simpler is to mix the collider into your
+Player class, and then just provide those collide_ methods on your Player
+class.
+
+A third approach is to create a cocos Action derivative which handles the
+player controls and collision. This is the approach taken in the
+test/test_platformer.py code.
 
