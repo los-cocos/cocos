@@ -158,15 +158,31 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
 
     def get_rect(self):
-        '''Get a cocos.rect.Rect for this sprite.'''
+        '''Get a cocos.rect.Rect for this sprite.
+
+        Note that this rect's position is most likely NOT the same
+        as the Sprite's position - in fact by default the rect's
+        center is the Sprite's position. If you move the rect around
+        and wish to reflect this change in the Sprite, you will probably
+        have to do something like (again with the default image anchor
+        in the center)::
+
+            rect = sprite.get_rect()
+            rect.midbottom = (0, 100)
+            sprite.position = rect.center
+
+        Returns a cocos.rect.Rect instance.
+        '''
         x, y = self.position
         x -= self.image_anchor_x
         y -= self.image_anchor_y
         return rect.Rect(x, y, self.width, self.height)
 
     def get_AABB(self):
-        '''Returns a local-coordinates Axis aligned Bounding Box'''
+        '''Returns a local-coordinates Axis aligned Bounding Box
 
+        Returns a cocos.rect.Rect instance.
+        '''
         v = self._vertex_list.vertices
         x = v[0], v[2], v[4], v[6]
         y = v[1], v[3], v[5], v[7]
