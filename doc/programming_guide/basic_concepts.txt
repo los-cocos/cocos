@@ -54,7 +54,7 @@ make transitions between two scenes (fade out/in, slide from a side, etc).
 
 Since scenes are subclass of `CocosNode`, they can be transformed manually or
 by using actions.
-See `Actions, Transformations and Effects` for more detail about actions.
+See `Actions, Transformations and Effects`_ for more detail about actions.
 
 Director
 --------
@@ -97,7 +97,7 @@ Even if any serious app will require you to define some `Layer` subclasses, coco
 provides some useful specialized layers
 
 	- `MultiplexLayer`, a group of layers where only one is seen at a time
-	- `ScrollerManager`, `ScrollableLayer`; does the logic to limit scroll to viewable areas
+	- `ScrollingManager`, `ScrollableLayer`; does the logic to limit scroll to viewable areas
 	- `RectMapLayer`, `HexMapLayer`; displays a group of rectangular or hexagonal tiles
 	- `Menu`, implements simple menus
 	- `ColorLayer`, a solid color rectangle

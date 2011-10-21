@@ -156,7 +156,7 @@ Sets up a RectMap object. Child tags are of the form::
 
 
 Map, Cell and Tile Properties
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 Most tags may additionally have properties specified as::
 
@@ -241,7 +241,7 @@ Thus the cell at (0, 0) is 'a' and (0, 1) is 'd'.
 
 
 Rectangular Map Collisions
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 A simple collider class is provided called RectMapCollider. This
 collider is particularly useful in 2D side-scrolling platformers, or
@@ -249,7 +249,7 @@ top-down dungeon crawlers, to control movement of the player.
 
 It assumes that the cells within your tile map have the boolean properties
 "left", "right", "top" and "bottom" defined for those cells which are to be
-collidable. See `Map, Cell and Tile Properties`__ for information about
+collidable. See `Map, Cell and Tile Properties`_ for information about
 properties.
 
 A solid block would probably have all four sides set. A
@@ -265,7 +265,7 @@ The basic interface to RectMapCollider is to invoke collide_map to collide
 a single moving actor with a RectMapLayer.
 
 You would typically override RectMapCollider to provide implementations
-of its collision methods, for example:
+of its collision methods, for example::
 
  class PlayerCollider(tiles.RectMapCollider):
     def __init__(self, player):
@@ -287,7 +287,7 @@ of its collision methods, for example:
 
 Then you would instantiate the collider (possibly only once) passing in the
 object representing the player which manages the player's velocity (dx and
-dy). Once per update you would could something like:
+dy). Once per update you would could something like::
 
     collider = PlayerCollider(player)
     dx, dy = player.velocity
@@ -310,7 +310,7 @@ dy). Once per update you would could something like:
     player.position = new.position
 
 Another approach which may be simpler is to mix the collider into your
-Player class, and then just provide those collide_ methods on your Player
+Player class, and then just provide those collide methods on your Player
 class.
 
 A third approach is to create a cocos Action derivative which handles the
