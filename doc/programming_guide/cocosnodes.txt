@@ -2,104 +2,157 @@ CocosNodes
 ==========
 
 .. contents::
-:local:
+    :local:
 
-CocosNode Overview
-------------------
+CocosNode Functionality
+-----------------------
 
-In cocos2d, every object that is part of a scene is a `CocosNode` object.
-For example:
+The fact that all objects depicting the scene are CocosNodes subclasses means that they share a common core of characteristics and functionalities. You know for one and you know for all.
 
-- sprites
-- labels
-- menus
-- layers
-- scenes
+The common core can be broken by functionality in
 
-Every `CocosNode` object has these attributes
-*(see below for some exceptions)* :
+Parent-child
+^^^^^^^^^^^^
 
-placement
+    - .add(self, child, z=0, name=None ) \: Adds a child, raises exception Name already exists if duplicated
+    - .remove(self, name_or_obj) \: Removes a child given its name or object, raises exception Child not found if not present
+    - .kill(self) \: Remove itself from its parent
+    - .parent \: property giving the parent node or None
+    - .get_ancestor(self, klass) \: Returns the first ancestor that isinstance of klass 
+    - .get_children(self) \: Returns a list with the node children, order is back to front (ascending z)
+    - .get(self, name) \: Gets a child given its name, raises exception Child not found if not present
+    - operator in , as 'in node1 in node2' \: returns True if and only if node1 is child of node 2
 
-	position : property that get/sets _x and _y
-	anchor, anchor_x, anchor_y
-	transform_anchor, transform_anchor_x, transform_anchor_y
-	scale
-	rotation
+Building a scene, object instantiation omitted ::
 
+    # a scene with 2 layers; the background would be seen behind the game layer because of z values
+    scene.add( background_layer, z=0 )
+    scene.add( game_layer, z=1 )
 
+    # the layer with 1 bloody pacman sprite
+    blody_pacman_sprite.position = (100, 100)
+    game_layer.add( bloody_pacman_sprite )
 
-- position
-- color
-- opacity
-- scale
-- rotation
-- visible
-- camera
-- grid
+    # the bloody pacman has two daggers !!!
+    sprite.add( dagger_far_sprite, z=-1 )
+    sprite.add( dagger_near_sprite, z=1  )
+    # the draw order is dagger_far, bloody_pacman, dagger_near
 
-and these attributes can be modified manually.
-Example::
+    # also they are zombie alien cowboys in the game,
+    # so we add a bunch of them to the game_layer
+    ...
+ 
 
-# place the sprite in 320,240
-sprite.position = (320,240)
+A dagger has touched a zombie alien cowboy so it wants to spawn a nasty blotch of green blood.
+We could add the blotch_sprite to the zac_sprite, an then the blotch will follow the zombie::
 
-or by using actions.
-Example::
+    zac_zprite.add(blotch_sprite, z = 1)
 
-# move the sprite to 320,240 in 5 seconds
-sprite.do( MoveTo( (320,240, duration=2 ) )
+or we could add to the game_layer, and the blotch will not follow the zombie::
 
-You can modify these attributes to **any** `CocosNode` object.
-For example::
+    layer = zac_sprite.parent # should be game_layer, because our staggering
+    layer.add(blotch_sprite)
 
-scene.do( ScaleTo(2, duration=2) )
+If for some ridiculous reason a dagger needs to grab a reference to the game_layer we could use 'get_ancestor'.
+Due to to way we staged the scene, we know game_layer is parent of bloody_pacman_sprite which is parent of the dagger. So::
 
-layer.do( RotateBy(360, duration=3) )
+    layer = dagger_near.get_ancestor(Layer)
 
-sprite.do( Blink(5, duration=1 ) )
+should produce game_layer.
 
-label.do( JumpBy( (100,100), 50, 5, duration=3) )
+A zombie is killed, we can retire from the scene with::
 
-Another important feature common to **any** `CocosNode` object, is that
-is is also a container, it can have children nodes.
-For example::
+    zac_sprite.kill()
 
-# a scene with 2 layers
-scene.add( background_layer, z=0 )
-scene.add( game_layer, z=1 )
+or with::
 
-# the layer with 1 sprite
-game_layer.add( sprite )
+    game_layer.remove(zac_sprite)
 
-# the sprite, with 2 sprites
-sprite.add( ship1_sprite )
-sprite.add( ship2_sprite )
+or if we named it "T'chkss" when we added to the game_layer, like in::
 
-and you can remove any children from any `CocosNode` object
-using *remove*. For example::
+    game_layer.add(zac_sprite, name = "T'chkss", z=4)
 
-layer.add( sprite1 )
-layer.add( sprite2, name="car" )
+then we can retire it with::
 
-# remove by reference
-layer.remove( sprite )
-
-# remove by name
-layer.remove( "car" )
+    game_layer.remove("T'chkss")
 
 Note that in current cocos if you add with name then you should remove by name,
 else the name will become unusable for new additions.
 
-In case you want to obtain a reference to a certain named child, you can
-use *get*.
+
+Spatial Placement
+^^^^^^^^^^^^^^^^^
+
+A node position is defined relative to the parent node, most precisely with respect the parent position anchor  
+
+    - .x
+    - .y
+    - .position property equivalent to (.x, .y)
+    - .anchor_y
+    - .anchor_y
+    - .anchor   (property equivalent to (anchor_x, .anchor_y)
+    - .scale
+    - .rotation
+
 Example::
 
-layer.add( sprite1, name="car")
+    # place the sprite in 320,240
+    sprite.position = (320,240)
 
-...
+or by using actions.
+Example::
 
-car_sprite = layer.get("car")
+    # move the sprite to 320,240 in 5 seconds
+    sprite.do( MoveTo( (320,240, duration=2 ) )
+    
+Going in or out of the active scene
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    - .on_enter(self) \: called if added to a parent while parent in the active scene or if the entire scene goes active
+    - .on_exit(self) \: called if removed from parent while parent in the active scene or if the entire scene
+
+    
+Render
+^^^^^^
+
+    - .visit(self) : renders itself and its children. Render order is children with z <= 0, itself, children with z > 0
+    - .draw(self) : draws itself
+    - .transform(self) : helper for draw and visit, handles the openGL coordinate changes needed to render mandated by position, anchor, scale and rotation
+    - .camera : instead of the stock position, anchor, scale and rotation uses a custom gluLookAt that also allows z. This is rarely used, usually by special effects in transitions.
+
+    
+Time management
+^^^^^^^^^^^^^^^
+
+    - .schedule_interval(self, callback, interval, \*args, \*\*kwargs) \: Schedule a function to be called every interval seconds.
+    - .schedule(self, callback, \*args, \*\*kwargs) \: Schedule a function to be called every frame.
+    - .unschedule(self, callback) : Remove a function from the schedule.
+    - .pause_scheduler(self) \: Time will stop passing for this node: scheduled callbacks will not be called, worker actions will not be called
+    - .resume_scheduler(self) \: Time will continue/start passing for this node and callbacks will be called, worker actions will be called
+
+    
+Automated changes along the time
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    - .do(self, template_action, target=None) \: most of the time it is called with target=None, which result in target being self. The action will perform a potentially gradual change in target. Returns the worker action, which is the object doing the changes. You must save a reference to the worker if you plan to call later to .action_remove
+    - .action_remove(self, worker_action) \: the worker action will 
+    - .pause(self) \: Suspends the execution of actions.
+    - .resume(self) \: Resumes the execution of actions.
+    - .stop(self) \: All actions scheduled in this node are removed, stop method will be called for each action.
+    - .are_actions_running(self) \: True or False
+    
+
+You can modify these attributes to **any** `CocosNode` object.
+By example::
+
+    scene.do( ScaleTo(2, duration=2) )
+
+    layer.do( RotateBy(360, duration=3) )
+
+    sprite.do( Blink(5, duration=1 ) )
+
+    label.do( JumpBy( (100,100), 50, 5, duration=3) )
+
 
 
 Brief tour of built-in cocosnode objects
@@ -214,42 +267,42 @@ CocosNode s managing vertex lists for that.
 If your scene has less than 25 sprites, you can add directly to the
 scene, like::
 
-class TLayer(cocos.layer.Layer):
-is_event_handler = True
-def __init__(self):
-cocos.layer.Layer.__init__(self)
-world_width, world_height = director.get_window_size()
-rand_color = [255, 0, 0]
-icolor = 0
-for i in range(qty_balls):
-ball = Ball((world_width*random.random(), world_height*random.random()), color=rand_color)
-rand_color[icolor] = random.randint(50, 255)
-icolor = (icolor + 1)%len(rand_color)
-self.add(ball)
-self.time = 0.0
-self.schedule(self.update)
+    class TLayer(cocos.layer.Layer):
+        is_event_handler = True
+        def __init__(self):
+            cocos.layer.Layer.__init__(self)
+            world_width, world_height = director.get_window_size()
+            rand_color = [255, 0, 0]
+            icolor = 0
+            for i in range(qty_balls):
+                ball = Ball((world_width*random.random(), world_height*random.random()), color=rand_color)
+                rand_color[icolor] = random.randint(50, 255)
+                icolor = (icolor + 1)%len(rand_color)
+                self.add(ball)
+    self.time = 0.0
+    self.schedule(self.update)
 
 When you have between 25 and 100 visible sprites, moving at each frame, you
 should add one or more BatchNode s at some level in the scene and add the
 sprites to them. Even only one batch can give you 4x fps::
 
-class TLayer(cocos.layer.Layer):
-is_event_handler = True
-def __init__(self):
-cocos.layer.Layer.__init__(self)
-batch = cocos.batch.BatchNode()
-self.add(batch) # we add a batch to the layer ...
-world_width, world_height = director.get_window_size()
-rand_color = [255, 0, 0]
-icolor = 0
-for i in range(100):
-ball = Ball((world_width*random.random(), world_height*random.random()), color=rand_color)
-rand_color[icolor] = random.randint(50, 255)
-icolor = (icolor + 1)%len(rand_color)
-batch.add(ball) # see ? we add sprites to the batch, not the layer
-self.batch = batch
-self.time = 0.0
-self.schedule(self.update)
+    class TLayer(cocos.layer.Layer):
+        is_event_handler = True
+            def __init__(self):
+                cocos.layer.Layer.__init__(self)
+                batch = cocos.batch.BatchNode()
+                self.add(batch) # we add a batch to the layer ...
+                world_width, world_height = director.get_window_size()
+                rand_color = [255, 0, 0]
+                icolor = 0
+                for i in range(100):
+                    ball = Ball((world_width*random.random(), world_height*random.random()), color=rand_color)
+                    rand_color[icolor] = random.randint(50, 255)
+                    icolor = (icolor + 1)%len(rand_color)
+                    batch.add(ball) # see ? we add sprites to the batch, not the layer
+                self.batch = batch
+                self.time = 0.0
+                self.schedule(self.update)
 
 With more than 100 visible, moving at each frame sprites, you will need to
 optimize further to run at 60 fps in weak hardware like netbooks, old desktops,
