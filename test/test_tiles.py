@@ -5,7 +5,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import pyglet
 from pyglet.window import key
-from pyglet.gl import *
 
 pyglet.resource.path.append(pyglet.resource.get_script_home())
 pyglet.resource.reindex()
