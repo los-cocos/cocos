@@ -23,62 +23,7 @@ Parent-child
     - .get(self, name) \: Gets a child given its name, raises exception Child not found if not present
     - operator in , as 'in node1 in node2' \: returns True if and only if node1 is child of node 2
 
-Building a scene, object instantiation omitted ::
-
-    # a scene with 2 layers; the background would be seen behind the game layer because of z values
-    scene.add( background_layer, z=0 )
-    scene.add( game_layer, z=1 )
-
-    # the layer with 1 bloody pacman sprite
-    blody_pacman_sprite.position = (100, 100)
-    game_layer.add( bloody_pacman_sprite )
-
-    # the bloody pacman has two daggers !!!
-    sprite.add( dagger_far_sprite, z=-1 )
-    sprite.add( dagger_near_sprite, z=1  )
-    # the draw order is dagger_far, bloody_pacman, dagger_near
-
-    # also they are zombie alien cowboys in the game,
-    # so we add a bunch of them to the game_layer
-    ...
- 
-
-A dagger has touched a zombie alien cowboy so it wants to spawn a nasty blotch of green blood.
-We could add the blotch_sprite to the zac_sprite, an then the blotch will follow the zombie::
-
-    zac_zprite.add(blotch_sprite, z = 1)
-
-or we could add to the game_layer, and the blotch will not follow the zombie::
-
-    layer = zac_sprite.parent # should be game_layer, because our staggering
-    layer.add(blotch_sprite)
-
-If for some ridiculous reason a dagger needs to grab a reference to the game_layer we could use 'get_ancestor'.
-Due to to way we staged the scene, we know game_layer is parent of bloody_pacman_sprite which is parent of the dagger. So::
-
-    layer = dagger_near.get_ancestor(Layer)
-
-should produce game_layer.
-
-A zombie is killed, we can retire from the scene with::
-
-    zac_sprite.kill()
-
-or with::
-
-    game_layer.remove(zac_sprite)
-
-or if we named it "T'chkss" when we added to the game_layer, like in::
-
-    game_layer.add(zac_sprite, name = "T'chkss", z=4)
-
-then we can retire it with::
-
-    game_layer.remove("T'chkss")
-
-Note that in current cocos if you add with name then you should remove by name,
-else the name will become unusable for new additions.
-
+`Parent-Child examples`
 
 Spatial Placement
 ^^^^^^^^^^^^^^^^^
@@ -94,16 +39,7 @@ A node position is defined relative to the parent node, most precisely with resp
     - .scale
     - .rotation
 
-Example::
-
-    # place the sprite in 320,240
-    sprite.position = (320,240)
-
-or by using actions.
-Example::
-
-    # move the sprite to 320,240 in 5 seconds
-    sprite.do( MoveTo( (320,240, duration=2 ) )
+`Spatial Placement examples`
     
 Going in or out of the active scene
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -141,110 +77,90 @@ Automated changes along the time
     - .stop(self) \: All actions scheduled in this node are removed, stop method will be called for each action.
     - .are_actions_running(self) \: True or False
     
-
-You can modify these attributes to **any** `CocosNode` object.
-By example::
-
-    scene.do( ScaleTo(2, duration=2) )
-
-    layer.do( RotateBy(360, duration=3) )
-
-    sprite.do( Blink(5, duration=1 ) )
-
-    label.do( JumpBy( (100,100), 50, 5, duration=3) )
+`Automated changes along the time examples`
 
 
-
-Brief tour of built-in cocosnode objects
-----------------------------------------
+Brief tour of built-in CocosNode subclasses
+-------------------------------------------
 
 Scene
 ^^^^^
 
-The root of the tree depicting the full content of the window.
-
-In the common case, contains all elements visible on the app window.
-
-These properties are not available:
-
-- color
-- opacity
+The root of the tree depicting the full content to be displayed.
+To change between scenes you use director.
 
 TransitionScene
 ^^^^^^^^^^^^^^^
 
-'TransitionScene',
+`TransitionScene`
 
 Base class to implement a gradual change from one screen (scene) to other. Typical examples are fade in and fade out.
 
-Cocos provides a bunch of ready made scene transitions (sample code in test/test_transition_*.py), the more simpler and supported for nearly any hardware / openGL drivers are:
-
-`RotoZoomTransition`, `JumpZoomTransition`, `MoveInLTransition`, `MoveInRTransition`,
-`MoveInBTransition`,`MoveInTTransition`, `SlideInLTransition`,`SlideInRTransition`,
-`SlideInBTransition`, `SlideInTTransition`, `ShrinkGrowTransition`, `FadeTransition`, `ZoomTransition`
-
-Other transitions available, requiring FBO (Frame Buffer Object) support from openGL which is nearly universal these days are:
-
-`FlipX3DTransition`, `FlipY3DTransition`, `FlipAngular3DTransition`, `ShuffleTransition`, `TurnOffTilesTransition`, `FadeTRTransition`, `FadeBLTransition`, `FadeUpTransition`,
-`FadeDownTransition`, `CornerMoveTransition`, `EnvelopeTransition`, `SplitRowsTransition`,
-`SplitColsTransition`
+Cocos provides a bunch of ready made scene transitions (sample code in test/test_transition_*.py)
 
 Layer
 ^^^^^
 
-TODO: explain `Layer`
+`Layer`
 
-These properties are not available:
-
-- color
-- opacity
-
-
-MultiplexLayer
-^^^^^^^^^^^^^^
-
-asdasdasd
-
-ScrollingManager
-^^^^^^^^^^^^^^^^
-
-These properties are not available:
-
-- color
-- opacity
-
-
-ScrollableLayer
-^^^^^^^^^^^^^^^
-
-These properties are not available:
-
-- color
-- opacity
+Helps to organize the view in the depth axis.
+Subclasses often offer specialized services to the childs (like ScrollingManager), and can be used to build higher order functionality (like Menu)
 
 
 ColorLayer
 ^^^^^^^^^^
 
-TODO: explain `ColorLayer`
+`ColorLayer`
 
+The primary use is to provide a solid color background to a scene, also used to draw solid color rectangles.
+
+
+MultiplexLayer
+^^^^^^^^^^^^^^
+
+`MultiplexLayer`
+
+Allows to show only one of his childs, and to select which one.
+An use case is when you want to show one of a number of menus.
+
+ScrollingManager
+^^^^^^^^^^^^^^^^
+
+`ScrollingManager`
+
+Coordinates a number of ScrollableLayer to do scroll and parallax so that the scroll don't goes out of the the world.
+
+ScrollableLayer
+^^^^^^^^^^^^^^^
+
+Used as childs of ScrollingManager, helps to manage scroll limits and parallax.
+You must set attributes px_with and px_height in a `ScrollableLayer` instance so restrictions in the scroll are enforced.
+If using parallax, it must be provided in the constructor.
 
 RectMapLayer and HexMapLayer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+A tilemap is a world description where
+ - the space is partitioned in a regular grid (rectangular or hexagonal in cocos)
+ - it is known which associated image and game properties has each cell in the grid.
 
+`RectMapLayer` and `HexMapLayer` are usually created by tiles.load, and they care to display the world and give access to the cells properties.
+
+Examples are test/test_tiles.py and test/test_platformer.py
 
 InterpreterLayer
 ^^^^^^^^^^^^^^^^
 
+Used by director to show a python console that allows to inspect and modify the objects in the application using director.
+You don't instantiate manually an InterpreterLayer, simply press ctrl + i (cmd + i on mac) to toggle the layer's visibility.
 
 Sprite
 ^^^^^^
 
-Sprites allows to display a image in a rectangular area, which can be rotated,
+`Sprite`
+
+Sprites allows to display an image in a rectangular area, which can be rotated,
 scaled and moved.
-The placement in the scene follows the standard CocosNode rules.
-Also, all stock actions will work with sprites.
 
 
 Animating a sprite
@@ -314,6 +230,8 @@ programing guide for ideas.
 ParticleSystems
 ^^^^^^^^^^^^^^^
 
+`ParticleSystems`
+
 Certain effects are best rendered as a big number of translucent, colored images, by example explosions and smoke.
 Cocos provides the base class `ParticleSystems` to efficiently render those entities, and some specialized subclasses like `Fireworks`, `Spiral`, `Meteor`, `Sun`, `Fire`, `Galaxy`, `Flower`, `Explosion`, `Smoke`.
 
@@ -321,54 +239,136 @@ The most common method to customize particle systems is to subclass one of the c
 If you change the particle texture remember to load it with pyglet.image.load, not pyglet.resource.image
 Of course, deeper customization can be achieved with subclassing and code customization.
 
-Label
-^^^^^
+Label, HTMLLabel
+^^^^^^^^^^^^^^^^
 
-`Label` s provide the most simple text display.
-Font family, font size, position, color, opacity and align can be specified.
+Family and Font size can be specified for both.
 
-`HTMLLabel` s is a slightly more powerful label, it can use mixed styles. Uses HTML syntax for text and styles.
-
-These properties are not available:
-
-- camera
+`Label` s provide the most simple text display; color, opacity and align can also be set.
+ 
+`HTMLLabel` s is a slightly more powerful label, it can use mixed styles. Uses HTML syntax for text and styles; opacity as a whole can be set.
 
 
 Menu
 ^^^^
 
-TODO: explain `Menu`
+`Menu`
 
-TODO: explain `MultiplexLayer`
+- Does the layout of menu items
+- Handles navigation between menu items
+- Passes to the items the desired animation to play when the focus changes from one to another item
 
-These properties are not available:
+Look for examples at test/test_menu_*.py
+ 
+Menu items
+^^^^^^^^^^
 
-- color
-- opacity
+`MenuItem`: A menu item that shows text
 
+`ImageMenuItem`: A menu item that shows a image and optionally text 
 
-MenuItem
-^^^^^^^^
+`MultipleMenuItem`: Allows to cycle trough a customizable list of options
 
-TODO: explain `MenuItem`
+`ToggleMenuItem`: Exposes a on/off selection
 
-TODO: explain `MultipleMenuItem`
+`EntryMenuItem`: Exposes a label and a text entry field
 
-TODO: explain `ToggleMenuItem`
+`ColorMenuItem`: Allows to select a color
 
-TODO: explain `EntryMenuItem`
+Look at test/test_menu_items.py for sample code.
 
-TODO: explain pre-defined actions: `shake` , `shake_back` ,
-`zoom_in` and `zoom_out`
-
-These properties are not available:
-
-- color
-- opacity
-
-
-Creating your own objects
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Creating your CocosNode subclasses
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 TODO: explain how to build custom cocosnode objects,
 how to use `transform` , etc.
+
+CocosNodes Examples
+-------------------
+
+Parent-Child examples
+^^^^^^^^^^^^^^^^^^^^^
+
+Building a scene, object instantiation omitted ::
+
+    # a scene with 2 layers; the background would be seen behind the game layer because of z values
+    scene.add( background_layer, z=0 )
+    scene.add( game_layer, z=1 )
+
+    # the layer with 1 bloody pacman sprite
+    blody_pacman_sprite.position = (100, 100)
+    game_layer.add( bloody_pacman_sprite )
+
+    # the bloody pacman has two daggers !!!
+    sprite.add( dagger_far_sprite, z=-1 )
+    sprite.add( dagger_near_sprite, z=1  )
+    # the draw order is dagger_far, bloody_pacman, dagger_near
+
+    # also they are zombie alien cowboys in the game,
+    # so we add a bunch of them to the game_layer
+    ...
+ 
+
+A dagger has touched a zombie alien cowboy so it wants to spawn a nasty blotch of green blood.
+We could add the blotch_sprite to the zac_sprite, an then the blotch will follow the zombie::
+
+    zac_zprite.add(blotch_sprite, z = 1)
+
+or we could add to the game_layer, and the blotch will not follow the zombie::
+
+    layer = zac_sprite.parent # should be game_layer, because our staggering
+    layer.add(blotch_sprite)
+
+If for some ridiculous reason a dagger needs to grab a reference to the game_layer we could use 'get_ancestor'.
+Due to to way we staged the scene, we know game_layer is parent of bloody_pacman_sprite which is parent of the dagger. So::
+
+    layer = dagger_near.get_ancestor(Layer)
+
+should produce game_layer.
+
+A zombie is killed, we can retire from the scene with::
+
+    zac_sprite.kill()
+
+or with::
+
+    game_layer.remove(zac_sprite)
+
+or if we named it "T'chkss" when we added to the game_layer, like in::
+
+    game_layer.add(zac_sprite, name = "T'chkss", z=4)
+
+then we can retire it with::
+
+    game_layer.remove("T'chkss")
+
+Note that in current cocos if you add with name then you should remove by name,
+else the name will become unusable for new additions.
+
+Spatial Placement examples
+^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+
+Example::
+
+    # place the sprite in 320,240
+    sprite.position = (320,240)
+
+or by using actions.
+Example::
+
+    # move the sprite to 320,240 in 5 seconds
+    sprite.do( MoveTo( (320,240, duration=2 ) )
+
+Automated changes along the time examples
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    
+You can modify these attributes to **any** `CocosNode` object.
+By example::
+
+    scene.do( ScaleTo(2, duration=2) )
+
+    layer.do( RotateBy(360, duration=3) )
+
+    sprite.do( Blink(5, duration=1 ) )
+
+    label.do( JumpBy( (100,100), 50, 5, duration=3) )
