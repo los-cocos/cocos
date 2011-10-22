@@ -14,70 +14,69 @@ The common core can be broken by functionality in
 Parent-child
 ^^^^^^^^^^^^
 
-    - .add(self, child, z=0, name=None ) \: Adds a child, raises exception Name already exists if duplicated
-    - .remove(self, name_or_obj) \: Removes a child given its name or object, raises exception Child not found if not present
-    - .kill(self) \: Remove itself from its parent
-    - .parent \: property giving the parent node or None
-    - .get_ancestor(self, klass) \: Returns the first ancestor that isinstance of klass 
-    - .get_children(self) \: Returns a list with the node children, order is back to front (ascending z)
-    - .get(self, name) \: Gets a child given its name, raises exception Child not found if not present
-    - operator in , as 'in node1 in node2' \: returns True if and only if node1 is child of node 2
+    - .add(self, child, z=0, name=None ): Adds a child, raises exception Name already exists if duplicated
+    - .remove(self, name_or_obj): Removes a child given its name or object, raises exception Child not found if not present
+    - .kill(self): Remove itself from its parent
+    - .parent: property giving the parent node or None
+    - .get_ancestor(self, klass): Returns the first ancestor that isinstance of klass, or None
+    - .get_children(self): Returns a list with the node children, order is back to front (ascending z)
+    - .get(self, name): Gets a child given its name, raises exception Child not found if not present
+    - operator in , as 'in node1 in node2': returns True if and only if node1 is child of node 2
 
 `Parent-Child examples`
 
 Spatial Placement
 ^^^^^^^^^^^^^^^^^
 
-A node position is defined relative to the parent node, most precisely with respect the parent position anchor  
+A node position is defined relative to the parent node, most precisely with respect the parent position.
 
-    - .x
-    - .y
-    - .position property equivalent to (.x, .y)
-    - .anchor_y
-    - .anchor_y
-    - .anchor   (property equivalent to (anchor_x, .anchor_y)
-    - .scale
-    - .rotation
+    - .x, .y .position: properties giving position relative to parent origin; updating x or y automatically updates position, the reverse is also true.
+    - .anchor_x, .anchor_y, anchor: properties giving the center for the scale and rotation, they automatically maintain the relation anchor == (anchor_x, anchor_y). Notice that different CocosNodes subclasses can have different default values for anchor.
+    - .scale : 1.0 is the default scale, with 2.0 the node will double its apparent size.
+    - .rotation : in degrees
 
-`Spatial Placement examples`
-    
+`Spatial Placement snippets`; also most of scripts in directory tests do explicit placement.
+
 Going in or out of the active scene
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    - .on_enter(self) \: called if added to a parent while parent in the active scene or if the entire scene goes active
-    - .on_exit(self) \: called if removed from parent while parent in the active scene or if the entire scene
+    - .on_enter(self): called if added to a parent while parent in the active scene or if the entire scene goes active
+    - .on_exit(self): called if removed from parent while parent in the active scene or if the entire scene
 
     
 Render
 ^^^^^^
 
-    - .visit(self) : renders itself and its children. Render order is children with z <= 0, itself, children with z > 0
-    - .draw(self) : draws itself
-    - .transform(self) : helper for draw and visit, handles the openGL coordinate changes needed to render mandated by position, anchor, scale and rotation
-    - .camera : instead of the stock position, anchor, scale and rotation uses a custom gluLookAt that also allows z. This is rarely used, usually by special effects in transitions.
+    - .visit(self): renders itself and its children. Render order is children with z <= 0, itself, children with z > 0
+    - .draw(self): draws itself
+    - .transform(self): helper for draw and visit, handles the openGL coordinate changes needed to render mandated by position, anchor, scale and rotation
+    - .camera: instead of the stock position, anchor, scale and rotation uses a custom gluLookAt that also allows z. This is rarely used, usually by special effects in transitions.
 
     
 Time management
 ^^^^^^^^^^^^^^^
 
-    - .schedule_interval(self, callback, interval, \*args, \*\*kwargs) \: Schedule a function to be called every interval seconds.
-    - .schedule(self, callback, \*args, \*\*kwargs) \: Schedule a function to be called every frame.
-    - .unschedule(self, callback) : Remove a function from the schedule.
-    - .pause_scheduler(self) \: Time will stop passing for this node: scheduled callbacks will not be called, worker actions will not be called
-    - .resume_scheduler(self) \: Time will continue/start passing for this node and callbacks will be called, worker actions will be called
+    - .schedule_interval(self, callback, interval, \*args, \*\*kwargs): Schedule a function to be called every interval seconds.
+    - .schedule(self, callback, \*args, \*\*kwargs): Schedule a function to be called every frame.
+    - .unschedule(self, callback): Remove a function from the schedule.
+    - .pause_scheduler(self): Time will stop passing for this node: scheduled callbacks will not be called, worker actions will not be called
+    - .resume_scheduler(self): Time will continue/start passing for this node and callbacks will be called, worker actions will be called
 
     
 Automated changes along the time
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    - .do(self, template_action, target=None) \: most of the time it is called with target=None, which result in target being self. The action will perform a potentially gradual change in target. Returns the worker action, which is the object doing the changes. You must save a reference to the worker if you plan to call later to .action_remove
-    - .action_remove(self, worker_action) \: the worker action will 
-    - .pause(self) \: Suspends the execution of actions.
-    - .resume(self) \: Resumes the execution of actions.
-    - .stop(self) \: All actions scheduled in this node are removed, stop method will be called for each action.
-    - .are_actions_running(self) \: True or False
-    
-`Automated changes along the time examples`
+    - .do(self, template_action, target=None): most of the time it is called with target=None, which result in target being self. The action will perform a potentially gradual change in target. Returns the worker action, which is the object doing the changes. You must save a reference to the worker if you plan to call later to .action_remove
+    - .action_remove(self, worker_action): the worker action will terminate
+    - .pause(self): Suspends the execution of actions.
+    - .resume(self): Resumes the execution of actions.
+    - .stop(self): All actions scheduled in this node are removed, stop method will be called for each action.
+    - .are_actions_running(self): True or False
+  
+The automated changes are performed by a collaboration between CocosNode instances and `Action` instances.
+
+`Automated changes along the time snippets`
+Also the test directory has many samples like test_accel*.py, test_blink.py, test_callfunc*.py and others.
 
 
 Brief tour of built-in CocosNode subclasses
@@ -226,7 +225,16 @@ cheap new desktops.
 You can look at cocos particle systems and the section graphics in pyglet
 programing guide for ideas.
 
+For a ballpark data point, a 2008 low gamming spec machine (athon 5200, radeon 4650) gives::
 
+    numballs    fps
+        250     98
+        500     54
+        750     36
+
+Notice that sprites out of view has a fraction of the cost that visible sprites: they are discarded at the openGL geometry stage (in most of openGL implementations)
+
+    
 ParticleSystems
 ^^^^^^^^^^^^^^^
 
@@ -239,15 +247,23 @@ The most common method to customize particle systems is to subclass one of the c
 If you change the particle texture remember to load it with pyglet.image.load, not pyglet.resource.image
 Of course, deeper customization can be achieved with subclassing and code customization.
 
-Label, HTMLLabel
-^^^^^^^^^^^^^^^^
+Look at test/test_particle_*.py for smaple code.
 
-Family and Font size can be specified for both.
+TextElement, Label, HTMLLabel, RichLabel
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`Label` s provide the most simple text display; color, opacity and align can also be set.
+Overall opacity, Family and Font size can be specified for all.
+
+`TextElement`: base class for all cocos text. Holds internally (member 'element') a suitable pyglet text object, providing the CocosNode interface and pyglet Batch to store parts.
+Features other than opacity and the common cocosnode ones should be accessed trough the instance.element.   
+
+`Label`: provide the most simple text display; color can also be set.
  
-`HTMLLabel` s is a slightly more powerful label, it can use mixed styles. Uses HTML syntax for text and styles; opacity as a whole can be set.
+`HTMLLabel`: a slightly more powerful label, it can use mixed styles. Uses HTML syntax for text and styles; opacity as a whole can be set.
 
+`RichTextLabel`: Allows rich text attributes.
+
+Look for examples at test/test_label_*.py, test/test_htmllabel_*.py, test/test_rich_label.py
 
 Menu
 ^^^^
@@ -345,7 +361,7 @@ then we can retire it with::
 Note that in current cocos if you add with name then you should remove by name,
 else the name will become unusable for new additions.
 
-Spatial Placement examples
+Spatial Placement snippets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 
 Example::
@@ -359,10 +375,10 @@ Example::
     # move the sprite to 320,240 in 5 seconds
     sprite.do( MoveTo( (320,240, duration=2 ) )
 
-Automated changes along the time examples
+Automated changes along the time snippets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     
-You can modify these attributes to **any** `CocosNode` object.
+You can modify attributes to **any** `CocosNode` object.
 By example::
 
     scene.do( ScaleTo(2, duration=2) )
