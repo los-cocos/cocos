@@ -31,8 +31,14 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Text cocos nodes
+'''Text support
+
+CocosNodes subclasses supporting text.
+They use a suitable pyglet text object to do the work.
+Functionality other that the one common to all cococsnodes, except 'opacity', is
+provided by the member 'element' , which is the underlying pyglet object.
 '''
+
 __docformat__ = 'restructuredtext'
 
 from director import director
@@ -49,7 +55,10 @@ from batch import *
 class TextElement(cocosnode.CocosNode):
     """
     Base class for all cocos text
+
     Provides the CocosNode interfase and a pyglet Batch to store parts
+    Functionality other that the one common to all cococsnodes, except 'opacity', is
+    provided by the member 'element' , which is the underlying pyglet object.
     """
     def __init__(self, text='', position=(0,0), **kwargs):
         super(TextElement, self).__init__()
@@ -78,22 +87,55 @@ class TextElement(cocosnode.CocosNode):
         self.element.color = tuple(self.element.color[:3]) + (int(value),)
     opacity = property(_get_opacity, _set_opacity)
 
+
 class Label(TextElement):
-    '''CocosNode Label element. It is a wrapper of pyglet.text.Label with the benefits
-    of being of a CocosNode
+    '''Plain text support
+
+    Functionality other that the one common to all cococsnodes, except 'opacity', is
+    provided by the member 'element' , which is the underlying pyglet object.
+    The undelying pyglet object is pyglet.text.Label
+
+    For pyglet 1.1.4 the available init keyword arguments are
+        - font_name: Font family name(s); the first matching name is used
+        - font_size: Font size, in points
+        - bold: bool
+        - italic: bool
+        - color: (int, int, int, int) Font colour, as RGBA
+        - width: Width of the label in pixels, or None
+        - height: Height of the label in pixels, or None
+        - anchor_x: one of "left", "center" or "right"
+        - anchor_y : one of "bottom", "baseline", "center" or "top"
+        - halign : applies when width is supplied. One of "left", "center" or "right".
+        - multiline: bool
+        - dpi: Resolution of the fonts in this layout. Defaults to 96.
+
     '''
     klass = pyglet.text.Label
 
 
-
 class HTMLLabel(TextElement):
-    '''CocosNode HTMLLabel element. It is a wrapper of pyglet.text.HTMLLabel with the benefits
-    of being of a CocosNode
+    '''HTML formatted text label (supports a subset of HTML 4.01)
+
+    Functionality other that the one common to all cococsnodes, except 'opacity', is
+    provided by the member 'element' , which is the underlying pyglet object.
+    The undelying pyglet object is pyglet.text.HTMLLabel.
+
+    For pyglet 1.1.4 the available init keyword arguments are
+        - location: Location object for loading images referred to in the document. By default, the working directory is used.
+        - width: Width of the label in pixels, or None
+        - height: Height of the label in pixels, or None
+        - anchor_x: "left", "center" or "right".
+        - anchor_y: one of "bottom", "baseline", "center" or "top".
+        - multiline : bool
+        - dpi : float, defaults to 96
+
     '''
     klass = pyglet.text.HTMLLabel
 
 class PygletRichLabel(pyglet.text.DocumentLabel):
-    '''Rich text label.
+    '''This is not a CocosNode - let instantiation be handled by RichLabel
+
+    Helper class for RichLabel
     '''
     def __init__(self, text='',
                  font_name=None, font_size=None, bold=False, italic=False,
@@ -170,7 +212,24 @@ class PygletRichLabel(pyglet.text.DocumentLabel):
         self.document.set_style(0, len(self.document.text), style)
 
 class RichLabel(TextElement):
-    '''CocosNode RichLabel element. It is a wrapper of a custom Pyglet Rich Label
-    using rich text attributes with the benefits of being of a CocosNode
+    '''displays pyglet attributed (rich) text
+
+    The undelying pyglet object is a custom, cocos provided PygletRichLabel
+    element, subclass of pyglet.text.DocumentLabel.
+
+    For pyglet 1.1.4 the available init keyword arguments are
+        - font_name: Font family name(s); first matching is used
+        - font_size: Font size, in points.
+        - bold: bool
+        - italic: bool
+        - color : (int, int, int, int) or None
+        - width: Width of the label in pixels, or None
+        - height: Height of the label in pixels, or None
+        - anchor_x: "left", "center" or "right"
+        - anchor_y: one of "bottom", "baseline", "center" or "top"
+        - halign :  only when a width is supplied. One of "left", "center", "right".
+        - multiline : bool
+        - dpi : Resolution of the fonts in this layout.  Defaults to 96.
+
     '''
     klass = PygletRichLabel
