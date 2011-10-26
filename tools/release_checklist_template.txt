@@ -65,13 +65,23 @@ Finishing:
 
 - Test that the package built with setup.py works
 
-- upload to googlecode, mark as featured; if this is a final release
-unmark as featured older packages
+- upload library and docs archives to googlecode , mark as featured; if this is a final release
+unmark as featured older packages. Download and binary compare just in case.
 
-- Update cocos2d.org site ( see 5 in building_release_notes.txt)
-
-For Release Candidates, alphas, betas we dont upload to pypi, nor tag the version
+- Update cocos2d.org site and the backup( see 5 in building_release_notes.txt)
 
 - upload to pypi ( see 6 in building_release_notes.txt )
+  For Release Candidates, alphas, betas we don't upload to pypi (automatic installers can't differentiate between stable or unstable releases, so by example 'easy_install foo' can silently install an unstable release if it where uploaded to pypi) 
 
-- tag the release in the repo 
+  check how the pypi page looks, download the zip / tar and binary compare with the originals.
+
+- tag the release in the repo (see 7 in building_release_notes.txt)
+
+- Update release_checklist_template.txt and or building_release_notes.txt if necessary.
+
+- Announce the release.
+	cocos list
+	pyar list
+	pyglet list
+	
+- Congratulate yourself and relax :-)

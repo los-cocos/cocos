@@ -1,3 +1,4 @@
+After a release, please update this document if any change was needed.
 
  1 Checking that the pypi page has proper reST
    To check for reST conformance, somewhere (distutils ? pypi ?) the command
@@ -53,16 +54,17 @@
    things ).
    Listing only the cocos related files:
    www
-    doc -> directory with the html docs generated for cocos, update on release
+    doc -> 	directory with the html docs generated for cocos, update on release
+			after building the docs, upload the contents of doc/html to this directory (www/doc)
 
     coco.png
     contribute.html -> not release related
     doc.html -> links into the doc dir, also links to video tutorials not release related
-    download.html -> download links, dependencies, needs update on release
+    download.html -> download links, dependencies, *needs update on release*
     favicon.ico -> 0 sized atm
     games.htm -> sample games, not release related
     grossini.png -> warn, maybe also used for iphone 
-    index.html -> the homepage, news and demo videos, needs update on release
+    index.html -> the homepage, news and demo videos, *needs update on release*
     style.css
     tetrico.jpg
 
@@ -71,7 +73,9 @@
    To check out:
    svn checkout https://los-cocos.googlecode.com/svn/web/ cocos_site --username google_code_usr
 
-   I just used FTP Commander (free) for the 0.4rc0 and 0.4.0, seems to work ok.
+   After editing, upload and test, commit the changes
+   
+   I just used FTP Commander (free) to upload from 0.4rc0 to 0.5.0, seems to work ok.
  
  6 Updating PyPI page
    Albeit pypi home page tells to use "python setup.py upload" to upload the
@@ -103,3 +107,8 @@
 
    Probably more info at:
        http://packages.python.org/an_example_pypi_project/setuptools.html#intermezzo-pypirc-file-and-gpg
+
+7.  tagging the release
+	( remember to change the version in the example if doing copy & paste )
+
+svn copy https://los-cocos.googlecode.com/svn/trunk/ https://los-cocos.googlecode.com/svn/tags/release-0.5.0 -m "tagging release 0.5.0"
