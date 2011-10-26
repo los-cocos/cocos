@@ -178,6 +178,7 @@ class EditLayer(cocos.layer.Layer):
         self.dragging = False
         self.keyscrolling = False
         self.keyscrolling_descriptor = (0, 0)
+        self.wdrag_start_point = (0, 0)
         self.elastic_box = None
         self.selection = {}
         
@@ -425,7 +426,7 @@ class EditLayer(cocos.layer.Layer):
             self.restricted_mov = (modifiers & self.mod_restricted_mov)
 
     def adjust_elastic_box(self):
-        # when elastic_box visilble this method needs to be called any time
+        # when elastic_box visible this method needs to be called any time
         # world_mouse changes or screen_to_world results changes (scroll, etc)
         wx0, wy0 = self.wdrag_start_point
         wx1, wy1 = self.world_mouse
