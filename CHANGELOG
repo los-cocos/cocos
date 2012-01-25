@@ -1,3 +1,5 @@
+v0.5.
+  - action operator AccelDeccel calls .update(1.0), fixes issue 171 reported by AcidTonic@gmail.com
 
 v0.5.0 - October 26, 2011
   - better docs

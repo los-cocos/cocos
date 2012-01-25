@@ -321,11 +321,10 @@ class AccelDeccel( IntervalAction ):
         self.other.start()
 
     def update(self, t):
-        ft = (t-0.5) * 12
-        nt = 1./( 1. + math.exp(-ft) )
-
-        self.other.update( nt )
-
+        if t != 1.0:
+            ft = (t - 0.5) * 12
+            t = 1./( 1. + math.exp(-ft) )
+        self.other.update( t )
 
     def __reversed__(self):
         return AccelDeccel( Reverse(self.other) )
