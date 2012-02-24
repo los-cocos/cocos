@@ -35,6 +35,7 @@
 __docformat__ = 'restructuredtext'
 
 import pyglet
+from pyglet.gl import *
 
 from cocos.actions import *
 import cocos.scene as scene
@@ -147,6 +148,11 @@ class TransitionScene(scene.Scene):
         self.in_scene.visible = False
         self.out_scene.visible = False
 
+    def visit(self):
+        # preserve modelview matrix
+        glPushMatrix()
+        super(TransitionScene, self).visit()
+        glPopMatrix()
         
 class RotoZoomTransition(TransitionScene):
     '''Rotate and zoom out the outgoing scene, and then rotate and zoom in the incoming 
