@@ -108,6 +108,10 @@ class ScrollableLayer(Layer):
         director.push_handlers(self.on_cocos_resize)        
         super(ScrollableLayer, self).on_enter()
 
+    def on_exit(self):
+        super(ScrollableLayer, self).on_exit()
+        director.pop_handlers()        
+
     def set_view(self, x, y, w, h, viewport_ox=0, viewport_oy=0):
         x *= self.parallax
         y *= self.parallax
@@ -183,6 +187,10 @@ class ScrollingManager(Layer):
         director.push_handlers(self.on_cocos_resize)
         self.update_view_size()
         self.refresh_focus()
+
+    def on_exit(self):
+        director.pop_handlers()
+        super(ScrollingManager, self).on_exit()
 
     def update_view_size(self):
         if self.viewport is not None:
