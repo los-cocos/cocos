@@ -504,7 +504,9 @@ class Director(event.EventDispatcher):
         self.window.clear()
 
         # draw all the objects
+        glPushMatrix()
         self.scene.visit()
+        glPopMatrix()
 
         # finally show the FPS
         if self.show_FPS:
