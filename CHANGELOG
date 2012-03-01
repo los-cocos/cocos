@@ -1,4 +1,6 @@
 v0.5.
+  - removed crashing debug print in action Spawn, issue 173 reported by pascal.lemerrer@gmail.com
+  - fixed issue 76 distorted view for interpreter layer and fps display when using grid transformations
   - fixed memory leak with ScrollingManager and ScrollableLayer, issue 169 reported by  davexunit@gmail.com
   - TransitionScene now preserves modelview matrix, fixes issue 172 reported by AcidTonic@gmail.com
   - action operator AccelDeccel calls .update(1.0), fixes issue 171 reported by AcidTonic@gmail.com
