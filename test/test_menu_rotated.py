@@ -18,8 +18,8 @@ from cocos.scene import Scene
 class MainMenu(Menu):
     def __init__( self ):
         super( MainMenu, self ).__init__("TITLE" )
-        item1 = MenuItem('Item 1', self.on_quit ) 
-        item2 = MenuItem('Item 2', self.on_quit ) 
+        item1 = MenuItem('Item 1', self.on_quit )
+        item2 = MenuItem('Item 2', self.on_quit )
         item3 = MenuItem('Item 3', self.on_quit )
         item4 = MenuItem('Item 4', self.on_quit )
 

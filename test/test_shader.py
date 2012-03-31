@@ -17,7 +17,7 @@ class TestLayer(cocos.layer.Layer):
         x = x/2
         y = y/2
         d = 100
-        
+
         cuadric.install()
         glColor4ub(255,255,255,255)
         glBegin(GL_TRIANGLES)
@@ -27,28 +27,28 @@ class TestLayer(cocos.layer.Layer):
         glVertex2f( x,y+d )
         glTexCoord2f( 1,1 )
         glVertex2f( x+d,y )
-        
+
         glTexCoord2f( 0.5,0 )
         glVertex2f( x-d,y-d )
         glTexCoord2f( 0,0 )
         glVertex2f( x,y-d )
         glTexCoord2f( 1,1 )
         glVertex2f( x-d,y )
-        
+
         glTexCoord2f( 0.5,0 )
         glVertex2f( x+d,y-d )
         glTexCoord2f( 0,0 )
         glVertex2f( x,y-d )
         glTexCoord2f( 1,1 )
         glVertex2f( x+d,y )
-        
+
         glTexCoord2f( 0.5,0 )
         glVertex2f( x-d,y+d )
         glTexCoord2f( 0,0 )
         glVertex2f( x,y+d )
         glTexCoord2f( 1,1 )
         glVertex2f( x-d,y )
-        
+
         glTexCoord2f( 0.5,1)
         glVertex2f( x,y )
         glVertex2f( x,y+d )
@@ -68,7 +68,7 @@ class TestLayer(cocos.layer.Layer):
 
         glEnd()
         cuadric.uninstall()
-                
+
 cuadric_t = '''
 void main() {
     vec2 pos = gl_TexCoord[0].st;
@@ -83,7 +83,7 @@ void main() {
 
 
 cuadric = shader.ShaderProgram()
-cuadric.setShader(shader.FragmentShader('cuadric_t', cuadric_t))     
+cuadric.setShader(shader.FragmentShader('cuadric_t', cuadric_t))
 
 if __name__ == "__main__":
     director.init()

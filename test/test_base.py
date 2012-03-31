@@ -9,8 +9,8 @@ import cocos
 from cocos.director import director
 from cocos.sprite import Sprite
 import pyglet
-        
-        
+
+
 
 if __name__ == "__main__":
     director.init()

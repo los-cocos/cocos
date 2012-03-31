@@ -14,7 +14,7 @@ import pyglet
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
 
         self.sprite = Sprite( 'grossini.png', (x/2, y/2) )
@@ -23,7 +23,7 @@ class TestLayer(cocos.layer.Layer):
         rot = Rotate(360, 1)
         seq = Place((x/4,y/2)) + rot+move+rot+move
         self.sprite.do( Repeat ( seq ) )
-        
+
 
 if __name__ == "__main__":
     director.init()

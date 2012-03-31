@@ -9,7 +9,7 @@ import cocos
 from cocos.director import director
 from cocos.sprite import Sprite
 import pyglet
-        
+
 class PrintKey(cocos.layer.Layer):
     is_event_handler = True
     def on_key_press (self, key, modifiers):

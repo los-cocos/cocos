@@ -86,7 +86,7 @@ class TestLayer(cocos.layer.Layer):
 #        glVertex3f(right, top, 0)
 #        glVertex3f(left, top, 0)
 #        glEnd()
-        
+
 
 
 if __name__ == "__main__":

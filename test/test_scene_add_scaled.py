@@ -14,7 +14,7 @@ import pyglet
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
         sprite1 = Sprite( 'grossini.png' , (x/4, y/2) )
         sprite2 = Sprite( 'grossinis_sister1.png', (x/2, y/2) )
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
     main_scene.add( ColorLayer( 0, 0, 255, 255 ) )
-    l = ColorLayer( 255, 0, 0, 255 ) 
+    l = ColorLayer( 255, 0, 0, 255 )
     l.scale = 0.5
     main_scene.add( l )
     l2 =  TestLayer()

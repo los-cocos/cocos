@@ -19,7 +19,7 @@ class TestFigure(draw.Canvas):
         x,y = director.get_window_size()
         ye = 15
         xs = 15
-        line_width = 35 
+        line_width = 35
         self.set_color( (255,255,0,125) )
         self.set_stroke_width( line_width )
         parts = 20
@@ -30,24 +30,24 @@ class TestFigure(draw.Canvas):
             self.move_to( (0,0) )
             self.rotate( 2*math.pi/ parts )
             self.push()
-            for i in range(parts):    
+            for i in range(parts):
                 self.line_to( (xs,ye) )
                 self.translate( (xs,ye) )
                 self.rotate( math.pi/ parts )
             self.pop()
-            
-                        
-        
-        
-        
-        
-            
-        
+
+
+
+
+
+
+
+
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
-        self.add( TestFigure() )        
+
+        self.add( TestFigure() )
         self.schedule( lambda x: 0 )
 
 if __name__ == "__main__":

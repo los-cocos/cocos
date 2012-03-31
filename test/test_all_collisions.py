@@ -46,7 +46,7 @@ view_height = view_width
 # the distance in one dimension from a crossing to the center of next left
 # square
 offset = 0.5 * street_width + 0.5 * square_width
-offset = half_street_width + street_to_square_width_multiplier * half_street_width  
+offset = half_street_width + street_to_square_width_multiplier * half_street_width
 offset = half_street_width * (street_to_square_width_multiplier + 1)
 
 
@@ -71,7 +71,7 @@ class Actor(cocos.sprite.Sprite):
         self.cshape = cm.CircleShape(eu.Vector2(0.0, 0.0), rx)#, ry)
 
     def update_position(self, new_position):
-        assert isinstance(new_position, eu.Vector2) 
+        assert isinstance(new_position, eu.Vector2)
         self.position = new_position
         self.cshape.center = new_position
 
@@ -117,7 +117,7 @@ class RobotCar(Actor):
             if dx < 0: dx = -1
             else: dx = 1
             ix += dx
-            # it is not acceptable going invisible except if final crossing 
+            # it is not acceptable going invisible except if final crossing
             ok = ((0<ix<(streets_per_side-1) and (0<iy<streets_per_side-1)) or
                           ((ix, iy)==self.final_crossing))
             if not ok:
@@ -190,17 +190,17 @@ class City(cocos.layer.Layer):
 
     def add_squares(self):
         for iy in xrange(squares_per_side):
-            y = half_street_width + iy*crossing_point_separation 
+            y = half_street_width + iy*crossing_point_separation
             for ix in xrange(squares_per_side):
                 square = cocos.layer.ColorLayer(*square_color,width=square_width,
                                     height=square_width)
-                x = half_street_width + ix*crossing_point_separation 
+                x = half_street_width + ix*crossing_point_separation
                 square.position = (x,y)
                 self.add(square)
-        
+
     def generate_travel(self):
         #ix,iy : ints, street crossing; 0,0 is bottom left (out of view)
-        #ix, iy maps to x,y = ix*crossing_point_separation + iy*crossing_point_separation 
+        #ix, iy maps to x,y = ix*crossing_point_separation + iy*crossing_point_separation
         # iz refers to the starting crossing, jz to the final crossing
         # generate starting crossing
         if random.random()>0.5:
@@ -214,7 +214,7 @@ class City(cocos.layer.Layer):
             iy = 0
             if random.random()>0.5:
                 iy = streets_per_side - 1
-            ix = random.randint(1, streets_per_side-2); 
+            ix = random.randint(1, streets_per_side-2);
         # generate final crossing by simetry of initial
         jx = streets_per_side - 1 - ix; jy = streets_per_side - 1 - iy
         initial_crossing = (ix, iy)

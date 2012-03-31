@@ -15,13 +15,13 @@ import pyglet
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
-        
+
         self.sprite = Sprite( 'grossini.png', (0,y/2)  )
         self.add( self.sprite )
         self.sprite.do( MoveBy( (x/2, 0) ) + Hide() )
-        
+
 
 if __name__ == "__main__":
     print "sprite moves to midscreen and then hides"

@@ -25,7 +25,7 @@ class TestLayer(cocos.layer.Layer):
         self.sprite = Sprite('grossini.png')
         self.sprite.position = x/2, y/2
         self.add( self.sprite  )
-        
+
 if __name__ == "__main__":
     director.init()
     test_layer = TestLayer ()

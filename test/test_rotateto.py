@@ -13,7 +13,7 @@ import pyglet
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
 
         self.sprite = Sprite( 'grossini.png', (x/4, y/4), rotation=355 )

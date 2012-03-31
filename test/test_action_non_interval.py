@@ -37,13 +37,13 @@ class ProbeQuad(cocos.cocosnode.CocosNode):
         glPopMatrix()
 
 ##def random_walk(actor, fastness):
-##    width, height = director.get_window_size() 
+##    width, height = director.get_window_size()
 ##    x = random.randint(0, width)
 ##    y = random.randint(0, height)
 ##    dist = math.hypot(x-actor.position[0], y-actor.position[1])
 ##    time = dist/(1.0*fastness)
 ##    move_template = ac.MoveTo((x,y), time)+ac.CallFunc(random_walk, actor, fastness)
-##    actor.do(move_template)        
+##    actor.do(move_template)
 
 class RandomWalk(ac.Action):
     def init(self, fastness):
@@ -55,7 +55,7 @@ class RandomWalk(ac.Action):
     def make_new_leg(self):
         self._elapsed = 0.0
         x0, y0 = self.target.position
-        width, height = director.get_window_size() 
+        width, height = director.get_window_size()
         x1 = random.randint(0, width)
         y1 = random.randint(0, height)
         dx = x1-x0
@@ -65,7 +65,7 @@ class RandomWalk(ac.Action):
             self.t_arrival = norm/(1.0*self.fastness)
         except ZeroDivisionError:
             norm = 1.0
-            self.t_arrival = 0.1 
+            self.t_arrival = 0.1
         self.dx = dx/norm
         self.dy = dy/norm
         print 'dx, dy:',dx, dy
@@ -80,7 +80,7 @@ class RandomWalk(ac.Action):
         y = self.fastness*self._elapsed*self.dy + self.y0
         #print 'x,y:', x,y
         self.target.position = (x,y)
-        
+
 
 class Chase(ac.Action):
     def init(self, fastness):
@@ -131,7 +131,7 @@ class TestLayer(cocos.layer.Layer):
     def on_bullet_hit(self, bullet):
         self.remove(bullet)
 
-        
+
 if __name__ == "__main__":
     director.init()
     a = cocos.cocosnode.CocosNode()

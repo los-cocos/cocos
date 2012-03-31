@@ -25,7 +25,7 @@ class MainMenu(Menu):
 
         # then add the items
         items = [
-            ( MenuItem('Item 1', self.on_quit ) ), 
+            ( MenuItem('Item 1', self.on_quit ) ),
             ( MenuItem('Item 2', self.on_quit ) ),
             ( MenuItem('Item 3', self.on_quit ) ),
             ( MenuItem('Item 4', self.on_quit ) ),

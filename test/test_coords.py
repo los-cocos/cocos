@@ -20,60 +20,60 @@ sw = 800;sh = 600
 #sw = 768;sh = 480
 
 class TestLayer(cocos.layer.ColorLayer):
-	def __init__(self):
-		super( TestLayer, self ).__init__(0,0,50,255)
+    def __init__(self):
+        super( TestLayer, self ).__init__(0,0,50,255)
 
-		# get the sizes
-		sprite = Sprite('fire.png')
-		w, h =  sprite.width/2, sprite.height/2
+        # get the sizes
+        sprite = Sprite('fire.png')
+        w, h =  sprite.width/2, sprite.height/2
 
-		# thes are the center of the sprites, where to click
-		self.positions = [
-			(w, h),
-			(sw-w, h),
-			(w, sh-h),
-			(sw-w, sh-h),
-			(sw//2, sh//2),
-		]
+        # thes are the center of the sprites, where to click
+        self.positions = [
+            (w, h),
+            (sw-w, h),
+            (w, sh-h),
+            (sw-w, sh-h),
+            (sw//2, sh//2),
+        ]
 
-		# let's draw the sprites
-		self.sprites = []
-		for pos in self.positions:
-			sprite = Sprite('fire.png')
-			sprite.position = pos
-			self.add(sprite)
-			self.sprites.append(sprite)
+        # let's draw the sprites
+        self.sprites = []
+        for pos in self.positions:
+            sprite = Sprite('fire.png')
+            sprite.position = pos
+            self.add(sprite)
+            self.sprites.append(sprite)
 
-		self.dd = sprite
+        self.dd = sprite
 
-	def click(self, x, y):
-		# validate positions
-		for i, (pos_x, pos_y) in enumerate(self.positions):
-			ok_x = pos_x - 5 <= x <= pos_x + 5
-			ok_y = pos_y - 5 <= y <= pos_y + 5
-			if ok_x and ok_y:
-				sprite = self.sprites[i]
-				sprite.do(FadeOut(.5) + FadeIn(.5))
-				break
+    def click(self, x, y):
+        # validate positions
+        for i, (pos_x, pos_y) in enumerate(self.positions):
+            ok_x = pos_x - 5 <= x <= pos_x + 5
+            ok_y = pos_y - 5 <= y <= pos_y + 5
+            if ok_x and ok_y:
+                sprite = self.sprites[i]
+                sprite.do(FadeOut(.5) + FadeIn(.5))
+                break
 
 class MouseManager(cocos.layer.Layer):
-	is_event_handler = True
-	def __init__(self, test):
-		super(MouseManager, self).__init__()
-		self.test = test
+    is_event_handler = True
+    def __init__(self, test):
+        super(MouseManager, self).__init__()
+        self.test = test
 
-	def on_mouse_press(self, x, y, buttons, modifiers):
-		x, y = director.get_virtual_coordinates (x, y)
-		self.test.click(x, y)
+    def on_mouse_press(self, x, y, buttons, modifiers):
+        x, y = director.get_virtual_coordinates (x, y)
+        self.test.click(x, y)
 
 
 
 if __name__ == "__main__":
-	director.init(width=sw, height=sh, resizable=True)
-	test_layer = TestLayer()
-	main_scene = cocos.scene.Scene(test_layer)
-	main_scene.add(MouseManager(test_layer))
-	director.run(main_scene)
+    director.init(width=sw, height=sh, resizable=True)
+    test_layer = TestLayer()
+    main_scene = cocos.scene.Scene(test_layer)
+    main_scene.add(MouseManager(test_layer))
+    director.run(main_scene)
 
 # runs ok with a 4:3 window, and when ctrl-f in that situation.
 # fails if starting with a 16:10 window and doing ctrl-f

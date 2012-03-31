@@ -41,7 +41,7 @@ class TestLayer(cocos.layer.Layer):
         outer = ProbeRect(width+2*border_size, height+2*border_size, (255,255,0,255))
         outer.position = (-border_size, -border_size)
         self.add(outer, z=0 )
-                
+
 def usage():
     print """
     starts a 4/3 aspect ratio window.
@@ -72,7 +72,7 @@ director.run( scene )
 ##    r863 : ok (same)
 ##    r863 + modified Director.set_projection: runs ok
 
-##    r880 : broken: 
+##    r880 : broken:
 ##            1) I see yellow on the right and left, so it shows more x than desired
 ##            2) The window is misplaced, ie the desktop shows
 ##            3) The window's client height is less than desired.

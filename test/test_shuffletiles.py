@@ -23,7 +23,7 @@ if __name__ == "__main__":
     director.init( resizable=True, fullscreen=False )
     director.show_FPS = True
     main_scene = cocos.scene.Scene()
-    
+
     main_scene.add( BackgroundLayer(), z=0 )
 
     e = ShuffleTiles( grid=(16,8), duration=2, seed=2 )

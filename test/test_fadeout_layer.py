@@ -1,5 +1,5 @@
 #
-# Cocos: 
+# Cocos:
 # http://code.google.com/p/los-cocos/
 #
 # This code is so you can run the samples without installing the package

@@ -16,7 +16,7 @@ class Bg(cocos.layer.Layer):
     def __init__(self):
         super(Bg, self).__init__()
         self.image = pyglet.resource.image('grossini.png')
-        
+
     def on_enter(self):
         super(Bg, self).on_enter()
         sprite = Sprite(self.image)

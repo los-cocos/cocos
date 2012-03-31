@@ -16,13 +16,13 @@ from bezier import path
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
 
         self.sprite = Sprite('grossini.png', (x/4, y/4) )
         self.add( self.sprite )
         self.sprite.do( Bezier( path, 5 ) )
-        
+
 
 if __name__ == "__main__":
     director.init()

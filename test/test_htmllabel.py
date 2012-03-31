@@ -16,15 +16,15 @@ import pyglet
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
-        
+
         self.text = HTMLLabel("<font color=red>hello <i>world</i></font>", (x/2, y/2))
         self.text.do( Rotate( 360, 10 ) )
         self.text.do( ScaleTo( 10, 10 ) )
         self.add( self.text  )
-        
-        
+
+
 
 if __name__ == "__main__":
     director.init()

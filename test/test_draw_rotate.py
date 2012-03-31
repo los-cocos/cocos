@@ -30,18 +30,18 @@ class TestFigure(draw.Canvas):
             self.move_to( (0,0) )
             self.line_to( (xs,ye) )
             self.rotate( 2*math.pi/ parts )
-                    
-        
-        
-        
-        
-            
-        
+
+
+
+
+
+
+
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
-        self.add( TestFigure() )        
+
+        self.add( TestFigure() )
         self.schedule( lambda x: 0 )
 
 if __name__ == "__main__":

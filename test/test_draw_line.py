@@ -11,13 +11,13 @@ from cocos.sprite import Sprite
 from cocos.actions import Lerp, Reverse, Repeat
 from cocos import draw
 import pyglet, math
-    
-        
+
+
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
         line = draw.Line((0,0), (100,100), (255,255,255,255))
-        self.add( line )        
+        self.add( line )
 
 if __name__ == "__main__":
     director.init()

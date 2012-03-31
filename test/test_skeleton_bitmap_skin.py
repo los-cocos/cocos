@@ -25,7 +25,7 @@ class TestLayer(cocos.layer.Layer):
         self.add( self.skin )
         x, y = director.get_window_size()
         self.skin.position = x/2, y/2
-        
+
 
 if __name__ == "__main__":
     director.init()

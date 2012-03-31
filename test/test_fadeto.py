@@ -14,9 +14,9 @@ import pyglet
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
-        
+
         self.sprite = Sprite( 'grossini.png', (x/2, y/2) )
         self.add( self.sprite )
         self.sprite.do( FadeTo(0, 10 ) )
@@ -24,7 +24,7 @@ class TestLayer(cocos.layer.Layer):
         self.sprite2 = Sprite('grossini.png',  (x/4*3,y/2), opacity=0)
         self.add( self.sprite2 )
         self.sprite2.do( FadeTo(255, 10 ) )
-        
+
 
 if __name__ == "__main__":
     director.init()

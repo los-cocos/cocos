@@ -15,15 +15,15 @@ import pyglet
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
-        
+
         self.sprite = Sprite( 'grossini.png', (x/4,y/2)  )
         self.add( self.sprite )
         shake_part = MoveBy((-10.0, 0.0), 0.1)
         shake = shake_part + Reverse(shake_part)*2 + shake_part
         self.sprite.do( MoveTo( (x/2, y/2) ) + Repeat( shake ) )
-        
+
 
 if __name__ == "__main__":
     director.init()

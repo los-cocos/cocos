@@ -14,13 +14,13 @@ import pyglet
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
-        
+
         self.sprite = Sprite( 'grossini.png', (x/2,y/2), scale = 0.1 )
         self.add( self.sprite )
         self.sprite.do( ScaleBy( 10, 2 ) + ScaleBy( 0.1, 2 )  )
-        
+
 
 if __name__ == "__main__":
     director.init()

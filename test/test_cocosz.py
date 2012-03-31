@@ -16,10 +16,10 @@ class Quad(cocos.cocosnode.CocosNode):
         super(Quad, self).__init__()
         self.size = size
         self.qcolor = color
-        
+
     def draw(self):
         points = (self.x, self.y,
-                    self.x, self.y+self.size, 
+                    self.x, self.y+self.size,
                     self.x+self.size, self.y+self.size,
                     self.x + self.size, self.y )
         color = self.qcolor * 4
@@ -40,8 +40,8 @@ class MultiQuadLayer(cocos.layer.Layer):
             main.add( q, z= i-2)
         main.position = ( x/2, y/2 )
         self.add( main )
-        
-        
+
+
 if __name__ == "__main__":
     director.init()
     test_layer = MultiQuadLayer()

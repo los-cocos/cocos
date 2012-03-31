@@ -14,18 +14,18 @@ import pyglet
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
-        
+
         self.sprite = Sprite('grossini.png', (x/2, y/2) )
         self.sprite.visible = False
         self.add( self.sprite )
-        
+
         @CallFuncS
         def make_visible( sp ):
             sp.do( Show() )
         self.sprite.do( make_visible )
-        
+
 
 if __name__ == "__main__":
     director.init()

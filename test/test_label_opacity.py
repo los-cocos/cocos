@@ -16,14 +16,14 @@ import pyglet
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
-        
+
         self.text = Label("hello", (x/2, y/2))
         self.text.do( FadeOut(10) )
         self.add( self.text  )
-        
-        
+
+
 
 if __name__ == "__main__":
     director.init()

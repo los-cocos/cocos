@@ -29,7 +29,7 @@ def report(t):
     else:
         s_scene = 'transition scene'
     print 'current scene:', s_scene, current_scene
-    
+
 
 def sequencer(dt):
     global t0, stage, last_current_scene
@@ -49,7 +49,7 @@ def sequencer(dt):
 # Warn: if the parent transition overrides the finish method of TransitionScene
 # you may need some extra adjusts.
 # As to the present cocos revision (r1069), the only concrete transition scene
-# that overrides finish is ZoomTransition, and it works well with the recipe. 
+# that overrides finish is ZoomTransition, and it works well with the recipe.
 class FadeTransitionWithPop(FadeTransition):
     def finish(self):
         director.pop()
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     stage = "before director.run"
     print "\n%4.3f %s" % (0.0, stage)
     report(0)
-    
+
     t0 = time.time()
     stage = "run scene1"
     print "\n%4.3f begin %s" % (0.0, stage)

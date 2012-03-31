@@ -14,19 +14,19 @@ from cocos.sprite import Sprite
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
 
         self.sprite = Sprite( 'grossini.png', (x/2, y/2) )
         self.add( self.sprite )
-        
+
         self.sprite2 = Sprite( 'grossini.png', (x/2, y/4) )
         self.add( self.sprite2 )
 
         seq = Rotate( 360, 10 ) | MoveBy((x/2,0))
         self.sprite.do( seq )
         self.sprite2.do( Reverse( seq ) )
-        
+
 
 if __name__ == "__main__":
     director.init()

@@ -9,7 +9,7 @@ import cocos
 from cocos.director import director
 from cocos.sprite import Sprite
 import pyglet
-        
+
 class PrintKey(cocos.layer.Layer):
     is_event_handler = True
     def on_key_press (self, key, modifiers):
@@ -20,7 +20,7 @@ class SwitchLayer(cocos.layer.Layer):
         super(SwitchLayer, self).__init__()
         self.other = PrintKey()
         self.added = False
-    
+
     is_event_handler = True
     def on_key_press (self, key, modifiers):
         if key == pyglet.window.key.SPACE:
@@ -30,8 +30,8 @@ class SwitchLayer(cocos.layer.Layer):
                 self.add(self.other)
             else:
                 self.remove(self.other)
-            
-    
+
+
 if __name__ == "__main__":
     director.init()
     bg_layer = cocos.layer.ColorLayer(255,0,0,255)

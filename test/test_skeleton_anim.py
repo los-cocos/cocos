@@ -27,7 +27,7 @@ class TestLayer(cocos.layer.Layer):
         self.skin.position = x/2, y/2
         anim = cPickle.load(open("SAMPLE.anim"))
         self.skin.do( cocos.actions.Repeat( skeleton.Animate(anim) ) )
-        
+
 
 if __name__ == "__main__":
     director.init()

@@ -28,9 +28,9 @@ class BackgroundLayer( cocos.layer.Layer ):
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
-        
+
         self.sprite = Sprite( 'grossini.png', (x/2,y/2), scale = 1 )
         self.add( self.sprite )
         self.sprite.do( Repeat( ScaleBy( 5, 2 ) + ScaleBy( 0.2, 2 )  ) )
@@ -42,7 +42,7 @@ class TestLayer(cocos.layer.Layer):
                             TurnOffTiles( grid=(32,24), duration=2) + \
                             Reverse( TurnOffTiles( grid=(32,24), duration=2) ) + \
                             StopGrid() )
-        
+
 
 if __name__ == "__main__":
     director.init()

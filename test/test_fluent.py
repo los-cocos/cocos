@@ -18,7 +18,7 @@ if __name__ == "__main__":
     main_scene = (
         cocos.scene.Scene()
             .add( cocos.layer.ColorLayer( 255,255,0,255) )
-            .add( cocos.layer.Layer() 
+            .add( cocos.layer.Layer()
                 .add( Sprite('grossini.png', (x/2, y/2))
             )
         )

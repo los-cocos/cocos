@@ -82,7 +82,7 @@ class SquareLand(cocos.layer.ScrollableLayer):
         bg = cocos.layer.ColorLayer(0,170,170,255,width=world_width-2*margin,height=world_height-2*margin)
         bg.position = (margin,margin)
         self.add(bg, z=1)
-        
+
         mod = (world_width-2.0*margin)/10.0
         #print mod
         y = margin+mod
@@ -154,7 +154,7 @@ class SquareLand(cocos.layer.ScrollableLayer):
         print 'on_mouse_press:'
         vx, vy = self.scroller.pixel_from_screen(x,y)
         print '\tpixel_from_screen(x, y):', vx, vy
-     
+
     def clamp(self, actor, new_pos):
         x,y = new_pos
         if  x-actor.model_width/2<self.margin:
@@ -175,7 +175,7 @@ class SquareLand(cocos.layer.ScrollableLayer):
         if move_dir:
             new_pos = self.player.position + self.player.fastness*dt*move_dir.normalize()
             new_pos = self.clamp(self.player, new_pos)
-            
+
             self.player.position = new_pos
             changed = True
 

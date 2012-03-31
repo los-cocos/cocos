@@ -43,12 +43,12 @@ class TestLayer(cocos.layer.Layer):
         outer = ProbeRect(width+2*border_size, height+2*border_size, (255,255,0,255))
         outer.position = (-border_size, -border_size)
         self.add(outer, z=0 )
-                
+
 def usage():
     print """
     starts a 16/10 aspect ratio window.
     CTRL-F toggles fullscreen
-    
+
     The scene draw three boxes, centered at the window center.
       blue box: the exact same size as the window
       yellow box: a little bigger than blue box
@@ -56,7 +56,7 @@ def usage():
     Draw order is yellow, blue, red
     You must see no yellow, and a red rectangle with equal sized blue borders
     """
-    
+
 
 usage()
 

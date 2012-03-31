@@ -19,11 +19,11 @@ class TestLayer(cocos.layer.Layer):
     def __init__(self):
 
         super( TestLayer, self ).__init__()
-       
+
         self.mouse_x = self.mouse_y = 0
 
         x,y = director.get_window_size()
-        
+
         sprite1 = Sprite('grossini.png')
         self.add( sprite1  )
         sprite1.position = 300,300

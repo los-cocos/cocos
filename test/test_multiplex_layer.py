@@ -53,7 +53,7 @@ class OptionMenu(Menu):
 
 if __name__ == "__main__":
     director.init( resizable=True)
-    scene =Scene( 
+    scene =Scene(
             MultiplexLayer( MainMenu(), OptionMenu() )
             )
 

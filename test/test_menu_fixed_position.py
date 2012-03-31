@@ -19,7 +19,7 @@ class MainMenu(Menu):
     def __init__( self ):
         super( MainMenu, self ).__init__("TITLE" )
         items = [
-            ( MenuItem('Item 1', self.on_quit ) ), 
+            ( MenuItem('Item 1', self.on_quit ) ),
             ( MenuItem('Item 2', self.on_quit ) ),
             ( MenuItem('Item 3', self.on_quit ) ),
             ( MenuItem('Item 4', self.on_quit ) ),

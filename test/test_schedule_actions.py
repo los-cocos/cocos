@@ -17,7 +17,7 @@ class TestLayer(cocos.layer.Layer):
         super(TestLayer,self)._step(dt)
         print 'shall not happen'
         print self.rotation
-         
+
 
 if __name__ == "__main__":
     director.init()

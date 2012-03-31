@@ -23,7 +23,7 @@ You should see:
     zooming in and out with focus on his own center
 
     redish square alternates between still, rotating around his bottom left
-    corner, zooming in and out with focus on his bottom left corner.    
+    corner, zooming in and out with focus on his bottom left corner.
 """
 
 def get_test_scene():
@@ -31,9 +31,9 @@ def get_test_scene():
                          ac.Delay(1.0) # wait 1 second
                          + # and then
                          ac.Rotate(360, 2.0) # rotate 360 degrees in 2 seconds
-                         + # and then 
+                         + # and then
                          ac.Delay(1.0) # wait 1 second
-                         + # and then 
+                         + # and then
                          ac.ScaleTo(2.0, 1.0) #  zoom to 2x in 1 second
                          + # and then
                          ac.ScaleTo(1.0, 1.0)  # zoom to 1x in 1 second
@@ -44,7 +44,7 @@ def get_test_scene():
 
     # bluish square
     bluish_square = cocos.layer.ColorLayer(0, 160, 176, 255, width=100, height=100)
-    # transform_anchor set to the center position of itself 
+    # transform_anchor set to the center position of itself
     bluish_square.transform_anchor = (bluish_square.width/2.0, bluish_square.height/2.0)
     bluish_square.position = (w/3, h/2)
     bluish_square.do(template_action)
@@ -57,7 +57,7 @@ def get_test_scene():
 
     # redish square
     redish_square = cocos.layer.ColorLayer(201, 43, 0, 255, width=100, height=100)
-    # transform_anchor set to the bottomleft corner of itself 
+    # transform_anchor set to the bottomleft corner of itself
     redish_square.transform_anchor = (0, 0)
     redish_square.position = (w*2/3, h/2)
     redish_square.do(template_action)

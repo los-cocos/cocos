@@ -15,21 +15,21 @@ import pyglet
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
+
         x,y = director.get_window_size()
-        
+
         self.sprite = Sprite('grossini.png', (x/2, y/2))
         self.sprite2 = Sprite('grossini.png', (x/4, y/2))
         self.add( self.sprite  )
         self.add( self.sprite2, name="grossini"  )
-        
+
         def rem():
             self.remove( self.sprite )
             self.remove( "grossini" )
         self.do( Delay(5) + CallFunc( rem ) )
-            
-    
-        
+
+
+
 
 if __name__ == "__main__":
     director.init()

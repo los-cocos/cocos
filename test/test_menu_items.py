@@ -27,7 +27,7 @@ class MainMenu(Menu):
 
         # then add the items
         item1= ToggleMenuItem('ToggleMenuItem: ', self.on_toggle_callback, True )
-                        
+
         resolutions = ['320x200','640x480','800x600', '1024x768', '1200x1024']
         item2= MultipleMenuItem('MultipleMenuItem: ',
                         self.on_multiple_callback,

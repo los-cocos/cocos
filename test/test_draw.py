@@ -17,7 +17,7 @@ ri = random.randint
 class TestFigure(draw.Canvas):
     def render(self):
         x,y = director.get_window_size()
-        
+
         for i in range(100):
             start = ri(0,640), ri(0,480)
             end = ri(0,640), ri(0,480)
@@ -28,13 +28,13 @@ class TestFigure(draw.Canvas):
                 self.set_stroke_width( width )
                 self.move_to( start )
             self.line_to( end  )
-            
-        
+
+
 class TestLayer(cocos.layer.Layer):
     def __init__(self):
         super( TestLayer, self ).__init__()
-        
-        self.add( TestFigure() )        
+
+        self.add( TestFigure() )
         self.schedule( lambda x: 0 )
 
 if __name__ == "__main__":
