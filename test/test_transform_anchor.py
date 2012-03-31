@@ -72,9 +72,11 @@ def get_test_scene():
     scene.add(world)
     return scene
 
-
-if __name__ == "__main__":
+def main():
     print usage
     director.init( resizable=True )
     scene = get_test_scene()
     director.run(scene)
+
+if __name__ == '__main__':
+    main()

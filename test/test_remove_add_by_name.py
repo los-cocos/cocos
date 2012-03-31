@@ -8,9 +8,7 @@ import cocos
 from cocos.director import director
 from cocos.layer import *
 
-
-
-if __name__ == "__main__":
+def main():
     print "expected to fail"
     print "with traceback ... :Exception: Name already exists: color"
 
@@ -26,3 +24,6 @@ if __name__ == "__main__":
     # this one works
     #main_scene.remove('color')
     main_scene.add( color, name='color' )
+
+if __name__ == '__main__':
+    main()

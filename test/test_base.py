@@ -10,10 +10,11 @@ from cocos.director import director
 from cocos.sprite import Sprite
 import pyglet
 
-
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = cocos.layer.ColorLayer(255,0,0,255)
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

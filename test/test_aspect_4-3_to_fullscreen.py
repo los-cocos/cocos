@@ -55,7 +55,7 @@ def usage():
     You must see no yellow, and a red rectangle with equal sized blue borders
     """
 
-if __name__ == "__main__":
+def main():
     usage()
     director.init( width=width, height=height, resizable=False )
     director.window.set_caption('aspect ratio and fullscreen - see console for usage')
@@ -63,3 +63,6 @@ if __name__ == "__main__":
     scene = cocos.scene.Scene()
     scene.add(TestLayer())
     director.run( scene )
+
+if __name__ == '__main__':
+    main()

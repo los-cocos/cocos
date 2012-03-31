@@ -38,10 +38,13 @@ class L(Layer):
         x,y = self.sun.position
         self.sun.position = (x+dx, y+dy)
 
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 
     main_scene.add( L() )
 
     director.run( main_scene )
+
+if __name__ == '__main__':
+    main()

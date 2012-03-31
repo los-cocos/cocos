@@ -25,7 +25,7 @@ class BackgroundLayer( cocos.layer.Layer ):
         self.img.blit(0,0)
         glPopMatrix()
 
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     #director.set_depth_test()
 
@@ -45,3 +45,6 @@ if __name__ == "__main__":
     color.do( rot2 + Reverse(rot2) )
 
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

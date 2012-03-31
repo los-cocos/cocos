@@ -12,7 +12,7 @@ from cocos.sprite import *
 from cocos.layer import *
 import pyglet
 
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 
@@ -42,3 +42,6 @@ if __name__ == "__main__":
     main_scene.add( green, z=3 )
 
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

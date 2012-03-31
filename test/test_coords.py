@@ -66,12 +66,12 @@ class MouseManager(cocos.layer.Layer):
         x, y = director.get_virtual_coordinates (x, y)
         self.test.click(x, y)
 
-
-
-if __name__ == "__main__":
+def main():
     director.init(width=sw, height=sh, resizable=True)
     test_layer = TestLayer()
     main_scene = cocos.scene.Scene(test_layer)
     main_scene.add(MouseManager(test_layer))
     director.run(main_scene)
 
+if __name__ == '__main__':
+    main()

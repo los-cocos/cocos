@@ -28,8 +28,7 @@ class TestLayer(cocos.layer.Layer):
         anim = cPickle.load(open("SAMPLE.anim"))
         self.skin.do( cocos.actions.Repeat( skeleton.Animate(anim) ) )
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer()
     bg_layer = cocos.layer.ColorLayer(255,255,255,255)
@@ -37,3 +36,6 @@ if __name__ == "__main__":
     main_scene.add(bg_layer, z=-10)
     main_scene.add(test_layer, z=10)
     director.run(main_scene)
+
+if __name__ == '__main__':
+    main()

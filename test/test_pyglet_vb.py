@@ -65,7 +65,7 @@ class MeshSprite:
         glPopAttrib()
         glDisable(self.texture.target)
 
-if __name__ == "__main__":
+def main():
     window = pyglet.window.Window()
 
     grossini = pyglet.resource.image("grossini.png")
@@ -83,3 +83,6 @@ if __name__ == "__main__":
         ms.elapsed = 0
 
     pyglet.app.run()
+
+if __name__ == '__main__':
+    main()

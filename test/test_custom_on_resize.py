@@ -70,8 +70,7 @@ class AutocenteredBackgroundLayer(cocos.layer.Layer):
         y = (usable_height - self.img.height * self.scale) / 2
         self.position = (x, y)
 
-
-if __name__ == '__main__':
+def main():
     print usage
     # telling director to not auto scale the scene when the window resizes and
     # to allow window resize, also that a 400x400 window is desired.
@@ -83,3 +82,6 @@ if __name__ == '__main__':
         bg.add(sp)
     scene.add(bg)
     director.run( scene )
+
+if __name__ == '__main__':
+    main()

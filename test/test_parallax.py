@@ -11,7 +11,7 @@ from cocos.text import Label
 from cocos.layer import ScrollingManager, ScrollableLayer
 from pyglet.window import key
 
-if __name__ == "__main__":
+def main():
     director.init()
 
     m = ScrollingManager()
@@ -40,3 +40,6 @@ if __name__ == "__main__":
     main_scene.schedule(update)
 
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

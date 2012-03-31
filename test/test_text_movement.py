@@ -30,8 +30,7 @@ class HelloWorld(cocos.layer.Layer):
         self.label.element.x = x
         self.label.element.y = y
 
-
-if __name__ == "__main__":
+def main():
     # director init takes the same arguments as pyglet.window
     cocos.director.director.init()
 
@@ -46,3 +45,6 @@ if __name__ == "__main__":
 
     # or you could have written, without so many comments:
     #      director.run( cocos.scene.Scene( HelloWorld() ) )
+
+if __name__ == '__main__':
+    main()

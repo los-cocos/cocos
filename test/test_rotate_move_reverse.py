@@ -34,10 +34,12 @@ class Logo(cocos.layer.Layer):
             action = RotateBy(360, .5) | Delay(0.5)
             self.sprite.do(action + Reverse(action))
 
-if __name__=="__main__":
+def main():
     print "press space to initiate action"
     director.init(fullscreen=0, width=800, height=600)
     scene = cocos.scene.Scene()
     scene.add(Logo())
     director.run(scene)
 
+if __name__ == '__main__':
+    main()

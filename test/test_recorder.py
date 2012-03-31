@@ -25,11 +25,13 @@ class TestLayer(cocos.layer.Layer):
         self.add( self.sprite2 )
         self.sprite2.do( JumpBy( (x/5*4, 100), 100, 10, 6 ) )
 
-
-if __name__ == "__main__":
+def main():
     print "records 6 seconds, snapshots in the tmp subdir"
     director.set_recorder(25, "tmp/frame-%d.png", 6)
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

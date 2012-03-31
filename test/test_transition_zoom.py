@@ -31,8 +31,7 @@ def change_scene():
     scene1.add( BackgroundLayer(), z=0 )
     director.replace( ZoomTransition(scene1, 2) )
 
-
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     scene2 = cocos.scene.Scene()
 
@@ -43,3 +42,6 @@ if __name__ == "__main__":
     scene2.add( colorl, z=0 )
     scene2.do(Delay(1) + CallFunc(change_scene))
     director.run(scene2)
+
+if __name__ == '__main__':
+    main()

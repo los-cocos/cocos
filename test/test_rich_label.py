@@ -27,10 +27,11 @@ class TestLayer(cocos.layer.Layer):
         self.text.do( ScaleTo( 10, 10 ) )
         self.add( self.text  )
 
-
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

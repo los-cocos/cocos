@@ -45,8 +45,11 @@ class TestLayer(cocos.layer.Layer):
 
         sprite3.transform_anchor = sprite3.image.width/2, sprite3.image.height/2
 
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

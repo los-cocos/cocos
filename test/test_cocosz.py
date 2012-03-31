@@ -41,9 +41,11 @@ class MultiQuadLayer(cocos.layer.Layer):
         main.position = ( x/2, y/2 )
         self.add( main )
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = MultiQuadLayer()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

@@ -63,9 +63,12 @@ class MainMenu(Menu):
     def on_color_callback(self, value):
         print 'color item callback:', value
 
-if __name__ == "__main__":
+def main():
 
     pyglet.font.add_directory('.')
 
     director.init( resizable=True)
     director.run( Scene( MainMenu() ) )
+
+if __name__ == '__main__':
+    main()

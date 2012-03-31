@@ -22,10 +22,12 @@ class TestLayer(cocos.layer.Layer):
         self.add( self.sprite )
         self.sprite.do( MoveBy( (x/2, 0) ) + Place( (x/2, y/3) ) + MoveBy( (x/2, 0) ) )
 
-
-if __name__ == "__main__":
+def main():
     print "sprite moves from left border to midscreen,\nteleports down,\nmoves to right border"
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

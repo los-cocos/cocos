@@ -10,8 +10,7 @@ from cocos.director import director
 from cocos.sprite import Sprite
 import pyglet
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     x,y = director.get_window_size()
 
@@ -24,3 +23,6 @@ if __name__ == "__main__":
         )
     )
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

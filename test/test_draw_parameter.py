@@ -54,9 +54,11 @@ class TestLayer(cocos.layer.Layer):
         a = Lerp("line_width", 5, 55, 3)
         f.do( Repeat( a + Reverse( a ) ) )
 
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
 
+if __name__ == '__main__':
+    main()

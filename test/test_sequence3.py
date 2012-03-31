@@ -27,12 +27,13 @@ class TestLayer(cocos.layer.Layer):
         self.sprite.do( seq )
         self.sprite2.do( Reverse( seq ) )
 
-
-
-if __name__ == "__main__":
+def main():
     print "starting from midscreen, sprite 1 moves left and then up;"
     print "sprite2 does the reverse action "
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

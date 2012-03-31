@@ -28,11 +28,13 @@ class SwitchLayer(cocos.layer.Layer):
             print "DISPATCH EVENTS:", self.dispatch
             self.subscene.enable_handlers(self.dispatch)
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     bg_layer = cocos.layer.ColorLayer(255,0,0,255)
     sub = cocos.scene.Scene(bg_layer, PrintKey())
     test_layer = SwitchLayer(sub)
     main_scene = cocos.scene.Scene (sub, test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

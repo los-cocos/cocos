@@ -37,11 +37,12 @@ class MainMenu(Menu):
     def on_quit( self ):
         pyglet.app.exit()
 
-
-
-if __name__ == "__main__":
+def main():
 
     pyglet.font.add_directory('.')
 
     director.init( resizable=True)
     director.run( Scene( MainMenu() ) )
+
+if __name__ == '__main__':
+    main()

@@ -24,8 +24,7 @@ class TestLayer(cocos.layer.Layer):
         self.add( sprite1 )
         self.add( sprite3 )
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     main_scene = cocos.scene.Scene()
     main_scene.add( ColorLayer( 255, 0, 0, 255 ) )
@@ -33,3 +32,6 @@ if __name__ == "__main__":
     l.rotation = 45
     main_scene.add( l )
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

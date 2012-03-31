@@ -29,10 +29,12 @@ class TestLayer(cocos.layer.Layer):
 
         self.sprite.do( Rotate(90, 3), Dummy() )
 
-
-if __name__ == "__main__":
+def main():
     print "two actions at the same time"
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

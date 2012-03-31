@@ -23,7 +23,7 @@ class BackgroundLayer( cocos.layer.Layer ):
 def toggle_fullscreen():
     director.window.set_fullscreen( not director.window.fullscreen )
 
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     director.set_depth_test()
 
@@ -46,3 +46,6 @@ if __name__ == "__main__":
         )
 
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

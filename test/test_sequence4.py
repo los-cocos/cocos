@@ -23,12 +23,13 @@ class TestLayer(cocos.layer.Layer):
         seq = MoveBy( (x/2, 0) )
         self.sprite.do( seq + Reverse(seq) )
 
-
-
-if __name__ == "__main__":
+def main():
     print " sprite starts at the left, goes to center screen and"
     print "then does the reverse action."
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

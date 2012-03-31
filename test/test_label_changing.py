@@ -41,9 +41,11 @@ class TestLayer(cocos.layer.Layer):
             new_color = 0
         return new_color
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

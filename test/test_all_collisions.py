@@ -238,10 +238,12 @@ class City(cocos.layer.Layer):
             if other.state != 'burning':
                 other.e_burn()
 
-if __name__ == "__main__":
+def main():
     director.init(width=view_width, height=view_height)
     scene = cocos.scene.Scene()
     city = City()
     scene.add(city)
     director.run(scene)
 
+if __name__ == '__main__':
+    main()

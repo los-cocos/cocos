@@ -29,9 +29,11 @@ class TestLayer(cocos.layer.Layer):
         self.sprite2.do( RandomDelay(2,4) + MoveBy( (x, 0) )  )
         self.sprite3.do( RandomDelay(2,4) + MoveBy( (x, 0) )  )
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

@@ -15,9 +15,12 @@ class PrintKey(cocos.layer.Layer):
     def on_key_press (self, key, modifiers):
         print "Key Pressed:", key, modifiers
 
-if __name__ == "__main__":
+def main():
     director.init()
     bg_layer = cocos.layer.ColorLayer(255,0,0,255)
     test_layer = PrintKey()
     main_scene = cocos.scene.Scene (bg_layer, test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

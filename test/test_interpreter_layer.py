@@ -9,9 +9,11 @@ import cocos
 from cocos.director import director
 import pyglet
 
-
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     interpreter_layer = cocos.layer.PythonInterpreterLayer()
     main_scene = cocos.scene.Scene(interpreter_layer)
     director.run(main_scene)
+
+if __name__ == '__main__':
+    main()

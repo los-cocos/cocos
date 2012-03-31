@@ -21,7 +21,7 @@ class DriveCar(actions.Driver):
         super(DriveCar, self).step(dt)
         scroller.set_focus(self.target.x, self.target.y)
 
-if __name__ == "__main__":
+def main():
     from cocos.director import director
     director.init(width=600, height=300, do_not_scale=True, resizable=True)
 
@@ -55,3 +55,5 @@ if __name__ == "__main__":
 
     director.run(main_scene)
 
+if __name__ == '__main__':
+    main()

@@ -24,9 +24,11 @@ class TestLayer(cocos.layer.Layer):
         seq = Place((x/4,y/2)) + rot+move+rot+move
         self.sprite.do( Repeat ( seq ) )
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

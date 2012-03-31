@@ -48,9 +48,11 @@ class TestLayer(cocos.layer.Layer):
         glVertex3f(p.x, p.y, 0)
         glEnd()
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

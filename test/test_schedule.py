@@ -30,11 +30,12 @@ class TestLayer(cocos.layer.Layer):
     def change_y(self, dt):
         self.sprite.y = random.random()*director.get_window_size()[1]
 
-
-
-if __name__ == "__main__":
+def main():
     print "sprite will change to a random position each second"
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

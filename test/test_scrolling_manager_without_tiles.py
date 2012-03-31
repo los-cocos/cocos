@@ -333,7 +333,7 @@ resize:
     the view.
 """
 
-if __name__ == "__main__":
+def main():
     show_common_text()
     if test_mode == 1:
         show_mode_1_text()
@@ -348,3 +348,6 @@ if __name__ == "__main__":
     scroller.add(world_layer)
     scene.add(scroller)
     director.run(scene)
+
+if __name__ == '__main__':
+    main()

@@ -31,10 +31,12 @@ class SwitchLayer(cocos.layer.Layer):
             else:
                 self.remove(self.other)
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     bg_layer = cocos.layer.ColorLayer(255,0,0,255)
     test_layer = SwitchLayer()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

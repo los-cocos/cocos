@@ -25,10 +25,12 @@ class TestLayer(cocos.layer.Layer):
         self.sprite1.do( Accelerate( Speed( Rotate( 360, 1 ), 0.1 ), 4)  )
         self.sprite2.do( Speed( Accelerate( Rotate( 360, 1 ), 4 ), 0.1)  )
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene ()
     main_scene.add(test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

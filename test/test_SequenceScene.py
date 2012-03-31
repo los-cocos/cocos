@@ -14,8 +14,7 @@ from cocos.layer import *
 from pyglet import font
 from pyglet.window import key
 
-
-if __name__ == "__main__":
+def main():
     # This simple test shows the usage of the SequenceScene.
     # It creates two simple scenes and adds them a ColorLayer.
     # Then the director is called with the SequenceScene of this two scenes.
@@ -34,3 +33,6 @@ if __name__ == "__main__":
     scene2.add( colorLayer2, z=0 )
 
     director.run( SequenceScene(scene1, scene2) )
+
+if __name__ == '__main__':
+    main()

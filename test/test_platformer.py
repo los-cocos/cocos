@@ -49,8 +49,7 @@ class PlatformerController(actions.Action, tiles.RectMapCollider):
         # move the scrolling view to center on the player
         scroller.set_focus(*new.center)
 
-
-if __name__ == '__main__':
+def main():
     from cocos.director import director
     director.init(width=800, height=600, do_not_scale=True)
 
@@ -90,3 +89,5 @@ if __name__ == '__main__':
     # run the scene
     director.run(platformer_scene)
 
+if __name__ == '__main__':
+    main()

@@ -20,7 +20,7 @@ class BackgroundLayer( cocos.layer.Layer ):
     def draw( self ):
         self.img.blit(0,0)
 
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 
@@ -28,3 +28,6 @@ if __name__ == "__main__":
 
     main_scene.do( AccelDeccelAmplitude(Waves( waves=16, amplitude=80, grid=(16,16), duration=10), rate=4.0 ) )
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

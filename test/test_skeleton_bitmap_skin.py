@@ -26,8 +26,7 @@ class TestLayer(cocos.layer.Layer):
         x, y = director.get_window_size()
         self.skin.position = x/2, y/2
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer()
     bg_layer = cocos.layer.ColorLayer(255,255,255,255)
@@ -35,3 +34,6 @@ if __name__ == "__main__":
     main_scene.add(bg_layer, z=-10)
     main_scene.add(test_layer, z=10)
     director.run(main_scene)
+
+if __name__ == '__main__':
+    main()

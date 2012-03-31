@@ -19,7 +19,7 @@ class BackgroundLayer( cocos.layer.Layer ):
     def draw( self ):
         self.img.blit(0,0)
 
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 
@@ -28,3 +28,6 @@ if __name__ == "__main__":
     flip = FlipX3D( duration=2)
     main_scene.do( flip + Reverse(flip) )
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

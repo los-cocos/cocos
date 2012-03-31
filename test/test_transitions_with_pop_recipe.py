@@ -116,7 +116,7 @@ class TestScene(cocos.scene.Scene):
         super(TestScene, self).__init__()
         self.schedule(sequencer)
 
-if __name__ == "__main__":
+def main():
     usage()
     print "\nactual timeline:"
     director.init( resizable=True )
@@ -134,3 +134,6 @@ if __name__ == "__main__":
     stage = "run scene1"
     print "\n%4.3f begin %s" % (0.0, stage)
     director.run(scene1)
+
+if __name__ == '__main__':
+    main()

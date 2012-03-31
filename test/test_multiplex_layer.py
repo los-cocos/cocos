@@ -51,10 +51,13 @@ class OptionMenu(Menu):
     def on_quit( self ):
         self.parent.switch_to( 0 )
 
-if __name__ == "__main__":
+def main():
     director.init( resizable=True)
     scene =Scene(
             MultiplexLayer( MainMenu(), OptionMenu() )
             )
 
     director.run( scene )
+
+if __name__ == '__main__':
+    main()

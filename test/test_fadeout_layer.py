@@ -17,7 +17,7 @@ from cocos.director import director
 from cocos.actions import *
 from cocos.layer import *
 
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 
@@ -28,3 +28,6 @@ if __name__ == "__main__":
     #l.do( FadeIn( duration=2) )
 
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

@@ -18,8 +18,7 @@ class BackgroundLayer( cocos.layer.Layer ):
     def draw( self ):
         self.img.blit(0,0)
 
-
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 
@@ -29,3 +28,6 @@ if __name__ == "__main__":
     main_scene.do( a )
 
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

@@ -33,10 +33,11 @@ class TestLayer(cocos.layer.Layer):
         self.sprite3.do( Rotate(360,10) )
         self.sprite3.do( ScaleBy(2,5)+ScaleBy(0.5,5) )
 
-
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

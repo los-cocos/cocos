@@ -22,9 +22,11 @@ class TestLayer(cocos.layer.Layer):
         mov = AccelDeccel( MoveBy( (x, 0 ), 4 ) )
         self.sprite.do( Repeat( mov + Reverse(mov) ))
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

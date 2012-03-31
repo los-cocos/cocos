@@ -24,10 +24,12 @@ class TestBatch(cocos.layer.Layer):
             self.batchnode.add(sprite, z=i%4)
         self.batchnode.do(MoveBy((100, 100), 10))
 
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestBatch ()
     main_scene = cocos.scene.Scene (test_layer)
     director.show_FPS = True
     director.run (main_scene)
 
+if __name__ == '__main__':
+    main()

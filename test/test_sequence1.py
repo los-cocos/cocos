@@ -22,10 +22,12 @@ class TestLayer(cocos.layer.Layer):
         self.add( self.sprite )
         self.sprite.do( MoveBy( (x/2, 0) ) + Hide() )
 
-
-if __name__ == "__main__":
+def main():
     print "sprite moves to midscreen and then hides"
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

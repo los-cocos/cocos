@@ -43,7 +43,7 @@ class BackgroundLayer( Layer ):
     def draw( self ):
         self.img.blit(0,0)
 
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     main_scene = Scene()
 
@@ -57,3 +57,6 @@ if __name__ == "__main__":
     sprite.do( Waves3D(duration=4) + Flip(duration=4) )
     back.do( ShuffleTiles(duration=3, grid=(16,12)) )
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

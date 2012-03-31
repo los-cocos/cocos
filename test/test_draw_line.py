@@ -19,9 +19,11 @@ class TestLayer(cocos.layer.Layer):
         line = draw.Line((0,0), (100,100), (255,255,255,255))
         self.add( line )
 
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
 
+if __name__ == '__main__':
+    main()

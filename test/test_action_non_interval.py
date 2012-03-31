@@ -131,8 +131,7 @@ class TestLayer(cocos.layer.Layer):
     def on_bullet_hit(self, bullet):
         self.remove(bullet)
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     a = cocos.cocosnode.CocosNode()
     class A(object):
@@ -146,3 +145,6 @@ if __name__ == "__main__":
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

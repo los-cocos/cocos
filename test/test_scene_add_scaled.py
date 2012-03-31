@@ -24,7 +24,7 @@ class TestLayer(cocos.layer.Layer):
         self.add( sprite1 )
         self.add( sprite3 )
 
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
     main_scene.add( ColorLayer( 0, 0, 255, 255 ) )
@@ -35,3 +35,6 @@ if __name__ == "__main__":
     l2.scale = 2.0
     main_scene.add( l2 )
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

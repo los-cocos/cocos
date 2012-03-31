@@ -33,7 +33,7 @@ class SpriteLayer ( Layer ):
         self.add( sprite2 )
         self.add( sprite3 )
 
-if __name__ == "__main__":
+def main():
     print 'you shall see an scaled red background and fliping sprites. the background always must be seen (scaled)'
     director.init( resizable=True )
     main_scene = Scene()
@@ -49,3 +49,6 @@ if __name__ == "__main__":
 
     sprite.do( Waves3D(duration=4) + Flip(duration=4) )
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

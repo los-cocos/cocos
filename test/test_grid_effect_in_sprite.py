@@ -43,8 +43,7 @@ class TestLayer(cocos.layer.Layer):
                             Reverse( TurnOffTiles( grid=(32,24), duration=2) ) + \
                             StopGrid() )
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     background = BackgroundLayer()
     test_layer = TestLayer ()
@@ -54,3 +53,6 @@ if __name__ == "__main__":
     main_scene.add( test_layer, z=1 )
 
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

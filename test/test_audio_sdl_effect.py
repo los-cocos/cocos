@@ -9,9 +9,12 @@ import cocos
 from cocos.director import director
 from cocos.audio.effect import Effect
 
-if __name__ == "__main__":
+def main():
     director.init(audio_backend='sdl')
     effect = Effect('powerup.wav')
     effect.play()
     import time
     time.sleep(2)
+
+if __name__ == '__main__':
+    main()

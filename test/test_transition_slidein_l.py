@@ -25,8 +25,7 @@ class BackgroundLayer( cocos.layer.Layer ):
         self.img.blit(0,0)
         glPopMatrix()
 
-
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     scene1 = cocos.scene.Scene()
     scene2 = cocos.scene.Scene()
@@ -39,3 +38,6 @@ if __name__ == "__main__":
     scene2.add( colorl, z=0 )
 
     director.run( SlideInLTransition( scene1, 2, scene2) )
+
+if __name__ == '__main__':
+    main()

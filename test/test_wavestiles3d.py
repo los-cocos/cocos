@@ -19,7 +19,7 @@ class BackgroundLayer( cocos.layer.Layer ):
     def draw( self ):
         self.img.blit(0,0)
 
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     director.set_depth_test()
 
@@ -29,3 +29,6 @@ if __name__ == "__main__":
 
     main_scene.do( WavesTiles3D( waves=8, amplitude=70, grid=(16,16), duration=10) )
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

@@ -11,8 +11,7 @@ from cocos.sprite import Sprite
 from cocos.actions import *
 import pyglet
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     bg_layer = cocos.layer.ColorLayer(255,0,0,255)
     translate_layer = cocos.layer.Layer()
@@ -22,3 +21,6 @@ if __name__ == "__main__":
     sub.do( ScaleBy( 1/2.1, 5) )
     main_scene = cocos.scene.Scene (sub)
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

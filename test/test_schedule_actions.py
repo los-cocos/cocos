@@ -18,10 +18,12 @@ class TestLayer(cocos.layer.Layer):
         print 'shall not happen'
         print self.rotation
 
-
-if __name__ == "__main__":
+def main():
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene()
     test_layer.do( RotateBy(360, duration=2) )
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

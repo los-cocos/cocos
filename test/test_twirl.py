@@ -23,8 +23,7 @@ class BackgroundLayer( cocos.layer.Layer ):
         self.img.blit(0,0)
         glPopMatrix()
 
-
-if __name__ == "__main__":
+def main():
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 
@@ -32,3 +31,6 @@ if __name__ == "__main__":
 
     main_scene.do( Twirl( twirls=2, center=(320,240), amplitude=1, grid=(32,24), duration=10) )
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()

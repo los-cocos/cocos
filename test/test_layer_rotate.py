@@ -12,7 +12,7 @@ from cocos.sprite import Sprite
 from cocos.layer import *
 import pyglet
 
-if __name__ == "__main__":
+def main():
     director.init()
     main_scene = cocos.scene.Scene()
     test_layer = ColorLayer(64,64,64,255)
@@ -21,3 +21,6 @@ if __name__ == "__main__":
 
     test_layer.do( RotateBy( 360, 2 ) )
     director.run (main_scene)
+
+if __name__ == '__main__':
+    main()
