@@ -65,21 +65,21 @@ class MeshSprite:
         glPopAttrib()
         glDisable(self.texture.target)
 
+if __name__ == "__main__":
+    window = pyglet.window.Window()
 
-window = pyglet.window.Window()
+    grossini = pyglet.resource.image("grossini.png")
+    grossini.anchor_x = grossini.width / 2
+    grossini.anchor_y = grossini.height / 2
+    ms = MeshSprite( grossini, 15,31 )
+    def update(dt):
+        window.clear()
+        ms.draw(dt)
 
-grossini = pyglet.resource.image("grossini.png")
-grossini.anchor_x = grossini.width / 2
-grossini.anchor_y = grossini.height / 2
-ms = MeshSprite( grossini, 15,31 )
-def update(dt):
-    window.clear()
-    ms.draw(dt)
+    pyglet.clock.schedule_interval(update, 1/60.)
 
-pyglet.clock.schedule_interval(update, 1/60.)
+    @window.event
+    def on_key_press(key, mods):
+        ms.elapsed = 0
 
-@window.event
-def on_key_press(key, mods):
-    ms.elapsed = 0
-
-pyglet.app.run()
+    pyglet.app.run()

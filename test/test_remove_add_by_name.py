@@ -11,7 +11,7 @@ from cocos.layer import *
 
 
 if __name__ == "__main__":
-    print "in cocos 0.3.0 and cocos 0.4.0 is expected to fail"
+    print "expected to fail"
     print "with traceback ... :Exception: Name already exists: color"
 
     director.init( resizable=True )
@@ -24,5 +24,5 @@ if __name__ == "__main__":
     main_scene.remove(color)
 
     # this one works
-#    main_scene.remove('color')
+    #main_scene.remove('color')
     main_scene.add( color, name='color' )

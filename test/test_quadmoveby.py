@@ -26,9 +26,9 @@ if __name__ == "__main__":
     main_scene.add( BackgroundLayer(), z=0 )
 
     move = QuadMoveBy( delta0=(320,240), delta1=(-630,0), delta2=(-320,-240), delta3=(630,0), duration=2 )
-#    move = QuadMoveBy( delta0=(640,480), delta1=(-640,480), delta2=(-640,-480), delta3=(640,-480), duration=2 )
+    #move = QuadMoveBy( delta0=(640,480), delta1=(-640,480), delta2=(-640,-480), delta3=(640,-480), duration=2 )
 
     main_scene.do( move + Reverse(move) )
-#    main_scene.do( move )
+    #main_scene.do( move )
 
     director.run (main_scene)

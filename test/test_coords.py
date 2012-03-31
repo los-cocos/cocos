@@ -75,6 +75,3 @@ if __name__ == "__main__":
     main_scene.add(MouseManager(test_layer))
     director.run(main_scene)
 
-# runs ok with a 4:3 window, and when ctrl-f in that situation.
-# fails if starting with a 16:10 window and doing ctrl-f
-

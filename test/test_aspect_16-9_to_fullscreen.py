@@ -57,23 +57,11 @@ def usage():
     You must see no yellow, and a red rectangle with equal sized blue borders
     """
 
-
-usage()
-
-director.init( width=width, height=height, resizable=False )
-director.window.set_caption('aspect ratio and fullscreen - see console for usage')
-director.show_FPS = True
-scene = cocos.scene.Scene()
-scene.add(TestLayer())
-director.run( scene )
-
-
-##test runs: (in win xp, display with 4:3 ratio)
-##    r863 : when fullscreen the screen misses areas at left and right
-##    r863 + patch  arnaud : covers the dektop but missing areaas at top and bottom
-##    r863 + patch arnaud with correction JF : no go
-##    r863 + modified Director.set_projection: runs ok
-
-##test runs: in win xp, display with 1680 x 1050,
-##           r863 + modified Director.set_projection  -> 16:10 ratio: runs ok
-
+if __name__ == "__main__":
+    usage()
+    director.init( width=width, height=height, resizable=False )
+    director.window.set_caption('aspect ratio and fullscreen - see console for usage')
+    director.show_FPS = True
+    scene = cocos.scene.Scene()
+    scene.add(TestLayer())
+    director.run( scene )

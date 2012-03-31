@@ -333,17 +333,18 @@ resize:
     the view.
 """
 
-show_common_text()
-if test_mode == 1:
-    show_mode_1_text()
-    director.init(view_width, view_height, do_not_scale=False)
-else:
-    show_mode_2_text()
-    director.init(view_width, view_height, do_not_scale=True)
+if __name__ == "__main__":
+    show_common_text()
+    if test_mode == 1:
+        show_mode_1_text()
+        director.init(view_width, view_height, do_not_scale=False)
+    else:
+        show_mode_2_text()
+        director.init(view_width, view_height, do_not_scale=True)
 
-scene = TestScene()
-world_layer = SquareLand(world_width, world_height)
-scroller = cocos.layer.ScrollingManager()
-scroller.add(world_layer)
-scene.add(scroller)
-director.run(scene)
+    scene = TestScene()
+    world_layer = SquareLand(world_width, world_height)
+    scroller = cocos.layer.ScrollingManager()
+    scroller.add(world_layer)
+    scene.add(scroller)
+    director.run(scene)

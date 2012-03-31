@@ -27,6 +27,6 @@ class Bg(cocos.layer.Layer):
         action = MoveTo((640, 480), 4) | ( ScaleTo(2,2) + ScaleTo(4,2) )
 
         sprite.do(action)
-
-director.init()
-director.run(Scene(Bg()))
+if __name__ == "__main__":
+    director.init()
+    director.run(Scene(Bg()))

@@ -25,6 +25,6 @@ if __name__ == "__main__":
     main_scene.add( l, z=0 )
 
     l.do( FadeOut( duration=2) )
-#    l.do( FadeIn( duration=2) )
+    #l.do( FadeIn( duration=2) )
 
     director.run (main_scene)

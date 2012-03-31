@@ -27,7 +27,7 @@ class BackgroundLayer( cocos.layer.Layer ):
 
 if __name__ == "__main__":
     director.init( resizable=True )
-#    director.set_depth_test()
+    #director.set_depth_test()
 
     main_scene = cocos.scene.Scene()
 
