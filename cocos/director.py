@@ -383,7 +383,8 @@ class Director(event.EventDispatcher):
             `duration`: float
                 the amount of seconds to record, or 0 for infinite
         '''
-        pyglet.clock._default = cocos.custom_clocks.ScreenReaderClock(framerate, template, duration)
+        clock = cocos.custom_clocks.get_recorder_clock(framerate, template, duration)
+        cocos.custom_clocks.set_app_clock(clock)
 
 
     def on_draw( self ):

@@ -32,6 +32,29 @@
 # ----------------------------------------------------------------------------
 import pyglet
 
+def get_recorder_clock(*args, **kwargs):
+    if pyglet.version.startswith('1.1'):
+        # works with pyglet 1.1.4release
+        clock = ScreenReaderClock(*args, **kwargs)
+    else:
+        # works with pyglet 1.2dev , branch default, 2638:ca17f2a533b7 (2012 04)
+        clock = ScreenReaderClock_12dev(*args, **kwargs)
+    return clock
+
+def set_app_clock(clock):
+    if pyglet.version.startswith('1.1'):
+        # works with pyglet 1.1.4release
+        pyglet.clock._default = clock
+    else:
+        # works with pyglet 1.2dev , branch default, 2638:ca17f2a533b7 (2012 04)
+        pyglet.app.event_loop.clock = clock
+        pyglet.clock._default = clock
+        # pyglet.app.base.EventLoop._run_estimated murks the water by accesing
+        # the clock's time provider (which is not in sync with our fake time),
+        # so use _run instead
+        pyglet.app.event_loop._run_estimated = pyglet.app.event_loop._run
+
+
 class ScreenReaderClock(pyglet.clock.Clock):
     ''' Make frames happen every 1/framerate and takes screenshots '''
 
@@ -112,3 +135,55 @@ class ScreenReaderClock(pyglet.clock.Clock):
             self._schedule_interval_items.sort(key=lambda a: a.next_ts)
 
         return delta_t
+
+class ScreenReaderClock_12dev(pyglet.clock.Clock):
+    ''' Make frames happen every 1/framerate and takes screenshots '''
+
+    def __init__(self, framerate, template, duration):
+        super(ScreenReaderClock_12dev, self).__init__()
+        self.framerate = framerate
+        self.template = template
+        self.duration = duration
+        self.frameno = 0
+        self.fake_time = 0.0
+
+    def update_time(self):
+        '''Get the elapsed time since the last call to `update_time`.
+
+        This updates the clock's internal measure of time and returns
+        the difference since the last update (or since the clock was created).
+
+        :since: pyglet 1.2
+
+        :rtype: float
+        :return: The number of seconds since the last `update_time`, or 0
+            if this was the first time it was called.
+        '''
+        # take screenshot
+        pyglet.image.get_buffer_manager().get_color_buffer().save(self.template % (self.frameno) )
+        self.frameno += 1
+
+        # end?
+        if self.duration:
+            if self.fake_time > self.duration:
+                raise SystemExit()
+
+
+        #ts = self.time() # original pyglet
+        ts = self.fake_time
+        self.fake_time += 1.0/self.framerate
+
+        if self.last_ts is None: 
+            delta_t = 0
+        else:
+            delta_t = ts - self.last_ts
+            self.times.insert(0, delta_t)
+            if len(self.times) > self.window_size:
+                self.cumulative_time -= self.times.pop()
+        self.cumulative_time += delta_t
+        self.last_ts = ts
+
+        return delta_t
+        
+    def get_sleep_time(self, sleep_idle):
+        return 0.0
