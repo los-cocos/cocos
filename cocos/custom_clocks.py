@@ -32,13 +32,13 @@
 # ----------------------------------------------------------------------------
 import pyglet
 
-def get_recorder_clock(*args, **kwargs):
+def get_recorder_clock(framerate, template, duration):
     if pyglet.version.startswith('1.1'):
         # works with pyglet 1.1.4release
-        clock = ScreenReaderClock(*args, **kwargs)
+        clock = ScreenReaderClock(framerate, template, duration)
     else:
         # works with pyglet 1.2dev , branch default, 2638:ca17f2a533b7 (2012 04)
-        clock = ScreenReaderClock_12dev(*args, **kwargs)
+        clock = ScreenReaderClock_12dev(framerate, template, duration)
     return clock
 
 def set_app_clock(clock):
@@ -60,7 +60,7 @@ class ScreenReaderClock(pyglet.clock.Clock):
 
     def __init__(self, framerate, template, duration):
         super(ScreenReaderClock, self).__init__()
-        self.framerate = framerate
+        self.framerate = float(framerate)
         self.template = template
         self.duration = duration
         self.frameno = 0
@@ -79,9 +79,9 @@ class ScreenReaderClock(pyglet.clock.Clock):
             if self.fake_time > self.duration:
                 raise SystemExit()
 
-        # fake time.time
+        # fake clock.time
         ts = self.fake_time
-        self.fake_time += 1.0/self.framerate
+        self.fake_time = self.frameno/self.framerate
 
         if self.last_ts is None:
             delta_t = 0

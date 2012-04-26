@@ -372,7 +372,7 @@ class Director(event.EventDispatcher):
 
 
     def set_recorder(self, framerate, template="frame-%d.png", duration=None):
-        '''Will replace the system clock so that now we can ensure a steady
+        '''Will replace the app clock so that now we can ensure a steady
         frame rate and save one image per frame
 
         :Parameters
