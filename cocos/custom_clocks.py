@@ -30,9 +30,28 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+"""
+Custom clocks used by cocos to perform special tasks, like:
+recording a cocos app as a sequence of snapshots with an exact, fixed framerate 
+"""
 import pyglet
 
-def get_recorder_clock(framerate, template, duration):
+def get_recorder_clock(framerate, template, duration=0):
+    """
+    Returns a clock object suitable to be used as a pyglet app clock, which
+    will provide a steady framerate, and saves a snapshot for each frame from
+    time=0 to time=duration
+
+    The clock object class depends on the pyglet version, and is set automatically
+
+    :Parameters
+        `framerate`: int
+            the number of frames per second
+        `template`: str
+            snapshot filenames will be template%frame_number (ex: "s%d.png" -> s0.png, s1.png...)
+        `duration`: float
+            the amount of seconds to record, or 0 for infinite
+    """
     if pyglet.version.startswith('1.1'):
         # works with pyglet 1.1.4release
         clock = ScreenReaderClock(framerate, template, duration)
@@ -42,6 +61,9 @@ def get_recorder_clock(framerate, template, duration):
     return clock
 
 def set_app_clock(clock):
+    """
+    Sets the cocos (or pyglet) app clock to a custom one
+    """
     if pyglet.version.startswith('1.1'):
         # works with pyglet 1.1.4release
         pyglet.clock._default = clock
@@ -56,7 +78,11 @@ def set_app_clock(clock):
 
 
 class ScreenReaderClock(pyglet.clock.Clock):
-    ''' Make frames happen every 1/framerate and takes screenshots '''
+    """ Make frames happen every 1/framerate and takes screenshots
+
+        This class is compatible with pyglet 1.1.4release, it is not compatible
+        with pyglet 1.2dev
+    """
 
     def __init__(self, framerate, template, duration):
         super(ScreenReaderClock, self).__init__()
@@ -137,11 +163,15 @@ class ScreenReaderClock(pyglet.clock.Clock):
         return delta_t
 
 class ScreenReaderClock_12dev(pyglet.clock.Clock):
-    ''' Make frames happen every 1/framerate and takes screenshots '''
+    """ Make frames happen every 1/framerate and takes screenshots
+
+        This class is compatible with pyglet 1.2dev, it is not compatible
+        with pyglet 1.1.4release
+    """
 
     def __init__(self, framerate, template, duration):
         super(ScreenReaderClock_12dev, self).__init__()
-        self.framerate = framerate
+        self.framerate = float(framerate)
         self.template = template
         self.duration = duration
         self.frameno = 0
@@ -171,7 +201,7 @@ class ScreenReaderClock_12dev(pyglet.clock.Clock):
 
         #ts = self.time() # original pyglet
         ts = self.fake_time
-        self.fake_time += 1.0/self.framerate
+        self.fake_time = self.frameno/self.framerate
 
         if self.last_ts is None: 
             delta_t = 0
