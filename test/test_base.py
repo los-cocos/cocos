@@ -10,6 +10,8 @@ from cocos.director import director
 from cocos.sprite import Sprite
 import pyglet
 
+testinfo = "s, q"
+
 def main():
     director.init()
     test_layer = cocos.layer.ColorLayer(255,0,0,255)
