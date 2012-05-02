@@ -82,7 +82,7 @@ def get_autotest_clock(sampler):
     :Parameters
         sampler: obj with interface sampler.next(last_app_time) -> next_app_time
         Drives the app trough the desired states, take snapshots and handle the
-        app under observation termination conditions.        
+        app under observation termination conditions.
     """
     if pyglet.version.startswith('1.1'):
         # works with pyglet 1.1.4release
@@ -126,16 +126,16 @@ class ScreenReaderClock(pyglet.clock.Clock):
 
     def tick(self, poll=False):
         '''Signify that one frame has passed.
- 
+
         '''
         # Code is the same as in baseclass, except changes pointed in comments
-        
+
         # deleted code for rescheduling the process, we want to do our task
         # the faster possible
-        
+
         # our payload: take screenshot and handle end of snapshot session
         self._screenshot_logic()
-        
+
         # update the app time as desired, this replaces ts = self.time()
         ts = self._get_ts()
 
@@ -227,7 +227,7 @@ class ScreenReaderClock_12dev(pyglet.clock.Clock):
 
     def update_time(self):
         '''Get the (fake) elapsed time since the last call to `update_time`
-            Additionally, take snapshots. 
+            Additionally, take snapshots.
 
         returns the difference since the last update (or since the clock was created).
 
@@ -236,15 +236,15 @@ class ScreenReaderClock_12dev(pyglet.clock.Clock):
             if this was the first time it was called.
         '''
         # Code is the same as in baseclass, except changes pointed in comments
-        
+
         # our payload: take screenshot and handle end of snapshot session
         self._screenshot_logic()
-        
+
         # update the app time as desired, this replaces ts = self.time()
         ts = self._get_ts()
 
         # below is the same as in the stock pyglet 1.2dev clock.Clock.update_time
-        if self.last_ts is None: 
+        if self.last_ts is None:
             delta_t = 0
         else:
             delta_t = ts - self.last_ts
@@ -255,7 +255,7 @@ class ScreenReaderClock_12dev(pyglet.clock.Clock):
         self.last_ts = ts
 
         return delta_t
-        
+
     def get_sleep_time(self, sleep_idle):
         """sleep time between frames; 0.0 as as we want to run as fast as possible"""
         return 0.0
@@ -290,15 +290,15 @@ class AutotestClock(pyglet.clock.Clock):
 
     def tick(self, poll=False):
         # Code is the same as in baseclass, except changes pointed in comments
-        
+
         # deleted code for rescheduling the process, we want to do our task
         # as fast as possible
-        
+
         # this was ts = self.time() in pyglet, here .next will  drive the
         # desired fake time, take snapshots, and handle end conditions for
         # the snapshots session
         ts = self.screen_sampler.next(self.last_ts)
-        
+
         # below is the same as in the stock pyglet 1.1.4 clock.Clock.tick
         if self.last_ts is None:
             delta_t = 0
