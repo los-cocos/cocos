@@ -4,10 +4,11 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 0.49, s, t 0.51, s, t 2.49, s, t 2.51, s, t 2.99, s, t 3.1 s, q"
 
 import cocos
 from cocos.director import director
-from cocos.actions import *
+import cocos.actions as ac
 from cocos.layer import *
 import pyglet
 
@@ -24,10 +25,11 @@ def main():
     director.set_depth_test()
 
     main_scene = cocos.scene.Scene()
-
     main_scene.add( BackgroundLayer(), z=0 )
 
-    main_scene.do( WavesTiles3D( waves=8, amplitude=70, grid=(16,16), duration=10) )
+    action1 = ac.WavesTiles3D( waves=2, amplitude=70, grid=(16,16), duration=3)
+
+    main_scene.do( action1 )
     director.run (main_scene)
 
 if __name__ == '__main__':

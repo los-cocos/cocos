@@ -6,11 +6,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 testinfo = "s, t 0.49, s, t 0.51, s, t 2.49, s, t 2.51, s, t 2.99, s, t 3.1 s, q"
 
-import pyglet
 import cocos
 from cocos.director import director
 import cocos.actions as ac
 from cocos.layer import *
+import pyglet
 
 class BackgroundLayer( cocos.layer.Layer ):
     def __init__(self):
@@ -21,14 +21,16 @@ class BackgroundLayer( cocos.layer.Layer ):
         self.img.blit(0,0)
 
 def main():
-    director.init( resizable=True, fullscreen=False )
-    main_scene = cocos.scene.Scene()
+    director.init( resizable=True )
+    director.set_depth_test()
 
+    main_scene = cocos.scene.Scene()
     main_scene.add( BackgroundLayer(), z=0 )
 
-    action1 = ac.ShuffleTiles( grid=(16,8), seed=2, duration=3 )
-    main_scene.do( action1 )
+    action1 = ac.WavesTiles3D( waves=2, amplitude=70, grid=(16,16), duration=3)
+    action1 = ac.Reverse(action1)
 
+    main_scene.do( action1 )
     director.run (main_scene)
 
 if __name__ == '__main__':

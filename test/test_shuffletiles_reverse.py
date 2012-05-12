@@ -27,6 +27,7 @@ def main():
     main_scene.add( BackgroundLayer(), z=0 )
 
     action1 = ac.ShuffleTiles( grid=(16,8), seed=2, duration=3 )
+    action1 = ac.Reverse(action1)
     main_scene.do( action1 )
 
     director.run (main_scene)
