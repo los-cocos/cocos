@@ -30,7 +30,8 @@ def main():
     main_scene = cocos.scene.Scene()
     main_scene.add( BackgroundLayer(), z=0 )
 
-    action1 = ac.WavesTiles3D( waves=2, amplitude=70, grid=(16,16), duration=3)
+    action1 = (ac.WavesTiles3D( waves=2, amplitude=70, grid=(16,16), duration=3) +
+               ac.StopGrid())
     action2 = ( ac.Delay(0.5) +
                 ac.CallFunc(toggle_fullscreen) +
                 ac.Delay(2.0) +

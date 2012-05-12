@@ -28,7 +28,7 @@ def main():
     main_scene.add( BackgroundLayer(), z=0 )
 
     action1 = ac.WavesTiles3D( waves=2, amplitude=70, grid=(16,16), duration=3)
-    action1 = ac.Reverse(action1)
+    action1 = ac.Reverse(action1) + ac.StopGrid()
 
     main_scene.do( action1 )
     director.run (main_scene)

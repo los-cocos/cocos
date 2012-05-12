@@ -29,7 +29,7 @@ def main():
 
     main_scene.add( BackgroundLayer(), z=0 )
 
-    action1 = ac.ShuffleTiles( grid=(16,8), seed=2, duration=3 )
+    action1 = ac.ShuffleTiles( grid=(16,8), seed=2, duration=3 ) + ac.StopGrid()
     action2 = ( ac.Delay(0.5) +
                 ac.CallFunc(toggle_fullscreen) +
                 ac.Delay(2.0) +
