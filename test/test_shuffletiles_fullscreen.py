@@ -4,7 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 0.49, s, t 0.51, s, t 2.49, s, t 2.51, s, t 2.99, s, t 3.1 s, q"
+testinfo = "s, t 0.49, s, t 0.51, s, t 2.49, s, t 2.51, s, t 2.99, s, t 3.1, s, q"
+tags = "CallFunc, Delay, fullscreen"
 
 import pyglet
 import cocos
@@ -36,6 +37,8 @@ def main():
                 ac.CallFunc(toggle_fullscreen))
     combo_action = action1 | action2
 
+    # In real code after a sequence of grid actions the StopGrid() action
+    # should be called. Omited here to stay in the last grid action render
     main_scene.do( combo_action )
     director.run (main_scene)
 

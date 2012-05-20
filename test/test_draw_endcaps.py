@@ -4,15 +4,14 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, q"
+tags = "Draw, cap, endcap"
 
 import cocos
 from cocos.director import director
-from cocos.sprite import Sprite
 from cocos import draw
 import pyglet
 
-import random
-ri = random.randint
 
 class TestFigure(draw.Canvas):
     def render(self):
@@ -21,7 +20,7 @@ class TestFigure(draw.Canvas):
         ye = ys*3
         xs = x/4
         line_width = 50
-        self.set_color( (255,0,0,125) )
+        self.set_color( (255,0,0,150) )
         self.set_stroke_width( line_width )
 
         # draw lines

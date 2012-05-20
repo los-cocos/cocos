@@ -4,10 +4,12 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, q"
+tags = "CallFunc, visible"
 
 import cocos
 from cocos.director import director
-from cocos.actions import CallFunc, Show
+from cocos.actions import CallFunc
 from cocos.sprite import Sprite
 import pyglet
 
@@ -22,7 +24,7 @@ class TestLayer(cocos.layer.Layer):
         self.add( self.sprite )
 
         def make_visible( sp ):
-            sp.do( Show() )
+            sp.visible = True
         self.sprite.do( CallFunc( make_visible, self.sprite ) )
 
 def main():

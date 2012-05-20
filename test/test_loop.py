@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1, s, t 2, s, t 3, s, t 4, s, t 5.1, s, t 5.5, s, q"
+tags = "Loop"
 
 import cocos
 from cocos.director import director
@@ -19,7 +21,7 @@ class TestLayer(cocos.layer.Layer):
 
         self.sprite = Sprite('grossini.png', (0, y/2))
         self.add( self.sprite )
-        self.sprite.do( MoveBy((x/10,0),1) * 10 )
+        self.sprite.do( MoveBy((x/10,0),1) * 5 )
 
 def main():
     director.init()

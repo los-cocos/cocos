@@ -4,6 +4,9 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1, s, t 2, s, t 3, s, t 4.1, s, t 4.2, s, q"
+tags = "FadeOutUpTiles"
+
 import pyglet
 import cocos
 from cocos.director import director
@@ -25,7 +28,9 @@ def main():
     main_scene.add( BackgroundLayer(), z=0 )
 
     e = FadeOutUpTiles( grid=(16,12), duration=2 )
-    main_scene.do( e + Reverse(e) )
+    # a sequence of grid actions should terminate with the action StopGrid,
+    # else the scene will continue to do a double render for each frame
+    main_scene.do( e + Reverse(e) + StopGrid() )
 
     director.run (main_scene)
 

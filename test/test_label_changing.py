@@ -3,6 +3,8 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
+testinfo = "s, t 5, s, t 10.1, s, q"
+tags = "Label, color, text"
 
 import time
 import random

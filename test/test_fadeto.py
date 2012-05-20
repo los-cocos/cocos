@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 0.5, s, t 5.1, s, t 5.2, s, q"
+tags = "FadeTo"
 
 import cocos
 from cocos.director import director
@@ -19,11 +21,11 @@ class TestLayer(cocos.layer.Layer):
 
         self.sprite = Sprite( 'grossini.png', (x/2, y/2) )
         self.add( self.sprite )
-        self.sprite.do( FadeTo(0, 10 ) )
+        self.sprite.do( FadeTo(0, 5 ) )
 
         self.sprite2 = Sprite('grossini.png',  (x/4*3,y/2), opacity=0)
         self.add( self.sprite2 )
-        self.sprite2.do( FadeTo(255, 10 ) )
+        self.sprite2.do( FadeTo(255, 5 ) )
 
 def main():
     director.init()

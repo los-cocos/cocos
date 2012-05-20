@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1.0, s, t 2.1, s, q"
+tags = "transform_anchor, Rotate"
 
 import cocos
 from cocos.director import director

@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 4.9, s, t 5.1, s, t 10.1, s, t 10.2, s, q"
+tags = "sequence, MoveBy, Reverse"
 
 import cocos
 from cocos.director import director
@@ -23,9 +25,13 @@ class TestLayer(cocos.layer.Layer):
         seq = MoveBy( (x/2, 0) )
         self.sprite.do( seq + Reverse(seq) )
 
+description  = """
+Sprite starts at the left, goes to center screen and
+then returns to the initial position.
+"""
+
 def main():
-    print " sprite starts at the left, goes to center screen and"
-    print "then does the reverse action."
+    print description
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 4.9, s, t 5.1, s, t 10.1, s, t 10.2, s, q"
+tags = "MoveBy, spawn"
 
 import cocos
 from cocos.director import director
@@ -22,9 +24,12 @@ class TestLayer(cocos.layer.Layer):
         self.add( self.sprite )
         self.sprite.do( MoveBy( (x/2, 0) ) * 2 )
 
+description = """
+Starting from left border, sprites moves
+two times screen_width/2 to the right."""
+
 def main():
-    print "starting from left border, sprites moves"
-    print "two times screen_width/2 to the right."
+    print description
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

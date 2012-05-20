@@ -4,13 +4,14 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, q"
+tags = "ColorLayer"
 
 import cocos
 from cocos.director import director
 from cocos.sprite import Sprite
 import pyglet
 
-testinfo = "s, q"
 
 def main():
     director.init()

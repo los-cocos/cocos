@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 3.0, s, t 5.0, s, t 10.0, s, q"
+tags = "batch, BatchNode, Sprite"
 
 import cocos
 from cocos.director import director

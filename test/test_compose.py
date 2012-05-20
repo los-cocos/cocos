@@ -5,6 +5,9 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1.5, s, t 3, s, t 4.1, s, q"
+tags = "compose_actions, sequence, spawn"
+
 import pyglet
 import cocos
 from cocos.actions import ScaleTo, MoveTo, Accelerate

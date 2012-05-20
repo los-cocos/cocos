@@ -10,6 +10,7 @@ from cocos.sprite import *
 from cocos.utils import SequenceScene
 from cocos.text import *
 from cocos.layer import *
+import cocos.actions as ac
 
 from pyglet import font
 from pyglet.window import key
@@ -22,17 +23,25 @@ def main():
     # key to exit the scene which is ESCAPE.
     # The ESCAPE key is the default key to do a director.pop()
 
+    def push_sequence_scene():
+        scene1 = Scene()
+        scene2 = Scene()
+
+        colorLayer1 = ColorLayer(32,32,255,255)
+        colorLayer2 = ColorLayer(255,32,0,255)
+
+        scene1.add( colorLayer1, z=0 )
+        scene2.add( colorLayer2, z=0 )
+
+        director.push( SequenceScene(scene1, scene2) )
+
     director.init( resizable=True, width=640, height=480 )
-    scene1 = Scene()
-    scene2 = Scene()
-
-    colorLayer1 = ColorLayer(32,32,255,255)
-    colorLayer2 = ColorLayer(32,32,0,0)
-
-    scene1.add( colorLayer1, z=0 )
-    scene2.add( colorLayer2, z=0 )
-
-    director.run( SequenceScene(scene1, scene2) )
-
+    scene0 = Scene()
+    colorLayer0 = ColorLayer(32,255,0,255)
+    scene0.add(colorLayer0)
+    scene0.do(ac.Delay(2.0)+ac.CallFunc(push_sequence_scene))
+    director.run(scene0)
+# probably should shoow green, after two seconds blue,
+# after ESC red, after esc green, after esc terminates 
 if __name__ == '__main__':
     main()

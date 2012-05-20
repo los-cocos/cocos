@@ -4,7 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 0.49, s, t 0.51, s, t 2.49, s, t 2.51, s, t 2.99, s, t 3.1 s, q"
+testinfo = "s, t 0.49, s, t 0.51, s, t 2.49, s, t 2.51, s, t 2.99, s, t 3.1, s, q"
+tags = "ShuffleTiles, Reverse"
 
 import pyglet
 import cocos
@@ -27,8 +28,10 @@ def main():
     main_scene.add( BackgroundLayer(), z=0 )
 
     action1 = ac.ShuffleTiles( grid=(16,8), seed=2, duration=3 )
-    action1 = ac.Reverse(action1) + ac.StopGrid()
+    action1 = ac.Reverse(action1)
     
+    # In real code after a sequence of grid actions the StopGrid() action
+    # should be called. Omited here to stay in the last grid action render
     main_scene.do( action1 )
     director.run (main_scene)
 

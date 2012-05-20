@@ -4,16 +4,15 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1.5, s, t 3.1, s, q"
+tags = "Draw, parameter"
 
 import cocos
 from cocos.director import director
-from cocos.sprite import Sprite
 from cocos.actions import Lerp, Reverse, Repeat
 from cocos import draw
 import pyglet, math
 
-import random
-ri = random.randint
 
 class TestFigure(draw.Canvas):
     line_width = draw.parameter(5)
@@ -38,12 +37,6 @@ class TestFigure(draw.Canvas):
                 self.translate( (xs,ye) )
                 self.rotate( math.pi/ parts )
             self.pop()
-
-
-
-
-
-
 
 
 class TestLayer(cocos.layer.Layer):

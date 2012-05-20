@@ -4,15 +4,14 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, q"
+tags = "Draw, Canvas.rotate"
 
 import cocos
 from cocos.director import director
-from cocos.sprite import Sprite
 from cocos import draw
 import pyglet, math
 
-import random
-ri = random.randint
 
 class TestFigure(draw.Canvas):
     def render(self):
@@ -30,11 +29,6 @@ class TestFigure(draw.Canvas):
             self.move_to( (0,0) )
             self.line_to( (xs,ye) )
             self.rotate( 2*math.pi/ parts )
-
-
-
-
-
 
 
 class TestLayer(cocos.layer.Layer):

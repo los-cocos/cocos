@@ -7,7 +7,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import cocos
 from cocos.director import director
-from cocos.sprite import Sprite
 from cocos import draw
 import pyglet
 

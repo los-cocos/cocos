@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 2.0, s, t 4.1, s, q"
+tags = "AccelDeccel"
 
 import cocos
 from cocos.director import director

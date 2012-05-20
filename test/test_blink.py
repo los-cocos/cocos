@@ -4,6 +4,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "t 0.8, s, t 1.5, s, t 2.1, s, q"
 
 import cocos
 from cocos.director import director

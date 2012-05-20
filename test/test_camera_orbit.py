@@ -4,6 +4,9 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 4, s, t 8, s, t 12, s, t 16.1, s, q"
+tags = "OrbitCamera"
+
 import pyglet
 import cocos
 from cocos.director import director
@@ -11,7 +14,6 @@ from cocos.actions import *
 from cocos.layer import *
 
 from pyglet.gl import *
-
 
 
 class BackgroundLayer( cocos.layer.Layer ):

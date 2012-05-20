@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1, s, t 1.05, s, t 1.15, s, t 1.20, s, q"
+tags = "MoveBy, spawn"
 
 import cocos
 from cocos.director import director
@@ -20,9 +22,9 @@ class TestLayer(cocos.layer.Layer):
 
         self.sprite = Sprite( 'grossini.png', (x/4,y/2)  )
         self.add( self.sprite )
-        shake_part = MoveBy((-10.0, 0.0), 0.1)
+        shake_part = MoveBy((-4.0, 0.0), 0.05)
         shake = shake_part + Reverse(shake_part)*2 + shake_part
-        self.sprite.do( MoveTo( (x/2, y/2) ) + Repeat( shake ) )
+        self.sprite.do( MoveTo( (x/2, y/2), 1 ) + Repeat( shake ) )
 
 def main():
     director.init()

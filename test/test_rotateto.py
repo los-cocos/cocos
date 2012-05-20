@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1.5, s, t 3.1, s, q"
+tags = "RotateTo"
 
 import cocos
 from cocos.director import director
@@ -18,7 +20,7 @@ class TestLayer(cocos.layer.Layer):
 
         self.sprite = Sprite( 'grossini.png', (x/4, y/4), rotation=355 )
         self.add( self.sprite )
-        self.sprite.do( cocos.actions.RotateTo( 5, 3 ) )
+        self.sprite.do( cocos.actions.RotateTo( 45, 3 ) )
 
         self.sprite = Sprite( 'grossini.png', (x/4*3, y/4) )
         self.add( self.sprite )

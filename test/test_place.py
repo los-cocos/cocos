@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, q"
+tags = "Place"
 
 import cocos
 from cocos.director import director

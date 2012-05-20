@@ -4,10 +4,11 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, q"
+tags = "transform_anchor, scale, zoom"
 
 import cocos
 from cocos.director import director
-from cocos.actions import *
 from cocos.sprite import *
 from cocos.layer import *
 import pyglet
