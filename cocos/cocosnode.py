@@ -437,7 +437,7 @@ class CocosNode(object):
         If the node was added with name, it is better to remove by name, else
         the name will be unavailable for further adds ( and will raise Exception
         if add with this same name is attempted)
-        
+
         If the node was part of the active scene, its on_exit method will be called.
 
         :Parameters:
@@ -478,7 +478,7 @@ class CocosNode(object):
 
     def get( self, name ):
         """Gets a child given its name
-        
+
         :Parameters:
             `name` : string
                 name of the reference to be get
@@ -500,7 +500,7 @@ class CocosNode(object):
         Called every time just before the node enters the stage.
 
         scheduled calls and worker actions begins or continues to perform
-        
+
         Good point to do .push_handlers if you have custom ones
         Rule: a handler pushed there is near certain to require a .pop_handlers
         in the .on_exit method (else it will be called even after removed from
@@ -805,11 +805,11 @@ class CocosNode(object):
             matrix.scale(self._scale, self._scale)
             matrix.translate( -self.transform_anchor_x, -self.transform_anchor_y )
 
-            
-            self.is_transform_dirty = False 
+
+            self.is_transform_dirty = False
 
             self.transform_matrix = matrix
-    
+
         return self.transform_matrix
 
     def get_world_transform( self ):
@@ -826,7 +826,7 @@ class CocosNode(object):
 
         return matrix
 
-    def point_to_world( self, p ): 
+    def point_to_world( self, p ):
         '''returns an euclid.Vector2 converted to world space
 
         :rtype: euclid.Vector2
@@ -844,8 +844,8 @@ class CocosNode(object):
 
             matrix = self.get_local_transform().inverse()
             self.inverse_transform_matrix = matrix
-            self.is_inverse_transform_dirty = False 
-    
+            self.is_inverse_transform_dirty = False
+
         return self.inverse_transform_matrix
 
     def get_world_inverse( self ):
@@ -862,7 +862,7 @@ class CocosNode(object):
 
         return matrix
 
-    def point_to_local( self, p ): 
+    def point_to_local( self, p ):
         '''returns an euclid.Vector2 converted to local space
 
         :rtype: euclid.Vector2

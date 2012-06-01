@@ -269,7 +269,7 @@ def load_tmx(filename):
             elif c.tag == 'tile':
                 # add properties to tiles in the tileset
                 gid = tileset.firstgid + int(c.attrib['id'])
-                tile = tileset.get_tile(gid)
+                tile = tileset[gid]
                 props = c.find('properties')
                 if props is None:
                     continue
@@ -305,14 +305,12 @@ def load_tmx(filename):
                         break
             i = n % width
             j = height - (n // width + 1)
-            cells[i][j] = RectCell(i, j, tile_width, tile_height, {}, tile)
+            c = cells[i][j] = RectCell(i, j, tile_width, tile_height, {}, tile)
 
         id = layer.attrib['name']
-        visible = int(layer.attrib.get('visible', 1))
-
-        # XXX TODO properties
 
         m = RectMapLayer(id, tile_width, tile_height, cells, None, {})
+        m.visible = int(layer.attrib.get('visible', 1))
 
         resource.add_resource(id, m)
 
@@ -501,6 +499,7 @@ class TileSet(dict):
         atlas = pyglet.image.TextureGrid(image_grid)
         id = firstgid
         ts = cls(name, {})
+        ts.firstgid = firstgid
         for j in range(rows-1, -1, -1):
             for i in range(columns):
                 ts[id] = Tile(id, {}, atlas[j, i])
@@ -703,7 +702,7 @@ class MapLayer(layer.ScrollableLayer):
         for col in self.cells:
             for cell in col:
                 for k in requirements:
-                    if cell.properties.get(k) != requirements[k]:
+                    if cell.get(k) != requirements[k]:
                         break
                 else:
                     r.append(cell)
@@ -873,6 +872,8 @@ class RectMapCollider(object):
     '''This class implements collisions between a moving rect object and a
     tilemap.
     '''
+    resting = False
+
     def collide_bottom(self, dy):
         pass
 
@@ -894,6 +895,7 @@ class RectMapCollider(object):
 
         Returns the (possibly modified) (dx, dy)
         '''
+        self.resting = False
         tested = set()
         for cell in map.get_in_region(*(new.bottomleft + new.topright)):
             if cell is None or cell.tile is None:
@@ -933,8 +935,7 @@ class RectMapCollider(object):
 
         Returns the (possibly modified) (dx, dy)
         '''
-        g = cell.tile.properties.get
-        self.resting = False
+        g = cell.get
         if (g('top') and last.bottom >= cell.top and new.bottom < cell.top):
             dy = last.y - new.y
             new.bottom = cell.top
