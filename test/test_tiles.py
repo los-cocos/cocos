@@ -22,6 +22,7 @@ class DriveCar(actions.Driver):
         scroller.set_focus(self.target.x, self.target.y)
 
 def main():
+    global keyboard, scroller
     from cocos.director import director
     director.init(width=600, height=300, do_not_scale=True, resizable=True)
 
