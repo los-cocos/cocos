@@ -305,7 +305,7 @@ def load_tmx(filename):
                         break
             i = n % width
             j = height - (n // width + 1)
-            c = cells[i][j] = RectCell(i, j, tile_width, tile_height, {}, tile)
+            cells[i][j] = RectCell(i, j, tile_width, tile_height, {}, tile)
 
         id = layer.attrib['name']
 
