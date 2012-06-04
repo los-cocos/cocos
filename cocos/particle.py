@@ -56,7 +56,7 @@ rand = lambda: random.random() * 2 - 1
 # from pyglet's user list
 def PointerToNumpy(a, ptype=ctypes.c_float):
     a = numpy.ascontiguousarray(a)           # Probably a NO-OP, but perhaps not
-    return a.ctypes.data_as(ctypes.POINTER(ptype)) # Ugly and undocumented! 
+    return a.ctypes.data_as(ctypes.POINTER(ptype)) # Ugly and undocumented!
 
 class Color( object ):
     def __init__( self, r,g,b,a ):
@@ -145,30 +145,8 @@ class ParticleSystem( CocosNode ):
     total_particles = 0
 
     #:texture for the particles
-    texture = None
-
-    if True:
-        # compatible with cocos < 0.5, bad behavior, see issue 168
-        # for particles is wrong to use pyglet.resouce.image
-        texture = pyglet.resource.image('fire.png').texture
-        print """
-        cocos 0.5 deprecation warning:
-        particles.py loading image with 'pyglet.resource.image(...)'
-        Next cocos version will use 'pyglet.image.load(...) which fixes
-        issue 168 and can change the rendered size for particles.
-        New code should bundle cocos and switch to the correct behavior.
-        """
-    else:
-        # correct behavior, will be the one for cocos > 0.5
-        # always use pyglet.resource.image to get the particle texture
-        import os
-        from pyglet import image
-        # this in not zip safe for py2exe
-        ppath = os.path.abspath(__file__).split(os.sep)
-        ppath = ppath[:-1] + ['resources', 'fire.png']
-        fname = os.path.join(*ppath)
-        pic = image.load(fname)
-        texture = pic.get_texture()        
+    pic = pyglet.image.load('fire.png', file=pyglet.resource.file('fire.png'))
+    texture = pic.get_texture()
 
     #:blend additive
     blend_additive = False
@@ -207,7 +185,7 @@ class ParticleSystem( CocosNode ):
 
         #: How many particles can be emitted per second
         self.emit_counter = 0
-        
+
         #: Count of particles
         self.particle_count = 0
 
@@ -374,7 +352,7 @@ class ParticleSystem( CocosNode ):
         idx = -1
 
         if len(idxs[0]) > 0:
-            idx = idxs[0][0] 
+            idx = idxs[0][0]
         else:
             raise ExceptionNoEmptyParticle()
 
@@ -402,7 +380,7 @@ class ParticleSystem( CocosNode ):
 
         # tangential accel
         self.particle_tan[idx] = self.tangential_accel + self.tangential_accel_var * rand()
-        
+
         # life
         life = self.particle_life[idx] = self.life + self.life_var * rand()
 
