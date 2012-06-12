@@ -509,7 +509,9 @@ class ScaleBy(ScaleTo):
 
 class Blink( IntervalAction ):
     """Blinks a `CocosNode` object by modifying it's visible attribute
-    
+
+    The action ends with the same visible state than at the start time.
+
     Example::
 
         # Blinks 10 times in 2 seconds
@@ -530,10 +532,13 @@ class Blink( IntervalAction ):
         self.times = times
         self.duration = duration
 
+    def start(self):
+        self.end_invisible = not self.target.visible 
+
     def update(self, t):
         slice = 1 / float( self.times )
         m =  t % slice
-        self.target.visible = (m  >  slice / 2.0)
+        self.target.visible = self.end_invisible ^ (m  <  slice / 2.0)
 
     def __reversed__(self):
         return self
