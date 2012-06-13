@@ -259,11 +259,10 @@ def load_tmx(filename):
 
         for c in tag.getchildren():
             if c.tag == "image":
-                # create a tileset
+                # create a tileset from the image atlas
                 path = resource.find_file(c.attrib['source'])
-                # XXX TODO properties
                 tileset = TileSet.from_atlas(name, firstgid, path, tile_width, tile_height)
-                # XXX tile IDs as tile-<id> added to the resource
+                # TODO consider adding the individual tiles to the resource?
                 tilesets.append(tileset)
                 resource.add_resource(name, tileset)
             elif c.tag == 'tile':
@@ -277,7 +276,7 @@ def load_tmx(filename):
                     # store additional properties.
                     name = p.attrib['name']
                     value = p.attrib['value']
-                    # TODO hax
+                    # TODO consider more type conversions?
                     if value.isdigit():
                         value = int(value)
                     tile.properties[name] = value
