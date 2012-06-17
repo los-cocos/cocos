@@ -21,7 +21,7 @@ class TestLayer(cocos.layer.Layer):
 
         self.sprite = Sprite( 'grossini.png', (x/2, y/2) )
         self.add( self.sprite, name='sprite' )
-        self.sprite.do( MoveBy( (x/2,y/2), 10 ) )
+        self.sprite.do( MoveBy( (x/2,y/2), 6 ) )
 
 def main():
     director.init()

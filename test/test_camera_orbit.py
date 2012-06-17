@@ -4,7 +4,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 4, s, t 8, s, t 12, s, t 16.1, s, q"
+testinfo = "t 0.1, s, t 2, s, t 4, s, t 6, s, t 8, s, t 10, s, t 12, s, t 14, s, t 16.1, s, q"
 tags = "OrbitCamera"
 
 import pyglet
@@ -43,6 +43,8 @@ def main():
     rot = OrbitCamera( angle_x=45,  angle_z=0, delta_z=360, duration=8 )
     rot2 = OrbitCamera( radius=2, delta_radius=-1, angle_x=0, angle_z=0, delta_z=360, duration=8 )
 
+    # In real code after a sequence of grid actions the StopGrid() action
+    # should be called. Omited here to stay in the last grid action render
     background.do( rot + Reverse(rot) )
     color.do( rot2 + Reverse(rot2) )
 

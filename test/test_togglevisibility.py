@@ -4,12 +4,12 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, q"
+testinfo = "s, t 1.1, s, q"
 tags = "ToggleVisibility"
 
 import cocos
 from cocos.director import director
-from cocos.actions import  ToggleVisibility
+from cocos.actions import  Delay, ToggleVisibility
 from cocos.sprite import Sprite
 import pyglet
 
@@ -21,12 +21,12 @@ class TestLayer(cocos.layer.Layer):
 
         self.sprite = Sprite( 'grossini.png', (x/4, y/2) )
         self.add( self.sprite )
-        self.sprite.do( ToggleVisibility( ) )
+        self.sprite.do( Delay(1) + ToggleVisibility( ) )
 
         self.sprite2 = Sprite( 'grossini.png', (x/4*3, y/2) )
         self.sprite2.visible = False
         self.add( self.sprite2 )
-        self.sprite2.do( ToggleVisibility(  ) )
+        self.sprite2.do( Delay(1) + ToggleVisibility(  ) )
 
 def main():
     director.init()

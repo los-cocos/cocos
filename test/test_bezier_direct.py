@@ -65,7 +65,7 @@ class TestLayer(cocos.layer.Layer):
         sprite = Sprite('fire.png')
         sprite.scale = .3
         sprite.color = (0, 0, 255)
-        self.add(sprite)
+        self.add(sprite, z=5)
         sprite.do(Bezier(bezier_path, 5))
 
 def main():

@@ -4,12 +4,12 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, q"
+testinfo = "s, t 1.1, s, q"
 tags = "CallFunc, visible"
 
 import cocos
 from cocos.director import director
-from cocos.actions import CallFunc
+from cocos.actions import CallFunc, Delay
 from cocos.sprite import Sprite
 import pyglet
 
@@ -25,9 +25,14 @@ class TestLayer(cocos.layer.Layer):
 
         def make_visible( sp ):
             sp.visible = True
-        self.sprite.do( CallFunc( make_visible, self.sprite ) )
+        self.sprite.do( Delay(1) + CallFunc( make_visible, self.sprite ) )
+
+description = """Sprite grossini starts invisible, after 1 second will turn
+visible thanks to action CallFunc
+"""
 
 def main():
+    print description
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

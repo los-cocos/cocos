@@ -4,12 +4,12 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, q"
+testinfo = "s, t 1.1, s, q"
 tags = "Sprite, Show, visible"
 
 import cocos
 from cocos.director import director
-from cocos.actions import Show
+from cocos.actions import Show, Delay
 from cocos.sprite import Sprite
 
 import pyglet
@@ -23,7 +23,7 @@ class TestLayer(cocos.layer.Layer):
         self.sprite = Sprite( 'grossini.png', (x/2,y/2) )
         self.sprite.visible = False
         self.add( self.sprite )
-        self.sprite.do( Show(  ) )
+        self.sprite.do( Delay(1) + Show(  ) )
 
 def main():
     director.init()

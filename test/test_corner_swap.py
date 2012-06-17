@@ -4,7 +4,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 0.5, s, t 1.1, s, q"
+testinfo = "s, t 0.4, s, t 1.1, s, q"
 tags = "CornerSwap"
 
 import pyglet

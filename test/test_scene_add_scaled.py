@@ -29,10 +29,10 @@ class TestLayer(cocos.layer.Layer):
 def main():
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
-    main_scene.add( ColorLayer( 0, 0, 255, 255 ) )
+    main_scene.add( ColorLayer( 0, 0, 255, 255 ), z=-2 )
     l = ColorLayer( 255, 0, 0, 255 )
     l.scale = 0.5
-    main_scene.add( l )
+    main_scene.add( l, z=-1 )
     l2 =  TestLayer()
     l2.scale = 2.0
     main_scene.add( l2 )
