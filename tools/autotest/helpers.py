@@ -2,6 +2,7 @@ import sys
 import os
 import re
 import itertools as ito
+import copy
 
 import remembercases.db as dbm
 import remembercases.doers as doers
@@ -79,41 +80,46 @@ def new_testbed(db, testbed, basepath):
     db.add_testbed(testbed, basepath)
     db.set_default_testbed(testbed)
 
-    default_props = [
-        # script can't be loaded
-        'IOerror',
+    default_groups = {
+        "scan" : [
+            # script can't be loaded
+            'IOerror',
+            
+            # hints behavior, based on script's text
+            'timedependent',
+            'interactive',
+            'uses_random',
+            'has_testinfo', # string 'testinfo' present, maybe theres a real testinfo
+
+            # secondary behavior hints, combination of above
+            'static',
+
+            # testinfo
+            'testinfo',
+            'expected_snapshots',
+            'testinfo_diagnostic',
+            'md5_at_testinfo',
+            ],
         
-        # hints behavior, based on script's text
-        'timedependent',
-        'interactive',
-        'uses_random',
-        'has_testinfo', # string 'testinfo' present, maybe theres a real testinfo
-
-        # secondary behavior hints, combination of above
-        'static',
-
-        # testinfo
-        'testinfo',
-        'expected_snapshots',
-        'testinfo_diagnostic',
-        'md5_at_testinfo',
-
-        # props set by scanning the script changed 
-        'scan_changed',
-
-        # snapshots capture
-        'snapshots_success',
-        'snapshots_diagnostic',
-        'missing_snapshots'
-        ]
+        "snapshots_capture": [
+            'snapshots_success',
+            'snapshots_diagnostic',
+            'missing_snapshots',
+            ],
+        
+        "testrun": [
+            'testrun_success', # 'pass', 'fail', 'error'
+            'testrun_diagnostic',
+            'testrun_md5'
+            ]
+        }
     
-    for propname in default_props:
-        db.add_prop(propname)
+    for groupname in default_groups:
+        db.add_group(groupname, default_groups[groupname], addprops=True)
 
     # add to history
-    text_props = '\n  '.join(default_props)
     text_history = ("testbed: %s\n basepath: %s\nprops:"%(testbed, basepath) +
-                    text_props)
+                    "not implemented")
     db.history_add("new_testbed", text_history)
 
 def add_targets(db, filename_persist, targets):
@@ -125,7 +131,18 @@ def add_targets(db, filename_persist, targets):
     db.history_add('add_targets','\n'.join(scripts))
     dbm.db_save(db, filename_persist)
 
-def propdict_from_text(text, fname, base_text_props):
+def scanprops_from_text(text, fname):
+    base_text_props = [
+        'timedependent',
+        'interactive',
+        'uses_random',
+        'has_testinfo',
+        ]
+
+    if text is None:
+        propdict = {'IOerror': True}
+        return propict
+
     # get the props that are simple string matchs in text
     propdict = text_props_simple(text, base_text_props)
 
@@ -145,70 +162,27 @@ def propdict_from_text(text, fname, base_text_props):
 
     return propdict
 
-def update_scan_props(db, filename_persist, candidates):
+def scanprops_from_fname(fname):
+    try:
+        text = doers.load_text(fname)
+    except:
+        text = None
+    return scanprops_from_text(text, fname)        
+
+def update_scanprops(db, filename_persist, candidates):
     """
-    Adds the canonical filenames as entities in the db's default_testbed,
-    for each one calculates and sets some informative props:
-        'timedependent': guessed screen render changes over time
-        'interactive': guessed requires user interaction
-        'uses_random': guessed uses module random
-        'static': guessed screenrender don't changes over time
+    For each script in candidates the props in 'scan' group are calculated and
+    stored as script props.
 
-    Notice all candidte's props are erased then set to the ones calculated
-    over the candidate test.
-    This is to avoid stale information in the db.
-
-    OUTDATED ^    
+    candidates should be known entities in the db
     """
-    base_text_props = [
-        'timedependent',
-        'interactive',
-        'uses_random',
-        'has_testinfo',
-        ]
-
-    other_props = [ 
-        'IOerror',
-        'static',
-        'testinfo',
-        'expected_snapshots',
-        'testinfo_diagnostic',
-        'md5_at_testinfo',
-        'scan_changed'
-        ]
-
-    all_scan_props = base_text_props + other_props
-    default__propdict = dict( [ (k, None) for k in all_scan_props] )
     
     known_scripts, unknowns = db.entities(candidates=candidates)
 
     for script in known_scripts:
         fname = db.fname_from_canonical(script)
-        load_ok = True
-        try:
-            text = doers.load_text(fname)
-        except:
-            load_ok = False
-            
-        if load_ok:
-            propdict = propdict_from_text(text, fname, base_text_props)
-        else:
-            propdict = {'IOerror': True}
-
-        old_propdict = db.get_propdict(script)
-        scan_changed = ('scan_changed' not in old_propdict or
-                        old_propdict['scan_changed'])
-        propdict['scan_changed'] = scan_changed #more below
-
-        to_delete = [prop for prop in old_propdict if prop not in propdict]
-        db.del_entity_props(script, to_delete)
-        scan_changed = scan_changed or len(script) 
-
-        if not scan_changed:
-            scan_changed = any((propdict[k]!=old_propdict[k] for k in propdict))
-        propdict['scan_changed'] = scan_changed
-
-        db.update_entity_propdict(script, propdict)
+        scanprops = scanprops_from_fname(fname)
+        db.set_groupdict(script, 'scan', scanprops)
 
     # update history
     text = '\n'.join(known_scripts)
@@ -293,8 +267,6 @@ def update_snapshots(db, filename_persist, target_scripts, snapshots_dir):
             print 'err:', err
         db.set_prop_value(script, 'snapshots_diagnostic', snapshots_diagnostic)
 
-        # reset 'scan_change'; the snapshots capture is in sync with testinfo
-        db.set_prop_value(script, 'scan_changed', False)
 
     # update history
     text = '\n'.join(known_scripts)
@@ -302,6 +274,65 @@ def update_snapshots(db, filename_persist, target_scripts, snapshots_dir):
 
     dbm.db_save(db, filename_persist)
     return known_scripts, unknowns
+
+def _update_testrun(db, candidates_w_props, snapshots_dir):
+    """
+    the propdict for each candidate must have been tested for keys in testrun
+    """
+
+    known_scripts, unknowns = db.entities(candidates=candidates_w_props)
+    ignored = set()
+
+    for script in known_scripts:
+        fname = db.fname_from_canonical(script)
+        propdict = scanprops_from_fname(fname)
+
+        if propdict != db.get_groupdict(script, 'scan'):
+            # potential changes in script after snapshots done, ignore
+            ignored.add(script)
+            continue
+        d = copy.deepcopy(candidates_w_props[script])
+        d['testrun_md5'] = propdict['md5_at_testinfo']
+        db.set_groupdict(script, 'testrun', d)
+
+    checked_in = set([k for k in known_scripts if k not in ignored])
+    return checked_in, ignored, unknowns
+
+
+def update_testrun__pass(db, filename_persist, candidates,
+                         snapshots_dir, snapshots_reference_dir=None):
+    """
+    snapshots_reference_dir : dir to move snapshots; if None no move
+    """
+    
+    if snapshots_reference_dir:
+        if not os.path.isdir(snapshots_dir):
+            raise ValueError("snapshot dir not found or not a dir:%s"%snapshots_dir)
+        if not os.path.exists(snapshots_reference_dir):
+            os.makedirs(snapshots_reference_dir)
+
+    pass_dict = {
+        'testrun_success': 'pass',
+        'testrun_diagnostic': '',
+        }
+
+    candidates_w_props = dict([(k, pass_dict) for k in candidates])
+    checked_in, ignored, unknown = _update_testrun(db, candidates_w_props,
+                                                   snapshots_dir)
+
+    move_failed = set()
+    if snapshots_reference_dir:
+        # move snapshots to reference dir 
+        for script in checked_in:
+            snapshots = db.get_prop_value(script, 'expected_snapshots')
+            moved, cant_move = doers.move_files(snapshots, snapshots_dir,
+                                                snapshots_reference_dir)
+            if cant_move:
+                db.del_groupdict(script, 'testrun')
+                move_failed.add(script)
+
+    checked_in -= move_failed 
+    return checked_in, unknown, move_failed
 
 # >>> some useful selectors
 
@@ -325,17 +356,11 @@ def fn_allow_snapshots_success(propdict):
 def fn_allow_snapshots_failure(propdict):
     return 'snapshots_success' in propdict and not propdict['snapshots_success']
 
-def fn_allow_scan_changed(propdict):
-    return 'scan_changed' in propdict and propdict['scan_changed']
-
-def fn_allow_md5_changed(propdict):
-    return ( 'md5_at_testinfo' in propdict and
-             'md5_last' in propdict and
-             propdict['md5_at_testinfo']==propdict['md5_last'])
-
 def fn_allow_IOerror(propdict):
     return 'IOerror' in propdict and propdict['IOerror']
     
+def fn_allow_testrun_pass(propdict):
+    return 'testrun_success' in propdict and propdict['testrun_success']=='pass'
 
 def get_scripts(db, selector, candidates=None, testbed=None):
     was_unknown = (selector == 'unknown')
@@ -365,10 +390,9 @@ def section(db, selector, candidates=None, verbose=None, testbed=None):
         'all': "All scripts",
         'snapshots_success': "Scripts that have taken snapshots succesfuly",
         'snapshots_failure': "Scripts that atempted to take snapshots but failed",
-        'md5_changed': "Script that changed it md5 from the time testinfo was captured",
-        'unknown': "Script not known to the db",
-        'scan_changed': "Scripts that changed some of the scan props",
+        'unknown': "Scripts not known to the db",
         'IOerror': "Scripts that can't be readed",
+        'testrun_pass': "Scripts showing correct behavior and snapshots reflect that",
         }
     scripts, unknown = get_scripts(db, selector, candidates, testbed)
     scripts = sorted(scripts)

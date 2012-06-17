@@ -67,6 +67,7 @@ Working now (toward milestone 1+2)
 	> adding testinfo to remaining test
 	> expand testinfo spec and support for interactive tests using KBD, other interactions.
 	> explore how to handle human assessment
+		+ bulk register a bunch of test 'pass' (recon.py update_3)
 	
 
 Milestone 2
