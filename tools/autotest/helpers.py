@@ -275,6 +275,25 @@ def update_snapshots(db, filename_persist, target_scripts, snapshots_dir):
     dbm.db_save(db, filename_persist)
     return known_scripts, unknowns
 
+def re_scan_and_shoot(db, filename_persist, target_scripts, snapshots_dir):
+    known_scripts, unknowns = db.entities(candidates=target_scripts)
+
+    # delete old snapshots
+    for script in known_scripts:
+        try:
+            snaps = db.get_prop_value(script, 'expected_snapshots')
+            for name in snaps: 
+                p = os.path.join(snapshots_dir, name)
+                if os.path.exists(p):
+                    os.remove(p)
+        except dbm.ErrorUnknownPropInEntity:
+            pass
+
+    # scan
+    update_scanprops(db, filename_persist, known_scripts)
+    # do snapshots
+    update_snapshots(db, filename_persist, known_scripts, snapshots_dir)
+
 def _update_testrun(db, candidates_w_props, snapshots_dir):
     """
     the propdict for each candidate must have been tested for keys in testrun
@@ -362,6 +381,10 @@ def fn_allow_IOerror(propdict):
 def fn_allow_testrun_pass(propdict):
     return 'testrun_success' in propdict and propdict['testrun_success']=='pass'
 
+def fn_allow_new_no_interactive(propdict):
+    return ( 'testinfo' not in propdict and
+             'interactive' in propdict and not propdict['interactive'] )
+
 def get_scripts(db, selector, candidates=None, testbed=None):
     was_unknown = (selector == 'unknown')
     if was_unknown:
@@ -393,6 +416,7 @@ def section(db, selector, candidates=None, verbose=None, testbed=None):
         'unknown': "Scripts not known to the db",
         'IOerror': "Scripts that can't be readed",
         'testrun_pass': "Scripts showing correct behavior and snapshots reflect that",
+        'new_no_interactive': "No testinfo, no interactive",
         }
     scripts, unknown = get_scripts(db, selector, candidates, testbed)
     scripts = sorted(scripts)

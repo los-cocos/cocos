@@ -227,6 +227,191 @@ def update_3(db, filename_persist, snapshots_dir, snapshots_reference_dir):
 
     return checked_in, unknown, move_failed
 
+def update_4(db, filename_persist, snapshots_dir):
+    """ scan + snapshopts for this files """
+    text = """
+
+        : update4
+
+        : testinfo added
+         
+         test/test_SequenceScene.py
+         test/test_cocosz.py
+         test/test_delay.py
+         test/test_draw.py
+         test/test_grid_effect_in_layer.py
+         test/test_grid_effect_in_sprite.py
+         test/test_jumptiles3d.py
+         test/test_lens_3d.py
+         test/test_liquid_16_x_16.py
+         test/test_move_corner_down.py
+         test/test_move_corner_up.py
+         test/test_multiple_grid_effects.py
+         test/test_particle_explosion.py
+         test/test_particle_fire.py
+         test/test_particle_fireworks.py
+         test/test_particle_flower.py
+         test/test_particle_galaxy.py
+         test/test_particle_meteor.py
+         test/test_particle_smoke.py
+         test/test_particle_spiral.py
+         test/test_transition_corner_move.py
+         test/test_transition_envelope.py
+         test/test_transition_fade.py
+         test/test_transition_fadebl.py
+         test/test_transition_fadetr.py
+         test/test_transition_fadeup.py
+         test/test_transition_flip_angular.py
+         test/test_transition_flipx.py
+         test/test_transition_flipy.py
+         test/test_transition_jumpzoom.py
+         test/test_transition_movein_t.py
+         test/test_transition_rotozoom.py
+         test/test_transition_shrink_grow.py
+         test/test_transition_shuffle.py
+         test/test_transition_slidein_l.py
+         test/test_transition_splitcols.py
+         test/test_transition_splitrows.py
+         test/test_transition_turnofftiles.py
+         test/test_transition_zoom.py
+         test/test_quadmoveby.py
+         test/test_reuse_grid.py
+         test/test_reverse.py
+         test/test_reverse_time.py
+         test/test_ripple3d.py
+         test/test_shader.py
+         test/test_shaky3d.py
+         test/test_shakytiles3d.py
+         test/test_shattered_tiles_3d.py
+         test/test_skeleton_anim.py
+         test/test_skeleton_bitmap_skin.py
+         test/test_skew_horizontal.py
+         test/test_skew_vertical.py
+         test/test_sprite_aabb.py
+         test/test_stop_grid.py
+         test/test_transform_anchor.py
+         test/test_turnoff_tiles.py
+         test/test_twirl.py
+         test/test_waves.py
+         test/test_waves3d.py
+         test/test_waves_horizontal.py
+         test/test_waves_vertical.py
+         test/test_world_coordinates.py
+    """
+
+    candidates = doers.scripts_names_from_text(text, end_mark=':')
+
+    # scan candidates to get info needed by update snapshots
+    candidates, unknowns = hl.update_scanprops(db, filename_persist, candidates)
+    assert len(unknowns) == 0
+
+    # do snapshots
+    candidates, unknowns = hl.update_snapshots(db, filename_persist, candidates,
+                                            snapshots_dir)
+    li = list(candidates)
+    li.sort()
+    text_history = '\n'.join(li)
+
+    assert len(unknowns)==0
+    db.history_add("updated tests and snapshots", text_history)
+    dbm.db_save(db, filename_persist)
+
+def update_5(db, filename_persist, snapshots_dir):
+    """ re-(scan + snapshot) for this files"""
+    text = """
+         test/test_SequenceScene.py
+         test/test_lens_3d.py
+         test/test_fadeto.py
+         test/test_grid_effect_in_layer.py
+         test/test_grid_effect_in_sprite.py
+         test/test_particle_explosion.py
+         test/test_particle_fire.py
+         test/test_particle_fireworks.py
+         test/test_particle_flower.py
+         test/test_particle_galaxy.py
+         test/test_particle_meteor.py
+         test/test_particle_smoke.py
+         test/test_particle_spiral.py
+         test/test_transition_jumpzoom.py
+         test/test_transition_rotozoom.py
+         """
+    candidates = doers.scripts_names_from_text(text, end_mark=':')
+    hl.re_scan_and_shoot(db, filename_persist, candidates, snapshots_dir)
+
+def update_6(db, filename_persist, snapshots_dir, snapshots_reference_dir):
+    """
+    This files 'pass', register them as such and move their snapshots
+    to the reference snapshots folder
+    """
+    text = """
+        : Snapshots inspected, 'pass'
+
+        test/test_cocosz.py
+        test/test_delay.py
+        test/test_draw.py
+        test/test_liquid_16_x_16.py
+        test/test_move_corner_down.py
+        test/test_move_corner_up.py
+        test/test_multiple_grid_effects.py
+        test/test_transition_corner_move.py
+        test/test_transition_envelope.py
+        test/test_transition_fade.py
+        test/test_transition_fadebl.py
+        test/test_transition_fadetr.py
+        test/test_transition_fadeup.py
+        test/test_transition_flip_angular.py
+        test/test_transition_flipx.py
+        test/test_transition_flipy.py
+        test/test_transition_movein_t.py
+        test/test_transition_shrink_grow.py
+        test/test_transition_shuffle.py 
+        test/test_transition_slidein_l.py
+        test/test_transition_splitcols.py
+        test/test_transition_splitrows.py
+        test/test_transition_turnofftiles.py
+        test/test_quadmoveby.py
+        test/test_reuse_grid.py
+        test/test_reverse.py
+        test/test_reverse_time.py
+        test/test_ripple3d.py
+        test/test_shader.py
+        test/test_shaky3d.py
+        test/test_shakytiles3d.py
+        test/test_shattered_tiles_3d.py
+        test/test_skeleton_anim.py
+        test/test_skeleton_bitmap_skin.py
+        test/test_skew_horizontal.py
+        test/test_skew_vertical.py
+        test/test_sprite_aabb.py
+        test/test_stop_grid.py
+        test/test_transform_anchor.py
+        test/test_turnoff_tiles.py
+        test/test_twirl.py
+        test/test_waves.py
+        test/test_waves3d.py
+        test/test_waves_horizontal.py
+        test/test_waves_vertical.py
+        test/test_world_coordinates.py
+        test/test_fadeto.py
+        test/test_grid_effect_in_layer.py
+        test/test_grid_effect_in_sprite.py
+        test/test_transition_jumpzoom.py
+        test/test_lens_3d.py
+        test/test_transition_rotozoom.py
+        """
+
+    candidates = doers.scripts_names_from_text(text, end_mark=':')
+    checked_in, unknown, move_failed = hl.update_testrun__pass(db,
+                                        filename_persist, candidates,
+                                        snapshots_dir, snapshots_reference_dir)    
+
+    checked = [ k for k in checked_in ]
+    checked.sort()
+    text_hystory = doers.pprint_to_string(checked)
+    db.history_add("updated testrun pass", text)
+    dbm.db_save(db, filename_persist)
+
+    return checked_in, unknown, move_failed
 
 # <-- one-off tasks
 
@@ -274,16 +459,24 @@ if clean:
     # asses these tests pass human inspection; store snapshots for reference
     update_3(db, filename_persist, snapshots_dir, snapshots_reference_dir)
 
+    update_4(db, filename_persist, snapshots_dir)
+    update_5(db, filename_persist, snapshots_dir)
+
 else:
     db = dbm.db_load(filename_persist, default_testbed=testbed)
 
+# asses these tests pass human inspection; store snapshots for reference
+update_6(db, filename_persist, snapshots_dir, snapshots_reference_dir)
 print progress_report(db, verbose=False)
-##print hl.rpt(db, ['testinfo_invalid'], verbose=True)
+print hl.rpt(db, ['testinfo_invalid'], verbose=True)
 ##print hl.rpt(db, ['IOerror'])
-##print hl.rpt_detail_diagnostics(db, 'snapshots_failure')
+print hl.rpt_detail_diagnostics(db, 'snapshots_failure')
 ##print hl.rpt_detail_diagnostics(db, 'testinfo_invalid')
 ##print hl.rpt(db, ['snapshots_success'], verbose=True)
 #pprint.pprint(db.db)
 
-    
+# select new batch of candidates to add testinfo: dont have testinfo, not
+# interactive, 
+##candidates, unknowns = hl.get_scripts(db, 'new_no_interactive')
+##pprint.pprint(candidates)
 

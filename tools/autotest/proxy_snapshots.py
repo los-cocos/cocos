@@ -3,6 +3,10 @@ import os
 
 import remembercases.snapshot_taker as st
 
+import random
+# seed random for repeteability
+random.seed('123')
+
 import pyglet
 import cocos
 from cocos.director import director
