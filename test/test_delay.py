@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 3, s, t 4.1, s, t 6, s, q"
+tags = "Delay, RandomDelay"
 
 import cocos
 from cocos.director import director
@@ -25,7 +27,7 @@ class TestLayer(cocos.layer.Layer):
         self.sprite3 = Sprite( 'grossini.png', (0, y/4*3) )
         self.add( self.sprite3 )
 
-        self.sprite.do( Delay(3) + MoveBy( (x, 0) )  )
+        self.sprite.do( Delay(2) + MoveBy( (x, 0) )  )
         self.sprite2.do( RandomDelay(2,4) + MoveBy( (x, 0) )  )
         self.sprite3.do( RandomDelay(2,4) + MoveBy( (x, 0) )  )
 

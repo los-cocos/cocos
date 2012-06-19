@@ -4,6 +4,9 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1, s, t 2, s, t 3, s, t 4, s, q"
+tags = "particles, Fireworks"
+
 import pyglet
 import cocos
 from cocos.director import director

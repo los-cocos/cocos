@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 2, s, t 5.1, s, q"
+tags = "Waves"
 
 import cocos
 from cocos.director import director
@@ -25,7 +27,10 @@ def main():
 
     main_scene.add( BackgroundLayer(), z=0 )
 
-    main_scene.do( Waves( hsin=False, vsin=True, waves=10, grid=(16,16), duration=20) )
+    # In real code after a sequence of grid actions the StopGrid() action
+    # should be called. Omited here to stay in the last grid action render
+    main_scene.do( Waves( hsin=False, vsin=True, waves=2, grid=(16,16),
+                          duration=5) )
     director.run (main_scene)
 
 if __name__ == '__main__':

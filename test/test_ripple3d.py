@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 0.3, s, t 0.5, s, t 1, s, q"
+tags = "Ripple3D"
 
 import pyglet
 import cocos
@@ -28,7 +30,8 @@ def main():
     main_scene.add( BackgroundLayer(), z=0 )
 
     # important:  maintain the aspect ratio in the grid
-    e = Ripple3D( radius=240, grid=(32,24), duration=20, waves=20, amplitude=60 )
+    e = Ripple3D( radius=240, grid=(32,24), duration=20, waves=20,
+                  amplitude=60 )
     main_scene.do( e )
 
     director.run (main_scene)

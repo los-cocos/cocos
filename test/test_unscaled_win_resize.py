@@ -21,9 +21,13 @@ class TestLayer(cocos.layer.Layer):
         self.add( self.sprite )
         self.sprite.do( MoveTo( (x,y), 10 ) )
 
+description = """
+Using do_not_scale=True in director.init, content will not
+be scaled on resize. Use ctrl-f to toggle fullscreen
+"""
+
 def main():
-    print "Using do_not_scale=True in director.init, content will not"
-    print "be scaled on resize. Use ctrl-f to toggle fullscreen"
+    print description
     director.init(width=300, height=300, do_not_scale=True)
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

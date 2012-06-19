@@ -13,6 +13,11 @@ from cocos.scenes import *
 
 import time
 
+t0 = None
+scene1 = None
+scene2 = None
+scene3 = None
+stage = None
 last_current_scene = 123 #anything != None
 def report(t):
     global stage, scene1, scene2
@@ -117,6 +122,7 @@ class TestScene(cocos.scene.Scene):
         self.schedule(sequencer)
 
 def main():
+    global t0, scene1, scene2, scene3, stage
     usage()
     print "\nactual timeline:"
     director.init( resizable=True )

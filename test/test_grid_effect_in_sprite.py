@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1.7, s, t 3.7, s, t 6.7, s, t 9.7, s, t 12, s, q"
+tags = "Sprites, Waves, Twirl, WavesTiles3D, TurnOffTiles, StopGrid"
 
 import cocos
 from cocos.director import director
@@ -36,12 +38,13 @@ class TestLayer(cocos.layer.Layer):
         self.sprite.do( Repeat( ScaleBy( 5, 2 ) + ScaleBy( 0.2, 2 )  ) )
         self.sprite.do( Repeat( RotateBy( 360, 10 ) ) )
 
-        self.sprite.do( Waves( duration=5 ) + \
-                            Twirl( amplitude=1, twirls=3, grid=(32,24), duration=5 ) + \
-                            WavesTiles3D( waves=4, grid=(32,24), duration=5 ) + \
-                            TurnOffTiles( grid=(32,24), duration=2) + \
-                            Reverse( TurnOffTiles( grid=(32,24), duration=2) ) + \
-                            StopGrid() )
+        self.sprite.do(
+            Waves( duration=3 ) +
+            Twirl( amplitude=1, twirls=3, grid=(32,24), duration=3 ) + 
+            WavesTiles3D( waves=4, grid=(32,24), duration=3 ) + 
+            TurnOffTiles( grid=(32,24), duration=1.5) + 
+            Reverse( TurnOffTiles( grid=(32,24), duration=1.5) ) + 
+            StopGrid() )
 
 def main():
     director.init()

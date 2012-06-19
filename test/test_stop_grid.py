@@ -8,6 +8,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 2, s, t 5.1, s, q"
+tags = "StopGrid"
 
 import cocos
 from cocos.director import director
@@ -23,7 +25,14 @@ class BackgroundLayer( cocos.layer.Layer ):
     def draw( self ):
         self.img.blit(0,0)
 
+description = """
+After a grid action the action StopGrid should be called to restore the
+normal view. Here we go with a 2 seconds FlipX3D drid action, followed
+by StopGrid.
+"""
+
 def main():
+    print description
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 

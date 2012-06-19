@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1.0, s, t 2.0"
+tags = "Liquid"
 
 import cocos
 from cocos.director import director
@@ -26,7 +28,8 @@ def main():
 
     main_scene.add( BackgroundLayer(), z=0 )
 
-    main_scene.do( Liquid( waves=50, grid=(16,16), duration=100) )
+    #main_scene.do( Liquid( waves=5, grid=(16,16), duration=10) + StopGrid() )
+    main_scene.do( Liquid( waves=5, grid=(16,16), duration=10) )
     director.run (main_scene)
 
 if __name__ == '__main__':

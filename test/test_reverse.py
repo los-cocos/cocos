@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 2, s, t 5.1, s, q"
+tags = "Reverse"
 
 import cocos
 from cocos.director import director
@@ -19,7 +21,7 @@ class TestLayer(cocos.layer.Layer):
 
         self.sprite = Sprite( 'grossini.png', (x/2, y/2) )
         self.add( self.sprite )
-        self.sprite.do( Reverse( Rotate( 360, 10 ) ) )
+        self.sprite.do( Reverse( Rotate( 360, 5 ) ) )
 
 def main():
     director.init()

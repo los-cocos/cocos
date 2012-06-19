@@ -9,6 +9,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1, s, t 3, s, t 4, s, t 5, s, t 8.1, s"
+tags = "ShuffleTiles, Flip, ShuffleTiles"
 
 import pyglet
 
@@ -43,7 +45,14 @@ class BackgroundLayer( Layer ):
     def draw( self ):
         self.img.blit(0,0)
 
+description = """
+Aplying different effects to different scene parts. 
+The background does a ShuffleTiles, the layer with sprites does
+a Wave3D followed by a Flip.
+"""
+
 def main():
+    print description
     director.init( resizable=True )
     main_scene = Scene()
 
@@ -54,6 +63,8 @@ def main():
     main_scene.add( back, z=0 )
     main_scene.add( sprite, z=1 )
 
+    # In real code after a sequence of grid actions the StopGrid() action
+    # should be called. Omited here to stay in the last grid action render
     sprite.do( Waves3D(duration=4) + Flip(duration=4) )
     back.do( ShuffleTiles(duration=3, grid=(16,12)) )
     director.run (main_scene)

@@ -4,6 +4,9 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 0.33, s, t 0.66, s, t 1.1, s, q"
+tags = "MoveCornerDown"
+
 import pyglet
 import cocos
 from cocos.director import director

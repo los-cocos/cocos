@@ -3,6 +3,10 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
+
+testinfo = "s, t 0.3, s, t 0.6, s, t 1, s, q"
+tags = "skeleton, BitmapSkin, Animate"
+
 import cPickle
 
 import cocos

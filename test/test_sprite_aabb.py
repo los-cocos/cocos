@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 0.5, s, t 1, s, t 1.5, s, q"
+tags = "Sprite, bounding box"
 
 import cocos
 from cocos.director import director

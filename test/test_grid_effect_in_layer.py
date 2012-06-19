@@ -9,6 +9,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1, s, t 2.1, s, t 3.2, s, t 4.1, s, q"
+tags = "Layer, Waves3D, Flip"
 
 from cocos.director import director
 from cocos.actions import Flip, Waves3D
@@ -33,8 +35,13 @@ class SpriteLayer ( Layer ):
         self.add( sprite2 )
         self.add( sprite3 )
 
+description = """
+A scaled-down ColorLayer and three sprites, the scene at fist waves and
+then flips trough the use of Waves3D and Flip actions over the holder Layer 
+"""
+
 def main():
-    print 'you shall see an scaled red background and fliping sprites. the background always must be seen (scaled)'
+    print description
     director.init( resizable=True )
     main_scene = Scene()
 
@@ -47,7 +54,7 @@ def main():
     main_scene.add( red, z=0 )
     main_scene.add( sprite, z=1 )
 
-    sprite.do( Waves3D(duration=4) + Flip(duration=4) )
+    sprite.do( Waves3D(duration=2) + Flip(duration=2) )
     director.run (main_scene)
 
 if __name__ == '__main__':

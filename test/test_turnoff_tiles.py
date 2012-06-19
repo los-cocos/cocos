@@ -4,6 +4,9 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1, s, t 2.1, s, q"
+tags = "TurnOffTiles"
+
 import pyglet
 import cocos
 from cocos.director import director
@@ -26,7 +29,10 @@ def main():
     main_scene.add( BackgroundLayer(), z=0 )
 
     e = TurnOffTiles( grid=(16,12), duration=2 )
-    main_scene.do( e + Reverse(e) )
+
+    # In real code after a sequence of grid actions the StopGrid() action
+    # should be called. Omited here to stay in the last grid action render
+    main_scene.do( e )
     director.run (main_scene)
 
 if __name__ == '__main__':
