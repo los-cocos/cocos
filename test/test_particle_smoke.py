@@ -4,7 +4,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 1, s, t 2, s, t 3, s, t 4, s, q"
+testinfo = "f 10 0.033, s, f 20 0.033, s, f 30 0.033, s, f 30 0.033, s, q"
 tags = "particles, Smoke"
 
 import pyglet

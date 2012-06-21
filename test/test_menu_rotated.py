@@ -1,7 +1,11 @@
+# This code is so you can run the samples without installing the package
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
-# Cocos
-# http://code.google.com/p/los-cocos/
-#
+
+testinfo = "s, q"
+tags = "menu, layout_strategy, fixedPositionMenuLayout"
 
 import sys
 import os

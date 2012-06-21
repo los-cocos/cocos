@@ -4,10 +4,13 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1, s, q"
+tags = "director.init, do_not_scale"
+autotest = 0
 
 import cocos
 from cocos.director import director
-from cocos.actions import MoveTo
+from cocos.actions import MoveTo, Delay, CallFunc
 from cocos.sprite import Sprite
 import pyglet
 
@@ -20,6 +23,11 @@ class TestLayer(cocos.layer.Layer):
         self.sprite = Sprite( 'grossini.png' )
         self.add( self.sprite )
         self.sprite.do( MoveTo( (x,y), 10 ) )
+        if autotest:
+            self.do(Delay(1) + CallFunc(self.resize))
+
+    def resize(self):
+        director.window.set_size(600, 600)
 
 description = """
 Using do_not_scale=True in director.init, content will not

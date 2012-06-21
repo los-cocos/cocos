@@ -1,11 +1,11 @@
-#
-# Cocos
-# http://code.google.com/p/los-cocos/
-#
-
+# This code is so you can run the samples without installing the package
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+#
+
+testinfo = "s, q"
+tags = "menu, menu_valign, menu_halign"
 
 from pyglet import image
 from pyglet.gl import *
@@ -32,7 +32,8 @@ class MainMenu(Menu):
 
         ]
 
-        self.create_menu( items, selected_effect=zoom_in(), unselected_effect=zoom_out())
+        self.create_menu( items, selected_effect=zoom_in(),
+                          unselected_effect=zoom_out())
 
     def on_quit( self ):
         pyglet.app.exit()

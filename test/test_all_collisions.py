@@ -5,6 +5,9 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
+testinfo = "f 10 0.033, s, f 20 0.033, s, f 30 0.033, s, f 30 0.033, s, q"
+tags = "collision"
+
 import cocos
 from cocos.director import director
 import cocos.actions as ac
@@ -196,7 +199,7 @@ class City(cocos.layer.Layer):
                                     height=square_width)
                 x = half_street_width + ix*crossing_point_separation
                 square.position = (x,y)
-                self.add(square)
+                self.add(square, z=2)
 
     def generate_travel(self):
         #ix,iy : ints, street crossing; 0,0 is bottom left (out of view)

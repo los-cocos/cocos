@@ -28,10 +28,11 @@ class Logo(cocos.layer.Layer):
         self.label = DebugLabel()
         self.add(self.label)
         self.add(self.sprite)
+        self.schedule(lambda x: 0)
 
     def on_key_press(self, k, m):
         if k == key.SPACE:
-            action = RotateBy(360, .5) | Delay(0.5)
+            action = RotateBy(180, 1.0) + Delay(1.0)
             self.sprite.do(action + Reverse(action))
 
 def main():

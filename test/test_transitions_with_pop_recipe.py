@@ -4,6 +4,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 2.5, s, t 3, s, t 4.5, s, t 5.1"
+tags = "transitions with pop"
 
 import cocos
 from cocos.director import director
@@ -11,9 +13,10 @@ from cocos.actions import *
 from cocos.layer import *
 from cocos.scenes import *
 
-import time
 
-t0 = None
+t0 = 0.0
+time_x = 0.0
+
 scene1 = None
 scene2 = None
 scene3 = None
@@ -37,18 +40,18 @@ def report(t):
 
 
 def sequencer(dt):
-    global t0, stage, last_current_scene
-    t = time.time() - t0
+    global time_x, t0, stage, last_current_scene
+    time_x += dt
     if last_current_scene != director.scene:
         last_current_scene = director.scene
-        report(t)
-    if stage == "run scene1" and t > 2.0:
+        report(time_x)
+    if stage == "run scene1" and time_x > 2.0:
         stage = "transition to scene2"
-        print "\n%4.3f begin %s" % (t, stage)
+        print "\n%4.3f begin %s" % (time_x, stage)
         director.push(FadeTransition( scene2, 1))
-    elif stage == "transition to scene2" and t >4.0:
+    elif stage == "transition to scene2" and time_x >4.0:
         stage = "transition to the top scene in the stack"
-        print "\n%4.3f begin %s" % (t, stage)
+        print "\n%4.3f begin %s" % (time_x, stage)
         director.replace(FadeTransitionWithPop(director.scene_stack[0], 1))
 
 # Warn: if the parent transition overrides the finish method of TransitionScene
@@ -109,7 +112,7 @@ def usage():
     around t=2.000 : begins normal transition to scene2 (director.push(...))
     around t=3.000 : transitions ends, scene2 in full view (screen full violet)
     around t=4.000 : starts transition with pop
-    around t=5.000 : transition ends, scene1 in full view
+    around t=5.000 : transition ends, scene1 in full view (screen full green)
 
     In the console a report about current scene and director.scene_stack changes
     The final scene should be scene1 and len(director.scene_stack) should be the
@@ -136,7 +139,6 @@ def main():
     print "\n%4.3f %s" % (0.0, stage)
     report(0)
 
-    t0 = time.time()
     stage = "run scene1"
     print "\n%4.3f begin %s" % (0.0, stage)
     director.run(scene1)

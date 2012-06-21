@@ -4,6 +4,9 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "f 10 0.033, s, f 20 0.033, s, f 30 0.033, s, f 30 0.033, s, f 30 0.033, s, q"
+tags = "Action"
+
 import random
 import math
 import cocos

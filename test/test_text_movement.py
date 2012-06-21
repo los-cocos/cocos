@@ -30,7 +30,13 @@ class HelloWorld(cocos.layer.Layer):
         self.label.element.x = x
         self.label.element.y = y
 
+description = """
+A label its shown, initially 'Hi' at screen center, then telling the
+mouse position at position near the mouse pointer
+"""
+
 def main():
+    print description
     # director init takes the same arguments as pyglet.window
     cocos.director.director.init()
 
