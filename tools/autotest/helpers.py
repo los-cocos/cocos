@@ -141,7 +141,7 @@ def scanprops_from_text(text, fname):
 
     if text is None:
         propdict = {'IOerror': True}
-        return propict
+        return propdict
 
     # get the props that are simple string matchs in text
     propdict = text_props_simple(text, base_text_props)
@@ -194,29 +194,42 @@ def update_scanprops(db, filename_persist, candidates):
 
 def update_snapshots(db, filename_persist, target_scripts, snapshots_dir):
     """
-    Runs each of the target_scripts, doing:
-        screen snapshots as specified by their testinfo.
-        snapshots related info is stored in the db under the props
-            'snapshots_success': bool
-            'snapshots_diagnostic': string; '' no errors, else description of
-            failure while trying to take snapshots
-            'missing_snapshots': list of missing snapshots filenames
+    runs the scripts in target scripts, taking snapshots as indicated by the
+    testinfo in the script, and updating the snapshots related info in the db.
 
-    Parameters:
-        db: a remembercases.TestbedEntityPropDB object
-        target_scripts: iterable giving script names in db canonical form
-        snapshots_dir: string , path to dir to store snapshots
+    Params:
+        db:
+            a remembercases.TestbedEntityPropDB object
+        filename_persist:
+            filename to persist the db after updating
+        target_scripts:
+            iterable yielding scripts. If None, all scripts known in the
+            default testbed are assumed.
+        snapshots_dir:
+            directory to store the snapshots
 
-    Preconditions:
-        db has set it default_testbed (only the default testbed data will change)
-        script names in db canonical form, and are entities in the testbed
-        script names has set the props (usualy by call to update_testinfo)
-            'testinfo'
-            'expected_snapshots'
-        snapshot related keys had been deleted to not have stale info on
-        failure (usually update_testinfo acomplishes that)
+    Returns (valid_scripts, rejected) where:
 
-    OUTDATED ^
+        valid_scripts :
+            scripts in target_scripts that are known in the default testbed and
+            have valid testinfo
+
+        rejected :
+            scripts in target_scripts that are unknown in the default testbed or
+            dont have valid testinfo
+        
+    Db operations are done over the default testbed, which should have been
+    set bejore calling here.
+    
+    For each valid entity the following props are set:
+        'snapshots_success':
+            bool, True if (no traceback or timeout when running the script,
+            also all expected snapshots had been produced), else False
+        'snapshots_diagnostic':
+            string, '' means no errors, else description of failure while
+            trying to take snapshots
+        'missing_snapshots':
+            list of missing snapshots filenames
     """
     proxy_abspath = os.path.abspath('proxy_snapshots.py')
     if not os.path.exists(proxy_abspath):
@@ -226,9 +239,10 @@ def update_snapshots(db, filename_persist, target_scripts, snapshots_dir):
     if not os.path.exists(snapshots_abspath):
         os.makedirs(snapshots_abspath)
         
-    known_scripts, unknowns = db.entities(candidates=target_scripts)
+    valid_scripts, rejected = db.entities(fn_allow=fn_allow_testinfo_valid,
+                                          candidates=target_scripts)
     
-    for script in known_scripts:
+    for script in valid_scripts:
         # get the exercise plan
         stored_testinfo = db.get_prop_value(script, 'testinfo')
 
@@ -269,11 +283,11 @@ def update_snapshots(db, filename_persist, target_scripts, snapshots_dir):
 
 
     # update history
-    text = '\n'.join(known_scripts)
+    text = '\n'.join(valid_scripts)
     db.history_add('update_snapshots', text)
 
     dbm.db_save(db, filename_persist)
-    return known_scripts, unknowns
+    return valid_scripts, rejected
 
 def re_scan_and_shoot(db, filename_persist, target_scripts, snapshots_dir):
     known_scripts, unknowns = db.entities(candidates=target_scripts)
@@ -385,6 +399,9 @@ def fn_allow_new_no_interactive(propdict):
     return ( 'testinfo' not in propdict and
              'interactive' in propdict and not propdict['interactive'] )
 
+def fn_allow_no_props(propdict):
+    return len(propdict)==0
+
 def get_scripts(db, selector, candidates=None, testbed=None):
     was_unknown = (selector == 'unknown')
     if was_unknown:
@@ -417,6 +434,7 @@ def section(db, selector, candidates=None, verbose=None, testbed=None):
         'IOerror': "Scripts that can't be readed",
         'testrun_pass': "Scripts showing correct behavior and snapshots reflect that",
         'new_no_interactive': "No testinfo, no interactive",
+        'no_props': "No props set"
         }
     scripts, unknown = get_scripts(db, selector, candidates, testbed)
     scripts = sorted(scripts)
@@ -460,3 +478,20 @@ def rpt_detail_diagnostics(db, selector, candidates=None, testbed=None):
         text_parts.append('-'*78)
     text = '\n'.join(text_parts)
     return text
+
+def rpt_all_props(db, candidates, testbed=None):
+    scripts, unknowns = db.entities(candidates=candidates)
+    text_parts = []
+    separator = '-' * 78
+    for name in scripts:
+        text_parts.append(name)
+        text = doers.pprint_to_string(db.get_propdict(name, testbed=testbed))
+        text_parts.append(text)
+        text_parts.append(separator)
+    if unknowns:
+        text_parts.append('unknown entities')
+        text_parts.append(doers.pprint_to_string(unknowns))
+    text = '\n'.join(text_parts)
+    return text
+        
+        

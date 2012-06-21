@@ -46,15 +46,20 @@ def main(script_name, stored_testinfo, snapshots_dir):
         sys.stderr.write("Es01 - received testinfo doesn't match script testinfo. (db outdated?)\n")
         sys.exit(1)
 
-    screen_sampler = st.ScreenSampler.sampler(stored_testinfo, script_name,
-                                fn_quit=quit_pyglet_app,
-                                fn_take_snapshot=take_snapshot_cocos_app,
-                                snapshots_dir=snapshots_dir)
+    screen_sampler, diagnostic = st.ScreenSampler.sampler(stored_testinfo,
+                                    script_name,
+                                    fn_quit=quit_pyglet_app,
+                                    fn_take_snapshot=take_snapshot_cocos_app,
+                                    snapshots_dir=snapshots_dir)
+    assert diagnostic == ''
     clock = cc.get_autotest_clock(screen_sampler)
     cocos.custom_clocks.set_app_clock(clock)
     
     set_init_interceptor()
     #sys.stderr.write('\nafter interceptor')
+    if hasattr(script_module, 'autotest'):
+        # allows the script to know if running through autotest
+        script_module.autotest = 1
     script_module.main()
 
 if __name__ == '__main__':

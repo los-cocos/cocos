@@ -413,8 +413,106 @@ def update_6(db, filename_persist, snapshots_dir, snapshots_reference_dir):
 
     return checked_in, unknown, move_failed
 
-# <-- one-off tasks
 
+def update_7(db, filename_persist):
+    """add new tests"""
+    text = """
+        ../../test/test_schedule_interval.py : nuevo, hay que hacer svn add
+        ../../test/test_aspect_ratio_on_resize.py : nuevo, hay que hacer svn add
+        """
+    candidates = doers.scripts_names_from_text(text, end_mark=':')
+    hl.add_targets(db, filename_persist, candidates)
+    db.history_add("added tests", text)
+    dbm.db_save(db, filename_persist)
+
+
+def update_8(db, filename_persist, snapshots_dir):
+    """ re-(scan + snapshot) for this files"""
+    text = """
+        test/test_particle_explosion.py
+        test/test_particle_fire.py
+        test/test_particle_fireworks.py
+        test/test_particle_flower.py
+        test/test_particle_galaxy.py
+        test/test_particle_meteor.py
+        test/test_particle_smoke.py
+        test/test_particle_spiral.py
+        test/test_particle_sun.py         
+
+        test/test_action_non_interval.py
+        test/test_all_collisions.py : puede no ser representativo
+        test/test_transitions_with_pop_recipe.py
+        test/test_draw_resolution.py
+        test/test_unscaled_win_resize.py
+        test/test_interpreter_layer.py : weak test, interpreter not exercised
+        test/test_schedule.py
+        test/test_schedule_interval.py : nuevo, hay que hacer svn add
+        test/test_aspect_ratio_on_resize.py : nuevo, hay que hacer svn add
+
+        test/test_menu_bottom_right.py : todos los de menu no prueban automaticamente la logica
+        test/test_menu_centered.py
+        test/test_menu_fixed_position.py
+        test/test_menu_items.py
+        test/test_menu_rotated.py
+        test/test_menu_top_left.py
+         """
+    candidates = doers.scripts_names_from_text(text, end_mark=':')
+    hl.re_scan_and_shoot(db, filename_persist, candidates, snapshots_dir)
+
+def update_9(db, filename_persist, snapshots_dir, snapshots_reference_dir):
+    """
+    This files 'pass', register them as such and move their snapshots
+    to the reference snapshots folder
+    """
+    text = """
+        test/test_action_non_interval.py
+        test/test_all_collisions.py : puede no ser representativo; agregado z para ver si cuadrado rinde
+        test/test_draw_resolution.py
+        test/test_interpreter_layer.py : weak test, interpreter not exercised
+        test/test_menu_bottom_right.py : todos los de menu no prueban automaticamente la logica
+        test/test_menu_centered.py
+        test/test_menu_fixed_position.py
+        test/test_menu_items.py
+        test/test_menu_rotated.py
+        test/test_menu_top_left.py
+        test/test_particle_explosion.py
+        test/test_particle_fire.py
+        test/test_particle_fireworks.py
+        test/test_particle_flower.py
+        test/test_particle_galaxy.py
+        test/test_particle_meteor.py
+        test/test_particle_smoke.py
+        test/test_particle_spiral.py
+        test/test_particle_sun.py
+        test/test_schedule.py
+        test/test_unscaled_win_resize.py
+    """
+    candidates = doers.scripts_names_from_text(text, end_mark=':')
+    checked_in, unknown, move_failed = hl.update_testrun__pass(db,
+                                        filename_persist, candidates,
+                                        snapshots_dir, snapshots_reference_dir)    
+
+    checked = [ k for k in checked_in ]
+    checked.sort()
+    text_hystory = doers.pprint_to_string(checked)
+    db.history_add("updated testrun pass", text)
+    dbm.db_save(db, filename_persist)
+
+    return checked_in, unknown, move_failed
+
+def update_10(db, filename_persist, snapshots_dir):
+    """ deleted this entities, they were added with wrong path"""
+    text = """
+        tools/autotest/test/test_aspect_ratio_on_resize.py
+        tools/autotest/test/test_schedule_interval.py
+        tools/autotest/test_aspect_ratio_on_resize.py
+         """
+    candidates = doers.scripts_names_from_text(text, end_mark=':')
+    for name in candidates:
+        db.del_entity(name)
+
+
+# <-- one-off tasks
 
 
 # filename to persist the db
@@ -462,21 +560,46 @@ if clean:
     update_4(db, filename_persist, snapshots_dir)
     update_5(db, filename_persist, snapshots_dir)
 
+    # asses these tests pass human inspection; store snapshots for reference
+    update_6(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+
+    update_7(db, filename_persist)
+    update_8(db, filename_persist, snapshots_dir)
+    update_9(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+
+    ##erasing some wrong entered entities
+    ##update_10(db, filename_persist, snapshots_dir)
+
 else:
     db = dbm.db_load(filename_persist, default_testbed=testbed)
 
-# asses these tests pass human inspection; store snapshots for reference
-update_6(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+# update_9(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+
 print progress_report(db, verbose=False)
 print hl.rpt(db, ['testinfo_invalid'], verbose=True)
+print hl.rpt(db, ['no_props'], verbose=True)
 ##print hl.rpt(db, ['IOerror'])
 print hl.rpt_detail_diagnostics(db, 'snapshots_failure')
-##print hl.rpt_detail_diagnostics(db, 'testinfo_invalid')
+print hl.rpt_detail_diagnostics(db, 'testinfo_invalid')
 ##print hl.rpt(db, ['snapshots_success'], verbose=True)
 #pprint.pprint(db.db)
 
-# select new batch of candidates to add testinfo: dont have testinfo, not
-# interactive, 
-##candidates, unknowns = hl.get_scripts(db, 'new_no_interactive')
-##pprint.pprint(candidates)
+### select new batch of candidates to add testinfo: dont have testinfo
+##candidates, unknowns = hl.get_scripts(db, 'testinfo_missing')
+##candidates = list(candidates)
+##candidates.sort()
+##for name in candidates:
+##    print name
+##
+##print '_'*30
+##print hl.rpt_all_props(db, ['test/test_unscaled_win_resize.py'])
 
+candidates, unknowns = hl.get_scripts(db, 'no_props')
+print hl.rpt_all_props(db, candidates)
+##candidates = list(candidates)
+##candidates.sort()
+##for name in candidates:
+##    print name
+##
+##print '_'*30
+##
