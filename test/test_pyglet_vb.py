@@ -1,10 +1,14 @@
-import pyglet
-from pyglet.gl import *
 # This code is so you can run the samples without installing the package
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
+
+testinfo = "s, f 20 0.016, s, f 20 0.016, s, f 20 0.016, s, q"
+tags = "vertex_list"
+
+import pyglet
+from pyglet.gl import *
 import math
 
 def sign(x): return 1 if x >= 0 else -1
@@ -65,7 +69,14 @@ class MeshSprite:
         glPopAttrib()
         glDisable(self.texture.target)
 
+description = """
+A prof of concept: using pyglet vertex lists to deform a sprite.
+The entity is not a CocosNode, and some details should be adjusted: by
+example at rest the top of grossini sprite is not visible.
+"""
+
 def main():
+    print description
     window = pyglet.window.Window()
 
     grossini = pyglet.resource.image("grossini.png")

@@ -4,6 +4,11 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1.1, s, t 3.1, s, t 4.1, s, q"
+tags = "RotateBy, Reverse"
+autotest = 0
+
+
 import pyglet
 import cocos
 from cocos.actions import *
@@ -29,6 +34,8 @@ class Logo(cocos.layer.Layer):
         self.add(self.label)
         self.add(self.sprite)
         self.schedule(lambda x: 0)
+        if autotest:
+            self.do(CallFunc(self.on_key_press, key.SPACE, 0))
 
     def on_key_press(self, k, m):
         if k == key.SPACE:

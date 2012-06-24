@@ -5,6 +5,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, q"
+tags = "get_virtual_coordinates, mouse hit"
 
 import cocos
 from cocos.director import director
@@ -65,6 +67,12 @@ class MouseManager(cocos.layer.Layer):
     def on_mouse_press(self, x, y, buttons, modifiers):
         x, y = director.get_virtual_coordinates (x, y)
         self.test.click(x, y)
+
+description = """
+Interactive test checking good behavior of virtual coordinates after resizes.
+Clicking the ball center should blink the ball, for any ball, whatever the
+resize done (including fullscreen, done with ctrl + F)
+"""
 
 def main():
     director.init(width=sw, height=sh, resizable=True)

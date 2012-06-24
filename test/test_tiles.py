@@ -3,6 +3,9 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
+testinfo = "s, q"
+tags = "tiles, Driver"
+
 import pyglet
 from pyglet.window import key
 

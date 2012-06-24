@@ -4,6 +4,9 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, q"
+tags = "resize, resizable, aspect ratio, set_caption"
+
 from pyglet.gl import *
 import cocos
 from cocos.director import director
@@ -43,24 +46,22 @@ class TestLayer(cocos.layer.Layer):
         outer.position = (-border_size, -border_size)
         self.add(outer, z=0 )
 
-def usage():
-    print """
-    starts a 16/10 aspect ratio window.
-    CTRL-F toggles fullscreen
+description = """
+Starts a 16/10 aspect ratio window.
+CTRL-F toggles fullscreen
 
-    The scene draw three boxes, centered at the window center.
-      blue box: the exact same size as the window
-      yellow box: a little bigger than blue box
-      red box: a little smaller than blue box
-    Draw order is yellow, blue, red
-    You must see no yellow, and a red rectangle with equal sized blue borders
-    """
+The scene draw three boxes, centered at the window center.
+  blue box: the exact same size as the window
+  yellow box: a little bigger than blue box
+  red box: a little smaller than blue box
+Draw order is yellow, blue, red
+You must see no yellow, and a red rectangle with equal sized blue borders
+"""
 
 def main():
-    usage()
+    print description
     director.init( width=width, height=height, resizable=False )
     director.window.set_caption('aspect ratio and fullscreen - see console for usage')
-    director.show_FPS = True
     scene = cocos.scene.Scene()
     scene.add(TestLayer())
     director.run( scene )

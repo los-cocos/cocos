@@ -4,6 +4,10 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+testinfo = "s, t 1.1, s, t 2.1, s, t 3.1, s, t 4.1, s, t 5.1, s, t 6.1, s, q"
+tags = "scrolling, ScrollingManager, do_not_scale"
+autotest = 0
+
 import math
 
 import pyglet
@@ -17,33 +21,14 @@ import cocos
 from cocos import tiles, actions, layer
 from cocos.director import director
 import cocos.euclid as eu
+from cocos.actions import Delay, CallFunc, ScaleTo
 
-# Select which mode you want to test by commenting out the alternative
+# test mode 2: no autoscale, ie do_not_scale=True
+test_mode = 2
 
-# test mode 1: autoscale, ie do_not_scale=False
-test_mode = 1
-
-### test mode 1: no autoscale, ie do_not_scale=True
-##test_mode = 2
-
-
-
-# adjust to something similar but with the same aspect ratio as your desktop
-# something as width = n*60; height = m*60 where n:m is your desktop aspect
-
-# 4:3 aspect ratio
 view_width = 640
 view_height = 480
 
-### 16:9 aspect ratio
-##view_width = 960
-##view_height = 540
-
-### 16:10 aspect ratio
-##view_width = 960
-##view_height = 600
-
-# dont touch these
 world_width = 1000 + 4*98 #1392
 world_height = 1000
 
@@ -189,13 +174,21 @@ class SquareLand(cocos.layer.ScrollableLayer):
             changed = True
 
         if changed:
-            self.scroller.set_focus(*self.player.position)
-            self.refresh_marks()
+            self.update_after_change()
+
+    def update_after_change(self):
+        self.scroller.set_focus(*self.player.position)
+        self.refresh_marks()
 
     def refresh_marks(self):
         for mark, position in zip(self.scene.marks, self.marks_positions):
             screen_pos = self.scroller.pixel_to_screen(*position)
             mark.position = screen_pos
+
+    def teleport_player(self, x, y):
+        """ only used by autotest """
+        self.player.position = x, y
+        self.update_after_change()
 
 
 class TestScene(cocos.scene.Scene):
@@ -345,6 +338,20 @@ def main():
     scene = TestScene()
     world_layer = SquareLand(world_width, world_height)
     scroller = cocos.layer.ScrollingManager()
+    if autotest:
+        def resize_scroller():
+            scroller.scale = 0.75
+        w, h = world_width, world_height
+        template_action = (
+            Delay(0.05) + 
+            CallFunc(world_layer.teleport_player, 0, 0) + Delay(1) +
+            CallFunc(world_layer.teleport_player, w//2, 0) + Delay(1) +
+            CallFunc(world_layer.teleport_player, w//2, h) +Delay(1) +
+            CallFunc(world_layer.teleport_player, w, h) + Delay(1) +
+            CallFunc(resize_scroller) + Delay(1) +
+            CallFunc(director.window.set_size, 800, 600) + CallFunc(world_layer.update_after_change)
+            )
+        world_layer.do(template_action)
     scroller.add(world_layer)
     scene.add(scroller)
     director.run(scene)

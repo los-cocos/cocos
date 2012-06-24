@@ -3,6 +3,9 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
+testinfo = "s, q"
+tags = "tilemap, collide_map"
+
 import pyglet
 from pyglet.window import key
 
@@ -24,6 +27,7 @@ class PlatformerController(actions.Action, tiles.RectMapCollider):
         self.target.velocity = (0, 0)
 
     def step(self, dt):
+        global keyboard, tilemap, scroller
         dx, dy = self.target.velocity
 
         # using the player controls, gravity and other acceleration influences
@@ -40,7 +44,7 @@ class PlatformerController(actions.Action, tiles.RectMapCollider):
         new.y += dy * dt
 
         # run the collider
-        dx, dy = self.target.velocity = self.collide_map(map, last, new, dy, dx)
+        dx, dy = self.target.velocity = self.collide_map(tilemap, last, new, dy, dx)
         self.on_ground = bool(new.y == last.y)
 
         # player position is anchored in the center of the image rect
@@ -49,10 +53,17 @@ class PlatformerController(actions.Action, tiles.RectMapCollider):
         # move the scrolling view to center on the player
         scroller.set_focus(*new.center)
 
+description = """
+Shows how to use a tilemap to control collision between actors and the terrain.
+Use Left-Right arrows and space to control.
+"""
+
 def main():
+    global keyboard, tilemap, scroller
     from cocos.director import director
     director.init(width=800, height=600, do_not_scale=True)
 
+    print description
     # create a layer to put the player in
     player_layer = layer.ScrollableLayer()
     # NOTE: the anchor for this sprite is in the CENTER (the cocos default)
@@ -61,14 +72,14 @@ def main():
     player_layer.add(player)
     player.do(PlatformerController())
 
-    # add the map and the player sprite layer to a scrolling manager
+    # add the tilemap and the player sprite layer to a scrolling manager
     scroller = layer.ScrollingManager()
-    map = tiles.load('platformer-map.xml')['level0']
-    scroller.add(map, z=0)
+    tilemap = tiles.load('platformer-map.xml')['level0']
+    scroller.add(tilemap, z=0)
     scroller.add(player_layer, z=1)
 
-    # set the player start using the player_start token from the map
-    start = map.find_cells(player_start=True)[0]
+    # set the player start using the player_start token from the tilemap
+    start = tilemap.find_cells(player_start=True)[0]
     r = player.get_rect()
 
     # align the mid bottom of the player with the mid bottom of the start cell
@@ -88,6 +99,7 @@ def main():
 
     # run the scene
     director.run(platformer_scene)
+
 
 if __name__ == '__main__':
     main()

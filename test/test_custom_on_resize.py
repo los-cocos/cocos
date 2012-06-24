@@ -1,19 +1,21 @@
-#
-# cocos2d:
-# http://cocos2d.org
-#
-
+# This code is so you can run the samples without installing the package
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+#
+
+testinfo = "s, t 2.1, s, q"
+tags = "director.on_cocos_resize"
+autotest = 0
 
 import pyglet
 from pyglet.gl import *
 import cocos
 from cocos.director import director
 from cocos.sprite import Sprite
+from cocos.actions import Delay, CallFunc
 
-usage = """
+description = """
 This script demonstrates:
     How to listen to director events, in particular the on_cocos_resize event.
     Instruct the director to not autoscale the scene when the window is
@@ -24,6 +26,10 @@ What you should see:
     the window should show more o less from the scene, at the same scale, and
     the scene center will always match the window center.
 """
+
+
+def resize():
+    director.window.set_size(800, 600)
 
 class AutocenteredBackgroundLayer(cocos.layer.Layer):
     """
@@ -41,6 +47,8 @@ class AutocenteredBackgroundLayer(cocos.layer.Layer):
         # we want to listen director events, so explicitly registering
         super(AutocenteredBackgroundLayer,self).on_enter()
         director.push_handlers(self.on_cocos_resize)
+        if autotest:
+            self.do(Delay(2.0) + CallFunc(resize) )
 
     def on_exit(self):
         # if a handler is explicitly attaching at on_enter, it should detach
@@ -71,7 +79,7 @@ class AutocenteredBackgroundLayer(cocos.layer.Layer):
         self.position = (x, y)
 
 def main():
-    print usage
+    print description
     # telling director to not auto scale the scene when the window resizes and
     # to allow window resize, also that a 400x400 window is desired.
     director.init(width=400, height=400, do_not_scale=True, resizable=True)

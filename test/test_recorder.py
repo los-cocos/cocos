@@ -4,6 +4,9 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
+# this test is not suitable for autotest because it uses a special clock
+# that clashes with the clock used to autotest. So no testinfo here.
+tags = "recorder"
 
 import cocos
 from cocos.director import director
