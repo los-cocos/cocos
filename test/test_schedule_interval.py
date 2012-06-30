@@ -26,6 +26,7 @@ class TestLayer(cocos.layer.Layer):
         self.corner = 0
         self.schedule_interval( self.change_sprite_pos, 1 )
         self.change_sprite_pos(0.0)
+        self.schedule(lambda x:0)
 
     def change_sprite_pos(self, dt):
         self.sprite.position = self.coords_from_corner[self.corner]

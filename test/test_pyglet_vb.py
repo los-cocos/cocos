@@ -4,7 +4,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, f 20 0.016, s, f 20 0.016, s, f 20 0.016, s, q"
+testinfo = "dt 0.016, s, f 20 0.016, s, f 20 0.016, s, f 20 0.016, s, q"
 tags = "vertex_list"
 
 import pyglet
@@ -87,7 +87,7 @@ def main():
         window.clear()
         ms.draw(dt)
 
-    pyglet.clock.schedule_interval(update, 1/60.)
+    pyglet.clock.schedule(update)
 
     @window.event
     def on_key_press(key, mods):

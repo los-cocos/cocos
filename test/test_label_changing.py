@@ -4,14 +4,14 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 5, s, t 10.1, s, q"
+testinfo = "s, t 1.1, s, t 2.1, s, t 3.1, s, q"
 tags = "Label, color, text"
 
 
 import cocos
 from cocos.director import director
 from cocos.sprite import Sprite
-from cocos.actions import Rotate
+from cocos.actions import Rotate, Repeat, Delay, CallFunc
 from cocos.text import Label
 
 
@@ -25,18 +25,18 @@ class TestLayer(cocos.layer.Layer):
 
         self.label = Label('', (x//2, y//2))
         self.label.do( Rotate( 360, 10 ) )
-        self.add( self.label  )
-        self._elapsed = 0.0
+        self.label.do( Repeat( Delay(1) + CallFunc(self.set_color, 0) +
+                               Delay(1) + CallFunc(self.set_color, 1) +
+                               Delay(1) + CallFunc(self.set_color, 2)
+                              )) 
+        self.add(self.label)
+        self.set_color(2)
 
-        self.schedule_interval(self.update_time, .1)
-
-    def update_time(self, dt):
-        self._elapsed += dt 
-        self.label.element.text = "%03d ms"%int(self._elapsed*1000)
-        r = (self._elapsed*0.2) % 1.0
-        r = 4.0 * r * (1.0 - r)
-        color = [int(r*self.color1[i] + (1.0 - r) * self.color2[i])
-                                                          for i in range(4)]
+    def set_color(self, color_selector):
+        colors = [ (255, 32, 64, 255), (0, 240, 100, 255), (90, 90, 250, 255) ]
+        color = colors[color_selector]
+        text = "(%s, %s, %s, %s)"%color
+        self.label.element.text = text
         self.label.element.color = color
 
 def main():

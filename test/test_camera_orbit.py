@@ -24,6 +24,7 @@ class BackgroundLayer( cocos.layer.Layer ):
     def draw( self ):
         glPushMatrix()
         self.transform()
+        glColor4ub(255, 255, 255, 255)
         self.img.blit(0,0)
         glPopMatrix()
 
