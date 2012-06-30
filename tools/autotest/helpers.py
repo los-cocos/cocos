@@ -1,8 +1,10 @@
+from __future__ import division
 import sys
 import os
 import re
-import itertools as ito
 import copy
+import time
+import hashlib
 
 import remembercases.db as dbm
 import remembercases.doers as doers
@@ -56,26 +58,57 @@ def testinfo_payload(text):
 
 # >>> high level tasks
 
-def new_db(filename_persist):
+def new_db(filename_persist=None):
+    """Instantiates and saves a new db
+    
+    :Parameters:
+        `filename_persist` : str
+            filename used to persist the new db, defaults to None
+
+    if filename_persist is None, the new db is not stored to disk
+    If file exists a ValueError is raised.
+    The new db is an instance of remembercases.TestbedEntityPropDB.
+    The stored db is retrieved to ensure it can be read.
+    
     """
-    Instantiates a new db, saving to filename_persist file.
-    RW is exercised on the empty db to ensure no problems with the filename
-    """
-    if os.path.exists(filename_persist):
-        raise ValueError("initial_recon refuses to overwrite an existing file: %s", filename_persist)
+    if filename_persist and os.path.exists(filename_persist):
+        msg = "initial_recon refuses to overwrite an existing file: %s"
+        msg = msg % filename_persist
+        raise ValueError(msg)
+    
     db = dbm.TestbedEntityPropDB()
-    dbm.db_save(db, filename_persist)
-    new = dbm.db_load(filename_persist)
+    if filename_persist:
+        dbm.db_save(db, filename_persist)
+        new = dbm.db_load(filename_persist)
     return db
 
 def new_testbed(db, testbed, basepath):
-    """
-    Creates a new testbed in the db with the given basepath, and sets it as the db's default_testbed
+    """Creates, initializes (and set as db's default_tesbed) a testbed
 
-    basepath is stored in the testbed, entities that are files should be named
-    in canonical form: by the path relative to testbed's basepath.
+    :Parameters:
+        `db` : remembercases.TestbedEntityPropDB
+            The db where the testbed will be added.
+        `testbed` : str
+            name for the new testbed; if duplicates an existing name an
+            dbm.ErrorDuplicatedTestbed will be raised and the db will not
+            be modified.            
+        `basepath` : str
+            directory name that will be the testbed's basepath
 
-    A number of props are added to db's testbed.
+    After the testbed is created, it is set as the db's default_testbed.
+    
+    The testbed is initialized by adding some group of props, and their
+    props are added to the testbed.
+
+    An entry "new_testbed" with details about the operation is added to the
+    db history.
+
+    The testbed basepath will be used to calculate the canonical name for
+    entities in the testbed that are files.
+    The canonical name is the the relative path from basepath, with '/'
+    path separators irrespective to the os.sep
+    No check is performed over the basepath parameter.
+    
     """
     db.add_testbed(testbed, basepath)
     db.set_default_testbed(testbed)
@@ -118,17 +151,41 @@ def new_testbed(db, testbed, basepath):
         db.add_group(groupname, default_groups[groupname], addprops=True)
 
     # add to history
-    text_history = ("testbed: %s\n basepath: %s\nprops:"%(testbed, basepath) +
-                    "not implemented")
+    text_history = ("testbed: %s\nbasepath: %s\n\n"%(testbed, basepath) +
+                    "\nAdded prop groups:\n" + doers.pprint_to_string(default_groups))
     db.history_add("new_testbed", text_history)
 
-def add_targets(db, filename_persist, targets):
-    scripts = []
-    for fname in targets:
-        entity = db.canonical_fname(fname)
-        db.add_entity(entity)
-        scripts.append(entity)
-    db.history_add('add_targets','\n'.join(scripts))
+def canonical_names_from_filenames(db, filenames):
+    """Convert filenames to the canonical form
+
+    :Parameters:
+        `db` : remembercases.TestbedEntityPropDB
+        `filenames` : iterable yielding filenames
+
+    :return: A list expressing the filenames in the canonical form.
+
+    The canonical form is the relative path from the basepath in the db's
+    default_tesbed, with dir separators always '/' irrespective of os.sep
+
+    A typical example transformation is::
+    
+        ..\..\test\test_base.py -> test\test_base.py
+
+    """
+    return [ db.canonical_fname(s) for s in filenames ]
+    
+
+def add_entities(db, filename_persist, targets):
+    """Adds entities to the db 's default testbed
+
+    :Parameters:
+        `db` : remembercases.TestbedEntityPropDB
+        `filename_persist` : filename used to persist the new db
+        `names` : iterable yielding entity names
+    """
+    for name in targets:
+        db.add_entity(name)
+    db.history_add('add_acripts','\n'.join(targets))
     dbm.db_save(db, filename_persist)
 
 def scanprops_from_text(text, fname):
@@ -158,7 +215,7 @@ def scanprops_from_text(text, fname):
         diagnostic, expected_snapshots = st.ScreenSampler.validated_info(testinfo, basename)
         propdict['testinfo_diagnostic'] = diagnostic 
         propdict['expected_snapshots'] = expected_snapshots
-        propdict['md5_at_testinfo'] = doers.md5_hex(text)
+    propdict['md5_at_testinfo'] = doers.md5_hex(text)
 
     return propdict
 
@@ -186,9 +243,10 @@ def update_scanprops(db, filename_persist, candidates):
 
     # update history
     text = '\n'.join(known_scripts)
-    db.history_add('update_scan_props', text)
+    db.history_add('update_scanprops', text)
 
-    dbm.db_save(db, filename_persist)
+    if filename_persist:
+        dbm.db_save(db, filename_persist)
     return known_scripts, unknowns
 
 
@@ -286,10 +344,13 @@ def update_snapshots(db, filename_persist, target_scripts, snapshots_dir):
     text = '\n'.join(valid_scripts)
     db.history_add('update_snapshots', text)
 
-    dbm.db_save(db, filename_persist)
+    if filename_persist:
+        dbm.db_save(db, filename_persist)
     return valid_scripts, rejected
 
 def re_scan_and_shoot(db, filename_persist, target_scripts, snapshots_dir):
+    db.history_add("the next scan and snapshots is a redo scan + snapshots", "-")
+    
     known_scripts, unknowns = db.entities(candidates=target_scripts)
 
     # delete old snapshots
@@ -308,12 +369,12 @@ def re_scan_and_shoot(db, filename_persist, target_scripts, snapshots_dir):
     # do snapshots
     update_snapshots(db, filename_persist, known_scripts, snapshots_dir)
 
-def _update_testrun(db, candidates_w_props, snapshots_dir):
+def _update_testrun(db, testrun_props_by_candidate, snapshots_dir):
     """
     the propdict for each candidate must have been tested for keys in testrun
     """
 
-    known_scripts, unknowns = db.entities(candidates=candidates_w_props)
+    known_scripts, unknowns = db.entities(candidates=testrun_props_by_candidate)
     ignored = set()
 
     for script in known_scripts:
@@ -324,7 +385,7 @@ def _update_testrun(db, candidates_w_props, snapshots_dir):
             # potential changes in script after snapshots done, ignore
             ignored.add(script)
             continue
-        d = copy.deepcopy(candidates_w_props[script])
+        d = copy.deepcopy(testrun_props_by_candidate[script])
         d['testrun_md5'] = propdict['md5_at_testinfo']
         db.set_groupdict(script, 'testrun', d)
 
@@ -349,8 +410,8 @@ def update_testrun__pass(db, filename_persist, candidates,
         'testrun_diagnostic': '',
         }
 
-    candidates_w_props = dict([(k, pass_dict) for k in candidates])
-    checked_in, ignored, unknown = _update_testrun(db, candidates_w_props,
+    testrun_props_by_candidate = dict([(k, pass_dict) for k in candidates])
+    checked_in, ignored, unknown = _update_testrun(db, testrun_props_by_candidate,
                                                    snapshots_dir)
 
     move_failed = set()
@@ -364,9 +425,193 @@ def update_testrun__pass(db, filename_persist, candidates,
                 db.del_groupdict(script, 'testrun')
                 move_failed.add(script)
 
-    checked_in -= move_failed 
+    checked_in -= move_failed
+
+    # update history
+    text_1 = doers.pprint_to_string(checked_in)
+    text_2 = doers.pprint_to_string(move_failed)
+    text_3 = doers.pprint_to_string(unknown)
+    text_history = '\n'.join(["checked_in:", text_1,
+                              "move_failed:", text_2,
+                              "unknown:", text_3
+                              ])
+    db.history_add("update_testrun__pass", text_history)
+
+    if filename_persist:
+        dbm.db_save(db, filename_persist)
+    
     return checked_in, unknown, move_failed
 
+def update_testrun__bad(db, filename_persist, testrun_props_by_candidate,
+                         snapshots_dir, snapshots_reference_dir=None):
+    """
+    snapshots_reference_dir : dir to move snapshots; if None no move
+    """
+    
+    if snapshots_reference_dir:
+        if not os.path.isdir(snapshots_dir):
+            raise ValueError("snapshot dir not found or not a dir:%s"%snapshots_dir)
+        if not os.path.exists(snapshots_reference_dir):
+            os.makedirs(snapshots_reference_dir)
+
+    checked_in, ignored, unknown = _update_testrun(db,
+                                                   testrun_props_by_candidate,
+                                                   snapshots_dir)
+
+    move_failed = set()
+    if snapshots_reference_dir:
+        # move snapshots to reference dir 
+        for script in checked_in:
+            snapshots = db.get_prop_value(script, 'expected_snapshots')
+            moved, cant_move = doers.move_files(snapshots, snapshots_dir,
+                                                snapshots_reference_dir)
+            if cant_move:
+                move_failed.add(script)
+
+
+    # update history
+    text_1 = doers.pprint_to_string(checked_in)
+    text_2 = doers.pprint_to_string(move_failed)
+    text_3 = doers.pprint_to_string(unknown)
+    text_history = '\n'.join(["checked_in:", text_1,
+                              "move_failed:", text_2,
+                              "unknown:", text_3
+                              ])
+    db.history_add("update_testrun__bad", text_history)
+
+    if filename_persist:
+        dbm.db_save(db, filename_persist)
+    
+    return checked_in, unknown, move_failed
+
+def compare_testbeds_by_entities(db1_fname, db1_testbed, db2_fname, db2_testbed):
+    db1 = dbm.db_load(db1_fname, default_testbed=db1_testbed)    
+    db2 = dbm.db_load(db2_fname, default_testbed=db2_testbed)
+    ents1, unknown = db1.entities()
+    ents2, unknown = db2.entities()
+    common_entities = ents1 & ents2
+    only_in_1 = ents1 - common_entities
+    only_in_2 = ents2 - common_entities
+
+    f1 = db1.get_propdict
+    f2 = db2.get_propdict
+    equals = set([ entity for entity in common_entities
+                                        if f1(entity)==f2(entity) ])
+    differents = common_entities - equals
+    return common_entities, only_in_1, only_in_2, equals, differents
+
+def measure_repeteability(db, candidates, limit, samples_dir, required_md5=None):
+    """
+    :Parameters:
+        limit : int or float
+            int means count of snapdhots runs
+            float means times in minutes, will be surpased to end the round
+    """
+    start_time = time.time()
+    scripts, unknowns = db.entities(fn_allow=fn_allow_testinfo_valid,
+                                    candidates=candidates)
+    
+    f = db.get_prop_value
+    # flat list of all snapshots
+    snapshots = [ snap for name in scripts
+                       for snap in f(name, 'expected_snapshots')]
+    # each snapshot name will hold a dict of md5(snap): count key-value pairs
+    stats_by_snapshot_name = dict( [ (snap, {}) for snap in snapshots])
+
+    stats_by_script_name = dict( [(name, { 'timeouts':0, 'errs':0 })
+                        for name in scripts if f(name, 'expected_snapshots')]) 
+
+    # build a hash to limit mismatchs when combining runs. Caveat: if files
+    # edited and testinfo not updated mismatch happens.
+    # It is recomended to run continuations from a clean checkout for safe
+    # combination.    
+    hasher = hashlib.md5()
+    for name in stats_by_script_name:
+        hasher.update(db.get_prop_value(name, 'md5_at_testinfo'))
+    overall_md5 = hasher.hexdigest()
+    if required_md5:
+        assert required_md5==overall_md5
+
+    if not os.path.exists(samples_dir):
+        os.makedirs(samples_dir)
+    snapshots_abspath = os.path.abspath(samples_dir)
+
+    proxy_abspath = os.path.abspath('proxy_snapshots.py')
+    if not os.path.exists(proxy_abspath):
+        raise ValueError("proxy script not found:%s"%proxy_abspath)
+
+    rounds = 0
+    if isinstance(limit, float):
+        limit_seconds = limit * 60
+        f_continue = lambda: (time.time() - start_time) < limit_seconds
+    elif isinstance(limit, int):
+        f_continue = lambda: rounds < limit
+    else:
+        raise ValueError
+
+    while f_continue():
+        for name in scripts:
+            # exercise the script acording to testinfo, snapshots would be taken 
+            fname = db.fname_from_canonical(name)
+            stored_testinfo = db.get_prop_value(name, 'testinfo')
+            timeout_hit, err = proxy.proxy_run(
+                                        proxy_abspath,
+                                        fname,
+                                        [stored_testinfo, snapshots_abspath])
+            # count errors
+            if timeout_hit:
+                stats_by_script_name[name]['timeouts'] += 1
+            if err:
+                stats_by_script_name[name]['errs'] += 1
+
+            # update stats by snapshots
+            sbs = stats_by_snapshot_name
+            for snap in stats_by_snapshot_name:
+                sname = os.path.join(snapshots_abspath, snap)
+                if os.path.exists(sname):
+                    try:
+                        f = open(sname, 'rb')
+                        data = f.read()
+                        f.close()
+                        md5 = doers.md5_hex(data)
+                        sbs[snap][md5] = sbs[snap].setdefault(md5, 0) + 1 
+                    except Exception:
+                        pass
+                    try:
+                        os.remove(sname)
+                    except Exception:
+                        pass
+        rounds += 1
+
+    elapsed = time.time() - start_time
+    return ( overall_md5, elapsed, rounds, stats_by_script_name,
+                                                     stats_by_snapshot_name ) 
+
+            
+def info_outdated_strong(db, candidates=None):
+    """candidates wose testrun info is not uptodate with testinfo
+
+    the db is not modified
+    candidates=None means 'all know scripts'
+    if a script can't be read, then is considered outdated
+    """
+    # un loop comparando el md5 actual con el de testrun
+    have_testrun, no_comply = get_scripts(db, 'testrun_present')
+
+    outdated = set()
+    for name in have_testrun:
+        fname = db.fname_from_canonical(name)
+        try:
+            text = doers.load_text(fname)
+        except Exception:
+            outdated.add(name)
+            continue
+        actual_md5 = doers.md5_hex(text)
+        if actual_md5 != db.get_prop_value(name,'testrun_md5'):
+            outdated.add(name)
+
+    return outdated
+        
 # >>> some useful selectors
 
 def fn_allow_all(propdict):
@@ -389,11 +634,20 @@ def fn_allow_snapshots_success(propdict):
 def fn_allow_snapshots_failure(propdict):
     return 'snapshots_success' in propdict and not propdict['snapshots_success']
 
+def fn_allow_expected_snapshots_present(propdict):
+    return 'expected_snapshots' in propdict
+
 def fn_allow_IOerror(propdict):
     return 'IOerror' in propdict and propdict['IOerror']
     
 def fn_allow_testrun_pass(propdict):
     return 'testrun_success' in propdict and propdict['testrun_success']=='pass'
+
+def fn_allow_testrun_not_pass(propdict):
+    return ('testinfo_diagnostic' in propdict and
+            propdict['testinfo_diagnostic']=='' and
+            ('testrun_success' not in propdict or
+             propdict['testrun_success']!='pass'))
 
 def fn_allow_new_no_interactive(propdict):
     return ( 'testinfo' not in propdict and
@@ -401,6 +655,18 @@ def fn_allow_new_no_interactive(propdict):
 
 def fn_allow_no_props(propdict):
     return len(propdict)==0
+
+def fn_allow_testrun_present(propdict):
+    return 'testrun_success' in propdict
+
+def fn_allow_outdated_weak(propdict):
+    return ('testrun_md5' in propdict and
+            'testinfo_md5' in propdict and
+            propdict['testrun_md5'] == propdict['testinfo_md5'])
+
+def fn_allow_not_inspected(propdict):
+    return ('testinfo_diagnostic' in propdict and
+             'testrun_success' not in propdict )
 
 def get_scripts(db, selector, candidates=None, testbed=None):
     was_unknown = (selector == 'unknown')
@@ -430,11 +696,16 @@ def section(db, selector, candidates=None, verbose=None, testbed=None):
         'all': "All scripts",
         'snapshots_success': "Scripts that have taken snapshots succesfuly",
         'snapshots_failure': "Scripts that atempted to take snapshots but failed",
+        'expected_snapshots_present': "Scripts that have prop 'expected_snapshots' present",
         'unknown': "Scripts not known to the db",
         'IOerror': "Scripts that can't be readed",
         'testrun_pass': "Scripts showing correct behavior and snapshots reflect that",
+        'testrun_not_pass': "Scripts which have valid testinfo and don't have testrun_success=='pass'",
         'new_no_interactive': "No testinfo, no interactive",
-        'no_props': "No props set"
+        'no_props': "No props set",
+        'testrun_present': "Scripts that have been inspected",
+        'outdated_weak': "Scripts with different MD5 in testinfo and testrun",
+        'not_inspected': "Scripts with testinfo valid without testrun info"
         }
     scripts, unknown = get_scripts(db, selector, candidates, testbed)
     scripts = sorted(scripts)
@@ -466,7 +737,8 @@ def rpt(db, selectors, candidates=None, verbose=True, testbed=None):
         
 def rpt_detail_diagnostics(db, selector, candidates=None, testbed=None):
     prop = {'snapshots_failure': 'snapshots_diagnostic',
-            'testinfo_invalid': 'testinfo_diagnostic'}
+            'testinfo_invalid': 'testinfo_diagnostic',
+            'testrun_success': 'testrun_diagnostic'}
     if selector not in prop:
         return '\nNo detailed report available for selector = ' + selector 
     scripts, unknown = get_scripts(db, selector, candidates, testbed)
@@ -494,4 +766,52 @@ def rpt_all_props(db, candidates, testbed=None):
     text = '\n'.join(text_parts)
     return text
         
+def rpt_testrun_outdated_strong(db):
+    parts = [ e for e in info_outdated_strong(db) ]
+    parts.sort()
+    parts.insert(0, ': Scripts with outdated testrun info (strong)\n')
+    text = '\n'.join(parts)
+    return text
+
+def rpt_compare_testbeds_by_entities(db1_fname, db1_testbed,
+                                        db2_fname, db2_testbed, verbose=False):
+
+    res = compare_testbeds_by_entities(db1_fname, db1_testbed,
+                                       db2_fname, db2_testbed)
+    common_entities, only_in_1, only_in_2, equals, differents = res
+    text_parts = []
+    
+    if only_in_1:
+        text_parts.append("Only in 1")
+        li = [ e for e in only_in_1 ]
+        li.sort()
+        text_parts.extend(li)
         
+    if only_in_2:
+        text_parts.append("\nOnly in 2")
+        li = [ e for e in only_in_2 ]
+        li.sort()
+        text_parts.extend(li)
+        
+    if not only_in_1 and not only_in_2:
+        text_parts.append("\nSame entitities in both tesbeds")
+
+    if common_entities:
+        if verbose:
+            text_parts.append("\nEntities in both testbeds with equal (props: values)")
+            li = [ e for e in common_entities ]
+            li.sort()
+            text_parts.extend(li)
+        else:
+            msg = "\nEntities in both testbeds with equal (props: values), quantity: %d"
+            msg = msg % len(common_entities)
+            text_parts.append(msg)
+        
+    if differents:
+        text_parts.append("\nEntities in both testbeds that differs in props")
+        li = [ e for e in differents ]
+        li.sort()
+        text_parts.extend(li)
+
+    text = '\n'.join(text_parts)
+    return text
