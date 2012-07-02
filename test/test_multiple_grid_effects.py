@@ -13,7 +13,9 @@ testinfo = "s, t 1, s, t 3, s, t 4, s, t 5, s, t 8.1, s"
 tags = "ShuffleTiles, Flip, ShuffleTiles"
 
 import pyglet
+from pyglet.gl import glColor4ub, glPushMatrix, glPopMatrix 
 
+import cocos
 from cocos.director import director
 from cocos.actions import Flip, Waves3D, ShuffleTiles
 from cocos.sprite import Sprite
@@ -37,13 +39,17 @@ class SpriteLayer ( Layer ):
         self.add( sprite2 )
         self.add( sprite3 )
 
-class BackgroundLayer( Layer ):
+class BackgroundLayer(cocos.layer.Layer):
     def __init__(self):
-        super( BackgroundLayer, self ).__init__()
+        super(BackgroundLayer, self).__init__()
         self.img = pyglet.resource.image('background_image.png')
 
     def draw( self ):
+        glColor4ub(255, 255, 255, 255)
+        glPushMatrix()
+        self.transform()
         self.img.blit(0,0)
+        glPopMatrix()
 
 description = """
 Aplying different effects to different scene parts. 

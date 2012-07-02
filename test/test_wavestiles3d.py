@@ -13,13 +13,17 @@ import cocos.actions as ac
 from cocos.layer import *
 import pyglet
 
-class BackgroundLayer( cocos.layer.Layer ):
+class BackgroundLayer(cocos.layer.Layer):
     def __init__(self):
-        super( BackgroundLayer, self ).__init__()
+        super(BackgroundLayer, self).__init__()
         self.img = pyglet.resource.image('background_image.png')
 
     def draw( self ):
+        glColor4ub(255, 255, 255, 255)
+        glPushMatrix()
+        self.transform()
         self.img.blit(0,0)
+        glPopMatrix()
 
 def main():
     director.init( resizable=True )

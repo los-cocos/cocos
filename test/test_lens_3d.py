@@ -8,17 +8,22 @@ testinfo = "s, t 1, s, t 5.1, s, q"
 tags = "Lens3D, StopGrid"
 
 import pyglet
+from pyglet.gl import glColor4ub, glPushMatrix, glPopMatrix 
 import cocos
 from cocos.director import director
 from cocos.actions import *
 
-class BackgroundLayer( cocos.layer.Layer ):
+class BackgroundLayer(cocos.layer.Layer):
     def __init__(self):
-        super( BackgroundLayer, self ).__init__()
+        super(BackgroundLayer, self).__init__()
         self.img = pyglet.resource.image('background_image.png')
 
     def draw( self ):
+        glColor4ub(255, 255, 255, 255)
+        glPushMatrix()
+        self.transform()
         self.img.blit(0,0)
+        glPopMatrix()
 
 description = """
 Shows a background image, after 1 sec the Lens3D effect is applied to,

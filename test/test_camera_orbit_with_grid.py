@@ -15,12 +15,13 @@ from pyglet.gl import *
 testinfo = "s, t 3, s, t 6, s, t 8.1, s, q"
 tags = "OrbitCamera, reuse_grid"
 
-class BackgroundLayer( cocos.layer.Layer ):
+class BackgroundLayer(cocos.layer.Layer):
     def __init__(self):
-        super( BackgroundLayer, self ).__init__()
+        super(BackgroundLayer, self).__init__()
         self.img = pyglet.resource.image('background_image.png')
 
     def draw( self ):
+        glColor4ub(255, 255, 255, 255)
         glPushMatrix()
         self.transform()
         self.img.blit(0,0)

@@ -7,19 +7,25 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 testinfo = "s, t 1, s, t 2, s, t 3, s, t 4.1, s, t 4.2, s, q"
 tags = "FlipY3D"
 
+import pyglet
+from pyglet.gl import glColor4ub, glPushMatrix, glPopMatrix 
+
 import cocos
 from cocos.director import director
 from cocos.actions import *
 from cocos.sprite import *
-import pyglet
 
-class BackgroundLayer( cocos.layer.Layer ):
+class BackgroundLayer(cocos.layer.Layer):
     def __init__(self):
-        super( BackgroundLayer, self ).__init__()
+        super(BackgroundLayer, self).__init__()
         self.img = pyglet.resource.image('background_image.png')
 
     def draw( self ):
+        glColor4ub(255, 255, 255, 255)
+        glPushMatrix()
+        self.transform()
         self.img.blit(0,0)
+        glPopMatrix()
 
 def main():
     director.init( resizable=True )
