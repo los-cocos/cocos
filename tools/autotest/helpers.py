@@ -186,7 +186,8 @@ def add_entities(db, filename_persist, targets):
     for name in targets:
         db.add_entity(name)
     db.history_add('add_acripts','\n'.join(targets))
-    dbm.db_save(db, filename_persist)
+    if filename_persist:
+        dbm.db_save(db, filename_persist)
 
 def scanprops_from_text(text, fname):
     base_text_props = [
@@ -483,6 +484,65 @@ def update_testrun__bad(db, filename_persist, testrun_props_by_candidate,
         dbm.db_save(db, filename_persist)
     
     return checked_in, unknown, move_failed
+
+def snapshots_compare(db, fn_snapshots_dist, threshold, candidates, max_tries,
+                            reference_dir, samples_dir):
+    """does snapshots for candidates and compares with reference snapshots
+
+    :Parameters:
+        db: remembercases.TestbedEntityPropDB
+            The db which holds info about scripts.
+            The default_testbed should have been set to the desired testbed,
+            comparison will use info about candidates in the default testbed.
+        fn_snapshots_dist : callable
+            callable that receives paths to two images and returns a float
+            meaning distance between images
+        threshold : float >= 0
+            images don't match if fn_snapshots_dist(img1, img1) > threshold
+        candidates : 
+            iterable yielding scripts.
+            If None, all scripts known in the default testbed are assumed.
+            Their testinfo must be present and up to date, except for maybe md5.
+        max_tries: int > 0
+            how many times try the (take snapshots + comparison). This is
+            handy because very rarely the capture fails. Sugested value is 3
+        reference_dir:
+            directory with the reference snapshots
+        samples_dir:
+            directory to write the fresh snapshots (will remain dirty)
+
+    :returns:
+        equals, unequals, unknowns : sets
+    """
+
+    assert max_tries > 0
+
+    if not os.path.exists(samples_dir):
+        os.makedirs(samples_dir)
+    samples_abspath = os.path.abspath(samples_dir)
+
+    knowns, unknowns = db.entities(fn_allow=None, candidates=candidates)
+    equals = set()
+    unequals = set(knowns)
+    for i in range(max_tries):
+        db.clone_testbed(None, 'tmp')
+        old_testbed = db.set_default_testbed('tmp')
+        update_snapshots(db, None, unequals, samples_dir)
+        for name in unequals:
+            if db.get_prop_value(name, 'snapshots_success'):
+                for snap in db.get_prop_value(name, 'expected_snapshots'):
+                    snap_ref = os.path.join(reference_dir, snap)
+                    snap_tmp = os.path.join(samples_abspath, snap)
+                    if fn_snapshots_dist(snap_ref, snap_tmp) > threshold:
+                        break
+                    equals.add(name)
+        db.del_testbed('tmp')
+        db.set_default_testbed(old_testbed)
+        unequals -= equals
+        if not unequals:
+            break
+
+    return equals, unequals, unknowns
 
 def compare_testbeds_by_entities(db1_fname, db1_testbed, db2_fname, db2_testbed):
     db1 = dbm.db_load(db1_fname, default_testbed=db1_testbed)    
