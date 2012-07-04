@@ -512,7 +512,9 @@ def snapshots_compare(db, fn_snapshots_dist, threshold, candidates, max_tries,
             directory to write the fresh snapshots (will remain dirty)
 
     :returns:
-        equals, unequals, unknowns : sets
+        equals, unequals, untested : sets
+            A script will be in untested when not known to the db,
+            doesn't have a valid testinfo or does not want snapshots
     """
 
     assert max_tries > 0
@@ -521,9 +523,11 @@ def snapshots_compare(db, fn_snapshots_dist, threshold, candidates, max_tries,
         os.makedirs(samples_dir)
     samples_abspath = os.path.abspath(samples_dir)
 
-    knowns, unknowns = db.entities(fn_allow=None, candidates=candidates)
+    knowns, unknowns = db.entities(fn_allow=fn_allow_wants_snapsots,
+                                   candidates=candidates)
     equals = set()
     unequals = set(knowns)
+    untested = unknowns | set(candidates) - unequals
     for i in range(max_tries):
         db.clone_testbed(None, 'tmp')
         old_testbed = db.set_default_testbed('tmp')
@@ -542,7 +546,7 @@ def snapshots_compare(db, fn_snapshots_dist, threshold, candidates, max_tries,
         if not unequals:
             break
 
-    return equals, unequals, unknowns
+    return equals, unequals, untested
 
 def compare_testbeds_by_entities(db1_fname, db1_testbed, db2_fname, db2_testbed):
     db1 = dbm.db_load(db1_fname, default_testbed=db1_testbed)    
@@ -697,6 +701,10 @@ def fn_allow_snapshots_failure(propdict):
 def fn_allow_expected_snapshots_present(propdict):
     return 'expected_snapshots' in propdict
 
+def fn_allow_wants_snapsots(propdict):
+    return ('expected_snapshots' in propdict and
+            len(propdict['expected_snapshots']) > 0)
+
 def fn_allow_IOerror(propdict):
     return 'IOerror' in propdict and propdict['IOerror']
     
@@ -757,6 +765,7 @@ def section(db, selector, candidates=None, verbose=None, testbed=None):
         'snapshots_success': "Scripts that have taken snapshots succesfuly",
         'snapshots_failure': "Scripts that atempted to take snapshots but failed",
         'expected_snapshots_present': "Scripts that have prop 'expected_snapshots' present",
+        'wants_snapsots': "Scripts with should take one or more snapshots",
         'unknown': "Scripts not known to the db",
         'IOerror': "Scripts that can't be readed",
         'testrun_pass': "Scripts showing correct behavior and snapshots reflect that",
