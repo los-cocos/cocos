@@ -309,8 +309,10 @@ class Director(event.EventDispatcher):
 
         if self.do_not_scale_window:
             resize_handler = self.unscaled_resize_window
+            self.set_projection = self.set_projection2D
         else:
             resize_handler = self.scaled_resize_window
+            self.set_projection = self.set_projection3D
         # the offsets and size for the viewport will be proper after this
         self._resize_no_events = True
         resize_handler(self.window.width, self.window.height)
@@ -621,6 +623,13 @@ class Director(event.EventDispatcher):
         self.dispatch_event("on_cocos_resize", self._usable_width, self._usable_height)
 
     def set_projection(self):
+        """
+        placeholder, will be set to one of set_projection2D or set_projection3D
+        when director.init is called
+        """
+        pass
+
+    def set_projection3D(self):
         '''Sets a 3D projection mantaining the aspect ratio of the original window size'''
         # virtual (desired) view size
         vw, vh = self.get_window_size()
@@ -637,6 +646,11 @@ class Director(event.EventDispatcher):
                    0.0, 1.0, 0.0                # up vector
                    )
 
+
+    def set_projection2D(self):
+        """Sets a 2D projection (ortho) covering all the window"""
+        # called only for the side effect of setting matrices in pyglet
+        self.window.on_resize(self._usable_width, self._usable_height)
 
     #
     # Misc functions
