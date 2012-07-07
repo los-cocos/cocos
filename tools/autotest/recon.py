@@ -451,7 +451,7 @@ def update_22(db, filename_persist, snapshots_dir, snapshots_reference_dir):
 # filename to persist the db
 filename_persist = 'initial.dat'
 # change the string to identify about which machine is the info collected 
-testbed = 'ati 6570'
+testbed = 'ati 6320'
 # dir used to calculate canonical paths
 basepath = '../..'
 # dir where update_snapshots will store snapshots

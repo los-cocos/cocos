@@ -178,7 +178,7 @@ def report(stats_fname, rpt_function):
 # set hardcoded params
 
 db_fname = 'initial.dat' # must exist as a result of running recon.py
-testbed = 'ati 6570'
+testbed = 'ati 6320'
 stats_fname = 'rep_stats.pkl' 
 samples_dir = '../../test/saux'
 
@@ -186,16 +186,17 @@ samples_dir = '../../test/saux'
 # you can spend in runs.
 # To add more rounds to a stats, set clean=False ; it is fine to have
 # different limit when adding rounds 
-candidates = ['test/test_accel_amplitude.py', 'test/test_base.py']
-# candidates = None # means all tests
+#candidates = ['test/test_accel_amplitude.py', 'test/test_base.py']
+candidates = None # means all tests
 
-clean = True # True starts a new stats serie
-recover = False # Normal is, used to debug combinning stats
-limit = 2 #int means rounds
-# limit = 30.0 #float means minutes; will be exceeded to complete last round
+clean = False # True starts a new stats serie
+recover = False # Normal is False, used to debug combinning stats
+#limit = 2 #int means rounds
+limit = 60.0 #float means minutes; will be exceeded to complete last round
 
 if clean:
     new(db_fname, testbed, stats_fname, candidates, limit, samples_dir)
-more_rounds(stats_fname, limit, recover=recover)
+else:
+    more_rounds(stats_fname, limit, recover=recover)
 
 print report(stats_fname, rpt_compact)
