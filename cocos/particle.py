@@ -46,6 +46,26 @@ import ctypes
 from cocosnode import CocosNode
 from euclid import Point2
 
+# for dev and diagnostic, None means real automatic, True / False means
+# return this value inconditionally
+forced_point_sprites = None
+def point_sprites_available():
+    """returns a bool telling if point sprites are available
+
+    For development and diagonostic cocos.particle.forced_point_sprites could
+    be set to force the desired return value
+    """
+    if forced_point_sprites is not None:
+        return forced_point_sprites
+    have_point_sprites = True
+    try:
+        glEnable(GL_POINT_SPRITE)
+        glDisable(GL_POINT_SPRITE)
+    except:
+        have_point_sprites = False
+    return have_point_sprites
+
+
 class ExceptionNoEmptyParticle(Exception):
     """particle system have no room for another particle"""
     pass
@@ -56,7 +76,7 @@ rand = lambda: random.random() * 2 - 1
 # from pyglet's user list
 def PointerToNumpy(a, ptype=ctypes.c_float):
     a = numpy.ascontiguousarray(a)           # Probably a NO-OP, but perhaps not
-    return a.ctypes.data_as(ctypes.POINTER(ptype)) # Ugly and undocumented!
+    return a.ctypes.data_as(ctypes.POINTER(ptype)) # Ugly and undocumented! 
 
 class Color( object ):
     def __init__( self, r,g,b,a ):
@@ -79,8 +99,6 @@ class ParticleSystem( CocosNode ):
     If you want to use a custom texture remember it should hold only one image,
     so don't use texture = pyglet.resource.image(...) (it would produce an atlas,
     ie multiple images in a texture); using texture = pyglet.image.load(...) is fine
-
-    This implementation uses openGL PointSprites, which some systems dont support.
     """
 
     # type of particle
@@ -157,7 +175,14 @@ class ParticleSystem( CocosNode ):
     # position type
     position_type = POSITION_GROUPED
 
-    def __init__(self):
+    def __init__(self, fallback=None):
+        """
+        fallback can be None, True, False; default is None
+            False: use point sprites, faster, not always availabel
+            True: use quads, slower but always available)
+            None: autodetect, use the faster available
+            
+        """
         super(ParticleSystem,self).__init__()
 
         # particles
@@ -185,14 +210,23 @@ class ParticleSystem( CocosNode ):
 
         #: How many particles can be emitted per second
         self.emit_counter = 0
-
+        
         #: Count of particles
         self.particle_count = 0
-
+        
         #: auto remove when particle finishes
         self.auto_remove_on_finish = False
 
+        #: rendering mode; True is quads, False is point_sprites, None is auto fallback
+        if fallback is None:
+            fallback = not point_sprites_available()
+        self.fallback = fallback
+        if fallback:
+            self._fallback_init()
+            self.draw = self.draw_fallback
+        
         self.schedule( self.step )
+
 
     def on_enter( self ):
         super( ParticleSystem, self).on_enter()
@@ -202,6 +236,8 @@ class ParticleSystem( CocosNode ):
         glPushMatrix()
         self.transform()
 
+        # color preserve - at least nvidia 6150SE needs that
+        glPushAttrib(GL_CURRENT_BIT)
         glPointSize( self.size )
 
         glEnable(GL_TEXTURE_2D)
@@ -238,6 +274,9 @@ class ParticleSystem( CocosNode ):
         glDrawArrays(GL_POINTS, 0, self.total_particles);
 
         # un -blend
+        glPopAttrib()
+
+        # color restore
         glPopAttrib()
 
 #        # restore env mode
@@ -352,7 +391,7 @@ class ParticleSystem( CocosNode ):
         idx = -1
 
         if len(idxs[0]) > 0:
-            idx = idxs[0][0]
+            idx = idxs[0][0] 
         else:
             raise ExceptionNoEmptyParticle()
 
@@ -380,7 +419,7 @@ class ParticleSystem( CocosNode ):
 
         # tangential accel
         self.particle_tan[idx] = self.tangential_accel + self.tangential_accel_var * rand()
-
+        
         # life
         life = self.particle_life[idx] = self.life + self.life_var * rand()
 
@@ -418,3 +457,95 @@ class ParticleSystem( CocosNode ):
         # gravity
         self.particle_grav[idx][0] = self.gravity.x
         self.particle_grav[idx][1] = self.gravity.y
+
+
+    # Below only fallback functionality.
+    # It uses quads instehad of point sprites, doing a transformation 
+    # point sprites buffers -> quads buffer, so any change in point sprite mode
+    # is automatically reflects in the fallback mode (except for changes in the
+    # draw method which should be manually adapted
+
+    def _fallback_init(self):
+        self.vertexs = numpy.zeros((self.total_particles * 4, 2), numpy.float32)
+        tex_coords_for_quad = numpy.array([[0.0, 1.0], [0.0, 0.0], [1.0, 0.0], [1.0, 1.0]], numpy.float32)
+        self.tex_coords = numpy.zeros((self.total_particles * 4, 2), numpy.float32)
+        all_tex_coords = self.tex_coords
+        for i in xrange(0,len(self.vertexs),4):
+            all_tex_coords[i : i + 4 ] = tex_coords_for_quad
+        self.per_vertex_colors = numpy.zeros( (self.total_particles * 4, 4), numpy.float32)
+        self.delta_pos_to_vertex = numpy.zeros((4, 2), numpy.float32)
+
+
+    def draw_fallback(self):
+        self.make_delta_pos_to_vertex()
+        self.update_vertexs_from_pos()
+        self.update_per_vertex_colors()
+
+        glPushMatrix()
+        self.transform()
+
+        # color preserve - at least intel 945G needs that
+        glPushAttrib(GL_CURRENT_BIT)
+
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, self.texture.id )
+
+	glEnableClientState(GL_VERTEX_ARRAY)
+        vertexs_ptr = PointerToNumpy(self.vertexs)
+	glVertexPointer(2, GL_FLOAT, 0, vertexs_ptr)
+
+	glEnableClientState(GL_COLOR_ARRAY)
+        color_ptr = PointerToNumpy(self.per_vertex_colors)
+	#glColorPointer(4, GL_UNSIGNED_BYTE, 0, color_ptr)
+        glColorPointer(4, GL_FLOAT, 0, color_ptr)
+        
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY )
+	tex_coord_ptr = PointerToNumpy(self.tex_coords)
+        glTexCoordPointer(2, GL_FLOAT, 0, tex_coord_ptr)
+
+        glPushAttrib(GL_COLOR_BUFFER_BIT)
+        glEnable(GL_BLEND)
+        if self.blend_additive:
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        else:
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glDrawArrays(GL_QUADS, 0, len(self.vertexs))
+	
+        # un -blend
+        glPopAttrib()
+
+        # color restore
+        glPopAttrib()
+
+        # disable states
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
+        glDisableClientState(GL_COLOR_ARRAY)
+        glDisableClientState(GL_VERTEX_ARRAY)
+        glDisable(GL_TEXTURE_2D);
+
+        glPopMatrix()
+
+    def update_vertexs_from_pos(self):
+        vertexs = self.vertexs
+        delta = self.delta_pos_to_vertex
+        pos = self.particle_pos
+        for i, pos_i in enumerate(pos):
+            i4 = i*4
+            vertexs[i4:i4 + 4 ] = delta + pos_i
+
+    def update_per_vertex_colors(self):
+        colors = self.particle_color
+        per_vertex_colors = self.per_vertex_colors
+        for i, color in enumerate(colors):
+            i4 = i*4
+            per_vertex_colors[i4:i4 + 4 ] = color
+
+    def make_delta_pos_to_vertex(self):
+        size2 = self.size / 2.0
+        # counter-clockwise
+        self.delta_pos_to_vertex[0] = (-size2, +size2) # NW
+        self.delta_pos_to_vertex[1] = (-size2, -size2) # SW
+        self.delta_pos_to_vertex[2] = (+size2, -size2) # SE
+        self.delta_pos_to_vertex[3] = (+size2, +size2) # NE
+
