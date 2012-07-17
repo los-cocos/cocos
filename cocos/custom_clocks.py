@@ -210,6 +210,7 @@ class ScreenReaderClock(pyglet.clock.Clock):
         self.fake_time = self.frameno/self.framerate
         return ts
 
+
 class ScreenReaderClock_12dev(pyglet.clock.Clock):
     """ Make frames happen every 1/framerate and takes screenshots
 
@@ -276,6 +277,7 @@ class ScreenReaderClock_12dev(pyglet.clock.Clock):
         ts = self.fake_time
         self.fake_time = self.frameno/self.framerate
         return ts
+
 
 class AutotestClock(pyglet.clock.Clock):
     """Make frames follow a test plan
@@ -355,3 +357,49 @@ class AutotestClock(pyglet.clock.Clock):
 
     def get_sleep_time(self, sleep_idle):
         return 0
+
+
+class AutotestClock_12dev(pyglet.clock.Clock):
+    """Make frames follow a test plan
+
+        This class is compatible with pyglet 1.2dev, it is not compatible
+        with pyglet 1.1.4release
+    """
+
+    def __init__(self, screen_sampler):
+        super(AutotestClock_12dev, self).__init__()
+        self.screen_sampler = screen_sampler
+
+    def update_time(self):
+        '''Get the (fake) elapsed time since the last call to `update_time`
+            Additionally, take snapshots.
+
+        returns the difference since the last update (or since the clock was created).
+
+        :rtype: float
+        :return: The number of seconds since the last `update_time`, or 0
+            if this was the first time it was called.
+        '''
+        # Code is the same as in baseclass, except changes pointed in comments
+
+        # this was ts = self.time() in pyglet, here .next will  drive the
+        # desired fake time, take snapshots, and handle end conditions for
+        # the snapshots session
+        ts = self.screen_sampler.next(self.last_ts)
+
+        # below is the same as in the stock pyglet 1.2dev clock.Clock.update_time
+        if self.last_ts is None:
+            delta_t = 0
+        else:
+            delta_t = ts - self.last_ts
+            self.times.insert(0, delta_t)
+            if len(self.times) > self.window_size:
+                self.cumulative_time -= self.times.pop()
+        self.cumulative_time += delta_t
+        self.last_ts = ts
+
+        return delta_t
+
+    def get_sleep_time(self, sleep_idle):
+        """sleep time between frames; 0.0 as as we want to run as fast as possible"""
+        return 0.0
