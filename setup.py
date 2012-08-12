@@ -8,8 +8,8 @@ $Date: 2011-08-14 23:00:00 -0300 (Wed, 14 August 2011) $
 
 __author__ = "cocos2d team"
 __author_email__ = "lucio.torre@gmail.com"
-__version__ = "0.5.0"
-__date__ = "2011 10 26"
+__version__ = "0.5.5"
+__date__ = "2012 08 12"
 
 try:
     import setuptools

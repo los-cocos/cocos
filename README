@@ -31,7 +31,7 @@ Requirements
 
  Software:
 
- * python 2.4 or newer; dont work with 3.x
+ * python 2.4 or newer; don't works with 3.x
  * pyglet 1.1.4 or newer (http://www.pyglet.org)
  * Linux, Windows or Mac OS/X
 
