@@ -55,7 +55,7 @@ __all__ = ['BatchNode','BatchableNode']
 
 def ensure_batcheable(node):
     if not isinstance(node, BatchableNode):
-        raise Exception("Children node of a batch must be have the batch mixin")
+        raise Exception("Children node of a batch must be of class BatchableNode")
     for c in  node.get_children():
         ensure_batcheable(c)
 
@@ -72,6 +72,8 @@ class BatchNode( cocosnode.CocosNode ):
 
     def visit(self):
         """ All children are placed in to self.batch, so nothing to visit """
+        if not self.visible:   
+           return 
         glPushMatrix()
         self.transform()
         self.batch.draw()

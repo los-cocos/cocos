@@ -122,7 +122,7 @@ class CocosNode(object):
         #: Default: 0
         self.transform_anchor_y = 0
 
-        #: whether of not the object is visible.
+        #: whether of not the object and his childrens are visible.
         #: Default: True
         self.visible = True
 

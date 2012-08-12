@@ -1,4 +1,5 @@
 v0.6dev
+  - fix issue 184, BatchNode not honoring the visible flag, patch by corentinglon@gmail.com
   - particles work even if gl point sprites not available, issue 178
   - fix issue 162, grid transitions ending with wrong projection / modelview matrices
   - fix issue 164, ZoomTransition misbehaves with some hardware
