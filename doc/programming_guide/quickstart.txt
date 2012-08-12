@@ -238,7 +238,7 @@ This class defines a key_pressed set, which should be the set of keys pressed at
 
 With that code, the layer is now fully working. You can press and release keys or key combinations, and you will se how the display is updated telling you which keys are pressed at any time.
 
-Handling mouse input is similar. You have three events of interest: on_mouse_press, on_mouse_release and on_mouse_motion. With that, we can define our layer::
+Handling mouse input is similar. You have three events of interest: on_mouse_press, on_mouse_motion and on_mouse_drag. With that, we can define our layer::
 
         class MouseDisplay(cocos.layer.Layer):
 
@@ -260,27 +260,45 @@ Handling mouse input is similar. You have three events of interest: on_mouse_pre
 
 And then add event handlers to update the text when the mouse is moved, and change the text position when any button is clicked::
 
-        def on_mouse_motion (self, x, y, dx, dy):
-            """This function is called when the mouse is moved over the app.
+    def on_mouse_motion (self, x, y, dx, dy):
+        """Called when the mouse moves over the app window with no button pressed
+        
+        (x, y) are the physical coordinates of the mouse
+        (dx, dy) is the distance vector covered by the mouse pointer since the
+          last call.
+        """
+        self.update_text (x, y)
 
-            (x, y) are the physical coordinates of the mouse
-            (dx, dy) is the distance vector covered by the mouse pointer since the
-                last call.
-            """
-            self.update_text (x, y)
+    def on_mouse_drag (self, x, y, dx, dy, buttons, modifiers):
+        """Called when the mouse moves over the app window with some button(s) pressed
+        
+        (x, y) are the physical coordinates of the mouse
+        (dx, dy) is the distance vector covered by the mouse pointer since the
+          last call.
+        'buttons' is a bitwise or of pyglet.window.mouse constants LEFT, MIDDLE, RIGHT
+        'modifiers' is a bitwise or of pyglet.window.key modifier constants
+           (values like 'SHIFT', 'OPTION', 'ALT')
+        """
+        self.update_text (x, y)
 
-        def on_mouse_press (self, x, y, buttons, modifiers):
-            """This function is called when any mouse button is pressed
+    def on_mouse_press (self, x, y, buttons, modifiers):
+        """This function is called when any mouse button is pressed
 
-            (x, y) are the physical coordinates of the mouse
-            'buttons' is a bitwise or of pyglet.window.mouse constants LEFT, MIDDLE, RIGHT
-            'modifiers' is a bitwise or of pyglet.window.key modifier constants
-                (values like 'SHIFT', 'OPTION', 'ALT')
-            """
-            self.posx, self.posy = director.get_virtual_coordinates (x, y)
-            self.update_text (x,y)
+        (x, y) are the physical coordinates of the mouse
+        'buttons' is a bitwise or of pyglet.window.mouse constants LEFT, MIDDLE, RIGHT
+        'modifiers' is a bitwise or of pyglet.window.key modifier constants
+           (values like 'SHIFT', 'OPTION', 'ALT')
+        """
+        self.posx, self.posy = director.get_virtual_coordinates (x, y)
+        self.update_text (x,y)
 
 The only thing a bit unusual here is the call to `director.get_virtual_coordinates` (x, y). As explained in the example before, cocos has two coordinates systems, a physical one and a virtual one. The mouse event handlers receive their arguments from pyglet in physical coordinates. If you want to map that to virtual coordinates, you need to use the director.get_virtual_coordinates method, which does the correct mapping. If you put instead ``self.posx``, ``self.posy = x,y`` in the on_mouse_press handler above, you will see that the app seems to work, but if you resize the window, the clicks will move the text to the wrong place.
+
+For completneddes, they are other mouse events that can be of interest:
+	on_mouse_release : called when a button is released
+	on_mouse_scroll : called when the mouse wheel moved
+	on_mouse_leave : called when the mouse cursor goes out of the window
+	on_mouse_enter : called when the mouse cursor enters the window
 
 The demo does not have much more code, just creating a scene with these two layers and running it::
 
@@ -292,7 +310,7 @@ You can now play to the demo and change it. Some things you can try are:
 
  * Change the on_mouse_press handler and remove the mapping to virtual coordinates; note how it behaves strangely after resizing the window
  * Note that the mouse coordinates on screen are physical coordinates, so their range changes when resizing the window; modify the demo to show virtual coordinates.
- * Change the code to be able to move the mouse coordinates label when you drag the mouse (hint: a mouse drag is a sequence of button_press, several motions, and a button_release event)
+ * Change the code to be able to move the mouse coordinates label when you drag the mouse
  * Change the code so the keyboard display also shows the modifiers set at each time
 
 Where to next?
