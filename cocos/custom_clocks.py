@@ -32,7 +32,8 @@
 # ----------------------------------------------------------------------------
 """
 Custom clocks used by cocos to perform special tasks, like:
-recording a cocos app as a sequence of snapshots with an exact, fixed framerate
+    - recording a cocos app as a sequence of snapshots with an exact, fixed framerate
+    - jump in a predefined sequence of timestamps taking snapshots
 
 dev notes:
 There's code duplication here, but having separated codepaths would help to
@@ -43,9 +44,12 @@ References to the classes defined here are discouraged in code outside this
 module because of possible changes.
 
 The public interface should be
-    get_recorder_clock
-    set_app_clock
+    - get_recorder_clock
+    - set_app_clock
 """
+
+__docformat__ = 'restructuredtext'
+
 import pyglet
 
 def get_recorder_clock(framerate, template, duration=0):
@@ -56,12 +60,12 @@ def get_recorder_clock(framerate, template, duration=0):
 
     The clock object class depends on the pyglet version, and is set automatically
 
-    :Parameters
-        `framerate`: int
+    :Parameters:
+        `framerate` : int
             the number of frames per second
-        `template`: str
+        `template` : str
             snapshot filenames will be template%frame_number (ex: "s%d.png" -> s0.png, s1.png...)
-        `duration`: float
+        `duration` : float
             the amount of seconds to record, or 0 for infinite
     """
     if pyglet.version.startswith('1.1'):
@@ -75,14 +79,15 @@ def get_recorder_clock(framerate, template, duration=0):
 def get_autotest_clock(sampler):
     """
     Returns a clock object suitable to be used as a pyglet app clock, which
-    will follow a test plan to advance time, hit some events and take snapshots
+    will follow a test plan to advance time and take snapshots.
 
-    The clock object class depends on the pyglet version, and is set automatically
+    The clock object class depends on the pyglet version, and is determined automatically.
 
-    :Parameters
-        sampler: obj with interface sampler.next(last_app_time) -> next_app_time
-        Drives the app trough the desired states, take snapshots and handle the
-        app under observation termination conditions.
+    :Parameters:
+        `sampler` : obj
+            obj with interface sampler.next(last_app_time) -> next_app_time
+            Drives the app trough the desired states, take snapshots and handles
+            the app termination conditions.
     """
     if pyglet.version.startswith('1.1'):
         # works with pyglet 1.1.4release
@@ -227,15 +232,13 @@ class ScreenReaderClock_12dev(pyglet.clock.Clock):
         self.fake_time = 0.0
 
     def update_time(self):
-        '''Get the (fake) elapsed time since the last call to `update_time`
+        """Get the (fake) elapsed time since the last call to `update_time`
             Additionally, take snapshots.
-
-        returns the difference since the last update (or since the clock was created).
 
         :rtype: float
         :return: The number of seconds since the last `update_time`, or 0
             if this was the first time it was called.
-        '''
+        """
         # Code is the same as in baseclass, except changes pointed in comments
 
         # our payload: take screenshot and handle end of snapshot session
@@ -373,8 +376,6 @@ class AutotestClock_12dev(pyglet.clock.Clock):
     def update_time(self):
         '''Get the (fake) elapsed time since the last call to `update_time`
             Additionally, take snapshots.
-
-        returns the difference since the last update (or since the clock was created).
 
         :rtype: float
         :return: The number of seconds since the last `update_time`, or 0
