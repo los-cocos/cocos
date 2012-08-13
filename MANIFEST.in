@@ -1,1 +1,19 @@
+# lot more needed than in release 0.5.0 , probably after installing pip - distribute
+include CHANGELOG
+include INSTALL
+include LICENSE
+include LICENSE.euclid
+include LICENSE.grossini
+include LICENSE.python_interpreter
+
+include cocos/audio/AUTHORS
+include cocos/audio/LICENSE.pygame-ctypes
+include cocos/resources *
+
+recursive-include benchmarks *
+recursive-include test *
+recursive-include utest *
+recursive-include samples *
+recursive-include tools *
+
 recursive-include doc/html *
