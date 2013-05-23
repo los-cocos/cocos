@@ -95,7 +95,10 @@ class SDL_DLL:
         if not library:
             raise ImportError, 'Dynamic library "%s" was not found' % \
                 _platform_library_name(self.library_name)
-        self._dll = getattr(cdll, library)
+        try:
+            self._dll = getattr(cdll, library)
+        except OSError:
+            raise ImportError, "Dynamic library not found"
 
     def version_compatible(self, v):
         '''Returns True iff `v` is equal to or later than the loaded library

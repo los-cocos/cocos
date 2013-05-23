@@ -1,3 +1,6 @@
+v0.5.7 - 
+  - fix Mac crash due to nonmatching SDL dlls when not using SDL audio (patch by useboxnet@gmail.com, issue 190)
+
 v0.5.5 - August 12, 2012
   - fix issue 168, now particle textures are propper (this can change visual size for particlers in old code)
   - fix issue 184, BatchNode now honors the visible flag, patch by corentinglon@gmail.com
