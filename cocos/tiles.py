@@ -766,11 +766,22 @@ class RectMap(RegularTesselationMap):
         self.px_height = len(cells[0]) * th # +abs(self.origin_y) ?
 
     def get_in_region(self, x1, y1, x2, y2):
-        '''Return cells (in [column][row]) that are within the map-space
-        pixel bounds specified by the bottom-left (x1, y1) and top-right
-        (x2, y2) corners.
+        '''Return cells that intersects the rectangle x1, y1, x2, y2 in an
+           area greater than zero
+
+        (x1, y1) and (x2, y2) are the lower left and upper right corners
+        respectively, in map's coordinate space, unmodified by screen, layer
+        or view transformations
 
         Return a list of Cell instances.
+
+        When the rectangle has area zero results are a bit inconsistent:
+            A rectangle which is a point intersects no cell
+            A rectangle which is a segment and overlaps the cell boundaries
+            intersects no cells
+            A rectangle which is a segment and don't overlaps the cell
+            boundaries intersects some cells: the ones that the open segment
+            intersects
         '''
         ox = self.origin_x
         oy = self.origin_y

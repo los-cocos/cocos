@@ -193,6 +193,14 @@ class MapModelTest(unittest.TestCase):
         assert set(overlaps) == set( ['col_2_row_4', 'col_3_row_4',
                                      'col_2_row_5', 'col_3_row_5'] )
 
+        # all rect boundaries overlaps cell boundaries
+        x1, y1 = 6, 8
+        x2, y2 = 8, 12
+        overlaps = m.get_in_region(x1, y1, x2, y2)
+        print overlaps
+        # expects all cells which overlaps the x1,y1,x2,y2 rect in an area > 0
+        assert set(overlaps) == set( ['col_3_row_4', 'col_3_row_5'] )
+
     def test_rect_region_alt__rect_is_a_segment_not_in_cells_boundary(self):
         # this is emergent behavior , not planed one
         tile_width = tile_height_h = 2

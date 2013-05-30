@@ -1,4 +1,6 @@
 v0.5.7 - 
+  - fix RectMap.get_in_region returns too many cells (thanks Gerardo Marset for 
+    bug report, analysis and tentative correction)
   - fix Mac crash due to nonmatching SDL dlls when not using SDL audio (issue 190, patch by useboxnet@gmail.com, thanks)
 
 v0.5.5 - August 12, 2012
