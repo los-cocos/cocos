@@ -776,8 +776,8 @@ class RectMap(RegularTesselationMap):
         oy = self.origin_y
         x1 = max(0, (x1 - ox) // self.tw)
         y1 = max(0, (y1 - oy) // self.th)
-        x2 = min(len(self.cells), (x2 - ox) // self.tw + 1)
-        y2 = min(len(self.cells[0]), (y2 - oy) // self.th + 1)
+        x2 = min(len(self.cells), (x2 - ox - 1) // self.tw + 1)
+        y2 = min(len(self.cells[0]), (y2 - oy -1) // self.th + 1)
 ##        return [self.cells[i][j]
 ##            for i in range(int(x1), int(x2))
 ##                for j in range(int(y1), int(y2))]
