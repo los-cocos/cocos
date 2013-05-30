@@ -193,7 +193,7 @@ class MapModelTest(unittest.TestCase):
         assert set(overlaps) == set( ['col_2_row_4', 'col_3_row_4',
                                      'col_2_row_5', 'col_3_row_5'] )
 
-    def test_rect_region_alt__rect_is_a_segment(self):
+    def test_rect_region_alt__rect_is_a_segment_not_in_cells_boundary(self):
         # this is emergent behavior , not planed one
         tile_width = tile_height_h = 2
         nrows = 7
@@ -201,12 +201,25 @@ class MapModelTest(unittest.TestCase):
         cells = [ [ 'col_%d_row_%d'%(yy, xx) for xx in range(ncols)]
                                                       for yy in xrange(nrows)]        
         m = RectMap(42, tile_width, tile_height_h, cells, origin=(0, 0, 0))
-        # what the actual code will do when the rectangle is a line
         x1, y1 = 5, 8
         x2, y2 = 5, 12
         overlaps = m.get_in_region(x1, y1, x2, y2)
-        print 'rect is a line:', overlaps
+        print 'rect is a segment not overlapping cells boundary:', overlaps
         assert set(overlaps) == set( ['col_2_row_4', 'col_2_row_5'] )
+
+    def test_rect_region_alt__rect_is_a_segment_not_in_cells_boundary(self):
+        # this is emergent behavior , not planed one
+        tile_width = tile_height_h = 2
+        nrows = 7
+        ncols = 6
+        cells = [ [ 'col_%d_row_%d'%(yy, xx) for xx in range(ncols)]
+                                                      for yy in xrange(nrows)]        
+        m = RectMap(42, tile_width, tile_height_h, cells, origin=(0, 0, 0))
+        x1, y1 = 4, 8
+        x2, y2 = 4, 12
+        overlaps = m.get_in_region(x1, y1, x2, y2)
+        print 'rect is a segment overlapping cells boundary:', overlaps
+        assert set(overlaps) == set( [] )
 
     def test_rect_region_alt__rect_is_a_point(self):
         # this is emergent behavior , not planed one
@@ -216,7 +229,6 @@ class MapModelTest(unittest.TestCase):
         cells = [ [ 'col_%d_row_%d'%(yy, xx) for xx in range(ncols)]
                                                       for yy in xrange(nrows)]        
         m = RectMap(42, tile_width, tile_height_h, cells, origin=(0, 0, 0))
-        # what the actual code will do when the rectangle is a point
         x1, y1 = 5, 8
         x2, y2 = 5, 8
         overlaps = m.get_in_region(x1, y1, x2, y2)
