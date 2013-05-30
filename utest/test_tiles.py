@@ -178,7 +178,7 @@ class MapModelTest(unittest.TestCase):
         t = m.get_in_region(32, 32, 96, 96)
         self.assertEquals(len(t), 4)
 
-    def test_rect_region_alt(self):
+    def test_rect_region_alt__rect_with_area_gt_0(self):
         tile_width = tile_height_h = 2
         nrows = 7
         ncols = 6
@@ -189,9 +189,39 @@ class MapModelTest(unittest.TestCase):
         x2, y2 = 8, 12
         overlaps = m.get_in_region(x1, y1, x2, y2)
         print overlaps
+        # expects all cells which overlaps the x1,y1,x2,y2 rect in an area > 0
         assert set(overlaps) == set( ['col_2_row_4', 'col_3_row_4',
                                      'col_2_row_5', 'col_3_row_5'] )
 
+    def test_rect_region_alt__rect_is_a_segment(self):
+        # this is emergent behavior , not planed one
+        tile_width = tile_height_h = 2
+        nrows = 7
+        ncols = 6
+        cells = [ [ 'col_%d_row_%d'%(yy, xx) for xx in range(ncols)]
+                                                      for yy in xrange(nrows)]        
+        m = RectMap(42, tile_width, tile_height_h, cells, origin=(0, 0, 0))
+        # what the actual code will do when the rectangle is a line
+        x1, y1 = 5, 8
+        x2, y2 = 5, 12
+        overlaps = m.get_in_region(x1, y1, x2, y2)
+        print 'rect is a line:', overlaps
+        assert set(overlaps) == set( ['col_2_row_4', 'col_2_row_5'] )
+
+    def test_rect_region_alt__rect_is_a_point(self):
+        # this is emergent behavior , not planed one
+        tile_width = tile_height_h = 2
+        nrows = 7
+        ncols = 6
+        cells = [ [ 'col_%d_row_%d'%(yy, xx) for xx in range(ncols)]
+                                                      for yy in xrange(nrows)]        
+        m = RectMap(42, tile_width, tile_height_h, cells, origin=(0, 0, 0))
+        # what the actual code will do when the rectangle is a point
+        x1, y1 = 5, 8
+        x2, y2 = 5, 8
+        overlaps = m.get_in_region(x1, y1, x2, y2)
+        print 'rect is point:', overlaps
+        assert set(overlaps) == set( [] )
 
     def test_hex_neighbor(self):
         # test hexagonal tile map
