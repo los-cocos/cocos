@@ -56,6 +56,7 @@ class PlatformerController(actions.Action, tiles.RectMapCollider):
 description = """
 Shows how to use a tilemap to control collision between actors and the terrain.
 Use Left-Right arrows and space to control.
+Use D to show cell / tile info
 """
 
 def main():
@@ -96,6 +97,12 @@ def main():
     # track keyboard presses
     keyboard = key.KeyStateHandler()
     director.window.push_handlers(keyboard)
+
+    # allow display info about cells / tiles 
+    def on_key_press(key, modifier):
+        if key == pyglet.window.key.D:
+            tilemap.set_debug(True)
+    director.window.push_handlers(on_key_press)
 
     # run the scene
     director.run(platformer_scene)

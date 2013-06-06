@@ -676,6 +676,9 @@ class MapLayer(layer.ScrollableLayer):
                 ]
                 for p in cell.properties:
                     label.append('%s=%r'%(p, cell.properties[p]))
+                if cell.tile is not None:
+                    for p in cell.tile.properties:
+                        label.append('%s=%r'%(p, cell.tile.properties[p]))
                 lx, ly = cell.topleft
                 s._label = pyglet.text.Label(
                     '\n'.join(label), multiline=True, x=lx, y=ly,
