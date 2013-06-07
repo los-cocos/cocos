@@ -41,7 +41,7 @@ __docformat__ = 'restructuredtext'
 __version__ = '$Id: resource.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 
 import os
-import math
+from math import ceil, sqrt
 import struct
 import weakref
 try:
@@ -566,7 +566,7 @@ def hexmap_factory(resource, tag):
 def hex_width(height):
     '''Determine a regular hexagon's width given its height.
     '''
-    return int(height / math.sqrt(3)) * 2
+    return int(height / sqrt(3)) * 2
 
 
 class MapLayer(layer.ScrollableLayer):
@@ -790,8 +790,8 @@ class RectMap(RegularTesselationMap):
         oy = self.origin_y
         x1 = max(0, (x1 - ox) // self.tw)
         y1 = max(0, (y1 - oy) // self.th)
-        x2 = min(len(self.cells), (x2 - ox - 1) // self.tw + 1)
-        y2 = min(len(self.cells[0]), (y2 - oy -1) // self.th + 1)
+        x2 = min(len(self.cells), ceil(float(x2 - ox) / self.tw))
+        y2 = min(len(self.cells[0]), ceil(float(y2 - oy) / self.th))
 ##        return [self.cells[i][j]
 ##            for i in range(int(x1), int(x2))
 ##                for j in range(int(y1), int(y2))]
@@ -1080,7 +1080,7 @@ class HexMap(RegularTesselationMap):
 
     Calculated attributes:
 
-     edge_length -- length of an edge in pixels = int(th / math.sqrt(3))
+     edge_length -- length of an edge in pixels = int(th / sqrt(3))
      tw          -- with of a "tile" in pixels = edge_length * 2
 
     Hexmaps store their cells in an offset array, column-major with y
@@ -1106,7 +1106,7 @@ class HexMap(RegularTesselationMap):
         self.cells = cells
 
         # figure some convenience values
-        s = self.edge_length = int(th / math.sqrt(3))
+        s = self.edge_length = int(th / sqrt(3))
         self.tw = self.edge_length * 2
 
         # now figure map dimensions
@@ -1205,7 +1205,7 @@ class HexMapLayer(HexMap, MapLayer):
 
     The Layer has a calculated attribute:
 
-     edge_length -- length of an edge in pixels = int(th / math.sqrt(3))
+     edge_length -- length of an edge in pixels = int(th / sqrt(3))
      tw          -- with of a "tile" in pixels = edge_length * 2
 
     Hexmaps store their cells in an offset array, column-major with y
