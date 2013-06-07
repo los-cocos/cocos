@@ -102,6 +102,10 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
                     the rotation (degrees). Defaults to 0.
                 `scale` : float
                     the zoom factor. Defaults to 1.
+                `scale_x` : float
+                    additional horizontal-only zoom factor. Defaults to 1.
+                `scale_y` : float
+                    additional vertical-only zoom factor. Defaults to 1.
                 `opacity` : int
                     the opacity (0=transparent, 255=opaque). Defaults to 255.
                 `color` : tuple
@@ -117,6 +121,10 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         self.transform_anchor_y = 0
         self._image_anchor_x = 0
         self._image_anchor_y = 0
+
+        # These need to be forward-defined here because pyglet sprites don't have them.
+        self._scale_x = 1
+        self._scale_y = 1
 
         pyglet.sprite.Sprite.__init__(self, image)
         BatchableNode.__init__(self)
@@ -149,6 +157,12 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
         #: scale of the sprite where 1.0 the default value
         self.scale = scale
+
+        #: additional horizontal-only scale of the sprite where 1.0 the default value
+        self.scale_x = 1
+
+        #: additional vertical-only scale of the sprite where 1.0 the default value
+        self.scale_y = 1
 
         #: opacity of the sprite where 0 is transparent and 255 is solid
         self.opacity = opacity
@@ -195,6 +209,14 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
     def _set_scale( self, s ):
         BatchableNode._set_scale(self,s)
         pyglet.sprite.Sprite._set_scale(self,s)
+
+    def _set_scale_x( self, s ):
+        BatchableNode._set_scale_x(self,s)
+        self._update_position()
+        
+    def _set_scale_y( self, s ):
+        BatchableNode._set_scale_y(self,s)
+        self._update_position()
 
     def _set_position( self, p ):
         BatchableNode._set_position(self,p)
@@ -268,10 +290,10 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         if self.transform_anchor_x == self.transform_anchor_y == 0:
 
             if self._rotation:
-                x1 = -self._image_anchor_x * self._scale
-                y1 = -self._image_anchor_y * self._scale
-                x2 = x1 + img.width * self._scale
-                y2 = y1 + img.height * self._scale
+                x1 = -self._image_anchor_x * self._scale * self._scale_x
+                y1 = -self._image_anchor_y * self._scale * self._scale_y
+                x2 = x1 + img.width * self._scale * self._scale_x
+                y2 = y1 + img.height * self._scale * self._scale_y
                 x = self._x
                 y = self._y
 
@@ -288,11 +310,11 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
                 dy = int(x1 * sr + y2 * cr + y)
 
                 self._vertex_list.vertices[:] = [ax, ay, bx, by, cx, cy, dx, dy]
-            elif self._scale != 1.0:
-                x1 = int(self._x - self._image_anchor_x * self._scale)
-                y1 = int(self._y - self._image_anchor_y * self._scale)
-                x2 = int(x1 + img.width * self._scale)
-                y2 = int(y1 + img.height * self._scale)
+            elif self._scale != 1.0 or self._scale_x != 1.0 or self._scale_y != 1.0:
+                x1 = int(self._x - self._image_anchor_x * self._scale * self._scale_x)
+                y1 = int(self._y - self._image_anchor_y * self._scale * self._scale_y)
+                x2 = int(x1 + img.width * self._scale * self._scale_x)
+                y2 = int(y1 + img.height * self._scale * self._scale_y)
                 self._vertex_list.vertices[:] = [x1, y1, x2, y1, x2, y2, x1, y2]
             else:
                 x1 = int(self._x - self._image_anchor_x)

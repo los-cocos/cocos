@@ -94,6 +94,16 @@ class CocosNode(object):
         #: Default: 1.0
         self._scale = 1.0
 
+        #: a float, alters the horizontal scale of this node and its children.
+        #: total scale along x axis is _scale_x * _scale
+        #: Default: 1.0
+        self._scale_x = 1.0
+
+        #: a float, alters the vertical scale of this node and its children.
+        #: total scale along y axis is _scale_y * _scale
+        #: Default: 1.0
+        self._scale_y = 1.0
+
         #: a float, in degrees, alters the rotation of this node and its children.
         #: Default: 0.0
         self._rotation = 0.0
@@ -382,6 +392,26 @@ class CocosNode(object):
 
     scale = property( _get_scale, lambda self, scale: self._set_scale(scale))
 
+    def _get_scale_x( self ):
+        return self._scale_x
+
+    def _set_scale_x( self, s ):
+        self._scale_x = s
+        self.is_transform_dirty = True
+        self.is_inverse_transform_dirty = True
+
+    scale_x = property( _get_scale_x, lambda self, scale: self._set_scale_x(scale))
+
+    def _get_scale_y( self ):
+        return self._scale_y
+
+    def _set_scale_y( self, s ):
+        self._scale_y = s
+        self.is_transform_dirty = True
+        self.is_inverse_transform_dirty = True
+
+    scale_y = property( _get_scale_y, lambda self, scale: self._set_scale_y(scale))
+
     def _get_rotation( self ):
         return self._rotation
 
@@ -564,8 +594,8 @@ class CocosNode(object):
         if self.rotation != 0.0:
             glRotatef( -self._rotation, 0, 0, 1)
 
-        if self.scale != 1.0:
-            glScalef( self._scale, self._scale, 1)
+        if self.scale != 1.0 or self.scale_x != 1.0 or self.scale_y != 1.0:
+            glScalef( self._scale * self._scale_x, self._scale * self._scale_y, 1)
 
         if self.transform_anchor != (0,0):
             glTranslatef(
@@ -802,7 +832,7 @@ class CocosNode(object):
             matrix.translate(self._x, self._y)
             matrix.translate( self.transform_anchor_x, self.transform_anchor_y )
             matrix.rotate( math.radians(-self.rotation) )
-            matrix.scale(self._scale, self._scale)
+            matrix.scale(self._scale * self._scale_x, self._scale * self._scale_y)
             matrix.translate( -self.transform_anchor_x, -self.transform_anchor_y )
 
 

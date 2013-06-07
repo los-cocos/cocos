@@ -1,8 +1,13 @@
 v0.5.7 - ??
+  - #165, CocosNode, added scale_x , scale_y properties to uneven resize a node
+        total scale along x axis is _scale_x * _scale
+		total scale along y axis is _scale_y * _scale
+	Don't change scale_x , scale_y from the default 1.0 in ScrollingManager or ScrollableLayer because scrolling and coordinate changes will fail.
+	(thanks Gerardo Marset for discussion and patch)
   - MapLayer, added tile properties to cell debug view
-  - fix RectMap.get_in_region returns too many cells (thanks Gerardo Marset for 
+  - fix #191 RectMap.get_in_region returns too many cells (thanks Gerardo Marset for 
     bug report, analysis and patch)
-  - fix Mac crash due to nonmatching SDL dlls when not using SDL audio (issue 190, patch by useboxnet@gmail.com, thanks)
+  - fix #190 Mac crash due to nonmatching SDL dlls when not using SDL audio (patch by  Juan J. Martínez, thanks)
 
 v0.5.5 - August 12, 2012
   - fix issue 168, now particle textures are propper (this can change visual size for particlers in old code)

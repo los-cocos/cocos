@@ -87,6 +87,9 @@ class ScrollableLayer(Layer):
     currently visible.
 
     The scrolling is usually managed by a ScrollingManager.
+
+    Don't change scale_x , scale_y from the default 1.0 or scrolling and
+    coordinate changes will fail
     '''
     view_x, view_y = 0, 0
     view_w, view_h = 0, 0
@@ -156,7 +159,7 @@ class ScrollingManager(Layer):
     the pixel dimensions .width and .height which are used during focusing.
 
     A ScrollingManager knows how to convert pixel coordinates from its own
-    pixel space to the screen space.
+    pixel space to the screen space.    
     '''
     def __init__(self, viewport=None, do_not_scale=None):
         if do_not_scale is None:
