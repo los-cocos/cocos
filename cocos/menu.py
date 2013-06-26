@@ -517,8 +517,10 @@ class MenuItem (BaseMenuItem):
 
 class ImageMenuItem (BaseMenuItem):
     """ A menu item that shows a selectable Image """
-    def __init__ (self, name, callback_func, *args, **kwargs):
-        self.image = pyglet.resource.image (name)
+    def __init__ (self, image, callback_func, *args, **kwargs):
+        if isinstance(image, str):
+            image = pyglet.resource.image(image)
+        self.image = image
         super (ImageMenuItem, self).__init__(callback_func, *args, **kwargs)
 
     def generateWidgets (self, pos_x, pos_y, font_item, font_item_selected):
