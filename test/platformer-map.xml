@@ -20,36 +20,36 @@
 
  <tileset>
     <tile id="b1"><image ref="i-b1" />
-        <property name="top" value="yes" />
+        <property name="top" type="bool" value="True" />
     </tile>
     <tile id="b2"><image ref="i-b2" />
-        <property name="top" value="yes" />
+        <property name="top" type="bool" value="True" />
     </tile>
     <tile id="l1"><image ref="i-l1" />
-        <property name="right" value="yes" />
+        <property name="right" type="bool" value="True" />
     </tile>
     <tile id="l2"><image ref="i-l2" />
-        <property name="right" value="yes" />
+        <property name="right" type="bool" value="True" />
     </tile>
     <tile id="r1"><image ref="i-r1" />
-        <property name="left" value="yes" />
+        <property name="left" type="bool" value="True" />
     </tile>
     <tile id="r2"><image ref="i-r2" />
-        <property name="left" value="yes" />
+        <property name="left" type="bool" value="True" />
     </tile>
     <tile id="bl"><image ref="i-bl" /></tile>
     <tile id="br"><image ref="i-br" /></tile>
     <tile id="tl"><image ref="i-tl" />
-        <property name="top" value="yes" />
-        <property name="left" value="yes" />
+        <property name="top" type="bool" value="True" />
+        <property name="left" type="bool" value="True" />
     </tile>
     <tile id="tr"><image ref="i-tr" />
-        <property name="top" value="yes" />
-        <property name="right" value="yes" />
+        <property name="top" type="bool" value="True" />
+        <property name="right" type="bool" value="True" />
     </tile>
     <tile id="tree"><image ref="i-tree" /></tile>
     <tile id="treefruit"><image ref="i-treefruit" />
-        <property name="fruit" value="yes" />
+        <property name="fruit" type="bool" value="True" />
     </tile>
     <tile id="cauldron"><image ref="i-cauldron" /></tile>
  </tileset>
@@ -73,7 +73,7 @@
   </column>
   <column> <!-- 2 -->
     <cell tile="b1" />
-    <cell tile="tree"><property type="bool" name="player_start" value="yes" /></cell>
+    <cell tile="tree"><property type="bool" name="player_start" value="True" /></cell>
     <cell />
     <cell />
     <cell />
@@ -553,7 +553,7 @@
   </column>
   <column> <!-- 12 -->
     <cell tile="b1" />
-    <cell tile="cauldron"><property name="player-end" value="yes" /></cell>
+    <cell tile="cauldron"><property type="bool" name="player-end" value="True" /></cell>
     <cell />
     <cell />
     <cell />
