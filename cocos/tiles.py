@@ -501,7 +501,19 @@ class TileSet(dict):
         ts.firstgid = firstgid
         for j in range(rows-1, -1, -1):
             for i in range(columns):
-                ts[id] = Tile(id, {}, atlas[j, i])
+                tile_image = image.get_region(atlas[j, i].x, 
+                                              atlas[j, i].y, 
+                                              atlas[j, i].width, 
+                                              atlas[j, i].height)
+
+                # Set texture clamping to avoid mis-rendering subpixel edges
+                gl.glBindTexture(tile_image.texture.target, id)
+                gl.glTexParameteri(tile_image.texture.target, 
+                    gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+                gl.glTexParameteri(tile_image.texture.target, 
+                    gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+
+                ts[id] = Tile(id, {}, tile_image)
                 id += 1
         return ts
 
