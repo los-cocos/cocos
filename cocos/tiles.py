@@ -318,25 +318,46 @@ def load_tmx(filename):
 #
 # XML PROPERTY PARSING
 #
+
+def text_to_4tuple_int(s):
+    s = s.strip()
+    s = s[1:-1]
+    res = tuple([int(v) for v in s.split(',')])
+    for e in res:
+        assert 0 <= e <= 255
+    return res
+                
+def color4_to_text(v):
+    return repr(v)
+
 _xml_to_python = dict(
+    # built in types
     unicode=unicode,
     int=int,
     float=float,
     bool=lambda value: value != "False",
+    # custom types
+    color4=text_to_4tuple_int,
 )
 _python_to_xml = {
+    # built in types
     str: unicode,
     unicode: unicode,
     int: repr,
     float: repr,
     bool: repr,
+    # custom types
+    'color4': color4_to_text,
 }
 _xml_type = {
+    # type is the type of value
     str: 'unicode',
     unicode: 'unicode',
     int: 'int',
     float: 'float',
     bool: 'bool',
+    # special cases, type from property name
+    'color4': 'color4',
 }
 
 def _handle_properties(tag):
@@ -1042,7 +1063,10 @@ class Cell(object):
             c.set('tile', self.tile.id)
         for k in self.properties:
             v = self.properties[k]
-            t = type(v)
+            if k == 'color4':
+                t = 'color4'
+            else:
+                t = type(v)
             v = _python_to_xml[t](v)
             ElementTree.SubElement(c, 'property', name=k, value=v,
                 type=_xml_type[t])
