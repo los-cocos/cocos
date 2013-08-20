@@ -667,7 +667,7 @@ class MapLayer(layer.ScrollableLayer):
         else:
             r, g, b = (0, 0, 0)
         cell.properties['color4'] = (r, g, b, opacity)
-        key = (i, j)
+        key = cell.origin[:2]
         if key in self._sprites:
             self._sprites[key].opacity = opacity
 
@@ -682,7 +682,7 @@ class MapLayer(layer.ScrollableLayer):
             a = 255
             r, g, b = color
         cell.properties['color4'] = (r, g, b, a)
-        key = (i, j)
+        key = cell.origin[:2]
         if key in self._sprites:
             self._sprites[key].color = color
 
