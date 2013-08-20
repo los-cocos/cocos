@@ -1181,9 +1181,11 @@ class HexMap(RegularTesselationMap):
         '''Return cells (in [column][row]) that are within the pixel bounds
         specified by the bottom-left (x1, y1) and top-right (x2, y2) corners.
         '''
+        ox = self.origin_x
+        oy = self.origin_y
         col_width = self.tw // 2 + self.tw // 4
-        x1 = max(0, x1 // col_width)
-        y1 = max(0, y1 // self.th - 1)
+        x1 = max(0, (x1 - ox) // col_width)
+        y1 = max(0, (y1 - oy) // self.th - 1)
         x2 = min(len(self.cells), x2 // col_width + 1)
         y2 = min(len(self.cells[0]), y2 // self.th + 1)
         return [self.cells[i][j] for i in range(x1, x2) for j in range(y1, y2)]
