@@ -659,12 +659,30 @@ class MapLayer(layer.ScrollableLayer):
         self._update_sprite_set()
 
     def set_cell_opacity(self, i, j, opacity):
-        key = self.cells[i][j].origin[:2]
+        cell = self.get_cell(i, j)
+        if cell is None:
+            return
+        if 'color4' in cell.properties:
+            r, g, b, a = cell.properties['color4']
+        else:
+            r, g, b = (0, 0, 0)
+        cell.properties['color4'] = (r, g, b, opacity)
+        key = (i, j)
         if key in self._sprites:
             self._sprites[key].opacity = opacity
 
     def set_cell_color(self, i, j, color):
-        key = self.cells[i][j].origin[:2]
+        cell = self.get_cell(i, j)
+        if cell is None:
+            return
+        if 'color4' in cell.properties:
+            a = cell.properties['color4'][3]
+            r, g, b = color
+        else:
+            a = 255
+            r, g, b = color
+        cell.properties['color4'] = (r, g, b, a)
+        key = (i, j)
         if key in self._sprites:
             self._sprites[key].color = color
 
@@ -676,10 +694,17 @@ class MapLayer(layer.ScrollableLayer):
             keep.add(key)
             if cell.tile is None:
                 continue
-            if key not in self._sprites:
-                self._sprites[key] = pyglet.sprite.Sprite(cell.tile.image,
+            if key in self._sprites:
+                s = s = self._sprites[key]
+            else:
+                s = pyglet.sprite.Sprite(cell.tile.image,
                     x=cx, y=cy, batch=self.batch)
-            s = self._sprites[key]
+                if 'color4' in cell.properties:
+                    r, g, b, a = cell.properties['color4']
+                    s.color = (r,g,b)
+                    s.opacity = a
+                self._sprites[key] = s
+
             if self.debug:
                 if getattr(s, '_label', None): continue
                 label = [
