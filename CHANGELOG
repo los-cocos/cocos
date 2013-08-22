@@ -1,13 +1,18 @@
 v0.5.7 - ??
-  - #165, CocosNode, added scale_x , scale_y properties to uneven resize a node
+  - fix some parts of a HexMap not rendering - #201 , #202
+  - tilemaps, added persistence of cell color / opacity from / to .xml files - #200
+  - fix cells in tilemap forgot color / opacity when out of view - #199
+  - fixes cracks in the render of .tmx maps (thanks 2slow2handle@gmail.com for analysis and patch) - #198
+  - allow ImageMenuItem to receive a pyglet image as first parameter - #195
+  - CocosNode, added scale_x , scale_y properties to uneven resize a node - #165
         total scale along x axis is _scale_x * _scale
 		total scale along y axis is _scale_y * _scale
 	Don't change scale_x , scale_y from the default 1.0 in ScrollingManager or ScrollableLayer because scrolling and coordinate changes will fail.
 	(thanks Gerardo Marset for discussion and patch)
   - MapLayer, added tile properties to cell debug view
-  - fix #191 RectMap.get_in_region returns too many cells (thanks Gerardo Marset for 
-    bug report, analysis and patch)
-  - fix #190 Mac crash due to nonmatching SDL dlls when not using SDL audio (patch by  Juan J. Martínez, thanks)
+  - fix RectMap.get_in_region returns too many cells (thanks Gerardo Marset for 
+    bug report, analysis and patch) - #191
+  - fix Mac crash due to nonmatching SDL dlls when not using SDL audio (patch by  Juan J. Martínez, thanks) #190
 
 v0.5.5 - August 12, 2012
   - fix issue 168, now particle textures are propper (this can change visual size for particlers in old code)

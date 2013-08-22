@@ -823,8 +823,8 @@ class RectMap(RegularTesselationMap):
             origin = (0, 0, 0)
         self.origin_x, self.origin_y, self.origin_z = origin
         self.cells = cells
-        self.px_width = len(cells) * tw #? +abs(self.origin_x) ?
-        self.px_height = len(cells[0]) * th # +abs(self.origin_y) ?
+        self.px_width = len(cells) * tw
+        self.px_height = len(cells[0]) * th
 
     def get_in_region(self, x1, y1, x2, y2):
         '''Return cells that intersects the rectangle x1, y1, x2, y2 in an
@@ -850,14 +850,9 @@ class RectMap(RegularTesselationMap):
         y1 = max(0, (y1 - oy) // self.th)
         x2 = min(len(self.cells), ceil(float(x2 - ox) / self.tw))
         y2 = min(len(self.cells[0]), ceil(float(y2 - oy) / self.th))
-##        return [self.cells[i][j]
-##            for i in range(int(x1), int(x2))
-##                for j in range(int(y1), int(y2))]
-        res =  [self.cells[i][j]
+        return [self.cells[i][j]
             for i in range(int(x1), int(x2))
                 for j in range(int(y1), int(y2))]
-        #print 'get_in_region result:', res
-        return res
 
     def get_at_pixel(self, x, y):
         ''' Return Cell at pixel px=(x,y) on the map.
@@ -1196,18 +1191,14 @@ class HexMap(RegularTesselationMap):
         '''Get the Cell at pixel (x,y).
 
         Return None if out of bounds.'''
-        print 'LOOKING UP', (x, y), 'with edge_length', self.edge_length
         s = self.edge_length
         # map is divided into columns of
         # s/2 (shared), s, s/2(shared), s, s/2 (shared), ...
         x = x // (s/2 + s)
-        print 'x=', x
         y = y // self.th
-        print 'y=', y
         if x % 2:
-            # every second cell is up one
+            # every second cell is down one
             y -= self.th // 2
-            print 'shift y=', y
         return self.get_cell(x, y)
 
     UP = 'up'
@@ -1264,7 +1255,18 @@ class HexMap(RegularTesselationMap):
         return r
 
 class HexMapLayer(HexMap, MapLayer):
-    '''A renderable, scrollable hex map.
+    '''A renderable, scrollable tile map covered by hexagonal tiles
+
+    While visually the tiles look hexagonal, the texture that draws each
+    tile is rectangular and should comply:
+
+      + depicts an hexagon with upper and lower sides paralel to the x-axis
+      + area out of the hexagon should be transparent
+      + tile size must comply width == int(height / sqrt(3) * 2)
+
+    Be warned that some hexagonal tilesets found in the net use other
+    proportions or the pointy orientation ( left and right sides paralel to
+    the y-axis) ; neither will work with HexMapLayer
 
     The Layer has a calculated attribute:
 
