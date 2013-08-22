@@ -591,7 +591,7 @@ def hexmap_factory(resource, tag):
             c.append(HexCell(i, j, height, properties, tile))
 
     properties = _handle_properties(tag)
-    m = HexMapLayer(id, width, cells, origin, properties)
+    m = HexMapLayer(id, height, cells, origin, properties)
     resource.add_resource(id, m)
 
     return m
@@ -599,7 +599,7 @@ def hexmap_factory(resource, tag):
 def hex_width(height):
     '''Determine a regular hexagon's width given its height.
     '''
-    return int(height / sqrt(3)) * 2
+    return int(height / sqrt(3) * 2)
 
 
 class MapLayer(layer.ScrollableLayer):
@@ -1184,7 +1184,7 @@ class HexMap(RegularTesselationMap):
         ox = self.origin_x
         oy = self.origin_y
         col_width = self.tw // 2 + self.tw // 4
-        x1 = max(0, (x1 - ox) // col_width)
+        x1 = max(0, (x1 - ox) // col_width - self.tw // 4)
         y1 = max(0, (y1 - oy) // self.th - 1)
         x2 = min(len(self.cells), x2 // col_width + 1)
         y2 = min(len(self.cells[0]), y2 // self.th + 1)
