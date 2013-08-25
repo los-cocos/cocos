@@ -41,7 +41,7 @@ __docformat__ = 'restructuredtext'
 __version__ = '$Id: resource.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 
 import os
-from math import ceil, sqrt
+from math import ceil, sqrt, floor
 import struct
 import weakref
 try:
@@ -1187,19 +1187,34 @@ class HexMap(RegularTesselationMap):
 
     # XXX add get_from_screen
 
+    def get_key_at_pixel(self, x, y):
+        """Returns the grid key (ix, iy) under (x, y)
+
+        Reference:
+            Hexagonal grid math, by Ruslan Shestopalyuk
+            http://blog.ruslans.com/2011/02/hexagonal-grid-math.html
+        """
+        radius = self.edge_length
+        side = (self.tw * 3) // 4
+        height = self.th
+        
+        ci = int( floor( x / side ) )
+        cx = int(x - side * ci)
+
+        ty = int(y - (ci % 2) * height / 2.0)
+        cj = int( floor( 1.0 * ty / height) )
+        cy = ty - height * cj
+
+        if (cx <= abs(radius / 2.0 - radius * cy / (1.0*height))):
+            cj = cj + (ci % 2) - (1 if (cy < height / 2.0) else 0)
+            ci = ci - 1
+        return ci, cj
+
     def get_at_pixel(self, x, y):
         '''Get the Cell at pixel (x,y).
 
         Return None if out of bounds.'''
-        s = self.edge_length
-        # map is divided into columns of
-        # s/2 (shared), s, s/2(shared), s, s/2 (shared), ...
-        x = x // (s/2 + s)
-        y = y // self.th
-        if x % 2:
-            # every second cell is down one
-            y -= self.th // 2
-        return self.get_cell(x, y)
+        return self.get_cell(*self.get_key_at_pixel(x, y))
 
     UP = 'up'
     DOWN = 'down'
