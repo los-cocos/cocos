@@ -854,6 +854,11 @@ class RectMap(RegularTesselationMap):
             for i in range(int(x1), int(x2))
                 for j in range(int(y1), int(y2))]
 
+    def get_key_at_pixel(self, x, y):
+        """returns the grid coordinates for the hex that covers the point (x, y)"""
+        return (int((x - self.origin_x) // self.tw),
+                int((y - self.origin_y) // self.th))
+
     def get_at_pixel(self, x, y):
         ''' Return Cell at pixel px=(x,y) on the map.
 
@@ -862,8 +867,7 @@ class RectMap(RegularTesselationMap):
 
         Return None if out of bounds.
         '''
-        return self.get_cell(int((x - self.origin_x) // self.tw),
-            int((y - self.origin_y) // self.th))
+        return self.get_cell(*self.get_key_at_pixel(x, y))
 
     UP = (0, 1)
     DOWN = (0, -1)
@@ -1188,7 +1192,7 @@ class HexMap(RegularTesselationMap):
     # XXX add get_from_screen
 
     def get_key_at_pixel(self, x, y):
-        """Returns the grid key (ix, iy) under (x, y)
+        """returns the grid coordinates for the hex that covers the point (x, y)
 
         Reference:
             Hexagonal grid math, by Ruslan Shestopalyuk
