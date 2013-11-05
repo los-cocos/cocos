@@ -192,6 +192,23 @@ class FragmentShader(Shader):
 
 
 class ShaderProgram(object):
+    @classmethod
+    def simple_program(cls, name, vertex_code, fragment_code):
+        """Intended to cut boilerplate when doing simple shaders
+
+           name : string with program name
+           vertex_code : None or string with the vertex shader code
+           fragment_code : None or string with the fragment shader code 
+        """
+        shader_p = cls()
+        if vertex_code:
+            shader_p.setShader(VertexShader(name+'_vp', vertex_code))
+        if fragment_code:
+            shader_p.setShader(FragmentShader(name+'_fp', fragment_code))
+        # link now to allow fail early
+        shader_p.prog()
+        return shader_p
+
     def __init__(self, vertex_shader=None, fragment_shader=None):
         self.vertex_shader = vertex_shader
         self.fragment_shader = fragment_shader
@@ -272,16 +289,27 @@ class ShaderProgram(object):
     def uset1I(self, var, x):
         glUniform1iARB(self.uniformLoc(var), x)
 
+    def uset2I(self, var, x, y):
+        glUniform2iARB(self.uniformLoc(var), x, y)
+
     def uset3I(self, var, x, y, z):
-        glUniform1iARB(self.uniformLoc(var), x, y, z)
+        glUniform3iARB(self.uniformLoc(var), x, y, z)
 
-    def usetM4F(self, var, m):
-        pass
-        # glUniform1iARB(self.uniformLoc(var), x, y, z)
+    def usetM4F(self, var, m, transpose=False):
+        # some matrixs readed from openGl will come as the transpose of the
+        # matrix we want to feed, so there it comes handy the transpose param
+        glUniformMatrix4fvARB(self.uniformLoc(var), 1, transpose,
+                              (c_float * 16)(*mat))
 
-    def usetTex(self, var, u, v):
-        glUniform1iARB(self.uniformLoc(var), u)
-        glActiveTexture(GL_TEXTURE0 + u)
-        glBindTexture(v.gl_tgt, v.gl_id)
+    def usetTex(self, var, unit, target, tx):
+        """
+        var : name of variable to write
+        unit : texture unit
+        target : target for glBindTexture
+        tx : texture ID
+        """
+        glUniform1iARB(self.uniformLoc(var), unit)
+        glActiveTexture(GL_TEXTURE0 + unit)
+        glBindTexture(target, tx)
 
 __all__ = ['VertexShader', 'FragmentShader', 'ShaderProgram', 'GLSLException']
