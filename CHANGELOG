@@ -1,5 +1,7 @@
 v0.5.7 - ??
+  - fix particles scaling, #204, thanks hello3171@gmail.com for bugreport
   - module shaders slightly upgraded, added test_shader_examples.py
+  - fix mouse hit in HexMap, #203
   - fix some parts of a HexMap not rendering - #201 , #202
   - tilemaps, added persistence of cell color / opacity from / to .xml files - #200
   - fix cells in tilemap forgot color / opacity when out of view - #199

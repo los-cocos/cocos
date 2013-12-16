@@ -45,6 +45,7 @@ import ctypes
 
 from cocosnode import CocosNode
 from euclid import Point2
+from cocos.director import director
 
 # for dev and diagnostic, None means real automatic, True / False means
 # return this value inconditionally
@@ -231,6 +232,21 @@ class ParticleSystem( CocosNode ):
     def on_enter( self ):
         super( ParticleSystem, self).on_enter()
         #self.add_particle()
+    
+    def get_scaled_particle_size(self):
+        """calcultes the value to pass in glPointSize to respect node scaling
+        and window resize; only used when rendering with point sprites.
+        """
+        node = self
+        scale = 1.0
+        while 1:
+            scale *= node.scale
+            node = node.parent
+            if node.parent is None:
+                break
+        if not director.do_not_scale_window:
+            scale *= 1.0 * director._usable_width / director._window_virtual_width
+        return self.size * scale
 
     def draw( self ):
         glPushMatrix()
@@ -238,7 +254,7 @@ class ParticleSystem( CocosNode ):
 
         # color preserve - at least nvidia 6150SE needs that
         glPushAttrib(GL_CURRENT_BIT)
-        glPointSize( self.size )
+        glPointSize( self.get_scaled_particle_size() )
 
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, self.texture.id )
