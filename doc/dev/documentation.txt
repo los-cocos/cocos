@@ -1,0 +1,23 @@
+===================
+Documentation Notes
+===================
+
+Making the switch to sphinx
+===========================
+
+Documentation was rendered with epydoc and some custom extensions until cocos 0.5.5. Epydoc is long time unmaintained, and needs patchs to work with newer python and docutils versions, so a change to a well maintained doc library was needed.
+
+Sphinx is the current de facto standard, so documentation will use sphinx.
+
+Guidelines for sphinx customization
+===================================
+
+Keep customization at a minimun to avoid the need of maintenace when sphinx changes.
+
+Steps for initial sphinx support
+================================
+
+  * Using sphinx 1.2 release , docutils 0.11, pygments 1.5
+  * deleting items in doc/ that sphinx won't use. (at that moment only doc/doc.css)
+  
+  
