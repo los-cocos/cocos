@@ -126,7 +126,7 @@ from pyglet.gl import *
 
 import cocos, cocos.audio, cocos.custom_clocks
 
-if hasattr(sys, 'is_epydoc') and sys.is_epydoc:
+if hasattr(sys, 'is_cocos_sphinx') and sys.is_cocos_sphinx:
     __all__ = ['director', 'Director', 'DefaultHandler']
 else:
     __all__ = ['director', 'DefaultHandler']

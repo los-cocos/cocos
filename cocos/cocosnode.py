@@ -165,6 +165,7 @@ class CocosNode(object):
 
 
     def make_property(attr):
+        types = { 'anchor_x': "int", 'anchor_y': "int", "anchor": "(int, int)"}
         def set_attr():
             def inner(self, value):
                 setattr(self, "transform_"+attr,value)
@@ -176,10 +177,9 @@ class CocosNode(object):
         return property(
             get_attr(),
             set_attr(),
-            doc="""a property to get fast access to [transform_|children_]
+            doc="""a property to get fast access to transform_%s
 
-            :type: (int,int)
-            """+attr )
+            :type: %s"""%(attr, types[attr]))
 
     #: Anchor point of the object.
     #: Children will be added at this point
