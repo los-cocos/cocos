@@ -19,5 +19,12 @@ Steps for initial sphinx support
 
   * Using sphinx 1.2 release , docutils 0.11, pygments 1.5
   * deleting items in doc/ that sphinx won't use. (at that moment only doc/doc.css)
+  * running::
   
+    cd doc
+	sphinx-quickstart
+    
+    Answered some interactive questions, renamed the old index.txt because sphinx-quickstart wants to generate a new one.
+
+  * results committed at r1274, no attempt to build was performed
   

@@ -1,20 +1,22 @@
+.. cocos2d documentation master file, created by
+   sphinx-quickstart on Sun Dec 29 16:32:10 2013.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to cocos2d's documentation!
 ===================================
-cocos2d v 0.5.5 Documentation Index
-===================================
+
+Contents:
+
+.. toctree::
+   :maxdepth: 2
 
 
-cocos2d documentation:
 
-  * `Programming Guide <programming_guide/index.html>`_
-  * `API Reference <api/index.html>`_
-  * `FAQ <faq/index.html>`_
-  * `Dev Notes <dev/index.html>`
+Indices and tables
+==================
 
-..
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
-Related documentation:
-
-  * `pyglet Programming Guide <http://pyglet.org/doc/programming_guide/>`_
-  * `pyglet API Reference <http://pyglet.org/doc/api/>`_
-  * `OpenGL Programming Guide <http://www.glprogramming.com/red/>`_
-  * `OpenGL Reference Pages <http://opengl.org/sdk/docs/man/>`_
