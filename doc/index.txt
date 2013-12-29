@@ -1,18 +1,49 @@
-.. cocos2d documentation master file, created by
-   sphinx-quickstart on Sun Dec 29 16:32:10 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+=====================================
+cocos2d |release| Documentation Index
+=====================================
 
-Welcome to cocos2d's documentation!
-===================================
+cocos2d is a framework for building 2D games, demos, and other
+graphical/interactive applications.
 
-Contents:
+It works on Windows, OS X and Linux and it is meant to be used by applications written in the python language.
+
+
+Programming Guide
+=================
 
 .. toctree::
    :maxdepth: 2
 
+   programming_guide/index
 
 
+API Reference
+=============
+
+.. toctree::
+   :maxdepth: 3
+   
+   api/cocos
+
+
+Frequently Asked Questions
+==========================
+
+.. toctree::
+   :maxdepth: 2
+
+   FAQ <faq/index>
+
+Related documentation
+=====================
+
+  * `pyglet Programming Guide <http://pyglet.org/doc/programming_guide/>`_
+  * `pyglet API Reference <http://pyglet.org/doc/api/>`_
+  * `OpenGL Programming Guide <http://www.glprogramming.com/red/>`_
+  * `OpenGL Reference Pages <http://opengl.org/sdk/docs/man/>`_
+
+   
+   
 Indices and tables
 ==================
 

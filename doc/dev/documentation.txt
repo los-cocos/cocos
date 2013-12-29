@@ -17,14 +17,18 @@ Keep customization at a minimun to avoid the need of maintenace when sphinx chan
 Steps for initial sphinx support
 ================================
 
+This notes can help if a new 'from scratch' documentation build is desired.
+
   * Using sphinx 1.2 release , docutils 0.11, pygments 1.5
   * deleting items in doc/ that sphinx won't use. (at that moment only doc/doc.css)
   * running::
   
-    cd doc
-	sphinx-quickstart
+      cd doc
+	  sphinx-quickstart
     
     Answered some interactive questions, renamed the old index.txt because sphinx-quickstart wants to generate a new one.
 
   * results committed at r1274, no attempt to build was performed
-  
+  * customize index.txt, conf.py, make.bat and Makefile (the later is untested)
+    Notice 'build' will run apidoc + build each time
+    Doing a build shows some warnings that will be addresed later; committed r1275

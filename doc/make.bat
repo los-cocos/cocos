@@ -1,10 +1,18 @@
 @ECHO OFF
 
-REM Command file for Sphinx documentation
+rem only tested the clean and html commands 
 
-if "%SPHINXBUILD%" == "" (
-	set SPHINXBUILD=sphinx-build
+REM dir to find sphinx scripts (sphinx-build and sphinx-apidoc, usualy c:\pythonXY\Scripts ) 
+if "%SPHINXDIR%" == "" (
+	echo Need an environment var SPHINXDIR with the dir to find the sphinx scripts,
+	echo usualy something like c:\pythonXY\Scripts
+	echo Nothing done.
+	goto end
 )
+
+set SPHINXBUILD=%SPHINXDIR%/sphinx-build
+set APIDOC=%SPHINXDIR%/sphinx-apidoc
+
 set BUILDDIR=_build
 set ALLSPHINXOPTS=-d %BUILDDIR%/doctrees %SPHINXOPTS% .
 set I18NSPHINXOPTS=%SPHINXOPTS% .
@@ -43,6 +51,7 @@ if "%1" == "help" (
 if "%1" == "clean" (
 	for /d %%i in (%BUILDDIR%\*) do rmdir /q /s %%i
 	del /q /s %BUILDDIR%\*
+	del /q /s api\*
 	goto end
 )
 
@@ -61,7 +70,8 @@ if errorlevel 9009 (
 )
 
 if "%1" == "html" (
-	%SPHINXBUILD% -b html %ALLSPHINXOPTS% %BUILDDIR%/html
+	%APIDOC% -o api ..\cocos --separate -f -s txt
+	%SPHINXBUILD% -w warnings.log -b html %ALLSPHINXOPTS% %BUILDDIR%/html
 	if errorlevel 1 exit /b 1
 	echo.
 	echo.Build finished. The HTML pages are in %BUILDDIR%/html.
