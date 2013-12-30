@@ -72,7 +72,7 @@ from doc/programming_guide/skeleton/show_root_bone.py::
 
 It will look like this:
 
-.. figure:: skeleton/show_root_bone.png
+.. figure:: show_root_bone.png
 
 The important new concept here is the skin. Skins are responsible for drawing
 the skeletons. Here we use the basic skin, ColorSkin, that just draws a colored
@@ -121,7 +121,7 @@ from doc/programming_guide/skeleton/show_root_skin.py::
        
 It will look like this:
 
-.. figure:: skeleton/show_root_skin.png
+.. figure:: show_root_skin.png
 
 The skeleton editor
 ^^^^^^^^^^^^^^^^^^^
@@ -133,7 +133,7 @@ the editor like this::
     
 It will look like this:
 
-.. figure:: skeleton/root_editor.png
+.. figure:: root_editor.png
 
 There you can see the skin part of your skeleton and several control points.
 Control points can be dragged. If a control point is on top of another control
@@ -183,7 +183,7 @@ but it useful to see what you are creating.
 
 The skeleton we have just created looks like this:
 
-.. figure:: skeleton/body_and_arm.png
+.. figure:: body_and_arm.png
 
 Now we add the skin. We wont care about the positions or flipping, as we will
 be changing that parameters when looking at it.
@@ -198,11 +198,11 @@ doc/programming_guide/skeleton/body_and_arm_skin.py::
 
 The mess we have just created will look like this:
 
-.. figure:: skeleton/body_and_arm_skin_pre.png
+.. figure:: body_and_arm_skin_pre.png
 
 We now have to use the editor to drag the parts until it looks like this:
 
-.. figure:: skeleton/body_and_arm_skin_final.png
+.. figure:: body_and_arm_skin_final.png
 
 NOTE: When moving the control points, things look weird. Its because you are actually
 only aplying a translation to the point. But the translation is then aplied over
@@ -240,7 +240,7 @@ Start the animation editor doing::
 
     tools/skeleton$ python animator.py ../../test/sample_skeleton.py --skin ../../test/sample_skin.py ../../test/SAMPLE.anim 
 
-.. figure:: skeleton/animator.png
+.. figure:: animator.png
 
 On the top you can see the timeline with the keyframes in blue and the
 current position marked in yellow.

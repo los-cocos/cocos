@@ -34,6 +34,16 @@ Frequently Asked Questions
 
    FAQ <faq/index>
 
+
+Dev notes
+=========
+
+.. toctree::
+   :maxdepth: 2
+
+   dev <dev/index>
+
+
 Related documentation
 =====================
 

@@ -1,4 +1,4 @@
-Collision
+ï»¿Collision
 =========
 
 .. contents::
@@ -22,7 +22,7 @@ The collision_model module has functionality to address these questions, lets se
 Simplified shapes
 ^^^^^^^^^^^^^^^^^
 
-Actors generally have an irregular shape, thus to answer 'actor A is touching actor B ?' ideally the rendered pixels for both actors should be considered. That would be too slow, so each actor specifies a simple geometrical shape to be used for collision calculations, and the question is translated to 'shape for actor A overlaps shape for actor B ?
+Actors generally have an irregular shape, thus to answer 'actor A is touching actor B ?' ideally the rendered pixels for both actors should be considered. That would be too slow, so each actor specifies a simple geometrical shape to be used for collision calculations, and the question is translated to 'shape for actor A overlaps shape for actor B ?'
 
 The available shapes at the moment are circles (discs) and rectangles with sides parallel to the axis x=0 and y=0.
 
@@ -58,7 +58,7 @@ To mantain the set of know candidates you have the methods
 	- remove_tricky(obj) : makes the collisionManager instance forget about obj; to perform correctly obj.cshape must have the same value as when .add(obj) was called 
 	- clear() : the CollisionManager instance will forget all known objects
 	
-For testing and debug purposes the methods ´knows(obj)´ and ´known_objs()´ are available.
+For testing and debug purposes the methods Â´knows(obj)Â´ and Â´known_objs()Â´ are available.
 
 Correct answers requires that the known objects have the same cshape value at the asking time than at the 'add' time.
 To satisfy that restriction there are two common strategies

@@ -2,4 +2,7 @@
 Dev Notes
 =========
 
- * Documentation <documentation.html>_
+.. toctree::
+   :maxdepth: 1
+
+   documentation

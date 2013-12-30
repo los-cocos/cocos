@@ -1,7 +1,6 @@
 =========================
 cocos2d Programming Guide
 =========================
-:breadcrumb: Programming Guide
 
 .. figure:: coco.png
 
@@ -9,24 +8,36 @@ The cocos2d Programming Guide provides in-depth documentation for writing
 applications that use cocos2d.  Many topics described here reference the cocos2d 
 API reference, provided separately.
 
-If this is your first time reading about cocos2d, we suggest you start at
-`Writing a cocos2d application`.
+If this is your first time reading about cocos2d, we suggest you start at :doc:`quickstart` .
 
-.. contents:: Sections
-    :depth: 1
+.. toctree::
+   :titlesonly:
 
-.. contents:: Table of contents
-    :depth: 3
+   introduction
+   installation
+   quickstart
+   basic_concepts
+   actions
+   transitions
+   tiled_map
+   cocosnodes
+   interpreter
+   default_handlers
+   collision
+   skeleton/skeleton
 
-.. include:: introduction.txt
-.. include:: installation.txt
-.. include:: quickstart.txt
-.. include:: basic_concepts.txt
-.. include:: actions.txt
-.. include:: transitions.txt
-.. include:: tiled_map.txt
-.. include:: cocosnodes.txt
-.. include:: interpreter.txt
-.. include:: default_handlers.txt
-.. include:: collision.txt
-.. include:: skeleton/skeleton.txt
+.. toctree::
+   :maxdepth: 3
+
+   introduction
+   installation
+   quickstart
+   basic_concepts
+   actions
+   transitions
+   tiled_map
+   cocosnodes
+   interpreter
+   default_handlers
+   collision
+   skeleton/skeleton
