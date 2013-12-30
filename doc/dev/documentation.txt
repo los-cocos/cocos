@@ -32,3 +32,15 @@ This notes can help if a new 'from scratch' documentation build is desired.
   * customize index.txt, conf.py, make.bat and Makefile (the later is untested)
     Notice 'build' will run apidoc + build each time
     Doing a build shows some warnings that will be addresed later; committed r1275
+  * fixed some warnings with r1276-77, now only 6 unimportant warnings
+  * At this point sphinx documentation is usable.
+  * To build the documentation do a::
+
+		cd doc
+		make.bat clean
+		make.bat html
+		
+	(in unix-like systems replace make with Makefile)
+
+I played a bit with the pyglet customizations for sphinx in the branch b_sphinx, but abandoned that because build times were much longer. (branch deleted at r1278)
+
