@@ -671,10 +671,10 @@ class EntryMenuItem(MenuItem):
             return True
 
     def _calculate_value( self ):
+        self.callback_func(self.value)
         new_text = u"%s %s" % (self._label, self.value)
         self.item.text = new_text
         self.item_selected.text = new_text
-        self.callback_func(self.value)
 
 class ColorMenuItem( MenuItem ):
     """A menu item for selecting a color.
