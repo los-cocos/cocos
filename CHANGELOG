@@ -1,4 +1,6 @@
 v0.5.7 - ??
+  - EntryMenuItem, callback called before updating the view
+  - documentation subsystem changed to sphinx, #206, ended r1278
   - fix particles scaling, #204, thanks hello3171@gmail.com for bugreport
   - module shaders slightly upgraded, added test_shader_examples.py
   - fix mouse hit in HexMap, #203
