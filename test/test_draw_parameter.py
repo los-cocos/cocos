@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -27,7 +29,7 @@ class TestFigure(draw.Canvas):
         parts = 5
         # draw lines
         self.set_endcap( draw.ROUND_CAP )
-        self.translate(( x/2, y/2 ))
+        self.translate(( x//2, y//2 ))
         for j in range(parts):
             self.move_to( (0,0) )
             self.rotate( 2*math.pi/ parts )

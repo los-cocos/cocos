@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -19,7 +21,7 @@ class TestLayer(cocos.layer.Layer):
         x,y = director.get_window_size()
 
         # rotation and childs, with default transform_anchor s
-        self.sprite_a1 = Sprite( 'grossini.png', (x/4, int(y*0.66))  )
+        self.sprite_a1 = Sprite( 'grossini.png', (x//4, int(y*0.66))  )
         self.sprite_a2 = Sprite( 'grossini.png', (0,0), rotation=30 )
         self.sprite_a3 = Sprite( 'grossini.png', (0,0), rotation=30 )
 
@@ -28,7 +30,7 @@ class TestLayer(cocos.layer.Layer):
         self.add( self.sprite_a1 )
 
         # position and childs, with default transform_anchor s
-        self.sprite_b1 = Sprite( 'grossinis_sister1.png', (x/2, int(y*0.66))  )
+        self.sprite_b1 = Sprite( 'grossinis_sister1.png', (x//2, int(y*0.66))  )
         self.sprite_b2 = Sprite( 'grossinis_sister1.png', (100,0) )
         self.sprite_b3 = Sprite( 'grossinis_sister1.png', (100,0) )
 

@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -20,7 +22,7 @@ def main():
         cocos.scene.Scene()
             .add( cocos.layer.ColorLayer( 255,255,0,255) )
             .add( cocos.layer.Layer()
-                .add( Sprite('grossini.png', (x/2, y/2))
+                .add( Sprite('grossini.png', (x//2, y//2))
             )
         )
     )

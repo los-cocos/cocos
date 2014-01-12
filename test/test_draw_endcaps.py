@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -16,9 +18,9 @@ import pyglet
 class TestFigure(draw.Canvas):
     def render(self):
         x,y = director.get_window_size()
-        ys = y/4
+        ys = y//4
         ye = ys*3
-        xs = x/4
+        xs = x//4
         line_width = 50
         self.set_color( (255,0,0,150) )
         self.set_stroke_width( line_width )

@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -26,7 +28,7 @@ class BackgroundLayer(cocos.layer.Layer):
         glPopMatrix()
 
 def main():
-    print description
+    print(description)
     director.init( resizable=True, fullscreen=False )
     main_scene = cocos.scene.Scene()
     main_scene.add( BackgroundLayer(), z=0 )

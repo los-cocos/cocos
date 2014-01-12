@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -15,14 +17,14 @@ import pyglet
 class PrintKey(cocos.layer.Layer):
     is_event_handler = True
     def on_key_press (self, key, modifiers):
-        print "Key Pressed:", key, modifiers
+        print("Key Pressed:", key, modifiers)
 
 description = """
 When pressing keys the key with modifiers should print on console
 """
 
 def main():
-    print description
+    print(description)
     director.init()
     bg_layer = cocos.layer.ColorLayer(255,0,0,255)
     test_layer = PrintKey()
