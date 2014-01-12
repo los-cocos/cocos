@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -13,14 +15,14 @@ from cocos.director import director
 
 width = 640
 height = 480
-assert abs(width/float(height)-4/3.0)<0.0001
+assert abs(width/height - 4/3.0)<0.0001
 
 class ProbeRect(cocos.cocosnode.CocosNode):
     def __init__(self, width, height, color4):
         super(ProbeRect,self).__init__()
         self.color4 = color4
-        w2 = int(width/2)
-        h2 = int(height/2)
+        w2 = int(width//2)
+        h2 = int(height//2)
         self.vertexes = [(0,0,0),(0,height,0), (width,height,0),(width,0,0)]
 
     def draw(self):
@@ -58,7 +60,7 @@ You must see no yellow, and a red rectangle with equal sized blue borders
 """
 
 def main():
-    print description
+    print(description)
     director.init( width=width, height=height, resizable=False )
     director.window.set_caption('aspect ratio and fullscreen - see console for usage')
     scene = cocos.scene.Scene()

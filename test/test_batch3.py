@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -30,7 +32,7 @@ class TestBatch(cocos.layer.Layer):
             else:
                 sprite = Sprite('grossinis_sister1.png')
                 self.parentSprite.add(sprite)
-            sprite.position = (i/12)*30, (i%12)*25
+            sprite.position = (i//12)*30, (i%12)*25
         # Remove the last Grossini, and his sisters
         self.batchnode.remove (self.parentSprite)
         self.batchnode.do(MoveBy((100, 100), 10))

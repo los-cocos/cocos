@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -40,7 +42,7 @@ class MultiQuadLayer(cocos.layer.Layer):
             q = Quad((255,0,0,255), 30)
             q.position = (15*i, 15*i)
             main.add( q, z= i-2)
-        main.position = ( x/2, y/2 )
+        main.position = ( x//2, y//2 )
         self.add( main )
 
 def main():

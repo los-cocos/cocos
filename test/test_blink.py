@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -35,7 +37,7 @@ Grossini starts visible, blinks three times and stay visible;
 Sheila, which starts invisible, will blink three times and stay invisible"""
 
 def main():
-    print description
+    print(description)
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

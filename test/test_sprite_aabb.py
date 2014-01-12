@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -29,7 +31,7 @@ class TestLayer(cocos.layer.Layer):
 
         parent = Sprite('grossinis_sister1.png')
         self.add( parent )
-        parent.position = ( x/2, y/2 )
+        parent.position = ( x//2, y//2 )
 
         sprite = Sprite('grossinis_sister2.png')
         sprite.position = 100,140

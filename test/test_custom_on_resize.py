@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -74,12 +76,12 @@ class AutocenteredBackgroundLayer(cocos.layer.Layer):
 
     def on_cocos_resize(self, usable_width, usable_height):
         # assumes  scene.scale==1.0
-        x = (usable_width - self.img.width * self.scale) / 2
-        y = (usable_height - self.img.height * self.scale) / 2
+        x = (usable_width - self.img.width * self.scale) // 2
+        y = (usable_height - self.img.height * self.scale) // 2
         self.position = (x, y)
 
 def main():
-    print description
+    print(description)
     # telling director to not auto scale the scene when the window resizes and
     # to allow window resize, also that a 400x400 window is desired.
     director.init(width=400, height=400, do_not_scale=True, resizable=True)

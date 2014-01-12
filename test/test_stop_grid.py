@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 #
 # Cocos:
 # http://code.google.com/p/los-cocos/
@@ -36,7 +38,7 @@ by StopGrid.
 """
 
 def main():
-    print description
+    print(description)
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
 

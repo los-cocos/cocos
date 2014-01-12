@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -15,7 +17,7 @@ import pyglet
 class PrintKey(cocos.layer.Layer):
     is_event_handler = True
     def on_key_press (self, key, modifiers):
-        print "Sublayer sees on_key_pressed:", key, modifiers
+        print("Sublayer sees on_key_pressed:", key, modifiers)
 
 class SwitchLayer(cocos.layer.Layer):
     def __init__(self):
@@ -25,10 +27,10 @@ class SwitchLayer(cocos.layer.Layer):
 
     is_event_handler = True
     def on_key_press (self, key, modifiers):
-        print 'Layer sees on_key_pressed:', key, modifiers
+        print('Layer sees on_key_pressed:', key, modifiers)
         if key == pyglet.window.key.SPACE:
             self.added = not self.added
-            print "\nSublayer present:", self.added
+            print("\nSublayer present:", self.added)
             if self.added:
                 self.add(self.other)
             else:
@@ -50,8 +52,7 @@ Demostrates
 """
 
 def main():
-    print description
-
+    print(description)
     director.init()
     bg_layer = cocos.layer.ColorLayer(255,0,0,255)
     test_layer = SwitchLayer()

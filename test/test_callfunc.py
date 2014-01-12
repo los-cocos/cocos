@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -19,7 +21,7 @@ class TestLayer(cocos.layer.Layer):
 
         x,y = director.get_window_size()
 
-        self.sprite = Sprite( 'grossini.png', (x/2, y/2) )
+        self.sprite = Sprite( 'grossini.png', (x//2, y//2) )
         self.sprite.visible = False
         self.add( self.sprite )
 
@@ -32,7 +34,7 @@ visible thanks to action CallFunc
 """
 
 def main():
-    print description
+    print(description)
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

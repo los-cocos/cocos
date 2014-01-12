@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -14,14 +16,14 @@ from cocos.actions import Delay, CallFunc, Repeat
 
 w_ini = 640
 h_ini = 480
-assert abs(w_ini/float(h_ini)-4/3.0)<0.0001
+assert abs(w_ini/h_ini - 4/3.0)<0.0001
 
 class ProbeRect(cocos.cocosnode.CocosNode):
     def __init__(self, w_ini, h_ini, color4):
         super(ProbeRect,self).__init__()
         self.color4 = color4
-        w2 = int(w_ini/2)
-        h2 = int(h_ini/2)
+        w2 = int(w_ini//2)
+        h2 = int(h_ini//2)
         self.vertexes = [(0,0,0),(0,h_ini,0), (w_ini,h_ini,0),(w_ini,0,0)]
 
     def draw(self):
@@ -73,7 +75,7 @@ When the aspect ratio is not 4:3, padding borders in black can be seen.
 """
 
 def main():
-    print description
+    print(description)
     director.init( width=w_ini, height=h_ini, resizable=False )
     scene = cocos.scene.Scene()
     scene.add(TestLayer())

@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -30,12 +32,12 @@ def main():
     green.scale = 0.25
     green.transform_anchor = x,y
 
-    red.add( Sprite( 'grossini.png', (0, y/2) ), z=1 )
-    blue.add( Sprite( 'grossini.png', (0, y/2) ), z=1 )
-    green.add( Sprite( 'grossini.png', (0, y/2) ), z=1 )
-    red.add( Sprite( 'grossini.png', (x, y/2) ), z=1 )
-    blue.add( Sprite( 'grossini.png', (x, y/2) ), z=1 )
-    green.add( Sprite( 'grossini.png', (x, y/2) ), z=1 )
+    red.add( Sprite( 'grossini.png', (0, y//2) ), z=1 )
+    blue.add( Sprite( 'grossini.png', (0, y//2) ), z=1 )
+    green.add( Sprite( 'grossini.png', (0, y//2) ), z=1 )
+    red.add( Sprite( 'grossini.png', (x, y//2) ), z=1 )
+    blue.add( Sprite( 'grossini.png', (x, y//2) ), z=1 )
+    green.add( Sprite( 'grossini.png', (x, y//2) ), z=1 )
 
     main_scene.add( white, z=0 )
     main_scene.add( red, z=1 )
