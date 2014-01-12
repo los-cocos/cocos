@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -48,7 +50,7 @@ def get_test_scene():
     bluish_square = cocos.layer.ColorLayer(0, 160, 176, 255, width=100, height=100)
     # transform_anchor set to the center position of itself
     bluish_square.transform_anchor = (bluish_square.width/2.0, bluish_square.height/2.0)
-    bluish_square.position = (w/3, h/2)
+    bluish_square.position = (w//3, h//2)
     bluish_square.do(template_action)
     world.add(bluish_square, z=2)
 
@@ -61,7 +63,7 @@ def get_test_scene():
     redish_square = cocos.layer.ColorLayer(201, 43, 0, 255, width=100, height=100)
     # transform_anchor set to the bottomleft corner of itself
     redish_square.transform_anchor = (0, 0)
-    redish_square.position = (w*2/3, h/2)
+    redish_square.position = (w*2//3, h//2)
     redish_square.do(template_action)
     world.add(redish_square, z=2)
 
@@ -75,7 +77,7 @@ def get_test_scene():
     return scene
 
 def main():
-    print description
+    print(description)
     director.init( resizable=True )
     scene = get_test_scene()
     director.run(scene)

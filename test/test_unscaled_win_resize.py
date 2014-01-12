@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -35,7 +37,7 @@ be scaled on resize. Use ctrl-f to toggle fullscreen
 """
 
 def main():
-    print description
+    print(description)
     director.init(width=300, height=300, do_not_scale=True)
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

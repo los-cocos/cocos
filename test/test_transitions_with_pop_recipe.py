@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -24,9 +26,9 @@ stage = None
 last_current_scene = 123 #anything != None
 def report(t):
     global stage, scene1, scene2
-    print '\nscene change'
-    print 'time:%4.3f' % t
-    print 'len(director.scene_stack):', len(director.scene_stack)
+    print('\nscene change')
+    print('time:%4.3f' % t)
+    print('len(director.scene_stack):', len(director.scene_stack))
     current_scene = director.scene
     if current_scene is None:
         s_scene = 'None'
@@ -36,7 +38,7 @@ def report(t):
         s_scene = 'scene2'
     else:
         s_scene = 'transition scene'
-    print 'current scene:', s_scene, current_scene
+    print('current scene:', s_scene, current_scene)
 
 
 def sequencer(dt):
@@ -47,11 +49,11 @@ def sequencer(dt):
         report(time_x)
     if stage == "run scene1" and time_x > 2.0:
         stage = "transition to scene2"
-        print "\n%4.3f begin %s" % (time_x, stage)
+        print("\n%4.3f begin %s" % (time_x, stage))
         director.push(FadeTransition( scene2, 0.5))
     elif stage == "transition to scene2" and time_x >5.0:
         stage = "transition to the top scene in the stack"
-        print "\n%4.3f begin %s" % (time_x, stage)
+        print("\n%4.3f begin %s" % (time_x, stage))
         director.replace(FadeTransitionWithPop(director.scene_stack[0], 0.5))
 
 # Warn: if the parent transition overrides the finish method of TransitionScene
@@ -127,8 +129,8 @@ class TestScene(cocos.scene.Scene):
 
 def main():
     global t0, scene1, scene2, scene3, stage
-    print description
-    print "\nactual timeline:"
+    print(description)
+    print("\nactual timeline:")
     director.init( resizable=True )
     scene1 = TestScene()
     scene1.add(ColorLayer(80,160,32,255))
@@ -137,11 +139,11 @@ def main():
     scene2.add(ColorLayer(120,32,120,255))
 
     stage = "before director.run"
-    print "\n%4.3f %s" % (0.0, stage)
+    print("\n%4.3f %s" % (0.0, stage))
     report(0)
 
     stage = "run scene1"
-    print "\n%4.3f begin %s" % (0.0, stage)
+    print("\n%4.3f begin %s" % (0.0, stage))
     director.run(scene1)
 
 if __name__ == '__main__':

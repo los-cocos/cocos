@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -71,7 +73,7 @@ class RandomWalk(ac.Action):
             self.t_arrival = 0.1
         self.dx = dx/norm
         self.dy = dy/norm
-        print 'dx, dy:',dx, dy
+        print('dx, dy:',dx, dy)
         self.x0 = x0
         self.y0 = y0
 
@@ -81,7 +83,7 @@ class RandomWalk(ac.Action):
             self.make_new_leg()
         x = self.fastness*self._elapsed*self.dx + self.x0
         y = self.fastness*self._elapsed*self.dy + self.y0
-        #print 'x,y:', x,y
+        #print('x,y:', x,y)
         self.target.position = (x,y)
 
 
@@ -134,7 +136,20 @@ class TestLayer(cocos.layer.Layer):
     def on_bullet_hit(self, bullet):
         self.remove(bullet)
 
+description = """
+Example actions with duration not known at it start time ( no IntervalAction,
+no InstantAction).
+It also shows one way of passing non deepcopy-able parameters, like a cocosnode,
+to an action.
+It should be seen:
+    A green quad moving in rectilinear traits.
+    A bunch of red dots spawning from left-bottom corner and moving towards
+    the green quad.
+    Green quad spining when a red dot reach the center of green quad.
+"""
+
 def main():
+    print(description)
     director.init()
     a = cocos.cocosnode.CocosNode()
     class A(object):
@@ -143,8 +158,8 @@ def main():
     z = A(a)
     import copy
     b = copy.deepcopy(a)
-    print 'a:', a
-    print 'b:', b
+    print('a:', a)
+    print('b:', b)
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)

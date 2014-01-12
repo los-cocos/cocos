@@ -62,6 +62,7 @@ And now tell the sprite to execute it::
 
     sprite.do( move )
 '''
+from six import string_types
 
 __docformat__ = 'restructuredtext'
 import math
@@ -114,7 +115,7 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
                     (x,y)-point from where the image will be positions, rotated and scaled in pixels. For example (image.width/2, image.height/2) is the center (default).
         '''
 
-        if isinstance(image, str):
+        if isinstance(image, string_types):
             image = pyglet.resource.image(image)
 
         self.transform_anchor_x = 0

@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -26,7 +28,16 @@ class BackgroundLayer(cocos.layer.Layer):
         self.img.blit(0,0)
         glPopMatrix()
 
+description = """
+Shows how to use AccelDeccelAmplitude to modify a GridAction.
+AccelDeccelAction will reparametrize time for the target action.
+It should be seen the stock background shaken with waves of increasing
+magnitude, then of decreasing magnitue, begginning and ending  with a
+flat image.
+"""
+
 def main():
+    print(description)
     director.init( resizable=True )
     main_scene = cocos.scene.Scene()
     main_scene.add( BackgroundLayer(), z=0 )

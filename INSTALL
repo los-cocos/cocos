@@ -10,14 +10,12 @@ Installation, Dependencies and Compatibility
 Dependencies
 ^^^^^^^^^^^^
 
+The basic dependencies are pyglet and six, these enable most of cocos functionality
+
 A quick rundown about dependencies, see also compatibility notes below
 
 Cocos and Pyglet both are pure python packages, both using ctypes to bind
 other libraries.
-
-    . for python 2.4 only, you need
-       - ctypes, http://pypi.python.org/pypi/ctypes
-       - elementtree, http://effbot.org/downloads/#elementtree
 
     . If you stash the source cocos and pyglet directories under
       site-packages, you have most of functionality.
@@ -51,9 +49,9 @@ What explicit dependencies are declared in the setup.py ?
 Compatibility
 ^^^^^^^^^^^^^
 
-Compatibility notes at the time of writing, August 2011
+Compatibility notes at the time of writing, January 2014
 
-    . python : cocos needs python 2.4+, is not compatible with 3.x 
+    . python : cocos needs python 2.6 or 2.7, is not compatible with 3.x 
 
     . pyglet : The last released pyglet is 1.1.4 and
     
@@ -68,6 +66,8 @@ Compatibility notes at the time of writing, August 2011
          integration, it is probably in alpha state. You should ask in
          the pyglet mailing list about status and instructions.
 
+		. For all OS It is recommended to install pyglet from the repository,
+		  it has a lot of fixed over last released and 1.2alpha
 
 Installing from source
 ^^^^^^^^^^^^^^^^^^^^^^

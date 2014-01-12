@@ -1,4 +1,7 @@
 v0.5.7 - ??
+  - from r1282 cocos needs python 2.6 or 2.7, and the 'six' package
+  ===========================================================================
+  - r1281 is the last revision completely compatible with python 2.4 and 2.5
   - EntryMenuItem, callback called before updating the view
   - documentation subsystem changed to sphinx, #206, ended r1278
   - fix particles scaling, #204, thanks hello3171@gmail.com for bugreport
