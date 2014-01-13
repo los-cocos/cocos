@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -25,21 +27,21 @@ class TestLayer(cocos.layer.Layer):
         x,y = director.get_window_size()
 
         sprite = Sprite('grossini.png')
-        sprite.position = x/5, y/2
+        sprite.position = x//5, y//2
         self.add(sprite)
 
         sprite = Sprite('grossini.png')
-        sprite.position = x*2/5, y/2
+        sprite.position = x*2//5, y//2
         sprite.scale_x = 0.5
         self.add(sprite)
 
         sprite = Sprite('grossini.png')
-        sprite.position = x*3/5, y/2
+        sprite.position = x*3//5, y//2
         sprite.scale_y = 0.5
         self.add(sprite)
 
         sprite = Sprite('grossini.png')
-        sprite.position = x*4/5, y/2
+        sprite.position = x*4//5, y//2
         sprite.scale_y = 0.5
         sprite.scale = 2.0
         self.add(sprite)
@@ -53,7 +55,7 @@ Shows four images of Grossini, from left to right:
 """
 
 def main():
-    print description
+    print(description)
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

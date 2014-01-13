@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -37,7 +39,7 @@ Grossini sprite will change position each second, showing at the screen corners
 """
 
 def main():
-    print description
+    print(description)
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

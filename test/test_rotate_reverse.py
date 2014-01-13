@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -29,7 +31,7 @@ class Logo(cocos.layer.Layer):
         super(Logo, self).__init__()
         self.wx, self.wy = director.get_window_size()
         self.sprite = cocos.sprite.Sprite('grossini.png')
-        self.sprite.position = self.wx/2, self.wy/2
+        self.sprite.position = self.wx//2, self.wy//2
         self.label = DebugLabel()
         self.add(self.label)
         self.add(self.sprite)
@@ -43,7 +45,7 @@ class Logo(cocos.layer.Layer):
             self.sprite.do(action + Reverse(action))
 
 def main():
-    print "press space to initiate action"
+    print("press space to initiate action")
     director.init(fullscreen=0, width=800, height=600)
     scene = cocos.scene.Scene()
     scene.add(Logo())

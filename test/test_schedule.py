@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -30,15 +32,15 @@ class TestLayer(cocos.layer.Layer):
     def change_sprite_pos(self, dt):
         self._elapsed += dt
         w,h = director.get_window_size()
-        self.sprite.position = ( w/2 + self.radius * cos(self._elapsed * 1.5),
-                                 h/2 + self.radius * sin(self._elapsed * 1.5))
+        self.sprite.position = ( w//2 + self.radius * cos(self._elapsed * 1.5),
+                                 h//2 + self.radius * sin(self._elapsed * 1.5))
 
 description = """
 Grossini sprite will circle around the center of the screen
 """
 
 def main():
-    print description
+    print(description)
     director.init()
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)

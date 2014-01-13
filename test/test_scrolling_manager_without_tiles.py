@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -136,20 +138,20 @@ class SquareLand(cocos.layer.ScrollableLayer):
 
     def on_mouse_press(self,x,y,button,modifiers):
         # test from screen coords
-        print 'on_mouse_press:'
+        print('on_mouse_press:')
         vx, vy = self.scroller.pixel_from_screen(x,y)
-        print '\tpixel_from_screen(x, y):', vx, vy
+        print('\tpixel_from_screen(x, y):', vx, vy)
 
     def clamp(self, actor, new_pos):
         x,y = new_pos
-        if  x-actor.model_width/2<self.margin:
-            x = self.margin + actor.model_width/2
-        elif x+actor.model_width/2>self.world_width-self.margin:
-            x = self.world_width-self.margin-actor.model_width/2
-        if  y-actor.model_height/2<self.margin:
-            y = self.margin + actor.model_height/2
-        elif y+actor.model_height/2>self.world_height-self.margin:
-            y = self.world_height-self.margin-actor.model_height/2
+        if  x-actor.model_width//2<self.margin:
+            x = self.margin + actor.model_width//2
+        elif x+actor.model_width//2>self.world_width-self.margin:
+            x = self.world_width-self.margin-actor.model_width//2
+        if  y-actor.model_height//2<self.margin:
+            y = self.margin + actor.model_height//2
+        elif y+actor.model_height//2>self.world_height-self.margin:
+            y = self.world_height-self.margin-actor.model_height//2
         return x,y
 
     def step( self, dt ):
@@ -196,7 +198,7 @@ class TestScene(cocos.scene.Scene):
         super(TestScene,self).__init__()
         self.marks = []
         for i in xrange(1,4):
-            mark = ProbeQuad(3,(0,255/i, 0, 255))
+            mark = ProbeQuad(3,(0,255//i, 0, 255))
             mark.position = (-20, -20)
             self.marks.append(mark)
             self.add(mark, z=2)
@@ -209,7 +211,7 @@ class TestScene(cocos.scene.Scene):
         self.f_refresh_marks()
 
 def show_common_text():
-    print """
+    print("""
 tests ScrollingManager and ScrollableLayer when the contents are not provided
 by a tilemap.
 
@@ -228,10 +230,10 @@ NotImplementedError in pixel_to_screen)
 For clarity set view_width, view_height to respect your desktop aspect
 ratio; look near the script begin
 
-"""
+""")
 
 def show_mode_1_text():
-    print """
+    print("""
 Mode: autoscale, that is do_not_scale=False
 
 1. scroll constraits works:
@@ -274,10 +276,10 @@ resize:
     view, it should nicely center in the screen.
     Moving the player from left to right border should not produce 'jumps' on
     the view.
-"""
+""")
 
 def show_mode_2_text():
-    print """
+    print("""
 Mode: not autoscale, that is do_not_scale=True
 
 1. scroll constraits works:
@@ -324,7 +326,7 @@ resize:
     view, it should nicely center in the screen.
     Moving the player from left to right border should not produce 'jumps' on
     the view.
-"""
+""")
 
 def main():
     show_common_text()

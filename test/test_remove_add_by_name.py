@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -14,8 +16,8 @@ from cocos.director import director
 from cocos.layer import *
 
 def main():
-    print "expected to fail"
-    print "with traceback ... :Exception: Name already exists: color"
+    print("expected to fail")
+    print("with traceback ... :Exception: Name already exists: color")
 
     director.init( resizable=True )
 

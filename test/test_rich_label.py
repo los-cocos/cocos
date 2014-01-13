@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -21,7 +23,7 @@ class TestLayer(cocos.layer.Layer):
 
         self.text = RichLabel(
         "Hello {color (255, 0, 0, 255)}World!",
-        (x/2, y/2))
+        (x//2, y//2))
         self.text.element.document.set_style(0, 5, dict(bold = True))
         self.text.element.document.set_style(6, 11, dict(italic = True))
 
