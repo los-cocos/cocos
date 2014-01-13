@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 #
 # Cocos
 # http://code.google.com/p/los-cocos/
@@ -58,7 +60,7 @@ a Wave3D followed by a Flip.
 """
 
 def main():
-    print description
+    print(description)
     director.init( resizable=True )
     main_scene = Scene()
 

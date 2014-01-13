@@ -49,6 +49,7 @@ or entry items (which lets you enter alphanumeric data).
 To use a menu in your code, just subclass `Menu` and add the menu to an `Scene` or
 another `Layer`.
 """
+from six import string_types
 
 __docformat__ = 'restructuredtext'
 
@@ -518,7 +519,7 @@ class MenuItem (BaseMenuItem):
 class ImageMenuItem (BaseMenuItem):
     """ A menu item that shows a selectable Image """
     def __init__ (self, image, callback_func, *args, **kwargs):
-        if isinstance(image, str):
+        if isinstance(image, string_types):
             image = pyglet.resource.image(image)
         self.image = image
         super (ImageMenuItem, self).__init__(callback_func, *args, **kwargs)

@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -20,7 +22,7 @@ class TestLayer(cocos.layer.Layer):
         x,y = director.get_window_size()
 
         self.sprite = Sprite('grossini.png')
-        self.sprite.position = 0, y/2
+        self.sprite.position = 0, y//2
         self.add( self.sprite  )
 
         self.sprite.do( Lerp("x", 0, x, 10) )

@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -64,7 +66,7 @@ def main():
     from cocos.director import director
     director.init(width=800, height=600, do_not_scale=True)
 
-    print description
+    print(description)
     # create a layer to put the player in
     player_layer = layer.ScrollableLayer()
     # NOTE: the anchor for this sprite is in the CENTER (the cocos default)

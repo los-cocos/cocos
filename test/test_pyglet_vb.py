@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -15,13 +17,13 @@ def sign(x): return 1 if x >= 0 else -1
 
 class MeshSprite:
     def __init__(self, image, x_quads, y_quads):
-        x_step = image.width / (x_quads)
-        y_step = image.height / (y_quads)
+        x_step = image.width // (x_quads)
+        y_step = image.height // (y_quads)
         self.image = image
         self.texture = image.get_texture()
 
-        w = float(image.width)/self.texture.tex_coords[3]
-        h = float(image.height)/self.texture.tex_coords[7]
+        w = image.width / self.texture.tex_coords[3]
+        h = image.height / self.texture.tex_coords[7]
         vertex_points = []
         texture_points = []
         for x in range(0, x_quads):
@@ -48,11 +50,11 @@ class MeshSprite:
         glPushAttrib(GL_COLOR_BUFFER_BIT)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        for p in range(len(self.vertex_points)/2):
+        for p in range(len(self.vertex_points)//2):
             x = self.vertex_points[2*p]
             y = self.vertex_points[2*p+1]
             if 0:
-                scale = abs(math.cos ( float(x)/(y+0.5) + self.elapsed ) ) + 1
+                scale = abs(math.cos ( x/(y+0.5) + self.elapsed ) ) + 1
                 x = (x-25) * scale + 25
                 y = (y-50) * scale + 50
             else:
@@ -76,12 +78,12 @@ example at rest the top of grossini sprite is not visible.
 """
 
 def main():
-    print description
+    print(description)
     window = pyglet.window.Window()
 
     grossini = pyglet.resource.image("grossini.png")
-    grossini.anchor_x = grossini.width / 2
-    grossini.anchor_y = grossini.height / 2
+    grossini.anchor_x = grossini.width // 2
+    grossini.anchor_y = grossini.height // 2
     ms = MeshSprite( grossini, 15,31 )
     def update(dt):
         window.clear()
