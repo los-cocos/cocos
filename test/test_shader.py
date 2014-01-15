@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -18,8 +20,8 @@ from cocos import shader
 class TestLayer(cocos.layer.Layer):
     def draw(self):
         x,y = director.get_window_size()
-        x = x/2
-        y = y/2
+        x = x//2
+        y = y//2
         d = 100
 
         cuadric.install()
