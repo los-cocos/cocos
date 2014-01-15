@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 from cocos.skeleton import Bone, Skeleton
 def Point2(*args): return args
 root_bone = Bone('torso', 70, -180.0, Point2(0.00, 0.00)).add(

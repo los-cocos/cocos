@@ -1,3 +1,4 @@
+from __future__ import division, print_function, unicode_literals
 
 skin = [
     ('brazo izq', (10, 49), 'gil-brazo2.png', False, False, 0.5),
