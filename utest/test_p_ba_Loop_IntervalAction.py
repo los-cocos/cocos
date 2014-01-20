@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # parametrized test, using py.test 
 # important: set cocos_utest=1 in the environment before run.
 # that simplifies the pyglet mockup needed
@@ -93,7 +95,7 @@ class Test_Loop_IntervalAction:
         next_done=0
         rec = []
         node._step(dt)
-        print 'rec 1st repetition:',rec
+        print('rec 1st repetition:',rec)
         elapsed += dt
         rec = [e for e in rec if e[1]!='step'] 
         assert rec[0]==(name1, 'update', elapsed/duration1) 
@@ -107,7 +109,7 @@ class Test_Loop_IntervalAction:
         node._step(dt)
         elapsed = next_elapsed
         rec = [e for e in rec if e[1]!='step'] 
-        print 'rec end 1st reptition:',rec
+        print ('rec end 1st reptition:', rec)
         assert rec[0]==(name1, 'update', 1.0) 
         assert rec[1]==(name1, 'stop')
         assert rec[2]==(name1, 'start')
@@ -119,7 +121,7 @@ class Test_Loop_IntervalAction:
         dt = 0.1
         rec = []
         node._step(dt)
-        print 'rec 1st repetition:',rec
+        print('rec 1st repetition:', rec)
         elapsed += dt
         rec = [e for e in rec if e[1]!='step'] 
         assert rec[0]==(name1, 'update', (elapsed-duration1)/duration1) 
@@ -132,7 +134,7 @@ class Test_Loop_IntervalAction:
         rec = []
         node._step(dt)
         rec = [e for e in rec if e[1]!='step'] 
-        print 'rec end 1st reptition:',rec
+        print('rec end 1st reptition:', rec)
         assert rec[0]==(name1, 'update', 1.0) 
         assert rec[1]==(name1, 'stop')
         assert len(rec)==2

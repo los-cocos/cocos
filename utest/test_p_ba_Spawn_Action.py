@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # important: set cocos_utest=1 in the environment before run.
 # that simplifies the pyglet mockup needed
 # remember to erase or set to zero for normal runs
@@ -34,7 +36,7 @@ class UAction(ac.Action):
         global rec, next_done
         rec.append((self.name, 'step', dt))
         if int(self.name) & next_done:
-            print 'setting %s _done to True'%self.name
+            print('setting %s _done to True'%self.name)
             self._done = True
 
     def stop(self):
@@ -70,7 +72,7 @@ class Test_Spawn_Action:
 
         rec = []
         node.do(composite)
-        print 'start rec:', rec
+        print('start rec:', rec)
         assert rec[0]==(name1, 'start')
         assert rec[0]==(name1, 'start')
         assert len(rec)==2
@@ -123,7 +125,7 @@ class Test_Spawn_Action:
         rec = []
         next_done = 1
         node._step(dt)
-        print rec
+        print(rec)
         recx = [e for e in rec if e[0]==name1]
         assert recx[0][1]== 'step'
         assert recx[1][1]=='stop'
@@ -171,7 +173,7 @@ class Test_Spawn_Action:
         
         rec = []
         node._step(dt)
-        print rec
+        print(rec)
         assert len([e for e in rec if rec[0]==name2])==0
         recx = [e for e in rec if e[0]==name1]
         assert len(recx)==1
@@ -193,7 +195,7 @@ class Test_Spawn_Action:
         rec = []
         next_done = 3
         node._step(dt)
-        print rec
+        print(rec)
 
         recx = [e for e in rec if e[0]==name1]
         assert recx[0][1]== 'step'
@@ -243,7 +245,7 @@ class Test_Spawn_Action:
         node._step(dt)
 
         rec=[]
-        print rec
+        print(rec)
         a_copy.stop()
         assert rec[0]==(name2, 'stop')
         assert len(rec)==1
@@ -263,7 +265,7 @@ class Test_Spawn_Action:
         node._step(dt)
 
         rec=[]
-        print rec
+        print(rec)
         a_copy.stop()
         assert rec[0]==(name1, 'stop')
         assert len(rec)==1

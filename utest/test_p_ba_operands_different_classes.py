@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # important: set cocos_utest=1 in the environment before run.
 # that simplifies the pyglet mockup needed
 # remember to erase or set to zero for normal runs
@@ -35,7 +37,7 @@ class UAction(ac.Action):
         global rec, next_done
         rec.append((self.name, 'step', dt))
         if int(self.name) & next_done:
-            print 'setting %s _done to True'%self.name
+            print('setting %s _done to True'%self.name)
             self._done = True
 
     def stop(self):
@@ -83,7 +85,7 @@ class Test_sequence:
         worker = node.do(composite)
         dt = 0.1
         node._step(dt)
-        print rec
+        print(rec)
         assert rec[0] == (name1, 'start')
         assert rec[1] == (name1, 'step', dt)
         assert rec[2] == (name1, 'update', 1.0)

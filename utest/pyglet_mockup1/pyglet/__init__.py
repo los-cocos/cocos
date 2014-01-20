@@ -1,4 +1,5 @@
-#
+from __future__ import division, print_function, unicode_literals
+
 mock_level = 1
 import resource
 import app

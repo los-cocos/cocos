@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # parametrized test, using py.test 
 # see _parametric_test_t_demo.py for a skeletal.
 
@@ -173,7 +175,7 @@ class Test_Spawn_IntervalAction:
         dt = next_elapsed - elapsed
         node._step(dt)
         
-        print 'rec:', rec
+        print('rec:', rec)
         rec = [ e for e in rec if e[1]!='step' ]
         if duration1 < duration2:
             oname1 = name1
@@ -186,14 +188,14 @@ class Test_Spawn_IntervalAction:
             oname2 = name1
             oduration2 = duration1
         orec1 = [ e for e in rec if e[0]==oname1 ]
-        print orec1
+        print(orec1)
         assert orec1[0]==(oname1, 'start')
         assert orec1[1]==(oname1, 'update', 1.0)
         assert orec1[2]==(oname1, 'stop')
         assert len(orec1)==3
         
         orec2 = [ e for e in rec if e[0]==oname2 ]
-        print orec2
+        print(orec2)
         assert len(orec2)==2
         assert orec2[0]==(oname2, 'start')
         assert orec2[1][1]=='update'
@@ -277,14 +279,14 @@ class Test_Spawn_IntervalAction:
 
         recx = [ e for e in rec if e[1]!='step' ]
         rec = [ e for e in recx if e[0]==name1]
-        print 'rec',rec
+        print('rec', rec)
         assert rec[0][1]=='start'
         assert rec[1][1]=='update' and rec[1][2]==1.0
         assert rec[2][1]=='stop'
         assert len(rec)==3
 
         rec = [ e for e in recx if e[0]==name2]
-        print 'rec:', rec
+        print ('rec:', rec)
         assert rec[0][1]=='start'
         assert rec[1][1]=='update' and rec[1][2]==1.0
         assert rec[2][1]=='stop'
@@ -367,12 +369,12 @@ class Test_Spawn_IntervalAction:
             oname1 = name2
             oname2 = name1
         rec_lo = [ e for e in rec if e[0]==oname1]
-        print 'rec_lo:', rec_lo
+        print('rec_lo:', rec_lo)
         assert len(rec_lo)==0
 
         rec = [ e for e in rec if e[0]==oname2]
         rec = [ e for e in rec if e[1]!='step' ]
-        print 'rec hi:', rec
+        print('rec hi:', rec)
         assert rec[0][1]=='update' and rec[0][2]==1.0
         assert rec[1][1]=='stop'
         assert len(rec)==2
@@ -413,12 +415,12 @@ class Test_Spawn_IntervalAction:
             oname1 = name2
             oname2 = name1
         rec_lo = [ e for e in rec if e[0]==oname1]
-        print 'rec_lo:', rec_lo
+        print('rec_lo:', rec_lo)
         assert len(rec_lo)==0
 
         rec = [ e for e in rec if e[0]==oname2]
         rec = [ e for e in rec if e[1]!='step' ]
-        print 'rec hi:',rec
+        print('rec hi:', rec)
         assert len(rec)==1
         assert (rec[0][1]=='update' and
                 abs(rec[0][2] - next_elapsed/max(duration1, duration2))<fe)

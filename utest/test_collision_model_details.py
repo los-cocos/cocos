@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # tests implementation details
 
 import cocos.collision_model as cm

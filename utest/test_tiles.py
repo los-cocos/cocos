@@ -5,6 +5,8 @@
 This test should just run without failing.
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: MAP_MODEL.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 
@@ -188,7 +190,7 @@ class MapModelTest(unittest.TestCase):
         x1, y1 = 5, 8
         x2, y2 = 8, 12
         overlaps = m.get_in_region(x1, y1, x2, y2)
-        print overlaps
+        print(overlaps)
         # expects all cells which overlaps the x1,y1,x2,y2 rect in an area > 0
         assert set(overlaps) == set( ['col_2_row_4', 'col_3_row_4',
                                      'col_2_row_5', 'col_3_row_5'] )
@@ -197,7 +199,7 @@ class MapModelTest(unittest.TestCase):
         x1, y1 = 6, 8
         x2, y2 = 8, 12
         overlaps = m.get_in_region(x1, y1, x2, y2)
-        print overlaps
+        print(overlaps)
         # expects all cells which overlaps the x1,y1,x2,y2 rect in an area > 0
         assert set(overlaps) == set( ['col_3_row_4', 'col_3_row_5'] )
 
@@ -212,7 +214,7 @@ class MapModelTest(unittest.TestCase):
         x1, y1 = 5, 8
         x2, y2 = 5, 12
         overlaps = m.get_in_region(x1, y1, x2, y2)
-        print 'rect is a segment not overlapping cells boundary:', overlaps
+        print('rect is a segment not overlapping cells boundary:', overlaps)
         assert set(overlaps) == set( ['col_2_row_4', 'col_2_row_5'] )
 
     def test_rect_region_alt__rect_is_a_segment_not_in_cells_boundary(self):
@@ -226,7 +228,7 @@ class MapModelTest(unittest.TestCase):
         x1, y1 = 4, 8
         x2, y2 = 4, 12
         overlaps = m.get_in_region(x1, y1, x2, y2)
-        print 'rect is a segment overlapping cells boundary:', overlaps
+        print('rect is a segment overlapping cells boundary:', overlaps)
         assert set(overlaps) == set( [] )
 
     def test_rect_region_alt__rect_is_a_point(self):
@@ -240,7 +242,7 @@ class MapModelTest(unittest.TestCase):
         x1, y1 = 5, 8
         x2, y2 = 5, 8
         overlaps = m.get_in_region(x1, y1, x2, y2)
-        print 'rect is point:', overlaps
+        print('rect is point:', overlaps)
         assert set(overlaps) == set( [] )
 
     def test_hex_neighbor(self):

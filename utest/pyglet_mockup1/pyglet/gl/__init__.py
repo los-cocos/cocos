@@ -1,4 +1,6 @@
 # gl
+from __future__ import division, print_function, unicode_literals
+
 
 GL_BLEND = 3042
 GL_ZERO = 0     # /usr/include/GL/gl.h:147

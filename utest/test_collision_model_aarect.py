@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # collision_model tests
 
 # aarects1 test
@@ -18,9 +20,9 @@ def create_obj_with_aarect(name, center, rx, ry):
 def pprint_container(heading, container):
     sl = [s.name for s in container]
     sl.sort()
-    print heading
+    print(heading)
     for s in sl:
-        print "\t%s"%s
+        print("\t%s"%s)
 
 # see aarect1_data.png for visualization, was ploted with func
 # plot_aarect_data1

@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # important: set cocos_utest=1 in the environment before run.
 # that simplifies the pyglet mockup needed
 # remember to erase or set to zero for normal runs
@@ -34,7 +36,7 @@ class UAction(ac.Action):
         global rec, next_done
         rec.append((self.name, 'step', dt))
         if int(self.name) & next_done:
-            print 'setting %s _done to True'%self.name
+            print('setting %s _done to True'%self.name)
             self._done = True
 
     def stop(self):
@@ -70,7 +72,7 @@ class Test_Sequence_Action:
 
         rec = []
         a_copy = node.do(composite)
-        print 'start rec:', rec
+        print('start rec:', rec)
         assert rec[0]==(name1, 'start')
         assert len(rec)==1
         assert not a_copy.done()
@@ -122,7 +124,7 @@ class Test_Sequence_Action:
         rec = []
         next_done = 1
         node._step(dt)
-        print rec
+        print(rec)
         assert rec[0][0]==name1 and rec[0][1]== 'step'
         assert rec[1][0]==name1 and rec[1][1]=='stop'
         assert rec[2][0]==name2 and rec[2][1]=='start'
@@ -145,7 +147,7 @@ class Test_Sequence_Action:
         rec = []
         dt = 0.2
         node._step(dt)
-        print rec
+        print(rec)
 
         assert 0==len([e for e in rec if e[0]==name1 ])
         assert rec[0]==(name2, 'step', dt)
@@ -168,7 +170,7 @@ class Test_Sequence_Action:
         rec = []
         dt = 0.2
         node._step(dt)
-        print rec
+        print(rec)
         
         assert 0==len([e for e in rec if e[0]==name1 ])
         assert rec[0]==(name2, 'step', dt)

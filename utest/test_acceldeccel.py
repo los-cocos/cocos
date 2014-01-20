@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # unit test to run with py.test
 # important: set cocos_utest=1 in the environment before run.
 # that simplifies the pyglet mockup needed
@@ -61,7 +63,7 @@ class Test_AccelDeccel:
         dt = duration * 1.0
         rec = []
         node._step(dt)
-        print 'rec:', rec
+        print('rec:', rec)
         update_record = rec[-1]
         assert update_record[1] == 'update'
         assert update_record[2] == 1.0

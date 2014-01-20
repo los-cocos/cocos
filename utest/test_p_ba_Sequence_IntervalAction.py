@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # parametrized test, using py.test 
 # important: set cocos_utest=1 in the environment before run.
 # that simplifies the pyglet mockup needed
@@ -84,7 +86,7 @@ class Test_Sequence_IntervalAction:
 
         rec = []
         node.do(composite)
-        print 'start rec:', rec
+        print('start rec:', rec)
         num = 0
         assert rec[num]==(name1, 'start')
         if duration1==0.0:
@@ -129,7 +131,7 @@ class Test_Sequence_IntervalAction:
             rec = []
             node._step(dt)
             rec = [ e for e in rec if e[1]!='step' ]
-            print rec
+            print(rec)
             assert rec[0][1]=='update' and abs(rec[0][2]-next_elapsed/duration1)<fe
             assert len(rec)==1
             elapsed = next_elapsed
@@ -156,14 +158,14 @@ class Test_Sequence_IntervalAction:
         #expect start, update(1), stop for action 1, start + update(x) for action2
         recx = [ e for e in rec if e[1]!='step' ]
         rec = [ e for e in recx if e[0]==name1]
-        print 'rec',rec
+        print('rec', rec)
         assert rec[0][1]=='start'
         assert rec[1][1]=='update' and rec[1][2]==1.0
         assert rec[2][1]=='stop'
         assert len(rec)==3
 
         rec = [ e for e in recx if e[0]==name2]
-        print 'rec',rec
+        print('rec', rec)
         assert rec[0][1]=='start'
         assert rec[1][1]=='update'
         assert abs(rec[1][2]-(next_elapsed-duration1)/duration2)<fe
@@ -198,13 +200,13 @@ class Test_Sequence_IntervalAction:
         #expect update(1), stop for action 1, start + update(x) for action2
         recx = [ e for e in rec if e[1]!='step' ]
         rec = [ e for e in recx if e[0]==name1]
-        print 'rec',rec
+        print('rec', rec)
         assert rec[0][1]=='update' and rec[0][2]==1.0
         assert rec[1][1]=='stop'
         assert len(rec)==2
 
         rec = [ e for e in recx if e[0]==name2]
-        print 'rec',rec
+        print('rec', rec)
         assert rec[0][1]=='start'
         assert rec[1][1]=='update'
         assert abs(rec[1][2]-(next_elapsed-duration1)/duration2)<fe
@@ -235,7 +237,7 @@ class Test_Sequence_IntervalAction:
 
         assert len([e for e in rec if e[0]==name1])==0
         rec = [ e for e in rec if e[1]!='step' ]
-        print rec
+        print(rec)
         assert rec[0][1]=='update'
         assert abs(rec[0][2]-(next_elapsed-duration1)/duration2)<fe
         assert len(rec)==1
@@ -258,14 +260,14 @@ class Test_Sequence_IntervalAction:
         # expected: for both actions start-update(1)-stop called, in that order
         recx = [ e for e in rec if e[1]!='step' ]
         rec = [ e for e in recx if e[0]==name1]
-        print 'rec',rec
+        print('rec', rec)
         assert len(rec)==3
         assert rec[0][1]=='start'
         assert rec[1][1]=='update' and rec[1][2]==1.0
         assert rec[2][1]=='stop'
 
         rec = [ e for e in recx if e[0]==name2]
-        print 'rec',rec
+        print('rec', rec)
         assert len(rec)==3
         assert rec[0][1]=='start'
         assert rec[1][1]=='update' and rec[1][2]==1.0
