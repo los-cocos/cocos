@@ -35,6 +35,8 @@
 CocosNode: the basic element of cocos2d
 """
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import bisect, copy
@@ -370,9 +372,8 @@ class CocosNode(object):
 
     def _get_position(self):
         return (self._x, self._y)
-    def _set_position(self, (x,y)):
-        self._x = x
-        self._y = y
+    def _set_position(self, pos):
+        self._x, self._y = pos
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 

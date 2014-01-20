@@ -54,6 +54,8 @@ Main Features
 http://cocos2d.org
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 __version__ = "0.5.5"

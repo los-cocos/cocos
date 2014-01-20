@@ -49,6 +49,8 @@ The public interface should be
     - set_app_clock
 """
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import pyglet

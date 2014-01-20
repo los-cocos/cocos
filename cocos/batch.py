@@ -40,6 +40,8 @@ Batches allow you to optimize the number of gl calls using pyglets batch
 
 """
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import cocosnode
