@@ -31,6 +31,9 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+
+from __future__ import division, print_function, unicode_literals
+
 import math
 import cPickle
 
@@ -309,7 +312,7 @@ class Bone(object):
         return bone
 
     def dump(self, depth=0):
-        print "-"*depth, self
+        print("-"*depth, self)
         for c in self.children:
             c.dump(depth+1)
 

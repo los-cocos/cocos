@@ -39,6 +39,8 @@ Functionality other that the one common to all cococsnodes, except 'opacity', is
 provided by the member 'element' , which is the underlying pyglet object.
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 from director import director

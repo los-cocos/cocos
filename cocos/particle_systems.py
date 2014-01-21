@@ -33,6 +33,8 @@
 # ----------------------------------------------------------------------------
 '''Pre-defined Particle Systems'''
 
+from __future__ import division, print_function, unicode_literals
+
 __all__ = ['Fireworks', 'Spiral', 'Meteor', 'Sun', 'Fire', 'Galaxy', 'Flower', 'Explosion', 'Smoke']
 
 from particle import ParticleSystem, Color

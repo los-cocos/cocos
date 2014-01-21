@@ -62,6 +62,8 @@ And now tell the sprite to execute it::
 
     sprite.do( move )
 '''
+from __future__ import division, print_function, unicode_literals
+
 from six import string_types
 
 __docformat__ = 'restructuredtext'
@@ -134,10 +136,10 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
         if anchor is None:
             if isinstance(self.image, pyglet.image.Animation):
-                anchor = (image.frames[0].image.width / 2,
-                    image.frames[0].image.height / 2)
+                anchor = (image.frames[0].image.width / 2.0,
+                    image.frames[0].image.height / 2.0)
             else:
-                anchor = image.width / 2, image.height / 2
+                anchor = image.width / 2.0, image.height / 2.0
 
 
         self.image_anchor = anchor

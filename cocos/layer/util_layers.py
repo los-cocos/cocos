@@ -43,6 +43,8 @@ Events are propagated to layers (from front to back) until some layer catches
 the event and accepts it.
 """
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import pyglet

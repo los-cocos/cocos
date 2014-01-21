@@ -31,6 +31,9 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+
+from __future__ import division, print_function, unicode_literals
+
 from base_layers import *
 from util_layers import *
 from python_interpreter import *

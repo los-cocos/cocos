@@ -33,6 +33,8 @@
 # ----------------------------------------------------------------------------
 '''Particle system engine'''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import random
@@ -506,17 +508,17 @@ class ParticleSystem( CocosNode ):
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, self.texture.id )
 
-	glEnableClientState(GL_VERTEX_ARRAY)
+        glEnableClientState(GL_VERTEX_ARRAY)
         vertexs_ptr = PointerToNumpy(self.vertexs)
-	glVertexPointer(2, GL_FLOAT, 0, vertexs_ptr)
+        glVertexPointer(2, GL_FLOAT, 0, vertexs_ptr)
 
-	glEnableClientState(GL_COLOR_ARRAY)
+        glEnableClientState(GL_COLOR_ARRAY)
         color_ptr = PointerToNumpy(self.per_vertex_colors)
-	#glColorPointer(4, GL_UNSIGNED_BYTE, 0, color_ptr)
+        #glColorPointer(4, GL_UNSIGNED_BYTE, 0, color_ptr)
         glColorPointer(4, GL_FLOAT, 0, color_ptr)
         
-	glEnableClientState( GL_TEXTURE_COORD_ARRAY )
-	tex_coord_ptr = PointerToNumpy(self.tex_coords)
+        glEnableClientState( GL_TEXTURE_COORD_ARRAY )
+        tex_coord_ptr = PointerToNumpy(self.tex_coords)
         glTexCoordPointer(2, GL_FLOAT, 0, tex_coord_ptr)
 
         glPushAttrib(GL_COLOR_BUFFER_BIT)
@@ -526,8 +528,8 @@ class ParticleSystem( CocosNode ):
         else:
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glDrawArrays(GL_QUADS, 0, len(self.vertexs))
-	
+        glDrawArrays(GL_QUADS, 0, len(self.vertexs))
+    
         # un -blend
         glPopAttrib()
 

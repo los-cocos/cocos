@@ -33,6 +33,8 @@
 # ----------------------------------------------------------------------------
 '''Pause scene'''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 from cocos.director import director
@@ -87,8 +89,8 @@ class PauseLayer(Layer):
         ft = pyglet.font.load('Arial', 36)
         self.text = pyglet.font.Text(ft, 
             'PAUSED', halign=pyglet.font.Text.CENTER)
-        self.text.x = x/2
-        self.text.y = y/2
+        self.text.x = x // 2
+        self.text.y = y // 2
         
     def draw(self):
         self.text.draw()

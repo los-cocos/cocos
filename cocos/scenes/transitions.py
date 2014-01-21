@@ -33,6 +33,8 @@
 # ----------------------------------------------------------------------------
 '''Transitions between Scenes'''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import pyglet
@@ -389,7 +391,7 @@ class ShuffleTransition(TransitionScene):
         super(ShuffleTransition, self ).__init__( *args, **kwargs)
 
         width, height = director.get_window_size()
-        aspect = width / float(height)
+        aspect = width / height
         x,y = int(12*aspect), 12
 
         shuffle = ShuffleTiles( grid=(x,y), duration=self.duration/2.0, seed=15 )
@@ -469,7 +471,7 @@ class FadeTRTransition(TransitionScene):
         super(FadeTRTransition, self ).__init__( *args, **kwargs)
 
         width, height = director.get_window_size()
-        aspect = width / float(height)
+        aspect = width / height
         x,y = int(12*aspect), 12
 
         a = self.get_action(x,y)
@@ -512,7 +514,7 @@ class TurnOffTilesTransition(TransitionScene):
         super(TurnOffTilesTransition, self ).__init__( *args, **kwargs)
 
         width, height = director.get_window_size()
-        aspect = width / float(height)
+        aspect = width / height
         x,y = int(12*aspect), 12
 
         a = TurnOffTiles( grid=(x,y), duration=self.duration )
@@ -619,7 +621,7 @@ class ZoomTransition(TransitionScene):
         actual_width, actual_height = director.get_window_size()
 
         out = Sprite(image)
-        out.position = actual_width / 2, actual_height / 2
-        out.scale = max(actual_width / float(width), actual_height / float(height))
+        out.position = actual_width // 2, actual_height // 2
+        out.scale = max(actual_width / width, actual_height / height)
 
         return out

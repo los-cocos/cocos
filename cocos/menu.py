@@ -49,6 +49,10 @@ or entry items (which lets you enter alphanumeric data).
 To use a menu in your code, just subclass `Menu` and add the menu to an `Scene` or
 another `Layer`.
 """
+
+from __future__ import division, print_function, unicode_literals
+
+
 from six import string_types
 
 __docformat__ = 'restructuredtext'
@@ -763,7 +767,7 @@ def shake():
     '''Predefined action that performs a slight rotation and then goes back to the original rotation
     position.
     '''
-    angle = 05
+    angle = 5
     duration = 0.05
 
     rot = Accelerate(RotateBy( angle, duration ), 2)
