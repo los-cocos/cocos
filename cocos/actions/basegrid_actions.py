@@ -57,6 +57,8 @@ To understand visually the difference between these 2 kinds of grids, try these 
   - run ``test/test_shaky3d.py`` to see the `Grid3DAction` counterpart
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 from pyglet.gl import *

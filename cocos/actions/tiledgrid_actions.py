@@ -33,6 +33,9 @@
 # ----------------------------------------------------------------------------
 '''Implementation of TiledGrid3DAction actions
 '''
+
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import random
@@ -245,7 +248,7 @@ class FadeOutTRTiles( TiledGrid3DAction ):
         x,y = self.grid * t
         if x+y==0:
             return 1 
-        return pow( (i+j) / float(x+y), 6 )
+        return pow( (i+j) / (x+y), 6 )
 
 class FadeOutBLTiles( FadeOutTRTiles):
     '''Fades out each tile following an Bottom-Left path until all the tiles are faded out.
@@ -259,7 +262,7 @@ class FadeOutBLTiles( FadeOutTRTiles):
         x,y = self.grid * (1-t)
         if i+j==0:
             return 1 
-        return pow( (x+y) / float(i+j), 6)
+        return pow( (x+y) / (i+j), 6)
 
 class FadeOutUpTiles( FadeOutTRTiles):
     '''Fades out each tile following an upwards path until all the tiles are faded out.
@@ -273,7 +276,7 @@ class FadeOutUpTiles( FadeOutTRTiles):
         x,y = self.grid * t
         if y==0:
             return 1 
-        return pow( (j) / float(y), 6 )
+        return pow( (j) / y, 6 )
 
     def transform_tile(self, x, y, t ):
         coords = self.get_original_tile(x,y)
@@ -299,7 +302,7 @@ class FadeOutDownTiles( FadeOutUpTiles):
         x,y = self.grid * (1-t)
         if j==0:
             return 1 
-        return pow( (y) / float(j), 6 )
+        return pow( (y) / j, 6 )
 
 
 class TurnOffTiles( TiledGrid3DAction ):

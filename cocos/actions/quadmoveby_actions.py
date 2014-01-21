@@ -36,6 +36,9 @@
 These actions modifies the x and y coordinates of fixed-size grid of (1,1).
 The z-coordinate is not modified.
 '''
+
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import math

@@ -36,6 +36,8 @@
 Actions that moves the OpenGL camera.
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 from cocos.director import director
@@ -150,7 +152,7 @@ class OrbitCamera( Camera3DAction ):
         if r == 0:
             r = 0.000000001
 
-        angle_z = math.acos( eye.z / float(r) )
+        angle_z = math.acos( eye.z / r )
         if eye.x < 0:
             angle_x = math.pi - math.asin( eye.y / s )
         else:

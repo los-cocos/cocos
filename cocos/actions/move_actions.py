@@ -60,6 +60,9 @@ Typically the sprite would be controlled by the user, so something like::
 
 '''
 
+from __future__ import division, print_function, unicode_literals
+
+
 __docformat__ = 'restructuredtext'
 
 __all__ = [
