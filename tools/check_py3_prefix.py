@@ -2,7 +2,7 @@ from __future__ import division, print_function, unicode_literals
 
 import os
 
-dirs = ["../test", "../utest"]
+dirs = ["../test", "../utest", "../cocos", "../cocos/layer", "../cocos/scenes"]
 must_have = "from __future__ import division, print_function, unicode_literals"
 non_compliant = []
 
