@@ -2,6 +2,8 @@
 exercise and develop autotest funtionality
 """
 
+from __future__ import division, print_function, unicode_literals
+
 import sys
 msg = """
 To run this script you need the package remembercases, which can be found at
@@ -11,7 +13,7 @@ Instructions about how to install in the same page.
 try:
     import remembercases
 except ImportError:
-    print msg
+    print(msg)
     sys.exit(1)
     
 import os
@@ -525,55 +527,55 @@ else:
 
 
 # a concise status report
-print progress_report(db, verbose=False)
+print(progress_report(db, verbose=False))
 
 ### list tests with bad testinfo
-##print hl.rpt(db, ['testinfo_invalid'], verbose=True)
+##print(hl.rpt(db, ['testinfo_invalid'], verbose=True))
 ##
 ### details for tests with bad testinfo, including diagnostic
-##print hl.rpt_detail_diagnostics(db, 'testinfo_invalid')
+##print(hl.rpt_detail_diagnostics(db, 'testinfo_invalid'))
 ##
 ##
 ### entities with no props, it can be 'added but not scaned' or 'added with
 ### wrong name'
-###print hl.rpt(db, ['no_props'], verbose=True)
+###print(hl.rpt(db, ['no_props'], verbose=True))
 ##
-### tests that don't have testinfo at all 
-##print hl.rpt(db, ['testinfo_missing'], verbose=True)
+### tests that don't have testinfo at all
+##print(hl.rpt(db, ['testinfo_missing'], verbose=True))
 ##
 ### tests that can't be readed, probably due to name mismatch 
-### print hl.rpt(db, ['IOerror'])
+### print(hl.rpt(db, ['IOerror']))
 ##
 ### print detailed info about test that tried but failed to take snapshots
-##print hl.rpt_detail_diagnostics(db, 'snapshots_failure')
+##print(hl.rpt_detail_diagnostics(db, 'snapshots_failure'))
 ##
 ### lists test that took snapshots without technical problems
-####print hl.rpt(db, ['snapshots_success'], verbose=True)
+####print(hl.rpt(db, ['snapshots_success'], verbose=True))
 ##
 # dump the entire db to console
 #pprint.pprint(db.db)
 ##
 ### show all props for a given entity
 ###entity = 'test/test_unscaled_win_resize.py'
-#print hl.rpt_all_props(db, ['test/test_schedule_interval.py'])
+#print(hl.rpt_all_props(db, ['test/test_schedule_interval.py']))
 ##
 ### list all tests that have valid testinfo and don't have testrun_success=='pass'
-##print hl.rpt(db, ['testrun_not_pass'], verbose=True)
+##print(hl.rpt(db, ['testrun_not_pass'], verbose=True))
 
 # list all tests that have been inspected ( ie have 'testrun_success' prop )
-#print hl.rpt(db, ['testrun_present'], verbose=True)
+#print(hl.rpt(db, ['testrun_present'], verbose=True))
 
 # list all test outdated (this is weak, because no re-scan is performed.
 # for a strong ouddated, make a scan before calling the weak outdated
-#print hl.rpt(db, ['outdated_weak'], verbose=True)
+#print(hl.rpt(db, ['outdated_weak'], verbose=True))
 
 ### tests that have testinfo and dont have testun info
-##print hl.rpt(db, ['not_inspected'], verbose=True)
+##print(hl.rpt(db, ['not_inspected'], verbose=True))
 
 ### tests with testrun outdated (strong version)
-##print hl.rpt_testrun_outdated_strong(db)
+##print(hl.rpt_testrun_outdated_strong(db))
 
 # report differences between 1st iterative testbed and a clean build
-#print hl.rpt_compare_testbeds_by_entities('initial_orig.dat', 'ati 6570',
-#                                'initial_clean.dat', 'ati 6570', verbose=False)
+#print(hl.rpt_compare_testbeds_by_entities('initial_orig.dat', 'ati 6570',
+#                                'initial_clean.dat', 'ati 6570', verbose=False))
 

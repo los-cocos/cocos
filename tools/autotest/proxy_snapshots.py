@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 import sys
 import os
 
@@ -5,7 +7,7 @@ import remembercases.snapshot_taker as st
 
 import random
 # seed random for repeteability
-random.seed('123')
+random.seed(123)
 
 import pyglet
 import cocos
@@ -38,7 +40,7 @@ def main(script_name, stored_testinfo, snapshots_dir):
     # ...
     sys.path.insert(0, os.getcwd())
     module_name = script_name[:script_name.rfind('.py')]
-    print 'module name:', module_name
+    print('module name:', module_name)
     s = "import %s as script_module"%module_name
     exec(s)
 

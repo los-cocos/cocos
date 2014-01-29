@@ -1,4 +1,5 @@
-from __future__ import division
+from __future__ import division, print_function, unicode_literals
+
 import sys
 import os
 import re
@@ -337,7 +338,7 @@ def update_snapshots(db, filename_persist, target_scripts, snapshots_dir):
                 err += '\nNot all snapshots captured - missing snapshots:\n'
                 err += '\n'.join(missing)
             snapshots_diagnostic = err
-            print 'err:', err
+            print('err:', err)
         db.set_prop_value(script, 'snapshots_diagnostic', snapshots_diagnostic)
 
 

@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function, unicode_literals
 
 import sys
 msg = """
@@ -9,7 +9,7 @@ Instructions about how to install in the same page.
 try:
     import remembercases
 except ImportError:
-    print msg
+    print(msg)
     sys.exit(1)
 
 import os
@@ -199,4 +199,4 @@ if clean:
 else:
     more_rounds(stats_fname, limit, recover=recover)
 
-print report(stats_fname, rpt_compact)
+print(report(stats_fname, rpt_compact))
