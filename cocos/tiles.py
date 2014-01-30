@@ -292,7 +292,7 @@ def load_tmx(filename):
 
         data = data.text.strip()
         data = data.decode('base64').decode('zlib')
-        data = struct.unpack('<%di' % (len(data)//4,), data)
+        data = struct.unpack(b'<%di' % (len(data)//4,), data)
         assert len(data) == width * height
 
         cells = [[None] * height for x in range(width)]
