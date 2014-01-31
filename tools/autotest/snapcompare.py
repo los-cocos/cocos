@@ -20,7 +20,8 @@ import helpers as hl
 # filename to persist the db
 filename_persist = 'initial.dat'
 # change the string to identify about which machine is the info collected 
-testbed = 'ati 6570'
+#testbed = 'ati 6570'
+testbed = 'cpu intel E7400, gpu ati 6570 with Catalyst 11-5 drivers, win xp sp3'
 ### dir used to calculate canonical paths
 ##basepath = '../..'
 ### dir where update_snapshots will store snapshots
@@ -116,8 +117,10 @@ if not os.path.exists(snapshots_reference_dir):
     diagnostic = "Snapshots references dir not found:%s"%snapshots_reference_dir
 
 db = dbm.db_load(filename_persist, default_testbed=testbed)
-candidates = doers.scripts_names_from_text(text, end_mark=':')
-knowns, unknowns = db.entities(fn_allow=None, candidates=candidates)
+knowns, unknowns = db.entities(fn_allow=hl.fn_allow_testrun_pass, candidates=None)
+
+##candidates = doers.scripts_names_from_text(text, end_mark=':')
+##knowns, unknowns = db.entities(fn_allow=None, candidates=candidates)
 if unknowns:
     msg = '\n'.join(unknowns)
     diagnostic = "Unknown scripts:\n" + msg
@@ -128,7 +131,7 @@ if diagnostic:
 
 # payload
 equals, unequals, untested = hl.snapshots_compare(db, fn_snapshots_dist,
-                                                  threshold, candidates, tries,
+                                                  threshold, knowns, tries,
                                                   snapshots_reference_dir,
                                                   samples_dir)
 # output

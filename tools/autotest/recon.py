@@ -453,7 +453,7 @@ def update_22(db, filename_persist, snapshots_dir, snapshots_reference_dir):
 # filename to persist the db
 filename_persist = 'initial.dat'
 # change the string to identify about which machine is the info collected 
-testbed = 'ati 6320'
+testbed = 'cpu intel E7400, gpu ati 6570 with Catalyst 11-5 drivers, win xp sp3'
 # dir used to calculate canonical paths
 basepath = '../..'
 # dir where update_snapshots will store snapshots
@@ -546,8 +546,8 @@ print(progress_report(db, verbose=False))
 ### tests that can't be readed, probably due to name mismatch 
 ### print(hl.rpt(db, ['IOerror']))
 ##
-### print detailed info about test that tried but failed to take snapshots
-##print(hl.rpt_detail_diagnostics(db, 'snapshots_failure'))
+# print detailed info about test that tried but failed to take snapshots
+#print(hl.rpt_detail_diagnostics(db, 'snapshots_failure'))
 ##
 ### lists test that took snapshots without technical problems
 ####print(hl.rpt(db, ['snapshots_success'], verbose=True))
