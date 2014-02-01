@@ -36,6 +36,8 @@ your cocos applications; but instead use the music control functions in the
 Scene class
 """
 
+from __future__ import division, print_function, unicode_literals
+
 from cocos import audio
 try:
     import pygame.music

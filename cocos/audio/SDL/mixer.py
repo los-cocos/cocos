@@ -19,6 +19,8 @@ choppy, try using 8-bit audio, mono audio, or lower frequencies.
     must call `Mix_OpenAudio` with the sampling rate of your music track.
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
 
@@ -62,7 +64,7 @@ class Mix_Chunk(Structure):
     def __getattr__(self, attr):
         if attr == 'abuf':
             return array.SDL_array(self._abuf, self.alen, c_ubyte)
-        raise AttributeError, attr
+        raise AttributeError(attr)
 
 # opaque type
 _Mix_Music = c_void_p

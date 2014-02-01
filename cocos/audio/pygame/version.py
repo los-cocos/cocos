@@ -26,6 +26,7 @@ pygame version without importing the main pygame module.
 The python version information should always compare greater than any previous
 releases. (hmm, until we get to versions > 10)
 """
+from __future__ import division, print_function, unicode_literals
 
 ver =   '1.8.0pre'
 vernum = 1,8,0

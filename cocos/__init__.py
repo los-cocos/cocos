@@ -87,21 +87,21 @@ if sys.platform == 'win32':
     except ImportError:
         sdl_lib_path = None
 
-def import_all():
-    import actions
-    import director
-    import layer
-    import menu
-    import sprite
-    import path
-    import scene
-    import grid
-    import text
-    import camera
-    import draw
-    import skeleton
-    import rect
-    import tiles
+##def import_all():
+##    import actions
+##    import director
+##    import layer
+##    import menu
+##    import sprite
+##    import path
+##    import scene
+##    import grid
+##    import text
+##    import camera
+##    import draw
+##    import skeleton
+##    import rect
+##    import tiles
 
-if not unittesting:
-    import_all()
+##if not unittesting:
+##    import_all()

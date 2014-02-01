@@ -19,6 +19,8 @@ pygame.locals directly into your module's namespace with::
 Most of the pygame examples do this if you'd like to take a look.
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: base.py 911 2006-08-09 08:56:31Z aholkner $'
 

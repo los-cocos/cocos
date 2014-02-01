@@ -3,6 +3,8 @@
 '''Constants and enums for all SDL submodules.
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
 
@@ -534,7 +536,7 @@ MIX_CHANNELS            = 8
 MIX_DEFAULT_FREQUENCY   = 22050
 MIX_MAX_VOLUME          = 128
 MIX_CHANNEL_POST        = -2
-MIX_EFFECTSMAXSPEED     = 'MIX_EFFECTSMAXSPEED'
+MIX_EFFECTSMAXSPEED     = b'MIX_EFFECTSMAXSPEED'
 MIX_DEFAULT_CHANNELS    = 2
 
 if sys.byteorder == 'little':

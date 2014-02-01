@@ -3,6 +3,8 @@
 '''Functions related to the SDL shared library version.
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
 
