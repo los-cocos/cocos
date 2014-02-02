@@ -38,6 +38,7 @@ constructed of image tiles.
 '''
 
 from __future__ import division, print_function, unicode_literals
+import six
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: resource.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
@@ -54,6 +55,8 @@ from pyglet import gl
 import cocos
 from cocos.director import director
 from cocos.rect import Rect
+
+unicode = six.text_type
 
 # Implement these classes for backwards compatibility; some older code
 # expects ScrollableLayer and ScrollingManager to be in the tiles module.
