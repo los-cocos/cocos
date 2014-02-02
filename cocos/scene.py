@@ -46,7 +46,10 @@ from pyglet.gl import *
 import cocos
 from cocos.director import director
 import cocos.cocosnode as cocosnode
-import cocos.audio.music
+try:
+    import cocos.audio.music
+except Exception:
+    pass
 
 class EventHandlerMixin(object):
     def add(self, child, *args, **kwargs):

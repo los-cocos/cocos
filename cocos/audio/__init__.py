@@ -31,27 +31,12 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-__all__ = ['SDL', 'pygame']
+#__all__ = ['SDL', 'pygame']
 
 import cocos
-_working = True
+_working = False
 
-try:
-    import pygame.mixer
-except ImportError, error:
-    # set to 0 to debug import errors
-    if 1:
-        _working = False
-    else:
-        raise
-
+# empty audio subsystem to not mess with audio in the initial refactor to py3 
 
 def initialize(arguments={}):
-    global _working
-    if arguments is None:
-        _working = False
-        music.set_control('dummy')
-    if _working:
-        pygame.mixer.init(**arguments)
-        music.set_control('pygame')
-
+    pass
