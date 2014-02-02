@@ -3,8 +3,6 @@
 '''
 '''
 
-from __future__ import division, print_function, unicode_literals
-
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
 
@@ -55,7 +53,7 @@ class SDL_array:
         :rtype: SDL_array
         '''
         return SDL_array(self.ptr, 
-                         self.count * sizeof(self.ctype) // 2, 
+                         self.count * sizeof(self.ctype) / 2, 
                          c_ushort)
 
     def as_int32(self):
@@ -65,7 +63,7 @@ class SDL_array:
         :rtype: SDL_array
         '''
         return SDL_array(self.ptr, 
-                         self.count * sizeof(self.ctype) // 4, 
+                         self.count * sizeof(self.ctype) / 4, 
                          c_uint)
 
     def as_ctypes(self):
@@ -100,9 +98,9 @@ class SDL_array:
         :rtype: numpy.ndarray
         '''
         if not _have_numpy:
-            raise ImportError('numpy could not be imported')
+            raise ImportError, 'numpy could not be imported'
         if self.ctype not in _numpy_typemap:
-            raise TypeError('%s has no numpy compatible type' % self.ctype)
+            raise TypeError, '%s has no numpy compatible type' % self.ctype
         if shape is None:
             shape = (self.count,)
         ar = numpy.frombuffer(self.as_ctypes(), _numpy_typemap[self.ctype])
@@ -142,7 +140,7 @@ class SDL_array:
     def __getitem__(self, key):
         if type(key) is slice:
             if key.step:
-                raise TypeError('slice step not supported')
+                raise TypeError, 'slice step not supported'
             return self.as_ctypes()[key.start:key.stop]
         else:
             return self.as_ctypes()[key]

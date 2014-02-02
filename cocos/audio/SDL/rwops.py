@@ -8,8 +8,6 @@ pointer to a contiguous region of memory, `SDL_RWFromMem` and
 `SDL_RWFromConstMem` can be used.
 '''
 
-from __future__ import division, print_function, unicode_literals
-
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
 
@@ -155,7 +153,7 @@ def SDL_RWFromObject(obj):
         try:
             r = obj.read(maximum * size)
             memmove(ptr, r, len(r))
-            return len(r) // size
+            return len(r) / size
         except:
             return -1
     ctx.read = _read_fn(_read)

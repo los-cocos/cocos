@@ -3,9 +3,6 @@
 '''
 '''
 
-from __future__ import division, print_function, unicode_literals
-from six import string_types
-
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
 
@@ -31,7 +28,7 @@ def _version_parts(v):
         return v.major, v.minor, v.patch
     elif type(v) == tuple:
         return v
-    elif type(v) == string_types:
+    elif type(v) == str:
         return tuple([int(i) for i in v.split('.')])
     else:
         raise TypeError
@@ -55,7 +52,7 @@ class SDL_DLL:
             try:
                 self._load_library_win()
             except WindowsError:
-                raise ImportError('Dynamic library "%s" was not found' %
+                raise ImportError, ('Dynamic library "%s" was not found' %
                                     library_name)
         else:
             self._load_library_nix(version)
@@ -96,12 +93,12 @@ class SDL_DLL:
             # there is'nt a libSDL.so but a libSDL-1.2.so
             library = find_library("%s-%s" % (self.library_name, version))
         if not library:
-            raise ImportError('Dynamic library "%s" was not found' % 
-                _platform_library_name(self.library_name))
+            raise ImportError, 'Dynamic library "%s" was not found' % \
+                _platform_library_name(self.library_name)
         try:
             self._dll = getattr(cdll, library)
         except OSError:
-            raise ImportError("Dynamic library not found")
+            raise ImportError, "Dynamic library not found"
 
     def version_compatible(self, v):
         '''Returns True iff `v` is equal to or later than the loaded library
@@ -116,9 +113,9 @@ class SDL_DLL:
         '''Raises an exception if `since` is later than the loaded library.'''
         if not version_compatible(since):
             import cocos.audio.SDL.error
-            raise cocos.audio.SDL.error.SDL_NotImplementedError(
-                '%s requires SDL version %s; currently using version %s' % 
-                (name, _version_string(since), _version_string(self._version)))
+            raise cocos.audio.SDL.error.SDL_NotImplementedError, \
+                '%s requires SDL version %s; currently using version %s' % \
+                (name, _version_string(since), _version_string(self._version))
 
 
 
@@ -179,10 +176,10 @@ class SDL_DLL:
         if since and not self.version_compatible(since):
             def _f(*args, **kwargs):
                 import cocos.audio.SDL.error
-                raise cocos.audio.SDL.error.SDL_NotImplementedError(
-                      '%s requires %s %s; currently using version %s' % 
+                raise cocos.audio.SDL.error.SDL_NotImplementedError, \
+                      '%s requires %s %s; currently using version %s' % \
                       (name, self.library_name, _version_string(since),
-                       _version_string(self._version)))
+                       _version_string(self._version))
             if args:
                 _f._args = args
             _f.__doc__ = doc
@@ -205,7 +202,7 @@ class SDL_DLL:
                     if result:
                         return result.contents
                     import cocos.audio.SDL.error
-                    raise cocos.audio.SDL.error.SDL_Exception(cocos.audio.SDL.error.SDL_GetError())
+                    raise cocos.audio.SDL.error.SDL_Exception, cocos.audio.SDL.error.SDL_GetError()
             else:
                 # Construct a function which dereferences the pointer result,
                 # or returns None if NULL is returned.
@@ -221,7 +218,7 @@ class SDL_DLL:
                 result = func(*args, **kwargs)
                 if result != success_return:
                     import cocos.audio.SDL.error
-                    raise cocos.audio.SDL.error.SDL_Exception(cocos.audio.SDL.error.SDL_GetError())
+                    raise cocos.audio.SDL.error.SDL_Exception, cocos.audio.SDL.error.SDL_GetError()
                 return result
         elif error_return is not None:
             # Construct a function which returns None, but raises an exception
@@ -230,7 +227,7 @@ class SDL_DLL:
                 result = func(*args, **kwargs)
                 if result == error_return:
                     import cocos.audio.SDL.error
-                    raise cocos.audio.SDL.error.SDL_Exception(cocos.audio.SDL.error.SDL_GetError())
+                    raise cocos.audio.SDL.error.SDL_Exception, cocus.audio.SDL.error.SDL_GetError()
                 return result
         elif require_return:
             # Construct a function which returns the usual result, or returns
@@ -239,7 +236,7 @@ class SDL_DLL:
                 result = func(*args, **kwargs)
                 if not result:
                     import cocos.audio.SDL.error
-                    raise cocos.audio.SDL.error.SDL_Exception(cocos.audio.SDL.error.SDL_GetError())
+                    raise cocos.audio.SDL.error.SDL_Exception, cocos.audio.SDL.error.SDL_GetError()
                 return result
         else:
             # Construct a function which returns the C function's return

@@ -38,8 +38,6 @@ the sound and when it gets played.  Try calling this before the pygame.init or
 pygame.mixer.init calls.  pygame.mixer.pre_init(44100,-16,2, 1024 * 3)
 '''
 
-from __future__ import division, print_function, unicode_literals
-
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: mixer.py 928 2006-08-19 03:13:40Z aholkner $'
 
@@ -236,7 +234,7 @@ def get_init():
 
 def _mixer_init_check():
     if not SDL_WasInit(SDL_INIT_AUDIO):
-        raise base.error('mixer system not initialized')
+        raise base.error, 'mixer system not initialized'
 
 def stop():
     '''Stop playback of all sound channels.
@@ -521,9 +519,9 @@ class Sound(object):
             mixerbytes = 1
         else:
             mixerbytes = 2
-        numsamples = self._chunk.alen // mixerbytes // channels
+        numsamples = self._chunk.alen / mixerbytes / channels
 
-        return numsamples / freq
+        return numsamples / float(freq)
 
 class Channel(object):
     '''The Channel object can be used to get fine control over the playback of
@@ -537,7 +535,7 @@ class Channel(object):
         _mixer_init_check()
 
         if id < 0 or id >= Mix_GroupCount(-1):
-            raise IndexError('invalid channel index')
+            raise IndexError, 'invalid channel index'
 
         if id in _channels:
             return _channels[id]

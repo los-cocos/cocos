@@ -3,8 +3,6 @@
 '''Time management routines.
 '''
 
-from __future__ import division, print_function, unicode_literals
-
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
 
@@ -94,7 +92,7 @@ def SDL_SetTimer(interval, callback):
     # XXX if this fails the global ref is incorrect and old one will
     # possibly be collected early.
     if _SDL_SetTimer(interval, _timercallback_ref) == -1:
-        raise SDL.error.SDL_Exception(SDL.error.SDL_GetError())
+        raise SDL.error.SDL_Exception, SDL.error.SDL_GetError()
 
 
 # For the new timer functions, the void *param passed to the callback
@@ -138,7 +136,7 @@ def SDL_AddTimer(interval, callback, param):
     func = _SDL_NewTimerCallback(_callback)
     result = _SDL_AddTimer(interval, func, None)
     if not result:
-        raise SDL.error.SDL_Exception(SDL.error.SDL_GetError())
+        raise SDL.error.SDL_Exception, SDL.error.SDL_GetError()
     _timer_refs[result] = func
     return result
 

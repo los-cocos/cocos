@@ -10,8 +10,6 @@ the music is streamed, and never actually loaded all at once. The mixer system
 only supports a single music stream at once.
 '''
 
-from __future__ import division, print_function, unicode_literals
-
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: music.py 875 2006-07-23 05:04:59Z aholkner $'
 
@@ -111,7 +109,7 @@ def play(loops=0, start=0.0):
     mixer._mixer_init_check()
 
     if not _current_music:
-        raise base.error('music not loaded')
+        raise base.error, 'music not loaded'
 
     Mix_HookMusicFinished(_endmusic_callback)
     Mix_SetPostMix(_mixmusic_callback, None)
@@ -123,8 +121,8 @@ def play(loops=0, start=0.0):
         Mix_VolumeMusic(volume)
     else:
         if start:
-            raise NotImplementedError( \
-                'music start position requires SDL_Mixer 1.2.3 or later')
+            raise NotImplementedError, \
+                'music start position requires SDL_Mixer 1.2.3 or later'
         Mix_PlayMusic(_current_music, loops)
 
 def rewind():

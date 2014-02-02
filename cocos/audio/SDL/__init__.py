@@ -21,8 +21,6 @@ header files.
 :group Non-core modules: ttf, mixer, image, sound
 '''
 
-from __future__ import division, print_function, unicode_literals
-
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
 
