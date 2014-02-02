@@ -45,9 +45,9 @@ import bisect, copy
 import pyglet
 from pyglet.gl import *
 
-from director import director
-from camera import Camera
-import euclid
+from cocos.director import director
+from cocos.camera import Camera
+from cocos import euclid
 
 import math
 import weakref

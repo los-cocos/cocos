@@ -144,7 +144,7 @@ class DefaultHandler( object ):
             return True
 
         elif symbol == pyglet.window.key.P and (modifiers & pyglet.window.key.MOD_ACCEL):
-            import scenes.pause as pause
+            import cocos.scenes.pause as pause
             pause_sc = pause.get_pause_scene()
             if pause:
                 director.push( pause_sc )

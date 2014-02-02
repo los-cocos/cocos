@@ -40,7 +40,7 @@ __docformat__ = 'restructuredtext'
 
 import random
 from cocos.euclid import *
-from basegrid_actions import *
+from .basegrid_actions import *
 from cocos.director import director
 
 rr = random.randrange

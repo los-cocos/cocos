@@ -35,7 +35,10 @@
 from __future__ import division, print_function, unicode_literals
 
 import math
-import cPickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 import cocos
 from cocos import euclid
@@ -213,7 +216,7 @@ class Skeleton(object):
 
     def save(self, name):
         f = open(name, "w")
-        cPickle.dump(self, f)
+        pickle.dump(self, f)
         f.close()
 
     def move(self, dx, dy):

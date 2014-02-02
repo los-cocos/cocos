@@ -45,7 +45,7 @@ import math
 
 from cocos.director import director
 from cocos.euclid import *
-from basegrid_actions import *
+from .basegrid_actions import *
 
 __all__ = ['QuadMoveBy',
            'MoveCornerUp',

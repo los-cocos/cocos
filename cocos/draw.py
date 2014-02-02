@@ -34,10 +34,10 @@
 
 from __future__ import division, print_function, unicode_literals
 
-import cocosnode
+from cocos.cocosnode import CocosNode
 import pyglet
 from pyglet.gl import *
-from euclid import *
+from cocos.euclid import *
 import math
 import copy
 
@@ -183,7 +183,7 @@ class Segment:
     def reversed(self):
         return Segment(self.end, self.start, self.width)
 
-class Canvas(cocosnode.CocosNode):
+class Canvas(CocosNode):
     def __init__(self):
         super(Canvas, self).__init__()
         self._dirty = True

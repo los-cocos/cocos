@@ -36,7 +36,7 @@ from __future__ import division, print_function, unicode_literals
 from pyglet.gl import *
 from pyglet import window, image
 
-import shader
+from cocos.shader import ShaderProgram, VertexShader, FragmentShader
 
 __all__ = ['wired']
 
@@ -59,9 +59,9 @@ void main()
 
 
 def load_shader():
-    s = shader.ShaderProgram()
-#    s.setShader(shader.VertexShader('test_v', test_v))
-    s.setShader(shader.FragmentShader('test_f', test_f))
+    s = ShaderProgram()
+#    s.setShader(VertexShader('test_v', test_v))
+    s.setShader(FragmentShader('test_f', test_f))
     return s
 
 wired = load_shader()

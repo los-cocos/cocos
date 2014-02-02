@@ -51,8 +51,7 @@ import pyglet
 from pyglet.gl import *
 
 from cocos.director import *
-from base_layers import Layer
-import cocos.cocosnode
+from .base_layers import Layer
 
 __all__ = ['ColorLayer']
 

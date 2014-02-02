@@ -51,8 +51,6 @@ another `Layer`.
 """
 
 from __future__ import division, print_function, unicode_literals
-
-
 from six import string_types
 
 __docformat__ = 'restructuredtext'
@@ -63,12 +61,12 @@ from pyglet.window import key
 from pyglet.gl import *
 import pyglet.graphics
 
-from layer import *
-from director import *
-from cocosnode import *
-from actions import *
-from sprite import Sprite
-import rect
+from cocos.layer import *
+from cocos.director import *
+from cocos.cocosnode import *
+from cocos.actions import *
+from cocos.sprite import Sprite
+from cocos import rect
 
 __all__ = [ 'Menu',                                         # menu class
 

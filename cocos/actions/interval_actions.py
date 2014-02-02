@@ -105,7 +105,7 @@ import random
 import copy
 import math
 
-from base_actions import *
+from .base_actions import *
 from cocos.euclid import *
 
 __all__ = [  'Lerp',                            # interpolation

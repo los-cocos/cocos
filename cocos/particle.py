@@ -45,8 +45,8 @@ import copy
 import numpy
 import ctypes
 
-from cocosnode import CocosNode
-from euclid import Point2
+from cocos.cocosnode import CocosNode
+from cocos.euclid import Point2
 from cocos.director import director
 
 # for dev and diagnostic, None means real automatic, True / False means

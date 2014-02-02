@@ -46,10 +46,7 @@ import os
 from math import ceil, sqrt, floor
 import struct
 import weakref
-try:
-    from xml.etree import ElementTree
-except ImportError:
-    import elementtree.ElementTree as ElementTree
+from xml.etree import ElementTree
 
 import pyglet
 from pyglet import gl

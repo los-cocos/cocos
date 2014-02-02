@@ -42,7 +42,7 @@ import random
 
 from cocos.director import director
 from cocos.euclid import *
-from basegrid_actions import *
+from .basegrid_actions import *
 
 rr = random.randrange
 

@@ -38,10 +38,10 @@ __docformat__ = 'restructuredtext'
 import pyglet
 from pyglet import image
 from pyglet.gl import *
-from euclid import Point2, Point3
+from cocos.euclid import Point2, Point3
 
-from director import director
-import framegrabber
+from cocos.director import director
+from cocos import framegrabber
 
 __all__ = ['GridBase',
            'Grid3D',

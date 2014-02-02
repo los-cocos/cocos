@@ -66,7 +66,7 @@ from pyglet.gl import *
 from cocos.grid import Grid3D, TiledGrid3D
 from cocos.director import director
 from cocos.euclid import *
-from base_actions import *
+from .base_actions import *
 
 __all__ = [ 'GridException',            # Grid Exceptions
             'GridBaseAction',               # Base classes

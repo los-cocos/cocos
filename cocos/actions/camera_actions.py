@@ -42,7 +42,7 @@ __docformat__ = 'restructuredtext'
 
 from cocos.director import director
 from cocos.euclid import *
-from base_actions import *
+from .base_actions import *
 
 import math
 

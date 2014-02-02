@@ -71,7 +71,7 @@ __all__ = [
 
 import math
 
-from base_actions import Action
+from .base_actions import Action
 
 class Move(Action):
     """Move the target based on parameters on the target.

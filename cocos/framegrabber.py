@@ -41,9 +41,9 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-from gl_framebuffer_object import FramebufferObject
+from cocos.gl_framebuffer_object import FramebufferObject
 from pyglet.gl import *
-from director import director
+from cocos.director import director
 from pyglet import image
 import pyglet
 

@@ -71,7 +71,7 @@ from __future__ import division, print_function, unicode_literals
 __docformat__ = 'restructuredtext'
 
 from cocos.director import director
-from cocos.layer.base_layers import Layer
+from .base_layers import Layer
 import pyglet
 from pyglet.gl import *
 
