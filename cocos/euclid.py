@@ -22,11 +22,15 @@
 '''euclid graphics maths module
 
 Documentation and tests are included in the file "euclid.txt", or online
-at http://code.google.com/p/pyeuclid
+at https://github.com/euclid3/euclid3
 '''
 
 from __future__ import division, print_function, unicode_literals
-
+import sys
+if sys.version_info[0] > 2:
+    scalar_types = (int, float)
+else:
+    scalar_types = (int, long, float) 
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id$'
@@ -36,59 +40,10 @@ import math
 import operator
 import types
 
-# Some magic here.  If _use_slots is True, the classes will derive from
-# object and will define a __slots__ class variable.  If _use_slots is
-# False, classes will be old-style and will not define __slots__.
-#
-# _use_slots = True:   Memory efficient, probably faster in future versions
-#                      of Python, "better".
-# _use_slots = False:  Ordinary classes, much faster than slots in current
-#                      versions of Python (2.4 and 2.5).
-_use_slots = True
 
-# If True, allows components of Vector2 and Vector3 to be set via swizzling;
-# e.g.  v.xyz = (1, 2, 3).  This is much, much slower than the more verbose
-# v.x = 1; v.y = 2; v.z = 3,  and slows down ordinary element setting as
-# well.  Recommended setting is False.
-_enable_swizzle_set = False
-
-# Requires class to derive from object.
-if _enable_swizzle_set:
-    _use_slots = True
-
-# Implement _use_slots magic.
-class _EuclidMetaclass(type):
-    def __new__(cls, name, bases, dct):
-        if '__slots__' in dct:
-            dct['__getstate__'] = cls._create_getstate(dct['__slots__'])
-            dct['__setstate__'] = cls._create_setstate(dct['__slots__'])
-        if _use_slots:
-            return type.__new__(cls, name, bases + (object,), dct)
-        else:
-            if '__slots__' in dct:
-                del dct['__slots__']
-            return types.ClassType.__new__(types.ClassType, name, bases, dct)
-
-    @classmethod
-    def _create_getstate(cls, slots):
-        def __getstate__(self):
-            d = {}
-            for slot in slots:
-                d[slot] = getattr(self, slot)
-            return d
-        return __getstate__
-
-    @classmethod
-    def _create_setstate(cls, slots):
-        def __setstate__(self, state):
-            for name, value in state.items():
-                setattr(self, name, value)
-        return __setstate__
-
-__metaclass__ = _EuclidMetaclass
-
-class Vector2:
+class Vector2(object):
     __slots__ = ['x', 'y']
+    __hash__ = None
 
     def __init__(self, x=0, y=0):
         self.x = x
@@ -111,7 +66,7 @@ class Vector2:
             return self.x == other[0] and \
                    self.y == other[1]
 
-    def __neq__(self, other):
+    def __ne__(self, other):
         return not self.__eq__(other)
 
     def __nonzero__(self):
@@ -131,27 +86,12 @@ class Vector2:
     def __iter__(self):
         return iter((self.x, self.y))
 
-    def __getattr__(self, name):
-        try:
-            return tuple([(self.x, self.y)['xy'.index(c)] \
-                          for c in name])
-        except ValueError:
-            raise AttributeError(name)
+    # swizzle implemented as properties, read only
+    def _get_xy(self): return self.x, self.y
+    xy = property(_get_xy, doc="(x, y)")
 
-    if _enable_swizzle_set:
-        # This has detrimental performance on ordinary setattr as well
-        # if enabled
-        def __setattr__(self, name, value):
-            if len(name) == 1:
-                object.__setattr__(self, name, value)
-            else:
-                try:
-                    l = [self.x, self.y]
-                    for c, v in map(None, name, value):
-                        l['xy'.index(c)] = v
-                    self.x, self.y = l
-                except ValueError:
-                    raise AttributeError(name)
+    def _get_yx(self): return self.y, self.x
+    yx = property(_get_yx, doc="(y, x)")
 
     def __add__(self, other):
         if isinstance(other, Vector2):
@@ -206,48 +146,48 @@ class Vector2:
                            other[1] - self.y)
 
     def __mul__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector2(self.x * other,
                        self.y * other)
 
     __rmul__ = __mul__
 
     def __imul__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         self.x *= other
         self.y *= other
         return self
 
     def __div__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector2(operator.div(self.x, other),
                        operator.div(self.y, other))
 
 
     def __rdiv__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector2(operator.div(other, self.x),
                        operator.div(other, self.y))
 
     def __floordiv__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector2(operator.floordiv(self.x, other),
                        operator.floordiv(self.y, other))
 
 
     def __rfloordiv__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector2(operator.floordiv(other, self.x),
                        operator.floordiv(other, self.y))
 
     def __truediv__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector2(operator.truediv(self.x, other),
                        operator.truediv(self.y, other))
 
 
     def __rtruediv__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector2(operator.truediv(other, self.x),
                        operator.truediv(other, self.y))
     
@@ -296,8 +236,18 @@ class Vector2:
         return Vector2(self.x - d * normal.x,
                        self.y - d * normal.y)
 
-class Vector3:
+    def angle(self, other):
+        """Return the angle to the vector other"""
+        return math.acos(self.dot(other) / (self.magnitude()*other.magnitude()))
+
+    def project(self, other):
+        """Return one vector projected on the vector other"""
+        n = other.normalized()
+        return self.dot(n)*n
+
+class Vector3(object):
     __slots__ = ['x', 'y', 'z']
+    __hash__ = None
 
     def __init__(self, x=0, y=0, z=0):
         self.x = x
@@ -325,7 +275,7 @@ class Vector3:
                    self.y == other[1] and \
                    self.z == other[2]
 
-    def __neq__(self, other):
+    def __ne__(self, other):
         return not self.__eq__(other)
 
     def __nonzero__(self):
@@ -342,31 +292,42 @@ class Vector3:
         l[key] = value
         self.x, self.y, self.z = l
 
-    def __iter__(self):
-        return iter((self.x, self.y, self.z))
+    # swizzle implemented as properties, read only
+    def _get_xy(self): return self.x, self.y
+    xy = property(_get_xy, doc="(x, y)")
 
-    def __getattr__(self, name):
-        try:
-            return tuple([(self.x, self.y, self.z)['xyz'.index(c)] \
-                          for c in name])
-        except ValueError:
-            raise AttributeError(name)
+    def _get_xz(self): return self.x, self.z
+    xz = property(_get_xz, doc="(x, z)")
 
-    if _enable_swizzle_set:
-        # This has detrimental performance on ordinary setattr as well
-        # if enabled
-        def __setattr__(self, name, value):
-            if len(name) == 1:
-                object.__setattr__(self, name, value)
-            else:
-                try:
-                    l = [self.x, self.y, self.z]
-                    for c, v in map(None, name, value):
-                        l['xyz'.index(c)] = v
-                    self.x, self.y, self.z = l
-                except ValueError:
-                    raise AttributeError(name)
+    def _get_yz(self): return self.y, self.z
+    yz = property(_get_yz, doc="(y, z)")
 
+    def _get_yx(self): return self.y, self.x
+    yx = property(_get_yx, doc="(y, x)")
+
+    def _get_zx(self): return self.z, self.x
+    zx = property(_get_zx, doc="(z, x)")
+
+    def _get_zy(self): return self.z, self.y
+    zy = property(_get_zy, doc="(z, y)")
+
+    def _get_xyz(self): return self.x, self.y, self.z
+    xyz = property(_get_xyz, doc="(x, y, z)")
+    
+    def _get_xzy(self): return self.x, self.z, self.y
+    xzy = property(_get_xzy, doc="(x, z, y)")
+
+    def _get_zyx(self): return self.z, self.y, self.x
+    zyx = property(_get_zyx, doc="(z, y, x)")
+
+    def _get_zxy(self): return self.z, self.x, self.y
+    zxy = property(_get_zxy, doc="(z, x, y)")
+
+    def _get_yxz(self): return self.y, self.x, self.z
+    yxz = property(_get_yxz, doc="(y, x, z)")
+
+    def _get_yzx(self): return self.y, self.z, self.x
+    yzx = property(_get_yzx, doc="(y, z, x)")
 
     def __add__(self, other):
         if isinstance(other, Vector3):
@@ -439,7 +400,7 @@ class Vector3:
                           self.y * other.y,
                           self.z * other.z)
         else: 
-            assert type(other) in (int, long, float)
+            assert type(other) in scalar_types
             return Vector3(self.x * other,
                            self.y * other,
                            self.z * other)
@@ -447,47 +408,47 @@ class Vector3:
     __rmul__ = __mul__
 
     def __imul__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         self.x *= other
         self.y *= other
         self.z *= other
         return self
 
     def __div__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector3(operator.div(self.x, other),
                        operator.div(self.y, other),
                        operator.div(self.z, other))
 
 
     def __rdiv__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector3(operator.div(other, self.x),
                        operator.div(other, self.y),
                        operator.div(other, self.z))
 
     def __floordiv__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector3(operator.floordiv(self.x, other),
                        operator.floordiv(self.y, other),
                        operator.floordiv(self.z, other))
 
 
     def __rfloordiv__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector3(operator.floordiv(other, self.x),
                        operator.floordiv(other, self.y),
                        operator.floordiv(other, self.z))
 
     def __truediv__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector3(operator.truediv(self.x, other),
                        operator.truediv(self.y, other),
                        operator.truediv(self.z, other))
 
 
     def __rtruediv__(self, other):
-        assert type(other) in (int, long, float)
+        assert type(other) in scalar_types
         return Vector3(operator.truediv(other, self.x),
                        operator.truediv(other, self.y),
                        operator.truediv(other, self.z))
@@ -547,11 +508,38 @@ class Vector3:
                        self.y - d * normal.y,
                        self.z - d * normal.z)
 
+    def rotate_around(self, axis, theta):
+        """Return the vector rotated around axis through angle theta. Right hand rule applies"""
+
+        # Adapted from equations published by Glenn Murray.
+        # http://inside.mines.edu/~gmurray/ArbitraryAxisRotation/ArbitraryAxisRotation.html
+        x, y, z = self.x, self.y,self.z
+        u, v, w = axis.x, axis.y, axis.z
+
+        # Extracted common factors for simplicity and efficiency
+        r2 = u**2 + v**2 + w**2
+        r = math.sqrt(r2)
+        ct = math.cos(theta)
+        st = math.sin(theta) / r
+        dt = (u*x + v*y + w*z) * (1 - ct) / r2
+        return Vector3((u * dt + x * ct + (-w * y + v * z) * st),
+                       (v * dt + y * ct + ( w * x - u * z) * st),
+                       (w * dt + z * ct + (-v * x + u * y) * st))
+
+    def angle(self, other):
+        """Return the angle to the vector other"""
+        return math.acos(self.dot(other) / (self.magnitude()*other.magnitude()))
+
+    def project(self, other):
+        """Return one vector projected on the vector other"""
+        n = other.normalized()
+        return self.dot(n)*n
+
 # a b c 
 # e f g 
 # i j k 
 
-class Matrix3:
+class Matrix3(object):
     __slots__ = list('abcefgijk')
 
     def __init__(self):
@@ -765,14 +753,14 @@ class Matrix3:
             tmp.j = det * (m02*m10 - m00*m12)
             tmp.k = det * (m00*m11 - m01*m10)
 
-        return tmp
+            return tmp
 
 # a b c d
 # e f g h
 # i j k l
 # m n o p
 
-class Matrix4:
+class Matrix4():
     __slots__ = list('abcdefghijklmnop')
 
     def __init__(self):
@@ -1205,7 +1193,7 @@ class Matrix4:
         return tmp;
         
 
-class Quaternion:
+class Quaternion(object):
     # All methods and naming conventions based off 
     # http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions
 
@@ -1256,16 +1244,28 @@ class Quaternion:
             Vx = other.x
             Vy = other.y
             Vz = other.z
+            ww = w * w
+            w2 = w * 2
+            wx2 = w2 * x
+            wy2 = w2 * y
+            wz2 = w2 * z
+            xx = x * x
+            x2 = x * 2
+            xy2 = x2 * y
+            xz2 = x2 * z
+            yy = y * y
+            yz2 = 2 * y * z
+            zz = z * z
             return other.__class__(\
-               w * w * Vx + 2 * y * w * Vz - 2 * z * w * Vy + \
-               x * x * Vx + 2 * y * x * Vy + 2 * z * x * Vz - \
-               z * z * Vx - y * y * Vx,
-               2 * x * y * Vx + y * y * Vy + 2 * z * y * Vz + \
-               2 * w * z * Vx - z * z * Vy + w * w * Vy - \
-               2 * x * w * Vz - x * x * Vy,
-               2 * x * z * Vx + 2 * y * z * Vy + \
-               z * z * Vz - 2 * w * y * Vx - y * y * Vz + \
-               2 * w * x * Vy - x * x * Vz + w * w * Vz)
+               ww * Vx + wy2 * Vz - wz2 * Vy + \
+               xx * Vx + xy2 * Vy + xz2 * Vz - \
+               zz * Vx - yy * Vx,
+               xy2 * Vx + yy * Vy + yz2 * Vz + \
+               wz2 * Vx - zz * Vy + ww * Vy - \
+               wx2 * Vz - xx * Vy,
+               xz2 * Vx + yz2 * Vy + \
+               zz * Vz - wy2 * Vx - yy * Vz + \
+               wx2 * Vy - xx * Vz + ww * Vz)
         else:
             other = other.copy()
             other._apply_transform(self)
@@ -1522,7 +1522,7 @@ class Quaternion:
 # Much maths thanks to Paul Bourke, http://astronomy.swin.edu.au/~pbourke
 # ---------------------------------------------------------------------------
 
-class Geometry:
+class Geometry(object):
     def _connect_unimplemented(self, other):
         raise AttributeError('Cannot connect %s to %s' % \
             (self.__class__, other.__class__))
@@ -1662,9 +1662,18 @@ def _connect_circle_line2(C, L):
 
 def _connect_circle_circle(A, B):
     v = B.c - A.c
+    d = v.magnitude()
+    if A.r >= B.r and d < A.r:
+        #centre B inside A
+        s1,s2 = +1, +1
+    elif B.r > A.r and d < B.r:
+        #centre A inside B
+        s1,s2 = -1, -1
+    elif d >= A.r and d >= B.r:
+        s1,s2 = +1, -1
     v.normalize()
-    return LineSegment2(Point2(A.c.x + v.x * A.r, A.c.y + v.y * A.r),
-                        Point2(B.c.x - v.x * B.r, B.c.y - v.y * B.r))
+    return LineSegment2(Point2(A.c.x + s1 * v.x * A.r, A.c.y + s1 * v.y * A.r),
+                        Point2(B.c.x + s2 * v.x * B.r, B.c.y + s2 * v.y * B.r))
 
 
 class Point2(Vector2, Geometry):
@@ -1925,13 +1934,23 @@ def _connect_sphere_line3(S, L):
 
 def _connect_sphere_sphere(A, B):
     v = B.c - A.c
+    d = v.magnitude()
+    if A.r >= B.r and d < A.r:
+        #centre B inside A
+        s1,s2 = +1, +1
+    elif B.r > A.r and d < B.r:
+        #centre A inside B
+        s1,s2 = -1, -1
+    elif d >= A.r and d >= B.r:
+        s1,s2 = +1, -1
+
     v.normalize()
-    return LineSegment3(Point3(A.c.x + v.x * A.r,
-                               A.c.y + v.y * A.r,
-                               A.c.x + v.z * A.r),
-                        Point3(B.c.x + v.x * B.r,
-                               B.c.y + v.y * B.r,
-                               B.c.x + v.z * B.r))
+    return LineSegment3(Point3(A.c.x + s1* v.x * A.r,
+                               A.c.y + s1* v.y * A.r,
+                               A.c.z + s1* v.z * A.r),
+                        Point3(B.c.x + s2* v.x * B.r,
+                               B.c.y + s2* v.y * B.r,
+                               B.c.z + s2* v.z * B.r))
 
 def _connect_sphere_plane(S, P):
     c = _connect_point3_plane(S.c, P)
@@ -2041,7 +2060,7 @@ class Point3(Vector3, Geometry):
         if c:
             return c._swap()
 
-class Line3:
+class Line3(object):
     __slots__ = ['p', 'v']
 
     def __init__(self, *args):
@@ -2151,7 +2170,7 @@ class LineSegment3(Line3):
 
     length = property(lambda self: abs(self.v))
 
-class Sphere:
+class Sphere(object):
     __slots__ = ['c', 'r']
 
     def __init__(self, center, radius):
@@ -2199,7 +2218,7 @@ class Sphere:
         if c:
             return c
 
-class Plane:
+class Plane(object):
     # n.p = k, where n is normal, p is point on plane, k is constant scalar
     __slots__ = ['n', 'k']
 
