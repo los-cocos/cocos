@@ -31,6 +31,17 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+from __future__ import division, print_function, unicode_literals
+import six
+if six.PY3:
+    def asciibytes(s):
+        return bytes(s, "ASCII")
+else:
+    def asciibytes(s):
+        if type(s) != bytes:
+            s = s.encode("ASCII")
+        return s
+
 from ctypes import *
 
 from pyglet.gl import *
@@ -62,6 +73,7 @@ class Shader(object):
     s_tag = 0
 
     def __init__(self, name, prog):
+        prog = asciibytes(prog)
         self.name = name
         self.prog = prog
         self.shader = 0
@@ -152,7 +164,7 @@ class Shader(object):
         if self.shader == 0:
             raise GLSLException('faled to create shader object')
 
-        all_source = ['\n'.join(self._source())]
+        all_source = [b'\n'.join(self._source())]
         prog = (c_char_p * len(all_source))(*all_source)
         length = (c_int * len(all_source))(-1)
         glShaderSourceARB(self.shader,
