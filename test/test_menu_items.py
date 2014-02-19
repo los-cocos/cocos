@@ -18,8 +18,6 @@ from cocos.menu import *
 from cocos.scene import *
 from cocos.layer import *
 
-from operator import setslice
-
 def printf(*args):
     sys.stdout.write(''.join([str(x) for x in args])+'\n')
 
