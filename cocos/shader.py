@@ -278,6 +278,7 @@ class ShaderProgram(object):
         glUseProgramObjectARB(0)
 
     def uniformLoc(self, var):
+        var = asciibytes(var)
         try:
             return self.__class__._uloc_[var]
         except:
