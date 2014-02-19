@@ -610,7 +610,7 @@ class CollisionManagerGrid(object):
         self.rows = rows
         numbuckets = cols*rows
         # buckets maps cell identifier -> objs that potentially overlaps the cell
-        self.buckets = [set() for k in xrange(numbuckets)]
+        self.buckets = [set() for k in range(numbuckets)]
 
     def add(self, obj):
         # add to any bucket it overlaps
@@ -779,8 +779,8 @@ class CollisionManagerGrid(object):
         if iy_sup > self.rows:
             iy_sup = self.rows
 
-        for iy in xrange(iy_lo, iy_sup):
+        for iy in range(iy_lo, iy_sup):
             contrib_y = iy * self.cols
-            for ix in xrange(ix_lo, ix_sup):
+            for ix in range(ix_lo, ix_sup):
                 cell_id = ix + contrib_y
                 yield cell_id

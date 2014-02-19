@@ -488,7 +488,7 @@ class ParticleSystem( CocosNode ):
         tex_coords_for_quad = numpy.array([[0.0, 1.0], [0.0, 0.0], [1.0, 0.0], [1.0, 1.0]], numpy.float32)
         self.tex_coords = numpy.zeros((self.total_particles * 4, 2), numpy.float32)
         all_tex_coords = self.tex_coords
-        for i in xrange(0,len(self.vertexs),4):
+        for i in range(0,len(self.vertexs),4):
             all_tex_coords[i : i + 4 ] = tex_coords_for_quad
         self.per_vertex_colors = numpy.zeros( (self.total_particles * 4, 4), numpy.float32)
         self.delta_pos_to_vertex = numpy.zeros((4, 2), numpy.float32)

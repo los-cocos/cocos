@@ -194,9 +194,9 @@ class City(cocos.layer.Layer):
         self.schedule(self.update)
 
     def add_squares(self):
-        for iy in xrange(squares_per_side):
+        for iy in range(squares_per_side):
             y = half_street_width + iy*crossing_point_separation
-            for ix in xrange(squares_per_side):
+            for ix in range(squares_per_side):
                 square = cocos.layer.ColorLayer(*square_color,width=square_width,
                                     height=square_width)
                 x = half_street_width + ix*crossing_point_separation

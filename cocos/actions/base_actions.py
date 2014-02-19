@@ -649,7 +649,7 @@ class Loop_Instant_Action(InstantAction):
         self.times = times
 
     def start(self):
-        for i in xrange(self.times):
+        for i in range(self.times):
             cpy = copy.deepcopy(self.one)
             cpy.start()
 
