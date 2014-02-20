@@ -32,7 +32,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 import math
-import cPickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 import cocos
 from cocos.director import director
@@ -57,7 +60,7 @@ class Player(cocos.layer.Layer):
     def __init__(self, sk, skin, *anims):
         super(Player, self).__init__()
         self.skeleton = sk
-        self.anims = [ cPickle.load(open(a)) for a in anims ]
+        self.anims = [ pickle.load(open(a, "rb")) for a in anims ]
 
         # we create a skin. Skins are what are rendered.
         # skins also are cocos nodes, so we add it to ourselves

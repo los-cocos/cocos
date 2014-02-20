@@ -215,7 +215,7 @@ class Skeleton(object):
         return sk
 
     def save(self, name):
-        f = open(name, "w")
+        f = open(name, "wb")
         pickle.dump(self, f)
         f.close()
 

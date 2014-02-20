@@ -23,6 +23,8 @@
 
 Documentation and tests are included in the file "euclid.txt", or online
 at https://github.com/euclid3/euclid3
+
+revision of euclid3/euclid3 euclid included: 2014 02 20 sha: de28ea080370 
 '''
 
 from __future__ import division, print_function, unicode_literals
@@ -41,7 +43,20 @@ import operator
 import types
 
 
-class Vector2(object):
+class Slotted(object):
+    __slots__ = []
+    def __getstate__(self):
+        d = {}
+        for slot in self.__slots__:
+            d[slot] = getattr(self, slot)
+        return d
+
+    def __setstate__(self, state):
+        for name, value in state.items():
+            setattr(self, name, value)
+
+
+class Vector2(Slotted):
     __slots__ = ['x', 'y']
     __hash__ = None
 
@@ -245,7 +260,7 @@ class Vector2(object):
         n = other.normalized()
         return self.dot(n)*n
 
-class Vector3(object):
+class Vector3(Slotted):
     __slots__ = ['x', 'y', 'z']
     __hash__ = None
 
@@ -539,7 +554,7 @@ class Vector3(object):
 # e f g 
 # i j k 
 
-class Matrix3(object):
+class Matrix3(Slotted):
     __slots__ = list('abcefgijk')
 
     def __init__(self):
@@ -760,7 +775,7 @@ class Matrix3(object):
 # i j k l
 # m n o p
 
-class Matrix4():
+class Matrix4(Slotted):
     __slots__ = list('abcdefghijklmnop')
 
     def __init__(self):
@@ -1193,7 +1208,7 @@ class Matrix4():
         return tmp;
         
 
-class Quaternion(object):
+class Quaternion(Slotted):
     # All methods and naming conventions based off 
     # http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions
 
@@ -1702,7 +1717,7 @@ class Point2(Vector2, Geometry):
         if c:
             return c._swap()
 
-class Line2(Geometry):
+class Line2(Geometry, Slotted):
     __slots__ = ['p', 'v']
 
     def __init__(self, *args):
@@ -1804,7 +1819,7 @@ class LineSegment2(Line2):
 
     length = property(lambda self: abs(self.v))
 
-class Circle(Geometry):
+class Circle(Geometry, Slotted):
     __slots__ = ['c', 'r']
 
     def __init__(self, center, radius):
@@ -2060,7 +2075,7 @@ class Point3(Vector3, Geometry):
         if c:
             return c._swap()
 
-class Line3(object):
+class Line3(Slotted):
     __slots__ = ['p', 'v']
 
     def __init__(self, *args):
@@ -2170,7 +2185,7 @@ class LineSegment3(Line3):
 
     length = property(lambda self: abs(self.v))
 
-class Sphere(object):
+class Sphere(Slotted):
     __slots__ = ['c', 'r']
 
     def __init__(self, center, radius):
@@ -2218,7 +2233,7 @@ class Sphere(object):
         if c:
             return c
 
-class Plane(object):
+class Plane(Slotted):
     # n.p = k, where n is normal, p is point on plane, k is constant scalar
     __slots__ = ['n', 'k']
 

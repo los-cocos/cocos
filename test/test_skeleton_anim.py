@@ -9,7 +9,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 testinfo = "s, t 0.3, s, t 0.6, s, t 1, s, q"
 tags = "skeleton, BitmapSkin, Animate"
 
-import cPickle
+try:
+    import cPickle as pickle
+except Exception:
+    import pickle
 
 import cocos
 from cocos.director import director
@@ -31,7 +34,7 @@ class TestLayer(cocos.layer.Layer):
         self.add( self.skin )
         x, y = director.get_window_size()
         self.skin.position = x//2, y//2
-        anim = cPickle.load(open("SAMPLE.anim"))
+        anim = pickle.load(open("SAMPLE.anim", "rb"))
         self.skin.do( cocos.actions.Repeat( skeleton.Animate(anim) ) )
 
 def main():

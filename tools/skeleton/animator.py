@@ -38,7 +38,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 import math
 from math import pi, atan
-import cPickle
+
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
 import glob
 from optparse import OptionParser
 
@@ -143,7 +148,7 @@ class BoneUILayer(ui.UILayer):
         self.count = 0
         self.savefile_name = savefile_name
         try:
-            self.animation = cPickle.load( open(savefile_name) )
+            self.animation = pickle.load( open(savefile_name, "rb") )
         except IOError:
             self.animation = Animation(skeleton)
         self.timeline = ui.TimeLine(self.animation)
@@ -156,7 +161,7 @@ class BoneUILayer(ui.UILayer):
         self.update_visual()
         
     def save(self):
-        cPickle.dump(self.animation, open(self.savefile_name,"w") )
+        pickle.dump(self.animation, open(self.savefile_name,"wb") )
 
     def start_animation(self):
         self.clean_skins()

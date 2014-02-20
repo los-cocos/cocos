@@ -36,14 +36,25 @@ class Test_Vector2(unittest.TestCase):
         self.assertEqual(repr(v2), repr(copied))
         self.assertFalse(copied is v2)
         self.assertFalse(hasattr(copied, '__dict__'))
-        
-    # fails with protocols 0 and 1 if __getstate__ not implemented
-    def test_pickle_lower_protocols_fail(self):
+
+    # they need __getstate__  and  __setstate__  implemented
+    def test_pickle_lower_protocols(self):
         xy = (1.0, 2.0)
         v2 = eu.Vector2(*xy)
 
-        self.assertRaises(Exception, pickle.dumps, v2, 0)
+        s = pickle.dumps(v2, 0)
+        copied = pickle.loads(s)
+        self.assertEqual(repr(v2), repr(copied))
+        self.assertFalse(copied is v2)        
+        self.assertFalse(hasattr(copied, '__dict__'))
 
+        s = pickle.dumps(v2, 1)
+        copied = pickle.loads(s)
+        self.assertEqual(repr(v2), repr(copied))
+        self.assertFalse(copied is v2)        
+        self.assertFalse(hasattr(copied, '__dict__'))
+
+    # don't need __getstate__ / __setstate__ implemented 
     def test_pickle_protocol_2(self):
         xy = (1.0, 2.0)
         v2 = eu.Vector2(*xy)
@@ -52,6 +63,7 @@ class Test_Vector2(unittest.TestCase):
         copied = pickle.loads(s)
         self.assertEqual(repr(v2), repr(copied))
         self.assertFalse(copied is v2)        
+        self.assertFalse(hasattr(copied, '__dict__'))
 
     def test_eq_v2(self):
         xy = (1.0, 2.0)
@@ -153,6 +165,39 @@ class Test_Vector2(unittest.TestCase):
         c = v2 // 3
         self.assertTrue(c.x == 4 // 3, c.y == 7 // 3)
     
+    def test_add(self):
+        a = (3.0, 7.0)
+        b = (1.0, 2.0)
+        va = eu.Vector2(*a)
+        vb = eu.Vector2(*b)
+
+        self.assertTrue(isinstance(va+vb, eu.Vector2))
+        self.assertEqual(repr(va+vb), 'Vector2(%.2f, %.2f)' % (4.0, 9.0))
+
+        c = (11.0, 17.0)
+        pc = eu.Point2(*c)
+        d = (13.0, 23.0)
+        pd = eu.Point2(*d)
+        
+        self.assertTrue(isinstance(va+pc, eu.Point2))
+        self.assertTrue(isinstance(pc+pd, eu.Vector2))
+
+        self.assertTrue(isinstance(va + b, eu.Vector2))
+        self.assertEqual(va + vb, va + b)
+
+    def test_inplace_add(self):
+        a = (3.0, 7.0)
+        b = (1.0, 2.0)
+        va = eu.Vector2(*a)
+        vb = eu.Vector2(*b)
+        va += b
+        self.assertEqual((va.x, va.y) , (4.0, 9.0))
+
+        va = eu.Vector2(*a)
+        va += b
+        self.assertEqual((va.x, va.y) , (4.0, 9.0))
+        
+
 
 class Test_Vector3(unittest.TestCase):
 
@@ -181,13 +226,24 @@ class Test_Vector3(unittest.TestCase):
         self.assertEqual(repr(v3), repr(copied))
         self.assertFalse(copied is v3)        
 
-    # fails with protocols 0 and 1 if __getstate__ not implemented
-    def test_pickle_lower_protocols_fail(self):
+    # they need __getstate__  and  __setstate__  implemented
+    def test_pickle_lower_protocols(self):
         xyz = (1.0, 2.0, 3.0)
         v3 = eu.Vector3(*xyz)
 
-        self.assertRaises(Exception, pickle.dumps, v3, 0)
+        s = pickle.dumps(v3, 0)
+        copied = pickle.loads(s)
+        self.assertEqual(repr(v3), repr(copied))
+        self.assertFalse(copied is v3)        
+        self.assertFalse(hasattr(copied, '__dict__'))
 
+        s = pickle.dumps(v3, 1)
+        copied = pickle.loads(s)
+        self.assertEqual(repr(v3), repr(copied))
+        self.assertFalse(copied is v3)        
+        self.assertFalse(hasattr(copied, '__dict__'))
+
+    # no need for __getstate__ and __setstate__
     def test_pickle_protocol_2(self):
         xyz = (1.0, 2.0, 3.0)
         v3 = eu.Vector3(*xyz)

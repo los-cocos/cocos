@@ -36,7 +36,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 #
 import math
 from math import pi, atan
-import cPickle
+
 import glob
 from optparse import OptionParser
 
@@ -108,7 +108,7 @@ class SkeletonEditorUI(ui.UILayer):
 
     def on_key_press(self, k, mod):
         if k == key.S:
-            f = open(self.skin_filename, "w")
+            f = open(self.skin_filename, "wt")
             f.write("\nskin = [\n")
             for p in self.skin.skin_parts:
                 f.write("    %s,\n"%(p,))
@@ -116,7 +116,7 @@ class SkeletonEditorUI(ui.UILayer):
 
             f.close()
 
-            f = open(self.skeleton_file, "w")
+            f = open(self.skeleton_file, "wt")
             f.write("""from cocos.skeleton import Bone, Skeleton\n
 def Point2(*args): return args\n
 root_bone = %s
