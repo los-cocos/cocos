@@ -452,7 +452,19 @@ class CocosNode(object):
         child.parent = self
 
         elem = z, child
-        bisect.insort( self.children,  elem )
+
+        # inlined and customized bisect.insort_right, the stock one fails in py3
+        lo = 0
+        hi = len(self.children)
+        a = self.children
+        while lo < hi:
+            mid = (lo+hi)//2
+            if z < a[mid][0]: hi = mid
+            else: lo = mid+1
+        self.children.insert(lo, elem)
+
+
+
         if self.is_running:
             child.on_enter()
         return self
