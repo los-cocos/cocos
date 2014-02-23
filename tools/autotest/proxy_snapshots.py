@@ -1,4 +1,5 @@
 from __future__ import division, print_function, unicode_literals
+import six
 
 import sys
 import os
@@ -42,7 +43,7 @@ def main(script_name, stored_testinfo, snapshots_dir):
     module_name = script_name[:script_name.rfind('.py')]
     print('module name:', module_name)
     s = "import %s as script_module"%module_name
-    exec(s)
+    six.exec_(s, globals())
 
     if stored_testinfo != script_module.testinfo:
         sys.stderr.write("Es01 - received testinfo doesn't match script testinfo. (db outdated?)\n")
