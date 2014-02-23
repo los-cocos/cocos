@@ -39,7 +39,7 @@ class FireManager( Layer ):
             blend_src=GL_SRC_ALPHA, blend_dest=GL_ONE)
         self.vertex_list = self.batch.add(4*num, GL_QUADS, self.group,
             'v2i', 'c4B', ('t3f', self.fimg.texture.tex_coords*num))
-        for n in xrange(0, num):
+        for n in range(0, num):
             f = Fire(0,0,0,0,0)
             self.goodies.append(f)
             self.vertex_list.vertices[n*8:(n+1)*8] = [0, 0, 0, 0, 0, 0, 0, 0]

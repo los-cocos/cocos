@@ -552,7 +552,7 @@ class Worldview(cocos.layer.ScrollableLayer):
         self.actors = []
         m = height/float(width)
         i = 0
-        for x in xrange(0, int(width), int(4*rPlayer)):
+        for x in range(0, int(width), int(4*rPlayer)):
             y = m*x
             actor = Actor()
             actor.update_position(eu.Vector2(float(x), float(y)))

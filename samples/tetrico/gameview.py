@@ -142,8 +142,8 @@ class GameView( Layer ):
         glPushMatrix()
         self.transform()
 
-        for i in xrange( COLUMNS ):
-            for j in xrange( ROWS ):
+        for i in range( COLUMNS ):
+            for j in range( ROWS ):
                 color = self.model.map.get( (i,j) )
                 if color:
                     Colors.images[color].blit( i * SQUARE_SIZE, j* SQUARE_SIZE)

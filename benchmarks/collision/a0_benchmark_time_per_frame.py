@@ -167,7 +167,7 @@ def time_per_frame(stats_fixed_params, world):
     num_frames = stats_fixed_params['num_frames']
     gc.collect()                 
     start_time = time.time()
-    for i in xrange(num_frames):
+    for i in range(num_frames):
         world.update(dt)
     gc.collect()
     end_time = time.time()

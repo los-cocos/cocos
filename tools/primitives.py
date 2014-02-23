@@ -435,7 +435,7 @@ if __name__=="__main__":
     l = Line((10,299),(100,299),stroke=2,color=(0,0.,1.,1.))
     while not win.has_exit:
         win.dispatch_events()
-        col = [random.random() for i in xrange(3)]+[1]
+        col = [random.random() for i in range(3)]+[1]
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         c.color = col
         c.render()
