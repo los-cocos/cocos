@@ -228,6 +228,17 @@ def load_tiles(filename):
     resource.handle(root)
     return resource
 
+def decode_base64(s):
+    "returns a bytes object"
+    if six.PY2:
+        return s.decode('base64')
+    else:
+        import base64
+        b = s.encode('utf-8')
+        return base64.b64decode(b)
+        
+        
+
 def load_tmx(filename):
     '''Load some tile mapping resources from a TMX file.
     '''
@@ -289,10 +300,14 @@ def load_tmx(filename):
         if data is None:
             raise ValueError('layer %s does not contain <data>' % layer.name)
 
-
         data = data.text.strip()
-        data = data.decode('base64').decode('zlib')
-        data = struct.unpack(b'<%di' % (len(data)//4,), data)
+        data = decode_base64(data)
+        if six.PY2:
+            data = data.decode('zlib')
+        else:
+            import zlib
+            data = zlib.decompress(data)
+        data = struct.unpack(str('<%di' % (len(data)//4)), data)
         assert len(data) == width * height
 
         cells = [[None] * height for x in range(width)]
