@@ -95,6 +95,10 @@ class Rect(object):
         return (self.x == other.x and self.y == other.y and
             self.width == other.width and  self.height == other.height)
 
+    # py3 compatiblity: obj that defines __eq__ needs to define __hash__ to be
+    # hashable, and we need that class RectCell(Rect, Cell) be hashable 
+    __hash__ = object.__hash__
+
     def __ne__(self, other):
         '''Compare the two rects.
 
