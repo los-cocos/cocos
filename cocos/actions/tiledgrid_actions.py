@@ -324,7 +324,7 @@ class TurnOffTiles( TiledGrid3DAction ):
             random.seed( self.seed )
 
         self.nr_of_tiles = self.grid.x * self.grid.y
-        self.tiles_order = range(self.nr_of_tiles )
+        self.tiles_order = [i for i in range(self.nr_of_tiles)]
         random.shuffle( self.tiles_order )
         
     def update( self, t ):
