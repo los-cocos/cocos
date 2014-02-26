@@ -191,14 +191,14 @@ def test_endplus_hitting_EOF():
 ##    line_0 = '#line 0'
 ##    line_last = '#line last'
 ##    text_0 = line_0 + '\n' + reference + line_last
-##    print text_0
+##    print(text_0)
 ##    SnipetCompliance.set_target(reference, 'classBackgroundLayer(')
 ##    worker = SnipetCompliance('', text_0)
 ##    worker.is_compliant()
-##    print '\n>>>'
-##    print 'matched:'
-##    print worker.matched()
-##    print '<<<\n'
+##    print('\n>>>')
+##    print('matched:')
+##    print(worker.matched())
+##    print('<<<\n')
 ##
 ##    worker.enforce_compliance()
 ##    print '\n>>>'
@@ -214,48 +214,48 @@ def test_endplus_hitting_EOF():
 ##    line_0 = '#line 0'
 ##    line_last = '#line last'
 ##    text_0 = line_0 + '\n' + reference + line_last
-##    print text_0
+##    print(text_0)
 ##    SnipetCompliance.set_target(reference, 'classBackgroundLayer(')
 ##    worker = SnipetCompliance('', text_0)
 ##    worker.is_compliant()
 ##    assert worker.compliant
 ##    worker.enforce_compliance()
 ##    assert text_0 == worker.text
-####    print '\n>>>'
-####    print 'matched:'
-####    print worker.matched()
-####    print '<<<\n'
+####    print('\n>>>')
+####    print('matched:')
+####    print(worker.matched())
+####    print('<<<\n')
 ####
 ####    worker.enforce_compliance()
-####    print '\n>>>'
-####    print 'matched:'
-####    print worker.matched()
-####    print '<<<\n'
+####    print('\n>>>')
+####    print('matched:')
+####    print(worker.matched())
+####    print('<<<\n')
 ####
-####    print 'fixed text:'
-####    print worker.text
+####    print('fixed text:')
+####    print(worker.text)
 ##    
 ##def test_trailing_text_compliant():
 ##    line_0 = '#line 0'
 ##    text_0 = line_0 + '\n' + reference
-##    print text_0
+##    print(text_0)
 ##    SnipetCompliance.set_target(reference, 'classBackgroundLayer(')
 ##    worker = SnipetCompliance('', text_0)
 ##    worker.is_compliant()
 ##    assert text_0 == worker.text
 ##    assert worker.compliant
-####    print '\n>>>'
-####    print 'matched:'
-####    print worker.matched()
-####    print '<<<\n'
+####    print('\n>>>')
+####    print('matched:')
+####    print(worker.matched())
+####    print('<<<\n')
 ####
 ####    worker.enforce_compliance()
-####    print '\n>>>'
-####    print 'matched:'
-####    print worker.matched()
-####    print '<<<\n'
+####    print('\n>>>')
+####    print('matched:')
+####    print(worker.matched())
+####    print('<<<\n')
 ####
-####    print 'fixed text:'
-####    print worker.text
+####    print('fixed text:')
+####    print(worker.text)
 ##test_midle_text_compliant
 ##test_trailing_text_compliant()
