@@ -535,12 +535,16 @@ def snapshots_compare(db, fn_snapshots_dist, threshold, candidates, max_tries,
         update_snapshots(db, None, unequals, samples_dir)
         for name in unequals:
             if db.get_prop_value(name, 'snapshots_success'):
+                match = True
                 for snap in db.get_prop_value(name, 'expected_snapshots'):
                     snap_ref = os.path.join(reference_dir, snap)
                     snap_tmp = os.path.join(samples_abspath, snap)
                     if fn_snapshots_dist(snap_ref, snap_tmp) > threshold:
+                        match = False
                         break
+                if match:
                     equals.add(name)
+                    
         db.del_testbed('tmp')
         db.set_default_testbed(old_testbed)
         unequals -= equals
