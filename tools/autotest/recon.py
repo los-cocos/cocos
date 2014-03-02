@@ -159,27 +159,27 @@ def update_3(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     return checked_in, unknown, move_failed
 
 
-def update_5(db, filename_persist, snapshots_dir):
-    """ re-(scan + snapshot) for this files"""
-    text = """
-         test/test_SequenceScene.py
-         test/test_lens_3d.py
-         test/test_fadeto.py
-         test/test_grid_effect_in_layer.py
-         test/test_grid_effect_in_sprite.py
-         test/test_particle_explosion.py
-         test/test_particle_fire.py
-         test/test_particle_fireworks.py
-         test/test_particle_flower.py
-         test/test_particle_galaxy.py
-         test/test_particle_meteor.py
-         test/test_particle_smoke.py
-         test/test_particle_spiral.py
-         test/test_transition_jumpzoom.py
-         test/test_transition_rotozoom.py
-         """
-    candidates = doers.scripts_names_from_text(text, end_mark=':')
-    hl.re_scan_and_shoot(db, filename_persist, candidates, snapshots_dir)
+##def update_5(db, filename_persist, snapshots_dir):
+##    """ re-(scan + snapshot) for this files"""
+##    text = """
+##         test/test_SequenceScene.py
+##         test/test_lens_3d.py
+##         test/test_fadeto.py
+##         test/test_grid_effect_in_layer.py
+##         test/test_grid_effect_in_sprite.py
+##         test/test_particle_explosion.py
+##         test/test_particle_fire.py
+##         test/test_particle_fireworks.py
+##         test/test_particle_flower.py
+##         test/test_particle_galaxy.py
+##         test/test_particle_meteor.py
+##         test/test_particle_smoke.py
+##         test/test_particle_spiral.py
+##         test/test_transition_jumpzoom.py
+##         test/test_transition_rotozoom.py
+##         """
+##    candidates = doers.scripts_names_from_text(text, end_mark=':')
+##    hl.re_scan_and_shoot(db, filename_persist, candidates, snapshots_dir)
 
 def update_6(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     """
@@ -251,16 +251,16 @@ def update_6(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     return checked_in, unknown, move_failed
 
 
-def update_7(db, filename_persist):
-    """add new tests"""
-    text = """
-        test/test_schedule_interval.py : new, svn add done
-        test/test_aspect_ratio_on_resize.py : new, svn add done
-        """
-    candidates = doers.scripts_names_from_text(text, end_mark=':')
-    hl.add_entities(db, filename_persist, candidates)
-    db.history_add("added tests", text)
-    dbm.db_save(db, filename_persist)
+##def update_7(db, filename_persist):
+##    """add new tests"""
+##    text = """
+##        test/test_schedule_interval.py : new, svn add done
+##        test/test_aspect_ratio_on_resize.py : new, svn add done
+##        """
+##    candidates = doers.scripts_names_from_text(text, end_mark=':')
+##    hl.add_entities(db, filename_persist, candidates)
+##    db.history_add("added tests", text)
+##    dbm.db_save(db, filename_persist)
 
 def update_9(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     """
@@ -297,42 +297,42 @@ def update_9(db, filename_persist, snapshots_dir, snapshots_reference_dir):
 
     return checked_in, unknown, move_failed
 
-def update_10(db, filename_persist, snapshots_dir):
-    """ delete this entities, they were added with wrong path"""
-    text = """
-        tools/autotest/test/test_aspect_ratio_on_resize.py
-        tools/autotest/test/test_schedule_interval.py
-        tools/autotest/test_aspect_ratio_on_resize.py
-         """
-    candidates = doers.scripts_names_from_text(text, end_mark=':')
-    for name in candidates:
-        db.del_entity(name)
-    db.history_add("deleted unwanted entities", text)
-    dbm.db_save(db, filename_persist)
+##def update_10(db, filename_persist, snapshots_dir):
+##    """ delete this entities, they were added with wrong path"""
+##    text = """
+##        tools/autotest/test/test_aspect_ratio_on_resize.py
+##        tools/autotest/test/test_schedule_interval.py
+##        tools/autotest/test_aspect_ratio_on_resize.py
+##         """
+##    candidates = doers.scripts_names_from_text(text, end_mark=':')
+##    for name in candidates:
+##        db.del_entity(name)
+##    db.history_add("deleted unwanted entities", text)
+##    dbm.db_save(db, filename_persist)
 
-def update_11(db, filename_persist, snapshots_dir):
-    """ Reflect some test renames (added but without testinfo): delete, add
-        If there were snapshots or testrun props more caoutious aproach is
-        needed"""
-    
-    text1 = """
-        test/test_rotate_move_reverse.py
-        test/test_local_coordinates.py
-         """
-    candidates = doers.scripts_names_from_text(text1, end_mark=':')
-    for name in candidates:
-        db.del_entity(name)
-
-    text2 = """
-        test/test_rotate_reverse.py
-        test/test_rect.py
-        """
-    candidates = doers.scripts_names_from_text(text2, end_mark=':')
-    hl.hl.add_entities(db, filename_persist, candidates)
-
-    text = text1 + '\nto\n' + text2
-    db.history_add("renamed entities", text)
-    dbm.db_save(db, filename_persist)
+##def update_11(db, filename_persist, snapshots_dir):
+##    """ Reflect some test renames (added but without testinfo): delete, add
+##        If there were snapshots or testrun props more caoutious aproach is
+##        needed"""
+##    
+##    text1 = """
+##        test/test_rotate_move_reverse.py
+##        test/test_local_coordinates.py
+##         """
+##    candidates = doers.scripts_names_from_text(text1, end_mark=':')
+##    for name in candidates:
+##        db.del_entity(name)
+##
+##    text2 = """
+##        test/test_rotate_reverse.py
+##        test/test_rect.py
+##        """
+##    candidates = doers.scripts_names_from_text(text2, end_mark=':')
+##    hl.hl.add_entities(db, filename_persist, candidates)
+##
+##    text = text1 + '\nto\n' + text2
+##    db.history_add("renamed entities", text)
+##    dbm.db_save(db, filename_persist)
 
 
 def update_19(db, filename_persist, snapshots_dir, snapshots_reference_dir):
@@ -377,8 +377,10 @@ def update_21(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     to the reference snapshots folder
     """
     text = """
-    test/test_label_changing.py
-    test/test_batch2.py
+        test/test_label_changing.py
+        test/test_batch2.py
+        test/test_scalexy.py
+        test/test_shader_examples.py
     """
     candidates = doers.scripts_names_from_text(text, end_mark=':')
     checked_in, unknown, move_failed = hl.update_testrun__pass(db,
@@ -446,6 +448,24 @@ def update_22(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     hl.update_testrun__bad(db, filename_persist, testrun_props_by_candidate,
                            snapshots_dir, snapshots_reference_dir)
 
+def update_23(db, filename_persist, snapshots_dir, snapshots_reference_dir):
+    """
+    This files 'pass', register them as such and move their snapshots
+    to the reference snapshots folder (but the second script should be
+    updated for better autotest)
+    """
+    text = """
+        test/test_fadeto.py
+        test/test_draw_elbows2.py
+    """
+    candidates = doers.scripts_names_from_text(text, end_mark=':')
+    checked_in, unknown, move_failed = hl.update_testrun__pass(db,
+                                        filename_persist, candidates,
+                                        snapshots_dir, snapshots_reference_dir)    
+
+    return checked_in, unknown, move_failed
+
+
 
 # <-- one-off tasks
 
@@ -463,7 +483,7 @@ snapshots_reference_dir = '../../test/ref'
 # dir for some helper tasks
 samples_dir = '../../test/saux'
 
-clean = True
+clean = False
 if clean:
     # updates commented out were used in the initial buildup, there are no
     # longer neccesary in a clean build but are keep (comented out) to
@@ -522,9 +542,11 @@ if clean:
     # asses these tests have problems
     update_22(db, filename_persist, snapshots_dir, snapshots_reference_dir)
 
+    # asses these tests pass human inspection; store snapshots for reference
+    update_23(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+
 else:
     db = dbm.db_load(filename_persist, default_testbed=testbed)
-
 
 # a concise status report
 print(progress_report(db, verbose=False))
@@ -547,7 +569,7 @@ print(progress_report(db, verbose=False))
 ### print(hl.rpt(db, ['IOerror']))
 ##
 # print detailed info about test that tried but failed to take snapshots
-#print(hl.rpt_detail_diagnostics(db, 'snapshots_failure'))
+print(hl.rpt_detail_diagnostics(db, 'snapshots_failure'))
 ##
 ### lists test that took snapshots without technical problems
 ####print(hl.rpt(db, ['snapshots_success'], verbose=True))
@@ -560,7 +582,7 @@ print(progress_report(db, verbose=False))
 #print(hl.rpt_all_props(db, ['test/test_schedule_interval.py']))
 ##
 ### list all tests that have valid testinfo and don't have testrun_success=='pass'
-##print(hl.rpt(db, ['testrun_not_pass'], verbose=True))
+print(hl.rpt(db, ['testrun_not_pass'], verbose=True))
 
 # list all tests that have been inspected ( ie have 'testrun_success' prop )
 #print(hl.rpt(db, ['testrun_present'], verbose=True))
