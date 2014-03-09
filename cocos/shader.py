@@ -33,14 +33,7 @@
 # ----------------------------------------------------------------------------
 from __future__ import division, print_function, unicode_literals
 import six
-if six.PY3:
-    def asciibytes(s):
-        return bytes(s, "ASCII")
-else:
-    def asciibytes(s):
-        if type(s) != bytes:
-            s = s.encode("ASCII")
-        return s
+from . import compat
 
 from ctypes import *
 
@@ -73,7 +66,7 @@ class Shader(object):
     s_tag = 0
 
     def __init__(self, name, prog):
-        prog = asciibytes(prog)
+        prog = compat.asciibytes(prog)
         self.name = name
         self.prog = prog
         self.shader = 0
@@ -278,7 +271,7 @@ class ShaderProgram(object):
         glUseProgramObjectARB(0)
 
     def uniformLoc(self, var):
-        var = asciibytes(var)
+        var = compat.asciibytes(var)
         try:
             return self.__class__._uloc_[var]
         except:

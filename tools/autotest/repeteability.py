@@ -25,12 +25,12 @@ def new(db_fname, testbed, stats_fname, candidates, limit, samples_dir):
     db = dbm.db_load(db_fname, default_testbed=testbed)
     # test stats_fname writable
     with open(stats_fname, 'wb') as f:
-        f.write("hello")
+        f.write("hello".encode('utf-8'))
     res = hl.measure_repeteability(db, candidates, limit, samples_dir)
     #overal_md5, elapsed, rounds, stats_by_script_name, stats_by_snapshot_name  = res
     session = db_fname, testbed, samples_dir, res
     with open(stats_fname, 'wb') as f:
-        pickle.dump(session, f)
+        pickle.dump(session, f, 2)
         
 def more_rounds(stats_fname, limit, recover=True):
     """
@@ -193,8 +193,8 @@ candidates = ['test/test_target.py', 'test/test_sprite_aabb.py']
 
 clean = True # True starts a new stats serie
 recover = False # Normal is False, used to debug combinning stats
-#limit = 2 #int means rounds
-limit = 60.0 #float means minutes; will be exceeded to complete last round
+limit = 2 #int means rounds
+#limit = 60.0 #float means minutes; will be exceeded to complete last round
 
 if clean:
     new(db_fname, testbed, stats_fname, candidates, limit, samples_dir)

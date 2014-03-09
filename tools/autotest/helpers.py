@@ -12,6 +12,8 @@ import remembercases.doers as doers
 import remembercases.snapshot_taker as st
 import remembercases.proxy as proxy
 
+from cocos import compat
+
 #>>> helpers to define script props by matching strings in the script's text
 
 def text_props_simple(text, propnames):
@@ -598,7 +600,7 @@ def measure_repeteability(db, candidates, limit, samples_dir, required_md5=None)
     # combination.    
     hasher = hashlib.md5()
     for name in stats_by_script_name:
-        hasher.update(db.get_prop_value(name, 'md5_at_testinfo'))
+        hasher.update(compat.asciibytes(db.get_prop_value(name, 'md5_at_testinfo')))
     overall_md5 = hasher.hexdigest()
     if required_md5:
         assert required_md5==overall_md5
