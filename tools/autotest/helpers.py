@@ -6,7 +6,7 @@ import re
 import copy
 import time
 import hashlib
-
+import pprint
 import remembercases.db as dbm
 import remembercases.doers as doers
 import remembercases.snapshot_taker as st
@@ -534,17 +534,16 @@ def snapshots_compare(db, fn_snapshots_dist, threshold, candidates, max_tries,
         old_testbed = db.set_default_testbed('tmp')
         update_snapshots(db, None, unequals, samples_dir)
         for name in unequals:
-            if db.get_prop_value(name, 'snapshots_success'):
-                match = True
+            match = db.get_prop_value(name, 'snapshots_success')
+            if match:
                 for snap in db.get_prop_value(name, 'expected_snapshots'):
                     snap_ref = os.path.join(reference_dir, snap)
                     snap_tmp = os.path.join(samples_abspath, snap)
                     if fn_snapshots_dist(snap_ref, snap_tmp) > threshold:
                         match = False
                         break
-                if match:
-                    equals.add(name)
-                    
+            if match:
+                equals.add(name)
         db.del_testbed('tmp')
         db.set_default_testbed(old_testbed)
         unequals -= equals
@@ -588,7 +587,7 @@ def measure_repeteability(db, candidates, limit, samples_dir, required_md5=None)
     stats_by_snapshot_name = dict( [ (snap, {}) for snap in snapshots])
 
     stats_by_script_name = dict( [(name, { 'timeouts':0, 'errs':0 })
-                        for name in scripts if f(name, 'expected_snapshots')]) 
+                        for name in scripts if f(name, 'expected_snapshots')])
 
     # build a hash to limit mismatchs when combining runs. Caveat: if files
     # edited and testinfo not updated mismatch happens.

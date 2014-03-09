@@ -34,7 +34,7 @@ samples_dir = '../../test/saux'
 # snapshots comparison parameters
 fn_snapshots_dist = imc.distance_01
 threshold = 0
-tries = 3
+tries = 1
 
 ### issue 164
 ##text = """
@@ -110,6 +110,20 @@ text = """
         test/test_subscene_events.py
        """
 
+text = """
+        test/test_accel_amplitude.py
+        test/test_accel_deccel_amplitude.py
+        test/test_acceldeccel.py
+        test/test_accelerate.py
+        test/test_accelerate_speed.py
+        test/test_anchor_sprites.py
+        test/test_anchors.py
+        test/test_animation.py
+        test/test_base.py
+        test/test_batch.py
+        test/test_batch3.py
+        test/test_bezier.py
+"""
 
 # sanity checks
 diagnostic = ''
@@ -117,10 +131,10 @@ if not os.path.exists(snapshots_reference_dir):
     diagnostic = "Snapshots references dir not found:%s"%snapshots_reference_dir
 
 db = dbm.db_load(filename_persist, default_testbed=testbed)
-knowns, unknowns = db.entities(fn_allow=hl.fn_allow_testrun_pass, candidates=None)
+#knowns, unknowns = db.entities(fn_allow=hl.fn_allow_testrun_pass, candidates=None)
 
-##candidates = doers.scripts_names_from_text(text, end_mark=':')
-##knowns, unknowns = db.entities(fn_allow=None, candidates=candidates)
+candidates = doers.scripts_names_from_text(text, end_mark=':')
+knowns, unknowns = db.entities(fn_allow=None, candidates=candidates)
 if unknowns:
     msg = '\n'.join(unknowns)
     diagnostic = "Unknown scripts:\n" + msg

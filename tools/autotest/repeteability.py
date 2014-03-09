@@ -178,7 +178,7 @@ def report(stats_fname, rpt_function):
 # set hardcoded params
 
 db_fname = 'initial.dat' # must exist as a result of running recon.py
-testbed = 'ati 6320'
+testbed = 'cpu intel E7400, gpu ati 6570 with Catalyst 11-5 drivers, win xp sp3'
 stats_fname = 'rep_stats.pkl' 
 samples_dir = '../../test/saux'
 
@@ -188,8 +188,10 @@ samples_dir = '../../test/saux'
 # different limit when adding rounds 
 #candidates = ['test/test_accel_amplitude.py', 'test/test_base.py']
 candidates = None # means all tests
+# debug
+candidates = ['test/test_target.py', 'test/test_sprite_aabb.py']
 
-clean = False # True starts a new stats serie
+clean = True # True starts a new stats serie
 recover = False # Normal is False, used to debug combinning stats
 #limit = 2 #int means rounds
 limit = 60.0 #float means minutes; will be exceeded to complete last round
