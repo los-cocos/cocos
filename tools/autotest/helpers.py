@@ -589,6 +589,9 @@ def measure_repeteability(db, candidates, limit, samples_dir, required_md5=None)
     stats_by_script_name = dict( [(name, { 'timeouts':0, 'errs':0 })
                         for name in scripts if f(name, 'expected_snapshots')])
 
+    # get rid of scripts that don't expect snapshots
+    scripts = [name for name in stats_by_script_name]
+
     # build a hash to limit mismatchs when combining runs. Caveat: if files
     # edited and testinfo not updated mismatch happens.
     # It is recomended to run continuations from a clean checkout for safe
@@ -616,6 +619,7 @@ def measure_repeteability(db, candidates, limit, samples_dir, required_md5=None)
         f_continue = lambda: rounds < limit
     else:
         raise ValueError
+
 
     while f_continue():
         for name in scripts:
