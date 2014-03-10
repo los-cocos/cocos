@@ -752,8 +752,8 @@ class ColorMenuItem( MenuItem ):
             item = self.item
 
         x1 = int(item._get_left() + item.labelWidth * 1.05)
-        y1 = int(item.y - item.content_height / 2)
-        y2 = int(item.y + item.content_height / 3)
+        y1 = int(item.y - item.content_height // 2)
+        y2 = int(item.y + item.content_height // 3)
         x2 = int(x1 + (y2 - y1) * 2)
         pyglet.graphics.draw(4, pyglet.graphics.GL_QUADS,
                              ('v2f', (x1, y1, x1, y2, x2, y2, x2, y1)),
