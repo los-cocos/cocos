@@ -189,12 +189,12 @@ samples_dir = '../../test/saux'
 #candidates = ['test/test_accel_amplitude.py', 'test/test_base.py']
 candidates = None # means all tests
 # debug
-candidates = ['test/test_target.py', 'test/test_sprite_aabb.py']
+#candidates = ['test/test_target.py', 'test/test_sprite_aabb.py']
 
 clean = True # True starts a new stats serie
 recover = False # Normal is False, used to debug combinning stats
-limit = 2 #int means rounds
-#limit = 60.0 #float means minutes; will be exceeded to complete last round
+#limit = 2 #int means rounds
+limit = 30.0 #float means minutes; will be exceeded to complete last round
 
 if clean:
     new(db_fname, testbed, stats_fname, candidates, limit, samples_dir)

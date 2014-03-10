@@ -9,6 +9,11 @@ import remembercases.snapshot_taker as st
 import random
 # seed random for repeteability
 random.seed(123)
+# for repeteabilty between py2 and py3 when running in autotest, random.randint
+# gives different results in each python even when random.seed was set 
+def randint(lo, hi):
+    return lo + int(random.random()*(hi-lo+1))
+random.randint = randint
 
 import pyglet
 import cocos
