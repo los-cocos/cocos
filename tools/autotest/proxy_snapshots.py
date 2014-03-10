@@ -20,7 +20,7 @@ def shuffle(alist):
     a = [ (random.random(), e) for e in alist]
     a.sort(key=lambda x: x[0])
     for i in range(len(alist)):
-        alist[i] = a[i]
+        alist[i] = a[i][1]
 random.shuffle = shuffle
 
 import pyglet
