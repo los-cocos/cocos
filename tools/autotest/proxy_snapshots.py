@@ -10,10 +10,18 @@ import random
 # seed random for repeteability
 random.seed(123)
 # for repeteabilty between py2 and py3 when running in autotest, random.randint
-# gives different results in each python even when random.seed was set 
+# and random.shuffle are redefined
 def randint(lo, hi):
     return lo + int(random.random()*(hi-lo+1))
 random.randint = randint
+
+def shuffle(alist):
+    # inplace
+    a = [ (random.random(), e) for e in alist]
+    a.sort(key=lambda x: x[0])
+    for i in range(len(alist)):
+        alist[i] = a[i]
+random.shuffle = shuffle
 
 import pyglet
 import cocos
