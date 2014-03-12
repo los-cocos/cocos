@@ -33,6 +33,8 @@
 # ----------------------------------------------------------------------------
 '''Grid data structure'''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import pyglet
@@ -81,10 +83,10 @@ class GridBase(object):
         self.grabber = framegrabber.TextureGrabber()
         self.grabber.grab(self.texture)
 
-        #: x pixels between each vertex (float)
-        self.x_step = width / self.grid.x
-        #: y pixels between each vertex (float)
-        self.y_step = height / self.grid.y
+        #: x pixels between each vertex (int)
+        self.x_step = width // self.grid.x
+        #: y pixels between each vertex (int)
+        self.y_step = height // self.grid.y
 
         self._init()
 
