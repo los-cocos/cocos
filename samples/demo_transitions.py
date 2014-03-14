@@ -2,6 +2,9 @@
 # cocos2d
 # http://cocos2d.org
 #
+
+from __future__ import division, print_function, unicode_literals
+
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -44,7 +47,7 @@ class ControlLayer(Layer):
 
         self.text_help = pyglet.text.Label("Press LEFT / RIGHT for prev/next test, ENTER to restart test",
             font_size=16,
-            x=director.get_window_size()[0] /2,
+            x=director.get_window_size()[0] // 2,
             y=20,
             anchor_x=font.Text.CENTER,
             anchor_y=font.Text.CENTER)

@@ -6,6 +6,9 @@
 # http://www.imitationpickles.org
 #
 
+from __future__ import division, print_function, unicode_literals
+import six
+
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -67,7 +70,11 @@ class FireManager( Layer ):
             f.frame -= 1
             ww,hh = w*f.scale,h*f.scale
             x-=ww/2
-            verts[n*8:(n+1)*8] = map(int,[x,y,x+ww,y,x+ww,y+hh,x,y+hh])
+            if six.PY2:
+                vs = map(int,[x,y,x+ww,y,x+ww,y+hh,x,y+hh])
+            else:
+                vs = list(map(int,[x,y,x+ww,y,x+ww,y+hh,x,y+hh]))
+            verts[n*8:(n+1)*8] = vs
             clrs[n*16:(n+1)*16] = [r,g,b,255] * 4
 
     def draw( self ):
@@ -148,7 +155,7 @@ class MainMenu(Menu):
     # Callbacks
     def on_new_game( self ):
 #        director.set_scene( StartGame() )
-        print "on_new_game()"
+        print("on_new_game()")
            
 
     def on_scores( self ):

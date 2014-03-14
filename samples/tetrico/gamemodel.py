@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -248,7 +250,7 @@ class Block( object ):
     def __init__(self):
         super( Block, self).__init__()
 
-        self.pos = Point2( COLUMNS/2-1, ROWS )
+        self.pos = Point2( COLUMNS//2-1, ROWS )
         self.rot = 0
 
         for x in range( len(self._shape) ):

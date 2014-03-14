@@ -3,6 +3,8 @@
 # http://cocos2d.org
 #
 
+from __future__ import division, print_function, unicode_literals
+
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -54,7 +56,7 @@ class FontLayer( Layer ):
 
         self.text_help = pyglet.text.Label("Press LEFT / RIGHT for prev/next test, ENTER to restart test",
             font_size=16,
-            x=director.get_window_size()[0] /2,
+            x=director.get_window_size()[0] //2,
             y=20,
             anchor_x=font.Text.CENTER,
             anchor_y=font.Text.CENTER,
@@ -73,16 +75,16 @@ class SpriteLayer( Layer ):
         self.index = index
 
         self.image = pyglet.resource.image('grossini.png')
-        self.image.anchor_x = self.image.width / 2
-        self.image.anchor_y = self.image.height / 2
+        self.image.anchor_x = self.image.width // 2
+        self.image.anchor_y = self.image.height // 2
 
         self.image_sister1 = pyglet.resource.image('grossinis_sister1.png')
-        self.image_sister1.anchor_x = self.image_sister1.width / 2
-        self.image_sister1.anchor_y = self.image_sister1.height / 2
+        self.image_sister1.anchor_x = self.image_sister1.width // 2
+        self.image_sister1.anchor_y = self.image_sister1.height // 2
 
         self.image_sister2 = pyglet.resource.image('grossinis_sister2.png')
-        self.image_sister2.anchor_x = self.image_sister2.width / 2
-        self.image_sister2.anchor_y = self.image_sister2.height / 2
+        self.image_sister2.anchor_x = self.image_sister2.width // 2
+        self.image_sister2.anchor_y = self.image_sister2.height // 2
 
     def on_key_release( self, keys, mod ):
         # LEFT: go to previous scene
@@ -318,7 +320,7 @@ class SpriteTrigger( SpriteLayer ):
         sprite.do( move + CallFunc( self.say_hello )  )
 
     def say_hello( self ):
-        print "HELLO BABY"
+        print("HELLO BABY")
 
         sprite2 = Sprite( self.image_sister1)
         self.add( sprite2 )

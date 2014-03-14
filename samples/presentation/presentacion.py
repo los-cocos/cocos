@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -92,12 +94,12 @@ class TitleSubTitleLayer(cocos.layer.Layer):
         x, y = director.get_window_size()
 
         self.title = text.Label(
-                title, (x/2, y/2+50), font_name = 'Gill Sans',
+                title, (x//2, y//2+50), font_name = 'Gill Sans',
                 font_size = 64, anchor_x='center', anchor_y='center' )
         self.add( self.title )
         
         self.subtitle = text.Label(
-                subtitle, (x/2, y/2-30), font_name = 'Gill Sans',
+                subtitle, (x//2, y//2-30), font_name = 'Gill Sans',
                 font_size = 44, anchor_x='center', anchor_y='center' )
         self.add( self.subtitle )
         
@@ -108,22 +110,22 @@ class BulletListLayer(cocos.layer.Layer):
 
 
         self.title = text.Label(
-                title, (x/2, y-50), font_name = 'Gill Sans',
+                title, (x//2, y-50), font_name = 'Gill Sans',
                 font_size = 64, anchor_x='center', anchor_y='center' )
         self.add( self.title )
 
-        start_y = (y/12)*8
-        font_size = 52 / (len(lines)/2.2+1)
+        start_y = (y//12)*8
+        font_size = 52 // (len(lines)/2.2+1)
         font_size = min(font_size, 52)
         line_font = font.load('Gill Sans', font_size)
         tot_height = 0
         max_width = 0
         rendered_lines = []
-        step = 300/ max(len(lines),1)
+        step = 300 // max(len(lines),1)
         i = 0
         for line in lines:
             line_text = text.Label(
-                line, (x/2, y-150-step*i), font_name = 'Gill Sans',
+                line, (x//2, y-150-step*i), font_name = 'Gill Sans',
                 font_size = font_size, anchor_x='center', anchor_y='center' )
             i += 1   
             self.add( line_text )    
@@ -328,7 +330,7 @@ if __name__ == "__main__":
             ),
         cocos.scene.Scene ( cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Conceptos", []).add(
-                Sprite("scene_sp.png", (x/2, 100))),
+                Sprite("scene_sp.png", (x//2, 100))),
             ),
         cocos.scene.Scene (cocos.layer.ColorLayer(0,0,0,255),
             BulletListLayer("Documentacion", [
@@ -399,7 +401,7 @@ if __name__ == "__main__":
         return cocos.scene.Scene(
             cocos.layer.ColorLayer(*color).add(
                 cocos.text.Label(
-                    name, (x/2,y/2), 
+                    name, (x//2,y//2), 
                     font_name = 'Gill Sans', font_size = 64, 
                     anchor_x='center', anchor_y='center'
                 )
