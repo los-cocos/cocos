@@ -200,6 +200,9 @@ def load(filename):
     # make sure we can find files relative to this one
     dirname = os.path.dirname(filename)
     if dirname and dirname not in pyglet.resource.path:
+        if os.sep == '\\':
+            # pyglet resource does not accept '\' in relative paths 
+            dirname = dirname.replace(os.sep, '/')
         pyglet.resource.path.append(dirname)
         pyglet.resource.reindex()
 
