@@ -31,6 +31,9 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+
+from __future__ import division, print_function, unicode_literals
+
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 #
@@ -103,7 +106,7 @@ class SkeletonEditorUI(ui.UILayer):
         self.skin = skin
         self.add( skin, z=z )
         xs, ys = director.get_window_size()
-        skin.position = xs/2-6, ys/2-11
+        skin.position = xs / 2 - 6, ys / 2 - 11
         self.generate_control_points()
 
     def on_key_press(self, k, mod):
@@ -185,8 +188,8 @@ if __name__ == "__main__":
     def usage():
         return "python animator.py skeleton.py skin.py"
     if len(args) not in [2]:
-        print usage()
-        print parser.error("incorrect number of arguments")
+        print(usage())
+        print(parser.error("incorrect number of arguments"))
         sys.exit()
         
 
@@ -195,7 +198,7 @@ if __name__ == "__main__":
         background = cocos.sprite.Sprite(options.background)
         x,y = director.get_window_size()
         animator.add( background, z=-10 )
-        background.position = x/2, y/2
+        background.position = x / 2, y / 2
         background.scale = float(options.scale)
 
     director.run(animator)

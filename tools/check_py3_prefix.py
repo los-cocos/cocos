@@ -2,8 +2,19 @@ from __future__ import division, print_function, unicode_literals
 
 import os
 
-dirs = ["../test", "../utest", "../cocos", "../cocos/layer", "../cocos/scenes",
-        "../cocos/actions"]
+dirs = ["../test",
+        "../utest",
+        "../cocos",
+        "../cocos/layer",
+        "../cocos/scenes",
+        "../cocos/actions",
+        "../samples",
+        "../samples/balldrive_toy_game",
+        "../samples/tetrico",
+        "../samples/presentation",
+        ".", # tools/
+        "./skeleton",
+        ]
 must_have = "from __future__ import division, print_function, unicode_literals"
 non_compliant = []
 

@@ -31,6 +31,8 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+from __future__ import division, print_function, unicode_literals
+
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
@@ -71,9 +73,9 @@ def flatten( l ):
 def v2a(x,y):
     if x == 0:
         if y > 0:
-            return pi/2
+            return pi / 2
         elif (y < 0):
-            return -pi/2;
+            return -pi / 2
         else:
             return 0
     elif y == 0:
@@ -84,11 +86,11 @@ def v2a(x,y):
     else:
         if x < 0:
             if y > 0:
-                return atan(y/float(x)) + pi
+                return atan(y / x) + pi
             else:
                 return atan(y / x) - pi
         else:
-            return atan( y/float(x) )
+            return atan( y / x )
 
 class UpdateTimeline(cocos.actions.IntervalAction):
     def init(self, duration):
@@ -153,7 +155,7 @@ class BoneUILayer(ui.UILayer):
             self.animation = Animation(skeleton)
         self.timeline = ui.TimeLine(self.animation)
         self.add(self.timeline)
-        self.tick_delta = 1.0/16
+        self.tick_delta = 1.0 / 16
         self.skeleton = skeleton
         self.editable_skeleton = None
         self.animating = False
@@ -173,7 +175,7 @@ class BoneUILayer(ui.UILayer):
             skin = ColorSkin( self.skeleton, (255,255,255,255))
         self.add( skin )
         xs, ys = director.get_window_size()
-        skin.position = xs/2-6, ys/2-11
+        skin.position = xs / 2-6, ys / 2 - 11
         self.animation.move_start()
         skin.do( Animate(self.animation)
                  + CallFunc(lambda: self.remove(skin))
@@ -192,7 +194,7 @@ class BoneUILayer(ui.UILayer):
         self.skin = skin
         self.add( skin, z=z )
         xs, ys = director.get_window_size()
-        skin.position = xs/2-6, ys/2-11
+        skin.position = xs / 2 - 6, ys / 2 - 11
         if editable:
             self.editable_skeleton = skeleton
             self.editable_skin = skin
@@ -314,8 +316,8 @@ if __name__ == "__main__":
     def usage():
         return "python animator.py skeleton.py animation_file.anim"
     if len(args)!=2:
-        print usage()
-        print parser.error("incorrect number of arguments")
+        print(usage())
+        print(parser.error("incorrect number of arguments"))
         sys.exit()
 
     sk_file = imp.load_source("skeleton", args[0])
@@ -329,7 +331,7 @@ if __name__ == "__main__":
         background = cocos.sprite.Sprite(options.background)
         x,y = director.get_window_size()
         animator.add( background, z=-10 )
-        background.position = x/2, y/2
+        background.position = x / 2, y / 2
         background.scale = float(options.scale)
 
     director.run(animator)

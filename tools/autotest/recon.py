@@ -483,7 +483,7 @@ snapshots_reference_dir = '../../test/ref'
 # dir for some helper tasks
 samples_dir = '../../test/saux'
 
-clean = False
+clean = True
 if clean:
     # updates commented out were used in the initial buildup, there are no
     # longer neccesary in a clean build but are keep (comented out) to

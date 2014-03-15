@@ -31,6 +31,9 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+
+from __future__ import division, print_function, unicode_literals
+
 import math
 from math import pi, atan
 
@@ -46,9 +49,9 @@ from pyglet.window import key
 def circle(radius, color):
     circumference = 2*math.pi*radius
     step_size = 5
-    steps = max(4, int(circumference/step_size))
+    steps = max(4, int(circumference / step_size))
 
-    adelta = 2*math.pi/steps
+    adelta = 2 * math.pi / steps
     points = [0,0,radius,0]
     for step in range(1,steps+1):
         x = radius*math.cos(step*adelta)
@@ -214,11 +217,11 @@ class TimeLine(Widget):
         ym = self.y_margin
         h = self.height
         for pixel in markers_pxs:
-            t = up_triange(pixel, y-ym-h/2, 10, 10, (100,100,255,255))
+            t = up_triange(pixel, y - ym - h / 2, 10, 10, (100,100,255,255))
             t.draw(GL_TRIANGLES)
 
         pixel = self.map_to_pixel( self.model.get_position() )
-        t = down_triange(pixel, y-ym-h/2, 10, 10, (255,255,0,255))
+        t = down_triange(pixel, y - ym - h / 2, 10, 10, (255,255,0,255))
         t.draw(GL_TRIANGLES)
 
     def map_to_pixel(self, when):
@@ -228,7 +231,7 @@ class TimeLine(Widget):
         if d == 0:
             return xm
         w = self.width
-        p = (when/d) * w
+        p = (when / d) * w
 
         return xm + p
 
