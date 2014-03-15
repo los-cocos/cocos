@@ -14,6 +14,7 @@ dirs = ["../test",
         "../samples/presentation",
         ".", # tools/
         "./skeleton",
+        "../benchmarks/collision",
         ]
 must_have = "from __future__ import division, print_function, unicode_literals"
 non_compliant = []
