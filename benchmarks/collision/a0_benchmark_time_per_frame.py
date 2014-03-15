@@ -1,3 +1,4 @@
+from __future__ import division, print_function, unicode_literals
 
 import random
 import time
@@ -174,13 +175,13 @@ def time_per_frame(stats_fixed_params, world):
     return (end_time - start_time) / num_frames
 
 def pprint_stats(stats):
-    print "\nstats = {"
+    print("\nstats = {")
     for case in stats:
         res = stats[case]
-        print "    %s:"%repr(case)
-        print "        [%s, %s, %s,"%(repr(res[0]), repr(res[1]), repr(res[2])) 
-        print "        %s],"%repr(res[3])
-    print "    }"
+        print("    %s:"%repr(case))
+        print("        [%s, %s, %s,"%(repr(res[0]), repr(res[1]), repr(res[2]))) 
+        print("        %s],"%repr(res[3]))
+    print("    }")
 
 def plot_benchmark_time_per_frame(ball_quantities, benchmark_results,
                                   title, pic_filename):
@@ -222,32 +223,32 @@ def sample_plot():
     stats = benchmark_time_per_frame(collman_cases, base_demo_world_params,
                                      fast_stats_params)    
     plot_benchmark_time_per_frame(ball_quantities, stats, title, fname)
-    print '\nPloting sample. For fastness a low frame number was chosen,'
-    print 'so the numbers obtained are incorrect.'
-    print 'For real runs, use num_frames = 100 .'
-    print 'Resulting plot saved in file:', fname
+    print('\nPloting sample. For fastness a low frame number was chosen,')
+    print('so the numbers obtained are incorrect.')
+    print('For real runs, use num_frames = 100 .')
+    print('Resulting plot saved in file:', fname)
 
 def plot_collman_cases():
     title = 'bouncing balls model - time per frame'
     fname = 'comparing_collision_managers.png'
-    print '\nWorking, it will take around five minutes to complete.'
+    print('\nWorking, it will take around five minutes to complete.')
 
     ball_quantities = stats_params['ball_quantities'] 
     stats = benchmark_time_per_frame(collman_cases, base_demo_world_params,
                                      stats_params)    
     plot_benchmark_time_per_frame(ball_quantities, stats, title, fname)
-    print 'Done. Resulting plot saved in file:', fname
+    print('Done. Resulting plot saved in file:', fname)
 
 def plot_cshape_cases():
     title = 'bouncing balls model - time per frame'
     fname = 'comparing_shapes.png'
-    print '\nWorking, it will take around five minutes to complete.'
+    print('\nWorking, it will take around five minutes to complete.')
 
     ball_quantities = stats_params['ball_quantities'] 
     stats = benchmark_time_per_frame(cshape_cases, base_demo_world_params,
                                      stats_params)    
     plot_benchmark_time_per_frame(ball_quantities, stats, title, fname)
-    print 'Done. Resulting plot saved in file:', fname
+    print('Done. Resulting plot saved in file:', fname)
 
 plot_collman_cases()
 #plot_cshape_cases()
