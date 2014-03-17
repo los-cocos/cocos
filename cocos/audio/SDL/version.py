@@ -8,7 +8,7 @@ __version__ = '$Id: $'
 
 from ctypes import *
 
-import dll
+from . import dll
 
 class SDL_version(Structure):
     '''Version structure.

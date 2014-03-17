@@ -13,8 +13,8 @@ __version__ = '$Id: $'
 
 from ctypes import *
 
-import dll
-import constants
+from . import dll
+from . import constants
 
 _rwops_p = POINTER('SDL_RWops')
 _seek_fn = CFUNCTYPE(c_int, _rwops_p, c_int, c_int)

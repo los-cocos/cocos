@@ -130,7 +130,7 @@ class Sound_DecoderInfo(Structure):
                 extensions.append(ext_p[i])
                 i += 1
             return extensions
-        raise AttributeError, name
+        raise AttributeError(name)
 
 class Sound_Sample(Structure):
     '''Represents sound data in the process of being decoded.
@@ -169,7 +169,7 @@ class Sound_Sample(Structure):
             return self._decoder.contents
         elif name == 'buffer':
             return SDL.array.SDL_array(self._buffer, self.buffer_size, c_ubyte)
-        raise AttributeError, name
+        raise AttributeError(name)
 
 Sound_Init = _dll.function('Sound_Init',
     '''Initialize SDL_sound.

@@ -38,7 +38,7 @@ Scene class
 
 from cocos import audio
 try:
-    import pygame.music
+    import cocos.audio.pygame.music
 except ImportError:
     audio._working = False
 

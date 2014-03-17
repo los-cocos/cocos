@@ -31,16 +31,19 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 from cocos import audio
+
 try:
     from cocos.audio.pygame.mixer import Sound
 except ImportError:
     audio._working = False
 
-
-import actions
+from . import actions
 
 class Effect(object):
     """Effects are sounds effect loaded in memory

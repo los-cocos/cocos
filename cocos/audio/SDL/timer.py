@@ -8,7 +8,7 @@ __version__ = '$Id: $'
 
 from ctypes import *
 
-import dll
+from . import dll
 
 SDL_GetTicks = dll.function('SDL_GetTicks',
     '''Get the number of milliseconds since the SDL library initialization.
@@ -92,7 +92,7 @@ def SDL_SetTimer(interval, callback):
     # XXX if this fails the global ref is incorrect and old one will
     # possibly be collected early.
     if _SDL_SetTimer(interval, _timercallback_ref) == -1:
-        raise SDL.error.SDL_Exception, SDL.error.SDL_GetError()
+        raise SDL.error.SDL_Exception(SDL.error.SDL_GetError())
 
 
 # For the new timer functions, the void *param passed to the callback
@@ -121,7 +121,7 @@ def SDL_AddTimer(interval, callback, param):
             cancelled.  An example callback function is::
 
                 def timer_callback(interval, param):
-                    print 'timer called after %d ms.' % interval
+                    print('timer called after %d ms.' % interval)
                     return 1000     # call again in 1 second
 
         `param` : any
@@ -136,7 +136,7 @@ def SDL_AddTimer(interval, callback, param):
     func = _SDL_NewTimerCallback(_callback)
     result = _SDL_AddTimer(interval, func, None)
     if not result:
-        raise SDL.error.SDL_Exception, SDL.error.SDL_GetError()
+        raise SDL.error.SDL_Exception(SDL.error.SDL_GetError())
     _timer_refs[result] = func
     return result
 
