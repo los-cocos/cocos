@@ -102,9 +102,9 @@ Clicking or draging into the get_rect() changes the colored square that follows
 the mouse to red; when outside the get_rect() it turns blue. 
 
 For other variants on collision or mouse hit see
-    test\test_sprite_aabb.py,
-    samples\balldrive_toy_game
-    samples\mouse_elastic_box_selection.py
+    test/test_sprite_aabb.py,
+    samples/balldrive_toy_game
+    samples/mouse_elastic_box_selection.py
 """
 
 def main():
