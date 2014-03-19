@@ -220,6 +220,26 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         BatchableNode._set_scale_y(self,s)
         self._update_position()
 
+    def _get_width(self):
+        return int(self._texture.width * self._scale * self._scale_x)
+    width = property(_get_width,
+                     doc='''Scaled width of the sprite.
+
+    Read-only.  Invariant under rotation.
+
+    :type: int
+    ''')
+    
+    def _get_height(self):
+        return int(self._texture.height * self._scale * self._scale_y)
+    height = property(_get_height,
+                      doc='''Scaled height of the sprite.
+
+    Read-only.  Invariant under rotation.
+
+    :type: int
+    ''')
+
     def _set_position( self, p ):
         BatchableNode._set_position(self,p)
         pyglet.sprite.Sprite.set_position(self, *p)

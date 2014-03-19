@@ -38,6 +38,7 @@ class TestLayer(cocos.layer.Layer):
         self.do(
             Delay(2) + CallFunc(self.mov) +
             Delay(2) + CallFunc(self.zoom) +
+            Delay(2) + CallFunc(self.scalex) +
             Delay(2) + CallFunc(self.rot)
             )
         self.mouse_mark = cocos.layer.ColorLayer(0, 0, 255, 255, 20, 20)
@@ -63,6 +64,10 @@ class TestLayer(cocos.layer.Layer):
 
     def zoom(self):
         self.sprite1.scale = 2
+        self.show_rect()
+
+    def scalex(self):
+        self.sprite1.scale_x = 0.5
         self.show_rect()
 
     def on_mouse_press(self, x, y, buttons, modifiers):
@@ -92,9 +97,10 @@ To work as expected these conditions must be meet:
 
 This scripts shows a sprite and a white rectangle depicting sprite.get_rect(),
     It starts at one position
-    After 3 seconds sprite moves to another position
-    After 3 seconds sprite scales 2x
-    After 3 seconds sprite rotates 90 degress
+    After 2 seconds sprite moves to another position
+    After 2 seconds sprite scales 2x in both axis
+    After 2 seconds sprite scales 0.5 in the x axis
+    After 2 seconds sprite rotates 90 degress
 
 get_rect() gives a tight fit when changing position or scale, but not when a
 rotation is applied.
