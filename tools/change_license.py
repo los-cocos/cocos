@@ -8,6 +8,7 @@ Be sure to check the hardcoded old_license, new_license, exclude are
 the one intended.
 use svn status to confirm what changed.
 """
+from __future__ import division, print_function, unicode_literals
 
 import optparse
 import os
@@ -148,11 +149,11 @@ if __name__ == '__main__':
         sys.exit(0)
 
     mode = options.mode
-    print 'mode:', mode
+    print('mode:', mode)
 
     assert mode in headers
 
-    print headers[mode]
+    print(headers[mode])
     change_files = (mode == 'change')
     if change_files:
         mode = 'list-matching-old'
@@ -178,4 +179,4 @@ if __name__ == '__main__':
                 process_file(path)
 
     for name in reported:
-        print name
+        print(name)

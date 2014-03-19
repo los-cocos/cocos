@@ -1,9 +1,9 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
-
-from operator import setslice
 
 from cocos.director import director
 from cocos.layer import *

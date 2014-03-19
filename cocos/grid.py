@@ -33,15 +33,17 @@
 # ----------------------------------------------------------------------------
 '''Grid data structure'''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import pyglet
 from pyglet import image
 from pyglet.gl import *
-from euclid import Point2, Point3
+from cocos.euclid import Point2, Point3
 
-from director import director
-import framegrabber
+from cocos.director import director
+from cocos import framegrabber
 
 __all__ = ['GridBase',
            'Grid3D',
@@ -81,10 +83,10 @@ class GridBase(object):
         self.grabber = framegrabber.TextureGrabber()
         self.grabber.grab(self.texture)
 
-        #: x pixels between each vertex (float)
-        self.x_step = width / self.grid.x
-        #: y pixels between each vertex (float)
-        self.y_step = height / self.grid.y
+        #: x pixels between each vertex (int)
+        self.x_step = width // self.grid.x
+        #: y pixels between each vertex (int)
+        self.y_step = height // self.grid.y
 
         self._init()
 
@@ -224,13 +226,13 @@ class Grid3D(GridBase):
         vertex_points_idx = []
         texture_points_idx = []
 
-        for x in xrange(0,self.grid.x+1):
-            for y in xrange(0,self.grid.y+1):
+        for x in range(0,self.grid.x+1):
+            for y in range(0,self.grid.y+1):
                 vertex_points_idx += [-1,-1,-1]
                 texture_points_idx += [-1,-1]
 
-        for x in xrange(0, self.grid.x):
-            for y in xrange(0, self.grid.y):
+        for x in range(0, self.grid.x):
+            for y in range(0, self.grid.y):
                 x1 = x * self.x_step 
                 x2 = x1 + self.x_step
                 y1 = y * self.y_step
@@ -252,7 +254,7 @@ class Grid3D(GridBase):
                 l2 = ( Point3(x1,y1,0), Point3(x2,y1,0), Point3(x2,y2,0), Point3(x1,y2,0) )
 
                 #  building the vertex
-                for i in xrange( len(l1) ):
+                for i in range( len(l1) ):
                     vertex_points_idx[ l1[i] ] = l2[i].x
                     vertex_points_idx[ l1[i] + 1 ] = l2[i].y
                     vertex_points_idx[ l1[i] + 2 ] = l2[i].z
@@ -261,7 +263,7 @@ class Grid3D(GridBase):
                 tex1 = ( a*2, b*2, c*2, d*2 )
                 tex2 = ( Point2(x1,y1), Point2(x2,y1), Point2(x2,y2), Point2(x1,y2) )
 
-                for i in xrange( len(tex1)):
+                for i in range( len(tex1)):
                     texture_points_idx[ tex1[i] ] = tex2[i].x / w
                     texture_points_idx[ tex1[i] + 1 ] = tex2[i].y / h
  
@@ -360,8 +362,8 @@ class TiledGrid3D(GridBase):
         vertex_points = []
         texture_points = []
 
-        for x in xrange(0, self.grid.x):
-            for y in xrange(0, self.grid.y):
+        for x in range(0, self.grid.x):
+            for y in range(0, self.grid.y):
                 x1 = x * self.x_step 
                 x2 = x1 + self.x_step
                 y1 = y * self.y_step

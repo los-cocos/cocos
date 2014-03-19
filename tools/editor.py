@@ -25,6 +25,8 @@ Hit control-q, or escape, or the window close button to quit without saving.
 
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 import pyglet
 from pyglet.gl import *
 import cocos
@@ -148,8 +150,8 @@ class TileSetLayer(cocos.layer.Layer):
     def __init__(self, level_to_edit):
         super(TileSetLayer, self).__init__()
         self.level_to_edit = level_to_edit
-        self.map_layer = level_to_edit.find(cocos.tiles.MapLayer).next()[1]
-        self.tileset = level_to_edit.findall(cocos.tiles.TileSet).next()[1]
+        self.map_layer = next(level_to_edit.find(cocos.tiles.MapLayer))[1]
+        self.tileset = next(level_to_edit.findall(cocos.tiles.TileSet))[1]
         self.batch = pyglet.graphics.Batch()
 
         # labels
@@ -169,7 +171,7 @@ class TileSetLayer(cocos.layer.Layer):
         h = max(h, self.tilesets_label.content_height)
         w += self.tilesets_label.content_width
 
-        self._width = (int(w) / self.TILE_SIZE) * self.TILE_SIZE + 8
+        self._width = (int(w) // self.TILE_SIZE) * self.TILE_SIZE + 8
         if int(w) % self.TILE_SIZE: self._width += self.TILE_SIZE
         self._height = h + 16 + self.TILE_SIZE * 8
 
@@ -190,7 +192,7 @@ class TileSetLayer(cocos.layer.Layer):
                 self.current = s
             s.tile_id = k
             self.tile_sprites.append(s)
-            s.scale = self.TILE_SIZE / float(s.width)
+            s.scale = self.TILE_SIZE / s.width
             if not n % 8:
                 y = 4; x += self.TILE_SIZE
             else:
@@ -360,7 +362,7 @@ if __name__ == '__main__':
     try:
         edit_level_xml = sys.argv[1]
     except:
-        print 'Usage: %s <level.xml>'%sys.argv[0]
+        print('Usage: %s <level.xml>'%sys.argv[0])
         sys.exit(0)
 
     director.init(width=1024, height=768)

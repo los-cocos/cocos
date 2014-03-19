@@ -49,6 +49,8 @@ Release workflow:
     to replace the remaining non compliant snipets with the referece snipet
     4. test all the scripts changed in the process.
 """
+from __future__ import division, print_function, unicode_literals
+import six
 
 import os
 import sys
@@ -101,11 +103,11 @@ class SnipetCompliance(object):
     def matched(self):
         if self.is_present is None:
             self.is_compliant()
-##        print 'self.is_present:', self.is_present
-##        print 'self.compliant:', self.compliant
+##        print('self.is_present:', self.is_present)
+##        print('self.compliant:', self.compliant)
         if self.is_present:
-##            print 'start_line:', self.start_line
-##            print 'endplus_line:', self.endplus_line
+##            print('start_line:', self.start_line)
+##            print('endplus_line:', self.endplus_line)
             s = '\n'.join(self.lines[self.start_line: self.endplus_line])
         else:
             s = ''
@@ -157,7 +159,7 @@ def get_start_line(iter_enumerated_lines, target):
     """
     try:
         while 1:
-            lineno, line = iter_enumerated_lines.next()
+            lineno, line = six.next(iter_enumerated_lines)
             line = line.strip()
             line = line.replace(' ', '')
             if line.startswith(target):
@@ -181,7 +183,7 @@ def get_endplus_line(iter_enumerated_lines):
     last_no_blank = None
     while 1:
         try:
-            lineno, line = iter_enumerated_lines.next()
+            lineno, line = six.next(iter_enumerated_lines)
         except StopIteration:
             # EOF
             break
@@ -218,7 +220,7 @@ if __name__ == '__main__':
     elif len(sys.argv)==2 and sys.argv[1] in task_to_flags:
         task = sys.argv[1]
     else:
-        print >> sys.stderr, __doc__
+        print(__doc__, sys.stderr)
         sys.exit(0)
 
     (report_compliant, report_only_big,
@@ -244,17 +246,17 @@ if __name__ == '__main__':
             if report_compliant == file_compliant:
                 if file_compliant and worker.is_present:
                     # strip initial '../' for better colaboration with autotest
-                    print fname[3:]
+                    print(fname[3:])
                 else:
                     if (not report_only_big or
                         (report_only_big and worker.bigger())):
                         # strip initial '../' for better colaboration with autotest
-                        print fname[3:]
+                        print(fname[3:])
                         if report_show_matching_block:
-                            print '\n>>>'
-                            print 'matched:'
-                            print worker.matched()
-                            print '<<<\n'
+                            print('\n>>>')
+                            print('matched:')
+                            print(worker.matched())
+                            print('<<<\n')
 
             if fix and not file_compliant:
                 worker.enforce_compliance()

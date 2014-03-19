@@ -62,6 +62,8 @@ And now tell the sprite to execute it::
 
     sprite.do( move )
 '''
+
+from __future__ import division, print_function, unicode_literals
 from six import string_types
 
 __docformat__ = 'restructuredtext'
@@ -71,11 +73,10 @@ import pyglet
 from pyglet import image
 from pyglet.gl import *
 
-import cocosnode
-from batch import *
-import rect
+from cocos.batch import BatchableNode
+from cocos.rect import Rect
+from cocos import euclid
 
-import euclid
 import math
 
 __all__ = [ 'Sprite',                     # Sprite class
@@ -134,10 +135,10 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
         if anchor is None:
             if isinstance(self.image, pyglet.image.Animation):
-                anchor = (image.frames[0].image.width / 2,
-                    image.frames[0].image.height / 2)
+                anchor = (image.frames[0].image.width // 2,
+                    image.frames[0].image.height // 2)
             else:
-                anchor = image.width / 2, image.height / 2
+                anchor = image.width // 2, image.height // 2
 
 
         self.image_anchor = anchor
@@ -191,7 +192,7 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         x, y = self.position
         x -= self.image_anchor_x
         y -= self.image_anchor_y
-        return rect.Rect(x, y, self.width, self.height)
+        return Rect(x, y, self.width, self.height)
 
     def get_AABB(self):
         '''Returns a local-coordinates Axis aligned Bounding Box
@@ -201,7 +202,7 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         v = self._vertex_list.vertices
         x = v[0], v[2], v[4], v[6]
         y = v[1], v[3], v[5], v[7]
-        return rect.Rect(min(x),min(y),max(x)-min(x),max(y)-min(y))
+        return Rect(min(x),min(y),max(x)-min(x),max(y)-min(y))
 
     def _set_rotation( self, a ):
         BatchableNode._set_rotation(self,a)

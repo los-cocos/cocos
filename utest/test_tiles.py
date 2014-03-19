@@ -185,7 +185,7 @@ class MapModelTest(unittest.TestCase):
         nrows = 7
         ncols = 6
         cells = [ [ 'col_%d_row_%d'%(yy, xx) for xx in range(ncols)]
-                                                      for yy in xrange(nrows)]        
+                                                      for yy in range(nrows)]        
         m = RectMap(42, tile_width, tile_height_h, cells, origin=(0, 0, 0))
         x1, y1 = 5, 8
         x2, y2 = 8, 12
@@ -209,7 +209,7 @@ class MapModelTest(unittest.TestCase):
         nrows = 7
         ncols = 6
         cells = [ [ 'col_%d_row_%d'%(yy, xx) for xx in range(ncols)]
-                                                      for yy in xrange(nrows)]        
+                                                      for yy in range(nrows)]        
         m = RectMap(42, tile_width, tile_height_h, cells, origin=(0, 0, 0))
         x1, y1 = 5, 8
         x2, y2 = 5, 12
@@ -223,7 +223,7 @@ class MapModelTest(unittest.TestCase):
         nrows = 7
         ncols = 6
         cells = [ [ 'col_%d_row_%d'%(yy, xx) for xx in range(ncols)]
-                                                      for yy in xrange(nrows)]        
+                                                      for yy in range(nrows)]        
         m = RectMap(42, tile_width, tile_height_h, cells, origin=(0, 0, 0))
         x1, y1 = 4, 8
         x2, y2 = 4, 12
@@ -237,7 +237,7 @@ class MapModelTest(unittest.TestCase):
         nrows = 7
         ncols = 6
         cells = [ [ 'col_%d_row_%d'%(yy, xx) for xx in range(ncols)]
-                                                      for yy in xrange(nrows)]        
+                                                      for yy in range(nrows)]        
         m = RectMap(42, tile_width, tile_height_h, cells, origin=(0, 0, 0))
         x1, y1 = 5, 8
         x2, y2 = 5, 8

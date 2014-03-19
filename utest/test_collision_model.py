@@ -34,7 +34,7 @@ def circle_data1(offset):
 
     r2 = 0.3
     d1 = (r1 + r2) - 0.1
-    angles = [a for a in xrange(360, 1, -360//12)]
+    angles = [a for a in range(360, 1, -360//12)]
     ring_touching = set()
     for a in angles:
         center = d1 * eu.Vector2(cos(radians(a)), sin(radians(a))) + offset
@@ -43,7 +43,7 @@ def circle_data1(offset):
 
     near_distance = 0.1
     d2 = (r1 + r2) + near_distance
-    angles = [a for a in xrange(360, 1, -360//12)]
+    angles = [a for a in range(360, 1, -360//12)]
     ring_near = set()
     for a in angles:
         center = d2 * eu.Vector2(cos(radians(a)), sin(radians(a))) + offset
@@ -53,7 +53,7 @@ def circle_data1(offset):
 
     far_distance = 0.2
     d3 = (r1 + r2) + far_distance
-    angles = [a for a in xrange(360, 1, -360//12)]
+    angles = [a for a in range(360, 1, -360//12)]
     ring_far = set()
     for a in angles:
         center = d3 * eu.Vector2(cos(radians(a)), sin(radians(a))) + offset

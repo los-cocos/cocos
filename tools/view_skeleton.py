@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -26,7 +28,7 @@ class TestLayer(cocos.layer.Layer):
         # add the skin to the scene
         self.add( self.skin )
         x, y = director.get_window_size()
-        self.skin.position = x/2, y/2
+        self.skin.position = x // 2, y // 2
    
     
 if __name__ == "__main__":

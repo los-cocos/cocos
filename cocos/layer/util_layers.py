@@ -43,14 +43,15 @@ Events are propagated to layers (from front to back) until some layer catches
 the event and accepts it.
 """
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import pyglet
 from pyglet.gl import *
 
 from cocos.director import *
-from base_layers import Layer
-import cocos.cocosnode
+from .base_layers import Layer
 
 __all__ = ['ColorLayer']
 

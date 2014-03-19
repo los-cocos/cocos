@@ -31,12 +31,15 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-from base_actions import *
-from interval_actions import *
-from instant_actions import *
-from basegrid_actions import *
-from quadmoveby_actions import *
-from tiledgrid_actions import *
-from grid3d_actions import *
-from camera_actions import *
-from move_actions import *
+
+from __future__ import division, print_function, unicode_literals
+
+from .base_actions import *
+from .interval_actions import *
+from .instant_actions import *
+from .basegrid_actions import *
+from .quadmoveby_actions import *
+from .tiledgrid_actions import *
+from .grid3d_actions import *
+from .camera_actions import *
+from .move_actions import *

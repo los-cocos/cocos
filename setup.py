@@ -8,7 +8,7 @@ $Date: 2011-08-14 23:00:00 -0300 (Wed, 14 August 2011) $
 
 __author__ = "cocos2d team"
 __author_email__ = "lucio.torre@gmail.com"
-__version__ = "0.5.5"
+__version__ = "0.6.0"
 __date__ = "2012 08 12"
 
 try:
@@ -43,16 +43,17 @@ setup(
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX :: Linux",
-        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
         ("Topic :: Software Development :: Libraries :: Python Modules"),
         ("Topic :: Games/Entertainment"),
         ],
  
-    packages = find_packages(),
+    packages = find_packages(exclude='.svn'),
     package_data={'cocos': ['resources/*']},
 
-    install_requires=['pyglet>=1.1.4',],
-    dependency_links=['http://code.google.com/p/pyglet/downloads/list',],
+    install_requires=['six', 'pyglet>=1.2',],
+    dependency_links=['hg+https://code.google.com/p/pyglet/#egg=pyglet-1.2',],
 
     include_package_data = True,
     zip_safe = False,

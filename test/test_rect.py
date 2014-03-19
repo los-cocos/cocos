@@ -32,7 +32,7 @@ class TestLayer(cocos.layer.Layer):
 
         self.sprite1 = Sprite('grossini.png', anchor=(0, 0))
         self.sprite_rect = None 
-        self.add(self.sprite1, z=1)
+        self.add(self.sprite1, z=2)
         self.sprite1.position = x // 3, y // 2
         self.show_rect()
         self.do(
@@ -102,9 +102,9 @@ Clicking or draging into the get_rect() changes the colored square that follows
 the mouse to red; when outside the get_rect() it turns blue. 
 
 For other variants on collision or mouse hit see
-    test\test_sprite_aabb.py,
-    samples\balldrive_toy_game
-    samples\mouse_elastic_box_selection.py
+    test/test_sprite_aabb.py,
+    samples/balldrive_toy_game
+    samples/mouse_elastic_box_selection.py
 """
 
 def main():

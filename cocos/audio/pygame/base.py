@@ -24,6 +24,7 @@ __version__ = '$Id: base.py 911 2006-08-09 08:56:31Z aholkner $'
 
 import atexit
 import sys
+import collections
 
 from cocos.audio import SDL
 
@@ -70,8 +71,9 @@ def init():
     else:
         fail += 1
 
-    for mod in sys.modules.values():
-        if hasattr(mod, '__PYGAMEinit__') and callable(mod.__PYGAMEinit__):
+    for mod in list(sys.modules.values()):
+        if (hasattr(mod, '__PYGAMEinit__') and
+            isinstance(mod.__PYGAMEinit__, collections.Callable)):
             try:
                 mod.__PYGAMEinit__()
                 success += 1

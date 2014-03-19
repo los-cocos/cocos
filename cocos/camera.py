@@ -33,10 +33,12 @@
 # ----------------------------------------------------------------------------
 '''Camera object'''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
-from director import director
-from euclid import Point3
+from cocos.director import director
+from cocos.euclid import Point3
 from pyglet.gl import *
 
 __all__ = ['Camera']

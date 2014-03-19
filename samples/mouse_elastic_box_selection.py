@@ -7,6 +7,9 @@ Drag a rectangle to select balls fully into rectangle
 Click outside any ball to unselect 
 Use arrow keys to move selection
 """
+
+from __future__ import division, print_function, unicode_literals
+
 import random
 import weakref
 
@@ -415,7 +418,7 @@ class EditLayer(cocos.layer.Layer):
             return
         
         if not self.dragging:
-            print "begin drag"
+            print("begin drag")
             self.begin_drag()
             return
 
@@ -446,7 +449,7 @@ class EditLayer(cocos.layer.Layer):
             self.drag_selecting = True
             self.adjust_elastic_box()
             self.elastic_box.visible = True
-            print "begin drag selection: drag_selecting, drag_moving", self.drag_selecting, self.drag_moving
+            print("begin drag selection: drag_selecting, drag_moving", self.drag_selecting, self.drag_moving)
 
         else:
             # want drag move
@@ -550,9 +553,9 @@ class Worldview(cocos.layer.ScrollableLayer):
             self.batch = cocos.batch.BatchNode()
             self.add(self.batch)
         self.actors = []
-        m = height/float(width)
+        m = height / width
         i = 0
-        for x in xrange(0, int(width), int(4*rPlayer)):
+        for x in range(0, int(width), int(4*rPlayer)):
             y = m*x
             actor = Actor()
             actor.update_position(eu.Vector2(float(x), float(y)))
@@ -569,14 +572,14 @@ class Worldview(cocos.layer.ScrollableLayer):
         scroller.set_focus(self.width/2.0, self.height/2.0) 
         
 
-print """
+print("""
 Interactive test for CollisionManager.objs_into_box
 Implements click selection plus elastic box selection
 Clicking anywhere will select the ball(s) under the mouse cursor
 Drag a rectangle to select balls fully into rectangle
 Click outside any ball to unselect 
 Use arrow keys to move selection
-"""
+""")
 
 director.init(**consts["window"])
 scene = cocos.scene.Scene()

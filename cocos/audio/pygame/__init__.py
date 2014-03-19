@@ -27,6 +27,9 @@ language. The package is highly portable, with games running on
 Windows, MacOS, OS X, BeOS, FreeBSD, IRIX, and Linux.
 '''
 
+from __future__ import division, print_function, unicode_literals
+import six
+
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: __init__.py 899 2006-08-04 16:52:18Z aholkner $'
 
@@ -46,10 +49,14 @@ class MissingModule:
             self.warn()
             self.urgent = 1
         MissingPygameModule = "%s module not available" % self.name
-        raise NotImplementedError, MissingPygameModule
+        raise NotImplementedError(MissingPygameModule)
 
-    def __nonzero__(self):
-        return 0
+    if six.PY2:
+        def __nonzero__(self):
+            return 0
+    else:
+        def __bool__(self):
+            return 0
 
     def warn(self):
         if self.urgent: type = 'import'
@@ -61,7 +68,7 @@ class MissingModule:
             else: level = 3
             warnings.warn(message, RuntimeWarning, level)
         except ImportError:
-            print message
+            print(message)
 
 
 
@@ -78,7 +85,7 @@ __version__ = ver
 #we still allow them to be missing for stripped down pygame distributions
 
 try: import cocos.audio.pygame.mixer
-except (ImportError,IOError), msg:mixer=MissingModule("mixer", msg, 0)
+except (ImportError,IOError) as msg:mixer=MissingModule("mixer", msg, 0)
 
 #there's also a couple "internal" modules not needed
 #by users, but putting them here helps "dependency finder"

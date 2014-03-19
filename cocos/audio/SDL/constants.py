@@ -408,7 +408,7 @@ TIMER_RESOLUTION = 0x0000000a
 # enum SDL_audiostatus
 (SDL_AUDIO_STOPPED,
     SDL_AUDIO_PLAYING,
-    SDL_AUDIO_PAUSED) = range(3)
+    SDL_AUDIO_PAUSED) = list(range(3))
 
 if sys.byteorder == 'little':
     AUDIO_U16SYS = AUDIO_U16LSB
@@ -424,7 +424,7 @@ AUDIO_S16 = AUDIO_S16LSB
 (CD_TRAYEMPTY,
     CD_STOPPED,
     CD_PLAYING,
-    CD_PAUSED) = range(4)
+    CD_PAUSED) = list(range(4))
 CD_ERROR = -1
 
 # From SDL_events.h (inserted manually)
@@ -452,7 +452,7 @@ CD_ERROR = -1
     SDL_EVENT_RESERVED4,
     SDL_EVENT_RESERVED5,
     SDL_EVENT_RESERVED6,
-    SDL_EVENT_RESERVED7) = range(24)
+    SDL_EVENT_RESERVED7) = list(range(24))
 SDL_USEREVENT = 24
 SDL_NUMEVENTS = 32
 
@@ -490,7 +490,7 @@ SDL_VIDEOEXPOSEMASK     = SDL_EVENTMASK(SDL_VIDEOEXPOSE)
 # enum SDL_eventaction
 (SDL_ADDEVENT,
     SDL_PEEKEVENT,
-    SDL_GETEVENT) = range(3)
+    SDL_GETEVENT) = list(range(3))
 
 #From SDL_joystick.h (inserted manually)
 SDL_HAT_RIGHTUP = SDL_HAT_RIGHT | SDL_HAT_UP
@@ -516,12 +516,12 @@ SDL_HAT_LEFTDOWN = SDL_HAT_LEFT | SDL_HAT_DOWN
     SDL_GL_MULTISAMPLEBUFFERS,
     SDL_GL_MULTISAMPLESAMPLES,
     SDL_GL_ACCELERATED_VISUAL,
-    SDL_GL_SWAP_CONTROL) = range(17)
+    SDL_GL_SWAP_CONTROL) = list(range(17))
 
 # enum SDL_GrabMode
 (SDL_GRAB_QUERY,
     SDL_GRAB_OFF,
-    SDL_GRAB_ON) = range(-1,2)
+    SDL_GRAB_ON) = list(range(-1,2))
 
 # From SDL_ttf.h (inserted manually)
 TTF_STYLE_NORMAL    = 0x00
@@ -545,7 +545,7 @@ else:
 # enum Mix_Fading
 (MIX_NO_FADING,
     MIX_FADING_OUT,
-    MIX_FADING_IN) = range(3)
+    MIX_FADING_IN) = list(range(3))
 
 # enum Mix_MusicType
 (MUS_NONE,
@@ -554,7 +554,7 @@ else:
     MUS_MOD,
     MUS_MID,
     MUS_OGG,
-    MUS_MP3) = range(7)
+    MUS_MP3) = list(range(7))
 
 # From SDL_sound.h (inserted manually):
 # enum Sound_SampleFlags

@@ -114,6 +114,8 @@ The director also has some useful attributes:
 
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import sys
@@ -142,7 +144,7 @@ class DefaultHandler( object ):
             return True
 
         elif symbol == pyglet.window.key.P and (modifiers & pyglet.window.key.MOD_ACCEL):
-            import scenes.pause as pause
+            import cocos.scenes.pause as pause
             pause_sc = pause.get_pause_scene()
             if pause:
                 director.push( pause_sc )

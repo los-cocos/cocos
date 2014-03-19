@@ -31,8 +31,14 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+
+from __future__ import division, print_function, unicode_literals
+
 import math
-import cPickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 import cocos
 from cocos.director import director
@@ -57,7 +63,7 @@ class Player(cocos.layer.Layer):
     def __init__(self, sk, skin, *anims):
         super(Player, self).__init__()
         self.skeleton = sk
-        self.anims = [ cPickle.load(open(a)) for a in anims ]
+        self.anims = [ pickle.load(open(a, "rb")) for a in anims ]
 
         # we create a skin. Skins are what are rendered.
         # skins also are cocos nodes, so we add it to ourselves
@@ -65,7 +71,7 @@ class Player(cocos.layer.Layer):
         self.add( self.skin )
 
         x, y = director.get_window_size()
-        self.skin.position = x/2, y/2
+        self.skin.position = x // 2, y // 2
         self.translate = False
         self.flipped = False
 
@@ -126,7 +132,7 @@ if __name__ == "__main__":
                "       each of this files will be asigned to a number 1-0"
 
     if len(sys.argv)<3:
-        print usage()
+        print(usage())
         sys.exit()
 
     skin_data = imp.load_source("skin", sys.argv[2]).skin

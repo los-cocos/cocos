@@ -34,6 +34,9 @@
 """
 Scene class and subclasses
 """
+
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 __all__ = ['Scene']
@@ -43,7 +46,10 @@ from pyglet.gl import *
 import cocos
 from cocos.director import director
 import cocos.cocosnode as cocosnode
-import cocos.audio.music
+try:
+    import cocos.audio.music
+except Exception:
+    pass
 
 class EventHandlerMixin(object):
     def add(self, child, *args, **kwargs):
@@ -99,8 +105,8 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
 
         x,y = director.get_window_size()
 
-        self.transform_anchor_x = x/2
-        self.transform_anchor_y = y/2
+        self.transform_anchor_x = x // 2
+        self.transform_anchor_y = y // 2
         self.music = None
         self.music_playing = False
 

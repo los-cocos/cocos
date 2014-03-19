@@ -395,6 +395,8 @@ If fastness is greather than the chasee fastness this action will certainly
 terminate, but we dont know how much time when the action starts.
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import copy
@@ -647,7 +649,7 @@ class Loop_Instant_Action(InstantAction):
         self.times = times
 
     def start(self):
-        for i in xrange(self.times):
+        for i in range(self.times):
             cpy = copy.deepcopy(self.one)
             cpy.start()
 

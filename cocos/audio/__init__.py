@@ -31,16 +31,19 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+
+from __future__ import division, print_function, unicode_literals
+
 __all__ = ['SDL', 'pygame']
 
 import cocos
 _working = True
 
 try:
-    import pygame.mixer
-except ImportError, error:
+    import cocos.audio.pygame.mixer
+except ImportError as error:
     # set to 0 to debug import errors
-    if 1:
+    if 0:
         _working = False
     else:
         raise
@@ -54,4 +57,3 @@ def initialize(arguments={}):
     if _working:
         pygame.mixer.init(**arguments)
         music.set_control('pygame')
-

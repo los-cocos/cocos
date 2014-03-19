@@ -8,6 +8,8 @@
 # 'internals' of generating a 3D effect.
 #
 
+from __future__ import division, print_function, unicode_literals
+
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -40,8 +42,8 @@ class Flag3D( cocos.layer.Layer ):
         self.grid_size = Point2(20,20)
 
         # size of each tile
-        self.x_step = x / self.grid_size.x
-        self.y_step = y / self.grid_size.y
+        self.x_step = x // self.grid_size.x
+        self.y_step = y // self.grid_size.y
 
         # calculate vertex, textures depending on image size
         idx_pts, ver_pts_idx, tex_pts_idx = self._calculate_vertex_points()
@@ -115,8 +117,8 @@ class Flag3D( cocos.layer.Layer ):
         # generate the vertex array with the correct values
 
         # size of the texture (power of 2)
-        w = float(self.image.width)/self.texture.tex_coords[3]
-        h = float(self.image.height)/self.texture.tex_coords[7]
+        w = float(self.image.width)//self.texture.tex_coords[3]
+        h = float(self.image.height)//self.texture.tex_coords[7]
 
         index_points = []
         vertex_points_idx = []

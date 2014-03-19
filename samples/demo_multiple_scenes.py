@@ -2,6 +2,8 @@
 # cocos2d
 # http://cocos2d.org
 #
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -26,9 +28,9 @@ class TestLayer(cocos.layer.Layer):
         sprite2 = Sprite( 'grossinis_sister1.png' )
         sprite3 = Sprite( 'grossinis_sister2.png' )
 
-        sprite1.position = (x/2, y/2 )
-        sprite2.position = (x/4, y/2 )
-        sprite3.position = (3*x/4.0, y/2 )
+        sprite1.position = (x//2, y//2 )
+        sprite2.position = (x//4, y//2 )
+        sprite3.position = (3*x/4.0, y//2 )
 
         self.add( sprite2 )
         self.add( sprite1 )

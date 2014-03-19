@@ -3,6 +3,9 @@
 # http://cocos2d.org
 #
 # This code is so you can run the samples without installing the package
+
+from __future__ import division, print_function, unicode_literals
+
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))

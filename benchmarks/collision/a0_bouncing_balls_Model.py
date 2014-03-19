@@ -13,6 +13,8 @@
         engine, like pymunk or box2D
 """
 
+from __future__ import division, print_function, unicode_literals
+
 import random
 import time
 import math
@@ -45,7 +47,7 @@ def get_ball_maker(cshape_cls_name, radius):
     elif cshape_cls_name == 'AARectShape':
         return with_AARectShape
     else:
-        print "\n Error, unknown cshape class name:", cshape_cls_name
+        print("\n Error, unknown cshape class name:", cshape_cls_name)
 
 
 class World(object):
@@ -83,8 +85,8 @@ class World(object):
             try:
                 self.collman.add(actor)
             except:
-                print 'ex in add; pos: %7.3f , %7.3f'%(actor.cshape.center[0],
-                                                       actor.cshape.center[1])
+                print('ex in add; pos: %7.3f , %7.3f'%(actor.cshape.center[0],
+                                                       actor.cshape.center[1]))
 
 
     def update(self, dt):
@@ -142,7 +144,7 @@ class World(object):
 
     
 def cocos_visualization():
-    print """
+    print("""
         This script has two purposes:
 
             Allow to benchmark different collision managers
@@ -155,7 +157,7 @@ def cocos_visualization():
 
         Finally, for accurate physics simulation I would go with a 2D physics
         engine, like pymunk or box2D
-        """
+        """)
 
     # instantiate and fill World
     world_params = {

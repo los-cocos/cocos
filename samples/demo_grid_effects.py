@@ -6,6 +6,9 @@
 # http://www.imitationpickles.org
 #
 
+from __future__ import division, print_function, unicode_literals
+import six
+
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -39,7 +42,7 @@ class FireManager( Layer ):
             blend_src=GL_SRC_ALPHA, blend_dest=GL_ONE)
         self.vertex_list = self.batch.add(4*num, GL_QUADS, self.group,
             'v2i', 'c4B', ('t3f', self.fimg.texture.tex_coords*num))
-        for n in xrange(0, num):
+        for n in range(0, num):
             f = Fire(0,0,0,0,0)
             self.goodies.append(f)
             self.vertex_list.vertices[n*8:(n+1)*8] = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -67,7 +70,11 @@ class FireManager( Layer ):
             f.frame -= 1
             ww,hh = w*f.scale,h*f.scale
             x-=ww/2
-            verts[n*8:(n+1)*8] = map(int,[x,y,x+ww,y,x+ww,y+hh,x,y+hh])
+            if six.PY2:
+                vs = map(int,[x,y,x+ww,y,x+ww,y+hh,x,y+hh])
+            else:
+                vs = list(map(int,[x,y,x+ww,y,x+ww,y+hh,x,y+hh]))
+            verts[n*8:(n+1)*8] = vs
             clrs[n*16:(n+1)*16] = [r,g,b,255] * 4
 
     def draw( self ):
@@ -148,7 +155,7 @@ class MainMenu(Menu):
     # Callbacks
     def on_new_game( self ):
 #        director.set_scene( StartGame() )
-        print "on_new_game()"
+        print("on_new_game()")
            
 
     def on_scores( self ):

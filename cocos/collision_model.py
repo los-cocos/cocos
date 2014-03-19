@@ -32,6 +32,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
 import operator as op
@@ -604,13 +606,13 @@ class CollisionManagerGrid(object):
         self.cell_width = cell_width
         self.cell_height = cell_height
 
-        cols = int(math.ceil((xmax - xmin)/float(cell_width)))
-        rows = int(math.ceil((ymax - ymin)/float(cell_height)))
+        cols = int(math.ceil((xmax - xmin) / cell_width))
+        rows = int(math.ceil((ymax - ymin) / cell_height))
         self.cols = cols
         self.rows = rows
         numbuckets = cols*rows
         # buckets maps cell identifier -> objs that potentially overlaps the cell
-        self.buckets = [set() for k in xrange(numbuckets)]
+        self.buckets = [set() for k in range(numbuckets)]
 
     def add(self, obj):
         # add to any bucket it overlaps
@@ -764,10 +766,10 @@ class CollisionManagerGrid(object):
     def _iter_cells_for_aabb(self, aabb):
         # iterate all buckets overlapping the rectangle minmax
         minx, maxx, miny, maxy = aabb
-        ix_lo = int(math.floor((minx - self.xmin)/self.cell_width))
-        ix_sup = int(math.ceil((maxx - self.xmin)/self.cell_width))
-        iy_lo = int(math.floor((miny - self.ymin)/self.cell_height))
-        iy_sup = int(math.ceil((maxy - self.ymin)/self.cell_height))
+        ix_lo = int(math.floor((minx - self.xmin) / self.cell_width))
+        ix_sup = int(math.ceil((maxx - self.xmin) / self.cell_width))
+        iy_lo = int(math.floor((miny - self.ymin) / self.cell_height))
+        iy_sup = int(math.ceil((maxy - self.ymin) / self.cell_height))
 
         # but disregard cells ouside world, can come from near questions
         if ix_lo < 0:
@@ -779,8 +781,8 @@ class CollisionManagerGrid(object):
         if iy_sup > self.rows:
             iy_sup = self.rows
 
-        for iy in xrange(iy_lo, iy_sup):
+        for iy in range(iy_lo, iy_sup):
             contrib_y = iy * self.cols
-            for ix in xrange(ix_lo, ix_sup):
+            for ix in range(ix_lo, ix_sup):
                 cell_id = ix + contrib_y
                 yield cell_id

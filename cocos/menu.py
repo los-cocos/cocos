@@ -49,6 +49,8 @@ or entry items (which lets you enter alphanumeric data).
 To use a menu in your code, just subclass `Menu` and add the menu to an `Scene` or
 another `Layer`.
 """
+
+from __future__ import division, print_function, unicode_literals
 from six import string_types
 
 __docformat__ = 'restructuredtext'
@@ -59,12 +61,12 @@ from pyglet.window import key
 from pyglet.gl import *
 import pyglet.graphics
 
-from layer import *
-from director import *
-from cocosnode import *
-from actions import *
-from sprite import Sprite
-import rect
+from cocos.layer import *
+from cocos.director import *
+from cocos.cocosnode import *
+from cocos.actions import *
+from cocos.sprite import Sprite
+from cocos import rect
 
 __all__ = [ 'Menu',                                         # menu class
 
@@ -750,8 +752,8 @@ class ColorMenuItem( MenuItem ):
             item = self.item
 
         x1 = int(item._get_left() + item.labelWidth * 1.05)
-        y1 = int(item.y - item.content_height / 2)
-        y2 = int(item.y + item.content_height / 3)
+        y1 = int(item.y - item.content_height // 2)
+        y2 = int(item.y + item.content_height // 3)
         x2 = int(x1 + (y2 - y1) * 2)
         pyglet.graphics.draw(4, pyglet.graphics.GL_QUADS,
                              ('v2f', (x1, y1, x1, y2, x2, y2, x2, y1)),
@@ -763,7 +765,7 @@ def shake():
     '''Predefined action that performs a slight rotation and then goes back to the original rotation
     position.
     '''
-    angle = 05
+    angle = 5
     duration = 0.05
 
     rot = Accelerate(RotateBy( angle, duration ), 2)

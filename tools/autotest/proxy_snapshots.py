@@ -1,3 +1,6 @@
+from __future__ import division, print_function, unicode_literals
+import six
+
 import sys
 import os
 
@@ -5,7 +8,49 @@ import remembercases.snapshot_taker as st
 
 import random
 # seed random for repeteability
-random.seed('123')
+random.seed(123)
+# for repeteabilty between py2 and py3 when running in autotest, random.randint
+# random.shuffle, random.choice and random.randrange are redefined
+def randint(lo, hi):
+    return lo + int(random.random()*(hi-lo+1))
+random.randint = randint
+
+def shuffle(alist):
+    # inplace
+    a = [ (random.random(), e) for e in alist]
+    a.sort(key=lambda x: x[0])
+    for i in range(len(alist)):
+        alist[i] = a[i][1]
+random.shuffle = shuffle
+
+def choice(seq):
+    return seq[random.randint(0, len(seq)-1)]
+random.choice = choice
+
+def randrange(*args):
+    """
+    randrange(stop)
+    randrange(start, stop [, step])
+
+    Return a randomly selected element from range(start, stop, step).
+    This is equivalent to choice(range(start, stop, step)),
+    but doesn't actually build a range object.
+    
+    NOTE: this implementation is inefficient and can have an huge overhead
+    on memory usage; it is intended for testing purposes and small ranges.
+    """
+    assert len(args)>0
+    start = 0
+    step = 1
+    if len(args)==3:
+        step = args[2]
+    if len(args)>1:
+        start = args[0]
+        stop = args[1]
+    else:
+        stop = args[0]
+    return choice(range(start, stop, step))
+random.randrange = randrange    
 
 import pyglet
 import cocos
@@ -38,9 +83,9 @@ def main(script_name, stored_testinfo, snapshots_dir):
     # ...
     sys.path.insert(0, os.getcwd())
     module_name = script_name[:script_name.rfind('.py')]
-    print 'module name:', module_name
+    print('module name:', module_name)
     s = "import %s as script_module"%module_name
-    exec(s)
+    six.exec_(s, globals())
 
     if stored_testinfo != script_module.testinfo:
         sys.stderr.write("Es01 - received testinfo doesn't match script testinfo. (db outdated?)\n")

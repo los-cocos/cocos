@@ -42,8 +42,10 @@ utils
 This module provides classes or functions that were useful to us while doing games.
 """
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
-from cocos.layer import *
+
 from cocos.scene import Scene
 from cocos.director import director
 

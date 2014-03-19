@@ -39,20 +39,19 @@ Functionality other that the one common to all cococsnodes, except 'opacity', is
 provided by the member 'element' , which is the underlying pyglet object.
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
-from director import director
-import cocosnode
-from batch import *
+from cocos.director import director
+from cocos.cocosnode import CocosNode
 
 import pyglet
 from pyglet.graphics import OrderedGroup
 from pyglet import image
 from pyglet.gl import *
 
-from batch import *
-
-class TextElement(cocosnode.CocosNode):
+class TextElement(CocosNode):
     """
     Base class for all cocos text
 

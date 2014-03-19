@@ -37,6 +37,9 @@ This module provides an API for loading, saving and rendering a map
 constructed of image tiles.
 '''
 
+from __future__ import division, print_function, unicode_literals
+import six
+
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: resource.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 
@@ -44,10 +47,7 @@ import os
 from math import ceil, sqrt, floor
 import struct
 import weakref
-try:
-    from xml.etree import ElementTree
-except ImportError:
-    import elementtree.ElementTree as ElementTree
+from xml.etree import ElementTree
 
 import pyglet
 from pyglet import gl
@@ -55,6 +55,8 @@ from pyglet import gl
 import cocos
 from cocos.director import director
 from cocos.rect import Rect
+
+unicode = six.text_type
 
 # Implement these classes for backwards compatibility; some older code
 # expects ScrollableLayer and ScrollingManager to be in the tiles module.
@@ -198,6 +200,9 @@ def load(filename):
     # make sure we can find files relative to this one
     dirname = os.path.dirname(filename)
     if dirname and dirname not in pyglet.resource.path:
+        if os.sep == '\\':
+            # pyglet resource does not accept '\' in relative paths 
+            dirname = dirname.replace(os.sep, '/')
         pyglet.resource.path.append(dirname)
         pyglet.resource.reindex()
 
@@ -225,6 +230,17 @@ def load_tiles(filename):
             root.name)
     resource.handle(root)
     return resource
+
+def decode_base64(s):
+    "returns a bytes object"
+    if six.PY2:
+        return s.decode('base64')
+    else:
+        import base64
+        b = s.encode('utf-8')
+        return base64.b64decode(b)
+        
+        
 
 def load_tmx(filename):
     '''Load some tile mapping resources from a TMX file.
@@ -288,8 +304,13 @@ def load_tmx(filename):
             raise ValueError('layer %s does not contain <data>' % layer.name)
 
         data = data.text.strip()
-        data = data.decode('base64').decode('zlib')
-        data = struct.unpack('<%di' % (len(data)/4,), data)
+        data = decode_base64(data)
+        if six.PY2:
+            data = data.decode('zlib')
+        else:
+            import zlib
+            data = zlib.decompress(data)
+        data = struct.unpack(str('<%di' % (len(data)//4)), data)
         assert len(data) == width * height
 
         cells = [[None] * height for x in range(width)]
@@ -417,12 +438,12 @@ def imageatlas_factory(resource, tag):
 
     for child in tag:
         if child.tag != 'image':
-            raise ValueError, 'invalid child'
+            raise ValueError('invalid child')
 
         if child.get('size'):
             width, height = map(int, child.get('size').split('x'))
         elif d_width is None:
-            raise ValueError, 'atlas or subimage must specify size'
+            raise ValueError('atlas or subimage must specify size')
         else:
             width, height = d_width, d_height
 
@@ -513,8 +534,8 @@ class TileSet(dict):
     @classmethod
     def from_atlas(cls, name, firstgid, file, tile_width, tile_height):
         image = pyglet.image.load(file)
-        rows = image.height / tile_height
-        columns = image.width / tile_width
+        rows = image.height // tile_height
+        columns = image.width // tile_width
         image_grid = pyglet.image.ImageGrid(image, rows, columns)
         atlas = pyglet.image.TextureGrid(image_grid)
         id = firstgid
@@ -1209,7 +1230,7 @@ class HexMap(RegularTesselationMap):
         cj = int( floor( 1.0 * ty / height) )
         cy = ty - height * cj
 
-        if (cx <= abs(radius / 2.0 - radius * cy / (1.0*height))):
+        if (cx <= abs(radius / 2.0 - radius * cy / height)):
             cj = cj + (ci % 2) - (1 if (cy < height / 2.0) else 0)
             ci = ci - 1
         return ci, cj
@@ -1258,7 +1279,7 @@ class HexMap(RegularTesselationMap):
             else:
                 return self.get_cell(cell.i + 1, cell.j - 1)
         else:
-            raise ValueError, 'Unknown direction %r'%direction
+            raise ValueError('Unknown direction %r'%direction)
 
     def get_neighbors(self, cell):
         '''Get all neighbor cells for the nominated cell.
@@ -1348,7 +1369,7 @@ class HexCell(Cell):
         Cell.__init__(self, i, j, width, height, properties, tile)
 
     def get_origin(self):
-        x = self.i * (self.width / 2 + self.width // 4)
+        x = self.i * (self.width // 2 + self.width // 4)
         y = self.j * self.height
         if self.i % 2:
             y += self.height // 2

@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -54,15 +56,15 @@ class GameModel( pyglet.event.EventDispatcher ):
     def init_map(self):
         '''creates a map'''
         self.map= {}
-        for i in xrange( COLUMNS ):
-            for j in xrange( ROWS ):
+        for i in range( COLUMNS ):
+            for j in range( ROWS ):
                 self.map[ (i,j) ] = 0
 
     def check_line(self):
         '''checks if the line is complete'''
         lines = []
-        for j in xrange( ROWS ):
-            for i in xrange( COLUMNS ):
+        for j in range( ROWS ):
+            for i in range( COLUMNS ):
                 c = self.map.get( (i,j) )
                 if not c:
                     break
@@ -73,7 +75,7 @@ class GameModel( pyglet.event.EventDispatcher ):
 
         effects = []
         for j in lines:
-            for i in xrange(COLUMNS):
+            for i in range(COLUMNS):
                 e = self.map[ (i,j) ]
                 if e in Colors.specials:
                     effects.append( e )
@@ -82,8 +84,8 @@ class GameModel( pyglet.event.EventDispatcher ):
             self.process_effects( effects )
 
         for l in lines:
-            for j in xrange(l, ROWS-1 ):
-                for i in xrange(COLUMNS):
+            for j in range(l, ROWS-1 ):
+                for i in range(COLUMNS):
                     self.map[ (i,j) ] = self.map[ (i,j+1) ]
 
         if lines:
@@ -133,16 +135,16 @@ class GameModel( pyglet.event.EventDispatcher ):
 
     def merge_block( self ):
         '''merges a block in the map'''
-        for i in xrange( self.block.x ):
-            for j in xrange( self.block.x ):
+        for i in range( self.block.x ):
+            for j in range( self.block.x ):
                 c= self.block.get(i,j)
                 if c:
                     self.map[ (i+self.block.pos.x, j+self.block.pos.y) ] = c
 
     def are_valid_movements(self):
         '''check wheter there are any left valid movement'''
-        for i in xrange(self.block.x):
-            for j in xrange(self.block.x):
+        for i in range(self.block.x):
+            for j in range(self.block.x):
                 if self.block.get(i,j):
                     if j + self.block.pos.y == 0:
                         return False
@@ -229,8 +231,8 @@ class GameModel( pyglet.event.EventDispatcher ):
 
     def is_valid_block( self ):
         '''check wheter the block is valid in the current position'''
-        for i in xrange( self.block.x ):
-            for j in xrange( self.block.x ):
+        for i in range( self.block.x ):
+            for j in range( self.block.x ):
                 if self.block.get(i,j):
                     if self.block.pos.x+i < 0:
                         return False
@@ -248,11 +250,11 @@ class Block( object ):
     def __init__(self):
         super( Block, self).__init__()
 
-        self.pos = Point2( COLUMNS/2-1, ROWS )
+        self.pos = Point2( COLUMNS//2-1, ROWS )
         self.rot = 0
 
-        for x in xrange( len(self._shape) ):
-            for y in xrange( len( self._shape[x]) ):
+        for x in range( len(self._shape) ):
+            for y in range( len( self._shape[x]) ):
                 if self._shape[x][y]:
                     r = random.random()
                     if r < status.level.prob:
@@ -263,8 +265,8 @@ class Block( object ):
 
     def draw( self ):
         '''draw the block'''
-        for i in xrange(self.x):
-            for j in xrange(self.x):
+        for i in range(self.x):
+            for j in range(self.x):
                 c = self.get(i,j)
                 if c:
                     Colors.images[c].blit( (i + self.pos.x) * SQUARE_SIZE, (j + self.pos.y) * SQUARE_SIZE)

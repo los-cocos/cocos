@@ -40,10 +40,11 @@ Batches allow you to optimize the number of gl calls using pyglets batch
 
 """
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
 
-import cocosnode
-from batch import *
+from cocos.cocosnode import CocosNode
 
 import pyglet
 from pyglet.graphics import OrderedGroup
@@ -59,7 +60,7 @@ def ensure_batcheable(node):
     for c in  node.get_children():
         ensure_batcheable(c)
 
-class BatchNode( cocosnode.CocosNode ):
+class BatchNode( CocosNode ):
     def __init__(self):
         super(BatchNode, self).__init__()
         self.batch = pyglet.graphics.Batch()
@@ -90,7 +91,7 @@ class BatchNode( cocosnode.CocosNode ):
     def draw(self):
         pass # All drawing done in visit!
 
-class BatchableNode( cocosnode.CocosNode ):
+class BatchableNode( CocosNode ):
     def add(self, child, z=0, name=None):
         batchnode = self.get_ancestor(BatchNode)
         if not batchnode:

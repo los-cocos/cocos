@@ -24,10 +24,12 @@ __version__ = '$Id: $'
 
 from ctypes import *
 
-import dll
-import version
-import array
-import rwops
+import cocos.compat
+
+from . import dll
+from . import version
+from . import array
+from . import rwops
 
 _dll = dll.SDL_DLL('SDL_mixer', 'Mix_Linked_Version', '1.2')
 
@@ -62,7 +64,7 @@ class Mix_Chunk(Structure):
     def __getattr__(self, attr):
         if attr == 'abuf':
             return array.SDL_array(self._abuf, self.alen, c_ubyte)
-        raise AttributeError, attr
+        raise AttributeError(attr)
 
 # opaque type
 _Mix_Music = c_void_p
@@ -142,7 +144,8 @@ def Mix_LoadWAV(file):
 
     :rtype: `Mix_Chunk`
     '''
-    return Mix_LoadWAV_RW(rwops.SDL_RWFromFile(file, 'rb'), 1)
+    filename = cocos.compat.asciibytes(file)
+    return Mix_LoadWAV_RW(rwops.SDL_RWFromFile(filename, b'rb'), 1)
 
 Mix_LoadMUS = _dll.function('Mix_LoadMUS',
     '''Load a WAV, MID, OGG, MP3 or MOD file.

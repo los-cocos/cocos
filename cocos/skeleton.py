@@ -31,8 +31,14 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+
+from __future__ import division, print_function, unicode_literals
+
 import math
-import cPickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 import cocos
 from cocos import euclid
@@ -209,8 +215,8 @@ class Skeleton(object):
         return sk
 
     def save(self, name):
-        f = open(name, "w")
-        cPickle.dump(self, f)
+        f = open(name, "wb")
+        pickle.dump(self, f)
         f.close()
 
     def move(self, dx, dy):
@@ -309,7 +315,7 @@ class Bone(object):
         return bone
 
     def dump(self, depth=0):
-        print "-"*depth, self
+        print("-"*depth, self)
         for c in self.children:
             c.dump(depth+1)
 

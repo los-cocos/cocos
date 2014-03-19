@@ -42,9 +42,12 @@ the Interval Actions.
 
 '''
 
+from __future__ import division, print_function, unicode_literals
+
 __docformat__ = 'restructuredtext'
+
 import copy
-from base_actions import *
+from .base_actions import *
 
 __all__ = [
             'Place',                            # placement action

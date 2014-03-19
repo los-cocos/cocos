@@ -4,6 +4,9 @@ Implementing 2D drawing primitives using
 pyglet.gl
 copyright 2007 by Flavio Codeco Coelho
 """
+
+from __future__ import division, print_function, unicode_literals
+
 from pyglet import font
 from pyglet import clock
 from pyglet import window
@@ -425,6 +428,7 @@ def calcRectCenter(l,t,r,b):#,v=()):
 if __name__=="__main__":
     import random
     win = window.Window()
+    glClearColor(.8, .8, .8, 1.0)
     glEnable(GL_BLEND)
     
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -435,7 +439,7 @@ if __name__=="__main__":
     l = Line((10,299),(100,299),stroke=2,color=(0,0.,1.,1.))
     while not win.has_exit:
         win.dispatch_events()
-        col = [random.random() for i in xrange(3)]+[1]
+        col = [random.random() for i in range(3)]+[1]
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         c.color = col
         c.render()

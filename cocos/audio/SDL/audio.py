@@ -9,10 +9,10 @@ __version__ = '$Id: $'
 from ctypes import *
 import sys
 
-import array
-import constants
-import dll
-import rwops
+from . import array
+from . import constants
+from . import dll
+from . import rwops
 
 _SDL_AudioSpec_fn = \
     CFUNCTYPE(POINTER(c_ubyte), POINTER(c_ubyte), POINTER(c_ubyte), c_int)
@@ -123,7 +123,7 @@ def _ctype_audio_format(fmt):
     elif fmt in (constants.AUDIO_S16LSB, constants.AUDIO_S16MSB):
         return c_short
     else:
-        raise TypeError, 'Unsupported format %r' % fmt
+        raise TypeError('Unsupported format %r' % fmt)
 
 _SDL_OpenAudio = dll.private_function('SDL_OpenAudio',
     arg_types=[POINTER(SDL_AudioSpec), POINTER(SDL_AudioSpec)],
@@ -196,7 +196,7 @@ def SDL_OpenAudio(desired, obtained):
 
     '''
     if not hasattr(desired, 'callback'):
-        raise TypeError, 'Attribute "callback" not set on "desired"'
+        raise TypeError('Attribute "callback" not set on "desired"')
     userdata = getattr(desired, 'userdata', None)
     callback = desired.callback
     ctype = [_ctype_audio_format(desired.format)]  # List, so mutable
@@ -381,9 +381,9 @@ def SDL_MixAudio(dst, src, length, volume):
     dstref, dst = array.to_ctypes(dst, len(dst), c_ubyte)
     srcref, src = array.to_ctypes(src, len(src), c_ubyte)
     if len(dst) < length:
-        raise TypeError, 'Destination buffer too small'
+        raise TypeError('Destination buffer too small')
     elif len(src) < length:
-        raise TypeError, 'Source buffer too small'
+        raise TypeError('Source buffer too small')
     _SDL_MixAudio(dst, src, length, volume)
 
 SDL_LockAudio = dll.function('SDL_LockAudio',

@@ -2,6 +2,8 @@
 exercise and develop autotest funtionality
 """
 
+from __future__ import division, print_function, unicode_literals
+
 import sys
 msg = """
 To run this script you need the package remembercases, which can be found at
@@ -11,7 +13,7 @@ Instructions about how to install in the same page.
 try:
     import remembercases
 except ImportError:
-    print msg
+    print(msg)
     sys.exit(1)
     
 import os
@@ -157,27 +159,27 @@ def update_3(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     return checked_in, unknown, move_failed
 
 
-def update_5(db, filename_persist, snapshots_dir):
-    """ re-(scan + snapshot) for this files"""
-    text = """
-         test/test_SequenceScene.py
-         test/test_lens_3d.py
-         test/test_fadeto.py
-         test/test_grid_effect_in_layer.py
-         test/test_grid_effect_in_sprite.py
-         test/test_particle_explosion.py
-         test/test_particle_fire.py
-         test/test_particle_fireworks.py
-         test/test_particle_flower.py
-         test/test_particle_galaxy.py
-         test/test_particle_meteor.py
-         test/test_particle_smoke.py
-         test/test_particle_spiral.py
-         test/test_transition_jumpzoom.py
-         test/test_transition_rotozoom.py
-         """
-    candidates = doers.scripts_names_from_text(text, end_mark=':')
-    hl.re_scan_and_shoot(db, filename_persist, candidates, snapshots_dir)
+##def update_5(db, filename_persist, snapshots_dir):
+##    """ re-(scan + snapshot) for this files"""
+##    text = """
+##         test/test_SequenceScene.py
+##         test/test_lens_3d.py
+##         test/test_fadeto.py
+##         test/test_grid_effect_in_layer.py
+##         test/test_grid_effect_in_sprite.py
+##         test/test_particle_explosion.py
+##         test/test_particle_fire.py
+##         test/test_particle_fireworks.py
+##         test/test_particle_flower.py
+##         test/test_particle_galaxy.py
+##         test/test_particle_meteor.py
+##         test/test_particle_smoke.py
+##         test/test_particle_spiral.py
+##         test/test_transition_jumpzoom.py
+##         test/test_transition_rotozoom.py
+##         """
+##    candidates = doers.scripts_names_from_text(text, end_mark=':')
+##    hl.re_scan_and_shoot(db, filename_persist, candidates, snapshots_dir)
 
 def update_6(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     """
@@ -249,16 +251,16 @@ def update_6(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     return checked_in, unknown, move_failed
 
 
-def update_7(db, filename_persist):
-    """add new tests"""
-    text = """
-        test/test_schedule_interval.py : new, svn add done
-        test/test_aspect_ratio_on_resize.py : new, svn add done
-        """
-    candidates = doers.scripts_names_from_text(text, end_mark=':')
-    hl.add_entities(db, filename_persist, candidates)
-    db.history_add("added tests", text)
-    dbm.db_save(db, filename_persist)
+##def update_7(db, filename_persist):
+##    """add new tests"""
+##    text = """
+##        test/test_schedule_interval.py : new, svn add done
+##        test/test_aspect_ratio_on_resize.py : new, svn add done
+##        """
+##    candidates = doers.scripts_names_from_text(text, end_mark=':')
+##    hl.add_entities(db, filename_persist, candidates)
+##    db.history_add("added tests", text)
+##    dbm.db_save(db, filename_persist)
 
 def update_9(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     """
@@ -295,42 +297,42 @@ def update_9(db, filename_persist, snapshots_dir, snapshots_reference_dir):
 
     return checked_in, unknown, move_failed
 
-def update_10(db, filename_persist, snapshots_dir):
-    """ delete this entities, they were added with wrong path"""
-    text = """
-        tools/autotest/test/test_aspect_ratio_on_resize.py
-        tools/autotest/test/test_schedule_interval.py
-        tools/autotest/test_aspect_ratio_on_resize.py
-         """
-    candidates = doers.scripts_names_from_text(text, end_mark=':')
-    for name in candidates:
-        db.del_entity(name)
-    db.history_add("deleted unwanted entities", text)
-    dbm.db_save(db, filename_persist)
+##def update_10(db, filename_persist, snapshots_dir):
+##    """ delete this entities, they were added with wrong path"""
+##    text = """
+##        tools/autotest/test/test_aspect_ratio_on_resize.py
+##        tools/autotest/test/test_schedule_interval.py
+##        tools/autotest/test_aspect_ratio_on_resize.py
+##         """
+##    candidates = doers.scripts_names_from_text(text, end_mark=':')
+##    for name in candidates:
+##        db.del_entity(name)
+##    db.history_add("deleted unwanted entities", text)
+##    dbm.db_save(db, filename_persist)
 
-def update_11(db, filename_persist, snapshots_dir):
-    """ Reflect some test renames (added but without testinfo): delete, add
-        If there were snapshots or testrun props more caoutious aproach is
-        needed"""
-    
-    text1 = """
-        test/test_rotate_move_reverse.py
-        test/test_local_coordinates.py
-         """
-    candidates = doers.scripts_names_from_text(text1, end_mark=':')
-    for name in candidates:
-        db.del_entity(name)
-
-    text2 = """
-        test/test_rotate_reverse.py
-        test/test_rect.py
-        """
-    candidates = doers.scripts_names_from_text(text2, end_mark=':')
-    hl.hl.add_entities(db, filename_persist, candidates)
-
-    text = text1 + '\nto\n' + text2
-    db.history_add("renamed entities", text)
-    dbm.db_save(db, filename_persist)
+##def update_11(db, filename_persist, snapshots_dir):
+##    """ Reflect some test renames (added but without testinfo): delete, add
+##        If there were snapshots or testrun props more caoutious aproach is
+##        needed"""
+##    
+##    text1 = """
+##        test/test_rotate_move_reverse.py
+##        test/test_local_coordinates.py
+##         """
+##    candidates = doers.scripts_names_from_text(text1, end_mark=':')
+##    for name in candidates:
+##        db.del_entity(name)
+##
+##    text2 = """
+##        test/test_rotate_reverse.py
+##        test/test_rect.py
+##        """
+##    candidates = doers.scripts_names_from_text(text2, end_mark=':')
+##    hl.hl.add_entities(db, filename_persist, candidates)
+##
+##    text = text1 + '\nto\n' + text2
+##    db.history_add("renamed entities", text)
+##    dbm.db_save(db, filename_persist)
 
 
 def update_19(db, filename_persist, snapshots_dir, snapshots_reference_dir):
@@ -375,8 +377,10 @@ def update_21(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     to the reference snapshots folder
     """
     text = """
-    test/test_label_changing.py
-    test/test_batch2.py
+        test/test_label_changing.py
+        test/test_batch2.py
+        test/test_scalexy.py
+        test/test_shader_examples.py
     """
     candidates = doers.scripts_names_from_text(text, end_mark=':')
     checked_in, unknown, move_failed = hl.update_testrun__pass(db,
@@ -444,6 +448,24 @@ def update_22(db, filename_persist, snapshots_dir, snapshots_reference_dir):
     hl.update_testrun__bad(db, filename_persist, testrun_props_by_candidate,
                            snapshots_dir, snapshots_reference_dir)
 
+def update_23(db, filename_persist, snapshots_dir, snapshots_reference_dir):
+    """
+    This files 'pass', register them as such and move their snapshots
+    to the reference snapshots folder (but the second script should be
+    updated for better autotest)
+    """
+    text = """
+        test/test_fadeto.py
+        test/test_draw_elbows2.py
+    """
+    candidates = doers.scripts_names_from_text(text, end_mark=':')
+    checked_in, unknown, move_failed = hl.update_testrun__pass(db,
+                                        filename_persist, candidates,
+                                        snapshots_dir, snapshots_reference_dir)    
+
+    return checked_in, unknown, move_failed
+
+
 
 # <-- one-off tasks
 
@@ -451,7 +473,7 @@ def update_22(db, filename_persist, snapshots_dir, snapshots_reference_dir):
 # filename to persist the db
 filename_persist = 'initial.dat'
 # change the string to identify about which machine is the info collected 
-testbed = 'ati 6320'
+testbed = 'cpu intel E7400, gpu ati 6570 with Catalyst 11-5 drivers, win xp sp3'
 # dir used to calculate canonical paths
 basepath = '../..'
 # dir where update_snapshots will store snapshots
@@ -520,60 +542,62 @@ if clean:
     # asses these tests have problems
     update_22(db, filename_persist, snapshots_dir, snapshots_reference_dir)
 
+    # asses these tests pass human inspection; store snapshots for reference
+    update_23(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+
 else:
     db = dbm.db_load(filename_persist, default_testbed=testbed)
 
-
 # a concise status report
-print progress_report(db, verbose=False)
+print(progress_report(db, verbose=False))
 
 ### list tests with bad testinfo
-##print hl.rpt(db, ['testinfo_invalid'], verbose=True)
+##print(hl.rpt(db, ['testinfo_invalid'], verbose=True))
 ##
 ### details for tests with bad testinfo, including diagnostic
-##print hl.rpt_detail_diagnostics(db, 'testinfo_invalid')
+##print(hl.rpt_detail_diagnostics(db, 'testinfo_invalid'))
 ##
 ##
 ### entities with no props, it can be 'added but not scaned' or 'added with
 ### wrong name'
-###print hl.rpt(db, ['no_props'], verbose=True)
+###print(hl.rpt(db, ['no_props'], verbose=True))
 ##
-### tests that don't have testinfo at all 
-##print hl.rpt(db, ['testinfo_missing'], verbose=True)
+### tests that don't have testinfo at all
+##print(hl.rpt(db, ['testinfo_missing'], verbose=True))
 ##
 ### tests that can't be readed, probably due to name mismatch 
-### print hl.rpt(db, ['IOerror'])
+### print(hl.rpt(db, ['IOerror']))
 ##
-### print detailed info about test that tried but failed to take snapshots
-##print hl.rpt_detail_diagnostics(db, 'snapshots_failure')
+# print detailed info about test that tried but failed to take snapshots
+print(hl.rpt_detail_diagnostics(db, 'snapshots_failure'))
 ##
 ### lists test that took snapshots without technical problems
-####print hl.rpt(db, ['snapshots_success'], verbose=True)
+####print(hl.rpt(db, ['snapshots_success'], verbose=True))
 ##
 # dump the entire db to console
 #pprint.pprint(db.db)
 ##
 ### show all props for a given entity
 ###entity = 'test/test_unscaled_win_resize.py'
-#print hl.rpt_all_props(db, ['test/test_schedule_interval.py'])
+#print(hl.rpt_all_props(db, ['test/test_schedule_interval.py']))
 ##
 ### list all tests that have valid testinfo and don't have testrun_success=='pass'
-##print hl.rpt(db, ['testrun_not_pass'], verbose=True)
+print(hl.rpt(db, ['testrun_not_pass'], verbose=True))
 
 # list all tests that have been inspected ( ie have 'testrun_success' prop )
-#print hl.rpt(db, ['testrun_present'], verbose=True)
+#print(hl.rpt(db, ['testrun_present'], verbose=True))
 
 # list all test outdated (this is weak, because no re-scan is performed.
 # for a strong ouddated, make a scan before calling the weak outdated
-#print hl.rpt(db, ['outdated_weak'], verbose=True)
+#print(hl.rpt(db, ['outdated_weak'], verbose=True))
 
 ### tests that have testinfo and dont have testun info
-##print hl.rpt(db, ['not_inspected'], verbose=True)
+##print(hl.rpt(db, ['not_inspected'], verbose=True))
 
 ### tests with testrun outdated (strong version)
-##print hl.rpt_testrun_outdated_strong(db)
+##print(hl.rpt_testrun_outdated_strong(db))
 
 # report differences between 1st iterative testbed and a clean build
-#print hl.rpt_compare_testbeds_by_entities('initial_orig.dat', 'ati 6570',
-#                                'initial_clean.dat', 'ati 6570', verbose=False)
+#print(hl.rpt_compare_testbeds_by_entities('initial_orig.dat', 'ati 6570',
+#                                'initial_clean.dat', 'ati 6570', verbose=False))
 

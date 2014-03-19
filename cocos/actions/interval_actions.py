@@ -96,13 +96,16 @@ Examples::
     accel_move = Accelerate(move)               # accelerates action move
 '''
 
+from __future__ import division, print_function, unicode_literals
+
+
 __docformat__ = 'restructuredtext'
 
 import random
 import copy
 import math
 
-from base_actions import *
+from .base_actions import *
 from cocos.euclid import *
 
 __all__ = [  'Lerp',                            # interpolation
@@ -536,7 +539,7 @@ class Blink( IntervalAction ):
         self.end_invisible = not self.target.visible 
 
     def update(self, t):
-        slice = 1 / float( self.times )
+        slice = 1.0 / self.times
         m =  t % slice
         self.target.visible = self.end_invisible ^ (m  <  slice / 2.0)
 

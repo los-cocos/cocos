@@ -35,6 +35,9 @@
 CocosNode: the basic element of cocos2d
 """
 
+from __future__ import division, print_function, unicode_literals
+from six import string_types
+
 __docformat__ = 'restructuredtext'
 
 import bisect, copy
@@ -42,9 +45,9 @@ import bisect, copy
 import pyglet
 from pyglet.gl import *
 
-from director import director
-from camera import Camera
-import euclid
+from cocos.director import director
+from cocos.camera import Camera
+from cocos import euclid
 
 import math
 import weakref
@@ -370,9 +373,8 @@ class CocosNode(object):
 
     def _get_position(self):
         return (self._x, self._y)
-    def _set_position(self, (x,y)):
-        self._x = x
-        self._y = y
+    def _set_position(self, pos):
+        self._x, self._y = pos
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 
@@ -450,7 +452,19 @@ class CocosNode(object):
         child.parent = self
 
         elem = z, child
-        bisect.insort( self.children,  elem )
+
+        # inlined and customized bisect.insort_right, the stock one fails in py3
+        lo = 0
+        hi = len(self.children)
+        a = self.children
+        while lo < hi:
+            mid = (lo+hi)//2
+            if z < a[mid][0]: hi = mid
+            else: lo = mid+1
+        self.children.insert(lo, elem)
+
+
+
         if self.is_running:
             child.on_enter()
         return self
@@ -475,7 +489,7 @@ class CocosNode(object):
                 name of the reference to be removed
                 or object to be removed
         """
-        if isinstance(obj, str):
+        if isinstance(obj, string_types):
             if obj in self.children_names:
                 child = self.children_names.pop( obj )
                 self._remove( child )

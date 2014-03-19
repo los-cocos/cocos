@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -79,7 +81,7 @@ class MessageLayer( Layer ):
             font_name='Edit Undo Line BRK',
             anchor_y='center',
             anchor_x='center' )
-        self.msg.position=(w/2.0, h)
+        self.msg.position=(w//2.0, h)
 
         self.add( self.msg )
 

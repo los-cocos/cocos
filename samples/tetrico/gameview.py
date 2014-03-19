@@ -1,3 +1,5 @@
+from __future__ import division, print_function, unicode_literals
+
 # This code is so you can run the samples without installing the package
 import sys
 import os
@@ -39,8 +41,8 @@ class GameView( Layer ):
         self.grid_size = ( int(20 *aspect),20)
         self.duration = 8
 
-        self.position = ( width/2 - COLUMNS * SQUARE_SIZE / 2, 0 )
-        self.transform_anchor = ( COLUMNS*SQUARE_SIZE /2, ROWS * SQUARE_SIZE/2)
+        self.position = ( width//2 - COLUMNS * SQUARE_SIZE // 2, 0 )
+        self.transform_anchor = ( COLUMNS*SQUARE_SIZE //2, ROWS * SQUARE_SIZE//2)
 
         # background layer to delimit the pieces visually
         cl = ColorLayer( 112,66,20,50, width = COLUMNS * SQUARE_SIZE, height=ROWS * SQUARE_SIZE )
@@ -105,7 +107,7 @@ class GameView( Layer ):
         return True
 
     def on_special_effect( self, effects ):
-        for e in effects.iterkeys():
+        for e in effects:
             a = self.get_action(e, effects[e])
             self.do( a )
 
@@ -142,8 +144,8 @@ class GameView( Layer ):
         glPushMatrix()
         self.transform()
 
-        for i in xrange( COLUMNS ):
-            for j in xrange( ROWS ):
+        for i in range( COLUMNS ):
+            for j in range( ROWS ):
                 color = self.model.map.get( (i,j) )
                 if color:
                     Colors.images[color].blit( i * SQUARE_SIZE, j* SQUARE_SIZE)

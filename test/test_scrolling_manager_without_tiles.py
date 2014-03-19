@@ -197,7 +197,7 @@ class TestScene(cocos.scene.Scene):
     def __init__(self):
         super(TestScene,self).__init__()
         self.marks = []
-        for i in xrange(1,4):
+        for i in range(1,4):
             mark = ProbeQuad(3,(0,255//i, 0, 255))
             mark.position = (-20, -20)
             self.marks.append(mark)

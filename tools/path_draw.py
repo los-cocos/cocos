@@ -2,6 +2,8 @@
 # framework libs
 #
 
+from __future__ import division, print_function, unicode_literals
+
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -20,8 +22,8 @@ import threading, string
 import time, cmd, math,random
 
 
-def dist((x1,y1), (x2,y2)):
-    return math.sqrt((x1-x2)**2+(y1-y2)**2)
+def dist(a, b):
+    return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
     
     
 class PathView:
@@ -62,17 +64,17 @@ class PathView:
         steps=100.0
         bz = self.bezier()
         last = self.a
-        for i in range(steps):
-            t = (i+1)/steps
-            next = bz.at( t )
-            next = next[0] + self.a.x, next[1] + self.a.y
+        for i in range(int(steps)):
+            t = (i+1) / steps
+            val = bz.at( t )
+            val = val[0] + self.a.x, val[1] + self.a.y
             
             glBegin(GL_LINES);
             glVertex2f(last[0], last[1]); 
-            glVertex2f(next[0], next[1]); 
+            glVertex2f(val[0], val[1]); 
             glEnd( );
 
-            last = next
+            last = val
             
     def get_nearest(self, x, y):
         mind = 10000
@@ -252,7 +254,7 @@ class PathDraw(Layer):
             if dt >= self.duration:
                 self.state = self.SHOW
             else:
-                x,y = bz.at( (dt/self.duration)**self.time_warp )
+                x,y = bz.at( (dt / self.duration)**self.time_warp )
                 c = Circle(
                         x+self.path.a.x,y+self.path.a.y,
                         width=45,color=(0.,1.,1.,1.)
@@ -273,19 +275,26 @@ class PathDraw(Layer):
 
                  
     def new_path(self):
-        self.paths.append( PathView("new"+str(random.randint(1,1000000)), Bezier( (100,100), (200,200), (108, 268), (438,27) ) ) )
+        self.paths.append(
+            PathView("new"+str(random.randint(1,1000000)),
+                     Bezier( (297,297), (13,286), (-192, 272), (89,84) )
+                     )
+            )
         self.pathp = len(self.paths)-1
         
- 
+def usage():
+    text = """Usage:
+    python %s file_with_paths.py
 
-            
-        
-        
+An example of input file is tools/foo.py
+"""
+    return text
+  
 if __name__ == "__main__":
     import imp, sys
     
     if len(sys.argv) < 2:
-        print "\nUsage:\n\tpython %s file_with_paths.py\n" % sys.argv[0]
+        print(usage() % sys.argv[0])
         sys.exit()
         
     path = sys.argv[1]
