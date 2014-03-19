@@ -10,67 +10,56 @@ Installation, Dependencies and Compatibility
 Dependencies
 ^^^^^^^^^^^^
 
-The basic dependencies are pyglet and six, these enable most of cocos functionality
+most of funcionality
+______________________
 
-A quick rundown about dependencies, see also compatibility notes below
+	. pyglet http://code.google.com/p/pyglet/
+	. six https://pypi.python.org/pypi/six/
 
-Cocos and Pyglet both are pure python packages, both using ctypes to bind
-other libraries.
+particles support
+_________________
 
-    . If you stash the source cocos and pyglet directories under
-      site-packages, you have most of functionality.
-      What you (maybe) don't have is:
-      
-            - cocos particles
-            - SDL audio backend
-            - AVBin (pyglet) audio-video backend 
+	. numpy www.numpy.org
 
-    . For particles to work you need the python package Numpy
-      http://new.scipy.org/download.html
+audio and video support by AVbin
+________________________________
 
-    . For SDL audio backend:
-        
-         - Numpy
-         - in windows, the pygame binaries (http://www.pygame.org/download.shtml)
-         - in unix like OSes, libraries sdl 1.2 and sdl-mixer 1.2;
-           in debian/ubuntu their packages are libsdl1.2 and libsdl-mixer1.2
-         - in Mac, theres no confirmed info. Should be similar to unix.
-            
-    . For AVBin (pyglet) audio backend:
-        
-        - For windows and Mac, if you installed pyglet using the *binaries*
-          provided by pyglet you have all you need.
-        - For unix like systems: add AVBin, http://code.google.com/p/avbin/
+	. AVbin http://avbin.github.io/AVbin/Home/Home.html
+	
+audio support by SDL
+____________________
+
+	. in Windows, pygame http://www.pygame.org
+	. in unix-like OSes libraries sdl 1.2 and sdl-mixer 1.2; in debian/ubuntu their packages are libsdl1.2 and libsdl-mixer1.2
+	. in Mac, theres no confirmed info. Should be similar to unix.
+
 
 What explicit dependencies are declared in the setup.py ?
-    pyglet 1.1.4+
+    six, ... ?
         
 
 Compatibility
 ^^^^^^^^^^^^^
 
-Compatibility notes at the time of writing, January 2014
+Compatibility notes at the time of writing, March 2014
 
-    . python : cocos needs python 2.6 or 2.7, is not compatible with 3.x 
+    . python : cocos needs python 2.6, 2.7 or 3.3+
+	  The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3  
 
-    . pyglet : The last released pyglet is 1.1.4 and
+    . pyglet : pyglet 1.2 or better
+		. The last released pyglet is 1.1.4 from 2009, which does not
+		  support python3, most 64bits OS, modern mac OS, etc
+		  In pypi the last pyglet is 1.1.4,
+		  in pyglet's googlecode downloads the last is an old 1.2alpha (2012)
+		  It is recomended to use pyglet from repo at a revision near the tip.
+		  ( ? insert revision under the cocos release was tested and example installations
+		  with pip o checkout + setup.py install)
     
-        . don't runs on 64bits windows. Theres a patch in the issue tracker
-         (http://code.google.com/p/pyglet/issues/detail?id=510) that can fix
-         this; notice that the patch is for the pyglet 1.2dev that you must
-         fetch from the repository, not the current 1.1.4 release
-        
-        . Macs: The 1.1.4  release needs a 32bit python, not a 64bits
-        
-        . Macs: The 1.2dev (repo default) received much work about Cocoa
-         integration, it is probably in alpha state. You should ask in
-         the pyglet mailing list about status and instructions.
-
-		. For all OS It is recommended to install pyglet from the repository,
-		  it has a lot of fixed over last released and 1.2alpha
 
 Installing from source
 ^^^^^^^^^^^^^^^^^^^^^^
+
+? rewrite this, probably with pip install sample
 
 Install setuptools if you don't have it.( http://pypi.python.org/pypi/setuptools )
 
