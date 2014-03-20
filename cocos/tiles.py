@@ -239,8 +239,25 @@ def decode_base64(s):
         import base64
         b = s.encode('utf-8')
         return base64.b64decode(b)
-        
-        
+
+def decompress_zlib(in_bytes):
+    """decompress the input array of bytes to an array of bytes using zlib"""
+    if six.PY2:
+        out_bytes = in_bytes.decode('zlib')
+    else:
+        import zlib
+        out_bytes = zlib.decompress(in_bytes)
+    return out_bytes
+    
+def decompress_gzip(in_bytes):
+    """decompress the input array of bytes to an array of bytes using gzip"""
+    import gzip
+    inp = six.BytesIO(in_bytes)
+    f = gzip.GzipFile(fileobj=inp)
+    out_bytes = f.read()
+    f.close()
+    inp.close()
+    return out_bytes
 
 def load_tmx(filename):
     '''Load some tile mapping resources from a TMX file.
@@ -303,13 +320,17 @@ def load_tmx(filename):
         if data is None:
             raise ValueError('layer %s does not contain <data>' % layer.name)
 
+        compression = data.attrib.get('compression')
         data = data.text.strip()
         data = decode_base64(data)
-        if six.PY2:
-            data = data.decode('zlib')
-        else:
-            import zlib
-            data = zlib.decompress(data)
+        if compression is not None:
+            if compression == 'zlib':
+                data = decompress_zlib(data)
+            elif compression == 'gzip':
+                data = decompress_gzip(data)
+            else:
+                raise ResourceError('Unknown compression method: %r' % compression)
+
         data = struct.unpack(str('<%di' % (len(data)//4)), data)
         assert len(data) == width * height
 
