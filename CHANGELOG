@@ -1,4 +1,7 @@
 v0.6.0 - ??
+  - added support for gzip compression in .tmx maps, thanks fred@reichbier.de
+    for initial patch, #185
+  - fix Sprite.get_rect() forgetting about .scale_x and .scale_y 
   - from r1282 cocos needs python 2.6 or 2.7, and the 'six' package
   ===========================================================================
   - r1281 is the last revision completely compatible with python 2.4 and 2.5
