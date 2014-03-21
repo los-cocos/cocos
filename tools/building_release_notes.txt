@@ -29,12 +29,16 @@ After a release, please update this document if any change was needed.
  3 Building the package
    Have a modern setuptools installed, for cocos 0.6.0 setuptools 3.3 was used
    to build the release
-   Work on a clean working copy, ie svn status should show an empty output.
- 
-   command line used in windows to build:
-       cd working_copy
-       setup.py sdist >build.log
-
+   Cmds to build:
+       svn checkout http://los-cocos.googlecode.com/svn/trunk/ cocos_trunk
+       cd cocos_trunk
+       svn export . ../cocos_export
+       cd ..\cocos_export
+       py -2.6 setup.py sdist >../sdist.log
+       [ the generated package will be in cocos_export/dist ]
+	
+	Verify all is including by decompressing the generated .gz or .zip and comparing with a diff tool cocos_trunk and the decompressed one. (used WinMerge in windows)
+	
  4 Installing the new package for test
    Preparation:
        backup easy-install.pth -> easy-install._pth

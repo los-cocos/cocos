@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 """setup -- setuptools setup file for cocos2d.
 
-$Author: eykd $
-$Rev: 1016 $
-$Date: 2011-08-14 23:00:00 -0300 (Wed, 14 August 2011) $
+   last used: release 0.6.0, built from py2.6 + setuptools 3.3
+
+   operation:
+       svn checkout http://los-cocos.googlecode.com/svn/trunk/ cocos_trunk
+       cd cocos_trunk
+       svn export . ../cocos_export
+       cd ..\cocos_export
+       py -2.6 setup.py sdist >../sdist.log
+       [ the generated package will be in cocos_export/dist ]
 """
 
 __author__ = "cocos2d team"
@@ -49,11 +55,11 @@ setup(
         ("Topic :: Games/Entertainment"),
         ],
  
-    packages = find_packages(exclude='.svn'),
-    package_data={'cocos': ['resources/*']},
+    packages = ['cocos'],
+    package_data={'cocos': ['resources/*.*']},
 
     install_requires=['six', 'pyglet>=1.2',],
-    dependency_links=['hg+https://code.google.com/p/pyglet/#egg=pyglet-1.2',],
+    dependency_links=['hg+https://code.google.com/p/pyglet@0a75c2e7c35d/#egg=pyglet-1.2',],
 
     include_package_data = True,
     zip_safe = False,
