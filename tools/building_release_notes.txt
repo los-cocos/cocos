@@ -11,15 +11,15 @@ After a release, please update this document if any change was needed.
 
  2 Building the docs
    Have sphinx >= 1.2.2 and dependencies instaled, build by:
-   	cd working_copy/doc
-        make clean
-        make html
+		cd working_copy/docgen
+		make clean
+		make html
 
    (replace make with Makefile in unix-like OSes)
 
-   Docs will be found at working_copy/doc/_build/html 
+   Docs will be found at working_copy/docgen/_build/html 
 
-   Check for errors and warnings at working_copy/doc/warnings.log	
+   Check for errors and warnings at working_copy/docgen/warnings.log	
 
    Work the docstrings to reduce errors and warnings.
 
