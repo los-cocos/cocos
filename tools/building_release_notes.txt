@@ -26,16 +26,16 @@ After a release, please update this document if any change was needed.
    Also, look some random pages in the generated html to see if there are any
    surprises.
 
- 3 Building the package
+ 3 Building the package (without the docs)
    Have a modern setuptools installed, for cocos 0.6.0 setuptools 3.3 was used
    to build the release
    Cmds to build:
        svn checkout http://los-cocos.googlecode.com/svn/trunk/ cocos_trunk
        cd cocos_trunk
-       svn export . ../cocos_export
-       cd ..\cocos_export
+       svn export . ../cocos_build
+       cd ..\cocos_build
        py -2.6 setup.py sdist >../sdist.log
-       [ the generated package will be in cocos_export/dist ]
+       [ the generated package will be in cocos_build/dist ]
 	
 	Verify all is including by decompressing the generated .gz or .zip and comparing with a diff tool cocos_trunk and the decompressed one. (used WinMerge in windows)
 	
@@ -55,7 +55,27 @@ After a release, please update this document if any change was needed.
         import pyglet and import cocos fails as before, restore your normal
         machinery to handle multiple package versions for cocos and pyglet
 
- 5 Updating cocos2d.org site
+  5 Final build including docs
+       [ svn checkout http://los-cocos.googlecode.com/svn/trunk/ cocos_trunk ]
+       cd cocos_trunk
+       svn export . ../cocos_docs
+	   svn export . ../cocos_build
+	   
+	   cd ../cocos_docs/docgen
+	   make clean
+	   make html
+	   
+	   py -2.6 ../tools/copy_docs.py
+	   cd ../../cocos_build
+	   py -2.6 setup.py sdist 
+      [ the generated package will be in cocos_build\dist , docs will show at doc/html in the package archive ]
+	  
+	In unix like replace
+		py -2.6 -> python
+		make ->Makefile
+	It should work with python 2.6, 2.7, 3.3+ , tested with 2.6 and 3.3
+		
+ 6 Updating cocos2d.org site
    the ftp URL points to a general directory with things not to touch;
    we are interested in a subset of www directory (which also holds other
    things ).
