@@ -58,8 +58,8 @@ setup(
     packages = ['cocos'],
     package_data={'cocos': ['resources/*.*']},
 
-    install_requires=['six', 'pyglet>=1.2',],
-    dependency_links=['hg+https://code.google.com/p/pyglet@0a75c2e7c35d/#egg=pyglet-1.2',],
+    install_requires=['six', 'pyglet>=1.2alpha1',],
+    dependency_links=['hg+https://code.google.com/p/pyglet@c7f948a848cb#egg=pyglet-1.2alpha1',],
 
     include_package_data = True,
     zip_safe = False,
