@@ -42,8 +42,8 @@ _working = True
 try:
     import cocos.audio.pygame.mixer
 except ImportError as error:
-    # set to 0 to debug import errors
-    if 0:
+    # set to 0 to debug import errors, for release must be 1
+    if 1:
         _working = False
     else:
         raise
