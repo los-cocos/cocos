@@ -74,7 +74,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'cocos2d'
-copyright = u'2013, cocos\'s team'
+copyright = u'2008-2014, cocos\'s team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

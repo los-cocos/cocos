@@ -20,6 +20,7 @@ Finishing:
   update version and date in
       cocos/__init__.py
       setup.py
+	  docgen/conf.py
 
   additionally, update version in
       CHANGELOG
