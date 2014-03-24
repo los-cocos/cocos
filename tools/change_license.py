@@ -176,8 +176,8 @@ if __name__ == '__main__':
                         filename not in exclude):
                         process_file(os.path.join(root, filename))
         else:
-            if (filename.endswith('.py') and 
-                filename not in exclude):
+            if (path.endswith('.py') and 
+                path not in exclude):
                 process_file(path)
 
     for name in reported:
