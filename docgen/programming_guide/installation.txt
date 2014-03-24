@@ -4,38 +4,35 @@ Installation, Dependencies and Compatibility
 .. contents::
     :local:
 
-Installation, Dependencies and Compatibility 
---------------------------------------------
-
 Dependencies
 ^^^^^^^^^^^^
 
 most of functionality
 ______________________
 
-	. six https://pypi.python.org/pypi/six/
-	. pyglet http://code.google.com/p/pyglet/
+    + six https://pypi.python.org/pypi/six/
+    + pyglet http://code.google.com/p/pyglet/
 
 particles support
 _________________
 
-	. numpy www.numpy.org
+    + numpy www.numpy.org
 
 audio and video support by AVbin
 ________________________________
 
-	. AVbin http://avbin.github.io/AVbin/Home/Home.html
-	
+    + AVbin http://avbin.github.io/AVbin/Home/Home.html
+    
 audio support by SDL
 ____________________
 
-	. in Windows, pygame http://www.pygame.org
-	. in unix-like OSes libraries sdl 1.2 and sdl-mixer 1.2; in debian/ubuntu their packages are libsdl1.2 and libsdl-mixer1.2
-	. in Mac, theres no confirmed info. Should be similar to unix.
+    + in Windows, pygame http://www.pygame.org
+    + in unix-like OSes libraries sdl 1.2 and sdl-mixer 1.2; in debian/ubuntu their packages are libsdl1.2 and libsdl-mixer1.2
+    + in Mac, theres no confirmed info. Should be similar to unix.
 
 
 What explicit dependencies are declared in the setup.py ?
-    six, pyglet from hg repository
+six, pyglet from hg repository
         
 
 Compatibility
@@ -43,16 +40,17 @@ Compatibility
 
 Compatibility notes at the time of writing, March 2014
 
-    . python : cocos needs python 2.6, 2.7 or 3.3+
-	  The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3  
+    + python : cocos needs python 2.6, 2.7 or 3.3+
+      The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3  
 
-    . pyglet : pyglet 1.2 or better
-		  In pypi the last pyglet is 1.1.4, from 2009
-		  In pyglet's googlecode downloads the last is an old 1.2alpha1 (2012)
-		  It is recomended to use pyglet from repo at a revision near the tip.
-		  For reference, this cocos release was tested with revision c7f948a848cb of pyglet,
-		  dated 2014 03 20
-		  
+    + pyglet : pyglet 1.2 or better
+
+          + In pypi the last pyglet is 1.1.4, from 2009
+          + In pyglet's googlecode downloads the last is an old 1.2alpha1 (2012)
+          + It is recomended to use pyglet from repo at a revision near the tip.
+          + For reference, this cocos release was tested with revision c7f948a848cb
+            of pyglet, dated 2014 03 20
+          
 
 Installing
 ^^^^^^^^^^
@@ -60,31 +58,32 @@ Installing
 Have a modern setuptools or pip installed.
 
 While::
-	easy_install cocos2d
+
+    easy_install cocos2d
+
 or::
 
-	pip install cocos2d --process-dependency-links
+    pip install cocos2d --process-dependency-links
 
 should work, you will miss the docs and code samples. Its is therefore recommended to
 
-	+ download cocos2d-0.6.0.zip from https://pypi.python.org/pypi/cocos2d/
-	+ decompress to a convenient location, the top dir will be cocos2d-0.6.0
-	+ the html docs will be in cocos2d-0.6.0\doc\html
-    + useful code samples will be in cocos2d-0.6.0\test, cocos2d-0.6.0\samples,
-	  cocos2d-0.6.0\utest.
-	+ install by::
-	
-		cd cocos2d-0.6.0
-		setup.py install
+    + download cocos2d-0.6.0.zip from https://pypi.python.org/pypi/cocos2d/
+    + decompress to a convenient location, the top dir will be cocos2d-0.6.0
+    + the html docs will be in cocos2d-0.6.0/doc/html
+    + useful code samples will be in cocos2d-0.6.0/test, cocos2d-0.6.0/samples, cocos2d-0.6.0/utest
+    + install by::
 
-	  or alternatively by pointing that directory from a .pth or PYTHONPATH
-	+ All of cocos should be usable now, with the possible exceptions
+        cd cocos2d-0.6.0
+        setup.py install
 
-		- cocos particles
-		- SDL audio backend
-		- AVBin (pyglet) audio-video backend 
+      or alternatively by pointing that directory from a .pth or PYTHONPATH
+    + All of cocos should be usable now, with the possible exceptions
 
-If you need to add these, look at the dependencies section.
+        - cocos particles
+        - SDL audio backend
+        - AVBin (pyglet) audio-video backend 
+
+If you want to add these, look at the dependencies section.
 
 Using PYTHONPATH or .pth
 ^^^^^^^^^^^^^^^^^^^^^^^^
