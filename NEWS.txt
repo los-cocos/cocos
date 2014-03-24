@@ -4,11 +4,28 @@ New in cocos 0.6.0
 Python 3 supported
 ------------------
  
-	. Support for python 2.4 and 2.5 was droped
+	. Support for python 2.4 and 2.5 was dropped
 	. We aim to support 2.6+ and 3.3+
-	. It may work in 3.2 but that is untested and unsuported
+	. It may work in 3.2 but that is untested and unsupported
 	. The code directly supports 2.x and 3.x, no need for 2to3
 
+
+New dependency
+--------------
+
+The 'six' package was added as a dependency, helps with simultaneous
+ python 2.x and 3x compatibility.
+
+It can be found at http://pypi.python.org/pypi/six/
+
+
+cocos.euclid heavily refactored
+-------------------------------
+
+While the external API has not changed, some implementation details changed.
+If you subclassed some class in cocos.euclid, probably you will need to adapt your code. 
+
+	
 Rendering order changed
 -----------------------
 
@@ -19,11 +36,12 @@ In cocos < 0.6.0 the intent was the same, but the second clause was not honored.
 
 So, older code may need to use some explicit z or change the order the childs are added. 
 
+
 Nodes support independent scaling in x and y direction
 ------------------------------------------------------
 
 CocosNode retained the property scale for uniform scaling and gained
-the properties scale_x , scale_y
+the properties scale_x , scale_y for scaling along the respective axis.
 
 scale_x * scale and scale_y * scale are the x and y scaling factors
 

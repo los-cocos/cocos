@@ -10,11 +10,11 @@ Installation, Dependencies and Compatibility
 Dependencies
 ^^^^^^^^^^^^
 
-most of funcionality
+most of functionality
 ______________________
 
-	. pyglet http://code.google.com/p/pyglet/
 	. six https://pypi.python.org/pypi/six/
+	. pyglet http://code.google.com/p/pyglet/
 
 particles support
 _________________
@@ -35,7 +35,7 @@ ____________________
 
 
 What explicit dependencies are declared in the setup.py ?
-    six, ... ?
+    six, pyglet from hg repository
         
 
 Compatibility
@@ -47,59 +47,51 @@ Compatibility notes at the time of writing, March 2014
 	  The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3  
 
     . pyglet : pyglet 1.2 or better
-		. The last released pyglet is 1.1.4 from 2009, which does not
-		  support python3, most 64bits OS, modern mac OS, etc
-		  In pypi the last pyglet is 1.1.4,
-		  in pyglet's googlecode downloads the last is an old 1.2alpha (2012)
+		  In pypi the last pyglet is 1.1.4, from 2009
+		  In pyglet's googlecode downloads the last is an old 1.2alpha1 (2012)
 		  It is recomended to use pyglet from repo at a revision near the tip.
-		  ( ? insert revision under the cocos release was tested and example installations
-		  with pip o checkout + setup.py install)
-    
+		  For reference, this cocos release was tested with revision c7f948a848cb of pyglet,
+		  dated 2014 03 20
+		  
 
-Installing from source
-^^^^^^^^^^^^^^^^^^^^^^
+Installing
+^^^^^^^^^^
 
-? rewrite this, probably with pip install sample
+Have a modern setuptools or pip installed.
 
-Install setuptools if you don't have it.( http://pypi.python.org/pypi/setuptools )
+While::
+	easy_install cocos2d
+or::
 
-Download cocos2d-0.5.0.zip, unzip to a temporary directory
+	pip install cocos2d --process-dependency-links
 
-In the command line do::
+should work, you will miss the docs and code samples. Its is therefore recommended to
 
-    cd <temporal_directory>
-    python setup.py install
-    (note that in windows the last line should be)
-    setup.py install
+	+ download cocos2d-0.6.0.zip from https://pypi.python.org/pypi/cocos2d/
+	+ decompress to a convenient location, the top dir will be cocos2d-0.6.0
+	+ the html docs will be in cocos2d-0.6.0\doc\html
+    + useful code samples will be in cocos2d-0.6.0\test, cocos2d-0.6.0\samples,
+	  cocos2d-0.6.0\utest.
+	+ install by::
+	
+		cd cocos2d-0.6.0
+		setup.py install
 
-Move from the temporary directory to your preferred locations the docs,
-examples, tests and unitests
+	  or alternatively by pointing that directory from a .pth or PYTHONPATH
+	+ All of cocos should be usable now, with the possible exceptions
 
-Done, you can delete the temporal directory.
-All of cocos should be usable now, with the possible exceptions
+		- cocos particles
+		- SDL audio backend
+		- AVBin (pyglet) audio-video backend 
 
-    - cocos particles
-    - SDL audio backend
-    - AVBin (pyglet) audio-video backend 
+If you need to add these, look at the dependencies section.
 
-If you need to add these, look at the dependencies and compatibility section.
+Using PYTHONPATH or .pth
+^^^^^^^^^^^^^^^^^^^^^^^^
 
+It is safe to point a checkout of cocos from a .pth or PYTHONPATH both
+ in python 2.x and 3.x; the same checkout can be pointed at the same time from both pythons.
 
-Installing with easy_install
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Install setuptools if you don't have it.( http://pypi.python.org/pypi/setuptools )
-
-at the command line enter
-    easy_install cocos
-    
-All of cocos should be usable now, with the possible exceptions
-
-    - cocos particles
-    - SDL audio backend
-    - AVBin (pyglet) audio-video backend 
-
-If you need to add these, look at the dependencies and compatibility section
-    
-You also will want to download the zip that contains the documentation, samples
-and demo, and unzip to a convenient location.
+Remember that pyglet does python 3 compatibility by running 2to3 at install time, so while
+a pyglet checkout can be pointed from a .pth or PYTHONPATH in python 2.x,
+that will not work for python 3.

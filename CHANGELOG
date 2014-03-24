@@ -25,7 +25,7 @@ v0.6.0 - ??
   - MapLayer, added tile properties to cell debug view
   - fix RectMap.get_in_region returns too many cells (thanks Gerardo Marset for 
     bug report, analysis and patch) - #191
-  - fix Mac crash due to nonmatching SDL dlls when not using SDL audio (patch by  Juan J. Martínez, thanks) #190
+  - fix Mac crash due to non matching SDL dlls when not using SDL audio (patch by  Juan J. Martínez, thanks) #190
 
 v0.5.5 - August 12, 2012
   - fix issue 168, now particle textures are propper (this can change visual size for particlers in old code)
