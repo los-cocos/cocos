@@ -14,10 +14,9 @@ import optparse
 import os
 import sys
 
-
 old_license = """# ----------------------------------------------------------------------------
 # cocos2d
-# Copyright (c) 2008-2011 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
+# Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
 # All rights reserved.
 #
@@ -49,10 +48,12 @@ old_license = """# -------------------------------------------------------------
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------"""
 
+
 new_license = """# ----------------------------------------------------------------------------
 # cocos2d
 # Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
+# Copyright (c) 2009-2014  Richard Jones, Claudio Canepa
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -164,6 +165,7 @@ if __name__ == '__main__':
     report_match = not ('non' in mode)
 
     for path in args:
+        print('args:', args)
         if os.path.isdir(path):
             for root, dirnames, filenames in os.walk(path):
                 for dirname in dirnames:
