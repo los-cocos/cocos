@@ -1,5 +1,8 @@
 After a release, please update this document if any change was needed.
 
+ 0 Update the copyright/license header in all files under cocos/ and tools/skeleton/
+   The script tools/change_license.py is used for thet.
+
  1 Checking that the pypi page has proper reST
    To check for reST conformance, somewhere (distutils ? pypi ?) the command
 	$ python setup.py --long-description | rst2html.py > output.html
