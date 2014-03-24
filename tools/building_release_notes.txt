@@ -54,7 +54,10 @@ After a release, please update this document if any change was needed.
         Delete additions in site-package, restore easy-install.pth, check that
         import pyglet and import cocos fails as before, restore your normal
         machinery to handle multiple package versions for cocos and pyglet
-
+		
+	[if posible, test also an instalation in a python witout sdl dependencies,
+	it should all work except the audio tests (currently only one)]
+	
   5 Final build including docs
        [ svn checkout http://los-cocos.googlecode.com/svn/trunk/ cocos_trunk ]
        cd cocos_trunk

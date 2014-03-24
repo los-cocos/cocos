@@ -1,4 +1,6 @@
 v0.6.0 - ??
+  - removed tiles.ScrollingManager / tiles.ScrollableLayer, they were deprecated
+    compatibility shims of same classes in cocos.layer
   - added support for gzip compression in .tmx maps, thanks fred@reichbier.de
     for initial patch, #185
   - fix Sprite.get_rect() forgetting about .scale_x and .scale_y 
