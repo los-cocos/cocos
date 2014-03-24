@@ -10,107 +10,88 @@ Installation, Dependencies and Compatibility
 Dependencies
 ^^^^^^^^^^^^
 
-A quick rundown about dependencies, see also compatibility notes below
+most of functionality
+______________________
 
-Cocos and Pyglet both are pure python packages, both using ctypes to bind
-other libraries.
+	. six https://pypi.python.org/pypi/six/
+	. pyglet http://code.google.com/p/pyglet/
 
-    . for python 2.4 only, you need
-       - ctypes, http://pypi.python.org/pypi/ctypes
-       - elementtree, http://effbot.org/downloads/#elementtree
+particles support
+_________________
 
-    . If you stash the source cocos and pyglet directories under
-      site-packages, you have most of functionality.
-      What you (maybe) don't have is:
-      
-            - cocos particles
-            - SDL audio backend
-            - AVBin (pyglet) audio-video backend 
+	. numpy www.numpy.org
 
-    . For particles to work you need the python package Numpy
-      http://new.scipy.org/download.html
+audio and video support by AVbin
+________________________________
 
-    . For SDL audio backend:
-        
-         - Numpy
-         - in windows, the pygame binaries (http://www.pygame.org/download.shtml)
-         - in unix like OSes, libraries sdl 1.2 and sdl-mixer 1.2;
-           in debian/ubuntu their packages are libsdl1.2 and libsdl-mixer1.2
-         - in Mac, theres no confirmed info. Should be similar to unix.
-            
-    . For AVBin (pyglet) audio backend:
-        
-        - For windows and Mac, if you installed pyglet using the *binaries*
-          provided by pyglet you have all you need.
-        - For unix like systems: add AVBin, http://code.google.com/p/avbin/
+	. AVbin http://avbin.github.io/AVbin/Home/Home.html
+	
+audio support by SDL
+____________________
+
+	. in Windows, pygame http://www.pygame.org
+	. in unix-like OSes libraries sdl 1.2 and sdl-mixer 1.2; in debian/ubuntu their packages are libsdl1.2 and libsdl-mixer1.2
+	. in Mac, theres no confirmed info. Should be similar to unix.
+
 
 What explicit dependencies are declared in the setup.py ?
-    pyglet 1.1.4+
+    six, pyglet from hg repository
         
 
 Compatibility
 ^^^^^^^^^^^^^
 
-Compatibility notes at the time of writing, August 2011
+Compatibility notes at the time of writing, March 2014
 
-    . python : cocos needs python 2.4+, is not compatible with 3.x 
+    . python : cocos needs python 2.6, 2.7 or 3.3+
+	  The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3  
 
-    . pyglet : The last released pyglet is 1.1.4 and
-    
-        . don't runs on 64bits windows. Theres a patch in the issue tracker
-         (http://code.google.com/p/pyglet/issues/detail?id=510) that can fix
-         this; notice that the patch is for the pyglet 1.2dev that you must
-         fetch from the repository, not the current 1.1.4 release
-        
-        . Macs: The 1.1.4  release needs a 32bit python, not a 64bits
-        
-        . Macs: The 1.2dev (repo default) received much work about Cocoa
-         integration, it is probably in alpha state. You should ask in
-         the pyglet mailing list about status and instructions.
+    . pyglet : pyglet 1.2 or better
+		  In pypi the last pyglet is 1.1.4, from 2009
+		  In pyglet's googlecode downloads the last is an old 1.2alpha1 (2012)
+		  It is recomended to use pyglet from repo at a revision near the tip.
+		  For reference, this cocos release was tested with revision c7f948a848cb of pyglet,
+		  dated 2014 03 20
+		  
 
+Installing
+^^^^^^^^^^
 
-Installing from source
-^^^^^^^^^^^^^^^^^^^^^^
+Have a modern setuptools or pip installed.
 
-Install setuptools if you don't have it.( http://pypi.python.org/pypi/setuptools )
+While::
+	easy_install cocos2d
+or::
 
-Download cocos2d-0.5.0.zip, unzip to a temporary directory
+	pip install cocos2d --process-dependency-links
 
-In the command line do::
+should work, you will miss the docs and code samples. Its is therefore recommended to
 
-    cd <temporal_directory>
-    python setup.py install
-    (note that in windows the last line should be)
-    setup.py install
+	+ download cocos2d-0.6.0.zip from https://pypi.python.org/pypi/cocos2d/
+	+ decompress to a convenient location, the top dir will be cocos2d-0.6.0
+	+ the html docs will be in cocos2d-0.6.0\doc\html
+    + useful code samples will be in cocos2d-0.6.0\test, cocos2d-0.6.0\samples,
+	  cocos2d-0.6.0\utest.
+	+ install by::
+	
+		cd cocos2d-0.6.0
+		setup.py install
 
-Move from the temporary directory to your preferred locations the docs,
-examples, tests and unitests
+	  or alternatively by pointing that directory from a .pth or PYTHONPATH
+	+ All of cocos should be usable now, with the possible exceptions
 
-Done, you can delete the temporal directory.
-All of cocos should be usable now, with the possible exceptions
+		- cocos particles
+		- SDL audio backend
+		- AVBin (pyglet) audio-video backend 
 
-    - cocos particles
-    - SDL audio backend
-    - AVBin (pyglet) audio-video backend 
+If you need to add these, look at the dependencies section.
 
-If you need to add these, look at the dependencies and compatibility section.
+Using PYTHONPATH or .pth
+^^^^^^^^^^^^^^^^^^^^^^^^
 
+It is safe to point a checkout of cocos from a .pth or PYTHONPATH both
+ in python 2.x and 3.x; the same checkout can be pointed at the same time from both pythons.
 
-Installing with easy_install
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Install setuptools if you don't have it.( http://pypi.python.org/pypi/setuptools )
-
-at the command line enter
-    easy_install cocos
-    
-All of cocos should be usable now, with the possible exceptions
-
-    - cocos particles
-    - SDL audio backend
-    - AVBin (pyglet) audio-video backend 
-
-If you need to add these, look at the dependencies and compatibility section
-    
-You also will want to download the zip that contains the documentation, samples
-and demo, and unzip to a convenient location.
+Remember that pyglet does python 3 compatibility by running 2to3 at install time, so while
+a pyglet checkout can be pointed from a .pth or PYTHONPATH in python 2.x,
+that will not work for python 3.

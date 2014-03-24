@@ -22,13 +22,12 @@ Finishing:
       setup.py
 
   additionally, update version in
-      doc/index.txt
       CHANGELOG
 
 - new big capabilities should be updated in
     cocos/__init__.py docstring
     README    
-    doc/programming_guide/introduction.txt
+    docgen/programming_guide/introduction.txt
     
 - Update text files in the top trunk directory
   Keep in mind that
@@ -52,10 +51,8 @@ Finishing:
 - build the docs (see 2 in building_release_notes.txt)
 
 - build the package
-  ( *.py line endings to unix if building in windows ? careful with
-    samples/tetrico/data/block_rotate.py , marked as octet/stream)
-  example build command in windows
-  setup.py sdist  >build.log
+  *.py line endings to unix if building in windows ?
+  (see tools/build_release_notes.txt for details)
 
 - check log for errors
 
