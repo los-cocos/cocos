@@ -1,4 +1,4 @@
-v0.6.0 - ??
+v0.6.0 - March 24, 2014
   - removed tiles.ScrollingManager / tiles.ScrollableLayer, they were deprecated
     compatibility shims of same classes in cocos.layer
   - added support for gzip compression in .tmx maps, thanks fred@reichbier.de
