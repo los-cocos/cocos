@@ -59,8 +59,7 @@ Learning cocos2d
     . the API Reference
     . some tutorial videos
 
-   The tutorials are included in the source package or can be download from:
-    http://code.google.com/p/los-cocos/downloads/list
+   The tutorials are included in the source package.
 
  * Lot of miniprograms that demostrates the available objects and posible actions.
    There are a great starting point while learning and experimenting with cocos:
@@ -88,11 +87,15 @@ Learning cocos2d
    $ python sample_name.py
 
 
-
 Do you have any doubt ?
-http://groups.google.com/group/cocos-discuss
+	+ http://groups.google.com/group/cocos-discuss
 
 
 Did you find any bug ?
-http://groups.google.com/group/cocos-discuss
-http://code.google.com/p/los-cocos/issues/list
+	+ http://groups.google.com/group/cocos-discuss
+	+ https://github.com/cocos2d/cocos2d-python/issues
+
+
+Current repository is at
+	+ https://github.com/cocos2d/cocos2d-python
+
