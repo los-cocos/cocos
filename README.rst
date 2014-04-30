@@ -4,8 +4,9 @@ cocos2d
 
 | A framework for building 2D games, demos, and other graphical/interactive applications.
 | Draws using OpenGL, which is hardware accelerated.
-| It provides some conventions and classes to help you structure a "scene based application".
+| Targets the Operating Systems linux, mac or windows on Pc-like hardware.
 
+| Provides some conventions and classes to help you structure a "scene based application".
 | A cocos2d application consists of several scenes, and a workflow connecting the different scenes.
 | It provides you with a "director" (a singleton) which handles that workflow between scenes.
 | Each scene is composed of an arbitrary number of layers;
