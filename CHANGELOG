@@ -1,3 +1,10 @@
+v0.x.x - ?
+New Features
+------------
+
+Bugfixes
+--------
+
 v0.6.0 - March 24, 2014
   - removed tiles.ScrollingManager / tiles.ScrollableLayer, they were deprecated
     compatibility shims of same classes in cocos.layer
