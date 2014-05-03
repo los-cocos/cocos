@@ -9,17 +9,23 @@ send it attached to the mailing list.
 
 Just in case, a `good guide to git <http://documentup.com/skwp/git-workflows-book>`.
 
-* **Make sure there is an open issue for your change.** Perhaps,
-  if it's a new feature, you probably want to
-  `discuss it first <http://groups.google.com/group/cocos-discuss>`_
+Steps
+-----
 
-* **Have a local clone with upload rights to work with**
-    * if you have commit rights in cocos2d/cocos2d-python, have a clone of that project
-    * if you don't, fork the project ( the button 'fork' in https://github.com/cocos2d/cocos2d-python ) and then clone your-username/cocos2d-python project
+**Make sure there is an open issue for your change.**
 
-* **Create a new Git branch specific to your change(s).** For example, if
-  you're adding a new feature to foo the bars, do something like the
-  following::
+Perhaps, if it's a new feature, you probably want to
+`discuss it first <http://groups.google.com/group/cocos-discuss>`_
+
+**Have a local clone with upload rights to work with.**
+
+  * if you have commit rights in cocos2d/cocos2d-python, have a clone of that project
+  * if you don't, fork the project ( the button 'fork' in https://github.com/cocos2d/cocos2d-python ) and then clone ``your-username/cocos2d-python project``
+
+**Create a new Git branch specific to your change(s).**
+
+For example, if you're adding a new feature to foo the bars, do something 
+like the following::
 
     $ git checkout master
     $ git pull
@@ -27,16 +33,17 @@ Just in case, a `good guide to git <http://documentup.com/skwp/git-workflows-boo
     <hack hack hack>
     $ git push origin HEAD
 
-  This makes life much easier for maintainers if you have (or ever plan to
-  have) additional changes in your own ``master`` branch.
+This makes life much easier for maintainers if you have (or ever plan to
+have) additional changes in your own ``master`` branch.
 
-* **submit pull request based on your new 'foo-the-bars' branch**
-    * Go to the Github page associated with your clone; if you forked it is the page for
-      your-username/coco2d-project
-    * In the button-dropdown list 'branch: zzz' select branch 'foo-the-bar'
-	* Press the green button to the left (the tooltip shows 'preview, create a pull request')
-	* Fill the subject and body. Make the subject descriptive and add a reference to the issue
-      you are working, by example if the issue number was 123 the subject can be 'foo the bars , #123'
+**submit pull request based on your new 'foo-the-bars' branch.**
+
+  * Go to the Github page associated with your clone; if you forked it is the page for
+    ``your-username/cocos2d-python`` project
+  * In the button-dropdown list ``branch: zzz`` select branch ``foo-the-bar``
+  * Press the green button to the left (the tooltip shows ``preview, create a pull request``)
+  * Fill the subject and body. Make the subject descriptive and add a reference to the issue
+    you are working, by example if the issue number was 123 the subject can be 'foo the bars , #123'
   
 .. admonition:: A corollary:
 
@@ -45,24 +52,33 @@ Just in case, a `good guide to git <http://documentup.com/skwp/git-workflows-boo
       and find a bugfix that doesn't *require* new feature X, **make a new
       distinct branch and PR** for the bugfix.
 
+Details
+-------
+
 * You may want to use the `Tim Pope’s Git commit messages standard
   <http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html>`_.
   It’s not necessary, but if you are doing something big, we recommend
   describing it in the commit message.
+
 * While working, **rebase instead of merging** (if possible).  We encourage
   using ``git rebase`` instead of ``git merge``.  If you are using
   ``git pull``, please run ``git config pull.rebase true`` to prevent merges
   from happening and replace them with rebase goodness.  There is also an
   “emergency switch” in case rebases fail and you do not know what to do:
   ``git pull --no-rebase``.
+
 * **Make sure documentation is updated** — at the very least, keep docstrings
   current, and if necessary, update the reStructuredText documentation in ``docgen/``.
+
 * **Add a changelog entry** at the top of ``CHANGELOG`` mentioning issue number
   and in the correct 'New Features'/'Bugfixes' section.
+
 * **Be PEP8 compliant in new code**
+
 * **Try writing some tests** if possible — again, following existing tests is
   often easiest, and a good way to tell whether the feature you are modifying is
   easily testable.
+  
 * Make sure to mention the issue it affects in the description of your pull request,
   so it's clear what to test and how to do it.
 
