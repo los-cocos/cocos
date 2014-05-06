@@ -94,9 +94,9 @@ Do you have any doubt ?
 
 Did you find any bug ?
 	+ http://groups.google.com/group/cocos-discuss
-	+ https://github.com/cocos2d/cocos2d-python/issues
+	+ https://github.com/los-cocos/cocos
 
 
 Current repository is at
-	+ https://github.com/cocos2d/cocos2d-python
+	+ https://github.com/los-cocos/cocos
 

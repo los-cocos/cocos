@@ -20,7 +20,7 @@ Perhaps, if it's a new feature, you probably want to
 **Have a local clone with upload rights to work with.**
 
   - if you have commit rights in cocos2d/cocos2d-python, have a clone of that project
-  - if you don't, fork the project ( the button 'fork' in https://github.com/cocos2d/cocos2d-python ) and then clone ``your-username/cocos2d-python`` project
+  - if you don't, fork the project ( the button 'fork' in https://github.com/los-cocos/cocos ) and then clone ``your-username/cocos2d-python`` project
 
 **Create a new Git branch specific to your change(s).**
 
