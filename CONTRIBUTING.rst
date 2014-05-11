@@ -19,8 +19,8 @@ Perhaps, if it's a new feature, you probably want to
 
 **Have a local clone with upload rights to work with.**
 
-  - if you have commit rights in cocos2d/cocos2d-python, have a clone of that project
-  - if you don't, fork the project ( the button 'fork' in https://github.com/los-cocos/cocos ) and then clone ``your-username/cocos2d-python`` project
+  - if you have commit rights in los-cocos/cocos, have a clone of that project
+  - if you don't, fork the project ( the button 'fork' in https://github.com/los-cocos/cocos ) and then clone ``your-username/cocos`` project
 
 **Create a new Git branch specific to your change(s).**
 
@@ -39,7 +39,7 @@ have) additional changes in your own ``master`` branch.
 **Submit pull request based on your new 'foo-the-bars' branch.**
 
   - Go to the Github page associated with your clone; if you forked it is the page for
-    ``your-username/cocos2d-python`` project
+    ``your-username/cocos`` project
   - In the button-dropdown list ``branch: zzz`` select branch ``foo-the-bar``
   - Press the green button to the left (the tooltip shows ``preview, create a pull request``)
   - Fill the subject and body. Make the subject descriptive and add a reference to the issue
