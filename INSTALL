@@ -55,7 +55,7 @@ Compatibility notes at the time of writing, March 2014
 Installing
 ^^^^^^^^^^
 
-Have a modern setuptools or pip installed.
+Have a modern setuptools or pip installed, also you will need Mercurial ( http://mercurial.selenic.com/ ) to install pyglet.
 
 While::
 

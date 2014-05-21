@@ -32,7 +32,7 @@ except ImportError:
 
 from setuptools import setup, find_packages
 
-f = open('README','rU')
+f = open('README.rst','rU')
 long_description = f.read()
 f.close()
 
