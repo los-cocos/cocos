@@ -24,7 +24,7 @@ cocos2d simplifies the game development in these areas:
     * Menus: Built in classes to create menus
     * Text Rendering: Label and HTMLLabel with action support
     * Built-in Python Interpreter: For debugging purposes
-    * Acces to OpenGL functionality
+    * Access to OpenGL functionality
     * and much more!http://cocos2d.org
 
 Requirements
@@ -52,7 +52,7 @@ Installing
 Learning cocos2d
 ----------------
 
- * go to the online tuturials / documentation page:
+ * go to the online tutorials / documentation page:
    http://cocos2d.org/doc.html
 
    you will find:
@@ -62,7 +62,7 @@ Learning cocos2d
 
    The tutorials are included in the source package.
 
- * Lot of miniprograms that demostrates the available objects and posible actions.
+ * Lot of miniprograms that demonstrates the available objects and possible actions.
    There are a great starting point while learning and experimenting with cocos:
    you find a sample with the object that interest you exercising the features
    that you need, read the code, run, modify and re-run to experiment.
@@ -79,7 +79,7 @@ Learning cocos2d
  * more complex sample programs
 
    You can find it in the samples directory in the source distribution, and the
-   most complex in subdrectories there, including a presentation done with
+   most complex in subdirectories there, including a presentation done with
    Cocos himself.
    
    After unpacking, to run the samples you can do
