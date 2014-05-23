@@ -122,7 +122,7 @@ class Cshape(object):
         pass
 
 
-# collision manager interfase
+# collision manager interface
 class CollisionManager(object):
     """
     Answers questions about proximity or collision with known objects.
@@ -209,7 +209,7 @@ class CollisionManager(object):
 
     Example actors for this case are player, enemies, soldiers.
 
-    All of the known objects don't change cshapes
+    All of the known objects don't change Cshapes
 
         - At level start you add all objects
         - When an actor reaches end of life use 'remove_tricky' to make it not known, no problem because his cshape has not changed
@@ -255,7 +255,7 @@ class CollisionManager(object):
     def iter_colliding(self, obj):
         """
         A lazy iterator over objects colliding with obj, allows to spare some
-        CPU when the loop procesing the colissions breaks before exausting
+        CPU when the loop processing the collisions breaks before exhausting
         the collisions.
         obj is not required to be a known object
 
@@ -323,7 +323,7 @@ class CollisionManager(object):
         pass
 
     def known_objs(self):
-        """Reurns a set with all the objects known by the CollisionManager
+        """Returns a set with all the objects known by the CollisionManager
         Used for debug and testing.
         """
         pass
@@ -399,7 +399,7 @@ class CircleShape(object):
 class AARectShape(object):
     """
     Implements the Cshape interface that uses rectangles with sides
-    paralell to the coordinate axis as geometric shape.
+    parallel to the coordinate axis as geometric shape.
     
     Distance is not the euclidean distance but the rectangular or max-min
     distance, max( min(x0 - x1), min(y0 - y1) : (xi, yi) in recti )
@@ -461,7 +461,7 @@ class CollisionManagerBruteForce(object):
     """
     Implements the CollisionManager interface with with the simpler code possible.
 
-    Intended for reference and debuging, it has very bad performance. 
+    Intended for reference and debugging, it has very bad performance.
 
     Look at CollisionManager for other class and methods documentation.
     """
@@ -526,7 +526,7 @@ class CollisionManagerBruteForce(object):
 ##                                                        (other is not obj) and
 ##                                                        (d <= near_distance)]
     def ranked_objs_near(self, obj, near_distance):
-        tmp = objs_near_wdistance(obj, near_distance)
+        tmp = self.objs_near_wdistance(obj, near_distance)
         tmp.sort(key=op.itemgetter(1))
         return tmp
 
@@ -572,7 +572,7 @@ class CollisionManagerGrid(object):
 
     Later, when the question 'which know objects has such and such spatial
     relation with <some object>' arrives, only the objects in rectangles
-    overlaping <some object> (or nearby ones) needs to be examined for the
+    overlapping <some object> (or nearby ones) needs to be examined for the
     condition.
 
     Look at CollisionManager for other class and methods documentation.
@@ -588,17 +588,17 @@ class CollisionManagerGrid(object):
 
         :Parameters:
             `xmin` : float
-                minimun x coordinate for a point in world
+                minimum x coordinate for a point in world
             `xmax` : float
-                maximun x coordinate for a point in world
+                maximum x coordinate for a point in world
             `ymin` : float
-                minimun y coordinate for a point in world
+                minimum y coordinate for a point in world
             `ymax` : float
-                maximun y coordinate for a point in world
+                maximum y coordinate for a point in world
             `cell_width` : float
                 width for the rectangles the space will be broken
             `cell_height` : float
-                heigh for the rectangles the space will be broken
+                height for the rectangles the space will be broken
         """
         self.xmin = xmin
         self.xmax = xmax
@@ -772,7 +772,7 @@ class CollisionManagerGrid(object):
         iy_lo = int(math.floor((miny - self.ymin) / self.cell_height))
         iy_sup = int(math.ceil((maxy - self.ymin) / self.cell_height))
 
-        # but disregard cells ouside world, can come from near questions
+        # but disregard cells outside world, can come from near questions
         if ix_lo < 0:
             ix_lo = 0
         if ix_sup > self.cols:
