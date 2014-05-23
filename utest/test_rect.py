@@ -23,3 +23,15 @@ def test_clippedBy__disjoint():
     r2 = Rect(20, 20, 10, 10)
     assert r1.clippedBy(r2)
 
+def test_clippedBy__encompassing():
+    r1 = Rect(0, 0, 10, 10)
+    r2 = Rect(0, 0, 10, 10)
+    assert not r1.clippedBy(r2)
+
+def test_clippedBy__partial_overlappinng():
+    r1 = Rect(0, 0, 10, 10)
+    r2 = Rect(5, 5, 10, 10)
+    assert r1.clippedBy(r2)
+
+
+

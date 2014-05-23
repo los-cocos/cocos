@@ -150,7 +150,9 @@ class Rect(object):
         return True
 
     def clippedBy(self, other):
-        '''Determine whether this rect is clipped by the other rect.
+        '''bool. True iif intersection with other is smaller than self.
+
+        Equivalent: True if self doesn't fit entirely into other
 
         >>> r1 = Rect(0, 0, 10, 10)
         >>> r2 = Rect(1, 1, 9, 9)
@@ -171,12 +173,10 @@ class Rect(object):
         >>> r1.clippedBy(r2)
         True
         '''
-        if self.intersects(other): return True
-        if i.x > self.x: return True
-        if i.y > self.y: return True
-        if i.width < self.width: return True
-        if i.height < self.height: return True
-        return False
+        intersection = self.intersect(other)
+        if intersection is None:
+            return True
+        return intersection != self
 
     def intersect(self, other):
         '''Find the intersection of two Rect s.

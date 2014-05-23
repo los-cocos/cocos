@@ -4,7 +4,9 @@ New Features
 
 Bugfixes
 --------
-  - fixed <instant action> * n
+  - fixed Rect.clippedBy () 
+  - fixed RandomDelay * n ( 56a5229 )
+  - fixed <instant action> * n ( 9b1d950 )
 
 v0.6.0 - March 24, 2014
   - removed tiles.ScrollingManager / tiles.ScrollableLayer, they were deprecated
