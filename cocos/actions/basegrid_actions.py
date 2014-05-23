@@ -111,7 +111,7 @@ class GridBaseAction( IntervalAction ):
                     and type(new_grid) == type(self.target.grid):
                 # since we are reusing the grid,
                 # we must "cheat" the action that the original vertex coords are
-                # the ones that were inhereted.
+                # the ones that were inherited.
                 self.target.grid.vertex_points = self.target.grid.vertex_list.vertices[:]
                 self.target.grid.reuse_grid -= 1
                 self.target.grid.reuse_grid = max(0, self.target.grid.reuse_grid)
@@ -276,7 +276,7 @@ class AccelDeccelAmplitude( IntervalAction ):
                 The acceleration rate. 1 is linear (default value)
         """
         if not hasattr(other,'amplitude'):
-            raise GridAction("Invalid Composition: IncAmplitude needs an action with amplitude")
+            raise GridException("Invalid Composition: IncAmplitude needs an action with amplitude")
 
         self.other = other
         self.rate = rate
@@ -319,7 +319,7 @@ class AccelAmplitude( IntervalAction ):
                 The acceleration rate. 1 is linear (default value)
         """
         if not hasattr(other,'amplitude'):
-            raise GridAction("Invalid Composition: IncAmplitude needs an action with amplitude")
+            raise GridException("Invalid Composition: IncAmplitude needs an action with amplitude")
         
         self.other = other
         self.duration = other.duration
