@@ -302,11 +302,11 @@ class ShaderProgram(object):
     def uset3I(self, var, x, y, z):
         glUniform3iARB(self.uniformLoc(var), x, y, z)
 
-    def usetM4F(self, var, m, transpose=False):
+    def usetM4F(self, var, matrix, transpose=False):
         # some matrixs readed from openGl will come as the transpose of the
         # matrix we want to feed, so there it comes handy the transpose param
         glUniformMatrix4fvARB(self.uniformLoc(var), 1, transpose,
-                              (c_float * 16)(*mat))
+                              (c_float * 16)(*matrix))
 
     def usetTex(self, var, unit, target, tx):
         """

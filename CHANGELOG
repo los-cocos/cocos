@@ -4,7 +4,8 @@ New Features
 
 Bugfixes
 --------
-  - fixed Rect.clippedBy () 
+  - fixed passing a mutrix in a uniform to shaders ()
+  - fixed Rect.clippedBy (0ffd5a37) 
   - fixed RandomDelay * n ( 56a5229 )
   - fixed <instant action> * n ( 9b1d950 )
 
