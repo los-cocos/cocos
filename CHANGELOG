@@ -4,6 +4,7 @@ New Features
 
 Bugfixes
 --------
+  - fixed <instant action> * n
 
 v0.6.0 - March 24, 2014
   - removed tiles.ScrollingManager / tiles.ScrollableLayer, they were deprecated

@@ -642,10 +642,10 @@ class Loop_Action(Action):
         if not self._done:
             self.current_action.stop()
 
-class Loop_Instant_Action(InstantAction):
+class Loop_InstantAction(InstantAction):
     """Repeats one InstantAction for n times
     """
-    def init(one, times):
+    def init(self, one, times):
         self.one = one
         self.times = times
 
