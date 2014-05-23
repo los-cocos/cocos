@@ -28,7 +28,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import unittest
 
+import cocos.layer
 from cocos.tiles import Rect, RectCell, RectMap, HexCell, HexMap, Tile
+import cocos.euclid as eu
 
 rmd = [
    [ {'meta': x} for x in m ] for m in ['ad', 'be', 'cf']
@@ -373,27 +375,64 @@ class MapModelTest(unittest.TestCase):
         # \_/ \_/ 
         m = gen_hex_map(hmd, 32)
         
-        # bottom-left map corner will return A
+        # bottom-left map corner will return None
         t = m.get_at_pixel(0,0)
-        self.assertEquals((t.i, t.j), (0, 0))
-        self.assertEquals(t.properties['meta'], 'a')
+        self.assertEquals(t, None)
 
-        # left-most corner of A
-        t = m.get_at_pixel(0, 16)
-        self.assertEquals((t.i, t.j), (0, 0))
-        self.assertEquals(t.properties['meta'], 'a')
+        # moving a bit from any corner roughtly towards the center
+        # gives a point that hit the cell
+        t00 = m.get_cell(0, 0)
 
-        t = m.get_at_pixel(16, 16)
-        self.assertEquals((t.i, t.j), (0, 0))
-        self.assertEquals(t.properties['meta'], 'a')
+        near_left = eu.Vector2(*t00.left) + eu.Vector2(1, 0)
+        t = m.get_at_pixel(*near_left)
+        self.assertEquals(t00, t)
 
-        t = m.get_at_pixel(35,16)
-        self.assertEquals((t.i, t.j), (0, 0))
-        self.assertEquals(t.properties['meta'], 'a')
+        near_right = eu.Vector2(*t00.right) + eu.Vector2(-1, 0)
+        t = m.get_at_pixel(*near_right)
+        self.assertEquals(t00, t)
 
-        t = m.get_at_pixel(36,16)
-        self.assertEquals((t.i, t.j), (1, 0))
-        self.assertEquals(t.properties['meta'], 'c')
+        near_topright = eu.Vector2(*t00.topright) + eu.Vector2(-1, -1)
+        t = m.get_at_pixel(*near_topright)
+        self.assertEquals(t00, t)
+
+        near_topleft = eu.Vector2(*t00.topleft) + eu.Vector2(1, -1)
+        t = m.get_at_pixel(*near_topleft)
+        self.assertEquals(t00, t)
+
+        near_bottomright = eu.Vector2(*t00.bottomright) + eu.Vector2(-1, 1)
+        t = m.get_at_pixel(*near_bottomright)
+        self.assertEquals(t00, t)
+
+        near_bottomleft = eu.Vector2(*t00.bottomleft) + eu.Vector2(1, 1)
+        t = m.get_at_pixel(*near_bottomleft)
+        self.assertEquals(t00, t)
+
+
+        # Whereas moving from the corner outwards gives a point outside
+        # the cell
+        near_left = eu.Vector2(*t00.left) - eu.Vector2(1, 0)
+        t = m.get_at_pixel(*near_left)
+        self.assertFalse(t00 == t)
+
+        near_right = eu.Vector2(*t00.right) - eu.Vector2(-1, 0)
+        t = m.get_at_pixel(*near_right)
+        self.assertFalse(t00 == t)
+
+        near_topright = eu.Vector2(*t00.topright) - eu.Vector2(-1, -1)
+        t = m.get_at_pixel(*near_topright)
+        self.assertFalse(t00 == t)
+
+        near_topleft = eu.Vector2(*t00.topleft) - eu.Vector2(1, -1)
+        t = m.get_at_pixel(*near_topleft)
+        self.assertFalse(t00 == t)
+
+        near_bottomright = eu.Vector2(*t00.bottomright) - eu.Vector2(-1, 1)
+        t = m.get_at_pixel(*near_bottomright)
+        self.assertFalse(t00 == t)
+
+        near_bottomleft = eu.Vector2(*t00.bottomleft) - eu.Vector2(1, 1)
+        t = m.get_at_pixel(*near_bottomleft)
+        self.assertFalse(t00 == t)
 
     def test_hex_dimensions(self):
         m = gen_hex_map([[{'a':'a'}]], 32)
