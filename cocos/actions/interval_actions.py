@@ -739,5 +739,4 @@ class RandomDelay(Delay):
             raise TypeError("Can only multiply actions by ints")
         if other <= 1:
             return self
-        return RandomDelay(low*other, hi*other)
-
+        return RandomDelay(self.low * other, self.hi * other)
