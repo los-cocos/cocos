@@ -78,18 +78,18 @@ def gen_recthex_map(meta, h):
 class RectTest(unittest.TestCase):
     def test_rect_coords(self):
         t = Rect(0, 0, 10, 16)
-        self.assertEquals(t.top, 16)
-        self.assertEquals(t.bottom, 0)
-        self.assertEquals(t.left, 0)
-        self.assertEquals(t.right, 10)
-        self.assertEquals(t.topleft, (0, 16))
-        self.assertEquals(t.topright, (10, 16))
-        self.assertEquals(t.bottomleft, (0, 0))
-        self.assertEquals(t.bottomright, (10, 0))
-        self.assertEquals(t.midtop, (5, 16))
-        self.assertEquals(t.midleft, (0, 8))
-        self.assertEquals(t.midright, (10, 8))
-        self.assertEquals(t.midbottom, (5, 0))
+        self.assertEqual(t.top, 16)
+        self.assertEqual(t.bottom, 0)
+        self.assertEqual(t.left, 0)
+        self.assertEqual(t.right, 10)
+        self.assertEqual(t.topleft, (0, 16))
+        self.assertEqual(t.topright, (10, 16))
+        self.assertEqual(t.bottomleft, (0, 0))
+        self.assertEqual(t.bottomright, (10, 0))
+        self.assertEqual(t.midtop, (5, 16))
+        self.assertEqual(t.midleft, (0, 8))
+        self.assertEqual(t.midright, (10, 8))
+        self.assertEqual(t.midbottom, (5, 0))
 
 class MapModelTest(unittest.TestCase):
 
@@ -102,44 +102,44 @@ class MapModelTest(unittest.TestCase):
         #    +---+---+---+
         m = gen_rect_map(rmd, 10, 16)
         t = m.get_cell(0,0)
-        self.assertEquals((t.x, t.y), (0, 0))
-        self.assertEquals(t.properties['meta'], 'a')
+        self.assertEqual((t.x, t.y), (0, 0))
+        self.assertEqual(t.properties['meta'], 'a')
         assert m.get_neighbor(t, m.DOWN) is None
-        self.assertEquals(m.get_neighbor(t, m.UP).properties['meta'], 'd')
+        self.assertEqual(m.get_neighbor(t, m.UP).properties['meta'], 'd')
         assert m.get_neighbor(t, m.LEFT) is None
-        self.assertEquals(m.get_neighbor(t, m.RIGHT).properties['meta'], 'b')
+        self.assertEqual(m.get_neighbor(t, m.RIGHT).properties['meta'], 'b')
         t = m.get_neighbor(t, m.UP)
-        self.assertEquals((t.i, t.j), (0, 1))
-        self.assertEquals((t.x, t.y), (0, 16))
-        self.assertEquals(t.properties['meta'], 'd')
-        self.assertEquals(m.get_neighbor(t, m.DOWN).properties['meta'], 'a')
+        self.assertEqual((t.i, t.j), (0, 1))
+        self.assertEqual((t.x, t.y), (0, 16))
+        self.assertEqual(t.properties['meta'], 'd')
+        self.assertEqual(m.get_neighbor(t, m.DOWN).properties['meta'], 'a')
         assert m.get_neighbor(t, m.UP) is None
         assert m.get_neighbor(t, m.LEFT) is None
-        self.assertEquals(m.get_neighbor(t, m.RIGHT).properties['meta'], 'e')
+        self.assertEqual(m.get_neighbor(t, m.RIGHT).properties['meta'], 'e')
         t = m.get_neighbor(t, m.RIGHT)
-        self.assertEquals((t.i, t.j), (1, 1))
-        self.assertEquals((t.x, t.y), (10, 16))
-        self.assertEquals(t.properties['meta'], 'e')
-        self.assertEquals(m.get_neighbor(t, m.DOWN).properties['meta'], 'b')
+        self.assertEqual((t.i, t.j), (1, 1))
+        self.assertEqual((t.x, t.y), (10, 16))
+        self.assertEqual(t.properties['meta'], 'e')
+        self.assertEqual(m.get_neighbor(t, m.DOWN).properties['meta'], 'b')
         assert m.get_neighbor(t, m.UP) is None
-        self.assertEquals(m.get_neighbor(t, m.RIGHT).properties['meta'], 'f')
-        self.assertEquals(m.get_neighbor(t, m.LEFT).properties['meta'], 'd')
+        self.assertEqual(m.get_neighbor(t, m.RIGHT).properties['meta'], 'f')
+        self.assertEqual(m.get_neighbor(t, m.LEFT).properties['meta'], 'd')
         t = m.get_neighbor(t, m.RIGHT)
-        self.assertEquals((t.i, t.j), (2, 1))
-        self.assertEquals((t.x, t.y), (20, 16))
-        self.assertEquals(t.properties['meta'], 'f')
-        self.assertEquals(m.get_neighbor(t, m.DOWN).properties['meta'], 'c')
+        self.assertEqual((t.i, t.j), (2, 1))
+        self.assertEqual((t.x, t.y), (20, 16))
+        self.assertEqual(t.properties['meta'], 'f')
+        self.assertEqual(m.get_neighbor(t, m.DOWN).properties['meta'], 'c')
         assert m.get_neighbor(t, m.UP) is None
         assert m.get_neighbor(t, m.RIGHT) is None
-        self.assertEquals(m.get_neighbor(t, m.LEFT).properties['meta'], 'e')
+        self.assertEqual(m.get_neighbor(t, m.LEFT).properties['meta'], 'e')
         t = m.get_neighbor(t, m.DOWN)
-        self.assertEquals((t.i, t.j), (2, 0))
-        self.assertEquals((t.x, t.y), (20, 0))
-        self.assertEquals(t.properties['meta'], 'c')
+        self.assertEqual((t.i, t.j), (2, 0))
+        self.assertEqual((t.x, t.y), (20, 0))
+        self.assertEqual(t.properties['meta'], 'c')
         assert m.get_neighbor(t, m.DOWN) is None
-        self.assertEquals(m.get_neighbor(t, m.UP).properties['meta'], 'f')
+        self.assertEqual(m.get_neighbor(t, m.UP).properties['meta'], 'f')
         assert m.get_neighbor(t, m.RIGHT) is None
-        self.assertEquals(m.get_neighbor(t, m.LEFT).properties['meta'], 'b')
+        self.assertEqual(m.get_neighbor(t, m.LEFT).properties['meta'], 'b')
 
     def test_rect_pixel(self):
         # test rectangular tile map
@@ -150,20 +150,20 @@ class MapModelTest(unittest.TestCase):
         #    +---+---+---+
         m = gen_rect_map(rmd, 10, 16)
         t = m.get_at_pixel(0,0)
-        self.assertEquals((t.i, t.j), (0, 0))
-        self.assertEquals(t.properties['meta'], 'a')
+        self.assertEqual((t.i, t.j), (0, 0))
+        self.assertEqual(t.properties['meta'], 'a')
         t = m.get_at_pixel(9,15)
-        self.assertEquals((t.i, t.j), (0, 0))
-        self.assertEquals(t.properties['meta'], 'a')
+        self.assertEqual((t.i, t.j), (0, 0))
+        self.assertEqual(t.properties['meta'], 'a')
         t = m.get_at_pixel(10,15)
-        self.assertEquals((t.i, t.j), (1, 0))
-        self.assertEquals(t.properties['meta'], 'b')
+        self.assertEqual((t.i, t.j), (1, 0))
+        self.assertEqual(t.properties['meta'], 'b')
         t = m.get_at_pixel(9,16)
-        self.assertEquals((t.i, t.j), (0, 1))
-        self.assertEquals(t.properties['meta'], 'd')
+        self.assertEqual((t.i, t.j), (0, 1))
+        self.assertEqual(t.properties['meta'], 'd')
         t = m.get_at_pixel(10,16)
-        self.assertEquals((t.i, t.j), (1, 1))
-        self.assertEquals(t.properties['meta'], 'e')
+        self.assertEqual((t.i, t.j), (1, 1))
+        self.assertEqual(t.properties['meta'], 'e')
 
     def test_rect_region(self):
         # test rectangular tile map
@@ -174,13 +174,13 @@ class MapModelTest(unittest.TestCase):
         #    +---+---+---+
         m = gen_rect_map(rmd, 64, 64)
         t = m.get_in_region(0, 0, 63, 63)
-        self.assertEquals(len(t), 1)
-        self.assertEquals(t[0].properties['meta'], 'a')
+        self.assertEqual(len(t), 1)
+        self.assertEqual(t[0].properties['meta'], 'a')
         t = m.get_in_region(64, 64, 127, 127)
-        self.assertEquals(len(t), 1)
-        self.assertEquals(t[0].properties['meta'], 'e')
+        self.assertEqual(len(t), 1)
+        self.assertEqual(t[0].properties['meta'], 'e')
         t = m.get_in_region(32, 32, 96, 96)
-        self.assertEquals(len(t), 4)
+        self.assertEqual(len(t), 4)
 
     def test_rect_region_alt__rect_with_area_gt_0(self):
         tile_width = tile_height_h = 2
@@ -257,56 +257,56 @@ class MapModelTest(unittest.TestCase):
         # \_/ \_/ 
         m = gen_hex_map(hmd, 32)
         t = m.get_cell(0,0)
-        self.assertEquals((t.i, t.j), (0, 0))
-        self.assertEquals(t.properties['meta'], 'a')
+        self.assertEqual((t.i, t.j), (0, 0))
+        self.assertEqual(t.properties['meta'], 'a')
         assert m.get_neighbor(t, m.DOWN) is None
-        self.assertEquals(m.get_neighbor(t, m.UP).properties['meta'], 'b')
+        self.assertEqual(m.get_neighbor(t, m.UP).properties['meta'], 'b')
         assert m.get_neighbor(t, m.DOWN_LEFT) is None
         assert m.get_neighbor(t, m.DOWN_RIGHT) is None
         assert m.get_neighbor(t, m.UP_LEFT) is None
-        self.assertEquals(m.get_neighbor(t, m.UP_RIGHT).properties['meta'], 'c')
+        self.assertEqual(m.get_neighbor(t, m.UP_RIGHT).properties['meta'], 'c')
         t = m.get_neighbor(t, m.UP)
-        self.assertEquals((t.i, t.j), (0, 1))
-        self.assertEquals(t.properties['meta'], 'b')
-        self.assertEquals(m.get_neighbor(t, m.DOWN).properties['meta'], 'a')
+        self.assertEqual((t.i, t.j), (0, 1))
+        self.assertEqual(t.properties['meta'], 'b')
+        self.assertEqual(m.get_neighbor(t, m.DOWN).properties['meta'], 'a')
         assert m.get_neighbor(t, m.UP) is None
         assert m.get_neighbor(t, m.DOWN_LEFT) is None
-        self.assertEquals(m.get_neighbor(t, m.DOWN_RIGHT).properties['meta'], 'c')
+        self.assertEqual(m.get_neighbor(t, m.DOWN_RIGHT).properties['meta'], 'c')
         assert m.get_neighbor(t, m.UP_LEFT) is None
-        self.assertEquals(m.get_neighbor(t, m.UP_RIGHT).properties['meta'], 'd')
+        self.assertEqual(m.get_neighbor(t, m.UP_RIGHT).properties['meta'], 'd')
         t = m.get_neighbor(t, m.DOWN_RIGHT)
-        self.assertEquals((t.i, t.j), (1, 0))
-        self.assertEquals(t.properties['meta'], 'c')
+        self.assertEqual((t.i, t.j), (1, 0))
+        self.assertEqual(t.properties['meta'], 'c')
         assert m.get_neighbor(t, m.DOWN) is None
-        self.assertEquals(m.get_neighbor(t, m.UP).properties['meta'], 'd')
-        self.assertEquals(m.get_neighbor(t, m.DOWN_LEFT).properties['meta'], 'a')
-        self.assertEquals(m.get_neighbor(t, m.DOWN_RIGHT).properties['meta'], 'e')
-        self.assertEquals(m.get_neighbor(t, m.UP_LEFT).properties['meta'], 'b')
-        self.assertEquals(m.get_neighbor(t, m.UP_RIGHT).properties['meta'], 'f')
+        self.assertEqual(m.get_neighbor(t, m.UP).properties['meta'], 'd')
+        self.assertEqual(m.get_neighbor(t, m.DOWN_LEFT).properties['meta'], 'a')
+        self.assertEqual(m.get_neighbor(t, m.DOWN_RIGHT).properties['meta'], 'e')
+        self.assertEqual(m.get_neighbor(t, m.UP_LEFT).properties['meta'], 'b')
+        self.assertEqual(m.get_neighbor(t, m.UP_RIGHT).properties['meta'], 'f')
         t = m.get_neighbor(t, m.UP_RIGHT)
-        self.assertEquals((t.i, t.j), (2, 1))
-        self.assertEquals(t.properties['meta'], 'f')
-        self.assertEquals(m.get_neighbor(t, m.DOWN).properties['meta'], 'e')
+        self.assertEqual((t.i, t.j), (2, 1))
+        self.assertEqual(t.properties['meta'], 'f')
+        self.assertEqual(m.get_neighbor(t, m.DOWN).properties['meta'], 'e')
         assert m.get_neighbor(t, m.UP) is None
-        self.assertEquals(m.get_neighbor(t, m.DOWN_LEFT).properties['meta'], 'c')
-        self.assertEquals(m.get_neighbor(t, m.DOWN_RIGHT).properties['meta'], 'g')
-        self.assertEquals(m.get_neighbor(t, m.UP_LEFT).properties['meta'], 'd')
-        self.assertEquals(m.get_neighbor(t, m.UP_RIGHT).properties['meta'], 'h')
+        self.assertEqual(m.get_neighbor(t, m.DOWN_LEFT).properties['meta'], 'c')
+        self.assertEqual(m.get_neighbor(t, m.DOWN_RIGHT).properties['meta'], 'g')
+        self.assertEqual(m.get_neighbor(t, m.UP_LEFT).properties['meta'], 'd')
+        self.assertEqual(m.get_neighbor(t, m.UP_RIGHT).properties['meta'], 'h')
         t = m.get_neighbor(t, m.DOWN_RIGHT)
-        self.assertEquals((t.i, t.j), (3, 0))
-        self.assertEquals(t.properties['meta'], 'g')
+        self.assertEqual((t.i, t.j), (3, 0))
+        self.assertEqual(t.properties['meta'], 'g')
         assert m.get_neighbor(t, m.DOWN) is None
-        self.assertEquals(m.get_neighbor(t, m.UP).properties['meta'], 'h')
-        self.assertEquals(m.get_neighbor(t, m.DOWN_LEFT).properties['meta'], 'e')
+        self.assertEqual(m.get_neighbor(t, m.UP).properties['meta'], 'h')
+        self.assertEqual(m.get_neighbor(t, m.DOWN_LEFT).properties['meta'], 'e')
         assert m.get_neighbor(t, m.DOWN_RIGHT) is None
-        self.assertEquals(m.get_neighbor(t, m.UP_LEFT).properties['meta'], 'f')
+        self.assertEqual(m.get_neighbor(t, m.UP_LEFT).properties['meta'], 'f')
         assert m.get_neighbor(t, m.UP_RIGHT) is None
         t = m.get_neighbor(t, m.UP)
-        self.assertEquals((t.i, t.j), (3, 1))
-        self.assertEquals(t.properties['meta'], 'h')
-        self.assertEquals(m.get_neighbor(t, m.DOWN).properties['meta'], 'g')
+        self.assertEqual((t.i, t.j), (3, 1))
+        self.assertEqual(t.properties['meta'], 'h')
+        self.assertEqual(m.get_neighbor(t, m.DOWN).properties['meta'], 'g')
         assert m.get_neighbor(t, m.UP) is None
-        self.assertEquals(m.get_neighbor(t, m.DOWN_LEFT).properties['meta'], 'f')
+        self.assertEqual(m.get_neighbor(t, m.DOWN_LEFT).properties['meta'], 'f')
         assert m.get_neighbor(t, m.DOWN_RIGHT) is None
         assert m.get_neighbor(t, m.UP_LEFT) is None
         assert m.get_neighbor(t, m.UP_RIGHT) is None
@@ -323,47 +323,47 @@ class MapModelTest(unittest.TestCase):
 
         # test tile sides / corners
         t00 = m.get_cell(0, 0)
-        self.assertEquals(t00.top, 32)
-        self.assertEquals(t00.bottom, 0)
-        self.assertEquals(t00.left, (0, 16))
-        self.assertEquals(t00.right, (36, 16))
-        self.assertEquals(t00.center, (18, 16))
-        self.assertEquals(t00.topleft, (9, 32))
-        self.assertEquals(t00.topright, (27, 32))
-        self.assertEquals(t00.bottomleft, (9, 0))
-        self.assertEquals(t00.bottomright, (27, 0))
-        self.assertEquals(t00.midtop, (18, 32))
-        self.assertEquals(t00.midbottom, (18, 0))
-        self.assertEquals(t00.midtopleft, (4, 24))
-        self.assertEquals(t00.midtopright, (31, 24))
-        self.assertEquals(t00.midbottomleft, (4, 8))
-        self.assertEquals(t00.midbottomright, (31, 8))
+        self.assertEqual(t00.top, 32)
+        self.assertEqual(t00.bottom, 0)
+        self.assertEqual(t00.left, (0, 16))
+        self.assertEqual(t00.right, (36, 16))
+        self.assertEqual(t00.center, (18, 16))
+        self.assertEqual(t00.topleft, (9, 32))
+        self.assertEqual(t00.topright, (27, 32))
+        self.assertEqual(t00.bottomleft, (9, 0))
+        self.assertEqual(t00.bottomright, (27, 0))
+        self.assertEqual(t00.midtop, (18, 32))
+        self.assertEqual(t00.midbottom, (18, 0))
+        self.assertEqual(t00.midtopleft, (4, 24))
+        self.assertEqual(t00.midtopright, (31, 24))
+        self.assertEqual(t00.midbottomleft, (4, 8))
+        self.assertEqual(t00.midbottomright, (31, 8))
 
         t10 = m.get_cell(1, 0)
-        self.assertEquals(t10.top, 48)
-        self.assertEquals(t10.bottom, 16)
-        self.assertEquals(t10.left, t00.topright)
-        self.assertEquals(t10.right, (63, 32))
-        self.assertEquals(t10.center, (45, 32))
-        self.assertEquals(t10.topleft, (36, 48))
-        self.assertEquals(t10.topright, (54, 48))
-        self.assertEquals(t10.bottomleft, t00.right)
-        self.assertEquals(t10.bottomright, (54, 16))
-        self.assertEquals(t10.midtop, (45, 48))
-        self.assertEquals(t10.midbottom, (45, 16))
-        self.assertEquals(t10.midtopleft, (31, 40))
-        self.assertEquals(t10.midtopright, (58, 40))
-        self.assertEquals(t10.midbottomleft, t00.midtopright)
-        self.assertEquals(t10.midbottomright, (58, 24))
+        self.assertEqual(t10.top, 48)
+        self.assertEqual(t10.bottom, 16)
+        self.assertEqual(t10.left, t00.topright)
+        self.assertEqual(t10.right, (63, 32))
+        self.assertEqual(t10.center, (45, 32))
+        self.assertEqual(t10.topleft, (36, 48))
+        self.assertEqual(t10.topright, (54, 48))
+        self.assertEqual(t10.bottomleft, t00.right)
+        self.assertEqual(t10.bottomright, (54, 16))
+        self.assertEqual(t10.midtop, (45, 48))
+        self.assertEqual(t10.midbottom, (45, 16))
+        self.assertEqual(t10.midtopleft, (31, 40))
+        self.assertEqual(t10.midtopright, (58, 40))
+        self.assertEqual(t10.midbottomleft, t00.midtopright)
+        self.assertEqual(t10.midbottomright, (58, 24))
 
         t = m.get_cell(2, 0)
-        self.assertEquals(t.top, 32)
-        self.assertEquals(t.bottom, 0)
-        self.assertEquals(t.left, t10.bottomright)
-        self.assertEquals(t.right, (90, 16))
-        self.assertEquals(t.center, (72, 16))
-        self.assertEquals(t.topleft, t10.right)
-        self.assertEquals(t.midtopleft, t10.midbottomright)
+        self.assertEqual(t.top, 32)
+        self.assertEqual(t.bottom, 0)
+        self.assertEqual(t.left, t10.bottomright)
+        self.assertEqual(t.right, (90, 16))
+        self.assertEqual(t.center, (72, 16))
+        self.assertEqual(t.topleft, t10.right)
+        self.assertEqual(t.midtopleft, t10.midbottomright)
 
     def test_hex_pixel(self):
         # test hexagonal tile map
@@ -377,7 +377,7 @@ class MapModelTest(unittest.TestCase):
         
         # bottom-left map corner will return None
         t = m.get_at_pixel(0,0)
-        self.assertEquals(t, None)
+        self.assertEqual(t, None)
 
         # moving a bit from any corner roughtly towards the center
         # gives a point that hit the cell
@@ -385,27 +385,27 @@ class MapModelTest(unittest.TestCase):
 
         near_left = eu.Vector2(*t00.left) + eu.Vector2(1, 0)
         t = m.get_at_pixel(*near_left)
-        self.assertEquals(t00, t)
+        self.assertEqual(t00, t)
 
         near_right = eu.Vector2(*t00.right) + eu.Vector2(-1, 0)
         t = m.get_at_pixel(*near_right)
-        self.assertEquals(t00, t)
+        self.assertEqual(t00, t)
 
         near_topright = eu.Vector2(*t00.topright) + eu.Vector2(-1, -1)
         t = m.get_at_pixel(*near_topright)
-        self.assertEquals(t00, t)
+        self.assertEqual(t00, t)
 
         near_topleft = eu.Vector2(*t00.topleft) + eu.Vector2(1, -1)
         t = m.get_at_pixel(*near_topleft)
-        self.assertEquals(t00, t)
+        self.assertEqual(t00, t)
 
         near_bottomright = eu.Vector2(*t00.bottomright) + eu.Vector2(-1, 1)
         t = m.get_at_pixel(*near_bottomright)
-        self.assertEquals(t00, t)
+        self.assertEqual(t00, t)
 
         near_bottomleft = eu.Vector2(*t00.bottomleft) + eu.Vector2(1, 1)
         t = m.get_at_pixel(*near_bottomleft)
-        self.assertEquals(t00, t)
+        self.assertEqual(t00, t)
 
 
         # Whereas moving from the corner outwards gives a point outside
@@ -436,11 +436,11 @@ class MapModelTest(unittest.TestCase):
 
     def test_hex_dimensions(self):
         m = gen_hex_map([[{'a':'a'}]], 32)
-        self.assertEquals((m.px_width, m.px_height), (36, 32))
+        self.assertEqual((m.px_width, m.px_height), (36, 32))
         m = gen_hex_map([[{'a':'a'}]*2], 32)
-        self.assertEquals((m.px_width, m.px_height), (36, 64))
+        self.assertEqual((m.px_width, m.px_height), (36, 64))
         m = gen_hex_map([[{'a':'a'}]]*2, 32)
-        self.assertEquals((m.px_width, m.px_height), (63, 48))
+        self.assertEqual((m.px_width, m.px_height), (63, 48))
 
 if __name__ == '__main__':
     unittest.main()
