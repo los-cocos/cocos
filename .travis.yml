@@ -1,0 +1,21 @@
+# recycling the .travis.yml from other project, commented out things
+# we don't need ATM but may come handy later -
+#before_install:
+#  - sudo apt-get update
+#  - sudo apt-get --reinstall install -qq language-pack-en language-pack-es
+
+language: python
+python:
+  - "2.6"
+  - "2.7"
+  - "3.3"
+
+env:
+    - cocos_utest=1
+
+install:
+#  - "pip install -r requirements.txt --use-mirrors"
+#  - "pip install . --use-mirrors"
+   - python setup.py install
+script:
+  - cd utest && py.test --tb native

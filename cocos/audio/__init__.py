@@ -40,9 +40,10 @@ __all__ = ['SDL', 'pygame']
 import cocos
 _working = True
 
+
 try:
     import cocos.audio.pygame.mixer
-except ImportError as error:
+except Exception as error:
     # set to 0 to debug import errors, for release must be 1
     if 1:
         _working = False

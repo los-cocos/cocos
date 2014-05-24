@@ -2,6 +2,9 @@
 cocos2d
 =======
 
+.. image:: https://travis-ci.org/ccanepa/unit_nk.png
+   :target: https://travis-ci.org/ccanepa/unit_nk
+
 | A framework for building 2D games, demos, and other graphical/interactive applications.
 | Draws using OpenGL, which is hardware accelerated.
 | Targets the Operating Systems linux, mac or windows on Pc-like hardware.
