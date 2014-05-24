@@ -32,9 +32,22 @@ except ImportError:
 
 from setuptools import setup, find_packages
 
+import os
+
 f = open('README.rst','rU')
 long_description = f.read()
 f.close()
+
+install_requires=['six', ]
+dependency_links = []
+if os.environ.get("TRAVIS", False):
+    # Travis CI run
+    # We don't want to install pyglet
+    pass
+else:
+    # normal install, add the pyglet dependency
+    install_requires.append('pyglet>=1.2alpha1')
+    dependency_links.append('hg+https://code.google.com/p/pyglet@c7f948a848cb#egg=pyglet-1.2alpha1')
 
 setup(
     name = "cocos2d",
@@ -61,11 +74,11 @@ setup(
         ("Topic :: Games/Entertainment"),
         ],
  
-    packages = ['cocos'],
+    packages = ['cocos', 'cocos/actions', 'cocos/audio', 'cocos/layer', 'cocos/scenes'],
     package_data={'cocos': ['resources/*.*']},
 
-    install_requires=['six', 'pyglet>=1.2alpha1',],
-    dependency_links=['hg+https://code.google.com/p/pyglet@c7f948a848cb#egg=pyglet-1.2alpha1',],
+    install_requires=install_requires,
+    dependency_links=dependency_links,
 
     include_package_data = True,
     zip_safe = False,
