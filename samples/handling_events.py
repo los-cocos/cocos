@@ -38,7 +38,9 @@ class KeyDisplay(cocos.layer.Layer):
         'key' is a constant indicating which key was pressed.
         'modifiers' is a bitwise or of several constants indicating which
            modifiers are active at the time of the press (ctrl, shift, capslock, etc.)
-            
+
+        See also on_key_release situations when a key press does not fire an
+         'on_key_press' event.
         """
         self.keys_pressed.add (key)
         self.update_text()
@@ -51,8 +53,16 @@ class KeyDisplay(cocos.layer.Layer):
            modifiers are active at the time of the press (ctrl, shift, capslock, etc.)
 
         Constants are the ones from pyglet.window.key
+
+        Sometimes a key release can arrive without a previous 'press' event, so discard
+        is used instead of remove.
+
+        This can happen in Windows by example when you 'press ALT, release ALT, press B,
+        release B'; the events received are 'pressed ALT, released ALT, released B'.
+
+        This may depend on the pyglet version, here pyglet from repo at may 2014 was used.
         """
-        self.keys_pressed.remove (key)
+        self.keys_pressed.discard (key)
         self.update_text()
 
 class MouseDisplay(cocos.layer.Layer):
