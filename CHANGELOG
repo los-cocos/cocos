@@ -4,6 +4,8 @@ New Features
 
 Bugfixes
 --------
+
+  - fixed z-order in BatchNode, #213, thanks Nitneroc and MCopperhead
   - fixed passing a mutrix in a uniform to shaders ()
   - fixed Rect.clippedBy (0ffd5a37) 
   - fixed RandomDelay * n ( 56a5229 )
