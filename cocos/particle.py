@@ -237,7 +237,7 @@ class ParticleSystem( CocosNode ):
         #self.add_particle()
     
     def get_scaled_particle_size(self):
-        """calcultes the value to pass in glPointSize to respect node scaling
+        """calculates the value to pass in glPointSize to respect node scaling
         and window resize; only used when rendering with point sprites.
         """
         node = self
@@ -247,7 +247,7 @@ class ParticleSystem( CocosNode ):
             node = node.parent
             if node.parent is None:
                 break
-        if not director.do_not_scale_window:
+        if director.autoscale:
             scale *= 1.0 * director._usable_width / director._window_virtual_width
         return self.size * scale
 

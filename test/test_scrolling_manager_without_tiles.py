@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
 testinfo = "s, t 1.1, s, t 2.1, s, t 3.1, s, t 4.1, s, t 5.1, s, t 6.1, s, q"
-tags = "scrolling, ScrollingManager, do_not_scale"
+tags = "scrolling, ScrollingManager, sutoscale"
 autotest = 0
 
 import math
@@ -25,8 +25,6 @@ from cocos.director import director
 import cocos.euclid as eu
 from cocos.actions import Delay, CallFunc, ScaleTo
 
-# test mode 2: no autoscale, ie do_not_scale=True
-test_mode = 2
 
 view_width = 640
 view_height = 480
@@ -215,8 +213,8 @@ def show_common_text():
 tests ScrollingManager and ScrollableLayer when the contents are not provided
 by a tilemap.
 
-You can run the test in the two available modes:'do_not_scale' True/False
-Look near the script begin to choose the mode; the instructions and expected
+You can run the test in the two available modes:'autoscale' True/False
+Look at the start of main to choose the mode; the instructions and expected
 results text will match the mode.
 
 use arrows to move, +- in the main keyboard (not the keypad) for zoom,
@@ -234,7 +232,7 @@ ratio; look near the script begin
 
 def show_mode_1_text():
     print("""
-Mode: autoscale, that is do_not_scale=False
+Mode: autoscale == True
 
 1. scroll constraits works:
     verify that moving the player you can make the view scroll to reveal all
@@ -280,7 +278,7 @@ resize:
 
 def show_mode_2_text():
     print("""
-Mode: not autoscale, that is do_not_scale=True
+Mode: not autoscale, that is 'autoscale' == False
 
 1. scroll constraits works:
     verify that moving the player you can make the view scroll to reveal all
@@ -330,12 +328,12 @@ resize:
 
 def main():
     show_common_text()
-    if test_mode == 1:
+    autoscale = True
+    if autoscale:
         show_mode_1_text()
-        director.init(view_width, view_height, do_not_scale=False)
     else:
         show_mode_2_text()
-        director.init(view_width, view_height, do_not_scale=True)
+    director.init(view_width, view_height, autoscale=autoscale)
 
     scene = TestScene()
     world_layer = SquareLand(world_width, world_height)

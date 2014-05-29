@@ -64,7 +64,7 @@ Use D to show cell / tile info
 def main():
     global keyboard, tilemap, scroller
     from cocos.director import director
-    director.init(width=800, height=600, do_not_scale=True)
+    director.init(width=800, height=600, autoscale=False)
 
     print(description)
     # create a layer to put the player in

@@ -84,7 +84,7 @@ def main():
     print(description)
     # telling director to not auto scale the scene when the window resizes and
     # to allow window resize, also that a 400x400 window is desired.
-    director.init(width=400, height=400, do_not_scale=True, resizable=True)
+    director.init(width=400, height=400, autoscale=False, resizable=True)
     scene = cocos.scene.Scene()
     bg = AutocenteredBackgroundLayer()
     for i in range(3):

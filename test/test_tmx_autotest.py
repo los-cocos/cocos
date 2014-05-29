@@ -37,7 +37,7 @@ class TestScene(cocos.scene.Scene):
         scroller.do(template_action)
 
 def main():
-    director.init(width=600, height=300, do_not_scale=True, resizable=True)
+    director.init(width=600, height=300, autoscale=False, resizable=True)
     main_scene = TestScene()
     director.run(main_scene)
 

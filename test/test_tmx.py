@@ -30,7 +30,7 @@ class DriveCar(actions.Driver):
 def main():
     global keyboard, scroller
     from cocos.director import director
-    director.init(width=800, height=600, do_not_scale=True, resizable=True)
+    director.init(width=800, height=600, autoscale=False, resizable=True)
 
     car_layer = layer.ScrollableLayer()
     car = cocos.sprite.Sprite('car.png')
