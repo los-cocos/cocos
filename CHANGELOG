@@ -1,13 +1,15 @@
-v0.x.x - ?
+v0.6.5 - ?
 New Features
 ------------
+
+  - deprecated do_not_scale and do_not_scale_window, use autoscale, #214
 
 Bugfixes
 --------
 
   - fixed z-order in BatchNode, #213, thanks Nitneroc and MCopperhead
-  - fixed passing a mutrix in a uniform to shaders ()
-  - fixed Rect.clippedBy (0ffd5a37) 
+  - fixed passing a matrix in a uniform to shaders ( 4a7bfb5ca8 )
+  - fixed Rect.clippedBy ( 0ffd5a37 ) 
   - fixed RandomDelay * n ( 56a5229 )
   - fixed <instant action> * n ( 9b1d950 )
 
