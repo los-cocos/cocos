@@ -166,8 +166,8 @@ class ScrollingManager(Layer):
     '''
     def __init__(self, viewport=None, do_not_scale=None):
         if do_not_scale is None:
-            do_not_scale = director.do_not_scale_window
-        self.autoscale = not do_not_scale and not director.do_not_scale_window
+            do_not_scale = not director.autoscale
+        self.autoscale = not do_not_scale and director.autoscale
 
         self.viewport = viewport
 
@@ -202,7 +202,7 @@ class ScrollingManager(Layer):
         if self.viewport is not None:
             self.view_w, self.view_h = self.viewport.width, self.viewport.height
             self.view_x, self.view_y = getattr(self.viewport, 'position', (0,0))
-            if director.do_not_scale_window:
+            if not director.autoscale:
                 self._scissor_flat = (self.view_x, self.view_y,
                                      self.view_w, self.view_h)
             else:
@@ -250,7 +250,7 @@ class ScrollingManager(Layer):
         Account for viewport, layer and screen transformations.
         '''
         # director display scaling
-        if not director.do_not_scale_window:
+        if director.autoscale:
             x, y = director.get_virtual_coordinates(x, y)
 
         # normalise x,y coord

@@ -121,6 +121,7 @@ __docformat__ = 'restructuredtext'
 
 import sys
 from os import getenv
+import warnings
 import pyglet
 from pyglet import window, event
 from pyglet import clock
@@ -215,17 +216,19 @@ class Director(event.EventDispatcher):
 
         There are a few cocos exclusive parameters, the rest are the
         standard pyglet parameters for pyglet.window.Window.__init__
-        This docstring only partially list the pyglet parameteres; a full
+        This docstring only partially list the pyglet parameters; a full
         list is available at pyglet Window API Reference at
         http://pyglet.org/doc/api/pyglet.window.Window-class.html
 
         :Parameters:
-            `do_not_scale` : bool
-                False: on window resizes, cocos will scale the view so that your
+            `autoscale` : bool
+                True: on window resizes, cocos will scale the view so that your
                 app don't need to handle resizes.
-                True: your app must include logic to deal with diferent window
+                False: your app must include logic to deal with different window
                 sizes along the session.
                 Defaults to False
+            `do_not_scale` : bool
+                Deprecated. The logical negation of autoscale
             `audio_backend` : string
                 one in ['pyglet','sdl']. Defaults to 'pyglet' for legacy support.
             `audio` : dict or None
@@ -281,8 +284,27 @@ class Director(event.EventDispatcher):
         #: flag requesting app termination
         self.terminate_app = False
 
-        # pop out the Cocos-specific flags
-        self.do_not_scale_window = kwargs.pop('do_not_scale', False)
+        ## pop out the Cocos-specific flags
+
+        # 'autoscale' / 'do_not_scale' - Scheduled for cleanup at v0.7
+        if 'do_not_scale' in kwargs:
+            warnings.warn("'do_not_scale' kw-param in director.init is deprecated, use 'autoscale'")
+            if 'autoscale' in kwargs:
+                warnings.warn("Conflict between deprecated 'do_not_scale' and 'autoscale', " +
+                              "'autoscale' wins")
+                self.autoscale = kwargs.pop('autoscale')
+            else:
+                self.autoscale = not kwargs.pop('do_not_scale')
+        else:
+            self.autoscale = kwargs.pop('autoscale', True)
+        def _get_do_not_scale_window():
+            warnings.warn('Access to deprecated director.do_not_scale_window')
+            return not self.autoscale
+        def _set_do_not_scale_window(v):
+            warnings.warn('Access to deprecated director.do_not_scale_window')
+            self.autoscale = not v
+        do_not_scale_window = property(_get_do_not_scale_window, _set_do_not_scale_window)
+
         audio_backend = kwargs.pop('audio_backend', 'pyglet')
         audio_settings = kwargs.pop('audio', {})
 
@@ -298,7 +320,7 @@ class Director(event.EventDispatcher):
         self.window = window.Window( *args, **kwargs )
 
         # complete the viewport geometry info, both virtual and real,
-        # also set the appropiate on_resize handler
+        # also set the appropriate on_resize handler
         if self._window_virtual_width is None:
             self._window_virtual_width = self.window.width
         if self._window_virtual_height is None:
@@ -310,12 +332,12 @@ class Director(event.EventDispatcher):
         self._offset_x = 0
         self._offset_y = 0
 
-        if self.do_not_scale_window:
-            resize_handler = self.unscaled_resize_window
-            self.set_projection = self.set_projection2D
-        else:
+        if self.autoscale:
             resize_handler = self.scaled_resize_window
             self.set_projection = self.set_projection3D
+        else:
+            resize_handler = self.unscaled_resize_window
+            self.set_projection = self.set_projection2D
         # the offsets and size for the viewport will be proper after this
         self._resize_no_events = True
         resize_handler(self.window.width, self.window.height)
@@ -335,7 +357,7 @@ class Director(event.EventDispatcher):
         if getenv('COCOS2D_NOSOUND', None) == '1' or audio_backend == 'pyglet':
             audio_settings = None
         # if audio is not working, better to not work at all. Except if
-        # explicitely instructed to continue
+        # explicitly instructed to continue
         if not cocos.audio._working and audio_settings is not None:
             from cocos.audio.exceptions import NoAudioError
             msg = "cocos.audio isn't able to work without needed dependencies. " \
@@ -400,7 +422,7 @@ class Director(event.EventDispatcher):
             The windows is painted as:
             
                 - Render the current scene by calling it's visit method
-                - Eventualy draw the fps metter
+                - Eventually draw the fps metter
                 - Eventually draw the interpreter
 
             When the window is minimized any pending switch to scene will be
@@ -411,7 +433,7 @@ class Director(event.EventDispatcher):
         if ((self.window.width==0 or self.window.height==0) and
             not self.terminate_app):
             # if surface area is zero, we don't need to draw; also
-            # we dont't want to allow scene changes in this situation: usually
+            # we don't want to allow scene changes in this situation: usually
             # on_enter does some scaling, which would lead to division by zero
             return
 

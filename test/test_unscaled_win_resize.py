@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
 testinfo = "s, t 1, s, q"
-tags = "director.init, do_not_scale"
+tags = "director.init, autoscale"
 autotest = 0
 
 import cocos
@@ -32,13 +32,13 @@ class TestLayer(cocos.layer.Layer):
         director.window.set_size(600, 600)
 
 description = """
-Using do_not_scale=True in director.init, content will not
+Using autoscale=False in director.init, content will not
 be scaled on resize. Use ctrl-f to toggle fullscreen
 """
 
 def main():
     print(description)
-    director.init(width=300, height=300, do_not_scale=True)
+    director.init(width=300, height=300, autoscale=False)
     test_layer = TestLayer ()
     main_scene = cocos.scene.Scene (test_layer)
     director.run (main_scene)
