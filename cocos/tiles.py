@@ -1484,16 +1484,17 @@ class HexCell(Cell):
 
 class TmxObject(Rect):
     '''An object in a TMX object layer.
-name: The name of the object. An arbitrary string.
-type: The type of the object. An arbitrary string.
-x: The x coordinate of the object in pixels.
-y: The y coordinate of the object in pixels.
-width: The width of the object in pixels (defaults to 0).
-height: The height of the object in pixels (defaults to 0).
-gid: An reference to a tile (optional).
-visible: Whether the object is shown (1) or hidden (0). Defaults to 1.
+
+        name: An arbitrary string. The object's 'name' field in Tiled Editor. 
+        usertype: An arbitrary string. The object's 'type' field in Tiled Editor.
+        x: The x coordinate of the object in pixels.
+        y: The y coordinate of the object in pixels.
+        width: The width of the object in pixels (defaults to 0).
+        height: The height of the object in pixels (defaults to 0).
+        gid: An reference to a tile (optional).
+        visible: Whether the object is shown (1) or hidden (0). Defaults to 1.
     '''
-    def __init__(self, type, x, y, width=0, height=0, name=None,
+    def __init__(self, usertype, x, y, width=0, height=0, name=None,
             gid=None, tile=None, visible=1):
         if tile:
             width = tile.image.width
@@ -1501,7 +1502,7 @@ visible: Whether the object is shown (1) or hidden (0). Defaults to 1.
         super(TmxObject, self).__init__(x, y, width, height)
         self.px = x
         self.py = y
-        self.type = type
+        self.usertype = usertype
         self.name = name
         self.gid = gid
         self.tile = tile
@@ -1636,8 +1637,8 @@ class TmxObjectLayer(MapLayer):
             int(tag.attrib.get('visible', 1)))
         width = tile_width * int(tag.attrib['width'])
         height = tile_height * int(tag.attrib['height'])
-        for object in tag.findall('object'):
-            layer.objects.append(TmxObject.fromxml(object, tilesets, width,
+        for obj in tag.findall('object'):
+            layer.objects.append(TmxObject.fromxml(obj, tilesets, width,
                 height))
         for c in tag.findall('property'):
             # store additional properties.
@@ -1660,9 +1661,9 @@ class TmxObjectLayer(MapLayer):
         '''
         r = []
         for propname in requirements:
-            for object in self.objects:
-                if object and propname in object or propname in self.properties:
-                    r.append(object)
+            for obj in self.objects:
+                if obj and propname in obj or propname in self.properties:
+                    r.append(obj)
         return r
 
     def match(self, **properties):
@@ -1670,15 +1671,15 @@ class TmxObjectLayer(MapLayer):
         '''
         r = []
         for propname in properties:
-            for object in self.objects:
-                if propname in object:
-                    val = object[propname]
+            for obj in self.objects:
+                if propname in obj:
+                    val = obj[propname]
                 elif propname in self.properties:
                     val = self.properties[propname]
                 else:
                     continue
                 if properties[propname] == val:
-                    r.append(object)
+                    r.append(obj)
         return r
 
     def collide(self, rect, propname):
@@ -1686,10 +1687,10 @@ class TmxObjectLayer(MapLayer):
         property name set.
         '''
         r = []
-        for object in self.get_in_region(rect.left, rect.bottom, rect.right,
+        for obj in self.get_in_region(rect.left, rect.bottom, rect.right,
                 rect.top):
-            if propname in object or propname in self.properties:
-                r.append(object)
+            if propname in obj or propname in self.properties:
+                r.append(obj)
         return r
 
     def get_in_region(self, left, bottom, right, top):
@@ -1706,9 +1707,9 @@ class TmxObjectLayer(MapLayer):
 
         Return an TmxObject instance or None.
         '''
-        for object in self.objects:
-            if object.contains(x, y):
-                return object
+        for obj in self.objects:
+            if obj.contains(x, y):
+                return obj
 
     def _update_sprite_set(self):
         self._sprites = {}
