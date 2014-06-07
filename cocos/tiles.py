@@ -52,7 +52,7 @@ from xml.etree import ElementTree
 
 import pyglet
 from pyglet import gl
-from pyglet.text.formats.html import _parse_color
+import pyglet.text.formats.html as p_html
 
 import cocos
 from cocos.director import director
@@ -1631,7 +1631,7 @@ class TmxObjectLayer(MapLayer):
     def fromxml(cls, tag, tilesets, tile_width, tile_height):
         color = tag.attrib.get('color')
         if color:
-            color = _parse_color(color)
+            color = p_html._parse_color(color)
         layer = cls(tag.attrib['name'], color, [],
             float(tag.attrib.get('opacity', 1)),
             int(tag.attrib.get('visible', 1)))
