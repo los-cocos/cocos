@@ -1482,24 +1482,73 @@ class HexCell(Cell):
     midbottomright = property(get_midbottomright)
 
 
-class TmxObject(Rect):
-    '''An object in a TMX object layer.
+def parse_tmx_points(tag, obj_x, obj_y):
+    """parses tmx tag points into left, bottom, right, top, points
 
-        name: An arbitrary string. The object's 'name' field in Tiled Editor. 
-        usertype: An arbitrary string. The object's 'type' field in Tiled Editor.
-        x: The x coordinate of the object in pixels.
-        y: The y coordinate of the object in pixels.
-        width: The width of the object in pixels (defaults to 0).
-        height: The height of the object in pixels (defaults to 0).
-        gid: An reference to a tile (optional).
-        visible: Whether the object is shown (1) or hidden (0). Defaults to 1.
+    Parameters:
+        tag: xml tag, assumed an object tag
+        obj_x: object x position in gl coordinates
+        obj_y: object y position in gl coordinates
+
+    Returns:
+        left: leftmost x-position in points, gl coordinates system
+        bottom: bottommost y-position in points, gl coordinates system
+        width: width of point's enclosing box
+        height: height of point's enclosing box
+        points: list of points in a gl coordinates system relative to (left, bottom)
+    """
+    points_string = tag.attrib['points']
+    points_parts = points_string.split(' ')
+    # points, absolute position
+    pa = []
+    for pair in points_parts:
+        coords = pair.split(',')
+        pa.append((int(coords[0]) + obj_x, -int(coords[1]) + obj_y))
+
+    left = min([x for x,y in pa])
+    bottom = min([y for x,y in pa])
+    right = max([x for x,y in pa])
+    top = max([y for x,y in pa])
+    width = right - left + 1
+    height = top - bottom + 1
+
+    # points, relative to (bottom, left)
+    points = [(x - left, y - bottom) for x,y in pa]
+    return left, bottom, width, height, points
+
+
+def tmx_coords_to_gl(x, y, map_height):
+    return x, map_height - y
+
+class TmxObject(Rect):
+    '''Represents an object in a TMX object layer.
+
+    Instances of this class are ussually constructed by calling
+    TmxObject.fromxml
+
+    Theres no validation of data pased to __init__
+
+    tmxtype: one of 'ellipse', 'polygon', 'polyline', 'rect', 'tile'
+    name: An arbitrary string. The object's 'name' field in Tiled Editor.
+    usertype: An arbitrary string. The object's 'type' field in Tiled Editor.
+    x: The x coordinate of the bottomleft object's Axis Aligned Bounding Box.
+    y: The y coordinate of the bottomleft object's Axis Aligned Bounding Box.
+    width: The width of the object in pixels (defaults to 0).
+    height: The height of the object in pixels (defaults to 0).
+    gid: An reference to a tile (optional).
+    visible: Whether the object is shown (1) or hidden (0). Defaults to 1.
+    points: a sequence of coords (x, y) relative to bottomleft  thas enumerates
+    the vertices in a 'polygon' or 'polyline'.
+
+    A 'rect' AABB is itself, so x,y is it's bottomleft corner. 
     '''
-    def __init__(self, usertype, x, y, width=0, height=0, name=None,
-            gid=None, tile=None, visible=1):
+    def __init__(self, tmxtype, usertype, x, y, width=0, height=0, name=None,
+            gid=None, tile=None, visible=1, points=None):
         if tile:
             width = tile.image.width
             height = tile.image.height
         super(TmxObject, self).__init__(x, y, width, height)
+        self.tmxtype = tmxtype
         self.px = x
         self.py = y
         self.usertype = usertype
@@ -1507,6 +1556,7 @@ class TmxObject(Rect):
         self.gid = gid
         self.tile = tile
         self.visible = visible
+        self.points = points
         self.properties = {}
 
         self._added_properties = {}
@@ -1551,8 +1601,15 @@ class TmxObject(Rect):
             return default
 
     @classmethod
-    def fromxml(cls, tag, tilesets, map_width, map_height):
+    def fromxml(cls, tag, tilesets, map_height):
+        # tiled uses origin at topleft map corner, convert to gl bottomleft origin
+        left = int(tag.attrib['x'])
+        top = map_height - int(tag.attrib['y'])
+        bottom = None
+        points = None
+
         if 'gid' in tag.attrib:
+            tmxtype = 'tile'
             gid = int(tag.attrib['gid'])
             # UGH
             for ts in tilesets:
@@ -1564,13 +1621,29 @@ class TmxObject(Rect):
         else:
             gid = None
             tile = None
-            w = int(tag.attrib['width'])
-            h = int(tag.attrib['height'])
+            w = int(tag.attrib.get('width', 0))
+            h = int(tag.attrib.get('height', 0))
 
-        # TILED TMX is OLD SKOOL Y DOWN
-        o = cls(tag.attrib.get('type', 'rect'), int(tag.attrib['x']),
-            map_height - int(tag.attrib['y']) - h, w, h, tag.attrib.get('name'),
-            gid, tile, int(tag.attrib.get('visible', 1)))
+            subtags = {}
+            for c in tag.getchildren():
+                subtags[c.tag] = c
+            if 'ellipse' in subtags:
+                tmxtype = 'ellipse'
+            elif 'polygon' in subtags:
+                tmxtype = 'polygon'
+                left, bottom, w, h, points = parse_tmx_points(subtags['polygon'], left, top)
+            elif 'polyline' in subtags:
+                tmxtype = 'polyline'
+                left, bottom, w, h, points = parse_tmx_points(subtags['polyline'], left, top)
+            else:
+                tmxtype = 'rect'
+
+        if bottom is None:
+            bottom = top - h
+
+        o = cls(tmxtype, tag.attrib.get('type'), left, bottom, w, h,
+                tag.attrib.get('name'), gid, tile, int(tag.attrib.get('visible', 1)),
+                points)
 
         props = tag.find('properties')
         if props is None:
@@ -1638,8 +1711,7 @@ class TmxObjectLayer(MapLayer):
         width = tile_width * int(tag.attrib['width'])
         height = tile_height * int(tag.attrib['height'])
         for obj in tag.findall('object'):
-            layer.objects.append(TmxObject.fromxml(obj, tilesets, width,
-                height))
+            layer.objects.append(TmxObject.fromxml(obj, tilesets, height))
         for c in tag.findall('property'):
             # store additional properties.
             name = c.attrib['name']
