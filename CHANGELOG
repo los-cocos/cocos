@@ -2,6 +2,7 @@ v0.6.5 - ?
 New Features
 ------------
 
+  - support to read .tmx (Tiled Editor) object layers and objects, #215
   - deprecated do_not_scale and do_not_scale_window, use autoscale, #214
 
 Bugfixes
