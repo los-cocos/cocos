@@ -52,6 +52,7 @@ from xml.etree import ElementTree
 
 import pyglet
 from pyglet import gl
+import pyglet.text.formats.html as p_html
 
 import cocos
 from cocos.director import director
@@ -279,7 +280,8 @@ def load_tmx(filename):
             if c.tag == "image":
                 # create a tileset from the image atlas
                 path = resource.find_file(c.attrib['source'])
-                tileset = TileSet.from_atlas(name, firstgid, path, tile_width, tile_height)
+                tileset = TileSet.from_atlas(name, firstgid, path, tile_width,
+                    tile_height)
                 # TODO consider adding the individual tiles to the resource?
                 tilesets.append(tileset)
                 resource.add_resource(name, tileset)
@@ -339,6 +341,11 @@ def load_tmx(filename):
         m.visible = int(layer.attrib.get('visible', 1))
 
         resource.add_resource(id, m)
+
+    # finally, object groups
+    for tag in map.findall('objectgroup'):
+        layer = TmxObjectLayer.fromxml(tag, tilesets, tile_width, tile_height)
+        resource.add_resource(layer.name, layer)
 
     return resource
 
@@ -743,7 +750,7 @@ class MapLayer(cocos.layer.ScrollableLayer):
             if cell.tile is None:
                 continue
             if key in self._sprites:
-                s = s = self._sprites[key]
+                s = self._sprites[key]
             else:
                 s = pyglet.sprite.Sprite(cell.tile.image,
                     x=cx, y=cy, batch=self.batch)
@@ -853,13 +860,13 @@ class RectMap(RegularTesselationMap):
         self.px_width = len(cells) * tw
         self.px_height = len(cells[0]) * th
 
-    def get_in_region(self, x1, y1, x2, y2):
-        '''Return cells that intersects the rectangle x1, y1, x2, y2 in an
-           area greater than zero
+    def get_in_region(self, left, bottom, right, top):
+        '''Return cells that intersects the rectangle left, bottom, right, top
+        in an area greater than zero
 
-        (x1, y1) and (x2, y2) are the lower left and upper right corners
-        respectively, in map's coordinate space, unmodified by screen, layer
-        or view transformations
+        (left, bottom) and (right, top) are the lower left and upper right
+        corners respectively, in map's coordinate space, unmodified by screen,
+        layer or view transformations
 
         Return a list of Cell instances.
 
@@ -873,13 +880,13 @@ class RectMap(RegularTesselationMap):
         '''
         ox = self.origin_x
         oy = self.origin_y
-        x1 = max(0, (x1 - ox) // self.tw)
-        y1 = max(0, (y1 - oy) // self.th)
-        x2 = min(len(self.cells), ceil(float(x2 - ox) / self.tw))
-        y2 = min(len(self.cells[0]), ceil(float(y2 - oy) / self.th))
+        left = max(0, (left - ox) // self.tw)
+        bottom = max(0, (bottom - oy) // self.th)
+        right = min(len(self.cells), ceil(float(right - ox) / self.tw))
+        top = min(len(self.cells[0]), ceil(float(top - oy) / self.th))
         return [self.cells[i][j]
-            for i in range(int(x1), int(x2))
-                for j in range(int(y1), int(y2))]
+            for i in range(int(left), int(right))
+                for j in range(int(bottom), int(top))]
 
     def get_key_at_pixel(self, x, y):
         """returns the grid coordinates for the hex that covers the point (x, y)"""
@@ -1197,24 +1204,25 @@ class HexMap(RegularTesselationMap):
         self.tw = self.edge_length * 2
 
         # now figure map dimensions
-        width = len(cells); height = len(cells[0])
+        width = len(cells);
+        height = len(cells[0])
         self.px_width = self.tw + (width - 1) * (s + s // 2)
         self.px_height = height * self.th
         if not width % 2:
             self.px_height += (th // 2)
 
-    def get_in_region(self, x1, y1, x2, y2):
+    def get_in_region(self, left, bottom, right, top):
         '''Return cells (in [column][row]) that are within the pixel bounds
-        specified by the bottom-left (x1, y1) and top-right (x2, y2) corners.
+        specified by the bottom-left (left, bottom) and top-right (right, top) corners.
         '''
         ox = self.origin_x
         oy = self.origin_y
         col_width = self.tw // 2 + self.tw // 4
-        x1 = max(0, (x1 - ox) // col_width - self.tw // 4)
-        y1 = max(0, (y1 - oy) // self.th - 1)
-        x2 = min(len(self.cells), x2 // col_width + 1)
-        y2 = min(len(self.cells[0]), y2 // self.th + 1)
-        return [self.cells[i][j] for i in range(x1, x2) for j in range(y1, y2)]
+        left = max(0, (left - ox) // col_width - self.tw // 4)
+        bottom = max(0, (bottom - oy) // self.th - 1)
+        right = min(len(self.cells), right // col_width + 1)
+        top = min(len(self.cells[0]), top // self.th + 1)
+        return [self.cells[i][j] for i in range(left, right) for j in range(bottom, top)]
 
     # XXX add get_from_screen
 
@@ -1472,3 +1480,343 @@ class HexCell(Cell):
         return (x + self.width // 2 + self.width // 4 + self.width // 8,
             y + self.height // 4)
     midbottomright = property(get_midbottomright)
+
+
+def parse_tmx_points(tag, obj_x, obj_y):
+    """parses tmx tag points into left, bottom, right, top, points
+
+    Parameters:
+        tag: xml tag, assumed an object tag
+        obj_x: object x position in gl coordinates
+        obj_y: object y position in gl coordinates
+
+    Returns:
+        left: leftmost x-position in points, gl coordinates system
+        bottom: bottommost y-position in points, gl coordinates system
+        width: width of point's enclosing box
+        height: height of point's enclosing box
+        points: list of points in a gl coordinates system relative to (left, bottom)
+    """
+    points_string = tag.attrib['points']
+    points_parts = points_string.split(' ')
+    # points, absolute position
+    pa = []
+    for pair in points_parts:
+        coords = pair.split(',')
+        pa.append((int(coords[0]) + obj_x, -int(coords[1]) + obj_y))
+
+    left = min([x for x,y in pa])
+    bottom = min([y for x,y in pa])
+    right = max([x for x,y in pa])
+    top = max([y for x,y in pa])
+    width = right - left + 1
+    height = top - bottom + 1
+
+    # points, relative to (bottom, left)
+    points = [(x - left, y - bottom) for x,y in pa]
+    return left, bottom, width, height, points
+
+
+def tmx_coords_to_gl(x, y, map_height):
+    return x, map_height - y
+
+class TmxObject(Rect):
+    '''Represents an object in a TMX object layer.
+
+    Instances of this class are ussually constructed by calling
+    TmxObject.fromxml
+
+    Theres no validation of data pased to __init__
+
+    tmxtype: one of 'ellipse', 'polygon', 'polyline', 'rect', 'tile'
+    name: An arbitrary string. The object's 'name' field in Tiled Editor.
+    usertype: An arbitrary string. The object's 'type' field in Tiled Editor.
+    x: The x coordinate of the bottomleft object's Axis Aligned Bounding Box.
+    y: The y coordinate of the bottomleft object's Axis Aligned Bounding Box.
+    width: The width of the object in pixels (defaults to 0).
+    height: The height of the object in pixels (defaults to 0).
+    gid: An reference to a tile (optional).
+    visible: Whether the object is shown (1) or hidden (0). Defaults to 1.
+    points: a sequence of coords (x, y) relative to bottomleft  thas enumerates
+    the vertices in a 'polygon' or 'polyline'.
+
+    A 'rect' AABB is itself, so x,y is it's bottomleft corner. 
+    '''
+    def __init__(self, tmxtype, usertype, x, y, width=0, height=0, name=None,
+            gid=None, tile=None, visible=1, points=None):
+        if tile:
+            width = tile.image.width
+            height = tile.image.height
+        super(TmxObject, self).__init__(x, y, width, height)
+        self.tmxtype = tmxtype
+        self.px = x
+        self.py = y
+        self.usertype = usertype
+        self.name = name
+        self.gid = gid
+        self.tile = tile
+        self.visible = visible
+        self.points = points
+        self.properties = {}
+
+        self._added_properties = {}
+        self._deleted_properties = set()
+
+    def __repr__(self):
+        if self.tile:
+            return '<TmxObject %s,%s %s,%s tile=%d>' % (self.px, self.py, self.width, self.height, self.gid)
+        else:
+            return '<TmxObject %s,%s %s,%s>' % (self.px, self.py, self.width, self.height)
+
+    def __contains__(self, key):
+        if key in self._deleted_properties:
+            return False
+        if key in self._added_properties:
+            return True
+        if key in self.properties:
+            return True
+        return self.tile and key in self.tile.properties
+
+    def __getitem__(self, key):
+        if key in self._deleted_properties:
+            raise KeyError(key)
+        if key in self._added_properties:
+            return self._added_properties[key]
+        if key in self.properties:
+            return self.properties[key]
+        if self.tile and key in self.tile.properties:
+            return self.tile.properties[key]
+        raise KeyError(key)
+
+    def __setitem__(self, key, value):
+        self._added_properties[key] = value
+
+    def __delitem__(self, key):
+        self._deleted_properties.add(key)
+
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
+    @classmethod
+    def fromxml(cls, tag, tilesets, map_height):
+        # tiled uses origin at topleft map corner, convert to gl bottomleft origin
+        left = int(tag.attrib['x'])
+        top = map_height - int(tag.attrib['y'])
+        bottom = None
+        points = None
+
+        if 'gid' in tag.attrib:
+            tmxtype = 'tile'
+            gid = int(tag.attrib['gid'])
+            # UGH
+            for ts in tilesets:
+                if gid in ts:
+                    tile = ts[gid]
+                    break
+            w = tile.image.width
+            h = tile.image.height
+        else:
+            gid = None
+            tile = None
+            w = int(tag.attrib.get('width', 0))
+            h = int(tag.attrib.get('height', 0))
+
+            subtags = {}
+            for c in tag.getchildren():
+                subtags[c.tag] = c
+            if 'ellipse' in subtags:
+                tmxtype = 'ellipse'
+            elif 'polygon' in subtags:
+                tmxtype = 'polygon'
+                left, bottom, w, h, points = parse_tmx_points(subtags['polygon'], left, top)
+            elif 'polyline' in subtags:
+                tmxtype = 'polyline'
+                left, bottom, w, h, points = parse_tmx_points(subtags['polyline'], left, top)
+            else:
+                tmxtype = 'rect'
+
+        if bottom is None:
+            bottom = top - h
+
+        o = cls(tmxtype, tag.attrib.get('type'), left, bottom, w, h,
+                tag.attrib.get('name'), gid, tile, int(tag.attrib.get('visible', 1)),
+                points)
+
+        props = tag.find('properties')
+        if props is None:
+            return o
+
+        for c in props.findall('property'):
+            # store additional properties.
+            name = c.attrib['name']
+            value = c.attrib['value']
+
+            # TODO hax
+            if value.isdigit():
+                value = int(value)
+            o.properties[name] = value
+        return o
+
+    def intersects(self, x1, y1, x2, y2):
+        if x2 < self.px:
+            return False
+        if y2 < self.py:
+            return False
+        if x1 > self.px + self.width:
+            return False
+        if y1 > self.py + self.height:
+            return False
+        return True
+
+
+class TmxObjectLayer(MapLayer):
+    '''A layer composed of basic primitive shapes.
+
+    Actually encompasses a TMX <objectgroup> but even the TMX documentation
+    refers to them as object layers, so I will.
+
+    TmxObjectLayers have some basic properties:
+
+        position - ignored (cannot be edited in the current Tiled editor)
+        name - the name of the object group.
+        color - the color used to display the objects in this group.
+        opacity - the opacity of the layer as a value from 0 to 1.
+        visible - whether the layer is shown (1) or hidden (0).
+        objects - the objects in this Layer (TmxObject instances)
+    '''
+    def __init__(self, name, color, objects, opacity=1,
+            visible=1, position=(0, 0)):
+        MapLayer.__init__(self, {})
+        self.name = name
+        self.color = color 
+        self.objects = objects
+        self.opacity = opacity
+        self.visible = visible
+        self.position = position
+
+    def __repr__(self):
+        return '<TmxObjectLayer "%s" at 0x%x>' % (self.name, id(self))
+
+    @classmethod
+    def fromxml(cls, tag, tilesets, tile_width, tile_height):
+        color = tag.attrib.get('color')
+        if color:
+            color = p_html._parse_color(color)
+        layer = cls(tag.attrib['name'], color, [],
+            float(tag.attrib.get('opacity', 1)),
+            int(tag.attrib.get('visible', 1)))
+        width = tile_width * int(tag.attrib['width'])
+        height = tile_height * int(tag.attrib['height'])
+        for obj in tag.findall('object'):
+            layer.objects.append(TmxObject.fromxml(obj, tilesets, height))
+        for c in tag.findall('property'):
+            # store additional properties.
+            name = c.attrib['name']
+            value = c.attrib['value']
+
+            # TODO hax
+            if value.isdigit():
+                value = int(value)
+            layer.properties[name] = value
+        return layer
+
+    def update(self, dt, *args):
+        pass
+
+    def find_cells(self, **requirements):
+        '''Find all cells with the given properties set.
+
+        Called "find_cells" for compatibility with existing cocos tile API.
+        '''
+        r = []
+        for propname in requirements:
+            for obj in self.objects:
+                if obj and propname in obj or propname in self.properties:
+                    r.append(obj)
+        return r
+
+    def match(self, **properties):
+        '''Find all objects with the given properties set to the given values.
+        '''
+        r = []
+        for propname in properties:
+            for obj in self.objects:
+                if propname in obj:
+                    val = obj[propname]
+                elif propname in self.properties:
+                    val = self.properties[propname]
+                else:
+                    continue
+                if properties[propname] == val:
+                    r.append(obj)
+        return r
+
+    def collide(self, rect, propname):
+        '''Find all objects the rect is touching that have the indicated
+        property name set.
+        '''
+        r = []
+        for obj in self.get_in_region(rect.left, rect.bottom, rect.right,
+                rect.top):
+            if propname in obj or propname in self.properties:
+                r.append(obj)
+        return r
+
+    def get_in_region(self, left, bottom, right, top):
+        '''Return objects that are within the map-space
+        pixel bounds specified by the bottom-left (x1, y1) and top-right
+        (x2, y2) corners.
+
+        Return a list of TmxObject instances.
+        '''
+        return [obj for obj in self.objects if obj.intersects(left, bottom, right, top)]
+
+    def get_at(self, x, y):
+        '''Return the first object found at the nominated (x, y) coordinate.
+
+        Return an TmxObject instance or None.
+        '''
+        for obj in self.objects:
+            if obj.contains(x, y):
+                return obj
+
+    def _update_sprite_set(self):
+        self._sprites = {}
+        color = self.color[:3] + [128]
+        color_image = pyglet.image.SolidColorImagePattern(color)
+        for cell in self.get_visible_cells():
+            cx, cy = key = cell.origin[:2]
+            if cell.tile:
+                image = cell.tile.image
+            else:
+                image = color_image.create_image(cell.width, cell.height)
+
+            if key not in self._sprites:
+                self._sprites[key] = pyglet.sprite.Sprite(image, x=cx, y=cy,
+                    batch=self.batch)
+
+
+class TmxObjectMapCollider(RectMapCollider):
+    def collide_map(self, map, last, new, dy, dx):
+        '''Collide a rect with the given TmxObjectLayer map.
+
+        Apart from "map" the arguments are as per `do_collision`.
+
+        Mutates the new rect to conform with the map.
+
+        Returns the (possibly modified) (dx, dy)
+        '''
+        self.resting = False
+        tested = set()
+        for cell in map.get_in_region(*(new.bottomleft + new.topright)):
+            if cell is None or cell.tile is None:
+                continue
+            # don't re-test
+            if cell in tested:
+                continue
+            tested.add(cell)
+            dx, dy = self.do_collision(cell, last, new, dy, dx)
+        return dx, dy

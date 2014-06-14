@@ -16,6 +16,9 @@ The only exception is pyglet.window.Window which stores the width, size passed
 by director.init, because director.window.width and director.window.height are
 widely used in cocos code.
 
+As of 2014 06 I prefer to let pyglet mockup modules be empty and inject
+necessary content in pyglet/__init__.py
+
 
 What not to add:
 
@@ -41,7 +44,7 @@ Capabilities:
  from cocos.director import director works
  director.get_window_size() works
  CocosNode and all the actions in BaseActions can be instantiated
- pyglet.clock.schedule ( also unschedule, etc) acepted (non memorized)
+ pyglet.clock.schedule ( also unschedule, etc) accepted (non memorized)
  some GL constants and gl functions are accepted (if you load them with
  from pyglet.gl import *).
  you can 'import cocos.layer'; the classes ScrollingManager and ScrollableLayer
