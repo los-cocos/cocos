@@ -174,7 +174,7 @@ class DefaultHandler( object ):
             return True
 
         elif symbol == pyglet.window.key.I and (modifiers & pyglet.window.key.MOD_ACCEL):
-            from layer import PythonInterpreterLayer
+            from .layer import PythonInterpreterLayer
 
             if not director.show_interpreter:
                 if director.python_interpreter == None:
