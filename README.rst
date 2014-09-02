@@ -28,7 +28,7 @@ cocos2d simplifies the game development in these areas:
     * Text Rendering: Label and HTMLLabel with action support
     * Built-in Python Interpreter: For debugging purposes
     * Access to OpenGL functionality
-    * and much more!http://cocos2d.org
+    * and much more! http://cocos2d.org
 
 Requirements
 ------------
@@ -59,9 +59,9 @@ Learning cocos2d
    http://cocos2d.org/doc.html
 
    you will find:
-    . the Programming Guide
-    . the API Reference
-    . some tutorial videos
+    * the Programming Guide
+    * the API Reference
+    * some tutorial videos
 
    The tutorials are included in the source package.
 
@@ -74,10 +74,10 @@ Learning cocos2d
    looking at the code you know what to look at in the docs.
 
    You can find them at the test directory in the source distribution.
-   After unpacking, to run the tests you can do
+   After unpacking, to run the tests you can do::
 
-   $ cd test
-   $ python test_*.py
+       $ cd test
+       $ python test_*.py
 
  * more complex sample programs
 
@@ -85,21 +85,21 @@ Learning cocos2d
    most complex in subdirectories there, including a presentation done with
    Cocos himself.
    
-   After unpacking, to run the samples you can do
+   After unpacking, to run the samples you can do::
     
-   $ cd samples
-   $ python sample_name.py
+       $ cd samples
+       $ python sample_name.py
 
 
 Do you have any doubt ?
-	+ http://groups.google.com/group/cocos-discuss
+    + http://groups.google.com/group/cocos-discuss
 
 
 Did you find any bug ?
-	+ http://groups.google.com/group/cocos-discuss
-	+ https://github.com/los-cocos/cocos
+    + http://groups.google.com/group/cocos-discuss
+    + https://github.com/los-cocos/cocos
 
 
 Current repository is at
-	+ https://github.com/los-cocos/cocos
+    + https://github.com/los-cocos/cocos
 
