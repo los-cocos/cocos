@@ -4,16 +4,14 @@ Interactive test for CollisionManager.objs_into_box
 Implements click selection plus elastic box selection
 Clicking anywhere will select the ball(s) under the mouse cursor
 Drag a rectangle to select balls fully into rectangle
-Click outside any ball to unselect 
+Click outside any ball to unselect
 Use arrow keys to move selection
 """
 
 from __future__ import division, print_function, unicode_literals
 
-import random
 import weakref
 
-import pyglet
 from pyglet.window import key
 from pyglet.window import mouse
 from pyglet.gl import *
@@ -32,37 +30,37 @@ consts = {
         "height": 480,
         "vsync": True,
         "resizable": True
-        },
+    },
     "world": {
         "width": 1200,
         "height": 1000,
         "rPlayer": 8.0,
-        },
+    },
     "edit": {
         "bindings": {
             key.LEFT: 'left',
             key.RIGHT: 'right',
             key.UP: 'up',
-            key.DOWN: 'down',            
+            key.DOWN: 'down',
             key.NUM_ADD: 'zoomin',
             key.NUM_SUBTRACT: 'zoomout'
-            },
+        },
         "mod_modify_selection": key.MOD_SHIFT,
         "mod_restricted_mov": key.MOD_ACCEL,
         "fastness": 160.0,
-        "autoscroll_border": 20.0, #in pixels, float; None disables autoscroll
-        "autoscroll_fastness": 320.0 ,
+        "autoscroll_border": 20.0,  # in pixels, float; None disables autoscroll
+        "autoscroll_fastness": 320.0,
         "wheel_multiplier": 2.5,
         "zoom_min": 0.1,
         "zoom_max": 2.0,
         "zoom_fastness": 1.0
-        },
+    },
     "view": {
-        # size visible area, measured in world 
+        # size visible area, measured in world
         'width': 400,
         'height': 300,
         # as the font file is not provided it will decay to the default font;
-        # the setting is retained anyway to not downgrade the code 
+        # the setting is retained anyway to not downgrade the code
         "font_name": 'Axaxax',
         "palette": {
             'bg': (0, 65, 133),
@@ -70,17 +68,19 @@ consts = {
             'wall': (247, 148, 29),
             'gate': (140, 198, 62),
             'food': (140, 198, 62)
-            }
         }
     }
+}
+
 
 class Actor(cocos.sprite.Sprite):
-    colors = [(255, 255, 255), (0, 80, 0) ] 
+    colors = [(255, 255, 255), (0, 80, 0)]
+
     def __init__(self):
         super(Actor, self).__init__('ball32.png')
         self._selected = True
         radius = self.image.width / 2.0
-        assert abs(radius-16.0)<fe
+        assert abs(radius - 16.0) < fe
         self.cshape = cm.CircleShape(eu.Vector2(0.0, 0.0), radius)
 #        self.cshape = cm.AARectShape(eu.Vector2(0.0, 0.0), radius, radius)
 
@@ -92,43 +92,48 @@ class Actor(cocos.sprite.Sprite):
         self._set_selected = value
         self.color = Actor.colors[1 if value else 0]
 
+
 class ProbeQuad(cocos.cocosnode.CocosNode):
+
     def __init__(self, r, color4):
-        super(ProbeQuad,self).__init__()
+        super(ProbeQuad, self).__init__()
         self.color4 = color4
-        self.vertexes = [(r,0,0),(0,r,0),(-r,0,0),(0,-r,0)]
+        self.vertexes = [(r, 0, 0), (0, r, 0), (-r, 0, 0), (0, -r, 0)]
 
     def draw(self):
         glPushMatrix()
         self.transform()
         glBegin(GL_QUADS)
-        glColor4ub( *self.color4 )
+        glColor4ub(*self.color4)
         for v in self.vertexes:
             glVertex3i(*v)
         glEnd()
         glPopMatrix()
 
+
 class MinMaxRect(cocos.cocosnode.CocosNode):
+
     """ WARN: it is not a real CocosNode, it pays no attention to position,
         rotation, etc. It only draws the quad depicted by the vertexes.
         In other worlds, a nasty hack that gets the work done and you
         should not take as example"""
+
     def __init__(self):
         super(MinMaxRect, self).__init__()
-        self.color3 = (0,0,255)
-        self.vertexes = [(0.0, 0.0), (0.0, 0.0), (0.0, 0.0), (0.0, 0.0) ]
+        self.color3 = (0, 0, 255)
+        self.vertexes = [(0.0, 0.0), (0.0, 0.0), (0.0, 0.0), (0.0, 0.0)]
         self.visible = False
 
     def adjust_from_w_minmax(self, wminx, wmaxx, wminy, wmaxy):
-        #asumes world to screen preserves order 
-        sminx, sminy = world_to_screen(wminx, wminy) 
+        # asumes world to screen preserves order
+        sminx, sminy = world_to_screen(wminx, wminy)
         smaxx, smaxy = world_to_screen(wmaxx, wmaxy)
-        self.vertexes = [ (sminx, sminy), (sminx, smaxy), (smaxx, smaxy), (smaxx, sminy)] 
-        
+        self.vertexes = [(sminx, sminy), (sminx, smaxy), (smaxx, smaxy), (smaxx, sminy)]
+
     def draw(self):
         if not self.visible:
             return
-        glLineWidth(2) #deprecated
+        glLineWidth(2)  # deprecated
         glColor3ub(*self.color3)
         glBegin(GL_LINE_STRIP)
         for v in self.vertexes:
@@ -137,7 +142,8 @@ class MinMaxRect(cocos.cocosnode.CocosNode):
         glEnd()
 
     def set_vertexes_from_minmax(self, minx, maxx, miny, maxy):
-        self.vertexes = [ (minx, miny), (minx, maxy), (maxx, maxy), (maxx, miny)] 
+        self.vertexes = [(minx, miny), (minx, maxy), (maxx, maxy), (maxx, miny)]
+
 
 class EditLayer(cocos.layer.Layer):
     is_event_handler = True
@@ -184,20 +190,20 @@ class EditLayer(cocos.layer.Layer):
         self.wdrag_start_point = (0, 0)
         self.elastic_box = None
         self.selection = {}
-        
+
         # opers that change cshape must ensure it goes to False,
         # selection opers must ensure it goes to True
         self.selection_in_collman = True
         #? Hardcoded here, should be obtained from level properties or calc
         # from available actors or current actors in worldview
-        gsize = 32 * 1.25 
+        gsize = 32 * 1.25
         self.collman = cm.CollisionManagerGrid(-gsize, self.wwidth + gsize,
                                                -gsize, self.wheight + gsize,
                                                gsize, gsize)
         for actor in worldview.actors:
             self.collman.add(actor)
 
-        self.schedule(self.update)       
+        self.schedule(self.update)
 
     def on_enter(self):
         super(EditLayer, self).on_enter()
@@ -205,11 +211,11 @@ class EditLayer(cocos.layer.Layer):
         if self.elastic_box is None:
             self.elastic_box = MinMaxRect()
             scene.add(self.elastic_box, z=10)
-            self.mouse_mark = ProbeQuad(4, (0,0,0,255))
+            self.mouse_mark = ProbeQuad(4, (0, 0, 0, 255))
             scene.add(self.mouse_mark, z=11)
-        
+
     def update(self, dt):
-        mx = self.buttons['right'] - self.buttons['left'] 
+        mx = self.buttons['right'] - self.buttons['left']
         my = self.buttons['up'] - self.buttons['down']
         dz = self.buttons['zoomin'] - self.buttons['zoomout']
 
@@ -227,10 +233,10 @@ class EditLayer(cocos.layer.Layer):
                 self.keyscrolling_descriptor = new_keyscrolling_descriptor
                 fastness = 1.0
                 if mx != 0 and my != 0:
-                    fastness *= 0.707106 # 1/sqrt(2)
-                self.autoscrolling_sdelta = (0.5*fastness*mx, 0.5*fastness*my)
+                    fastness *= 0.707106  # 1/sqrt(2)
+                self.autoscrolling_sdelta = (0.5 * fastness * mx, 0.5 * fastness * my)
             if self.keyscrolling:
-                self.update_autoscroll(dt)                
+                self.update_autoscroll(dt)
 
         # selection move
         if self.drag_moving:
@@ -253,7 +259,7 @@ class EditLayer(cocos.layer.Layer):
         scroller = self.weak_scroller()
 
         # zoom
-        zoom_change = (dz != 0 or self.wheel != 0) 
+        zoom_change = (dz != 0 or self.wheel != 0)
         if zoom_change:
             if self.mouse_into_world():
                 wzoom_center = self.world_mouse
@@ -261,7 +267,7 @@ class EditLayer(cocos.layer.Layer):
             else:
                 # decay to scroller unadorned
                 wzoom_center = None
-            if self.wheel !=0:
+            if self.wheel != 0:
                 dt_dz = 0.01666666 * self.wheel
                 self.wheel = 0
             else:
@@ -286,7 +292,7 @@ class EditLayer(cocos.layer.Layer):
         # handle autoscroll
         border = self.autoscroll_border
         if border is not None:
-            #sleft and companions includes the border
+            # sleft and companions includes the border
             scroller = self.weak_scroller()
             self.update_view_bounds()
             sdx = 0.0
@@ -302,7 +308,7 @@ class EditLayer(cocos.layer.Layer):
             self.autoscrolling = sdx != 0.0 or sdy != 0.0
             if self.autoscrolling:
                 self.autoscrolling_sdelta = (sdx / border, sdy / border)
-        self.mouse_mark.position = world_to_screen(*self.world_mouse) 
+        self.mouse_mark.position = world_to_screen(*self.world_mouse)
 
     def update_autoscroll(self, dt):
         fraction_sdx, fraction_sdy = self.autoscrolling_sdelta
@@ -317,14 +323,14 @@ class EditLayer(cocos.layer.Layer):
         scroller.set_focus(fx, fy)
         self.world_mouse = screen_to_world(*self.screen_mouse)
         self.adjust_elastic_box()
-        #self.update_view_bounds()
+        # self.update_view_bounds()
 
     def update_view_bounds(self):
         scroller = self.weak_scroller()
-        scx , scy = world_to_screen(scroller.restricted_fx,
-                                    scroller.restricted_fy)
-        hw = scroller.view_w/2.0
-        hh = scroller.view_h/2.0
+        scx, scy = world_to_screen(scroller.restricted_fx,
+                                   scroller.restricted_fy)
+        hw = scroller.view_w / 2.0
+        hh = scroller.view_h / 2.0
         border = self.autoscroll_border
         self.sleft = scx - hw + border
         self.sright = scx + hw - border
@@ -334,8 +340,8 @@ class EditLayer(cocos.layer.Layer):
     def mouse_into_world(self):
         worldview = self.weak_worldview()
         #? allow lower limits != 0 ?
-        return ( (0 <= self.world_mouse[0] <= worldview.width) and
-                 (0 <= self.world_mouse[1] <= worldview.height))
+        return ((0 <= self.world_mouse[0] <= worldview.width) and
+               (0 <= self.world_mouse[1] <= worldview.height))
 
     def on_key_press(self, k, m):
         binds = self.bindings
@@ -345,7 +351,7 @@ class EditLayer(cocos.layer.Layer):
             return True
         return False
 
-    def on_key_release(self, k, m ):
+    def on_key_release(self, k, m):
         binds = self.bindings
         if k in binds:
             self.buttons[binds[k]] = 0
@@ -392,13 +398,13 @@ class EditLayer(cocos.layer.Layer):
             self.selection.clear()
             if under_mouse_unique is not None:
                 self.selection_add(under_mouse_unique)
-            
+
     def selection_add(self, actor):
         self.selection[actor] = actor.cshape.copy()
-        
+
     def selection_remove(self, actor):
         del self.selection[actor]
-        
+
     def end_drag_selection(self, wx, wy, modify_selection):
         new_selection = self.collman.objs_into_box(*self.elastic_box_wminmax)
         if not modify_selection:
@@ -409,14 +415,14 @@ class EditLayer(cocos.layer.Layer):
 
         self.elastic_box.visible = False
         self.drag_selecting = False
-        
+
     def on_mouse_drag(self, sx, sy, dx, dy, buttons, modifiers):
         #? inhibir esta llamada si estamos fuera de la client area / viewport
         self.update_mouse_position(sx, sy)
         if not buttons & mouse.LEFT:
             # ignore except for left-btn-drag
             return
-        
+
         if not self.dragging:
             print("begin drag")
             self.begin_drag()
@@ -449,7 +455,8 @@ class EditLayer(cocos.layer.Layer):
             self.drag_selecting = True
             self.adjust_elastic_box()
             self.elastic_box.visible = True
-            print("begin drag selection: drag_selecting, drag_moving", self.drag_selecting, self.drag_moving)
+            print("begin drag selection: drag_selecting, drag_moving",
+                  self.drag_selecting, self.drag_moving)
 
         else:
             # want drag move
@@ -465,7 +472,7 @@ class EditLayer(cocos.layer.Layer):
     def begin_drag_move(self):
         # begin drag move
         self.drag_moving = True
-        
+
         # how-to update collman: remove/add vs clear/add all
         # when total number of actors is low anyone will be fine,
         # with high numbers, most probably we move only a small fraction
@@ -473,17 +480,17 @@ class EditLayer(cocos.layer.Layer):
         # can be implemented later
         self.set_selection_in_collman(False)
 #        print "begin drag: drag_selecting, drag_moving", self.drag_selecting, self.drag_moving
-            
+
     def end_drag_move(self, wx, wy):
         self.set_selection_in_collman(True)
         for actor in self.selection:
             self.selection[actor] = actor.cshape.copy()
-        
+
         self.drag_moving = False
 
     def single_actor_from_mouse(self):
         under_mouse = self.collman.objs_touching_point(*self.world_mouse)
-        if len(under_mouse)==0:
+        if len(under_mouse) == 0:
             return None
         # return the one with the center most near to mouse, if tie then
         # an arbitrary in the tie
@@ -496,7 +503,7 @@ class EditLayer(cocos.layer.Layer):
                 nearest = actor
                 near_d = d
         return nearest
-        
+
     def set_selection_in_collman(self, bool_value):
         if self.selection_in_collman == bool_value:
             return
@@ -514,25 +521,28 @@ class EditLayer(cocos.layer.Layer):
 
 
 class ColorRect(cocos.cocosnode.CocosNode):
+
     def __init__(self, width, height, color4):
-        super(ColorRect,self).__init__()
+        super(ColorRect, self).__init__()
         self.color4 = color4
-        w2 = int(width/2)
-        h2 = int(height/2)
-        self.vertexes = [(0,0,0),(0,height,0), (width,height,0),(width,0,0)]
+        w2 = int(width / 2)
+        h2 = int(height / 2)
+        self.vertexes = [(0, 0, 0), (0, height, 0), (width, height, 0), (width, 0, 0)]
 
     def draw(self):
         glPushMatrix()
         self.transform()
         glBegin(GL_QUADS)
-        glColor4ub( *self.color4 )
+        glColor4ub(*self.color4)
         for v in self.vertexes:
             glVertex3i(*v)
         glEnd()
         glPopMatrix()
 
+
 class Worldview(cocos.layer.ScrollableLayer):
     is_event_handler = True
+
     def __init__(self, width=None, height=None, rPlayer=None):
         super(Worldview, self).__init__()
         self.width = width
@@ -541,13 +551,13 @@ class Worldview(cocos.layer.ScrollableLayer):
         self.px_height = height
 
         # background
-        self.add( ColorRect(width, height, (0,0,255,255)), z=-2)
+        self.add(ColorRect(width, height, (0, 0, 255, 255)), z=-2)
         border_size = 10
-        inner = ColorRect(width-2*border_size, height-2*border_size, (255,0,0,255))
+        inner = ColorRect(width - 2 * border_size, height - 2 * border_size, (255, 0, 0, 255))
         inner.position = (border_size, border_size)
-        self.add(inner, z=-1 )
+        self.add(inner, z=-1)
 
-        #actors
+        # actors
         use_batch = True
         if use_batch:
             self.batch = cocos.batch.BatchNode()
@@ -555,8 +565,8 @@ class Worldview(cocos.layer.ScrollableLayer):
         self.actors = []
         m = height / width
         i = 0
-        for x in range(0, int(width), int(4*rPlayer)):
-            y = m*x
+        for x in range(0, int(width), int(4 * rPlayer)):
+            y = m * x
             actor = Actor()
             actor.update_position(eu.Vector2(float(x), float(y)))
             if use_batch:
@@ -569,15 +579,15 @@ class Worldview(cocos.layer.ScrollableLayer):
     def on_enter(self):
         super(Worldview, self).on_enter()
         scroller = self.get_ancestor(cocos.layer.ScrollingManager)
-        scroller.set_focus(self.width/2.0, self.height/2.0) 
-        
+        scroller.set_focus(self.width / 2.0, self.height / 2.0)
+
 
 print("""
 Interactive test for CollisionManager.objs_into_box
 Implements click selection plus elastic box selection
 Clicking anywhere will select the ball(s) under the mouse cursor
 Drag a rectangle to select balls fully into rectangle
-Click outside any ball to unselect 
+Click outside any ball to unselect
 Use arrow keys to move selection
 """)
 
@@ -599,5 +609,3 @@ director.run(scene)
 # single_actor_from_mouse should be modified to consider z over
 
 # no keymoving still
-
-

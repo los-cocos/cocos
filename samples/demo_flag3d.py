@@ -18,7 +18,7 @@ import pyglet
 from pyglet.gl import *
 import cocos
 from cocos.director import director
-from cocos.euclid import Point2,Point3
+from cocos.euclid import Point2, Point3
 import math
 
 
@@ -50,7 +50,7 @@ class Flag3D(cocos.layer.Layer):
 
         # Generates an indexed vertex array with texture, vertex and color
         # http://www.glprogramming.com/red/chapter02.html#name6
-        self.vertex_list = pyglet.graphics.vertex_list_indexed((self.grid_size.x+1) * (self.grid_size.y+1),
+        self.vertex_list = pyglet.graphics.vertex_list_indexed((self.grid_size.x + 1) * (self.grid_size.y + 1),
                                                                idx_pts, "t2f", "v3f/stream", "c4B")
         self.vertex_list.vertices = ver_pts_idx     # vertex points
         self.vertex_list.tex_coords = tex_pts_idx   # texels

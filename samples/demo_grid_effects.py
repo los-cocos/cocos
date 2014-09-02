@@ -29,11 +29,13 @@ rr = random.randrange
 
 
 class Fire:
+
     def __init__(self, x, y, vy, frame, size):
         self.x, self.y, self.vy, self.frame, self.size = x, y, vy, frame, size
 
 
 class FireManager(Layer):
+
     def __init__(self, view_width, num):
         super(FireManager, self).__init__()
 
@@ -42,14 +44,14 @@ class FireManager(Layer):
         self.batch = pyglet.graphics.Batch()
         self.fimg = pyglet.resource.image('fire.jpg')
         self.group = pyglet.sprite.SpriteGroup(self.fimg.texture,
-            blend_src=GL_SRC_ALPHA, blend_dest=GL_ONE)
+                                               blend_src=GL_SRC_ALPHA, blend_dest=GL_ONE)
         self.vertex_list = self.batch.add(4 * num, GL_QUADS, self.group,
-            'v2i', 'c4B', ('t3f', self.fimg.texture.tex_coords*num))
+                                          'v2i', 'c4B', ('t3f', self.fimg.texture.tex_coords * num))
         for n in range(0, num):
             f = Fire(0, 0, 0, 0, 0)
             self.goodies.append(f)
-            self.vertex_list.vertices[n*8:(n+1)*8] = [0, 0, 0, 0, 0, 0, 0, 0]
-            self.vertex_list.colors[n*16:(n+1)*16] = [0, 0, 0, 0, ] * 4
+            self.vertex_list.vertices[n * 8:(n + 1) * 8] = [0, 0, 0, 0, 0, 0, 0, 0]
+            self.vertex_list.colors[n * 16:(n + 1) * 16] = [0, 0, 0, 0, ] * 4
 
         self.schedule(self.step)
 
@@ -63,13 +65,13 @@ class FireManager(Layer):
                 f.y = rr(-120, -80)
                 f.vy = rr(40, 70) / 100.0
                 f.frame = rr(50, 250)
-                f.size = 8 + pow(rr(0.0, 100)/100.0, 2.0) * 32
+                f.size = 8 + pow(rr(0.0, 100) / 100.0, 2.0) * 32
                 f.scale = f.size / 32.0
 
             x = f.x = f.x + rr(-50, 50) / 100.0
             y = f.y = f.y + f.vy * 4
             c = 3 * f.frame / 255.0
-            r, g, b = (min(255, int(c*0xc2)), min(255, int(c*0x41)), min(255, int(c*0x21)))
+            r, g, b = (min(255, int(c * 0xc2)), min(255, int(c * 0x41)), min(255, int(c * 0x21)))
             f.frame -= 1
             ww, hh = w * f.scale, h * f.scale
             x -= ww / 2
@@ -77,8 +79,8 @@ class FireManager(Layer):
                 vs = map(int, [x, y, x + ww, y, x + ww, y + hh, x, y + hh])
             else:
                 vs = list(map(int, [x, y, x + ww, y, x + ww, y + hh, x, y + hh]))
-            verts[n*8:(n+1)*8] = vs
-            clrs[n*16:(n+1)*16] = [r, g, b, 255] * 4
+            verts[n * 8:(n + 1) * 8] = vs
+            clrs[n * 16:(n + 1) * 16] = [r, g, b, 255] * 4
 
     def draw(self):
         glPushMatrix()
@@ -124,6 +126,7 @@ class SpriteLayer(Layer):
 
 
 class MainMenu(Menu):
+
     def __init__(self):
 
         # call superclass with the title
@@ -170,6 +173,7 @@ class MainMenu(Menu):
 
 
 class OptionMenu(Menu):
+
     def __init__(self):
         super(OptionMenu, self).__init__("GROSSINI'S SISTERS")
 
@@ -200,6 +204,7 @@ class OptionMenu(Menu):
 
 
 class ScoreMenu(Menu):
+
     def __init__(self):
         super(ScoreMenu, self).__init__("GROSSINI'S SISTERS")
 
@@ -233,7 +238,8 @@ def start():
     twirl_normal = Twirl(center=(320, 240), grid=(16, 12), duration=15, twirls=6, amplitude=6)
     twirl = AccelDeccelAmplitude(twirl_normal, rate=4.0)
     lens = Lens3D(radius=240, center=(320, 240), grid=(32, 24), duration=5)
-    waves3d = AccelDeccelAmplitude(Waves3D(waves=18, amplitude=80, grid=(32, 24), duration=15), rate=4.0)
+    waves3d = AccelDeccelAmplitude(
+        Waves3D(waves=18, amplitude=80, grid=(32, 24), duration=15), rate=4.0)
     flipx = FlipX3D(duration=1)
     flipy = FlipY3D(duration=1)
     flip = Flip(duration=1)
@@ -243,13 +249,15 @@ def start():
     corners = CornerSwap(duration=1)
     waves = AccelAmplitude(Waves(waves=8, amplitude=50, grid=(32, 24), duration=5), rate=2.0)
     shaky = Shaky3D(randrange=10, grid=(32, 24), duration=5)
-    quadmove = QuadMoveBy(delta0=(320, 240), delta1=(-630, 0), delta2=(-320, -240), delta3=(630, 0), duration=2)
+    quadmove = QuadMoveBy(
+        delta0=(320, 240), delta1=(-630, 0), delta2=(-320, -240), delta3=(630, 0), duration=2)
     fadeout = FadeOutTRTiles(grid=(16, 12), duration=2)
     cornerup = MoveCornerUp(duration=1)
     cornerdown = MoveCornerDown(duration=1)
     shatter = ShatteredTiles3D(randrange=16, grid=(16, 12), duration=4)
     shuffle = ShuffleTiles(grid=(16, 12), duration=1)
-    orbit = OrbitCamera(radius=1, delta_radius=2, angle_x=0, delta_x=-90, angle_z=0, delta_z=180, duration=4)
+    orbit = OrbitCamera(
+        radius=1, delta_radius=2, angle_x=0, delta_x=-90, angle_z=0, delta_z=180, duration=4)
     jumptiles = JumpTiles3D(jumps=2, duration=4, amplitude=80, grid=(16, 12))
     wavestiles = WavesTiles3D(waves=3, amplitude=60, duration=8, grid=(16, 12))
     turnoff = TurnOffTiles(grid=(16, 12), duration=2)
@@ -273,7 +281,7 @@ def start():
         flipy + Delay(2) + ReuseGrid() +
         flipx + Delay(2) + ReuseGrid() +
         flipy + Delay(2) +
-        lens + ReuseGrid() + ((orbit+Reverse(orbit)) | waves3d) + Delay(1) +
+        lens + ReuseGrid() + ((orbit + Reverse(orbit)) | waves3d) + Delay(1) +
         corners + Delay(2) + Reverse(corners) +
         waves + Delay(2) + ReuseGrid() + shaky +
         jumptiles + Delay(1) +
@@ -283,9 +291,9 @@ def start():
         quadmove + Delay(1) +
         Reverse(quadmove) +
         StopGrid()
-        )
+    )
 
-    scene.do(Delay(10) + OrbitCamera(delta_z=-360*3, duration=10*4))
+    scene.do(Delay(10) + OrbitCamera(delta_z=-360 * 3, duration=10 * 4))
 
     firelayer.do(Delay(4) + Repeat(RotateBy(360, 10)))
 
