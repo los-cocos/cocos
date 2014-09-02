@@ -10,6 +10,10 @@ Use arrow keys to move selection
 
 from __future__ import division, print_function, unicode_literals
 
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 import weakref
 
 from pyglet.window import key
