@@ -9,7 +9,7 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from pyglet import image, font
+from pyglet import font
 from pyglet.gl import *
 from pyglet.window import key
 

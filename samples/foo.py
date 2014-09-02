@@ -4,7 +4,6 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-import cocos
 from cocos.path import Bezier
 
 curva = Bezier((100, 100), (449, 290), (5, 287), (438, 27))

@@ -16,7 +16,7 @@ from cocos.scenes.transitions import *
 from cocos.actions import *
 from cocos.sprite import Sprite
 import pyglet
-from pyglet import gl, font
+from pyglet import font
 
 from pyglet.window import key
 

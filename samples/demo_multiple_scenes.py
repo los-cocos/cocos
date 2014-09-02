@@ -16,7 +16,7 @@ from cocos.director import director
 from cocos.actions import *
 from cocos.layer import *
 from cocos.sprite import Sprite
-import pyglet
+
 
 class TestLayer(cocos.layer.Layer):
 
