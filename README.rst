@@ -17,89 +17,88 @@ cocos2d
 
 cocos2d simplifies the game development in these areas:
 
-    * Flow control: Manage the flow control between different scenes in an easy way
-    * Sprites: Fast and easy sprites
-    * Actions: Just tell sprites what you want them to do. Composable actions like move, rotate, scale and much more
-    * Effects: Effects like waves, twirl, lens and much more
-    * Tiled Maps: Support for rectangular and hexagonal tiled maps
-    * Collision: Basic pure python support for collisions
-    * Transitions: Move from scene to scene with style
-    * Menus: Built in classes to create menus
-    * Text Rendering: Label and HTMLLabel with action support
-    * Built-in Python Interpreter: For debugging purposes
-    * Access to OpenGL functionality
-    * and much more! http://cocos2d.org
+* Flow control: Manage the flow control between different scenes in an easy way
+* Sprites: Fast and easy sprites
+* Actions: Just tell sprites what you want them to do. Composable actions like move, rotate, scale and much more
+* Effects: Effects like waves, twirl, lens and much more
+* Tiled Maps: Support for rectangular and hexagonal tiled maps
+* Collision: Basic pure python support for collisions
+* Transitions: Move from scene to scene with style
+* Menus: Built in classes to create menus
+* Text Rendering: Label and HTMLLabel with action support
+* Built-in Python Interpreter: For debugging purposes
+* Access to OpenGL functionality
+* and much more! http://cocos2d.org
 
 Requirements
 ------------
 
- Software:
+Software:
 
- * python 2.6, 2.7 or 3.3+
- * pyglet 1.2 or newer (http://www.pyglet.org)
- * Linux, Windows or Mac OS/X
+* python 2.6, 2.7 or 3.3+
+* pyglet 1.2 or newer (http://www.pyglet.org)
+* Linux, Windows or Mac OS/X
 
- Hardware:
+Hardware:
 
- * To execute some effects you will need a video card with the:
-     GL_EXT_framebuffer_object extension.
+* To execute some effects you will need a video card with the:
+    GL_EXT_framebuffer_object extension.
 
 
 Installing
 ----------
-      
-   Being a pure python package the usual options are available; you
-   can look at the INSTALL file for some details
+
+Being a pure python package the usual options are available; you
+can look at the INSTALL file for some details
 
 
 Learning cocos2d
 ----------------
 
- * go to the online tutorials / documentation page:
-   http://cocos2d.org/doc.html
+* Go to the online tutorials / documentation page:
+  http://cocos2d.org/doc.html
 
-   you will find:
-    * the Programming Guide
-    * the API Reference
-    * some tutorial videos
+  You will find:
+   * the Programming Guide
+   * the API Reference
+   * some tutorial videos
 
-   The tutorials are included in the source package.
+  The tutorials are included in the source package.
 
- * Lot of miniprograms that demonstrates the available objects and possible actions.
-   There are a great starting point while learning and experimenting with cocos:
-   you find a sample with the object that interest you exercising the features
-   that you need, read the code, run, modify and re-run to experiment.
+* Lot of miniprograms that demonstrates the available objects and possible actions.
+  There are a great starting point while learning and experimenting with cocos:
+  you find a sample with the object that interest you exercising the features
+  that you need, read the code, run, modify and re-run to experiment.
+  
+  Also, handy to know what is available in cocos: run all the tests and by
+  looking at the code you know what to look at in the docs.
+
+  You can find them at the test directory in the source distribution.
+  After unpacking, to run the tests you can do::
+
+      $ cd test
+      $ python test_*.py
+
+* More complex sample programs
+
+  You can find it in the samples directory in the source distribution, and the
+  most complex in subdirectories there, including a presentation done with
+  Cocos himself.
+  
+  After unpacking, to run the samples you can do::
    
-   Also, handy to know what is available in cocos: run all the tests and by
-   looking at the code you know what to look at in the docs.
-
-   You can find them at the test directory in the source distribution.
-   After unpacking, to run the tests you can do::
-
-       $ cd test
-       $ python test_*.py
-
- * more complex sample programs
-
-   You can find it in the samples directory in the source distribution, and the
-   most complex in subdirectories there, including a presentation done with
-   Cocos himself.
-   
-   After unpacking, to run the samples you can do::
-    
-       $ cd samples
-       $ python sample_name.py
+      $ cd samples
+      $ python sample_name.py
 
 
-Do you have any doubt ?
+Do you have any doubt?
     + http://groups.google.com/group/cocos-discuss
 
 
-Did you find any bug ?
+Did you find any bug?
     + http://groups.google.com/group/cocos-discuss
     + https://github.com/los-cocos/cocos
 
 
 Current repository is at
     + https://github.com/los-cocos/cocos
-
