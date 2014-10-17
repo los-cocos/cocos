@@ -4,6 +4,12 @@ import random
 import time
 import gc
 
+# This code is so you can run the samples without installing the package
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
+#
+
 import cocos.collision_model as cm
 import a0_bouncing_balls_Model as m
 
@@ -17,7 +23,7 @@ base_demo_world_params = {
     'k_border': 10.0,
     'k_ball': 10.0,
     
-    'cshape_cls_name': None, # must be filled 'CircleShape' #'AARectShape'
+    'cshape_cls_names': None, # must be filled 'CircleShape' #'AARectShape'
     'collision_manager': None # must be filled, see below
     }
 
@@ -31,7 +37,7 @@ stats_params = {
 ##cases = {
 ##    '<name case>': {
 ##        'collman_cls_name':'hjhjg',
-##        'cshape_cls_name': 'dsdas',
+##        'cshape_cls_names': ['dsdas'],
 ##        'collman_gen_args': [...]
 ##        }
 ##    ...
@@ -41,27 +47,27 @@ stats_params = {
 collman_cases = { 
     'BruteForce': {
         'collman_cls_name': 'CollisionManagerBruteForce',
-        'cshape_cls_name': 'CircleShape',
+        'cshape_cls_names': ['CircleShape'],
         'collman_gen_args': []
         },
     'Grid, cell width to ball width ratio 1.25': {
         'collman_cls_name': 'CollisionManagerGrid',
-        'cshape_cls_name': 'CircleShape',
+        'cshape_cls_names': ['CircleShape'],
         'collman_gen_args': [1.25] # desired (cell width) / (obj width) ratio
         },
     'Grid, cell width to ball width ratio 1.50': {
         'collman_cls_name': 'CollisionManagerGrid',
-        'cshape_cls_name': 'CircleShape',
+        'cshape_cls_names': ['CircleShape'],
         'collman_gen_args': [1.50]
         },
     'Grid, cell width to ball width ratio 2.00': {
         'collman_cls_name': 'CollisionManagerGrid',
-        'cshape_cls_name': 'CircleShape',
+        'cshape_cls_names': ['CircleShape'],
         'collman_gen_args': [2.0]
         },
     'Grid, cell width to ball width ratio 3.00': {
         'collman_cls_name': 'CollisionManagerGrid',
-        'cshape_cls_name': 'CircleShape',
+        'cshape_cls_names': ['CircleShape'],
         'collman_gen_args': [3.0]
         }
     }
@@ -70,22 +76,32 @@ collman_cases = {
 cshape_cases = {
     'Grid, cshape CircleShape, cell to ball 1.25': {
         'collman_cls_name': 'CollisionManagerGrid',
-        'cshape_cls_name': 'CircleShape',
+        'cshape_cls_names': ['CircleShape'],
         'collman_gen_args': [1.25] # desired (cell width) / (obj width) ratio
         },
     'Grid, cshape CircleShape, cell to ball 2.00': {
         'collman_cls_name': 'CollisionManagerGrid',
-        'cshape_cls_name': 'CircleShape',
+        'cshape_cls_names': ['CircleShape'],
         'collman_gen_args': [2.0]
         },
     'Grid, cshape AARectShape, cell to ball 1.25': {
         'collman_cls_name': 'CollisionManagerGrid',
-        'cshape_cls_name': 'AARectShape',
+        'cshape_cls_names': ['AARectShape'],
         'collman_gen_args': [1.25]
         },
     'Grid, cshape AARectShape, cell to ball 2.00': {
         'collman_cls_name': 'CollisionManagerGrid',
-        'cshape_cls_name': 'AARectShape',
+        'cshape_cls_names': ['AARectShape'],
+        'collman_gen_args': [2.0]
+        },
+    'Grid, cshape CircleShape & AARectShape, cell to ball 1.25': {
+        'collman_cls_name': 'CollisionManagerGrid',
+        'cshape_cls_names': ['CircleShape', 'AARectShape'],
+        'collman_gen_args': [1.25]
+        },
+    'Grid, cshape CircleShape & AARectShape, cell to ball 2.00': {
+        'collman_cls_name': 'CollisionManagerGrid',
+        'cshape_cls_names': ['CircleShape', 'AARectShape'],
         'collman_gen_args': [2.0]
         }
     }
@@ -93,7 +109,7 @@ cshape_cases = {
 def benchmark_time_per_frame(cases, base_world_params, stats_params):
     fixed_world_params = dict(base_world_params)
     fixed_world_params.pop('collision_manager')
-    fixed_world_params.pop('cshape_cls_name')
+    fixed_world_params.pop('cshape_cls_names')
 
     stats_fixed_params = dict(stats_params) 
     ball_quantities = stats_fixed_params.pop('ball_quantities')
@@ -137,7 +153,7 @@ def benchmark_time_per_frame(cases, base_world_params, stats_params):
         case_params = cases[case_name]
         world_params = dict(base_world_params)
         random.seed(world_params.pop('seed'))
-        world_params['cshape_cls_name'] = case_params['cshape_cls_name']
+        world_params['cshape_cls_names'] = case_params['cshape_cls_names']
         
         collman_cls_name = case_params['collman_cls_name']
         collman_cls = getattr(cm, collman_cls_name)
@@ -186,7 +202,7 @@ def pprint_stats(stats):
 def plot_benchmark_time_per_frame(ball_quantities, benchmark_results,
                                   title, pic_filename):
     import pylab
-    fig = pylab.figure(figsize=(6.0, 11.0)) #size in inches
+    fig = pylab.figure(figsize=(7.0, 11.0)) #size in inches
     fig.suptitle(title, fontsize=12)
 
     pylab.axis([0.0, 500, -10 * len(benchmark_results), 150]) # axis extension
@@ -250,8 +266,8 @@ def plot_cshape_cases():
     plot_benchmark_time_per_frame(ball_quantities, stats, title, fname)
     print('Done. Resulting plot saved in file:', fname)
 
-plot_collman_cases()
-#plot_cshape_cases()
+#plot_collman_cases()
+plot_cshape_cases()
 
 ##if __name__ == '__main__':
 ##    sample_plot()
@@ -269,7 +285,7 @@ plot_collman_cases()
 ##        'k_border': 10.0,
 ##        'k_ball': 10.0
 ##        
-##        'cshape_cls_name': None # must be filled 'CircleShape' #'AARectShape'
+##        'cshape_cls_names': None # must be filled 'CircleShape' #'AARectShape'
 ##        'collision_manager': None # must be filled, see below
 ##        }
 ##

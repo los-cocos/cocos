@@ -155,11 +155,9 @@ class CollisionManager(object):
     Such an object can be called 'a collidable' in the documentation, and when
     'obj' or 'other' is seen in the code you can assume it means collidable.
 
-    As a limitation imposed by the current Cshapes implementations, all the
-    collidables that interacts with a particular instance of CollisionManager
-    must share the same concrete Cshape subclass: by example, all
-    objects should have a CircleShape cshape, or all objects should have a
-    AARectShape cshape.
+    While usually all collidables in a collision manager are of the same class 
+    (CircleShape or AARectShape) it is allowed to use both types into the same
+    collision manager.
 
     The known objects collective for each CollisionManager instance is
     manipulated by calling the methods
@@ -368,16 +366,21 @@ class CircleShape(object):
         self.r = r
 
     def overlaps(self, other):
-        return abs(self.center - other.center) < self.r + other.r
+        if isinstance(other, CircleShape):
+            return circle_overlaps_circle(self, other)
+        elif isinstance(other, AARectShape):
+            return aa_rect_overlaps_circle(other, self)
+        raise NotImplementedError("Collision between CircleShape and {0} is not implemented".format(other.__class__.__name__))
 
     def distance(self, other):
-        d = abs(self.center - other.center) - self.r - other.r
-        if d<0.0:
-            d = 0.0
-        return d
+        if isinstance(other, CircleShape):
+            return circle_distance_circle(self, other)
+        elif isinstance(other, AARectShape):
+            return aa_rect_distance_circle(other, self)
+        raise NotImplementedError("Distance between CircleShape and {0} is not implemented".format(other.__class__.__name__))
     
     def near_than(self, other, near_distance):
-        return abs(self.center - other.center) <= self.r + other.r + near_distance
+        return self.distance(other) <= near_distance
 
     def touches_point(self, x, y):
         return abs(self.center - (x,y)) <= self.r
@@ -424,19 +427,21 @@ class AARectShape(object):
         self.ry = half_height
         
     def overlaps(self, other):
-        return ( abs(self.center[0] - other.center[0]) < self.rx + other.rx and
-                 abs(self.center[1] - other.center[1]) < self.ry + other.ry )
+        if isinstance(other, AARectShape):
+            return aa_rect_overlaps_aa_rect(self, other)
+        elif isinstance(other, CircleShape):
+            return aa_rect_overlaps_circle(self, other)
+        raise NotImplementedError("Collision between AARectShape and {0} is not implemented".format(other.__class__.__name__))
 
     def distance(self, other):
-        d = max((abs(self.center[0] - other.center[0])-self.rx - other.rx,
-                abs(self.center[1] - other.center[1])-self.ry - other.ry ))
-        if d<0.0:
-            d = 0.0
-        return d
+        if isinstance(other, AARectShape):
+            return aa_rect_distance_aa_rect(self, other)
+        elif isinstance(other, CircleShape):
+            return aa_rect_distance_circle(self, other)
+        raise NotImplementedError("Distance between AARectShape and {0} is not implemented".format(other.__class__.__name__))
     
     def near_than(self, other, near_distance):
-        return ( abs(self.center[0] - other.center[0]) - self.rx - other.rx < near_distance and
-                 abs(self.center[1] - other.center[1]) - self.ry - other.ry < near_distance)
+        return self.distance(other) <= near_distance
 
     def touches_point(self, x, y):
         return ( abs(self.center[0] - x) < self.rx and
@@ -453,7 +458,84 @@ class AARectShape(object):
     def copy(self):
         return AARectShape(eu.Vector2(*self.center), self.rx, self.ry)
 
+def clamp(value, minimum, maximum):
+        return max( min( value, maximum ), minimum )
 
+def aa_rect_overlaps_aa_rect(aa_rect, other):
+    """
+    Tells if two axis aligned rectangles overlap.
+
+    The rects must have members 'center', 'rx', 'ry' where the latest two are 
+    the rect half_width and half_height.
+    """
+    return abs(aa_rect.center[0] - other.center[0]) < aa_rect.rx + other.rx and \
+           abs(aa_rect.center[1] - other.center[1]) < aa_rect.ry + other.ry
+
+def circle_overlaps_circle(circle, other):
+    """
+    Tells if two circles overlap.
+
+    The circles must have members 'center', 'r', where the latest is the radius.
+    """
+    return (circle.center - other.center).magnitude_squared() < (circle.r + other.r) ** 2
+
+def aa_rect_overlaps_circle(aa_rect, circle):
+    """
+    Tells if an axis aligned rectangle and a circle overlap.
+
+    The rect must have members 'center', 'rx', 'ry' where the latest two are 
+    the rect half_width and half_height.
+    The circle must have members 'center', 'r', where the latest is the radius.
+    """
+    d = circle.center - aa_rect.center
+    # Point in the rect nearest to circle center.
+    d_clamped = eu.Vector2( clamp(d.x, -aa_rect.rx, aa_rect.rx),
+                            clamp(d.y, -aa_rect.ry, aa_rect.ry) )
+
+    return (d - d_clamped).magnitude_squared() < circle.r ** 2
+
+def circle_distance_circle(circle, other):
+    """
+    Give the distance between two circles.
+
+    The circles must have members 'center', 'r', where the latest is the radius.
+    """
+    d = abs(circle.center - other.center) - circle.r - other.r
+    if d<0.0:
+        d = 0.0
+    return d
+
+def aa_rect_distance_circle(aa_rect, circle):
+    """
+    Give the distance between an axis-aligned rectangle and a circle.
+
+    The rect must have members 'center', 'rx', 'ry' where the latest two are 
+    the rect half_width and half_height.
+    The circle must have members 'center', 'r', where the latest is the radius.
+    """
+    d = circle.center - aa_rect.center
+    # Point in the rect nearest to circle center.
+    d_clamped = eu.Vector2( clamp(d.x, -aa_rect.rx, aa_rect.rx),
+                            clamp(d.y, -aa_rect.ry, aa_rect.ry) )
+
+    d = abs(d - d_clamped) - circle.r
+    if d<0.0:
+        d = 0.0
+    return d
+
+def aa_rect_distance_aa_rect(aa_rect, other):
+    """
+    Give the distance between two axis-aligned rectangles.
+
+    The rect must have members 'center', 'rx', 'ry' where the latest two are 
+    the rect half_width and half_height.
+    """
+    d = max((abs(aa_rect.center[0] - other.center[0])-aa_rect.rx - other.rx,
+             abs(aa_rect.center[1] - other.center[1])-aa_rect.ry - other.ry ))
+    if d<0.0:
+        d = 0.0
+    return d
+    
 ###### CollisionManager implementations #######################################
 
 

@@ -19,6 +19,12 @@ import random
 import time
 import math
 
+# This code is so you can run the samples without installing the package
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
+#
+
 import cocos.collision_model as cm
 import cocos.euclid as eu
 
@@ -53,7 +59,7 @@ def get_ball_maker(cshape_cls_name, radius):
 class World(object):
     def __init__(self, world_width=0, world_height=0, border_thickness=0,
                  ball_radius=0, fastness=0, k_border=0, k_ball=0,
-                 cshape_cls_name=0, collision_manager=0):
+                 cshape_cls_names=[], collision_manager=0):
         # all parameters are required, default values are set only to allow
         # call with **kwargs
         self.width = world_width
@@ -63,7 +69,7 @@ class World(object):
         self.fastness = fastness
         self.k_border = k_border
         self.k_ball = k_ball
-        self.fn_ball_maker = get_ball_maker(cshape_cls_name, ball_radius)
+        self.fn_ball_makers = [get_ball_maker(cshape_cls_name, ball_radius) for cshape_cls_name in cshape_cls_names]
         self.collman = collision_manager
 
         self.actors = []
@@ -80,7 +86,7 @@ class World(object):
             y = random_uniform(self.y_lo, self.y_hi)
             a = random_uniform(0.0, pi2)
             vel = self.fastness * eu.Vector2(math.cos(a), math.sin(a))
-            actor = self.fn_ball_maker(eu.Vector2(x, y), vel)
+            actor = random.choice(self.fn_ball_makers)(eu.Vector2(x, y), vel)
             self.actors.append(actor)
             try:
                 self.collman.add(actor)
@@ -170,7 +176,7 @@ def cocos_visualization():
         'k_border': 10.0,
         'k_ball': 10.0,
         
-        'cshape_cls_name': 'CircleShape', #'AARectShape'
+        'cshape_cls_names': ['CircleShape', 'AARectShape'],
         'collision_manager': None # must be filled, see below
         }
     ball_quantity = 40 # 175 # 300
