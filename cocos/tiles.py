@@ -1785,7 +1785,7 @@ class TmxObjectLayer(MapLayer):
 
     def _update_sprite_set(self):
         self._sprites = {}
-        color = self.color[:3] + [128]
+        color = tuple(self.color[:3] + [128])
         color_image = pyglet.image.SolidColorImagePattern(color)
         for cell in self.get_visible_cells():
             cx, cy = key = cell.origin[:2]
