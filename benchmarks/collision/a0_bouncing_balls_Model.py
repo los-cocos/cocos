@@ -19,14 +19,10 @@ import random
 import time
 import math
 
-# This code is so you can run the samples without installing the package
-import sys
-import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
-#
 
-import cocos.collision_model as cm
 import cocos.euclid as eu
+# the cocos.collision_model implementation to test is imported elsewhere and
+# stored in __builtins__.collision_module
 
 fe = 1.0e-4
 
@@ -40,12 +36,12 @@ class Ball(object):
 
 def get_ball_maker(cshape_cls_name, radius):
     def with_CircleShape(center, velocity):
-        cshape = cm.CircleShape(center, radius)
+        cshape = collision_module.CircleShape(center, radius)
         return Ball(cshape, velocity)
 
     def with_AARectShape(center, velocity):
         rx = 0.8 * radius
-        cshape = cm.AARectShape(center, rx, rx)
+        cshape = collision_module.AARectShape(center, rx, rx)
         return Ball(cshape, velocity)
     
     if cshape_cls_name == 'CircleShape':
@@ -69,7 +65,9 @@ class World(object):
         self.fastness = fastness
         self.k_border = k_border
         self.k_ball = k_ball
-        self.fn_ball_makers = [get_ball_maker(cshape_cls_name, ball_radius) for cshape_cls_name in cshape_cls_names]
+        self.fn_ball_makers = [get_ball_maker(name, ball_radius)
+                                                   for name in cshape_cls_names]
+        self.num_cshapeclasses = len(cshape_cls_names)
         self.collman = collision_manager
 
         self.actors = []
@@ -81,18 +79,20 @@ class World(object):
     def set_actor_quantity(self, n):
         random_uniform = random.uniform
         pi2 = 2*math.pi
-        while n > len(self.actors):
+        for i in range(n):
             x = random_uniform(self.x_lo, self.x_hi)
             y = random_uniform(self.y_lo, self.y_hi)
             a = random_uniform(0.0, pi2)
             vel = self.fastness * eu.Vector2(math.cos(a), math.sin(a))
-            actor = random.choice(self.fn_ball_makers)(eu.Vector2(x, y), vel)
+            k = i % self.num_cshapeclasses
+            actor = self.fn_ball_makers[k](eu.Vector2(x, y), vel)
             self.actors.append(actor)
             try:
                 self.collman.add(actor)
             except:
                 print('ex in add; pos: %7.3f , %7.3f'%(actor.cshape.center[0],
                                                        actor.cshape.center[1]))
+        print('*** end adding actors')
 
 
     def update(self, dt):
@@ -141,7 +141,7 @@ class World(object):
                 actor.colliding = False
 
         # update collman
-        if not isinstance(self.collman, cm.CollisionManagerBruteForce):
+        if not isinstance(self.collman, collision_module.CollisionManagerBruteForce):
             add = self.collman.add
             self.collman.clear()
             for actor in self.actors:
@@ -183,7 +183,7 @@ def cocos_visualization():
 
     random.seed(world_params.pop('seed'))
     cell_side = world_params['ball_radius'] * 2.0
-    collman = cm.CollisionManagerGrid(0.0, world_params['world_width'],
+    collman = collision_module.CollisionManagerGrid(0.0, world_params['world_width'],
                                       0.0, world_params['world_height'],
                                       cell_side, cell_side)
     world_params['collision_manager'] = collman
@@ -226,6 +226,9 @@ def cocos_visualization():
     # run
     director.run(scene)
 
+
 if __name__=='__main__':
+    import cocos.collision_model as cm
+    __builtins__.collision_module = cm
     cocos_visualization()
 
