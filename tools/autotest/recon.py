@@ -435,9 +435,6 @@ def update_22(db, filename_persist, snapshots_dir, snapshots_reference_dir):
 
       'test/test_transition_zoom.py' : {
           'st':'error', 'diag': 'bad timestamps, repeated snapshots'},
-
-      'test/test_transitions_with_pop_recipe.py' : {
-          'st':'error', 'diag': 'bad timestamps, repeated snapshots'},
       }
 
     ren_key = {'st':'testrun_success', 'diag':'testrun_diagnostic'}
