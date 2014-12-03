@@ -32,13 +32,13 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Text support
+"""Text support
 
 CocosNodes subclasses supporting text.
 They use a suitable pyglet text object to do the work.
 Functionality other that the one common to all cococsnodes, except 'opacity', is
 provided by the member 'element' , which is the underlying pyglet object.
-'''
+"""
 
 from __future__ import division, print_function, unicode_literals
 
@@ -52,6 +52,7 @@ from pyglet.graphics import OrderedGroup
 from pyglet import image
 from pyglet.gl import *
 
+
 class TextElement(CocosNode):
     """
     Base class for all cocos text
@@ -60,12 +61,12 @@ class TextElement(CocosNode):
     Functionality other that the one common to all cococsnodes, except 'opacity', is
     provided by the member 'element' , which is the underlying pyglet object.
     """
-    def __init__(self, text='', position=(0,0), **kwargs):
+    def __init__(self, text='', position=(0, 0), **kwargs):
         super(TextElement, self).__init__()
         self.position = position
         self.args = []
         self.kwargs = kwargs
-        kwargs['text']=text
+        kwargs['text'] = text
         self.group = None
         self.batch = None
 
@@ -83,13 +84,14 @@ class TextElement(CocosNode):
 
     def _get_opacity(self):
         return self.element.color[3]
+
     def _set_opacity(self, value):
         self.element.color = tuple(self.element.color[:3]) + (int(value),)
     opacity = property(_get_opacity, _set_opacity)
 
 
 class Label(TextElement):
-    '''Plain text support
+    """Plain text support
 
     Functionality other that the one common to all cococsnodes, except 'opacity', is
     provided by the member 'element' , which is the underlying pyglet object.
@@ -109,12 +111,12 @@ class Label(TextElement):
         - multiline: bool
         - dpi: Resolution of the fonts in this layout. Defaults to 96.
 
-    '''
+    """
     klass = pyglet.text.Label
 
 
 class HTMLLabel(TextElement):
-    '''HTML formatted text label (supports a subset of HTML 4.01)
+    """HTML formatted text label (supports a subset of HTML 4.01)
 
     Functionality other that the one common to all cococsnodes, except 'opacity', is
     provided by the member 'element' , which is the underlying pyglet object.
@@ -129,14 +131,15 @@ class HTMLLabel(TextElement):
         - multiline : bool
         - dpi : float, defaults to 96
 
-    '''
+    """
     klass = pyglet.text.HTMLLabel
 
+
 class PygletRichLabel(pyglet.text.DocumentLabel):
-    '''This is not a CocosNode - let instantiation be handled by RichLabel
+    """This is not a CocosNode - let instantiation be handled by RichLabel
 
     Helper class for RichLabel
-    '''
+    """
     def __init__(self, text='',
                  font_name=None, font_size=None, bold=False, italic=False,
                  color=None,
@@ -144,7 +147,7 @@ class PygletRichLabel(pyglet.text.DocumentLabel):
                  anchor_x='left', anchor_y='baseline',
                  halign='left',
                  multiline=False, dpi=None, batch=None, group=None):
-        '''Create a rich text label.
+        """Create a rich text label.
 
         :Parameters:
             `text` : str
@@ -189,13 +192,13 @@ class PygletRichLabel(pyglet.text.DocumentLabel):
             `group` : `Group`
                 Optional graphics group to use.
 
-        '''
+        """
 
         text = '{color (255, 255, 255, 255)}' + text
         document = pyglet.text.decode_attributed(text)
         super(PygletRichLabel, self).__init__(document, x, y, width, height,
-                                    anchor_x, anchor_y,
-                                    multiline, dpi, batch, group)
+                                              anchor_x, anchor_y,
+                                              multiline, dpi, batch, group)
         style = dict(halign=halign)
 
         if font_name:
@@ -211,8 +214,9 @@ class PygletRichLabel(pyglet.text.DocumentLabel):
 
         self.document.set_style(0, len(self.document.text), style)
 
+
 class RichLabel(TextElement):
-    '''displays pyglet attributed (rich) text
+    """displays pyglet attributed (rich) text
 
     The undelying pyglet object is a custom, cocos provided PygletRichLabel
     element, subclass of pyglet.text.DocumentLabel.
@@ -231,5 +235,5 @@ class RichLabel(TextElement):
         - multiline : bool
         - dpi : Resolution of the fonts in this layout.  Defaults to 96.
 
-    '''
+    """
     klass = PygletRichLabel

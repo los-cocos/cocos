@@ -32,17 +32,19 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Camera object'''
+"""Camera object"""
 
 from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-from cocos.director import director
-from cocos.euclid import Point3
 from pyglet.gl import *
 
+from cocos.director import director
+from cocos.euclid import Point3
+
 __all__ = ['Camera']
+
 
 class Camera(object):
     """
@@ -54,41 +56,41 @@ class Camera(object):
     If the object is transformed by any of the scale, rotation or
     position attributes, then they will override the camera.
     """
-    
+
     def __init__(self):
         self.restore()
 
     @classmethod
-    def get_z_eye( cls ):
-        '''Returns the best distance for the camera for the current window size
+    def get_z_eye(cls):
+        """Returns the best distance for the camera for the current window size
 
         cocos2d uses a Filed Of View (fov) of 60
-        '''
+        """
         width, height = director.get_window_size()
         eye_z = height / 1.1566
         return eye_z
 
-    def restore( self ):
-        '''Restore the camera to the initial position
+    def restore(self):
+        """Restore the camera to the initial position
         and sets it's ``dirty`` attribute in False and ``once`` in true.
 
         If you use the camera, for a while and you want to stop using it
         call this method.
-        '''
+        """
 
         width, height = director.get_window_size()
 
         # tuple (x,y,z) that says where is the eye of the camera.
         # used by ``gluLookAt()``
-        self._eye = Point3( width /2.0, height /2.0, self.get_z_eye() )
+        self._eye = Point3(width / 2.0, height / 2.0, self.get_z_eye())
 
         # tuple (x,y,z) that says where is pointing to the camera.
         # used by ``gluLookAt()``
-        self._center = Point3( width /2.0, height /2.0, 0.0 )
+        self._center = Point3(width / 2.0, height / 2.0, 0.0)
 
         # tuple (x,y,z) that says the up vector for the camera.
         # used by ``gluLookAt()``
-        self._up_vector = Point3( 0.0, 1.0, 0.0)
+        self._up_vector = Point3(0.0, 1.0, 0.0)
 
         #: whether or not the camera is 'dirty'
         #: It is dirty if it is not in the original position
@@ -97,53 +99,53 @@ class Camera(object):
         #: optimization. Only renders the camera once
         self.once = False
 
-    def locate( self, force=False ):
-        '''Sets the camera using gluLookAt using its eye, center and up_vector
+    def locate(self, force=False):
+        """Sets the camera using gluLookAt using its eye, center and up_vector
 
         :Parameters:
             `force` : bool
                 whether or not the camera will be located even if it is not dirty
-        '''
+        """
         if force or self.dirty or self.once:
             glLoadIdentity()
-            gluLookAt( self._eye.x, self._eye.y, self._eye.z,             # camera eye
-                       self._center.x, self._center.y, self._center.z,    # camera center
-                       self._up_vector.x, self._up_vector.y, self._up_vector.z  # camera up vector
-                       )
+            gluLookAt(self._eye.x, self._eye.y, self._eye.z,             # camera eye
+                      self._center.x, self._center.y, self._center.z,    # camera center
+                      self._up_vector.x, self._up_vector.y, self._up_vector.z  # camera up vector
+                      )
             self.once = False
 
-    def _get_eye( self ):
+    def _get_eye(self):
         return self._eye
 
-    def _set_eye( self, eye ):
+    def _set_eye(self, eye):
         self._eye = eye
         self.dirty = True
 
     eye = property(_get_eye, _set_eye, doc='''Eye of the camera in x,y,z coordinates
-    
+
     :type: flaat,float,float
     ''')
 
-    def _get_center( self ):
+    def _get_center(self):
         return self._center
 
-    def _set_center( self, center ):
+    def _set_center(self, center):
         self._center = center
         self.dirty = True
 
     center = property(_get_center, _set_center, doc='''Center of the camera in x,y,z coordinates
-    
+
     :type: flaat,float,float
     ''')
 
-    def _get_up_vector( self ):
+    def _get_up_vector(self):
         return self._up_vector
 
-    def _set_up_vector( self, up_vector ):
+    def _set_up_vector(self, up_vector):
         self._up_vector = up_vector
         self.dirty = True
 
     up_vector = property(_get_up_vector, _set_up_vector, doc='''Up vector of the camera in x,y,z coordinates
-    
+
     :type: flaat,float,float
     ''')

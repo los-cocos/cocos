@@ -43,6 +43,7 @@ try:
 except ImportError:
     audio._working = False
 
+
 class MusicControl(object):
     def load(self, filename):
         pygame.music.load(filename)
@@ -53,21 +54,24 @@ class MusicControl(object):
     def stop(self):
         pygame.music.stop()
 
+
 class DummyMusicControl(object):
-    def load(self,filename):
+    def load(self, filename):
         pass
+
     def play(self):
         pass
+
     def stop(self):
         pass
+
 
 def set_control(name):
     global control
     assert name in ('dummy', 'pygame')
-    control = globals()["_" + name] 
+    control = globals()["_" + name]
 
 _dummy = DummyMusicControl()
 _pygame = MusicControl()
 
 set_control('dummy')
-

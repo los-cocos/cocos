@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''An abstract sound format decoding API.
+"""An abstract sound format decoding API.
 
 The latest version of SDL_sound can be found at: http://icculus.org/SDL_sound/
 
@@ -31,7 +31,7 @@ Support is in place or planned for the following sound formats:
 - .AU   (Sun's Audio format, internal.)
 - .AIFF (Audio Interchange format, internal.)
 - .FLAC (Lossless audio compression, via libFLAC.)
-'''
+"""
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
@@ -46,8 +46,9 @@ SDL = cocos.audio.SDL
 
 _dll = SDL.dll.SDL_DLL('SDL_sound', None, '1.2')
 
+
 class Sound_Version(Structure):
-    '''Version structure.
+    """Version structure.
 
     :Ivariables:
         `major` : int
@@ -57,7 +58,7 @@ class Sound_Version(Structure):
         `patch` : int
             Patch revision number
 
-    '''
+    """
     _fields_ = [('major', c_int),
                 ('minor', c_int),
                 ('patch', c_int)]
@@ -65,15 +66,17 @@ class Sound_Version(Structure):
     def __repr__(self):
         return '%d.%d.%d' % (self.major, self.minor, self.patch)
 
-_Sound_GetLinkedVersion = _dll.private_function('Sound_GetLinkedVersion',
+_Sound_GetLinkedVersion = _dll.private_function(
+    'Sound_GetLinkedVersion',
     arg_types=[POINTER(Sound_Version)],
     return_type=None)
 
+
 def Sound_GetLinkedVersion():
-    '''Get the version of the dynamically linked SDL_sound library
+    """Get the version of the dynamically linked SDL_sound library
 
     :rtype: `Sound_Version`
-    '''
+    """
     version = Sound_Version()
     _Sound_GetLinkedVersion(byref(version))
     return version
@@ -81,8 +84,9 @@ def Sound_GetLinkedVersion():
 # Fill in non-standard linked version now, so "since" declarations can work
 _dll._version = SDL.dll._version_parts(Sound_GetLinkedVersion())
 
+
 class Sound_AudioInfo(Structure):
-    '''Information about an existing sample's format.
+    """Information about an existing sample's format.
 
     :Ivariables:
         `format` : int
@@ -94,13 +98,14 @@ class Sound_AudioInfo(Structure):
 
     :see: `Sound_SampleNew`
     :see: `Sound_SampleNewFromFile`
-    '''
+    """
     _fields_ = [('format', c_ushort),
                 ('channels', c_ubyte),
                 ('rate', c_uint)]
 
+
 class Sound_DecoderInfo(Structure):
-    '''Information about a sound decoder.
+    """Information about a sound decoder.
 
     Each decoder sets up one of these structures, which can be retrieved
     via the `Sound_AvailableDecoders` function.  Fields in this
@@ -115,7 +120,7 @@ class Sound_DecoderInfo(Structure):
             Author and email address
         `url` : str
             URL specific to this decoder
-    '''
+    """
     _fields_ = [('_extensions', POINTER(c_char_p)),
                 ('description', c_char_p),
                 ('author', c_char_p),
@@ -132,8 +137,9 @@ class Sound_DecoderInfo(Structure):
             return extensions
         raise AttributeError(name)
 
+
 class Sound_Sample(Structure):
-    '''Represents sound data in the process of being decoded.
+    """Represents sound data in the process of being decoded.
 
     The `Sound_Sample` structure is the heart of SDL_sound.  This holds
     information about a source of sound data as it is beind decoded.  All
@@ -155,7 +161,7 @@ class Sound_Sample(Structure):
             SOUND_SAMPLEFLAG_EOF, SOUND_SAMPLEFLAG_ERROR,
             SOUND_SAMPLEFLAG_EGAIN
 
-    '''
+    """
     _fields_ = [('opaque', c_void_p),
                 ('_decoder', POINTER(Sound_DecoderInfo)),
                 ('desired', Sound_AudioInfo),
@@ -163,7 +169,7 @@ class Sound_Sample(Structure):
                 ('_buffer', POINTER(c_ubyte)),
                 ('buffer_size', c_uint),
                 ('flags', c_int)]
-    
+
     def __getattr__(self, name):
         if name == 'decoder':
             return self._decoder.contents
@@ -171,7 +177,8 @@ class Sound_Sample(Structure):
             return SDL.array.SDL_array(self._buffer, self.buffer_size, c_ubyte)
         raise AttributeError(name)
 
-Sound_Init = _dll.function('Sound_Init',
+Sound_Init = _dll.function(
+    'Sound_Init',
     '''Initialize SDL_sound.
 
     This must be called before any other SDL_sound function (except perhaps
@@ -185,7 +192,8 @@ Sound_Init = _dll.function('Sound_Init',
     return_type=c_int,
     error_return=0)
 
-Sound_Quit = _dll.function('Sound_Quit',
+Sound_Quit = _dll.function(
+    'Sound_Quit',
     '''Shutdown SDL_sound.
 
     This closes any SDL_RWops that were being used as sound sources, and
@@ -205,12 +213,14 @@ Sound_Quit = _dll.function('Sound_Quit',
     return_type=c_int,
     error_return=0)
 
-_Sound_AvailableDecoders = _dll.private_function('Sound_AvailableDecoders',
+_Sound_AvailableDecoders = _dll.private_function(
+    'Sound_AvailableDecoders',
     arg_types=[],
     return_type=POINTER(POINTER(Sound_DecoderInfo)))
 
+
 def Sound_AvailableDecoders():
-    '''Get a list of sound formats supported by this version of SDL_sound.
+    """Get a list of sound formats supported by this version of SDL_sound.
 
     This is for informational purposes only. Note that the extension listed
     is merely convention: if we list "MP3", you can open an MPEG-1 Layer 3
@@ -220,7 +230,7 @@ def Sound_AvailableDecoders():
     thanks to the abstraction that an SDL_RWops provides.
 
     :rtype: list of `Sound_DecoderInfo`
-    '''
+    """
     decoders = []
     decoder_p = _Sound_AvailableDecoders()
     i = 0
@@ -228,8 +238,9 @@ def Sound_AvailableDecoders():
         decoders.append(decoder_p[i].contents)
         i += 1
     return decoders
- 
-Sound_GetError = _dll.function('Sound_GetError',
+
+Sound_GetError = _dll.function(
+    'Sound_GetError',
     '''Get the last SDL_sound error message.
 
     This will be None if there's been no error since the last call to this
@@ -244,7 +255,8 @@ Sound_GetError = _dll.function('Sound_GetError',
     arg_types=[],
     return_type=c_char_p)
 
-Sound_ClearError = _dll.function('Sound_ClearError',
+Sound_ClearError = _dll.function(
+    'Sound_ClearError',
     '''Clear the current error message.
 
     The next call to `Sound_GetError` after `Sound_ClearError` will return
@@ -254,7 +266,8 @@ Sound_ClearError = _dll.function('Sound_ClearError',
     arg_types=[],
     return_type=None)
 
-Sound_NewSample = _dll.function('Sound_NewSample',
+Sound_NewSample = _dll.function(
+    'Sound_NewSample',
     '''Start decoding a new sound sample.
 
     The data is read via an SDL_RWops structure, so it may be coming from
@@ -316,7 +329,7 @@ Sound_NewSample = _dll.function('Sound_NewSample',
             don't need conversion.
         `bufferSize` : int
             Size, in bytes, to allocate for the decoding buffer
-    
+
     :rtype: `Sound_Sample`
     ''',
     args=['rw', 'ext', 'desired', 'bufferSize'],
@@ -326,16 +339,18 @@ Sound_NewSample = _dll.function('Sound_NewSample',
     dereference_return=True,
     require_return=True)
 
-_Sound_NewSampleFromMem = _dll.private_function('Sound_NewSampleFromMem',
+_Sound_NewSampleFromMem = _dll.private_function(
+    'Sound_NewSampleFromMem',
     arg_types=[POINTER(c_ubyte), c_uint, c_char_p,
                POINTER(Sound_AudioInfo), c_uint],
     return_type=POINTER(Sound_Sample),
     dereference_return=True,
     require_return=True,
-    since=(9,9,9))  # Appears in header only
+    since=(9, 9, 9))  # Appears in header only
+
 
 def Sound_NewSampleFromMem(data, ext, desired, bufferSize):
-    '''Start decoding a new sound sample from a buffer.
+    """Start decoding a new sound sample from a buffer.
 
     This is identical to `Sound_NewSample`, but it creates an `SDL_RWops`
     for you from the buffer.
@@ -351,15 +366,16 @@ def Sound_NewSampleFromMem(data, ext, desired, bufferSize):
             don't need conversion.
         `bufferSize` : int
             Size, in bytes, to allocate for the decoding buffer
-    
+
     :rtype: `Sound_Sample`
 
     :since: Not yet released in SDL_sound
-    '''
+    """
     ref, data = SDL.array.to_ctypes(data, len(data), c_ubyte)
     return _Sound_NewSampleFromMem(data, len(data), ext, desired, bufferSize)
 
-Sound_NewSampleFromFile = _dll.function('Sound_NewSampleFromFile',
+Sound_NewSampleFromFile = _dll.function(
+    'Sound_NewSampleFromFile',
     '''Start decoding a new sound sample from a file on disk.
 
     This is identical to `Sound_NewSample`, but it creates an `SDL_RWops
@@ -371,7 +387,8 @@ Sound_NewSampleFromFile = _dll.function('Sound_NewSampleFromFile',
     dereference_return=True,
     require_return=True)
 
-Sound_FreeSample = _dll.function('Sound_FreeSample',
+Sound_FreeSample = _dll.function(
+    'Sound_FreeSample',
     '''Dispose of a `Sound_Sample`.
 
     This will also close/dispose of the `SDL_RWops` that was used at
@@ -387,7 +404,8 @@ Sound_FreeSample = _dll.function('Sound_FreeSample',
     arg_types=[POINTER(Sound_Sample)],
     return_type=None)
 
-Sound_GetDuration = _dll.function('Sound_GetDuration',
+Sound_GetDuration = _dll.function(
+    'Sound_GetDuration',
     '''Retrieve the total play time of a sample, in milliseconds.
 
     Report total time length of sample, in milliseconds.  This is a fast
@@ -399,7 +417,7 @@ Sound_GetDuration = _dll.function('Sound_GetDuration',
     duration. Many decoders will require the ability to seek in the data
     stream to calculate this, so even if we can tell you how long an .ogg
     file will be, the same data set may fail if it's, say, streamed over an
-    HTTP connection. 
+    HTTP connection.
 
     :Parameters:
         `sample` : `Sound_Sample`
@@ -414,9 +432,10 @@ Sound_GetDuration = _dll.function('Sound_GetDuration',
     args=['sample'],
     arg_types=[POINTER(Sound_Sample)],
     return_type=c_int,
-    since=(9,9,9))
+    since=(9, 9, 9))
 
-Sound_SetBufferSize = _dll.function('Sound_SetBufferSize',
+Sound_SetBufferSize = _dll.function(
+    'Sound_SetBufferSize',
     '''Change the current buffer size for a sample.
 
     If the buffer size could be changed, then the ``sample.buffer`` and
@@ -445,7 +464,8 @@ Sound_SetBufferSize = _dll.function('Sound_SetBufferSize',
     return_type=c_int,
     error_return=0)
 
-Sound_Decode = _dll.function('Sound_Decode',
+Sound_Decode = _dll.function(
+    'Sound_Decode',
     '''Decode more of the sound data in a `Sound_Sample`.
 
     It will decode at most sample->buffer_size bytes into ``sample.buffer``
@@ -458,7 +478,7 @@ Sound_Decode = _dll.function('Sound_Decode',
     :Parameters:
         `sample` : `Sound_Sample`
             Do more decoding to this sample
-    
+
     :rtype: int
     :return: number of bytes decoded into ``sample.buffer``
     ''',
@@ -466,7 +486,8 @@ Sound_Decode = _dll.function('Sound_Decode',
     arg_types=[POINTER(Sound_Sample)],
     return_type=c_uint)
 
-Sound_DecodeAll = _dll.function('Sound_DecodeAll',
+Sound_DecodeAll = _dll.function(
+    'Sound_DecodeAll',
     '''Decode the remainder of the sound data in a `Sound_Sample`.
 
     This will dynamically allocate memory for the entire remaining sample.
@@ -493,7 +514,7 @@ Sound_DecodeAll = _dll.function('Sound_DecodeAll',
     :Parameters:
         `sample` : `Sound_Sample`
             Do all decoding for this sample.
-    
+
     :rtype: int
     :return: number of bytes decoded into ``sample.buffer``
     ''',
@@ -501,7 +522,8 @@ Sound_DecodeAll = _dll.function('Sound_DecodeAll',
     arg_types=[POINTER(Sound_Sample)],
     return_type=c_uint)
 
-Sound_Rewind = _dll.function('Sound_Rewind',
+Sound_Rewind = _dll.function(
+    'Sound_Rewind',
     '''Rewind a sample to the start.
 
     Restart a sample at the start of its waveform data, as if newly
@@ -530,7 +552,8 @@ Sound_Rewind = _dll.function('Sound_Rewind',
     return_type=c_int,
     error_return=0)
 
-Sound_Seek = _dll.function('Sound_Seek',
+Sound_Seek = _dll.function(
+    'Sound_Seek',
     '''Seek to a different point in a sample.
 
     Reposition a sample's stream. If successful, the next call to
@@ -575,5 +598,3 @@ Sound_Seek = _dll.function('Sound_Seek',
     arg_types=[POINTER(Sound_Sample), c_uint],
     return_type=c_int,
     error_return=0)
-
-    

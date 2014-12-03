@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-'''Access to the raw audio mixing buffer.
-'''
+"""Access to the raw audio mixing buffer.
+"""
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
@@ -17,8 +17,9 @@ from . import rwops
 _SDL_AudioSpec_fn = \
     CFUNCTYPE(POINTER(c_ubyte), POINTER(c_ubyte), POINTER(c_ubyte), c_int)
 
+
 class SDL_AudioSpec(Structure):
-    '''Audio format structure.
+    """Audio format structure.
 
     The calculated values in this structure are calculated by `SDL_OpenAudio`.
 
@@ -37,7 +38,7 @@ class SDL_AudioSpec(Structure):
         `size` : int
             Audio buffer size in bytes (calculated)
 
-    '''
+    """
     _fields_ = [('freq', c_int),
                 ('format', c_ushort),
                 ('channels', c_ubyte),
@@ -53,8 +54,9 @@ _SDL_AudioCVT_p = POINTER('SDL_AudioCVT')
 _SDL_AudioCVT_filter_fn = \
     CFUNCTYPE(POINTER(c_ubyte), _SDL_AudioCVT_p, c_ushort)
 
+
 class SDL_AudioCVT(Structure):
-    '''Set of audio conversion filters and buffers.
+    """Set of audio conversion filters and buffers.
 
     :Ivariables:
         `needed` : int
@@ -76,7 +78,7 @@ class SDL_AudioCVT(Structure):
         `filter_index` : int
             Current audio conversion function
 
-    '''
+    """
     _fields_ = [('needed', c_int),
                 ('src_format', c_ushort),
                 ('dst_format', c_ushort),
@@ -94,11 +96,12 @@ SetPointerType(_SDL_AudioCVT_p, SDL_AudioCVT)
 # SDL_AudioInit and SDL_AudioQuit marked private
 
 _SDL_AudioDriverName = dll.private_function('SDL_AudioDriverName',
-    arg_types=[c_char_p, c_int],
-    return_type=c_char_p)
+                                            arg_types=[c_char_p, c_int],
+                                            return_type=c_char_p)
+
 
 def SDL_AudioDriverName(maxlen=1024):
-    '''
+    """
     Returns the name of the audio driver.  Returns None if no driver has
     been initialised.
 
@@ -107,11 +110,12 @@ def SDL_AudioDriverName(maxlen=1024):
             Maximum length of the returned driver name; defaults to 1024.
 
     :rtype: string
-    '''
+    """
     buf = create_string_buffer(maxlen)
     if _SDL_AudioDriverName(buf, maxlen):
         return buf.value
     return None
+
 
 def _ctype_audio_format(fmt):
     if fmt == constants.AUDIO_U8:
@@ -126,12 +130,13 @@ def _ctype_audio_format(fmt):
         raise TypeError('Unsupported format %r' % fmt)
 
 _SDL_OpenAudio = dll.private_function('SDL_OpenAudio',
-    arg_types=[POINTER(SDL_AudioSpec), POINTER(SDL_AudioSpec)],
-    return_type=c_int,
-    error_return=-1)
+                                      arg_types=[POINTER(SDL_AudioSpec), POINTER(SDL_AudioSpec)],
+                                      return_type=c_int,
+                                      error_return=-1)
+
 
 def SDL_OpenAudio(desired, obtained):
-    '''Open the audio device with the desired parameters.
+    """Open the audio device with the desired parameters.
 
     If successful, the actual hardware parameters will be set in the
     instance passed into `obtained`.  If `obtained` is None, the audio
@@ -194,7 +199,7 @@ def SDL_OpenAudio(desired, obtained):
      - `desired`: `SDL_AudioSpec`
      - `obtained`: `SDL_AudioSpec` or None
 
-    '''
+    """
     if not hasattr(desired, 'callback'):
         raise TypeError('Attribute "callback" not set on "desired"')
     userdata = getattr(desired, 'userdata', None)
@@ -213,42 +218,43 @@ def SDL_OpenAudio(desired, obtained):
         ctype[0] = _ctype_audio_format(obtained.format)
 
 SDL_GetAudioStatus = dll.function('SDL_GetAudioStatus',
-    '''Get the current audio state.
+                                  '''Get the current audio state.
 
-    :rtype: int
-    :return: one of SDL_AUDIO_STOPPED, SDL_AUDIO_PLAYING, SDL_AUDIO_PAUSED
-    ''',
-    args=[],
-    arg_types=[],
-    return_type=c_int)
+                                  :rtype: int
+                                  :return: one of SDL_AUDIO_STOPPED, SDL_AUDIO_PLAYING, SDL_AUDIO_PAUSED
+                                  ''',
+                                  args=[],
+                                  arg_types=[],
+                                  return_type=c_int)
 
 SDL_PauseAudio = dll.function('SDL_PauseAudio',
-    '''Pause and unpause the audio callback processing.
+                              '''Pause and unpause the audio callback processing.
 
-    It should be called with a parameter of 0 after opening the audio
-    device to start playing sound.  This is so you can safely initalize
-    data for your callback function after opening the audio device.
-    Silence will be written to the audio device during the pause.
+                              It should be called with a parameter of 0 after opening the audio
+                              device to start playing sound.  This is so you can safely initalize
+                              data for your callback function after opening the audio device.
+                              Silence will be written to the audio device during the pause.
 
-    :Parameters:
-     - `pause_on`: int
+                              :Parameters:
+                               - `pause_on`: int
 
-    ''',
-    args=['pause_on'],
-    arg_types=[c_int],
-    return_type=None)
+                              ''',
+                              args=['pause_on'],
+                              arg_types=[c_int],
+                              return_type=None)
 
 _SDL_LoadWAV_RW = dll.private_function('SDL_LoadWAV_RW',
-    arg_types=[POINTER(rwops.SDL_RWops),
-               c_int,
-               POINTER(SDL_AudioSpec),
-               POINTER(POINTER(c_ubyte)),
-               POINTER(c_uint)],
-    return_type=POINTER(SDL_AudioSpec),
-    require_return=True)
+                                       arg_types=[POINTER(rwops.SDL_RWops),
+                                                  c_int,
+                                                  POINTER(SDL_AudioSpec),
+                                                  POINTER(POINTER(c_ubyte)),
+                                                  POINTER(c_uint)],
+                                       return_type=POINTER(SDL_AudioSpec),
+                                       require_return=True)
+
 
 def SDL_LoadWAV_RW(src, freesrc):
-    '''Load a WAVE from the data source.
+    """Load a WAVE from the data source.
 
     The source is automatically freed if `freesrc` is non-zero.  For
     example, to load a WAVE file, you could do::
@@ -265,7 +271,7 @@ def SDL_LoadWAV_RW(src, freesrc):
     :rtype: (`SDL_AudioSpec`, `SDL_array`)
     :return: a tuple (`spec`, `audio_buf`) where `spec` describes the data
         format and `audio_buf` is the buffer containing audio data.
-    '''
+    """
     spec = SDL_AudioSpec()
     audio_buf = POINTER(c_ubyte)()
     audio_len = c_uint()
@@ -274,40 +280,43 @@ def SDL_LoadWAV_RW(src, freesrc):
     return (spec,
             array.SDL_array(audio_buf, audio_len.value/sizeof(ctype), ctype))
 
+
 def SDL_LoadWAV(file):
-    '''Load a WAVE from a file.
+    """Load a WAVE from a file.
 
     :Parameters:
      - `file`: str
 
     :rtype: (`SDL_AudioSpec`, `SDL_array`)
     :see: `SDL_LoadWAV_RW`
-    '''
+    """
     return SDL_LoadWAV_RW(rwops.SDL_RWFromFile(file, 'rb'), 1)
 
 _SDL_FreeWAV = dll.private_function('SDL_FreeWAV',
-    arg_types=[POINTER(c_ubyte)],
-    return_type=None)
+                                    arg_types=[POINTER(c_ubyte)],
+                                    return_type=None)
+
 
 def SDL_FreeWAV(audio_buf):
-    '''Free a buffer previously allocated with `SDL_LoadWAV_RW` or
+    """Free a buffer previously allocated with `SDL_LoadWAV_RW` or
     `SDL_LoadWAV`.
 
     :Parameters:
      - `audio_buf`: `SDL_array`
 
-    '''
+    """
     _SDL_FreeWAV(audio_buf.as_bytes().as_ctypes())
 
 _SDL_BuildAudioCVT = dll.private_function('SDL_BuildAudioCVT',
-    arg_types=[POINTER(SDL_AudioCVT), c_ushort, c_ubyte, c_uint,
-               c_ushort, c_ubyte, c_uint],
-    return_type=c_int,
-    error_return=-1)
+                                          arg_types=[POINTER(SDL_AudioCVT), c_ushort, c_ubyte, c_uint,
+                                                     c_ushort, c_ubyte, c_uint],
+                                          return_type=c_int,
+                                          error_return=-1)
+
 
 def SDL_BuildAudioCVT(src_format, src_channels, src_rate,
                       dst_format, dst_channels, dst_rate):
-    '''Take a source format and rate and a destination format and rate,
+    """Take a source format and rate and a destination format and rate,
     and return a `SDL_AudioCVT` structure.
 
     The `SDL_AudioCVT` structure is used by `SDL_ConvertAudio` to convert
@@ -322,44 +331,45 @@ def SDL_BuildAudioCVT(src_format, src_channels, src_rate,
      - `dst_rate`: int
 
     :rtype: `SDL_AudioCVT`
-    '''
+    """
     cvt = SDL_AudioCVT()
     _SDL_BuildAudioCVT(cvt, src_format, src_channels, src_rate,
                        dst_format, dst_channels, dst_rate)
     return cvt
 
 SDL_ConvertAudio = dll.function('SDL_ConvertAudio',
-    '''Convert audio data in-place.
+                                '''Convert audio data in-place.
 
-    Once you have initialized the 'cvt' structure using
-    `SDL_BuildAudioCVT`, created an audio buffer ``cvt.buf``, and filled it
-    with ``cvt.len`` bytes of audio data in the source format, this
-    function will convert it in-place to the desired format.  The data
-    conversion may expand the size of the audio data, so the buffer
-    ``cvt.buf`` should be allocated after the cvt structure is initialized
-    by `SDL_BuildAudioCVT`, and should be ``cvt->len*cvt->len_mult`` bytes
-    long.
+                                Once you have initialized the 'cvt' structure using
+                                `SDL_BuildAudioCVT`, created an audio buffer ``cvt.buf``, and filled it
+                                with ``cvt.len`` bytes of audio data in the source format, this
+                                function will convert it in-place to the desired format.  The data
+                                conversion may expand the size of the audio data, so the buffer
+                                ``cvt.buf`` should be allocated after the cvt structure is initialized
+                                by `SDL_BuildAudioCVT`, and should be ``cvt->len*cvt->len_mult`` bytes
+                                long.
 
-    Note that you are responsible for allocating the buffer.  The
-    recommended way is to construct an `SDL_array` of the correct size,
-    and set ``cvt.buf`` to the result of `SDL_array.as_ctypes`.
+                                Note that you are responsible for allocating the buffer.  The
+                                recommended way is to construct an `SDL_array` of the correct size,
+                                and set ``cvt.buf`` to the result of `SDL_array.as_ctypes`.
 
-    :Parameters:
-     - `cvt`: `SDL_AudioCVT`
+                                :Parameters:
+                                 - `cvt`: `SDL_AudioCVT`
 
-    :rtype: int
-    :return: undocumented
-    ''',
-    args=['cvt'],
-    arg_types=[POINTER(SDL_AudioCVT)],
-    return_type=c_int)
+                                :rtype: int
+                                :return: undocumented
+                                ''',
+                                args=['cvt'],
+                                arg_types=[POINTER(SDL_AudioCVT)],
+                                return_type=c_int)
 
 _SDL_MixAudio = dll.private_function('SDL_MixAudio',
-    arg_types=[POINTER(c_ubyte), POINTER(c_ubyte), c_uint, c_int],
-    return_type=None)
+                                     arg_types=[POINTER(c_ubyte), POINTER(c_ubyte), c_uint, c_int],
+                                     return_type=None)
+
 
 def SDL_MixAudio(dst, src, length, volume):
-    '''Mix two audio buffers.
+    """Mix two audio buffers.
 
     This takes two audio buffers of the playing audio format and mixes
     them, performing addition, volume adjustment, and overflow clipping.
@@ -377,7 +387,7 @@ def SDL_MixAudio(dst, src, length, volume):
      - `length`: int
      - `volume`: int
 
-    '''
+    """
     dstref, dst = array.to_ctypes(dst, len(dst), c_ubyte)
     srcref, src = array.to_ctypes(src, len(src), c_ubyte)
     if len(dst) < length:
@@ -387,29 +397,29 @@ def SDL_MixAudio(dst, src, length, volume):
     _SDL_MixAudio(dst, src, length, volume)
 
 SDL_LockAudio = dll.function('SDL_LockAudio',
-    '''Guarantee the callback function is not running.
+                             '''Guarantee the callback function is not running.
 
-    The lock manipulated by these functions protects the callback function.
-    During a LockAudio/UnlockAudio pair, you can be guaranteed that the
-    callback function is not running.  Do not call these from the callback
-    function or you will cause deadlock.
-    ''',
-    args=[],
-    arg_types=[],
-    return_type=None)
+                             The lock manipulated by these functions protects the callback function.
+                             During a LockAudio/UnlockAudio pair, you can be guaranteed that the
+                             callback function is not running.  Do not call these from the callback
+                             function or you will cause deadlock.
+                             ''',
+                             args=[],
+                             arg_types=[],
+                             return_type=None)
 
 SDL_UnlockAudio = dll.function('SDL_UnlockAudio',
-    '''Release the audio callback lock.
+                               '''Release the audio callback lock.
 
-    :see: `SDL_LockAudio`
-    ''',
-    args=[],
-    arg_types=[],
-    return_type=None)
+                               :see: `SDL_LockAudio`
+                               ''',
+                               args=[],
+                               arg_types=[],
+                               return_type=None)
 
 SDL_CloseAudio = dll.function('SDL_CloseAudio',
-    '''Shut down audio processing and close the audio device.
-    ''',
-    args=[],
-    arg_types=[],
-    return_type=None)
+                              '''Shut down audio processing and close the audio device.
+                              ''',
+                              args=[],
+                              arg_types=[],
+                              return_type=None)

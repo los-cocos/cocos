@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''Pygame core routines
+"""Pygame core routines
 
 Contains the core routines that are used by the rest of the
 pygame modules. Its routines are merged directly into the pygame
@@ -15,9 +15,9 @@ that type. As a convenience, you can import the members of
 pygame.locals directly into your module's namespace with::
 
     from pygame.locals import *
-    
+
 Most of the pygame examples do this if you'd like to take a look.
-'''
+"""
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: base.py 911 2006-08-09 08:56:31Z aholkner $'
@@ -30,11 +30,13 @@ from cocos.audio import SDL
 
 _quitfunctions = []
 
+
 class error(RuntimeError):
     pass
 
+
 def init():
-    '''Autoinitialize all imported pygame modules.
+    """Autoinitialize all imported pygame modules.
 
     Initialize all imported pygame modules. Includes pygame modules
     that are not part of the base modules (like font and image).
@@ -54,17 +56,17 @@ def init():
     but if you initialize by hand, be aware of this constraint.
 
     As with the manual `init` routines. It is safe to call this
-    `init` as often as you like. 
+    `init` as often as you like.
 
     :rtype: int, int
     :return: (count_passed, count_failed)
-    '''
+    """
     success = 0
     fail = 0
 
-    SDL.SDL_Init(SDL.SDL_INIT_EVENTTHREAD | \
-                 SDL.SDL_INIT_TIMER | \
-                 SDL.SDL_INIT_NOPARACHUTE) 
+    SDL.SDL_Init(SDL.SDL_INIT_EVENTTHREAD |
+                 SDL.SDL_INIT_TIMER |
+                 SDL.SDL_INIT_NOPARACHUTE)
 
     if _video_autoinit():
         success += 1
@@ -72,8 +74,8 @@ def init():
         fail += 1
 
     for mod in list(sys.modules.values()):
-        if (hasattr(mod, '__PYGAMEinit__') and
-            isinstance(mod.__PYGAMEinit__, collections.Callable)):
+        if (hasattr(mod, '__PYGAMEinit__') and isinstance(mod.__PYGAMEinit__,
+                                                          collections.Callable)):
             try:
                 mod.__PYGAMEinit__()
                 success += 1
@@ -81,24 +83,28 @@ def init():
                 fail += 1
     return success, fail
 
+
 def register_quit(func):
-    '''Routine to call when pygame quits.
+    """Routine to call when pygame quits.
 
     The given callback routine will be called when pygame is
     quitting. Quit callbacks are served on a 'last in, first out'
     basis.
-    '''
+    """
     _quitfunctions.append(func)
+
 
 def _video_autoquit():
     if SDL.SDL_WasInit(SDL.SDL_INIT_VIDEO):
         SDL.SDL_QuitSubSystem(SDL.SDL_INIT_VIDEO)
+
 
 def _video_autoinit():
     if not SDL.SDL_WasInit(SDL.SDL_INIT_VIDEO):
         SDL.SDL_InitSubSystem(SDL.SDL_INIT_VIDEO)
         SDL.SDL_EnableUNICODE(1)
     return 1
+
 
 def _atexit_quit():
     while _quitfunctions:
@@ -107,17 +113,19 @@ def _atexit_quit():
     _video_autoquit()
     SDL.SDL_Quit()
 
+
 def get_sdl_version():
-    '''Get the version of the linked SDL runtime.
+    """Get the version of the linked SDL runtime.
 
     :rtype: int, int, int
     :return: major, minor, patch
-    '''
+    """
     v = SDL.SDL_Linked_Version()
     return v.major, v.minor, v.patch
 
+
 def quit():
-    '''Uninitialize all pygame modules.
+    """Uninitialize all pygame modules.
 
     Uninitialize all pygame modules that have been initialized. Even
     if you initialized the module by hand, this `quit` will
@@ -127,19 +135,21 @@ def quit():
     program exits, so you will usually not need this routine. If you
     program plans to keep running after it is done with pygame, then
     would be a good time to make this call.
-    '''
+    """
     _atexit_quit()
 
+
 def get_error():
-    '''Get current error message.
+    """Get current error message.
 
     SDL maintains an internal current error message. This message is
     usually given to you when an SDL related exception occurs, but
     sometimes you may want to call this directly yourself.
 
     :rtype: str
-    '''
+    """
     return SDL.SDL_GetError()
+
 
 def _rgba_from_obj(obj):
     if not type(obj) in (tuple, list):
@@ -148,11 +158,10 @@ def _rgba_from_obj(obj):
     if len(obj) == 1:
         return _rgba_from_obj(obj[0])
     elif len(obj) == 3:
-        return (int(obj[0]), int(obj[1]), int(obj[2]), 255)
+        return int(obj[0]), int(obj[1]), int(obj[2]), 255
     elif len(obj) == 4:
         return obj
     else:
         return None
 
 atexit.register(_atexit_quit)
-

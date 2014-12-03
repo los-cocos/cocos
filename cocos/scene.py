@@ -47,38 +47,33 @@ from pyglet.gl import *
 import cocos
 from cocos.director import director
 import cocos.cocosnode as cocosnode
+
 try:
     import cocos.audio.music
 except Exception:
     pass
+
 
 class EventHandlerMixin(object):
     def add(self, child, *args, **kwargs):
         super(EventHandlerMixin, self).add(child, *args, **kwargs)
 
         scene = self.get(Scene)
-        if not scene: return
+        if not scene:
+            return
 
-        if (    scene._handlers_enabled and
-                scene.is_running and
-                isinstance(child, cocos.layer.Layer)
-                ):
+        if scene._handlers_enabled and scene.is_running and isinstance(child, cocos.layer.Layer):
             child.push_all_handlers()
-
 
     def remove(self, child):
         super(EventHandlerMixin, self).remove(child)
 
         scene = self.get(Scene)
-        if not scene: return
+        if not scene:
+            return
 
-        if (    scene._handlers_enabled and
-                scene.is_running and
-                isinstance(child, cocos.layer.Layer)
-                ):
+        if scene._handlers_enabled and scene.is_running and isinstance(child, cocos.layer.Layer):
             child.remove_all_handlers()
-
-
 
 
 class Scene(cocosnode.CocosNode, EventHandlerMixin):
@@ -99,12 +94,12 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
                 num_children.
         """
 
-        super(Scene,self).__init__()
+        super(Scene, self).__init__()
         self._handlers_enabled = False
         for i, c in enumerate(children):
-            self.add( c, z=i )
+            self.add(c, z=i)
 
-        x,y = director.get_window_size()
+        x, y = director.get_window_size()
 
         self.transform_anchor_x = x // 2
         self.transform_anchor_y = y // 2
@@ -126,7 +121,6 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         if self.music_playing:
             cocos.audio.music.control.stop()
 
-
     def push_all_handlers(self):
         for child in self.get_children():
             if isinstance(child, cocos.layer.Layer):
@@ -146,7 +140,6 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         elif not value and self._handlers_enabled and self.is_running:
             self.remove_all_handlers()
         self._handlers_enabled = value
-
 
     def end(self, value=None):
         """Ends the current scene setting director.return_value with `value`
@@ -193,5 +186,3 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         """Stops music playback for this scene.
         """
         self.load_music(None)
-
-

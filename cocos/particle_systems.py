@@ -32,7 +32,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Pre-defined Particle Systems'''
+"""Pre-defined Particle Systems"""
 
 from __future__ import division, print_function, unicode_literals
 
@@ -41,7 +41,8 @@ __all__ = ['Fireworks', 'Spiral', 'Meteor', 'Sun', 'Fire', 'Galaxy', 'Flower', '
 from cocos.particle import ParticleSystem, Color
 from cocos.euclid import Point2
 
-class Fireworks( ParticleSystem ):
+
+class Fireworks(ParticleSystem):
 
     # total particles
     total_particles = 3000
@@ -50,7 +51,7 @@ class Fireworks( ParticleSystem ):
     duration = -1
 
     # gravity
-    gravity = Point2(0,-90)
+    gravity = Point2(0, -90)
 
     # angle
     angle = 90
@@ -65,7 +66,7 @@ class Fireworks( ParticleSystem ):
     speed_var = 50
 
     # emitter variable position
-    pos_var = Point2(0,0)
+    pos_var = Point2(0, 0)
 
     # life of particles
     life = 3.5
@@ -75,10 +76,10 @@ class Fireworks( ParticleSystem ):
     emission_rate = total_particles / life
 
     # color of particles
-    start_color = Color(0.5,0.5,0.5,1.0)
+    start_color = Color(0.5, 0.5, 0.5, 1.0)
     start_color_var = Color(0.5, 0.5, 0.5, 1.0)
-    end_color = Color(0.1,0.1,0.1,0.2)
-    end_color_var = Color(0.1,0.1,0.1,0.2)
+    end_color = Color(0.1, 0.1, 0.1, 0.2)
+    end_color_var = Color(0.1, 0.1, 0.1, 0.2)
 
     # size, in pixels
     size = 8.0
@@ -91,7 +92,7 @@ class Fireworks( ParticleSystem ):
     color_modulate = True
 
 
-class Explosion( ParticleSystem ):
+class Explosion(ParticleSystem):
 
     # total particle
     total_particles = 700
@@ -100,7 +101,7 @@ class Explosion( ParticleSystem ):
     duration = 0.1
 
     # gravity
-    gravity = Point2(0,-90)
+    gravity = Point2(0, -90)
 
     # angle
     angle = 90.0
@@ -115,7 +116,7 @@ class Explosion( ParticleSystem ):
     speed_var = 40.0
 
     # emitter variable position
-    pos_var = Point2(0,0)
+    pos_var = Point2(0, 0)
 
     # life of particles
     life = 5.0
@@ -141,7 +142,7 @@ class Explosion( ParticleSystem ):
     color_modulate = True
 
 
-class Fire( ParticleSystem ):
+class Fire(ParticleSystem):
 
     # total particles
     total_particles = 250
@@ -150,7 +151,7 @@ class Fire( ParticleSystem ):
     duration = -1
 
     # gravity
-    gravity = Point2(0,0)
+    gravity = Point2(0, 0)
 
     # angle
     angle = 90.0
@@ -191,7 +192,7 @@ class Fire( ParticleSystem ):
     color_modulate = True
 
 
-class Flower( ParticleSystem ):
+class Flower(ParticleSystem):
 
     # total particles
     total_particles = 500
@@ -200,7 +201,7 @@ class Flower( ParticleSystem ):
     duration = -1
 
     # gravity
-    gravity = Point2( 0, 0)
+    gravity = Point2(0, 0)
 
     # angle
     angle = 90.0
@@ -219,7 +220,7 @@ class Flower( ParticleSystem ):
     tangential_accel_var = 0.0
 
     # emitter variable position
-    pos_var = Point2(0,0)
+    pos_var = Point2(0, 0)
 
     # life of particles
     life = 4.0
@@ -244,7 +245,8 @@ class Flower( ParticleSystem ):
     # color modulate
     color_modulate = True
 
-class Sun( ParticleSystem ):
+
+class Sun(ParticleSystem):
 
     # total particles
     total_particles = 350
@@ -253,7 +255,7 @@ class Sun( ParticleSystem ):
     duration = -1
 
     # gravity
-    gravity = Point2(0,0)
+    gravity = Point2(0, 0)
 
     # angle
     angle = 90.0
@@ -298,7 +300,7 @@ class Sun( ParticleSystem ):
     color_modulate = True
 
 
-class Spiral( ParticleSystem ):
+class Spiral(ParticleSystem):
 
     # total paticles
     total_particles = 500
@@ -307,7 +309,7 @@ class Spiral( ParticleSystem ):
     duration = -1
 
     # gravity
-    gravity = Point2(0,0)
+    gravity = Point2(0, 0)
 
     # angle
     angle = 90.0
@@ -326,7 +328,7 @@ class Spiral( ParticleSystem ):
     tangential_accel_var = 0.0
 
     # emitter variable position
-    pos_var = Point2(0,0)
+    pos_var = Point2(0, 0)
 
     # life of particles
     life = 12.0
@@ -352,7 +354,7 @@ class Spiral( ParticleSystem ):
     color_modulate = True
 
 
-class Meteor( ParticleSystem ):
+class Meteor(ParticleSystem):
 
     # total particles
     total_particles = 150
@@ -361,7 +363,7 @@ class Meteor( ParticleSystem ):
     duration = -1
 
     # gravity
-    gravity = Point2(-200,100)
+    gravity = Point2(-200, 100)
 
     # angle
     angle = 90.0
@@ -380,7 +382,7 @@ class Meteor( ParticleSystem ):
     tangential_accel_var = 0.0
 
     # emitter variable position
-    pos_var = Point2(0,0)
+    pos_var = Point2(0, 0)
 
     # life of particles
     life = 2.0
@@ -406,7 +408,7 @@ class Meteor( ParticleSystem ):
     color_modulate = True
 
 
-class Galaxy( ParticleSystem ):
+class Galaxy(ParticleSystem):
 
     # total particles
     total_particles = 200
@@ -415,7 +417,7 @@ class Galaxy( ParticleSystem ):
     duration = -1
 
     # gravity
-    gravity = Point2(0,0)
+    gravity = Point2(0, 0)
 
     # angle
     angle = 90.0
@@ -434,7 +436,7 @@ class Galaxy( ParticleSystem ):
     tangential_accel_var = 0.0
 
     # emitter variable position
-    pos_var = Point2(0,0)
+    pos_var = Point2(0, 0)
 
     # life of particles
     life = 4.0
@@ -459,7 +461,8 @@ class Galaxy( ParticleSystem ):
     # color modulate
     color_modulate = True
 
-class Smoke( ParticleSystem ):
+
+class Smoke(ParticleSystem):
 
     # total particles
     total_particles = 80
@@ -468,7 +471,7 @@ class Smoke( ParticleSystem ):
     duration = -1
 
     # gravity
-    gravity = Point2(0,0)
+    gravity = Point2(0, 0)
 
     # angle
     angle = 90.0
@@ -487,7 +490,7 @@ class Smoke( ParticleSystem ):
     tangential_accel_var = 0.0
 
     # emitter variable position
-    pos_var = Point2(0.1,0)
+    pos_var = Point2(0.1, 0)
 
     # life of particles
     life = 4.0
@@ -500,10 +503,10 @@ class Smoke( ParticleSystem ):
     # emits per frame
     emission_rate = total_particles / life
 
-    start_color = Color(0.5,0.5,0.5,0.1)
-    start_color_var = Color(0,0,0,0.1)
-    end_color = Color(0.5,0.5,0.5,0.1)
-    end_color_var = Color(0,0,0,0.1)
+    start_color = Color(0.5, 0.5, 0.5, 0.1)
+    start_color_var = Color(0, 0, 0, 0.1)
+    end_color = Color(0.5, 0.5, 0.5, 0.1)
+    end_color_var = Color(0, 0, 0, 0.1)
 
     # blend additive
     blend_additive = True

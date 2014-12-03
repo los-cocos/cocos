@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-'''
-'''
+"""
+"""
 
 import six
 
@@ -11,6 +11,7 @@ __version__ = '$Id: $'
 from ctypes import *
 from ctypes.util import find_library
 import sys
+
 
 # Private version checking declared before SDL.version can be
 # imported.
@@ -23,9 +24,10 @@ class _SDL_version(Structure):
         return '%d.%d.%d' % \
             (self.major, self.minor, self.patch)
 
+
 def _version_parts(v):
-    '''Return a tuple (major, minor, patch) for `v`, which can be
-    an _SDL_version, string or tuple.'''
+    """Return a tuple (major, minor, patch) for `v`, which can be
+    an _SDL_version, string or tuple."""
     if hasattr(v, 'major') and hasattr(v, 'minor') and hasattr(v, 'patch'):
         return v.major, v.minor, v.patch
     elif type(v) == tuple:
@@ -35,8 +37,10 @@ def _version_parts(v):
     else:
         raise TypeError
 
+
 def _version_string(v):
     return '%d.%d.%d' % _version_parts(v)
+
 
 def _platform_library_name(library):
     if sys.platform[:5] == 'linux':
@@ -47,15 +51,16 @@ def _platform_library_name(library):
         return '%s.dll' % library
     return library
 
+
 class SDL_DLL:
     def __init__(self, library_name, version_function_name, version=None):
         self.library_name = library_name
-        if sys.platform=='win32':
+        if sys.platform == 'win32':
             try:
                 self._load_library_win()
             except WindowsError:
                 raise ImportError(('Dynamic library "%s" was not found' %
-                                    library_name))
+                                   library_name))
         else:
             self._load_library_nix(version)
 
@@ -71,12 +76,12 @@ class SDL_DLL:
             self._version = (0, 0, 0)
 
     def _load_library_win(self):
-        '''
+        """
         loads library from the dir cocos.sdl_lib_path
         Normally it is the path to the pygame package.
         If set to None will look first in the current working directory,
-        then in system32; that can be handy when using py2exe 
-        '''
+        then in system32; that can be handy when using py2exe
+        """
         import os
         import cocos
         # we must change cwd because some .dll s will directly load other dlls
@@ -96,15 +101,15 @@ class SDL_DLL:
             library = find_library("%s-%s" % (self.library_name, version))
         if not library:
             raise ImportError('Dynamic library "%s" was not found' %
-                _platform_library_name(self.library_name))
+                              _platform_library_name(self.library_name))
         try:
             self._dll = getattr(cdll, library)
         except OSError:
             raise ImportError("Dynamic library not found")
 
     def version_compatible(self, v):
-        '''Returns True iff `v` is equal to or later than the loaded library
-        version.'''
+        """Returns True iff `v` is equal to or later than the loaded library
+        version."""
         v = _version_parts(v)
         for i in range(3):
             if self._version[i] < v[i]:
@@ -112,18 +117,16 @@ class SDL_DLL:
         return True
 
     def assert_version_compatible(self, name, since):
-        '''Raises an exception if `since` is later than the loaded library.'''
+        """Raises an exception if `since` is later than the loaded library."""
         if not version_compatible(since):
             import cocos.audio.SDL.error
             raise cocos.audio.SDL.error.SDL_NotImplementedError(
                 '%s requires SDL version %s; currently using version %s' %
                 (name, _version_string(since), _version_string(self._version)))
 
-
-
     def private_function(self, name, **kwargs):
-        '''Construct a wrapper function for ctypes with internal documentation
-        and no argument names.'''
+        """Construct a wrapper function for ctypes with internal documentation
+        and no argument names."""
         kwargs['doc'] = 'Private wrapper for %s' % name
         kwargs['args'] = []
         return self.function(name, **kwargs)
@@ -135,7 +138,7 @@ class SDL_DLL:
                  success_return=None,
                  error_return=None,
                  since=None):
-        '''Construct a wrapper function for ctypes.
+        """Construct a wrapper function for ctypes.
 
         :Parameters:
             `name`
@@ -173,15 +176,15 @@ class SDL_DLL:
                 raises `SDL_NotImplementedError` will be returned instead.
                 Set to None if the function is in all versions of SDL.
 
-        '''
+        """
         # Check for version compatibility first
         if since and not self.version_compatible(since):
             def _f(*args, **kwargs):
                 import cocos.audio.SDL.error
                 raise cocos.audio.SDL.error.SDL_NotImplementedError(
-                      '%s requires %s %s; currently using version %s' %
-                      (name, self.library_name, _version_string(since),
-                       _version_string(self._version)))
+                    '%s requires %s %s; currently using version %s' %
+                    (name, self.library_name, _version_string(since),
+                     _version_string(self._version)))
             if args:
                 _f._args = args
             _f.__doc__ = doc

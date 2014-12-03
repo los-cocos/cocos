@@ -33,6 +33,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
+
 class NoAudioError(Exception):
     pass
-

@@ -56,6 +56,7 @@ __docformat__ = 'restructuredtext'
 
 import pyglet
 
+
 def get_recorder_clock(framerate, template, duration=0):
     """
     Returns a clock object suitable to be used as a pyglet app clock, which
@@ -80,6 +81,7 @@ def get_recorder_clock(framerate, template, duration=0):
         clock = ScreenReaderClock_12dev(framerate, template, duration)
     return clock
 
+
 def get_autotest_clock(sampler):
     """
     Returns a clock object suitable to be used as a pyglet app clock, which
@@ -100,6 +102,7 @@ def get_autotest_clock(sampler):
         # works with pyglet 1.2dev , branch default, 2638:ca17f2a533b7 (2012 04)
         clock = AutotestClock_12dev(sampler)
     return clock
+
 
 def set_app_clock(clock):
     """
@@ -134,9 +137,9 @@ class ScreenReaderClock(pyglet.clock.Clock):
         self.fake_time = 0
 
     def tick(self, poll=False):
-        '''Signify that one frame has passed.
+        """Signify that one frame has passed.
 
-        '''
+        """
         # Code is the same as in baseclass, except changes pointed in comments
 
         # deleted code for rescheduling the process, we want to do our task
@@ -193,8 +196,7 @@ class ScreenReaderClock(pyglet.clock.Clock):
 
         # Remove finished one-shots.
         self._schedule_interval_items = \
-            [item for item in self._schedule_interval_items \
-             if item.next_ts > ts]
+            [item for item in self._schedule_interval_items if item.next_ts > ts]
 
         if need_resort:
             # TODO bubble up changed items might be faster
@@ -205,7 +207,7 @@ class ScreenReaderClock(pyglet.clock.Clock):
     def _screenshot_logic(self):
         """takes screenshots, handles end of screenshot session"""
         # take screenshot
-        pyglet.image.get_buffer_manager().get_color_buffer().save(self.template % (self.frameno) )
+        pyglet.image.get_buffer_manager().get_color_buffer().save(self.template % self.frameno)
         self.frameno += 1
 
         # end?
@@ -216,7 +218,7 @@ class ScreenReaderClock(pyglet.clock.Clock):
     def _get_ts(self):
         """handles the time progression"""
         ts = self.fake_time
-        self.fake_time = self.frameno/self.framerate
+        self.fake_time = self.frameno / self.framerate
         return ts
 
 
@@ -271,7 +273,7 @@ class ScreenReaderClock_12dev(pyglet.clock.Clock):
     def _screenshot_logic(self):
         """takes screenshots, handles end of screenshot session"""
         # take screenshot
-        pyglet.image.get_buffer_manager().get_color_buffer().save(self.template % (self.frameno) )
+        pyglet.image.get_buffer_manager().get_color_buffer().save(self.template % self.frameno)
         self.frameno += 1
 
         # end?
@@ -353,8 +355,7 @@ class AutotestClock(pyglet.clock.Clock):
 
         # Remove finished one-shots.
         self._schedule_interval_items = \
-            [item for item in self._schedule_interval_items \
-             if item.next_ts > ts]
+            [item for item in self._schedule_interval_items if item.next_ts > ts]
 
         if need_resort:
             # TODO bubble up changed items might be faster
@@ -378,13 +379,13 @@ class AutotestClock_12dev(pyglet.clock.Clock):
         self.screen_sampler = screen_sampler
 
     def update_time(self):
-        '''Get the (fake) elapsed time since the last call to `update_time`
+        """Get the (fake) elapsed time since the last call to `update_time`
             Additionally, take snapshots.
 
         :rtype: float
         :return: The number of seconds since the last `update_time`, or 0
             if this was the first time it was called.
-        '''
+        """
         # Code is the same as in baseclass, except changes pointed in comments
 
         # this was ts = self.time() in pyglet, here .next will  drive the

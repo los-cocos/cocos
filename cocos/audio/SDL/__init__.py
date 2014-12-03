@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''Main module for importing SDL-ctypes.
+"""Main module for importing SDL-ctypes.
 
 This module defines the intialization and cleanup functions:
     - `SDL_Init`
@@ -19,7 +19,7 @@ This gives you access to all SDL names exactly as they appear in the C
 header files.
 
 :group Non-core modules: ttf, mixer, image, sound
-'''
+"""
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
@@ -38,13 +38,14 @@ from .timer import *
 # SDL.h
 
 _SDL_Init = SDL_dll.private_function('SDL_Init',
-    arg_types=[ctypes.c_uint],
-    return_type=ctypes.c_int)
+                                     arg_types=[ctypes.c_uint],
+                                     return_type=ctypes.c_int)
+
 
 def SDL_Init(flags):
-    '''Initialise the SDL library.
+    """Initialise the SDL library.
 
-    This function loads the SDL dynamically linked library and initializes 
+    This function loads the SDL dynamically linked library and initializes
     the subsystems specified by `flags` (and those satisfying dependencies)
     Unless the `SDL_INIT_NOPARACHUTE` flag is set, it will install cleanup
     signal handlers for some commonly ignored fatal signals (like SIGSEGV).
@@ -66,18 +67,19 @@ def SDL_Init(flags):
     :rtype: int
     :return: undocumented (FIXME)
     :see: `SDL_Quit`
-    '''
+    """
     if sys.platform == 'darwin' and flags & SDL_INIT_VIDEO:
         import cocos.audio.SDL.darwin
         cocos.audio.SDL.darwin.init()
     return _SDL_Init(flags)
 
 _SDL_InitSubSystem = SDL_dll.private_function('SDL_InitSubSystem',
-    arg_types=[ctypes.c_uint],
-    return_type=ctypes.c_int)
+                                              arg_types=[ctypes.c_uint],
+                                              return_type=ctypes.c_int)
+
 
 def SDL_InitSubSystem(flags):
-    '''Initialize specific SDL subsystems.
+    """Initialize specific SDL subsystems.
 
     :Parameters:
      - `flags`: int
@@ -85,46 +87,46 @@ def SDL_InitSubSystem(flags):
     :rtype: int
     :return: undocumented (FIXME)
     :see: `SDL_Init`, `SDL_QuitSubSystem`
-    '''
+    """
     if sys.platform == 'darwin' and flags & SDL_INIT_VIDEO:
         import cocos.audio.SDL.darwin
         cocos.audio.SDL.darwin.init()
     return _SDL_InitSubSystem(flags)
 
 SDL_QuitSubSystem = SDL_dll.function('SDL_QuitSubSystem',
-    '''Clean up specific SDL subsystems.
+                                     '''Clean up specific SDL subsystems.
 
-    :Parameters:
-     - `flags`: int
+                                     :Parameters:
+                                      - `flags`: int
 
-    :see: `SDL_InitSubSystem`
-    ''',
-    args=['flags'],
-    arg_types=[ctypes.c_uint],
-    return_type=None)
+                                     :see: `SDL_InitSubSystem`
+                                     ''',
+                                     args=['flags'],
+                                     arg_types=[ctypes.c_uint],
+                                     return_type=None)
 
 SDL_WasInit = SDL_dll.function('SDL_WasInit',
-    '''Return a mask of the specified subsystems which have been
-    initialized.
+                               '''Return a mask of the specified subsystems which have been
+                               initialized.
 
-    If `flags` is 0, return a mask of all initialized subsystems.
+                               If `flags` is 0, return a mask of all initialized subsystems.
 
-    :Parameters:
-     - `flags`: int
+                               :Parameters:
+                                - `flags`: int
 
-    :rtype: int
-    :return: undocumented (FIXME)
-    :see: `SDL_Init`
-    ''',
-    args=['flags'],
-    arg_types=[ctypes.c_uint],
-    return_type=ctypes.c_int)
+                               :rtype: int
+                               :return: undocumented (FIXME)
+                               :see: `SDL_Init`
+                               ''',
+                               args=['flags'],
+                               arg_types=[ctypes.c_uint],
+                               return_type=ctypes.c_int)
 
 SDL_Quit = SDL_dll.function('SDL_Quit',
-    '''Clean up all initialized subsystems.
+                            '''Clean up all initialized subsystems.
 
-    You should call this function upon all exit conditions.
-    ''',
-    args=[],
-    arg_types=[],
-    return_type=None)
+                            You should call this function upon all exit conditions.
+                            ''',
+                            args=[],
+                            arg_types=[],
+                            return_type=None)

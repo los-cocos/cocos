@@ -42,6 +42,7 @@ import ctypes as ct
 
 from pyglet.gl import *
 
+
 class FramebufferObject (object):
     """
     Wrapper for framebuffer objects. See
@@ -50,23 +51,23 @@ class FramebufferObject (object):
 
     API is not very OO, should be improved.
     """
-    def __init__ (self):
+    def __init__(self):
         """Create a new framebuffer object"""
         id = GLuint(0)
-        glGenFramebuffersEXT (1, ct.byref(id))
+        glGenFramebuffersEXT(1, ct.byref(id))
         self._id = id.value
 
-    def bind (self):
+    def bind(self):
         """Set FBO as current rendering target"""
-        glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, self._id)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, self._id)
 
-    def unbind (self):
+    def unbind(self):
         """Set default framebuffer as current rendering target"""
-        glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0)
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0)
 
-    def texture2d (self, texture):
+    def texture2d(self, texture):
         """Map currently bound framebuffer (not necessarily self) to texture"""
-        glFramebufferTexture2DEXT (
+        glFramebufferTexture2DEXT(
             GL_FRAMEBUFFER_EXT,
             GL_COLOR_ATTACHMENT0_EXT,
             texture.target,
@@ -75,11 +76,11 @@ class FramebufferObject (object):
 
     def check_status(self):
         """Check that currently set framebuffer is ready for rendering"""
-        status = glCheckFramebufferStatusEXT (GL_FRAMEBUFFER_EXT)
+        status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT)
         if status != GL_FRAMEBUFFER_COMPLETE_EXT:
-            raise Exception ("Frambuffer not complete: %d" % status)
+            raise Exception("Frambuffer not complete: %d" % status)
 
     def __del__(self):
-        '''Delete the framebuffer from the GPU memory'''
+        """Delete the framebuffer from the GPU memory"""
         id = GLuint(self._id)
         glDeleteFramebuffersEXT(1, ct.byref(id))
