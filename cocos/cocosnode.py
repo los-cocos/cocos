@@ -293,7 +293,6 @@ class CocosNode(object):
         by node.schedule/node.schedule_interface.
         """
 
-        total_len = len(self.scheduled_calls + self.scheduled_interval_calls)
         self.scheduled_calls = [
                 c for c in self.scheduled_calls if c[0] != callback
                 ]
