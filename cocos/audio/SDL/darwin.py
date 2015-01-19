@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-'''Darwin (OS X) support.
+"""Darwin (OS X) support.
 
 Appropriated from pygame.macosx
-'''
+"""
 
 from __future__ import division, print_function, unicode_literals
 import six
@@ -26,6 +26,7 @@ SDL = cocos.audio.SDL
 
 __all__ = ['init']
 
+
 # Need to do this if not running with a nib
 def setupAppleMenu(app):
     appleMenuController = NSAppleMenuController.alloc().init()
@@ -36,7 +37,8 @@ def setupAppleMenu(app):
     app.mainMenu().addItem_(appleMenuItem)
     appleMenuController.controlMenu_(appleMenu)
     app.mainMenu().removeItem_(appleMenuItem)
-    
+
+
 # Need to do this if not running with a nib
 def setupWindowMenu(app):
     windowMenu = NSMenu.alloc().initWithTitle_('Window')
@@ -47,6 +49,7 @@ def setupWindowMenu(app):
     windowMenuItem.setSubmenu_(windowMenu)
     app.mainMenu().addItem_(windowMenuItem)
     app.setWindowsMenu_(windowMenu)
+
 
 # Used to cleanly terminate
 class SDLAppDelegate(NSObject):
@@ -65,6 +68,7 @@ class SDLAppDelegate(NSObject):
             self, NSWindowDidUpdateNotification, None)
         self.release()
 
+
 def setIcon(app, icon_data):
     data = NSData.dataWithBytes_length_(icon_data, len(icon_data))
     if data is None:
@@ -73,6 +77,7 @@ def setIcon(app, icon_data):
     if img is None:
         return
     app.setApplicationIconImage_(img)
+
 
 def install():
     app = NSApplication.sharedApplication()
@@ -93,6 +98,7 @@ def install():
     app.updateWindows()
     app.activateIgnoringOtherApps_(True)
 
+
 def S(*args):
     return ''.join(args)
 
@@ -100,14 +106,15 @@ OSErr = objc._C_SHT
 OUTPSN = 'o^{ProcessSerialNumber=LL}'
 INPSN = 'n^{ProcessSerialNumber=LL}'
 
-FUNCTIONS=[
+FUNCTIONS = [
     # These two are public API
-    ( 'GetCurrentProcess', S(OSErr, OUTPSN) ),
-    ( 'SetFrontProcess', S(OSErr, INPSN) ),
+    ('GetCurrentProcess', S(OSErr, OUTPSN)),
+    ('SetFrontProcess', S(OSErr, INPSN)),
     # This is undocumented SPI
-    ( 'CPSSetProcessName', S(OSErr, INPSN, objc._C_CHARPTR) ),
-    ( 'CPSEnableForegroundOperation', S(OSErr, INPSN) ),
+    ('CPSSetProcessName', S(OSErr, INPSN, objc._C_CHARPTR)),
+    ('CPSEnableForegroundOperation', S(OSErr, INPSN)),
 ]
+
 
 def WMEnable(name=None):
     if name is None:
@@ -144,6 +151,7 @@ def WMEnable(name=None):
         print('SetFrontProcess', (err, psn))
         return False
     return True
+
 
 def init():
     if not (MacOS.WMAvailable() or WMEnable()):

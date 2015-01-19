@@ -40,8 +40,9 @@ from ctypes import *
 
 from pyglet.gl import *
 
-class GLSLException(Exception): pass
 
+class GLSLException(Exception):
+    pass
 
 
 def glsl_log(handle):
@@ -50,17 +51,16 @@ def glsl_log(handle):
     log_len = c_int(0)
 
     glGetObjectParameterivARB(handle, GL_OBJECT_INFO_LOG_LENGTH_ARB,
-        byref(log_len))
+                              byref(log_len))
     if log_len.value == 0:
         return ''
 
-    log = create_string_buffer(log_len.value) # does log_len include the NUL?
+    log = create_string_buffer(log_len.value)  # does log_len include the NUL?
 
     chars_written = c_int(0)
     glGetInfoLogARB(handle, log_len.value, byref(chars_written), log)
 
     return log.value
-
 
 
 class Shader(object):
@@ -79,9 +79,10 @@ class Shader(object):
         self.destroy()
 
     def _source(self):
-        if self.tag == Shader.s_tag: return []
+        if self.tag == Shader.s_tag:
+            return []
         self.tag = Shader.s_tag
-        
+
         r = []
         for d in self.dependencies:
             r.extend(d._source())
@@ -90,8 +91,10 @@ class Shader(object):
         return r
 
     def _compile(self):
-        if self.shader: return
-        if self.compiling : return
+        if self.shader:
+            return
+        if self.compiling:
+            return
         self.compiling = True
 
         self.shader = glCreateShaderObjectARB(self.shaderType())
@@ -118,7 +121,8 @@ class Shader(object):
             raise GLSLException('failed to compile shader', err)
 
     def _attachTo(self, program):
-        if self.tag == Shader.s_tag: return
+        if self.tag == Shader.s_tag:
+            return
 
         self.tag = Shader.s_tag
 
@@ -133,8 +137,8 @@ class Shader(object):
         return self
 
     def destroy(self):
-        if self.shader != 0: glDeleteObjectARB(self.shader)
-
+        if self.shader != 0:
+            glDeleteObjectARB(self.shader)
 
     def shaderType(self):
         raise NotImplementedError()
@@ -152,7 +156,8 @@ class Shader(object):
             glAttachObjectARB(program, self.shader)
 
     def compileFlat(self):
-        if self.isCompiled(): return
+        if self.isCompiled():
+            return
 
         self.shader = glCreateShaderObjectARB(self.shaderType())
         if self.shader == 0:
@@ -176,9 +181,9 @@ class Shader(object):
             self.shader = 0
             raise GLSLException('failed to compile shader', err)
 
-
     def compile(self):
-        if self.isCompiled(): return
+        if self.isCompiled():
+            return
 
         for d in self.dependencies:
             d.compile()
@@ -186,15 +191,14 @@ class Shader(object):
         self._compile()
 
 
-
 class VertexShader(Shader):
-    def shaderType(self): return GL_VERTEX_SHADER_ARB
-
+    def shaderType(self):
+        return GL_VERTEX_SHADER_ARB
 
 
 class FragmentShader(Shader):
-    def shaderType(self): return GL_FRAGMENT_SHADER_ARB
-
+    def shaderType(self):
+        return GL_FRAGMENT_SHADER_ARB
 
 
 class ShaderProgram(object):
@@ -204,13 +208,13 @@ class ShaderProgram(object):
 
            name : string with program name
            vertex_code : None or string with the vertex shader code
-           fragment_code : None or string with the fragment shader code 
+           fragment_code : None or string with the fragment shader code
         """
         shader_p = cls()
         if vertex_code:
-            shader_p.setShader(VertexShader(name+'_vp', vertex_code))
+            shader_p.setShader(VertexShader(name + '_vp', vertex_code))
         if fragment_code:
-            shader_p.setShader(FragmentShader(name+'_fp', fragment_code))
+            shader_p.setShader(FragmentShader(name + '_fp', fragment_code))
         # link now to allow fail early
         shader_p.prog()
         return shader_p
@@ -224,25 +228,31 @@ class ShaderProgram(object):
         self.destroy()
 
     def destroy(self):
-        if self.program != 0: glDeleteObjectARB(self.program)
+        if self.program != 0:
+            glDeleteObjectARB(self.program)
 
     def setShader(self, shader):
         if isinstance(shader, FragmentShader):
             self.fragment_shader = shader
         if isinstance(shader, VertexShader):
             self.vertex_shader = shader
-        if self.program != 0: glDeleteObjectARB(self.program)
+        if self.program != 0:
+            glDeleteObjectARB(self.program)
 
     def link(self):
-        if self.vertex_shader is not None: self.vertex_shader.compileFlat()
-        if self.fragment_shader is not None: self.fragment_shader.compileFlat()
+        if self.vertex_shader is not None:
+            self.vertex_shader.compileFlat()
+        if self.fragment_shader is not None:
+            self.fragment_shader.compileFlat()
 
         self.program = glCreateProgramObjectARB()
         if self.program == 0:
             raise GLSLException('failed to create program object')
 
-        if self.vertex_shader is not None: self.vertex_shader.attachFlat(self.program)
-        if self.fragment_shader is not None: self.fragment_shader.attachFlat(self.program)
+        if self.vertex_shader is not None:
+            self.vertex_shader.attachFlat(self.program)
+        if self.fragment_shader is not None:
+            self.fragment_shader.attachFlat(self.program)
 
         glLinkProgramARB(self.program)
 
@@ -260,7 +270,8 @@ class ShaderProgram(object):
         return self.program
 
     def prog(self):
-        if self.program: return self.program
+        if self.program:
+            return self.program
         return self.link()
 
     def install(self):

@@ -59,6 +59,7 @@ from .util_layers import ColorLayer
 
 __all__ = ['PythonInterpreterLayer']
 
+
 class Output:
     def __init__(self, display, realstdout):
         self.out = display
@@ -67,6 +68,7 @@ class Output:
 
     def write(self, data):
         self.out(data)
+
 
 class MyInterpreter(code.InteractiveInterpreter):
     def __init__(self, locals, display):
@@ -80,15 +82,15 @@ class MyInterpreter(code.InteractiveInterpreter):
         sys.stdout = old_stdout
         return more
 
-class PythonInterpreterLayer(ColorLayer):
-    '''Runs an interactive Python interpreter as a child `Layer` of the current `Scene`.
-    '''
 
-    cfg = {'code.font_name':'Arial',
-            'code.font_size':12,
-            'code.color':(255,255,255,255),
-            'caret.color':(255,255,255),
-            }
+class PythonInterpreterLayer(ColorLayer):
+    """Runs an interactive Python interpreter as a child `Layer` of the current `Scene`.
+    """
+
+    cfg = {'code.font_name': 'Arial',
+           'code.font_size': 12,
+           'code.color': (255, 255, 255, 255),
+           'caret.color': (255, 255, 255), }
 
     name = 'py'
 
@@ -99,24 +101,23 @@ class PythonInterpreterLayer(ColorLayer):
     is_event_handler = True     #: enable pyglet's events
 
     def __init__(self):
-        super(PythonInterpreterLayer, self).__init__( 32,32,32,192 )
+        super(PythonInterpreterLayer, self).__init__(32, 32, 32, 192)
 
         self.content = self.prompt
         local_vars = director.interpreter_locals
         local_vars["self"] = self
         self.interpreter = MyInterpreter(
-                local_vars, self._write)
+            local_vars, self._write)
 
         self.current_input = []
 
         self.history = ['']
         self.history_pos = 0
 
-
     def on_enter(self):
         super(PythonInterpreterLayer, self).on_enter()
 
-        vw,vh = cocos.director.director.get_window_size()
+        vw, vh = cocos.director.director.get_window_size()
 
         # format the code
         self.document = document.FormattedDocument(self.content)
@@ -130,10 +131,11 @@ class PythonInterpreterLayer(ColorLayer):
 
         # generate the document
         self.layout = layout.IncrementalTextLayout(self.document,
-            vw, vh, multiline=True, batch=self.batch)
-        self.layout.anchor_y= 'top'
+                                                   vw, vh, multiline=True,
+                                                   batch=self.batch)
+        self.layout.anchor_y = 'top'
 
-        self.caret = caret.Caret(self.layout, color=self.cfg['caret.color'] )
+        self.caret = caret.Caret(self.layout, color=self.cfg['caret.color'])
         self.caret.on_activate()
 
         self.on_resize(vw, vh)
@@ -150,8 +152,8 @@ class PythonInterpreterLayer(ColorLayer):
         self.layout.end_update()
 
         # XXX: hack
-        x,y = director.window.width, director.window.height
-        self.layout.top_group._scissor_width=x-4
+        x, y = director.window.width, director.window.height
+        self.layout.top_group._scissor_width = x - 4
 
         self.caret.position = len(self.document.text)
 
@@ -221,14 +223,14 @@ class PythonInterpreterLayer(ColorLayer):
                 self.history[self.history_pos] = line
             self.history_pos = max(0, self.history_pos-1)
             self.document.delete_text(self.start_of_line,
-                len(self.document.text))
+                                      len(self.document.text))
             self._write(self.history[self.history_pos])
             self.caret.position = len(self.document.text)
         elif motion == pyglet.window.key.MOTION_DOWN:
             # move forward in the history
             self.history_pos = min(len(self.history)-1, self.history_pos+1)
             self.document.delete_text(self.start_of_line,
-                len(self.document.text))
+                                      len(self.document.text))
             self._write(self.history[self.history_pos])
             self.caret.position = len(self.document.text)
         elif motion == pyglet.window.key.MOTION_BACKSPACE:
@@ -258,12 +260,12 @@ class PythonInterpreterLayer(ColorLayer):
     def _scroll_to_bottom(self):
         # on key press always move the view to the bottom of the screen
         if self.layout.height < self.layout.content_height:
-            self.layout.anchor_y= 'bottom'
+            self.layout.anchor_y = 'bottom'
             self.layout.y = 0
             self.layout.view_y = 0
         if self.caret.position < self.start_of_line:
             self.caret.position = len(self.document.text)
 
     def draw(self):
-        super( PythonInterpreterLayer, self).draw()
+        super(PythonInterpreterLayer, self).draw()
         self.batch.draw()

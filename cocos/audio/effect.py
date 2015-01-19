@@ -46,6 +46,7 @@ except ImportError:
 
 from . import actions
 
+
 class Effect(object):
     """Effects are sounds effect loaded in memory
 

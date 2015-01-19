@@ -43,17 +43,17 @@ __all__ = ['wired']
 
 test_v = '''
 varying vec3 position;
-void main() 
-{ 
-  gl_Position = ftransform(); 
+void main()
+{
+  gl_Position = ftransform();
   position = gl_Position.xyz;
 }
 '''
 
 test_f = '''
 uniform vec4 color;
-void main() 
-{ 
+void main()
+{
     gl_FragColor = color;
 }
 '''
@@ -61,7 +61,7 @@ void main()
 
 def load_shader():
     s = ShaderProgram()
-#    s.setShader(VertexShader('test_v', test_v))
+    # s.setShader(VertexShader('test_v', test_v))
     s.setShader(FragmentShader('test_f', test_f))
     return s
 

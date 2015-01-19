@@ -32,7 +32,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''
+"""
 cocos.director.director is the singleton that creates and handles the main ``Window``
 and manages the logic behind the ``Scenes``.
 
@@ -113,7 +113,7 @@ The director also has some useful attributes:
 
     * ``self.scene``: The scene currently active
 
-'''
+"""
 
 from __future__ import division, print_function, unicode_literals
 
@@ -122,51 +122,55 @@ __docformat__ = 'restructuredtext'
 import sys
 from os import getenv
 import warnings
+
 import pyglet
 from pyglet import window, event
 from pyglet import clock
-#from pyglet import media
+# from pyglet import media
 from pyglet.gl import *
 
-import cocos, cocos.audio, cocos.custom_clocks
+import cocos
+import cocos.audio
+import cocos.custom_clocks
 
 if hasattr(sys, 'is_cocos_sphinx') and sys.is_cocos_sphinx:
     __all__ = ['director', 'Director', 'DefaultHandler']
 else:
     __all__ = ['director', 'DefaultHandler']
 
-class DefaultHandler( object ):
+
+class DefaultHandler(object):
     def __init__(self):
-        super(DefaultHandler,self).__init__()
+        super(DefaultHandler, self).__init__()
         self.wired = False
 
-    def on_key_press( self, symbol, modifiers ):
+    def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.F and (modifiers & pyglet.window.key.MOD_ACCEL):
-            director.window.set_fullscreen( not director.window.fullscreen )
+            director.window.set_fullscreen(not director.window.fullscreen)
             return True
 
         elif symbol == pyglet.window.key.P and (modifiers & pyglet.window.key.MOD_ACCEL):
             import cocos.scenes.pause as pause
             pause_sc = pause.get_pause_scene()
             if pause:
-                director.push( pause_sc )
+                director.push(pause_sc)
             return True
 
         elif symbol == pyglet.window.key.W and (modifiers & pyglet.window.key.MOD_ACCEL):
-#            import wired
-            if self.wired == False:
-                glDisable(GL_TEXTURE_2D);
-                glPolygonMode(GL_FRONT, GL_LINE);
-                glPolygonMode(GL_BACK, GL_LINE);
-#                wired.wired.install()
-#                wired.wired.uset4F('color', 1.0, 1.0, 1.0, 1.0 )
+            # import wired
+            if not self.wired:
+                glDisable(GL_TEXTURE_2D)
+                glPolygonMode(GL_FRONT, GL_LINE)
+                glPolygonMode(GL_BACK, GL_LINE)
+                # wired.wired.install()
+                # wired.wired.uset4F('color', 1.0, 1.0, 1.0, 1.0 )
                 self.wired = True
             else:
-                glEnable(GL_TEXTURE_2D);
-                glPolygonMode(GL_FRONT, GL_FILL);
-                glPolygonMode(GL_BACK, GL_FILL);
+                glEnable(GL_TEXTURE_2D)
+                glPolygonMode(GL_FRONT, GL_FILL)
+                glPolygonMode(GL_BACK, GL_FILL)
                 self.wired = False
-#                wired.wired.uninstall()
+                # wired.wired.uninstall()
             return True
 
         elif symbol == pyglet.window.key.X and (modifiers & pyglet.window.key.MOD_ACCEL):
@@ -177,19 +181,19 @@ class DefaultHandler( object ):
             from .layer import PythonInterpreterLayer
 
             if not director.show_interpreter:
-                if director.python_interpreter == None:
-                    director.python_interpreter = cocos.scene.Scene( PythonInterpreterLayer() )
-                    director.python_interpreter.enable_handlers( True )
+                if director.python_interpreter is None:
+                    director.python_interpreter = cocos.scene.Scene(PythonInterpreterLayer())
+                    director.python_interpreter.enable_handlers(True)
                 director.python_interpreter.on_enter()
                 director.show_interpreter = True
             else:
                 director.python_interpreter.on_exit()
-                director.show_interpreter= False
+                director.show_interpreter = False
             return True
 
         elif symbol == pyglet.window.key.S and (modifiers & pyglet.window.key.MOD_ACCEL):
             import time
-            pyglet.image.get_buffer_manager().get_color_buffer().save('screenshot-%d.png' % (int( time.time() ) ) )
+            pyglet.image.get_buffer_manager().get_color_buffer().save('screenshot-%d.png' % (int(time.time())))
             return True
 
         if symbol == pyglet.window.key.ESCAPE:
@@ -200,10 +204,10 @@ class DefaultHandler( object ):
 class Director(event.EventDispatcher):
     """Class that creates and handle the main Window and manages how
        and when to execute the Scenes
-       
+
        You should not directly instantiate the class, instead you do::
-       
-            from cocos.director import director 
+
+            from cocos.director import director
 
        to access the only one Director instance.
        """
@@ -284,7 +288,7 @@ class Director(event.EventDispatcher):
         #: flag requesting app termination
         self.terminate_app = False
 
-        ## pop out the Cocos-specific flags
+        # pop out the Cocos-specific flags
 
         # 'autoscale' / 'do_not_scale' - Scheduled for cleanup at v0.7
         if 'do_not_scale' in kwargs:
@@ -297,9 +301,11 @@ class Director(event.EventDispatcher):
                 self.autoscale = not kwargs.pop('do_not_scale')
         else:
             self.autoscale = kwargs.pop('autoscale', True)
+
         def _get_do_not_scale_window():
             warnings.warn('Access to deprecated director.do_not_scale_window')
             return not self.autoscale
+
         def _set_do_not_scale_window(v):
             warnings.warn('Access to deprecated director.do_not_scale_window')
             self.autoscale = not v
@@ -317,7 +323,7 @@ class Director(event.EventDispatcher):
             kwargs.pop('height', 0)
 
         #: pyglet's window object
-        self.window = window.Window( *args, **kwargs )
+        self.window = window.Window(*args, **kwargs)
 
         # complete the viewport geometry info, both virtual and real,
         # also set the appropriate on_resize handler
@@ -327,7 +333,7 @@ class Director(event.EventDispatcher):
             self._window_virtual_height = self.window.height
 
         self._window_virtual_aspect = (
-            self._window_virtual_width / float( self._window_virtual_height ))
+            self._window_virtual_width / float(self._window_virtual_height))
 
         self._offset_x = 0
         self._offset_y = 0
@@ -351,7 +357,7 @@ class Director(event.EventDispatcher):
         self.set_alpha_blending()
 
         # default handler
-        self.window.push_handlers( DefaultHandler() )
+        self.window.push_handlers(DefaultHandler())
 
         # Environment variable COCOS2d_NOSOUND=1 overrides audio settings
         if getenv('COCOS2D_NOSOUND', None) == '1' or audio_backend == 'pyglet':
@@ -367,7 +373,7 @@ class Director(event.EventDispatcher):
             raise NoAudioError(msg)
 
         # Audio setup:
-        #TODO: reshape audio to not screw unittests
+        # TODO: reshape audio to not screw unittests
         import os
         if not os.environ.get('cocos_utest', False):
             cocos.audio.initialize(audio_settings)
@@ -375,6 +381,7 @@ class Director(event.EventDispatcher):
         return self.window
 
     fps_display = None
+
     def set_show_FPS(self, value):
         if value and self.fps_display is None:
             self.fps_display = clock.ClockDisplay()
@@ -382,8 +389,7 @@ class Director(event.EventDispatcher):
             self.fps_display.unschedule()
             self.fps_display = None
 
-    show_FPS = property(lambda self: self.fps_display is not None,
-        set_show_FPS)
+    show_FPS = property(lambda self: self.fps_display is not None, set_show_FPS)
 
     def run(self, scene):
         """Runs a scene, entering in the Director's main loop.
@@ -393,13 +399,12 @@ class Director(event.EventDispatcher):
                 The scene that will be run.
         """
 
-        self._set_scene( scene )
+        self._set_scene(scene)
 
         event_loop.run()
 
-
     def set_recorder(self, framerate, template="frame-%d.png", duration=None):
-        '''Will replace the app clock so that now we can ensure a steady
+        """Will replace the app clock so that now we can ensure a steady
         frame rate and save one image per frame
 
         :Parameters
@@ -409,18 +414,17 @@ class Director(event.EventDispatcher):
                 the template that will be completed with an in for the name of the files
             `duration`: float
                 the amount of seconds to record, or 0 for infinite
-        '''
+        """
         clock = cocos.custom_clocks.get_recorder_clock(framerate, template, duration)
         cocos.custom_clocks.set_app_clock(clock)
 
-
-    def on_draw( self ):
+    def on_draw(self):
         """Handles the event 'on_draw' from the pyglet.window.Window
 
             Realizes switch to other scene and app termination if needed
             Clears the window area
             The windows is painted as:
-            
+
                 - Render the current scene by calling it's visit method
                 - Eventually draw the fps metter
                 - Eventually draw the interpreter
@@ -430,8 +434,7 @@ class Director(event.EventDispatcher):
         """
 
         # typically True when window minimized
-        if ((self.window.width==0 or self.window.height==0) and
-            not self.terminate_app):
+        if (self.window.width == 0 or self.window.height == 0) and not self.terminate_app:
             # if surface area is zero, we don't need to draw; also
             # we don't want to allow scene changes in this situation: usually
             # on_enter does some scaling, which would lead to division by zero
@@ -440,14 +443,13 @@ class Director(event.EventDispatcher):
         # handle scene changes and app termination
         if self.terminate_app:
             self.next_scene = None
-            
+
         if self.next_scene is not None or self.terminate_app:
-            self._set_scene( self.next_scene )
+            self._set_scene(self.next_scene)
 
         if self.terminate_app:
             pyglet.app.exit()
             return
-
 
         self.window.clear()
 
@@ -463,7 +465,6 @@ class Director(event.EventDispatcher):
         if self.show_interpreter:
             self.python_interpreter.visit()
 
-
     def push(self, scene):
         """Suspends the execution of the running scene, pushing it
         on the stack of suspended scenes. The new scene will be executed.
@@ -472,11 +473,11 @@ class Director(event.EventDispatcher):
             `scene` : `Scene`
                 It is the scene that will be run.
            """
-        self.dispatch_event("on_push", scene )
+        self.dispatch_event("on_push", scene)
 
-    def on_push( self, scene ):
+    def on_push(self, scene):
         self.next_scene = scene
-        self.scene_stack.append( self.scene )
+        self.scene_stack.append(self.scene)
 
     def pop(self):
         """If the scene stack is empty the appication is terminated.
@@ -485,7 +486,7 @@ class Director(event.EventDispatcher):
         self.dispatch_event("on_pop")
 
     def on_pop(self):
-        if len(self.scene_stack)==0:
+        if len(self.scene_stack) == 0:
             self.terminate_app = True
         else:
             self.next_scene = self.scene_stack.pop()
@@ -499,7 +500,7 @@ class Director(event.EventDispatcher):
         """
         self.next_scene = scene
 
-    def _set_scene(self, scene ):
+    def _set_scene(self, scene):
         """Makes scene the current scene
 
             Operates on behalf of the public scene switching methods
@@ -513,23 +514,22 @@ class Director(event.EventDispatcher):
         # always true except for first scene in the app
         if self.scene is not None:
             self.scene.on_exit()
-            self.scene.enable_handlers( False )
+            self.scene.enable_handlers(False)
 
         old = self.scene
         self.scene = scene
 
         # always true except when terminating the app
         if self.scene is not None:
-            self.scene.enable_handlers( True )
+            self.scene.enable_handlers(True)
             scene.on_enter()
 
         return old
 
-
     #
     # Window Helper Functions
     #
-    def get_window_size( self ):
+    def get_window_size(self):
         """Returns the size of the window when it was created, and not the
         actual size of the window.
 
@@ -544,10 +544,9 @@ class Director(event.EventDispatcher):
         :rtype: (x,y)
         :returns: The size of the window when it was created
         """
-        return ( self._window_virtual_width, self._window_virtual_height)
+        return self._window_virtual_width, self._window_virtual_height
 
-
-    def get_virtual_coordinates( self, x, y ):
+    def get_virtual_coordinates(self, x, y):
         """Transforms coordinates that belongs the *real* window size, to the
         coordinates that belongs to the *virtual* window.
 
@@ -561,16 +560,15 @@ class Director(event.EventDispatcher):
         :returns: Transformed coordinates from the *real* window to the *virtual* window
         """
 
-        x_diff = self._window_virtual_width / float( self.window.width - self._offset_x * 2 )
-        y_diff = self._window_virtual_height / float( self.window.height - self._offset_y * 2 )
+        x_diff = self._window_virtual_width / float(self.window.width - self._offset_x * 2)
+        y_diff = self._window_virtual_height / float(self.window.height - self._offset_y * 2)
 
-        adjust_x = (self.window.width * x_diff - self._window_virtual_width ) / 2
-        adjust_y = (self.window.height * y_diff - self._window_virtual_height ) / 2
+        adjust_x = (self.window.width * x_diff - self._window_virtual_width) / 2
+        adjust_y = (self.window.height * y_diff - self._window_virtual_height) / 2
 
-        return ( int( x_diff * x) - adjust_x,   int( y_diff * y ) - adjust_y )
+        return int(x_diff * x) - adjust_x, int(y_diff * y) - adjust_y
 
-
-    def scaled_resize_window( self, width, height):
+    def scaled_resize_window(self, width, height):
         """One of two possible methods that are called when the main window is resized.
 
         This implementation scales the display such that the initial resolution
@@ -593,12 +591,12 @@ class Director(event.EventDispatcher):
         # virtual (desired) view size
         vw, vh = self.get_window_size()
         # desired aspect ratio
-        v_ar = vw/float(vh)
+        v_ar = vw / float(vh)
         # usable width, heigh
-        uw = int(min(pw, ph*v_ar))
-        uh = int(min(ph, pw/v_ar))
-        ox = (pw-uw)//2
-        oy = (ph-uh)//2
+        uw = int(min(pw, ph * v_ar))
+        uh = int(min(ph, pw / v_ar))
+        ox = (pw-uw) // 2
+        oy = (ph-uh) // 2
         self._offset_x = ox
         self._offset_y = oy
         self._usable_width = uw
@@ -606,7 +604,7 @@ class Director(event.EventDispatcher):
         self.set_projection()
 
         if self._resize_no_events:
-            # setting viewport geometry, not handling an event  
+            # setting viewport geometry, not handling an event
             return
 
         # deprecated - see issue 154
@@ -639,7 +637,7 @@ class Director(event.EventDispatcher):
         self._usable_height = height
 
         if self._resize_no_events:
-            # setting viewport geometry, not handling an event  
+            # setting viewport geometry, not handling an event
             return
 
         # deprecated - see issue 154
@@ -655,22 +653,21 @@ class Director(event.EventDispatcher):
         pass
 
     def set_projection3D(self):
-        '''Sets a 3D projection mantaining the aspect ratio of the original window size'''
+        """Sets a 3D projection mantaining the aspect ratio of the original window size"""
         # virtual (desired) view size
         vw, vh = self.get_window_size()
 
         glViewport(self._offset_x, self._offset_y, self._usable_width, self._usable_height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(60, self._usable_width/float(self._usable_height), 0.1, 3000.0)
+        gluPerspective(60, self._usable_width / float(self._usable_height), 0.1, 3000.0)
         glMatrixMode(GL_MODELVIEW)
 
         glLoadIdentity()
-        gluLookAt( vw/2.0, vh/2.0, vh/1.1566,   # eye
-                   vw/2.0, vh/2.0, 0,           # center
-                   0.0, 1.0, 0.0                # up vector
-                   )
-
+        gluLookAt(vw / 2.0, vh / 2.0, vh / 1.1566,   # eye
+                  vw / 2.0, vh / 2.0, 0,             # center
+                  0.0, 1.0, 0.0                      # up vector
+                  )
 
     def set_projection2D(self):
         """Sets a 2D projection (ortho) covering all the window"""
@@ -680,7 +677,7 @@ class Director(event.EventDispatcher):
     #
     # Misc functions
     #
-    def set_alpha_blending( self, on=True ):
+    def set_alpha_blending(self, on=True):
         """
         Enables/Disables alpha blending in OpenGL
         using the GL_ONE_MINUS_SRC_ALPHA algorithm.
@@ -692,16 +689,15 @@ class Director(event.EventDispatcher):
         else:
             glDisable(GL_BLEND)
 
-    def set_depth_test( sefl, on=True ):
-        '''Enables z test. On by default
-        '''
+    def set_depth_test(self, on=True):
+        """Enables z test. On by default"""
         if on:
             glClearDepth(1.0)
             glEnable(GL_DEPTH_TEST)
             glDepthFunc(GL_LEQUAL)
             glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
         else:
-            glDisable( GL_DEPTH_TEST )
+            glDisable(GL_DEPTH_TEST)
 
 event_loop = pyglet.app.event_loop
 if not hasattr(event_loop, "event"):

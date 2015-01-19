@@ -32,7 +32,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''Actions for moving things around based on their velocity and
+"""Actions for moving things around based on their velocity and
 acceleration.
 
 The simplest usage:
@@ -59,20 +59,19 @@ Typically the sprite would be controlled by the user, so something like::
 
  ship.do(MoveShip())
 
-'''
+"""
 
 from __future__ import division, print_function, unicode_literals
 
 
 __docformat__ = 'restructuredtext'
 
-__all__ = [
-    'Move', 'WrappedMove', 'BoundedMove', 'Driver',
-]
+__all__ = ['Move', 'WrappedMove', 'BoundedMove', 'Driver', ]
 
 import math
 
 from .base_actions import Action
+
 
 class Move(Action):
     """Move the target based on parameters on the target.
@@ -104,9 +103,10 @@ class Move(Action):
         dr = getattr(self.target, 'dr', 0)
         ddr = getattr(self.target, 'ddr', 0)
         if dr or ddr:
-            dr = self.target.dr = dr + ddr * dt
+            dr = self.target.dr = dr + ddr*dt
         if dr:
             self.target.rotation += dr * dt
+
 
 class WrappedMove(Move):
     """Move the target but wrap position when it hits certain bounds.
@@ -124,6 +124,7 @@ class WrappedMove(Move):
                 The height to wrap position at.
         """
         self.width, self.height = width, height
+
     def step(self, dt):
         super(WrappedMove, self).step(dt)
         x, y = self.target.position
@@ -138,6 +139,7 @@ class WrappedMove(Move):
         elif y < 0 - h/2:
             y += self.height + h
         self.target.position = (x, y)
+
 
 class BoundedMove(Move):
     """Move the target but limit position when it hits certain bounds.
@@ -155,6 +157,7 @@ class BoundedMove(Move):
                 The height to bound position at.
         """
         self.width, self.height = width, height
+
     def step(self, dt):
         super(BoundedMove, self).step(dt)
         x, y = self.target.position
@@ -214,6 +217,5 @@ class Driver(Action):
         r = math.radians(self.target.rotation)
         s = dt * speed
         x, y = self.target.position
-        self.target.position = (x + math.sin(r) * s, y + math.cos(r) * s)
+        self.target.position = (x + math.sin(r)*s, y + math.cos(r)*s)
         self.target.speed = speed
-

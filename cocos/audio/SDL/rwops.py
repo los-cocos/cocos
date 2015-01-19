@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-'''General interface for SDL to read and write data sources.
+"""General interface for SDL to read and write data sources.
 
 For files, use `SDL_RWFromFile`.  Other Python file-type objects can be
 used with `SDL_RWFromObject`.  If another library provides a constant void
 pointer to a contiguous region of memory, `SDL_RWFromMem` and
 `SDL_RWFromConstMem` can be used.
-'''
+"""
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
@@ -22,19 +22,21 @@ _read_fn = CFUNCTYPE(c_int, _rwops_p, c_void_p, c_int, c_int)
 _write_fn = CFUNCTYPE(c_int, _rwops_p, c_void_p, c_int, c_int)
 _close_fn = CFUNCTYPE(c_int, _rwops_p)
 
+
 class _hidden_mem_t(Structure):
     _fields_ = [('base', c_void_p),
                 ('here', c_void_p),
                 ('stop', c_void_p)]
 
+
 class SDL_RWops(Structure):
-    '''Read/write operations structure.
+    """Read/write operations structure.
 
     :Ivariables:
         `seek` : function
             seek(context: `SDL_RWops`, offset: int, whence: int) -> int
         `read` : function
-            read(context: `SDL_RWops`, ptr: c_void_p, size: int, maxnum: int) 
+            read(context: `SDL_RWops`, ptr: c_void_p, size: int, maxnum: int)
             -> int
         `write` : function
             write(context: `SDL_RWops`, ptr: c_void_p, size: int, num: int) ->
@@ -44,7 +46,7 @@ class SDL_RWops(Structure):
         `type` : int
             Undocumented
 
-    '''
+    """
     _fields_ = [('seek', _seek_fn),
                 ('read', _read_fn),
                 ('write', _write_fn),
@@ -53,7 +55,8 @@ class SDL_RWops(Structure):
                 ('_hidden_mem', _hidden_mem_t)]
 SetPointerType(_rwops_p, SDL_RWops)
 
-SDL_RWFromFile = dll.function('SDL_RWFromFile',
+SDL_RWFromFile = dll.function(
+    'SDL_RWFromFile',
     '''Create an SDL_RWops structure from a file on disk.
 
     :Parameters:
@@ -70,7 +73,8 @@ SDL_RWFromFile = dll.function('SDL_RWFromFile',
     dereference_return=True,
     require_return=True)
 
-SDL_RWFromMem = dll.function('SDL_RWFromMem',
+SDL_RWFromMem = dll.function(
+    'SDL_RWFromMem',
     '''Create an SDL_RWops structure from a contiguous region of memory.
 
     :Parameters:
@@ -85,7 +89,8 @@ SDL_RWFromMem = dll.function('SDL_RWFromMem',
     dereference_return=True,
     require_return=True)
 
-SDL_RWFromConstMem = dll.function('SDL_RWFromConstMem',
+SDL_RWFromConstMem = dll.function(
+    'SDL_RWFromConstMem',
     '''Create an SDL_RWops structure from a contiguous region of memory.
 
     :Parameters:
@@ -100,7 +105,7 @@ SDL_RWFromConstMem = dll.function('SDL_RWFromConstMem',
     return_type=POINTER(SDL_RWops),
     dereference_return=True,
     require_return=True,
-    since=(1,2,7))
+    since=(1, 2, 7))
 
 """ These functions shouldn't be useful to Pythoners.
     SDL_AllocRW = dll.function('SDL_AllocRW',
@@ -124,12 +129,13 @@ SDL_RWFromConstMem = dll.function('SDL_RWFromConstMem',
         return_type=None)
 """
 
+
 # XXX Tested read from open() only so far
 def SDL_RWFromObject(obj):
-    '''Construct an SDL_RWops structure from a Python file-like object.
+    """Construct an SDL_RWops structure from a Python file-like object.
 
     The object must support the following methods in the same fashion as
-    the builtin file object: 
+    the builtin file object:
 
         - ``read(len) -> data``
         - ``write(data)``
@@ -140,7 +146,7 @@ def SDL_RWFromObject(obj):
      - `obj`: Python file-like object to wrap
 
     :rtype: `SDL_RWops`
-    '''
+    """
 
     ctx = SDL_RWops()
 

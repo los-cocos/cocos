@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''Pygame module for controlling streamed audio
+"""Pygame module for controlling streamed audio
 
 The music module is closely tied to pygame.mixer. Use the music module to
 control the playback of music in the sound mixer.
@@ -8,7 +8,7 @@ control the playback of music in the sound mixer.
 The difference between the music playback and regular Sound playback is that
 the music is streamed, and never actually loaded all at once. The mixer system
 only supports a single music stream at once.
-'''
+"""
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: music.py 875 2006-07-23 05:04:59Z aholkner $'
@@ -30,11 +30,13 @@ _pos_time = -1
 
 _endmusic_event = SDL_NOEVENT
 
+
 def _mixmusic_callback(data, stream):
     global _pos, _pos_time
     if not Mix_PausedMusic():
         _pos += len(stream)
         _pos_time = SDL_GetTicks()
+
 
 def _endmusic_callback():
     global _current_music, _queue_music, _pos, _pos_time
@@ -50,6 +52,7 @@ def _endmusic_callback():
         _pos_time = -1
         Mix_SetPostMix(None, None)
 
+
 def _free_loaded(current=True, queue=True):
     global _current_music, _queue_music
     if current and _current_music:
@@ -60,8 +63,9 @@ def _free_loaded(current=True, queue=True):
         Mix_FreeMusic(_queue_music)
         _current_music = None
 
+
 def load(filename):
-    '''Load a music file for playback.
+    """Load a music file for playback.
 
     This will load a music file and prepare it for playback. If a music stream
     is already playing it will be stopped. This does not start the music
@@ -74,15 +78,16 @@ def load(filename):
         `filename` : str
             Filename of music to load.
 
-    '''
+    """
     global _current_music
     mixer._mixer_init_check()
 
     _free_loaded()
     _current_music = Mix_LoadMUS(filename)
 
+
 def play(loops=0, start=0.0):
-    '''Start the playback of the music stream.
+    """Start the playback of the music stream.
 
     This will play the loaded music stream. If the music is already playing it
     will be restarted.
@@ -103,7 +108,7 @@ def play(loops=0, start=0.0):
         `start` : float
             Starting time within music track to play from, in seconds.
 
-    '''
+    """
     global _frequency, _format, _channels
 
     mixer._mixer_init_check()
@@ -125,43 +130,48 @@ def play(loops=0, start=0.0):
                 'music start position requires SDL_Mixer 1.2.3 or later')
         Mix_PlayMusic(_current_music, loops)
 
+
 def rewind():
-    '''Restart music.
+    """Restart music.
 
     Resets playback of the current music to the beginning.
-    '''
+    """
     mixer._mixer_init_check()
     Mix_RewindMusic()
 
+
 def stop():
-    '''Stop the music playback.
+    """Stop the music playback.
 
     Stops the current music if it is playing.  Any queued music will be
     unqueued.
-    '''
+    """
     mixer._mixer_init_check()
     Mix_HaltMusic()
     _free_loaded(False, True)
 
+
 def pause():
-    '''Temporarily stop music playback.
+    """Temporarily stop music playback.
 
     Temporarily stop playback of the music stream. It can be resumed
     with the `unpause` function.
-    '''
+    """
     mixer._mixer_init_check()
     Mix_PauseMusic()
 
+
 def unpause():
-    '''Resume paused music.
+    """Resume paused music.
 
     This will resume the playback of a music stream after it has been paused.
-    '''
+    """
     mixer._mixer_init_check()
     Mix_ResumeMusic()
 
+
 def fadeout(time):
-    '''Stop music playback after fading out.
+    """Stop music playback after fading out.
 
     This will stop the music playback after it has been faded out over the
     specified time (measured in milliseconds).  Any queued music will be
@@ -173,14 +183,15 @@ def fadeout(time):
         `time` : int
             Time to fade out over, in milliseconds.
 
-    '''
+    """
     mixer._mixer_init_check()
 
     Mix_FadeOutMusic(time)
     _free_loaded(False, True)
 
+
 def set_volume(volume):
-    '''Set the music volume.
+    """Set the music volume.
 
     Set the volume of the music playback. The value argument is between
     0.0 and 1.0. When new music is loaded the volume is reset.
@@ -189,34 +200,37 @@ def set_volume(volume):
         `volume` : float
             Volume of music playback, in range [0.0, 1.0].
 
-    '''
+    """
     mixer._mixer_init_check()
     Mix_VolumeMusic(int(volume * 128))
 
+
 def get_volume():
-    '''Get the music volume.
+    """Get the music volume.
 
     Returns the current volume for the mixer. The value will be between 0.0
     and 1.0.
 
     :rtype: float
-    '''
+    """
     mixer._mixer_init_check()
     return Mix_VolumeMusic(-1) / 128.0
 
+
 def get_busy():
-    '''Check if the music stream is playing.
+    """Check if the music stream is playing.
 
     Returns True when the music stream is actively playing. When the music
     is idle this returns False.
 
     :rtype: bool
-    '''
+    """
     mixer._mixer_init_check()
     return Mix_PlayingMusic()
 
+
 def get_pos():
-    '''Get the amount of time music has been playing.
+    """Get the amount of time music has been playing.
 
     This gets the number of milliseconds that the music has been playing for.
     The returned time only represents how long the music has been playing; it
@@ -225,7 +239,7 @@ def get_pos():
     Returns -1 if the position is unknown.
 
     :rtype: int
-    '''
+    """
     mixer._mixer_init_check()
     if _pos_time < 0:
         return -1
@@ -235,8 +249,9 @@ def get_pos():
         ticks += SDL_GetTicks() - _pos_time
     return int(ticks)
 
+
 def queue(filename):
-    '''Queue a music file to follow the current one.
+    """Queue a music file to follow the current one.
 
     This will load a music file and queue it. A queued music file will begin
     as soon as the current music naturally ends. If the current music is ever
@@ -253,7 +268,7 @@ def queue(filename):
         `filename` : str
             Filename of music file to queue.
 
-    '''
+    """
     global _queue_music
 
     mixer._mixer_init_check()
@@ -263,8 +278,9 @@ def queue(filename):
 
     _queue_music = music
 
+
 def set_endevent(eventtype=None):
-    '''Have the music send an event when playback stops.
+    """Have the music send an event when playback stops.
 
     This causes Pygame to signal (by means of the event queue) when
     the music is done playing. The argument determines the type of
@@ -278,19 +294,20 @@ def set_endevent(eventtype=None):
         `eventtype` : int
             Type of event to post.  For example, ``SDL_USEREVENT + n``
 
-    '''
+    """
     global _endmusic_event
 
     if eventtype is None:
         eventtype = SDL_NOEVENT
     _endmusic_event = eventtype
 
+
 def get_endevent():
-    '''Get the event a channel sends when playback stops.
+    """Get the event a channel sends when playback stops.
 
     Returns the event type to be sent every time the music finishes playback.
     If there is no endevent the function returns pygame.NOEVENT.
 
     :rtype: int
-    '''
+    """
     return _endmusic_event

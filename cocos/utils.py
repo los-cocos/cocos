@@ -50,11 +50,12 @@ __docformat__ = 'restructuredtext'
 from cocos.scene import Scene
 from cocos.director import director
 
+
 class SequenceScene(Scene):
     """SequenceScene is used when you want to load more than one scene to the director.
     Some easy example would be:
     I want to run a Intro scene before the menu game. So I do this:
-    director.run( SequenceScene(intro(), menuGame()) )
+    director.run(SequenceScene(intro(), menuGame()))
     """
     def __init__(self, *scenes):
         super(SequenceScene, self).__init__()
@@ -65,6 +66,6 @@ class SequenceScene(Scene):
         if self.p >= len(self.scenes):
             director.pop()
         else:
-            director.push( self.scenes[ self.p ] )
+            director.push(self.scenes[self.p])
 
         self.p += 1

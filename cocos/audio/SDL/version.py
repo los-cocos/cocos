@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-'''Functions related to the SDL shared library version.
-'''
+"""Functions related to the SDL shared library version.
+"""
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
@@ -10,8 +10,9 @@ from ctypes import *
 
 from . import dll
 
+
 class SDL_version(Structure):
-    '''Version structure.
+    """Version structure.
 
     :Ivariables:
         `major` : int
@@ -21,7 +22,7 @@ class SDL_version(Structure):
         `patch` : int
             Patch revision number
 
-    '''
+    """
     _fields_ = [('major', c_ubyte),
                 ('minor', c_ubyte),
                 ('patch', c_ubyte)]
@@ -33,15 +34,16 @@ class SDL_version(Structure):
     def is_since(self, required):
         if hasattr(required, 'major'):
             return self.major >= required.major and \
-                   self.minor >= required.minor and \
-                   self.patch >= required.patch
+                self.minor >= required.minor and \
+                self.patch >= required.patch
         else:
             return self.major >= required[0] and \
-                   self.minor >= required[1] and \
-                   self.patch >= required[2]
+                self.minor >= required[1] and \
+                self.patch >= required[2]
+
 
 def SDL_VERSIONNUM(major, minor, patch):
-    '''Turn the version numbers into a numeric value.
+    """Turn the version numbers into a numeric value.
 
     For example::
 
@@ -54,10 +56,11 @@ def SDL_VERSIONNUM(major, minor, patch):
      - `patch`: int
 
     :rtype: int
-    '''
-    return x * 1000 + y * 100 + z
+    """
+    return x*1000 + y*100 + z
 
-SDL_Linked_Version = dll.function('SDL_Linked_Version',
+SDL_Linked_Version = dll.function(
+    'SDL_Linked_Version',
     '''Get the version of the dynamically linked SDL library.
 
     :rtype: `SDL_version`
@@ -68,19 +71,20 @@ SDL_Linked_Version = dll.function('SDL_Linked_Version',
     dereference_return=True,
     require_return=True)
 
+
 def SDL_VERSION_ATLEAST(major, minor, patch):
-    '''Determine if the SDL library is at least the given version.
-    
+    """Determine if the SDL library is at least the given version.
+
     :Parameters:
      - `major`: int
      - `minor`: int
      - `patch`: int
 
     :rtype: bool
-    '''
+    """
     v = SDL_Linked_Version()
     return SDL_VERSIONNUM(v.major, v.minor, v.patch) >= \
-           SDL_VERSIONNUM(major, minor, patch)
+        SDL_VERSIONNUM(major, minor, patch)
 
 # SDL_VERSION and SDL_COMPILEDVERSION not implemented as there is no
 # sensible mapping to compiled version numbers.

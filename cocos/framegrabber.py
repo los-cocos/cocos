@@ -42,17 +42,19 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-from cocos.gl_framebuffer_object import FramebufferObject
 from pyglet.gl import *
-from cocos.director import director
 from pyglet import image
 import pyglet
+
+from cocos.gl_framebuffer_object import FramebufferObject
+from cocos.director import director
 
 # Auxiliar classes for render-to-texture
 
 _best_grabber = None
 
 __all__ = ['TextureGrabber']
+
 
 def TextureGrabber():
     """Returns an instance of the best texture grabbing class"""
@@ -65,7 +67,7 @@ def TextureGrabber():
     # Preferred method: framebuffer object
     try:
         # TEST XXX
-        #_best_grabber = GenericGrabber
+        # _best_grabber = GenericGrabber
         _best_grabber = FBOGrabber
         return _best_grabber()
     except:
@@ -76,19 +78,21 @@ def TextureGrabber():
 #    _best_grabber = GenericGrabber
 #    return _best_grabber()
 
+
 class _TextureGrabber(object):
     def __init__(self):
         """Create a texture grabber."""
-        
+
     def grab(self, texture):
         """Capture the current screen."""
-        
+
     def before_render(self, texture):
         """Setup call before rendering begins."""
-        
+
     def after_render(self, texture):
         """Rendering done, make sure texture holds what has been rendered."""
-        
+
+
 class GenericGrabber(_TextureGrabber):
     """A simple render-to-texture mechanism. Destroys the current GL display;
     and considers the whole layer as opaque. But it works in any GL
@@ -98,31 +102,31 @@ class GenericGrabber(_TextureGrabber):
         x1 = y1 = 0
         x2, y2 = director.get_window_size()
         self.vertex_list = pyglet.graphics.vertex_list(4,
-            ('v2f', [x1, y1, x2, y1, x2, y2, x1, y2]),
-            ('c4B', [255,255,255,255]*4)
-        )
-        
-    def before_render (self, texture):
-        #self.before = image.get_buffer_manager().get_color_buffer()
+                                                       ('v2f', [x1, y1, x2, y1, x2, y2, x1, y2]),
+                                                       ('c4B', [255, 255, 255, 255] * 4))
+
+    def before_render(self, texture):
+        # self.before = image.get_buffer_manager().get_color_buffer()
         director.window.clear()
 
-    def after_render (self, texture):
+    def after_render(self, texture):
         buffer = image.get_buffer_manager().get_color_buffer()
         texture.blit_into(buffer, 0, 0, 0)
         director.window.clear()
         return
-        
-        self.before.blit(0,0)
+
+        self.before.blit(0, 0)
         glEnable(self.before.texture.target)
         glBindTexture(self.before.texture.target, self.before.texture.id)
 
         glPushAttrib(GL_COLOR_BUFFER_BIT)
 
         self.vertex_list.draw(pyglet.gl.GL_QUADS)
-               
+
         glPopAttrib()
         glDisable(self.before.texture.target)
-        
+
+
 class PbufferGrabber(_TextureGrabber):
     """A render-to texture mechanism using pbuffers.
     Requires pbuffer extensions. Currently only implemented in GLX.
@@ -131,7 +135,7 @@ class PbufferGrabber(_TextureGrabber):
 
     TODO: finish pbuffer grabber
     """
-    def grab (self, texture):
+    def grab(self, texture):
         self.pbuf = Pbuffer(director.window, [
             GLX_CONFIG_CAVEAT, GLX_NONE,
             GLX_RED_SIZE, 8,
@@ -141,18 +145,18 @@ class PbufferGrabber(_TextureGrabber):
             GLX_DOUBLEBUFFER, 1,
             ])
 
-    def before_render (self, texture):
+    def before_render(self, texture):
         self.pbuf.switch_to()
         gl.glViewport(0, 0, self.pbuf.width, self.pbuf.height)
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
         gl.glOrtho(0, self.pbuf.width, 0, self.pbuf.height, -1, 1)
         gl.glMatrixMode(gl.GL_MODELVIEW)
-        gl.glEnable (gl.GL_TEXTURE_2D)
+        gl.glEnable(gl.GL_TEXTURE_2D)
 
-    def after_render (self, texture):
+    def after_render(self, texture):
         buffer = image.get_buffer_manager().get_color_buffer()
-        texture.blit_into (buffer, 0, 0, 0)
+        texture.blit_into(buffer, 0, 0, 0)
         director.window.switch_to()
 
 
@@ -162,20 +166,20 @@ class FBOGrabber(_TextureGrabber):
     implementation/driver.
 
     Requires framebuffer_object extensions"""
-    def __init__ (self):
+    def __init__(self):
         # This code is on init to make creation fail if FBOs are not available
         self.fbuf = FramebufferObject()
         self.fbuf.check_status()
 
-    def grab (self, texture):
+    def grab(self, texture):
         self.fbuf.bind()
-        self.fbuf.texture2d (texture)
+        self.fbuf.texture2d(texture)
         self.fbuf.check_status()
         self.fbuf.unbind()
 
-    def before_render (self, texture):
+    def before_render(self, texture):
         self.fbuf.bind()
         glClear(GL_COLOR_BUFFER_BIT)
 
-    def after_render (self, texture):
+    def after_render(self, texture):
         self.fbuf.unbind()

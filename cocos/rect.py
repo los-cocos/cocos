@@ -37,8 +37,9 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
+
 class Rect(object):
-    '''Define a rectangular area.
+    """Define a rectangular area.
 
     Many convenience handles and other properties are also defined - all of
     which may be assigned to which will result in altering the position
@@ -63,11 +64,11 @@ class Rect(object):
 
     The Rect area includes the bottom and left borders but not the top and
     right borders.
-    '''
+    """
     def __init__(self, x, y, width, height):
-        '''Create a Rect with the bottom-left corner at (x, y) and
+        """Create a Rect with the bottom-left corner at (x, y) and
         dimensions (width, height).
-        '''
+        """
         self._x, self._y = x, y
         self._width, self._height = width, height
 
@@ -75,11 +76,11 @@ class Rect(object):
         return bool(self.width and self.height)
 
     def __repr__(self):
-        return 'Rect(xy=%.4g,%.4g; wh=%.4g,%.4g)'%(self.x, self.y,
-            self.width, self.height)
+        return 'Rect(xy=%.4g,%.4g; wh=%.4g,%.4g)' % (self.x, self.y,
+                                                     self.width, self.height)
 
     def __eq__(self, other):
-        '''Compare the two rects.
+        """Compare the two rects.
 
         >>> r1 = Rect(0, 0, 10, 10)
         >>> r1 == Rect(0, 0, 10, 10)
@@ -92,16 +93,16 @@ class Rect(object):
         False
         >>> r1 == Rect(0, 0, 10, 11)
         False
-        '''
+        """
         return (self.x == other.x and self.y == other.y and
-            self.width == other.width and  self.height == other.height)
+                self.width == other.width and self.height == other.height)
 
     # py3 compatibility: obj that defines __eq__ needs to define __hash__ to be
-    # hashable, and we need that class RectCell(Rect, Cell) be hashable 
+    # hashable, and we need that class RectCell(Rect, Cell) be hashable
     __hash__ = object.__hash__
 
     def __ne__(self, other):
-        '''Compare the two rects.
+        """Compare the two rects.
 
         >>> r1 = Rect(0, 0, 10, 10)
         >>> r1 != Rect(0, 0, 10, 10)
@@ -114,7 +115,7 @@ class Rect(object):
         True
         >>> r1 != Rect(0, 0, 10, 11)
         True
-        '''
+        """
         return not (self == other)
 
     def copy(self):
@@ -122,35 +123,52 @@ class Rect(object):
 
     # the following four properties will most likely be overridden in a
     # subclass
-    def set_x(self, value): self._x = value
+    def set_x(self, value):
+        self._x = value
+
     x = property(lambda self: self._x, set_x)
-    def set_y(self, value): self._y = value
+
+    def set_y(self, value):
+        self._y = value
+
     y = property(lambda self: self._y, set_y)
-    def set_width(self, value): self._width = value
+
+    def set_width(self, value):
+        self._width = value
+
     width = property(lambda self: self._width, set_width)
-    def set_height(self, value): self._height = value
+
+    def set_height(self, value):
+        self._height = value
+
     height = property(lambda self: self._height, set_height)
 
     def contains(self, x, y):
-        '''Return boolean whether the point defined by x, y is inside the
+        """Return boolean whether the point defined by x, y is inside the
         rect area.
-        '''
-        if x < self.x or x > self.x + self.width: return False
-        if y < self.y or y > self.y + self.height: return False
+        """
+        if x < self.x or x > self.x + self.width:
+            return False
+        if y < self.y or y > self.y + self.height:
+            return False
         return True
 
     def intersects(self, other):
-        '''Return boolean whether the "other" rect (an object with .x, .y,
+        """Return boolean whether the "other" rect (an object with .x, .y,
         .width and .height attributes) overlaps this Rect in any way.
-        '''
-        if self.x + self.width < other.x: return False
-        if other.x + other.width < self.x: return False
-        if self.y + self.height < other.y: return False
-        if other.y + other.height < self.y: return False
+        """
+        if self.x + self.width < other.x:
+            return False
+        if other.x + other.width < self.x:
+            return False
+        if self.y + self.height < other.y:
+            return False
+        if other.y + other.height < self.y:
+            return False
         return True
 
     def clippedBy(self, other):
-        '''bool. True iif intersection with other is smaller than self.
+        """bool. True iif intersection with other is smaller than self.
 
         Equivalent: True if self doesn't fit entirely into other
 
@@ -172,14 +190,14 @@ class Rect(object):
         >>> r2 = Rect(11, 11, 1, 1)
         >>> r1.clippedBy(r2)
         True
-        '''
+        """
         intersection = self.intersect(other)
         if intersection is None:
             return True
         return intersection != self
 
     def intersect(self, other):
-        '''Find the intersection of two Rect s.
+        """Find the intersection of two Rect s.
 
         >>> r1 = Rect(0, 51, 200, 17)
         >>> r2 = Rect(0, 64, 200, 55)
@@ -204,7 +222,7 @@ class Rect(object):
         False
         >>> bool(Rect(0, 0, 0, 0))
         False
-        '''
+        """
         s_tr_x, s_tr_y = self.topright
         o_tr_x, o_tr_y = other.topright
         bl_x = max(self.x, other.x)
@@ -216,92 +234,133 @@ class Rect(object):
             return None
         return self.__class__(bl_x, bl_y, w, h)
 
-    def set_position(self, value): self._x, self._y = value
+    def set_position(self, value):
+        self._x, self._y = value
+
     position = property(lambda self: (self._x, self._y), set_position)
 
-    def set_size(self, value): self._width, self._height = value
+    def set_size(self, value):
+        self._width, self._height = value
+
     size = property(lambda self: (self._width, self._height), set_size)
 
-    def get_origin(self): return self.x, self.y
-    def set_origin(self, origin): self.x, self.y = origin
+    def get_origin(self):
+        return self.x, self.y
+
+    def set_origin(self, origin):
+        self.x, self.y = origin
+
     origin = property(get_origin, set_origin)
 
-    def get_top(self): return self.y + self.height
-    def set_top(self, y): self.y = y - self.height
+    def get_top(self):
+        return self.y + self.height
+
+    def set_top(self, y):
+        self.y = y - self.height
+
     top = property(get_top, set_top)
 
     # r/w, in pixels, y extent
-    def get_bottom(self): return self.y
-    def set_bottom(self, y): self.y = y
+    def get_bottom(self):
+        return self.y
+
+    def set_bottom(self, y):
+        self.y = y
+
     bottom = property(get_bottom, set_bottom)
 
-    def get_left(self): return self.x
-    def set_left(self, x): self.x = x
+    def get_left(self):
+        return self.x
+
+    def set_left(self, x):
+        self.x = x
+
     left = property(get_left, set_left)
 
-    def get_right(self): return self.x + self.width
-    def set_right(self, x): self.x = x - self.width
+    def get_right(self):
+        return self.x + self.width
+
+    def set_right(self, x):
+        self.x = x - self.width
+
     right = property(get_right, set_right)
 
     def get_center(self):
-        return (self.x + self.width//2, self.y + self.height//2)
+        return self.x + self.width//2, self.y + self.height//2
+
     def set_center(self, center):
         x, y = center
         self.position = (x - self.width//2, y - self.height//2.0)
+
     center = property(get_center, set_center)
 
     def get_midtop(self):
-        return (self.x + self.width//2, self.y + self.height)
+        return self.x + self.width//2, self.y + self.height
+
     def set_midtop(self, midtop):
         x, y = midtop
         self.position = (x - self.width//2, y - self.height)
+
     midtop = property(get_midtop, set_midtop)
 
     def get_midbottom(self):
-        return (self.x + self.width//2, self.y)
+        return self.x + self.width//2, self.y
+
     def set_midbottom(self, midbottom):
         x, y = midbottom
         self.position = (x - self.width//2, y)
+
     midbottom = property(get_midbottom, set_midbottom)
 
     def get_midleft(self):
-        return (self.x, self.y + self.height//2)
+        return self.x, self.y + self.height//2
+
     def set_midleft(self, midleft):
         x, y = midleft
         self.position = (x, y - self.height//2)
+
     midleft = property(get_midleft, set_midleft)
 
     def get_midright(self):
-        return (self.x + self.width, self.y + self.height//2)
+        return self.x + self.width, self.y + self.height//2
+
     def set_midright(self, midright):
         x, y = midright
         self.position = (x - self.width, y - self.height//2)
+
     midright = property(get_midright, set_midright)
- 
+
     def get_topleft(self):
-        return (self.x, self.y + self.height)
+        return self.x, self.y + self.height
+
     def set_topleft(self, position):
         x, y = position
         self.position = (x, y - self.height)
+
     topleft = property(get_topleft, set_topleft)
- 
+
     def get_topright(self):
-        return (self.x + self.width, self.y + self.height)
+        return self.x + self.width, self.y + self.height
+
     def set_topright(self, position):
         x, y = position
         self.position = (x - self.width, y - self.height)
+
     topright = property(get_topright, set_topright)
- 
+
     def get_bottomright(self):
-        return (self.x + self.width, self.y)
+        return self.x + self.width, self.y
+
     def set_bottomright(self, position):
         x, y = position
         self.position = (x - self.width, y)
+
     bottomright = property(get_bottomright, set_bottomright)
- 
+
     def get_bottomleft(self):
-        return (self.x, self.y)
+        return self.x, self.y
+
     def set_bottomleft(self, position):
         self.x, self.y = position
-    bottomleft = property(get_bottomleft, set_bottomleft)
 
+    bottomleft = property(get_bottomleft, set_bottomleft)

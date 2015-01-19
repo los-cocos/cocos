@@ -32,7 +32,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''a framework for building 2D games, demos, and other graphical/interactive applications.
+"""a framework for building 2D games, demos, and other graphical/interactive applications.
 
 Main Features
 -------------
@@ -53,7 +53,7 @@ Main Features
     * OpenGL Based: Hardware Acceleration
 
 http://cocos2d.org
-'''
+"""
 
 from __future__ import division, print_function, unicode_literals
 
@@ -66,7 +66,8 @@ version = __version__
 import sys
 
 # add the cocos resources path
-import os, pyglet
+import os
+import pyglet
 pyglet.resource.path.append(
     os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources")
     )
@@ -87,6 +88,7 @@ if sys.platform == 'win32':
         del dummy
     except ImportError:
         sdl_lib_path = None
+
 
 def import_all():
     import cocos.actions

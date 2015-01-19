@@ -71,17 +71,17 @@ class ColorLayer(Layer):
         l.position = (50,50)
 
     """
-    def __init__(self, r,g,b,a, width=None, height=None):
+    def __init__(self, r, g, b, a, width=None, height=None):
         super(ColorLayer, self).__init__()
         self._batch = pyglet.graphics.Batch()
         self._vertex_list = None
-        self._rgb = r,g,b
+        self._rgb = r, g, b
         self._opacity = a
 
         self.width = width
         self.height = height
 
-        w,h = director.get_window_size()
+        w, h = director.get_window_size()
         if not self.width:
             self.width = w
         if not self.height:
@@ -93,11 +93,10 @@ class ColorLayer(Layer):
         ox, oy = 0, 0
 
         self._vertex_list = self._batch.add(4, pyglet.gl.GL_QUADS, None,
-            ('v2i', ( ox, oy,
-                      ox, oy + y,
-                      ox+x, oy+y,
-                      ox+x, oy)),
-            'c4B')
+                                            ('v2i', (ox, oy,
+                                                     ox, oy + y,
+                                                     ox + x, oy + y,
+                                                     ox + x, oy)), 'c4B')
 
         self._update_color()
 
@@ -142,7 +141,7 @@ class ColorLayer(Layer):
         self._update_color()
 
     color = property(lambda self: self._rgb, _set_color,
-                       doc='''Blend color.
+                     doc='''Blend color.
 
     This property sets the color of the layer's vertices. This allows the
     layer to be drawn with a color tint.

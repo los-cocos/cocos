@@ -45,23 +45,22 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-from cocos.cocosnode import CocosNode
-
 import pyglet
-from pyglet.graphics import OrderedGroup
-from pyglet import image
 from pyglet.gl import *
 
-__all__ = ['BatchNode','BatchableNode']
+from cocos.cocosnode import CocosNode
+
+__all__ = ['BatchNode', 'BatchableNode']
 
 
 def ensure_batcheable(node):
     if not isinstance(node, BatchableNode):
         raise Exception("Children node of a batch must be of class BatchableNode")
-    for c in  node.get_children():
+    for c in node.get_children():
         ensure_batcheable(c)
 
-class BatchNode( CocosNode ):
+
+class BatchNode(CocosNode):
     def __init__(self):
         super(BatchNode, self).__init__()
         self.batch = pyglet.graphics.Batch()
@@ -74,8 +73,8 @@ class BatchNode( CocosNode ):
 
     def visit(self):
         """ All children are placed in to self.batch, so nothing to visit """
-        if not self.visible:   
-           return 
+        if not self.visible:
+            return
         glPushMatrix()
         self.transform()
         self.batch.draw()
@@ -90,9 +89,10 @@ class BatchNode( CocosNode ):
         super(BatchNode, self).remove(child)
 
     def draw(self):
-        pass # All drawing done in visit!
+        pass  # All drawing done in visit!
 
-class BatchableNode( CocosNode ):
+
+class BatchableNode(CocosNode):
     def add(self, child, z=0, name=None):
         batchnode = self.get_ancestor(BatchNode)
         if not batchnode:
@@ -104,7 +104,6 @@ class BatchableNode( CocosNode ):
         ensure_batcheable(child)
         super(BatchableNode, self).add(child, z, name)
         child.set_batch(self.batch, batchnode.groups, z)
-
 
     def remove(self, child):
         if isinstance(child, str):
@@ -126,4 +125,3 @@ class BatchableNode( CocosNode ):
             self.group = group
         for childZ, child in self.children:
             child.set_batch(self.batch, groups, z + childZ)
-

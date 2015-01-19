@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-'''Functions for converting to native byte order
-'''
+"""Functions for converting to native byte order
+"""
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
@@ -10,19 +10,23 @@ import sys
 
 from cocos.audio.SDL.constants import SDL_BIG_ENDIAN, SDL_LIL_ENDIAN
 
+
 def SDL_Swap16(x):
     return (x << 8 & 0xff00) | \
            (x >> 8 & 0x00ff)
 
+
 def SDL_Swap32(x):
     return (x << 24 & 0xff000000) | \
-           (x << 8  & 0x00ff0000) | \
-           (x >> 8  & 0x0000ff00) | \
-           (x >> 24 & 0x000000ff) 
+           (x << 8 & 0x00ff0000) | \
+           (x >> 8 & 0x0000ff00) | \
+           (x >> 24 & 0x000000ff)
+
 
 def SDL_Swap64(x):
     return (SDL_Swap32(x & 0xffffffff) << 32) | \
            (SDL_Swap32(x >> 32 & 0xffffffff))
+
 
 def _noop(x):
     return x
@@ -43,4 +47,3 @@ else:
     SDL_SwapBE16 = SDL_Swap16
     SDL_SwapBE32 = SDL_Swap32
     SDL_SwapBE64 = SDL_Swap64
-

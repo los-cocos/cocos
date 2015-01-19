@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''A simple multi-channel audio mixer.
+"""A simple multi-channel audio mixer.
 
 It supports 8 channels of 16 bit stereo audio, plus a single channel
 of music, mixed by MidMod MOD, Timidity MIDI or SMPEG MP3 libraries.
@@ -17,7 +17,7 @@ choppy, try using 8-bit audio, mono audio, or lower frequencies.
 
 :note: The music stream does not resample to the required audio rate.  You
     must call `Mix_OpenAudio` with the sampling rate of your music track.
-'''
+"""
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
@@ -33,7 +33,8 @@ from . import rwops
 
 _dll = dll.SDL_DLL('SDL_mixer', 'Mix_Linked_Version', '1.2')
 
-Mix_Linked_Version = _dll.function('Mix_Linked_Version',
+Mix_Linked_Version = _dll.function(
+    'Mix_Linked_Version',
     '''Get the version of the dynamically linked SDL_mixer library.
     ''',
     args=[],
@@ -42,8 +43,9 @@ Mix_Linked_Version = _dll.function('Mix_Linked_Version',
     dereference_return=True,
     require_return=True)
 
+
 class Mix_Chunk(Structure):
-    '''Internal format for an audio chunk.
+    """Internal format for an audio chunk.
 
     :Ivariables:
         `allocated` : int
@@ -55,7 +57,7 @@ class Mix_Chunk(Structure):
         `volume` : int
             Per-sample volume, in range [0, 128]
 
-    '''
+    """
     _fields_ = [('allocated', c_int),
                 ('_abuf', POINTER(c_ubyte)),
                 ('alen', c_uint),
@@ -69,14 +71,15 @@ class Mix_Chunk(Structure):
 # opaque type
 _Mix_Music = c_void_p
 
-Mix_OpenAudio = _dll.function('Mix_OpenAudio',
+Mix_OpenAudio = _dll.function(
+    'Mix_OpenAudio',
     '''Open the mixer with a certain audio format.
 
     :Parameters:
         `frequency` : int
             Samples per second.  Typical values are 22050, 44100, 44800.
         `format` : int
-            Audio format; one of AUDIO_U8, AUDIO_S8, AUDIO_U16LSB, 
+            Audio format; one of AUDIO_U8, AUDIO_S8, AUDIO_U16LSB,
             AUDIO_S16LSB, AUDIO_U16MSB or AUDIO_S16MSB
         `channels` : int
             Either 1 for monophonic or 2 for stereo.
@@ -89,7 +92,8 @@ Mix_OpenAudio = _dll.function('Mix_OpenAudio',
     return_type=c_int,
     error_return=-1)
 
-Mix_AllocateChannels = _dll.function('Mix_AllocateChannels',
+Mix_AllocateChannels = _dll.function(
+    'Mix_AllocateChannels',
     '''Dynamically change the number of channels managed by the mixer.
 
     If decreasing the number of channels, the upper channels
@@ -105,24 +109,27 @@ Mix_AllocateChannels = _dll.function('Mix_AllocateChannels',
     arg_types=[c_int],
     return_type=c_int)
 
-_Mix_QuerySpec = _dll.private_function('Mix_QuerySpec',
+_Mix_QuerySpec = _dll.private_function(
+    'Mix_QuerySpec',
     arg_types=[POINTER(c_int), POINTER(c_ushort), POINTER(c_int)],
     return_type=c_int)
 
+
 def Mix_QuerySpec():
-    '''Find out what the actual audio device parameters are.
+    """Find out what the actual audio device parameters are.
 
     The function returns a tuple giving each parameter value.  The first
     value is 1 if the audio has been opened, 0 otherwise.
 
     :rtype: (int, int, int, int)
     :return: (opened, frequency, format, channels)
-    '''
+    """
     frequency, format, channels = c_int(), c_ushort(), c_int()
     opened = _Mix_QuerySpec(byref(frequency), byref(format), byref(channels))
     return opened, frequency.value, format.value, channels.value
 
-Mix_LoadWAV_RW = _dll.function('Mix_LoadWAV_RW',
+Mix_LoadWAV_RW = _dll.function(
+    'Mix_LoadWAV_RW',
     '''Load a WAV, RIFF, AIFF, OGG or VOC file from a RWops source.
 
 
@@ -135,19 +142,21 @@ Mix_LoadWAV_RW = _dll.function('Mix_LoadWAV_RW',
     dereference_return=True,
     require_return=True)
 
+
 def Mix_LoadWAV(file):
-    '''Load a WAV, RIFF, AIFF, OGG or VOC file.
+    """Load a WAV, RIFF, AIFF, OGG or VOC file.
 
     :Parameters:
         `file` : string
             Filename to load.
 
     :rtype: `Mix_Chunk`
-    '''
+    """
     filename = cocos.compat.asciibytes(file)
     return Mix_LoadWAV_RW(rwops.SDL_RWFromFile(filename, b'rb'), 1)
 
-Mix_LoadMUS = _dll.function('Mix_LoadMUS',
+Mix_LoadMUS = _dll.function(
+    'Mix_LoadMUS',
     '''Load a WAV, MID, OGG, MP3 or MOD file.
 
     :Parameters:
@@ -161,7 +170,8 @@ Mix_LoadMUS = _dll.function('Mix_LoadMUS',
     return_type=_Mix_Music,
     require_return=True)
 
-Mix_LoadMUS_RW = _dll.function('Mix_LoadMUS_RW',
+Mix_LoadMUS_RW = _dll.function(
+    'Mix_LoadMUS_RW',
     '''Load a MID, OGG, MP3 or MOD file from a RWops source.
 
     :Parameters:
@@ -177,42 +187,47 @@ Mix_LoadMUS_RW = _dll.function('Mix_LoadMUS_RW',
     return_type=_Mix_Music,
     require_return=True)
 
-_Mix_QuickLoad_WAV = _dll.private_function('Mix_QuickLoad_WAV',
+_Mix_QuickLoad_WAV = _dll.private_function(
+    'Mix_QuickLoad_WAV',
     arg_types=[POINTER(c_ubyte)],
     return_type=POINTER(Mix_Chunk),
     dereference_return=True,
     require_return=True)
 
+
 def Mix_QuickLoad_WAV(mem):
-    '''Load a wave file of the mixer format from a sequence or SDL_array.
+    """Load a wave file of the mixer format from a sequence or SDL_array.
 
     :Parameters:
      - `mem`: sequence or `SDL_array`
 
     :rtype: `Mix_Chunk`
-    '''
+    """
     ref, mem = array.to_ctypes(mem, len(mem), c_ubyte)
     return _Mix_QuickLoad_WAV(mem)
 
-_Mix_QuickLoad_RAW = _dll.private_function('Mix_QuickLoad_RAW',
+_Mix_QuickLoad_RAW = _dll.private_function(
+    'Mix_QuickLoad_RAW',
     arg_types=[POINTER(c_ubyte), c_uint],
     return_type=POINTER(Mix_Chunk),
     dereference_return=True,
     require_return=True)
 
+
 def Mix_QuickLoad_RAW(mem):
-    '''Load raw audio data of the mixer format from a sequence or SDL_array.
+    """Load raw audio data of the mixer format from a sequence or SDL_array.
 
     :Parameters:
      - `mem`: sequence or `SDL_array`
 
     :rtype: `Mix_Chunk`
-    '''
+    """
     l = len(mem)
     ref, mem = SDL.array.to_ctypes(mem, len(mem), c_ubyte)
     return _Mix_QuickLoad_RAW(mem, l)
 
-Mix_FreeChunk = _dll.function('Mix_FreeChunk',
+Mix_FreeChunk = _dll.function(
+    'Mix_FreeChunk',
     '''Free an audio chunk previously loaded.
 
     :Parameters:
@@ -223,7 +238,8 @@ Mix_FreeChunk = _dll.function('Mix_FreeChunk',
     arg_types=[POINTER(Mix_Chunk)],
     return_type=None)
 
-Mix_FreeMusic = _dll.function('Mix_FreeMusic',
+Mix_FreeMusic = _dll.function(
+    'Mix_FreeMusic',
     '''Free a music chunk previously loaded.
 
     :Parameters:
@@ -234,7 +250,8 @@ Mix_FreeMusic = _dll.function('Mix_FreeMusic',
     arg_types=[_Mix_Music],
     return_type=None)
 
-Mix_GetMusicType = _dll.function('Mix_GetMusicType',
+Mix_GetMusicType = _dll.function(
+    'Mix_GetMusicType',
     '''Get the music format of a mixer music.
 
     Returns the format of the currently playing music if `music` is None.
@@ -251,32 +268,37 @@ Mix_GetMusicType = _dll.function('Mix_GetMusicType',
     return_type=c_int)
 
 _Mix_FilterFunc = CFUNCTYPE(None, c_void_p, POINTER(c_ubyte), c_int)
+
+
 def _make_filter(func, udata):
     if func:
         def f(ignored, stream, len):
             # FIXME: getting a negative len value here sometimes
-            if len < 0: return 
+            if len < 0:
+                return
             stream = array.SDL_array(stream, len, c_ubyte)
             func(udata, stream)
         return _Mix_FilterFunc(f)
     else:
         return _Mix_FilterFunc()
 
-_Mix_SetPostMix = _dll.private_function('Mix_SetPostMix',
+_Mix_SetPostMix = _dll.private_function(
+    'Mix_SetPostMix',
     arg_types=[_Mix_FilterFunc, c_void_p],
     return_type=None)
 
 _mix_postmix_ref = None
 
+
 def Mix_SetPostMix(mix_func, udata):
-    '''Set a function that is called after all mixing is performed.
+    """Set a function that is called after all mixing is performed.
 
     This can be used to provide real-time visual display of the audio
     stream or add a custom mixer filter for the stream data.
 
     :Parameters
         `mix_func` : function
-            The function must have the signature 
+            The function must have the signature
             (stream: `SDL_array`, udata: any) -> None.  The first argument
             is the array of audio data that may be modified in place.
             `udata` is the value passed in this function.
@@ -284,25 +306,27 @@ def Mix_SetPostMix(mix_func, udata):
             A variable that is passed to the `mix_func` function each
             call.
 
-    '''
+    """
     global _mix_postmix_ref
     _mix_postmix_ref = _make_filter(mix_func, udata)
     _Mix_SetPostMix(_mix_postmix_ref, None)
 
-_Mix_HookMusic = _dll.private_function('Mix_HookMusic',
+_Mix_HookMusic = _dll.private_function(
+    'Mix_HookMusic',
     arg_types=[_Mix_FilterFunc, c_void_p],
     return_type=None)
 
 _hookmusic_ref = None
 
+
 def Mix_HookMusic(mix_func, udata):
-    '''Add your own music player or additional mixer function.
+    """Add your own music player or additional mixer function.
 
     If `mix_func` is None, the default music player is re-enabled.
 
     :Parameters
         `mix_func` : function
-            The function must have the signature 
+            The function must have the signature
             (stream: `SDL_array`, udata: any) -> None.  The first argument
             is the array of audio data that may be modified in place.
             `udata` is the value passed in this function.
@@ -310,19 +334,21 @@ def Mix_HookMusic(mix_func, udata):
             A variable that is passed to the `mix_func` function each
             call.
 
-    '''
+    """
     global _hookmusic_ref
     _hookmusic_ref = _make_filter(mix_func, udata)
     _Mix_HookMusic(_hookmusic_ref, None)
 
 _Mix_HookMusicFinishedFunc = CFUNCTYPE(None)
 
-_Mix_HookMusicFinished = _dll.private_function('Mix_HookMusicFinished',
+_Mix_HookMusicFinished = _dll.private_function(
+    'Mix_HookMusicFinished',
     arg_types=[_Mix_HookMusicFinishedFunc],
     return_type=None)
 
+
 def Mix_HookMusicFinished(music_finished):
-    '''Add your own callback when the music has finished playing.
+    """Add your own callback when the music has finished playing.
 
     This callback is only called if the music finishes naturally.
 
@@ -330,7 +356,7 @@ def Mix_HookMusicFinished(music_finished):
         `music_finished` : function
             The callback takes no arguments and returns no value.
 
-    '''
+    """
     if music_finished:
         _Mix_HookMusicFinished(_Mix_HookMusicFinishedFunc(music_finished))
     else:
@@ -340,15 +366,17 @@ def Mix_HookMusicFinished(music_finished):
 
 _Mix_ChannelFinishedFunc = CFUNCTYPE(None, c_int)
 
-_Mix_ChannelFinished = _dll.private_function('Mix_ChannelFinished',
+_Mix_ChannelFinished = _dll.private_function(
+    'Mix_ChannelFinished',
     arg_types=[_Mix_ChannelFinishedFunc],
     return_type=None)
 
 # Keep the ctypes func around
 _channelfinished_ref = None
 
+
 def Mix_ChannelFinished(channel_finished):
-    '''Add your own callback when a channel has finished playing.
+    """Add your own callback when a channel has finished playing.
 
     The callback may be called from the mixer's audio callback or it
     could be called as a result of `Mix_HaltChannel`, etc.
@@ -362,7 +390,7 @@ def Mix_ChannelFinished(channel_finished):
             The function takes the channel number as its only argument,
             and returns None.  Pass None here to disable the callback.
 
-    '''
+    """
     global _channelfinished_ref
     if channel_finished:
         _channelfinished_ref = _Mix_ChannelFinishedFunc(channel_finished)
@@ -371,6 +399,8 @@ def Mix_ChannelFinished(channel_finished):
     _Mix_ChannelFinished(_channelfinished_ref)
 
 _Mix_EffectFunc = CFUNCTYPE(None, c_int, POINTER(c_ubyte), c_int, c_void_p)
+
+
 def _make_Mix_EffectFunc(func, udata):
     if func:
         def f(chan, stream, len, ignored):
@@ -381,6 +411,8 @@ def _make_Mix_EffectFunc(func, udata):
         return _Mix_EffectFunc()
 
 _Mix_EffectDoneFunc = CFUNCTYPE(None, c_int, c_void_p)
+
+
 def _make_Mix_EffectDoneFunc(func, udata):
     if func:
         def f(chan, ignored):
@@ -389,16 +421,17 @@ def _make_Mix_EffectDoneFunc(func, udata):
     else:
         return _MixEffectDoneFunc()
 
-_Mix_RegisterEffect = _dll.private_function('Mix_RegisterEffect',
-    arg_types=\
-     [c_int, _Mix_EffectFunc, _Mix_EffectDoneFunc, c_void_p],
+_Mix_RegisterEffect = _dll.private_function(
+    'Mix_RegisterEffect',
+    arg_types=[c_int, _Mix_EffectFunc, _Mix_EffectDoneFunc, c_void_p],
     return_type=c_int,
     error_return=0)
 
 _effect_func_refs = []
 
+
 def Mix_RegisterEffect(chan, f, d, arg):
-    '''Register a special effect function.
+    """Register a special effect function.
 
     At mixing time, the channel data is copied into a buffer and passed
     through each registered effect function.  After it passes through all
@@ -462,18 +495,19 @@ def Mix_RegisterEffect(chan, f, d, arg):
         `arg` : any
             User data passed to both callbacks.
 
-    '''
+    """
     f = _make_MixEffectFunc(f, arg)
     d = _make_MixEffectDoneFunc(d, arg)
     _effect_func_refs.append(f)
-    _effect_func_refs.append(d) 
+    _effect_func_refs.append(d)
     # TODO: override EffectDone callback to remove refs and prevent
     # memory leak.  Be careful with MIX_CHANNEL_POST
     _Mix_RegisterEffect(chan, f, d, arg)
-            
+
 # Mix_UnregisterEffect cannot be implemented
 
-Mix_UnregisterAllEffects = _dll.function('Mix_UnregisterAllEffects',
+Mix_UnregisterAllEffects = _dll.function(
+    'Mix_UnregisterAllEffects',
     '''Unregister all effects for a channel.
 
     You may not need to call this explicitly, unless you need to stop all
@@ -481,7 +515,7 @@ Mix_UnregisterAllEffects = _dll.function('Mix_UnregisterAllEffects',
     this will also shut off some internal effect processing, since
     `Mix_SetPanning` and others may use this API under the hood. This is
     called internally when a channel completes playback.
-   
+
     Posteffects are never implicitly unregistered as they are for channels,
     but they may be explicitly unregistered through this function by
     specifying `MIX_CHANNEL_POST` for a channel.
@@ -495,7 +529,8 @@ Mix_UnregisterAllEffects = _dll.function('Mix_UnregisterAllEffects',
     return_type=c_int,
     error_return=0)
 
-Mix_SetPanning = _dll.function('Mix_SetPanning',
+Mix_SetPanning = _dll.function(
+    'Mix_SetPanning',
     '''Set the panning of a channel.
 
     The left and right channels are specified as integers between 0 and
@@ -527,7 +562,8 @@ Mix_SetPanning = _dll.function('Mix_SetPanning',
     return_type=c_int,
     error_return=0)
 
-Mix_SetPosition = _dll.function('Mix_SetPosition',
+Mix_SetPosition = _dll.function(
+    'Mix_SetPosition',
     '''Set the position of a channel.
 
     `angle` is an integer from 0 to 360, that specifies the location of the
@@ -575,7 +611,8 @@ Mix_SetPosition = _dll.function('Mix_SetPosition',
     return_type=c_int,
     error_return=0)
 
-Mix_SetDistance = _dll.function('Mix_SetDistance',
+Mix_SetDistance = _dll.function(
+    'Mix_SetDistance',
     '''Set the "distance" of a channel.
 
     `distance` is an integer from 0 to 255 that specifies the location of
@@ -597,11 +634,11 @@ Mix_SetDistance = _dll.function('Mix_SetDistance',
     If you need more precise positional audio, consider using OpenAL for
     spatialized effects instead of SDL_mixer. This is only meant to be a
     basic effect for simple "3D" games.
-    
+
     Setting `channel` to `MIX_CHANNEL_POST` registers this as a posteffect,
     and the distance attenuation will be done to the final mixed stream
     before passing it on to the audio device.
-    
+
     This uses the `Mix_RegisterEffect` API internally.
 
     :Parameters:
@@ -614,20 +651,21 @@ Mix_SetDistance = _dll.function('Mix_SetDistance',
     return_type=c_int,
     error_return=0)
 
-Mix_SetReverseStereo = _dll.function('Mix_SetReverseStereo',
+Mix_SetReverseStereo = _dll.function(
+    'Mix_SetReverseStereo',
     '''Causes a channel to reverse its stereo.
 
     This is handy if the user has his or her speakers hooked up backwards,
     or you would like to have a minor bit of psychedelia in your sound
     code.  Calling this function with `flip` set to non-zero reverses the
     chunks's usual channels. If `flip` is zero, the effect is unregistered.
-    
+
     This uses the `Mix_RegisterEffect` API internally, and thus is probably
     more CPU intensive than having the user just plug in his speakers
     correctly.  `Mix_SetReverseStereo` returns without registering the
     effect function if the audio device is not configured for stereo
     output.
-    
+
     If you specify `MIX_CHANNEL_POST` for `channel`, then this the effect
     is used on the final mixed stream before sending it on to the audio
     device (a posteffect).
@@ -642,7 +680,8 @@ Mix_SetReverseStereo = _dll.function('Mix_SetReverseStereo',
     return_type=c_int,
     error_return=0)
 
-Mix_ReserveChannels = _dll.function('Mix_ReserveChannels',
+Mix_ReserveChannels = _dll.function(
+    'Mix_ReserveChannels',
     '''Reserve the first channels (0 to n-1) for the application.
 
     If reserved, a channel will not be allocated dynamically to a sample
@@ -658,7 +697,8 @@ Mix_ReserveChannels = _dll.function('Mix_ReserveChannels',
     arg_types=[c_int],
     return_type=c_int)
 
-Mix_GroupChannel = _dll.function('Mix_GroupChannel',
+Mix_GroupChannel = _dll.function(
+    'Mix_GroupChannel',
     '''Assing a channel to a group.
 
     A tag can be assigned to several mixer channels, to form groups
@@ -675,7 +715,8 @@ Mix_GroupChannel = _dll.function('Mix_GroupChannel',
     return_type=c_int,
     error_return=0)
 
-Mix_GroupChannels = _dll.function('Mix_GroupChannels',
+Mix_GroupChannels = _dll.function(
+    'Mix_GroupChannels',
     '''Assign several consecutive channels to a group.
 
     A tag can be assigned to several mixer channels, to form groups
@@ -693,7 +734,8 @@ Mix_GroupChannels = _dll.function('Mix_GroupChannels',
     return_type=c_int,
     error_return=0)
 
-Mix_GroupAvailable = _dll.function('Mix_GroupAvailable',
+Mix_GroupAvailable = _dll.function(
+    'Mix_GroupAvailable',
     '''Find the first available channel in a group of channels.
 
     :Parameters:
@@ -706,7 +748,8 @@ Mix_GroupAvailable = _dll.function('Mix_GroupAvailable',
     arg_types=[c_int],
     return_type=c_int)
 
-Mix_GroupCount = _dll.function('Mix_GroupCount',
+Mix_GroupCount = _dll.function(
+    'Mix_GroupCount',
     '''Get the number of channels in a group.
 
     If `tag` is -1, returns the total number of channels.
@@ -720,7 +763,8 @@ Mix_GroupCount = _dll.function('Mix_GroupCount',
     arg_types=[c_int],
     return_type=c_int)
 
-Mix_GroupOldest = _dll.function('Mix_GroupOldest',
+Mix_GroupOldest = _dll.function(
+    'Mix_GroupOldest',
     '''Find the "oldest" sample playing in a group of channels.
 
     :Parameters:
@@ -732,7 +776,8 @@ Mix_GroupOldest = _dll.function('Mix_GroupOldest',
     arg_types=[c_int],
     return_type=c_int)
 
-Mix_GroupNewer = _dll.function('Mix_GroupNewer',
+Mix_GroupNewer = _dll.function(
+    'Mix_GroupNewer',
     '''Find the "most recent" (i.e., last) sample playing in a group of
     channels.
 
@@ -745,8 +790,9 @@ Mix_GroupNewer = _dll.function('Mix_GroupNewer',
     arg_types=[c_int],
     return_type=c_int)
 
+
 def Mix_PlayChannel(channel, chunk, loops):
-    '''Play an audio chunk on a specific channel.
+    """Play an audio chunk on a specific channel.
 
     :Parameters:
         `channel` : int
@@ -756,13 +802,14 @@ def Mix_PlayChannel(channel, chunk, loops):
         `loops` : int
             If greater than zero, the number of times to play the sound;
             if -1, loop infinitely.
-    
+
     :rtype: int
     :return: the channel that was used to play the sound.
-    '''
+    """
     return Mix_PlayChannelTimed(channel, chunk, loops, -1)
 
-Mix_PlayChannelTimed = _dll.function('Mix_PlayChannelTimed',
+Mix_PlayChannelTimed = _dll.function(
+    'Mix_PlayChannelTimed',
     '''Play an audio chunk on a specific channel for a specified amount of
     time.
 
@@ -776,7 +823,7 @@ Mix_PlayChannelTimed = _dll.function('Mix_PlayChannelTimed',
             if -1, loop infinitely.
         `ticks` : int
             Maximum number of milliseconds to play sound for.
-    
+
     :rtype: int
     :return: the channel that was used to play the sound.
     ''',
@@ -784,7 +831,8 @@ Mix_PlayChannelTimed = _dll.function('Mix_PlayChannelTimed',
     arg_types=[c_int, POINTER(Mix_Chunk), c_int, c_int],
     return_type=c_int)
 
-Mix_PlayMusic = _dll.function('Mix_PlayMusic',
+Mix_PlayMusic = _dll.function(
+    'Mix_PlayMusic',
     '''Play a music chunk.
 
     :Parameters:
@@ -799,7 +847,8 @@ Mix_PlayMusic = _dll.function('Mix_PlayMusic',
     return_type=c_int,
     error_return=-1)
 
-Mix_FadeInMusic = _dll.function('Mix_FadeInMusic',
+Mix_FadeInMusic = _dll.function(
+    'Mix_FadeInMusic',
     '''Fade in music over a period of time.
 
     :Parameters:
@@ -816,7 +865,8 @@ Mix_FadeInMusic = _dll.function('Mix_FadeInMusic',
     return_type=c_int,
     error_return=-1)
 
-Mix_FadeInMusicPos = _dll.function('Mix_FadeInMusicPos',
+Mix_FadeInMusicPos = _dll.function(
+    'Mix_FadeInMusicPos',
     '''Fade in music at an offset over a period of time.
 
     :Parameters:
@@ -838,8 +888,9 @@ Mix_FadeInMusicPos = _dll.function('Mix_FadeInMusicPos',
     return_type=c_int,
     error_return=-1)
 
+
 def Mix_FadeInChannel(channel, chunk, loops, ms):
-    '''Fade in a channel.
+    """Fade in a channel.
 
     :Parameters:
         `channel` : int
@@ -851,10 +902,11 @@ def Mix_FadeInChannel(channel, chunk, loops, ms):
             if -1, loop infinitely.
         `ms` : int
             Number of milliseconds to fade up over.
-    '''
+    """
     Mix_FadeInChannelTimed(channel, chunk, loops, -1)
 
-Mix_FadeInChannelTimed = _dll.function('Mix_FadeInChannelTimed',
+Mix_FadeInChannelTimed = _dll.function(
+    'Mix_FadeInChannelTimed',
     '''Fade in a channel and play for a specified amount of time.
 
     :Parameters:
@@ -875,7 +927,8 @@ Mix_FadeInChannelTimed = _dll.function('Mix_FadeInChannelTimed',
     return_type=c_int,
     error_return=-1)
 
-Mix_Volume = _dll.function('Mix_Volume',
+Mix_Volume = _dll.function(
+    'Mix_Volume',
     '''Set the volume in the range of 0-128 of a specific channel.
 
     :Parameters:
@@ -892,7 +945,8 @@ Mix_Volume = _dll.function('Mix_Volume',
     arg_types=[c_int, c_int],
     return_type=c_int)
 
-Mix_VolumeChunk = _dll.function('Mix_VolumeChunk',
+Mix_VolumeChunk = _dll.function(
+    'Mix_VolumeChunk',
     '''Set the volume in the range of 0-128 of a chunk.
 
     :Parameters:
@@ -909,7 +963,8 @@ Mix_VolumeChunk = _dll.function('Mix_VolumeChunk',
     arg_types=[POINTER(Mix_Chunk), c_int],
     return_type=c_int)
 
-Mix_VolumeMusic = _dll.function('Mix_VolumeMusic',
+Mix_VolumeMusic = _dll.function(
+    'Mix_VolumeMusic',
     '''Set the volume in the range of 0-128 of the music.
 
     :Parameters:
@@ -924,7 +979,8 @@ Mix_VolumeMusic = _dll.function('Mix_VolumeMusic',
     arg_types=[c_int],
     return_type=c_int)
 
-Mix_HaltChannel = _dll.function('Mix_HaltChannel',
+Mix_HaltChannel = _dll.function(
+    'Mix_HaltChannel',
     '''Halt playing of a particular channel.
 
     :Parameters:
@@ -934,7 +990,8 @@ Mix_HaltChannel = _dll.function('Mix_HaltChannel',
     arg_types=[c_int],
     return_type=None)
 
-Mix_HaltGroup = _dll.function('Mix_HaltGroup',
+Mix_HaltGroup = _dll.function(
+    'Mix_HaltGroup',
     '''Halt playing of a particular group.
 
     :Parameters:
@@ -944,14 +1001,16 @@ Mix_HaltGroup = _dll.function('Mix_HaltGroup',
     arg_types=[c_int],
     return_type=None)
 
-Mix_HaltMusic = _dll.function('Mix_HaltMusic',
-    '''Halt playing music. 
+Mix_HaltMusic = _dll.function(
+    'Mix_HaltMusic',
+    '''Halt playing music.
     ''',
     args=[],
     arg_types=[],
     return_type=None)
 
-Mix_ExpireChannel = _dll.function('Mix_ExpireChannel',
+Mix_ExpireChannel = _dll.function(
+    'Mix_ExpireChannel',
     '''Change the expiration delay for a particular channel.
 
     The sample will stop playing afte the `ticks` milliseconds have
@@ -968,7 +1027,8 @@ Mix_ExpireChannel = _dll.function('Mix_ExpireChannel',
     arg_types=[c_int, c_int],
     return_type=c_int)
 
-Mix_FadeOutChannel = _dll.function('Mix_FadeOutChannel',
+Mix_FadeOutChannel = _dll.function(
+    'Mix_FadeOutChannel',
     '''Halt a channel, fading it out progressively until it's silent.
 
     The `ms` parameter indicates the number of milliseconds the fading
@@ -982,7 +1042,8 @@ Mix_FadeOutChannel = _dll.function('Mix_FadeOutChannel',
     arg_types=[c_int, c_int],
     return_type=None)
 
-Mix_FadeOutGroup = _dll.function('Mix_FadeOutGroup',
+Mix_FadeOutGroup = _dll.function(
+    'Mix_FadeOutGroup',
     '''Halt a group, fading it out progressively until it's silent.
 
     The `ms` parameter indicates the number of milliseconds the fading
@@ -996,7 +1057,8 @@ Mix_FadeOutGroup = _dll.function('Mix_FadeOutGroup',
     arg_types=[c_int, c_int],
     return_type=None)
 
-Mix_FadeOutMusic = _dll.function('Mix_FadeOutMusic',
+Mix_FadeOutMusic = _dll.function(
+    'Mix_FadeOutMusic',
     '''Halt playing music, fading it out progressively until it's silent.
 
     The `ms` parameter indicates the number of milliseconds the fading
@@ -1009,7 +1071,8 @@ Mix_FadeOutMusic = _dll.function('Mix_FadeOutMusic',
     arg_types=[c_int],
     return_type=None)
 
-Mix_FadingMusic = _dll.function('Mix_FadingMusic',
+Mix_FadingMusic = _dll.function(
+    'Mix_FadingMusic',
     '''Query the fading status of the music.
 
     :rtype: int
@@ -1019,7 +1082,8 @@ Mix_FadingMusic = _dll.function('Mix_FadingMusic',
     arg_types=[],
     return_type=c_int)
 
-Mix_FadingChannel = _dll.function('Mix_FadingChannel',
+Mix_FadingChannel = _dll.function(
+    'Mix_FadingChannel',
     '''Query the fading status of a channel.
 
     :Parameters:
@@ -1032,7 +1096,8 @@ Mix_FadingChannel = _dll.function('Mix_FadingChannel',
     arg_types=[c_int],
     return_type=c_int)
 
-Mix_Pause = _dll.function('Mix_Pause',
+Mix_Pause = _dll.function(
+    'Mix_Pause',
     '''Pause a particular channel.
 
     :Parameters:
@@ -1043,7 +1108,8 @@ Mix_Pause = _dll.function('Mix_Pause',
     arg_types=[c_int],
     return_type=None)
 
-Mix_Resume = _dll.function('Mix_Resume',
+Mix_Resume = _dll.function(
+    'Mix_Resume',
     '''Resume a particular channel.
 
     :Parameters:
@@ -1054,7 +1120,8 @@ Mix_Resume = _dll.function('Mix_Resume',
     arg_types=[c_int],
     return_type=None)
 
-Mix_Paused = _dll.function('Mix_Paused',
+Mix_Paused = _dll.function(
+    'Mix_Paused',
     '''Query if a channel is paused.
 
     :Parameters:
@@ -1066,28 +1133,32 @@ Mix_Paused = _dll.function('Mix_Paused',
     arg_types=[c_int],
     return_type=c_int)
 
-Mix_PauseMusic = _dll.function('Mix_PauseMusic',
+Mix_PauseMusic = _dll.function(
+    'Mix_PauseMusic',
     '''Pause the music stream.
     ''',
     args=[],
     arg_types=[],
     return_type=None)
 
-Mix_ResumeMusic = _dll.function('Mix_ResumeMusic',
+Mix_ResumeMusic = _dll.function(
+    'Mix_ResumeMusic',
     '''Resume the music stream.
     ''',
     args=[],
     arg_types=[],
     return_type=None)
 
-Mix_RewindMusic = _dll.function('Mix_RewindMusic',
+Mix_RewindMusic = _dll.function(
+    'Mix_RewindMusic',
     '''Rewind the music stream.
     ''',
     args=[],
     arg_types=[],
     return_type=None)
 
-Mix_PausedMusic = _dll.function('Mix_PausedMusic',
+Mix_PausedMusic = _dll.function(
+    'Mix_PausedMusic',
     '''Query if the music stream is paused.
 
     :rtype: int
@@ -1096,7 +1167,8 @@ Mix_PausedMusic = _dll.function('Mix_PausedMusic',
     arg_types=[],
     return_type=c_int)
 
-Mix_SetMusicPosition = _dll.function('Mix_SetMusicPosition',
+Mix_SetMusicPosition = _dll.function(
+    'Mix_SetMusicPosition',
     '''Set the current position in the music stream.
 
     For MOD files the position represents the pattern order number;
@@ -1112,7 +1184,8 @@ Mix_SetMusicPosition = _dll.function('Mix_SetMusicPosition',
     return_type=c_int,
     error_return=-1)
 
-Mix_Playing = _dll.function('Mix_Playing',
+Mix_Playing = _dll.function(
+    'Mix_Playing',
     '''Query the status of a specific channel.
 
     :Parameters:
@@ -1125,7 +1198,8 @@ Mix_Playing = _dll.function('Mix_Playing',
     arg_types=[c_int],
     return_type=c_int)
 
-Mix_PlayingMusic = _dll.function('Mix_PlayingMusic',
+Mix_PlayingMusic = _dll.function(
+    'Mix_PlayingMusic',
     '''Query the status of the music stream.
 
     :rtype: int
@@ -1135,7 +1209,8 @@ Mix_PlayingMusic = _dll.function('Mix_PlayingMusic',
     arg_types=[],
     return_type=c_int)
 
-Mix_SetMusicCMD = _dll.function('Mix_SetMusicCMD',
+Mix_SetMusicCMD = _dll.function(
+    'Mix_SetMusicCMD',
     '''Set the external music playback command.
 
     Any currently playing music will stop.
@@ -1149,7 +1224,8 @@ Mix_SetMusicCMD = _dll.function('Mix_SetMusicCMD',
     return_type=c_int,
     error_return=-1)
 
-Mix_SetSynchroValue = _dll.function('Mix_SetSynchroValue',
+Mix_SetSynchroValue = _dll.function(
+    'Mix_SetSynchroValue',
     '''Set the synchro value for a MOD music stream.
 
     :Parameters:
@@ -1161,7 +1237,8 @@ Mix_SetSynchroValue = _dll.function('Mix_SetSynchroValue',
     return_type=c_int,
     error_return=-1)
 
-Mix_GetSynchroValue = _dll.function('Mix_GetSynchroValue',
+Mix_GetSynchroValue = _dll.function(
+    'Mix_GetSynchroValue',
     '''Get the synchro value for a MOD music stream.
 
     :rtype: int
@@ -1170,7 +1247,8 @@ Mix_GetSynchroValue = _dll.function('Mix_GetSynchroValue',
     arg_types=[],
     return_type=c_int)
 
-Mix_GetChunk = _dll.function('Mix_GetChunk',
+Mix_GetChunk = _dll.function(
+    'Mix_GetChunk',
     '''Get the chunk currently associated with a mixer channel.
 
     Returns None if the channel is invalid or if there's no chunk associated.
@@ -1185,12 +1263,11 @@ Mix_GetChunk = _dll.function('Mix_GetChunk',
     return_type=POINTER(Mix_Chunk),
     dereference_return=True)
 
-Mix_CloseAudio = _dll.function('Mix_CloseAudio',
+Mix_CloseAudio = _dll.function(
+    'Mix_CloseAudio',
     '''Close the mixer, halting all playing audio.
 
     ''',
     args=[],
     arg_types=[],
     return_type=None)
-
-

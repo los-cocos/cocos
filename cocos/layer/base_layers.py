@@ -52,19 +52,20 @@ from cocos.director import *
 from cocos import cocosnode
 from cocos import scene
 
-__all__ = [ 'Layer', 'MultiplexLayer']
+__all__ = ['Layer', 'MultiplexLayer']
+
 
 class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
     """a CocosNode that automatically handles listening to director.window events"""
 
     #: if True the layer will listen to director.window events
     #: Default: False
-    is_event_handler = False #: if true, the event handlers of this layer will be registered. defaults to false.
+    is_event_handler = False  #: if true, the event handlers of this layer will be registered. defaults to false.
 
-    def __init__( self ):
-        super( Layer, self ).__init__()
+    def __init__(self):
+        super(Layer, self).__init__()
         self.scheduled_layer = False
-        x,y = director.get_window_size()
+        x, y = director.get_window_size()
         self.transform_anchor_x = x // 2
         self.transform_anchor_y = y // 2
 
@@ -73,7 +74,7 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
             the call to childs that are layers.
             class member is_event_handler must be True for this to work"""
         if self.is_event_handler:
-            director.window.push_handlers( self )
+            director.window.push_handlers(self)
         for child in self.get_children():
             if isinstance(child, Layer):
                 child.push_all_handlers()
@@ -83,7 +84,7 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
             the call to childs that are layers.
             class member is_event_handler must be True for this to work"""
         if self.is_event_handler:
-            director.window.remove_handlers( self )
+            director.window.remove_handlers(self)
         for child in self.get_children():
             if isinstance(child, Layer):
                 child.remove_all_handlers()
@@ -92,40 +93,41 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
         super(Layer, self).on_enter()
 
         scn = self.get_ancestor(scene.Scene)
-        if not scn: return
+        if not scn:
+            return
 
         if scn._handlers_enabled:
             if self.is_event_handler:
-                director.window.push_handlers( self )
+                director.window.push_handlers(self)
 
     def on_exit(self):
         super(Layer, self).on_exit()
 
         scn = self.get_ancestor(scene.Scene)
-        if not scn: return
+        if not scn:
+            return
 
         if scn._handlers_enabled:
             if self.is_event_handler:
-                director.window.remove_handlers( self )
+                director.window.remove_handlers(self)
 
-#
+
 # MultiplexLayer
-class MultiplexLayer( Layer ):
+class MultiplexLayer(Layer):
     """A Composite layer that only enables one layer at the time.
 
      This is useful, for example, when you have 3 or 4 menus, but you want to
      show one at the time"""
 
-
-    def __init__( self, *layers ):
-        super( MultiplexLayer, self ).__init__()
+    def __init__(self, *layers):
+        super(MultiplexLayer, self).__init__()
 
         self.layers = layers
         self.enabled_layer = 0
 
-        self.add( self.layers[ self.enabled_layer ] )
+        self.add(self.layers[self.enabled_layer])
 
-    def switch_to( self, layer_number ):
+    def switch_to(self, layer_number):
         """Switches to another Layer that belongs to the Multiplexor.
 
         :Parameters:
@@ -134,11 +136,11 @@ class MultiplexLayer( Layer ):
                 The running layer will receive an "on_exit()" call, and the
                 new layer will receive an "on_enter()" call.
         """
-        if layer_number < 0 or layer_number >= len( self.layers ):
+        if layer_number < 0 or layer_number >= len(self.layers):
             raise Exception("Multiplexlayer: Invalid layer number")
 
         # remove
-        self.remove( self.layers[ self.enabled_layer ] )
+        self.remove(self.layers[self.enabled_layer])
 
         self.enabled_layer = layer_number
-        self.add( self.layers[ self.enabled_layer ] )
+        self.add(self.layers[self.enabled_layer])

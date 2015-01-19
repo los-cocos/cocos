@@ -32,7 +32,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-'''
+"""
 Sprites allows to display a image in a rectangular area, which can be rotated,
 scaled and moved.
 The placement in the scene follows the standard CocosNode rules.
@@ -62,7 +62,7 @@ in 5 seconds.
 And now tell the sprite to execute it::
 
     sprite.do( move )
-'''
+"""
 
 from __future__ import division, print_function, unicode_literals
 from six import string_types
@@ -80,21 +80,20 @@ from cocos import euclid
 
 import math
 
-__all__ = [ 'Sprite',                     # Sprite class
-            ]
+__all__ = ['Sprite', ]  # Sprite class
 
 
-
-class Sprite( BatchableNode, pyglet.sprite.Sprite):
-    '''A CocosNode that displays a rectangular image.
+class Sprite(BatchableNode, pyglet.sprite.Sprite):
+    """A CocosNode that displays a rectangular image.
 
     Example::
 
         sprite = Sprite('grossini.png')
-    '''
+    """
 
-    def __init__( self, image, position=(0,0), rotation=0, scale=1, opacity = 255, color=(255,255,255), anchor = None ):
-        '''Initialize the sprite
+    def __init__(self, image, position=(0, 0), rotation=0, scale=1,
+                 opacity = 255, color=(255, 255, 255), anchor = None):
+        """Initialize the sprite
 
         :Parameters:
                 `image` : string or image
@@ -115,7 +114,7 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
                     the color to colorize the child (RGB 3-tuple). Defaults to (255,255,255).
                 `anchor` : (float, float)
                     (x,y)-point from where the image will be positions, rotated and scaled in pixels. For example (image.width/2, image.height/2) is the center (default).
-        '''
+        """
 
         if isinstance(image, string_types):
             image = pyglet.resource.image(image)
@@ -132,15 +131,12 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         pyglet.sprite.Sprite.__init__(self, image)
         BatchableNode.__init__(self)
 
-
-
         if anchor is None:
             if isinstance(self.image, pyglet.image.Animation):
                 anchor = (image.frames[0].image.width // 2,
-                    image.frames[0].image.height // 2)
+                          image.frames[0].image.height // 2)
             else:
                 anchor = image.width // 2, image.height // 2
-
 
         self.image_anchor = anchor
 
@@ -173,9 +169,8 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         #: color of the sprite in R,G,B format where 0,0,0 is black and 255,255,255 is white
         self.color = color
 
-
     def get_rect(self):
-        '''Get a cocos.rect.Rect for this sprite.
+        """Get a cocos.rect.Rect for this sprite.
 
         Note that this rect's position is most likely NOT the same
         as the Sprite's position - in fact by default the rect's
@@ -189,36 +184,36 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
             sprite.position = rect.center
 
         Returns a cocos.rect.Rect instance.
-        '''
+        """
         x, y = self.position
         x -= self.image_anchor_x
         y -= self.image_anchor_y
         return Rect(x, y, self.width, self.height)
 
     def get_AABB(self):
-        '''Returns a local-coordinates Axis aligned Bounding Box
+        """Returns a local-coordinates Axis aligned Bounding Box
 
         Returns a cocos.rect.Rect instance.
-        '''
+        """
         v = self._vertex_list.vertices
         x = v[0], v[2], v[4], v[6]
         y = v[1], v[3], v[5], v[7]
-        return Rect(min(x),min(y),max(x)-min(x),max(y)-min(y))
+        return Rect(min(x), min(y), max(x) - min(x), max(y) - min(y))
 
-    def _set_rotation( self, a ):
-        BatchableNode._set_rotation(self,a)
+    def _set_rotation(self, a):
+        BatchableNode._set_rotation(self, a)
         pyglet.sprite.Sprite._set_rotation(self, a)
 
-    def _set_scale( self, s ):
-        BatchableNode._set_scale(self,s)
-        pyglet.sprite.Sprite._set_scale(self,s)
+    def _set_scale(self, s):
+        BatchableNode._set_scale(self, s)
+        pyglet.sprite.Sprite._set_scale(self, s)
 
-    def _set_scale_x( self, s ):
-        BatchableNode._set_scale_x(self,s)
+    def _set_scale_x(self, s):
+        BatchableNode._set_scale_x(self, s)
         self._update_position()
-        
-    def _set_scale_y( self, s ):
-        BatchableNode._set_scale_y(self,s)
+
+    def _set_scale_y(self, s):
+        BatchableNode._set_scale_y(self, s)
         self._update_position()
 
     def _get_width(self):
@@ -230,7 +225,7 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
 
     :type: int
     ''')
-    
+
     def _get_height(self):
         return int(self._texture.height * self._scale * self._scale_y)
     height = property(_get_height,
@@ -241,30 +236,31 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
     :type: int
     ''')
 
-    def _set_position( self, p ):
-        BatchableNode._set_position(self,p)
+    def _set_position(self, p):
+        BatchableNode._set_position(self, p)
         pyglet.sprite.Sprite.set_position(self, *p)
 
-    def _set_x(self, x ):
-        BatchableNode._set_x( self, x)
-        pyglet.sprite.Sprite._set_x( self, x )
+    def _set_x(self, x):
+        BatchableNode._set_x(self, x)
+        pyglet.sprite.Sprite._set_x(self, x)
 
-    def _set_y(self, y ):
-        BatchableNode._set_y( self, y)
-        pyglet.sprite.Sprite._set_y( self, y )
+    def _set_y(self, y):
+        BatchableNode._set_y(self, y)
+        pyglet.sprite.Sprite._set_y(self, y)
 
     def contains(self, x, y):
-        '''Test whether this (untransformed) Sprite contains the pixel coordinates
+        """Test whether this (untransformed) Sprite contains the pixel coordinates
         given.
-        '''
+        """
         sx, sy = self.position
         ax, ay = self.image_anchor
         sx -= ax
         sy -= ay
-        if x < sx or x > sx + self.width: return False
-        if y < sy or y > sy + self.height: return False
+        if x < sx or x > sx + self.width:
+            return False
+        if y < sy or y > sy + self.height:
+            return False
         return True
-
 
     def _set_anchor_x(self, value):
         self._image_anchor_x = value
@@ -288,7 +284,7 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
         self._update_position()
 
     def _get_anchor(self):
-        return (self._get_anchor_x(), self._get_anchor_y())
+        return self._get_anchor_x(), self._get_anchor_y()
 
     image_anchor = property(_get_anchor, _set_anchor)
 
@@ -315,29 +311,29 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
             if self._rotation:
                 x1 = -self._image_anchor_x * self._scale * self._scale_x
                 y1 = -self._image_anchor_y * self._scale * self._scale_y
-                x2 = x1 + img.width * self._scale * self._scale_x
-                y2 = y1 + img.height * self._scale * self._scale_y
+                x2 = x1 + img.width*self._scale*self._scale_x
+                y2 = y1 + img.height*self._scale*self._scale_y
                 x = self._x
                 y = self._y
 
                 r = -math.radians(self._rotation)
                 cr = math.cos(r)
                 sr = math.sin(r)
-                ax = int(x1 * cr - y1 * sr + x)
-                ay = int(x1 * sr + y1 * cr + y)
-                bx = int(x2 * cr - y1 * sr + x)
-                by = int(x2 * sr + y1 * cr + y)
-                cx = int(x2 * cr - y2 * sr + x)
-                cy = int(x2 * sr + y2 * cr + y)
-                dx = int(x1 * cr - y2 * sr + x)
-                dy = int(x1 * sr + y2 * cr + y)
+                ax = int(x1*cr - y1*sr + x)
+                ay = int(x1*sr + y1*cr + y)
+                bx = int(x2*cr - y1*sr + x)
+                by = int(x2*sr + y1*cr + y)
+                cx = int(x2*cr - y2*sr + x)
+                cy = int(x2*sr + y2*cr + y)
+                dx = int(x1*cr - y2*sr + x)
+                dy = int(x1*sr + y2*cr + y)
 
                 self._vertex_list.vertices[:] = [ax, ay, bx, by, cx, cy, dx, dy]
             elif self._scale != 1.0 or self._scale_x != 1.0 or self._scale_y != 1.0:
-                x1 = int(self._x - self._image_anchor_x * self._scale * self._scale_x)
-                y1 = int(self._y - self._image_anchor_y * self._scale * self._scale_y)
-                x2 = int(x1 + img.width * self._scale * self._scale_x)
-                y2 = int(y1 + img.height * self._scale * self._scale_y)
+                x1 = int(self._x - self._image_anchor_x*self._scale*self._scale_x)
+                y1 = int(self._y - self._image_anchor_y*self._scale*self._scale_y)
+                x2 = int(x1 + img.width*self._scale*self._scale_x)
+                y2 = int(y1 + img.height*self._scale*self._scale_y)
                 self._vertex_list.vertices[:] = [x1, y1, x2, y1, x2, y2, x1, y2]
             else:
                 x1 = int(self._x - self._image_anchor_x)
@@ -346,8 +342,8 @@ class Sprite( BatchableNode, pyglet.sprite.Sprite):
                 y2 = y1 + img.height
                 self._vertex_list.vertices[:] = [x1, y1, x2, y1, x2, y2, x1, y2]
         else:
-            x1 = int(- self._image_anchor_x)
-            y1 = int(- self._image_anchor_y)
+            x1 = int(-self._image_anchor_x)
+            y1 = int(-self._image_anchor_y)
             x2 = x1 + img.width
             y2 = y1 + img.height
             m = self.get_local_transform()

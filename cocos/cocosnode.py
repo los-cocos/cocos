@@ -41,7 +41,9 @@ from six import string_types
 
 __docformat__ = 'restructuredtext'
 
-import bisect, copy
+import copy
+import math
+import weakref
 
 import pyglet
 from pyglet.gl import *
@@ -50,11 +52,8 @@ from cocos.director import director
 from cocos.camera import Camera
 from cocos import euclid
 
-import math
-import weakref
-
-
 __all__ = ['CocosNode']
+
 
 class CocosNode(object):
     """
@@ -127,7 +126,6 @@ class CocosNode(object):
         #: action.
         self.camera = Camera()
 
-
         #: offset from (x,0) from where rotation and scale will be applied.
         #: Default: 0
         self.transform_anchor_x = 0
@@ -167,23 +165,24 @@ class CocosNode(object):
         self.is_inverse_transform_dirty = False
         self.inverse_transform_matrix = euclid.Matrix3().identity()
 
-
     def make_property(attr):
-        types = { 'anchor_x': "int", 'anchor_y': "int", "anchor": "(int, int)"}
+        types = {'anchor_x': "int", 'anchor_y': "int", "anchor": "(int, int)"}
+
         def set_attr():
             def inner(self, value):
-                setattr(self, "transform_"+attr,value)
+                setattr(self, "transform_" + attr, value)
             return inner
+
         def get_attr():
             def inner(self):
-                return getattr(self,"transform_"+attr)
+                return getattr(self, "transform_" + attr)
             return inner
         return property(
             get_attr(),
             set_attr(),
             doc="""a property to get fast access to transform_%s
 
-            :type: %s"""%(attr, types[attr]))
+            :type: %s""" % (attr, types[attr]))
 
     #: Anchor point of the object.
     #: Children will be added at this point
@@ -200,11 +199,12 @@ class CocosNode(object):
     def make_property(attr):
         def set_attr():
             def inner(self, value):
-                setattr(self, attr+"_x",value[0])
-                setattr(self, attr+"_y",value[1])
+                setattr(self, attr + "_x", value[0])
+                setattr(self, attr + "_y", value[1])
             return inner
+
         def get_attr(self):
-            return getattr(self,attr+"_x"),  getattr(self,attr+"_y")
+            return getattr(self, attr + "_x"),  getattr(self, attr + "_y")
         return property(
             get_attr,
             set_attr(),
@@ -243,8 +243,8 @@ class CocosNode(object):
         if self.is_running:
             pyglet.clock.schedule_interval(callback, interval, *args, **kwargs)
         self.scheduled_interval_calls.append(
-                (callback, interval, args, kwargs)
-                )
+            (callback, interval, args, kwargs)
+            )
 
     def schedule(self, callback, *args, **kwargs):
         """
@@ -271,8 +271,8 @@ class CocosNode(object):
         if self.is_running:
             pyglet.clock.schedule(callback, *args, **kwargs)
         self.scheduled_calls.append(
-                (callback, args, kwargs)
-                )
+            (callback, args, kwargs)
+            )
 
     def unschedule(self, callback):
         """
@@ -294,14 +294,14 @@ class CocosNode(object):
         """
 
         self.scheduled_calls = [
-                c for c in self.scheduled_calls if c[0] != callback
-                ]
+            c for c in self.scheduled_calls if c[0] != callback
+            ]
         self.scheduled_interval_calls = [
-                c for c in self.scheduled_interval_calls if c[0] != callback
-                ]
+            c for c in self.scheduled_interval_calls if c[0] != callback
+            ]
 
         if self.is_running:
-            pyglet.clock.unschedule( callback )
+            pyglet.clock.unschedule(callback)
 
     def resume_scheduler(self):
         """
@@ -319,20 +319,24 @@ class CocosNode(object):
         not be called, worker actions will not be called
         """
         for f in set(
-                [ x[0] for x in self.scheduled_interval_calls ] +
-                [ x[0] for x in self.scheduled_calls ]
+                [x[0] for x in self.scheduled_interval_calls] +
+                [x[0] for x in self.scheduled_calls]
                 ):
             pyglet.clock.unschedule(f)
         for arg in self.scheduled_calls:
             pyglet.clock.unschedule(arg[0])
 
     def _get_parent(self):
-        if self._parent is None: return None
-        else: return self._parent()
+        if self._parent is None:
+            return None
+        else:
+            return self._parent()
 
     def _set_parent(self, parent):
-        if parent is None: self._parent = None
-        else: self._parent = weakref.ref(parent)
+        if parent is None:
+            self._parent = None
+        else:
+            self._parent = weakref.ref(parent)
 
     parent = property(_get_parent, _set_parent, doc='''The parent of this object.
 
@@ -350,82 +354,84 @@ class CocosNode(object):
             return self
         parent = self.parent
         if parent:
-            return parent.get_ancestor( klass )
+            return parent.get_ancestor(klass)
 
     #
     # Transform properties
     #
     def _get_x(self):
         return self._x
+
     def _set_x(self, x):
         self._x = x
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
-    x = property(_get_x, lambda self,x:self._set_x(x), doc="The x coordinate of the object")
+    x = property(_get_x, lambda self, x: self._set_x(x), doc="The x coordinate of the object")
 
     def _get_y(self):
         return self._y
+
     def _set_y(self, y):
         self._y = y
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
-    y = property(_get_y, lambda self,y:self._set_y(y), doc="The y coordinate of the object")
+    y = property(_get_y, lambda self, y: self._set_y(y), doc="The y coordinate of the object")
 
     def _get_position(self):
         return (self._x, self._y)
+
     def _set_position(self, pos):
         self._x, self._y = pos
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 
-    position = property(_get_position, lambda self,p:self._set_position(p),
+    position = property(_get_position, lambda self, p: self._set_position(p),
                         doc='''The (x, y) coordinates of the object.
 
     :type: (int, int)
     ''')
 
-    def _get_scale( self ):
+    def _get_scale(self):
         return self._scale
 
-    def _set_scale( self, s ):
+    def _set_scale(self, s):
         self._scale = s
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 
-    scale = property( _get_scale, lambda self, scale: self._set_scale(scale))
+    scale = property(_get_scale, lambda self, scale: self._set_scale(scale))
 
-    def _get_scale_x( self ):
+    def _get_scale_x(self):
         return self._scale_x
 
-    def _set_scale_x( self, s ):
+    def _set_scale_x(self, s):
         self._scale_x = s
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 
-    scale_x = property( _get_scale_x, lambda self, scale: self._set_scale_x(scale))
+    scale_x = property(_get_scale_x, lambda self, scale: self._set_scale_x(scale))
 
-    def _get_scale_y( self ):
+    def _get_scale_y(self):
         return self._scale_y
 
-    def _set_scale_y( self, s ):
+    def _set_scale_y(self, s):
         self._scale_y = s
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 
-    scale_y = property( _get_scale_y, lambda self, scale: self._set_scale_y(scale))
+    scale_y = property(_get_scale_y, lambda self, scale: self._set_scale_y(scale))
 
-    def _get_rotation( self ):
+    def _get_rotation(self):
         return self._rotation
 
-    def _set_rotation( self, a ):
+    def _set_rotation(self, a):
         self._rotation = a
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 
-    rotation = property( _get_rotation, lambda self, angle: self._set_rotation(angle))
+    rotation = property(_get_rotation, lambda self, angle: self._set_rotation(angle))
 
-
-    def add(self, child, z=0, name=None ):
+    def add(self, child, z=0, name=None):
         """Adds a child and if it becomes part of the active scene calls its on_enter method
 
         :Parameters:
@@ -441,13 +447,13 @@ class CocosNode(object):
 
         """
         # child must be a subclass of supported_classes
-        #if not isinstance( child, self.supported_classes ):
+        # if not isinstance( child, self.supported_classes ):
         #    raise TypeError("%s is not instance of: %s" % (type(child), self.supported_classes) )
 
         if name:
             if name in self.children_names:
-                raise Exception("Name already exists: %s" % name )
-            self.children_names[ name ] = child
+                raise Exception("Name already exists: %s" % name)
+            self.children_names[name] = child
 
         child.parent = self
 
@@ -458,24 +464,24 @@ class CocosNode(object):
         hi = len(self.children)
         a = self.children
         while lo < hi:
-            mid = (lo+hi)//2
-            if z < a[mid][0]: hi = mid
-            else: lo = mid+1
+            mid = (lo+hi) // 2
+            if z < a[mid][0]:
+                hi = mid
+            else:
+                lo = mid + 1
         self.children.insert(lo, elem)
-
-
 
         if self.is_running:
             child.on_enter()
         return self
 
     def kill(self):
-        '''Remove this object from its parent, and thus most likely from
+        """Remove this object from its parent, and thus most likely from
         everything.
-        '''
+        """
         self.parent.remove(self)
 
-    def remove( self, obj ):
+    def remove(self, obj):
         """Removes a child given its name or object
 
         If the node was added with name, it is better to remove by name, else
@@ -491,19 +497,19 @@ class CocosNode(object):
         """
         if isinstance(obj, string_types):
             if obj in self.children_names:
-                child = self.children_names.pop( obj )
-                self._remove( child )
+                child = self.children_names.pop(obj)
+                self._remove(child)
             else:
-                raise Exception("Child not found: %s" % obj )
+                raise Exception("Child not found: %s" % obj)
         else:
             self._remove(obj)
 
-    def _remove( self, child ):
+    def _remove(self, child):
         l_old = len(self.children)
-        self.children = [ (z,c) for (z,c) in self.children if c != child ]
+        self.children = [(z, c) for (z, c) in self.children if c != child]
 
         if l_old == len(self.children):
-            raise Exception("Child not found: %s" % str(child) )
+            raise Exception("Child not found: %s" % str(child))
 
         if self.is_running:
             child.on_exit()
@@ -515,12 +521,12 @@ class CocosNode(object):
         :return: childs of this node, ordered back to front
 
         """
-        return [ c for (z, c) in self.children ]
+        return [c for (z, c) in self.children]
 
     def __contains__(self, child):
         return child in self.get_children()
 
-    def get( self, name ):
+    def get(self, name):
         """Gets a child given its name
 
         :Parameters:
@@ -535,11 +541,11 @@ class CocosNode(object):
         produce an Exception.
         """
         if name in self.children_names:
-            return self.children_names[ name ]
+            return self.children_names[name]
         else:
-            raise Exception("Child not found: %s" % name )
+            raise Exception("Child not found: %s" % name)
 
-    def on_enter( self ):
+    def on_enter(self):
         """
         Called every time just before the node enters the stage.
 
@@ -562,8 +568,7 @@ class CocosNode(object):
         for c in self.get_children():
             c.on_enter()
 
-
-    def on_exit( self ):
+    def on_exit(self):
         """
         Called every time just before the node leaves the stage
 
@@ -587,37 +592,34 @@ class CocosNode(object):
         for c in self.get_children():
             c.on_exit()
 
-    def transform( self ):
+    def transform(self):
         """
         Apply ModelView transformations
 
         you will most likely want to wrap calls to this function with
         glPushMatrix/glPopMatrix
         """
-        x,y = director.get_window_size()
+        x, y = director.get_window_size()
 
         if not(self.grid and self.grid.active):
             # only apply the camera if the grid is not active
             # otherwise, the camera will be applied inside the grid
             self.camera.locate()
 
-        glTranslatef( self.position[0], self.position[1], 0 )
-        glTranslatef( self.transform_anchor_x, self.transform_anchor_y, 0 )
-
+        glTranslatef(self.position[0], self.position[1], 0)
+        glTranslatef(self.transform_anchor_x, self.transform_anchor_y, 0)
 
         if self.rotation != 0.0:
-            glRotatef( -self._rotation, 0, 0, 1)
+            glRotatef(-self._rotation, 0, 0, 1)
 
         if self.scale != 1.0 or self.scale_x != 1.0 or self.scale_y != 1.0:
-            glScalef( self._scale * self._scale_x, self._scale * self._scale_y, 1)
+            glScalef(self._scale * self._scale_x, self._scale * self._scale_y, 1)
 
-        if self.transform_anchor != (0,0):
+        if self.transform_anchor != (0, 0):
             glTranslatef(
-                - self.transform_anchor_x,
-                - self.transform_anchor_y,
-                0 )
-
-
+                -self.transform_anchor_x,
+                -self.transform_anchor_y,
+                0)
 
     def walk(self, callback, collect=None):
         """
@@ -639,7 +641,7 @@ class CocosNode(object):
 
         r = callback(self)
         if r is not None:
-            collect.append( r )
+            collect.append(r)
 
         for node in self.get_children():
             node.walk(callback, collect)
@@ -647,7 +649,7 @@ class CocosNode(object):
         return collect
 
     def visit(self):
-        '''
+        """
         This function *visits* it's children in a recursive
         way.
 
@@ -664,7 +666,7 @@ class CocosNode(object):
         Before *visiting* any children it will call
         the `transform` method to apply any possible
         transformation.
-        '''
+        """
         if not self.visible:
             return
 
@@ -675,12 +677,12 @@ class CocosNode(object):
 
         # we visit all nodes that should be drawn before ourselves
 
-
         if self.children and self.children[0][0] < 0:
             glPushMatrix()
             self.transform()
-            for z,c in self.children:
-                if z >= 0: break
+            for z, c in self.children:
+                if z >= 0:
+                    break
                 position += 1
                 c.visit()
 
@@ -693,13 +695,12 @@ class CocosNode(object):
         if position < len(self.children):
             glPushMatrix()
             self.transform()
-            for z,c in self.children[position:]:
+            for z, c in self.children[position:]:
                 c.visit()
             glPopMatrix()
 
         if self.grid and self.grid.active:
-            self.grid.after_draw( self.camera )
-
+            self.grid.after_draw(self.camera)
 
     def draw(self, *args, **kwargs):
         """
@@ -717,8 +718,8 @@ class CocosNode(object):
         """
         pass
 
-    def do( self, action, target=None ):
-        '''Executes an *action*.
+    def do(self, action, target=None):
+        """Executes an *action*.
         When the action finished, it will be removed from the node's actions
         container.
 
@@ -730,8 +731,8 @@ class CocosNode(object):
 
         to remove an action you must use the .do return value to
         call .remove_action
-        '''
-        a = copy.deepcopy( action )
+        """
+        a = copy.deepcopy(action)
 
         if target is None:
             a.target = self
@@ -739,12 +740,12 @@ class CocosNode(object):
             a.target = target
 
         a.start()
-        self.actions.append( a )
+        self.actions.append(a)
 
         if not self.scheduled:
             if self.is_running:
                 self.scheduled = True
-                pyglet.clock.schedule( self._step )
+                pyglet.clock.schedule(self._step)
         return a
 
     def remove_action(self, action):
@@ -764,7 +765,7 @@ class CocosNode(object):
             action.scheduled_to_remove = True
             action.stop()
             action.target = None
-            self.to_remove.append( action )
+            self.to_remove.append(action)
 
     def pause(self):
         """
@@ -773,7 +774,7 @@ class CocosNode(object):
         if not self.scheduled:
             return
         self.scheduled = False
-        pyglet.clock.unschedule( self._step )
+        pyglet.clock.unschedule(self._step)
 
     def resume(self):
         """
@@ -782,7 +783,7 @@ class CocosNode(object):
         if self.scheduled:
             return
         self.scheduled = True
-        pyglet.clock.schedule( self._step )
+        pyglet.clock.schedule(self._step)
         self.skip_frame = True
 
     def stop(self):
@@ -816,39 +817,38 @@ class CocosNode(object):
         """
         for x in self.to_remove:
             if x in self.actions:
-                self.actions.remove( x )
+                self.actions.remove(x)
         self.to_remove = []
 
         if self.skip_frame:
             self.skip_frame = False
             return
 
-        if len( self.actions ) == 0:
+        if len(self.actions) == 0:
             self.scheduled = False
-            pyglet.clock.unschedule( self._step )
+            pyglet.clock.unschedule(self._step)
 
         for action in self.actions:
             if not action.scheduled_to_remove:
                 action.step(dt)
                 if action.done():
-                    self.remove_action( action )
+                    self.remove_action(action)
 
     # world to local / local to world methods
-    def get_local_transform( self ):
-        '''returns an euclid.Matrix3 with the local transformation matrix
+    def get_local_transform(self):
+        """returns an euclid.Matrix3 with the local transformation matrix
 
         :rtype: euclid.Matrix3
-        '''
+        """
         if self.is_transform_dirty:
 
             matrix = euclid.Matrix3().identity()
 
             matrix.translate(self._x, self._y)
-            matrix.translate( self.transform_anchor_x, self.transform_anchor_y )
-            matrix.rotate( math.radians(-self.rotation) )
+            matrix.translate(self.transform_anchor_x, self.transform_anchor_y)
+            matrix.rotate(math.radians(-self.rotation))
             matrix.scale(self._scale * self._scale_x, self._scale * self._scale_y)
-            matrix.translate( -self.transform_anchor_x, -self.transform_anchor_y )
-
+            matrix.translate(-self.transform_anchor_x, -self.transform_anchor_y)
 
             self.is_transform_dirty = False
 
@@ -856,34 +856,34 @@ class CocosNode(object):
 
         return self.transform_matrix
 
-    def get_world_transform( self ):
-        '''returns an euclid.Matrix3 with the world transformation matrix
+    def get_world_transform(self):
+        """returns an euclid.Matrix3 with the world transformation matrix
 
         :rtype: euclid.Matrix3
-        '''
+        """
         matrix = self.get_local_transform()
 
         p = self.parent
-        while p != None:
+        while p is not None:
             matrix = p.get_local_transform() * matrix
             p = p.parent
 
         return matrix
 
-    def point_to_world( self, p ):
-        '''returns an euclid.Vector2 converted to world space
+    def point_to_world(self, p):
+        """returns an euclid.Vector2 converted to world space
 
         :rtype: euclid.Vector2
-        '''
-        v = euclid.Point2( p[0], p[1] )
+        """
+        v = euclid.Point2(p[0], p[1])
         matrix = self.get_world_transform()
-        return matrix *  v
+        return matrix * v
 
-    def get_local_inverse( self ):
-        '''returns an euclid.Matrix3 with the local inverse transformation matrix
+    def get_local_inverse(self):
+        """returns an euclid.Matrix3 with the local inverse transformation matrix
 
         :rtype: euclid.Matrix3
-        '''
+        """
         if self.is_inverse_transform_dirty:
 
             matrix = self.get_local_transform().inverse()
@@ -892,25 +892,25 @@ class CocosNode(object):
 
         return self.inverse_transform_matrix
 
-    def get_world_inverse( self ):
-        '''returns an euclid.Matrix3 with the world inverse transformation matrix
+    def get_world_inverse(self):
+        """returns an euclid.Matrix3 with the world inverse transformation matrix
 
         :rtype: euclid.Matrix3
-        '''
+        """
         matrix = self.get_local_inverse()
 
         p = self.parent
-        while p != None:
+        while p is not None:
             matrix = matrix * p.get_local_inverse()
             p = p.parent
 
         return matrix
 
-    def point_to_local( self, p ):
-        '''returns an euclid.Vector2 converted to local space
+    def point_to_local(self, p):
+        """returns an euclid.Vector2 converted to local space
 
         :rtype: euclid.Vector2
-        '''
-        v = euclid.Point2( p[0], p[1] )
+        """
+        v = euclid.Point2(p[0], p[1])
         matrix = self.get_world_inverse()
-        return matrix *  v
+        return matrix * v
