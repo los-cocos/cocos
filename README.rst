@@ -28,7 +28,7 @@ cocos2d simplifies the game development in these areas:
 * Text Rendering: Label and HTMLLabel with action support
 * Built-in Python Interpreter: For debugging purposes
 * Access to OpenGL functionality
-* and much more! http://cocos2d.org
+* and much more! http://python.cocos2d.org
 
 Requirements
 ------------
@@ -56,7 +56,7 @@ Learning cocos2d
 ----------------
 
 * Go to the online tutorials / documentation page:
-  http://cocos2d.org/doc.html
+  http://python.cocos2d.org/doc.html
 
   You will find:
    * the Programming Guide

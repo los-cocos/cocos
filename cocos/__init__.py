@@ -52,7 +52,7 @@ Main Features
     * Pyglet Based: No external dependencies
     * OpenGL Based: Hardware Acceleration
 
-http://cocos2d.org
+http://python.cocos2d.org
 """
 
 from __future__ import division, print_function, unicode_literals

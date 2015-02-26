@@ -1,6 +1,6 @@
 #
 # cocos2d
-# http://cocos2d.org
+# http://python.cocos2d.org
 #
 # Particle Engine done by Phil Hassey
 # http://www.imitationpickles.org

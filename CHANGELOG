@@ -1,15 +1,18 @@
-v0.6.5 - ?
+v0.6.2 - February 28, 2015
 New Features
 ------------
 
   - support collisions between CircleShape and AARectShape in collision_model, 
-    #220
+    #220, thanks Daniel Gillet
   - support to read .tmx (Tiled Editor) object layers and objects, #215
   - deprecated do_not_scale and do_not_scale_window, use autoscale, #214
 
 Bugfixes
 --------
-
+  - fixed tmx color problem in py2, thanks Daniel Gillet
+  - fixed InterpreterLayer crash in py3, thanks Gereon Kaiping 
+  - PEP8 over the library, thanks Humberto Rocha
+  - PEP8 on some support files, thanks Igor Hatarist
   - fixed z-order in BatchNode, #213, thanks Nitneroc and MCopperhead
   - fixed passing a matrix in a uniform to shaders ( 4a7bfb5ca8 )
   - fixed Rect.clippedBy ( 0ffd5a37 ) 

@@ -1,6 +1,6 @@
 #
 # cocos2d
-# http://cocos2d.org
+# http://python.cocos2d.org
 #
 # This code is so you can run the samples without installing the package
 

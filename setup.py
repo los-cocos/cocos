@@ -5,7 +5,7 @@ Supports the usual 'setup.py install' for cocos.
 
 As a release builder:
 
-   last used: release 0.6.2, built from py2.7 + setuptools 5.7
+   last used: release 0.6.2, built from py2.7 + setuptools 5.7 (or 12.2)
 
    example operation for generating release without handling the docs:
        git clone https://github.com/los-cocos/cocos.git cocos_trunk
@@ -53,7 +53,7 @@ setup(
     license="BSD",
     description = "a 2D framework for games and multimedia",
     long_description=long_description,
-    url = "http://cocos2d.org",
+    url = "http://python.cocos2d.org",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: MacOS X",

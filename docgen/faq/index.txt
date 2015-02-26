@@ -107,6 +107,6 @@ This unfinished code might help you: `gl_pbuffer.py`_
 .. _pyglet: http://www.pyglet.org
 .. _Bruce the Presentation Tool: http://code.google.com/p/bruce-tpt/
 .. _pycon 2008 cocos2d lighting talk: http://los-cocos.googlecode.com/svn/branches/pycon-lighting-talk/
-.. _effects: http://cocos2d.org/doc/programming_guide/effects.html
+.. _effects: http://python.cocos2d.org/doc/programming_guide/effects.html
 .. _pbuffer grabber: http://oss.sgi.com/projects/ogl-sample/registry/SGIX/pbuffer.txt
 .. _gl_pbuffer.py: http://los-cocos.googlecode.com/svn/branches/branch-0.2/cocos/gl_pbuffer.py 
