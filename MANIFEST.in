@@ -15,5 +15,5 @@ recursive-include test *
 recursive-include utest *
 recursive-include samples *
 recursive-include tools *
-
-recursive-include doc/html *
+recursive-include cocos *
+recursive-include docgen *

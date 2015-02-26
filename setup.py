@@ -5,15 +5,13 @@ Supports the usual 'setup.py install' for cocos.
 
 As a release builder:
 
-   last used: release 0.6.0, built from py2.6 + setuptools 3.3
+   last used: release 0.6.2, built from py2.7 + setuptools 5.7
 
    example operation for generating release without handling the docs:
-       svn checkout http://los-cocos.googlecode.com/svn/trunk/ cocos_trunk
+       git clone https://github.com/los-cocos/cocos.git cocos_trunk
        cd cocos_trunk
-       svn export . ../cocos_export
-       cd ..\cocos_export
-       py -2.6 setup.py sdist >../sdist.log
-       [ the generated package will be in cocos_export/dist ]
+       py -2.7 setup.py sdist >../sdist.log
+       [ the generated package will be in cocos_trunk/dist ]
 
        Look at tools/building_release_notes.txt for more info about building
        release.
@@ -21,8 +19,8 @@ As a release builder:
 
 __author__ = "cocos2d team"
 __author_email__ = "lucio.torre@gmail.com"
-__version__ = "0.6.0"
-__date__ = "2014 03 24"
+__version__ = "0.6.2"
+__date__ = "2015 02 28"
 
 try:
     import setuptools
@@ -46,8 +44,7 @@ if os.environ.get("TRAVIS", False):
     pass
 else:
     # normal install, add the pyglet dependency
-    install_requires.append('pyglet>=1.2alpha1')
-    dependency_links.append('hg+https://code.google.com/p/pyglet@c7f948a848cb#egg=pyglet-1.2alpha1')
+    install_requires.append('pyglet>=1.2')
 
 setup(
     name = "cocos2d",
