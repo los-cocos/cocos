@@ -170,9 +170,8 @@ class ParticleSystem(CocosNode):
     #: Maximum particles
     total_particles = 0
 
-    #: texture for the particles
-    pic = pyglet.image.load('fire.png', file=pyglet.resource.file('fire.png'))
-    texture = pic.get_texture()
+    #: texture for the particles. Lazy loaded because Intel weakness, #235
+    texture = None
 
     #: blend additive
     blend_additive = False
@@ -225,6 +224,8 @@ class ParticleSystem(CocosNode):
         #: auto remove when particle finishes
         self.auto_remove_on_finish = False
 
+        self.load_texture()
+
         #: rendering mode; True is quads, False is point_sprites, None is auto fallback
         if fallback is None:
             fallback = not point_sprites_available()
@@ -234,6 +235,11 @@ class ParticleSystem(CocosNode):
             self.draw = self.draw_fallback
 
         self.schedule(self.step)
+
+    def load_texture(self):
+        if self.texture is None:
+            pic = pyglet.image.load('fire.png', file=pyglet.resource.file('fire.png'))
+            self.__class__.texture = pic.get_texture()
 
     def on_enter(self):
         super(ParticleSystem, self).on_enter()
