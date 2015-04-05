@@ -648,7 +648,7 @@ def hexmap_factory(resource, tag):
                 tile = resource.get_resource(tile)
             else:
                 tile = None
-            properties = _handle_properties(tag)
+            properties = _handle_properties(cell)
             c.append(HexCell(i, j, height, properties, tile))
 
     properties = _handle_properties(tag)
