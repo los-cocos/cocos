@@ -23,7 +23,7 @@ Parent-child
     - .get(self, name): Gets a child given its name, raises exception Child not found if not present
     - operator in , as 'in node1 in node2': returns True if and only if node1 is child of node 2
 
-`Parent-Child examples`
+`Parent-Child examples`_
 
 Spatial Placement
 ^^^^^^^^^^^^^^^^^
@@ -35,7 +35,7 @@ A node position is defined relative to the parent node, most precisely with resp
     - .scale : 1.0 is the default scale, with 2.0 the node will double its apparent size.
     - .rotation : in degrees
 
-`Spatial Placement snippets`; also most of scripts in directory tests do explicit placement.
+`Spatial Placement snippets`_ ; also most of scripts in directory tests do explicit placement.
 
 Going in or out of the active scene
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -73,9 +73,9 @@ Automated changes along the time
     - .stop(self): All actions scheduled in this node are removed, stop method will be called for each action.
     - .are_actions_running(self): True or False
   
-The automated changes are performed by a collaboration between CocosNode instances and `Action` instances.
+The automated changes are performed by a collaboration between :class:`~cocos.cocosnode.CocosNode` instances and :class:`Action` instances.
 
-`Automated changes along the time snippets`
+`Automated changes along the time snippets`_
 Also the test directory has many samples like test_accel*.py, test_blink.py, test_callfunc*.py and others.
 
 

@@ -7,29 +7,41 @@ Actions, Transformations and Effects
 Actions
 -------
 
-Actions are like orders given to any `CocosNode` object.
-These actions usually modify some the object's attributes like `position`,
-`rotation`, `scale`, etc. If these attributes are modified during a period of time,
-they are `IntervalAction` actions, otherwise they are `InstantAction` actions.
+Actions are like orders given to any :class:`~cocos.cocosnode.CocosNode` object.
 
-For example, the `MoveBy` actions modifies the `position` attribute during a period
-of time, hence, it is an `IntervalAction`.
+These actions usually modify some the object's attributes like `position`,
+`rotation`, `scale`, etc.
+
+For example, the :class:`~cocos.actions.base_actions.MoveBy` action modifies the `position` attribute along a period of time
 
 Example::
 
     # Move a sprite 50 pixels to the right, and 100 pixel to the top in 2 seconds.
     sprite.do( MoveBy( (50,100), duration=2 ) )
-    
-The `IntervalAction` actions have some interesting properties:
 
-    - The can be accelerated using the time-altered actions
-        - `Accelerate`
-        - `AccelDeccel`
-        - `Speed`
+The actions behavior related to time classifies them in three groups:
+
+    :class:`InstantAction<cocos.actions.base_actions.InstantAction>` : the change is applied in one step
+    Example::
+    
+        # instantly move the sprite to the position (120, 330)
+        sprite.do( Place( (120, 330) )) 
+    
+    :class:`IntervalAction<cocos.actions.base_actions.IntervalAction>` : the change is applied in many steps along a time duration that is known at the action instantiation. Example, the above mentioned MoveBy
+
+    :class:`Action<cocos.actions.base_actions.Action>` : the change is applied in many steps along the time, but the duration is not know at instantiation time or it is 'forever'
+    
+The IntervalAction actions have some interesting properties:
+
+    - The timeflow can be modified using the time-altered actions
+    
+        + :class:`~cocos.actions.interval_actions.Accelerate`
+        + :class:`~cocos.actions.interval_actions.AccelDeccel`
+        + :class:`~cocos.actions.interval_actions.Speed`
+
     - All the relative actions (the ones ending in 'By') and some
       absolute actions (the ones ending in 'To')  have a `Reverse` action
       that executes the action in the opposite direction.
-
 
 
 Basic actions
@@ -39,41 +51,39 @@ Basic actions are the ones that modifies basic attributes like:
 
  - position
  
-    - `MoveBy`
-    - `MoveTo`
-    - `JumpBy`
-    - `JumpTo`
-    - `Bezier`
-    - `Place`
+    - :class:`~cocos.actions.interval_actions.MoveBy`
+    - :class:`~cocos.actions.interval_actions.MoveTo`
+    - :class:`~cocos.actions.interval_actions.JumpBy`
+    - :class:`~cocos.actions.interval_actions.JumpTo`
+    - :class:`~cocos.actions.interval_actions.Bezier`
+    - :class:`~cocos.actions.instant_actions.Place`
 
  - scale
  
-    - `ScaleBy`
-    - `ScaleTo`
+    - :class:`~cocos.actions.interval_actions.ScaleBy`
+    - :class:`~cocos.actions.interval_actions.ScaleTo`
 
  - rotation
  
-    - `RotateBy`
-    - `RotateTo`
+    - :class:`~cocos.actions.interval_actions.RotateBy`
+    - :class:`~cocos.actions.interval_actions.RotateTo`
 
  - visible
  
-    - `Show`
-    - `Hide`
-    - `Blink`
-    - `ToggleVisibility`
+    - :class:`~cocos.actions.instant_actions.Show`
+    - :class:`~cocos.actions.instant_actions.Hide`
+    - :class:`~cocos.actions.interval_actions.Blink`
+    - :class:`~cocos.actions.instant_actions.ToggleVisibility`
 
  - opacity
  
-    - `FadeIn`
-    - `FadeOut`
-    - `FadeTo`
+    - :class:`~cocos.actions.interval_actions.FadeIn`
+    - :class:`~cocos.actions.interval_actions.FadeOut`
+    - :class:`~cocos.actions.interval_actions.FadeTo`
     
 
-Example::
+Examples can be seen in ``test/test_<action name>.py`` , like ``test/test_moveby.py`` for MoveBy action  
 
-    XXX: finish this part
-  
 
 Effects
 -------
@@ -113,22 +123,22 @@ and this ``vertex array`` (the grid!) is transformed by the grid effects.
 Finally the ``vertex array`` is rendered into the screen.
 
 For more information about the internals refer to:
- - `TiledGrid3D` and `TiledGrid3DAction` for ``tiled`` grids
- - `Grid3D` and `Grid3DAction` for ``non-tiled`` grids
+ - :class:`~cocos.grid.TiledGrid3D` and :class:`~cocos.actions.basegrid_actions.TiledGrid3DAction` for ``tiled`` grids
+ - :class:`~cocos.grid.Grid3D` and :class:`~cocos.actions.basegrid_actions.Grid3DAction` for ``non-tiled`` grids
 
 
 For example, if you have an scene or layer that renders this image:
 
 .. image:: original_image.png
 
-...we can transform that image into this one using the `Ripple3D` action.
+...we can transform that image into this one using the :class:`~cocos.actions.grid3d_actions.Ripple3D` action.
 As you can see from the *wired* image, it is using a grid of 32x24 squares,
 and the grid is *non-tiled* (all the squares are together).
 
 .. image:: effect_ripple3d.png
 .. image:: effect_ripple3d_grid.png
 
-...or we can transform it into this one using the `FadeOutTRTiles` action.
+...or we can transform it into this one using the :class:`~cocos.actions.tiledgrid_actions.FadeOutTRTiles` action.
 As you can see from the *wired* image, it is using a grid of 16x12 squares,
 and the grid is *tiled* (all the squares/tiles can be separated).
 
@@ -152,10 +162,10 @@ Index of grid effects
 ^^^^^^^^^^^^^^^^^^^^^
 
 You can find all the `Grid3DAction` actions here:
- - `grid3d_actions`
+ - :mod:`cocos.actions.grid3d_actions`
 
 And all the `TiledGrid3DAction` actions here:
- - `tiledgrid_actions`
+ - :mod:`cocos.actions.tiledgrid_actions`
 
 
 
@@ -173,13 +183,14 @@ Some examples::
     # effect applied on a different Layer
     layer2.do( Waves( grid=(16,12), duration=4) + Liquid( grid=(16,12), duration=5 ) )
     
-
+Working samples can be found as ``test/test_<action name>.py`` , like ``test/test_lens_3d.py``
+	
 Composition
 -----------
 
- - `Sequence`
- - `Spawn`
- - `Repeat`
+ - :func:`~cocos.actions.base_actions.sequence`
+ - :func:`~cocos.actions.base_actions.spawn`
+ - :func:`~cocos.actions.base_actions.Repeat`
  
 Example::
 
@@ -190,15 +201,15 @@ Modifiers
 ---------
 
  - Time modifiers
-    - `Accelerate`
-    - `AccelDeccel`
-    - `Speed`
-    - `Reverse`
+    - :class:`~cocos.actions.interval_actions.Accelerate`
+    - :class:`~cocos.actions.interval_actions.AccelDeccel`
+    - :class:`~cocos.actions.interval_actions.Speed`
+    - :class:`~cocos.actions.base_actions.Reverse`
 
- - Amplitude modifiers
-    - `AccelAmplitude`
-    - `DeccelAmplitude`
-    - `AccelDeccelAmplitude`
+ - Grid Amplitude modifiers
+    - :class:`~cocos.actions.basegrid_actions.AccelAmplitude`
+    - :class:`~cocos.actions.basegrid_actions.DeccelAmplitude`
+    - :class:`~cocos.actions.basegrid_actions.AccelDeccelAmplitude`
    
 Example::
     
@@ -208,14 +219,13 @@ Example::
 Special Actions
 ---------------
 
-  - `Delay`
-  - `RandomDelay`
-  - `CallFunc`
-  - `CallFuncS`
-  - `DoAction`
-  - `StopGrid`
-  - `ReuseGrid`
-  - `OrbitCamera`
+  - :class:`~cocos.actions.interval_actions.Delay`
+  - :class:`~cocos.actions.interval_actions.RandomDelay`
+  - :class:`~cocos.actions.instant_actions.CallFunc`
+  - :class:`~cocos.actions.instant_actions.CallFuncS`
+  - :class:`~cocos.actions.basegrid_actions.StopGrid`
+  - :class:`~cocos.actions.basegrid_actions.ReuseGrid`
+  - :class:`~cocos.actions.camera_actions.OrbitCamera`
  
  Example::
  

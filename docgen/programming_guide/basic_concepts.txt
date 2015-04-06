@@ -10,7 +10,7 @@ need to know when developing a cocos2d application:
 Scenes
 ------
 
-A scene (implemented with the `Scene` object) is a more or less
+A scene (implemented with the :class:`~cocos.scene.Scene` object) is a more or less
 independent piece of the app workflow.
 Some people may call them "screens" or "stages". Your app can have
 many scenes, but only one of them is active at a given time.
@@ -49,7 +49,7 @@ Example for the main menu screen::
 			item3 : MenuItem , 'quit'
 
 There is also a family of `Scene` subclasses called transitions (implemented with
-the `TrasitionScene` object) which allow you to
+the :class:`~cocos.scenes.transitions.TrasitionScene` object) which allow you to
 make transitions between two scenes (fade out/in, slide from a side, etc).
 
 Since scenes are subclass of `CocosNode`, they can be transformed manually or
@@ -59,15 +59,22 @@ See :doc:`actions` for more detail about actions.
 Director
 --------
 
-The `Director` is the component which takes care about going back and forth
+The **director** is the component which takes care about going back and forth
 between scenes.
 
-The `Director` is a shared (singleton) object. It knows which scene is currently
+The director is a shared (singleton) object. It knows which scene is currently
 active, and it handles a stack of scenes to allow things like "scene calls"
 (pausing a `Scene` and putting it on hold while other enters, and then returning
 to the original). The push, replacement or end of the current scene is made by director.
 
-The `Director` is also responsible of initializing the main window.
+The director is also responsible of initializing the main window.
+
+To get the director object you do::
+
+	import cocos
+	from cocos.director import director
+
+Implementation lives in :mod:`cocos.director`
 
 Layers
 ------
@@ -93,17 +100,17 @@ time will be spent coding `Layer` subclasses that do what you need.
 The `Layer` is where you define event handlers. Events are propagated to layers
 (from front to back) until some layer catches the event and accepts it.
 
-Even if any serious app will require you to define some `Layer` subclasses, cocos2d
+Even if any serious app will require you to define some :class:`~cocos.layer.base_layers.Layer` subclasses, cocos2d
 provides some useful specialized layers
 
-	- `MultiplexLayer`, a group of layers where only one is seen at a time
-	- `ScrollingManager`, `ScrollableLayer`; does the logic to limit scroll to viewable areas
-	- `RectMapLayer`, `HexMapLayer`; displays a group of rectangular or hexagonal tiles
-	- `Menu`, implements simple menus
-	- `ColorLayer`, a solid color rectangle
-	- `InterpreterLayer`, used by director to pop up an interactive console to peek and poke at the objects in our scene ( ctrl + I to toggle on-off)
+	- :class:`~cocos.layer.base_layers.MultiplexLayer`, a group of layers where only one is seen at a time
+	- :class:`~cocos.layer.scrolling.ScrollingManager`, :class:`~cocos.layer.scrolling.ScrollableLayer`; does the logic to limit scroll to viewable areas
+	- :class:`~cocos.tiles.RectMapLayer`, :class:`~cocos.tiles.HexMapLayer`; displays a group of rectangular or hexagonal tiles
+	- :class:`~cocos.menu.Menu`, implements simple menus
+	- :class:`~cocos.layer.util_layers.ColorLayer`, a solid color rectangle
+	- :class:`~cocos.layer.python_interpreter.PythonInterpreterLayer`, used by director to pop up an interactive console to peek and poke at the objects in our scene ( ctrl + I to toggle on-off)
 
-To make loading of appropriate assets easier you may override the ``init``
+To make loading of appropriate assets easier you may override the ``__init__``
 method of your `Layer` subclass. This will be called when your Layer is
 created.
 
@@ -118,7 +125,7 @@ Sprites
 A cocos2d' sprite is like any other computer sprite.
 It is a 2D image that can be moved, rotated, scaled, animated, etc. 
 
-Sprites (implemented using the `Sprite` class) can have other sprites
+Sprites (implemented using the :class:`~cocos.sprite.Sprite` class) can have other sprites
 as children. When a parent is transformed, all its children are transformed as well.
 
 Since sprites are subclass of `CocosNode`, they can be transformed manually

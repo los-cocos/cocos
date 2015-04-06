@@ -9,6 +9,7 @@ New Features
 
 Bugfixes
 --------
+  - workaround to some cases of 'unable to share contexts' on Intel gpu, #235
   - fixed tmx color problem in py2, thanks Daniel Gillet
   - fixed InterpreterLayer crash in py3, thanks Gereon Kaiping 
   - PEP8 over the library, thanks Humberto Rocha

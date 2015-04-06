@@ -670,7 +670,7 @@ class MapLayer(cocos.layer.ScrollableLayer):
     Maps are comprised of tiles and can figure out which tiles are required to
     be rendered on screen.
 
-    Both rect and hex maps have the following attributes:
+    Both rect and hex maps have the following attributes::
 
         id              -- identifies the map in XML and Resources
         (width, height) -- size of map in cells
@@ -1104,7 +1104,8 @@ class RectMapCollider(object):
 class Cell(object):
     """Base class for cells from rect and hex maps.
 
-    Common attributes:
+    Common attributes::
+
         i, j            -- index of this cell in the map
         position        -- the above as a tuple
         width, height   -- dimensions
@@ -1177,7 +1178,8 @@ class Cell(object):
 class RectCell(Rect, Cell):
     """A rectangular cell from a MapLayer.
 
-    Cell attributes:
+    Cell attributes::
+    
         i, j            -- index of this cell in the map
         x, y            -- bottom-left pixel
         width, height   -- dimensions
@@ -1215,19 +1217,19 @@ class RectCell(Rect, Cell):
 class HexMap(RegularTesselationMap):
     """MapLayer with flat-top, regular hexagonal cells.
 
-    Calculated attributes:
+    Calculated attributes::
 
-     edge_length -- length of an edge in pixels = int(th / sqrt(3))
-     tw          -- with of a "tile" in pixels = edge_length * 2
+      edge_length -- length of an edge in pixels = int(th / sqrt(3))
+      tw          -- with of a "tile" in pixels = edge_length * 2
 
     Hexmaps store their cells in an offset array, column-major with y
     increasing up, such that a map::
 
-          /d\ /h\
-        /b\_/f\_/
-        \_/c\_/g\
-        /a\_/e\_/
-        \_/ \_/
+          /d\ /h\          .
+        /b\_/f\_/          .
+        \_/c\_/g\          .
+        /a\_/e\_/          .
+        \_/ \_/            .
 
     has cells = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
 
@@ -1367,7 +1369,7 @@ class HexMapLayer(HexMap, MapLayer):
     proportions or the pointy orientation ( left and right sides paralel to
     the y-axis) ; neither will work with HexMapLayer
 
-    The Layer has a calculated attribute:
+    The Layer has a calculated attribute::
 
      edge_length -- length of an edge in pixels = int(th / sqrt(3))
      tw          -- with of a "tile" in pixels = edge_length * 2
@@ -1375,11 +1377,11 @@ class HexMapLayer(HexMap, MapLayer):
     Hexmaps store their cells in an offset array, column-major with y
     increasing up, such that a map::
 
-              /d\ /h\
-            /b\_/f\_/
-            \_/c\_/g\
-            /a\_/e\_/
-            \_/ \_/
+              /d\ /h\        .
+            /b\_/f\_/        .
+            \_/c\_/g\        .
+            /a\_/e\_/        .
+            \_/ \_/          .
 
     has cells = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
     """
@@ -1395,13 +1397,15 @@ class HexMapLayer(HexMap, MapLayer):
 class HexCell(Cell):
     """A flat-top, regular hexagon cell from a HexMap.
 
-    Cell attributes:
+    Cell attributes::
+    
         i, j            -- index of this cell in the map
         width, height   -- dimensions
         properties      -- arbitrary properties
         cell            -- cell from the MapLayer's cells
 
-    Read-only attributes:
+    Read-only attributes::
+    
         x, y            -- bottom-left pixel
         top             -- y pixel extent
         bottom          -- y pixel extent
@@ -1530,12 +1534,15 @@ class HexCell(Cell):
 def parse_tmx_points(tag, obj_x, obj_y):
     """parses tmx tag points into left, bottom, right, top, points
 
-    Parameters:
-        tag: xml tag, assumed an object tag
-        obj_x: object x position in gl coordinates
-        obj_y: object y position in gl coordinates
+    :Parameters:
+        `tag` : xml tag
+            assumed an object tag
+        `obj_x` :
+            object x position in gl coordinates
+        `obj_y` :
+            object y position in gl coordinates
 
-    Returns:
+    :Returns: tuple (left, bottom, width, height, points)
         left: leftmost x-position in points, gl coordinates system
         bottom: bottommost y-position in points, gl coordinates system
         width: width of point's enclosing box
@@ -1572,19 +1579,19 @@ class TmxObject(Rect):
     Instances of this class are ussually constructed by calling
     TmxObject.fromxml
 
-    Theres no validation of data pased to __init__
+    Theres no validation of data pased to __init__::
 
-    tmxtype: one of 'ellipse', 'polygon', 'polyline', 'rect', 'tile'
-    name: An arbitrary string. The object's 'name' field in Tiled Editor.
-    usertype: An arbitrary string. The object's 'type' field in Tiled Editor.
-    x: The x coordinate of the bottomleft object's Axis Aligned Bounding Box.
-    y: The y coordinate of the bottomleft object's Axis Aligned Bounding Box.
-    width: The width of the object in pixels (defaults to 0).
-    height: The height of the object in pixels (defaults to 0).
-    gid: An reference to a tile (optional).
-    visible: Whether the object is shown (1) or hidden (0). Defaults to 1.
-    points: a sequence of coords (x, y) relative to bottomleft  thas enumerates
-    the vertices in a 'polygon' or 'polyline'.
+        tmxtype: one of 'ellipse', 'polygon', 'polyline', 'rect', 'tile'
+        name: An arbitrary string. The object's 'name' field in Tiled Editor.
+        usertype: An arbitrary string. The object's 'type' field in Tiled Editor.
+        x: The x coordinate of the bottomleft object's Axis Aligned Bounding Box.
+        y: The y coordinate of the bottomleft object's Axis Aligned Bounding Box.
+        width: The width of the object in pixels (defaults to 0).
+        height: The height of the object in pixels (defaults to 0).
+        gid: An reference to a tile (optional).
+        visible: Whether the object is shown (1) or hidden (0). Defaults to 1.
+        points: a sequence of coords (x, y) relative to bottomleft  thas enumerates
+        the vertices in a 'polygon' or 'polyline'.
 
     A 'rect' AABB is itself, so x,y is it's bottomleft corner.
     """
@@ -1724,7 +1731,7 @@ class TmxObjectLayer(MapLayer):
     Actually encompasses a TMX <objectgroup> but even the TMX documentation
     refers to them as object layers, so I will.
 
-    TmxObjectLayers have some basic properties:
+    TmxObjectLayers have some basic properties::
 
         position - ignored (cannot be edited in the current Tiled editor)
         name - the name of the object group.

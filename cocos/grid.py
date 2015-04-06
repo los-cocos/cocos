@@ -186,7 +186,7 @@ class GridBase(object):
 class Grid3D(GridBase):
     """`Grid3D` is a 3D grid implementation. Each vertex has 3 dimensions: x,y,z
 
-    The vindexed ertex array will be built with::
+    The indexed vertex array will be built with::
 
         self.vertex_list.vertices: x,y,z (floats)
         self.vertex_list.tex_coords: x,y,z (floats)

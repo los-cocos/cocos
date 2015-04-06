@@ -14,33 +14,36 @@ Guidelines for sphinx customization
 
 Keep customization at a minimun to avoid the need of maintenace when sphinx changes.
 
-Steps for initial sphinx support
-================================
+Hints for some common markup operations
+=======================================
 
-This notes can help if a new 'from scratch' documentation build is desired.
+inline literal text: \`\`:class:\`\` -> ``:class:`` 
 
-  * Using sphinx 1.2 release , docutils 0.11, pygments 1.5
-  * deleting items in doc/ that sphinx won't use. (at that moment only doc/doc.css)
-  * running::
-  
-      cd doc
-	  sphinx-quickstart
-    
-    Answered some interactive questions, renamed the old index.txt because sphinx-quickstart wants to generate a new one.
+(in link syntax ``~`` is a modidier that supress the high parts in a dotted name)
+ 
+link to a cocos module: ``:mod:`~cocos.cocosnode` ->`` :mod:`~cocos.cocosnode`
 
-  * results committed at r1274, no attempt to build was performed
-  * customize index.txt, conf.py, make.bat and Makefile (the later is untested)
-    Notice 'build' will run apidoc + build each time
-    Doing a build shows some warnings that will be addresed later; committed r1275
-  * fixed some warnings with r1276-77, now only 6 unimportant warnings
-  * At this point sphinx documentation is usable.
-  * To build the documentation do a::
+link to a cocos module: ``:mod:`cocos.cocosnode` ->`` :mod:`cocos.cocosnode`
 
-		cd doc
-		make.bat clean
-		make.bat html
-		
-	(in unix-like systems replace make with Makefile)
+link to a class: ``:class:`~cocos.cocosnode.CocosNode` ->`` :class:`~cocos.cocosnode.CocosNode`
 
-I played a bit with the pyglet customizations for sphinx in the branch b_sphinx, but abandoned that because build times were much longer. (branch deleted at r1278)
+link to a method: ``:meth:`~cocos.cocosnode.CocosNode.add` ->``  :meth:`~cocos.cocosnode.CocosNode.add`
+
+link to a method:
+
+``:meth:`CocosNode.add<cocos.cocosnode.CocosNode.add>` ->``  :meth:`CocosNode.add()<cocos.cocosnode.CocosNode.add>`
+
+link to a function: ``:func:`cocos.tiles.load` ->`` :func:`cocos.tiles.load`
+
+There are other roles like
+
+``:data:`` -> Reference a module-level variable.
+
+``:const:`` -> Reference a defined constant. This may be a Python variable that is not intended to be changed.
+
+``:attr:`` -> Reference a data attribute of an object.
+
+``:exc:``  -> Reference an exception. A dotted name may be used.
+
+``:obj:``  -> Reference an object of unspecified type. Useful e.g. as the default_role.
 
