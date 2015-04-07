@@ -30,7 +30,7 @@ What an object must comply to be collidable ?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 	- must have a member .cshape
-	- the .cshape value is an instance of cocos.collision_model.CircleShape or cocos.collision_model.AARectShape
+	- the .cshape value is an instance of :class:`~cocos.collision_model.CircleShape` or :class:`~cocos.collision_model.AARectShape`
  
 Examples::
 
@@ -89,7 +89,7 @@ The drawbacks are well known
 More details
 ^^^^^^^^^^^^
 
-Look at `CollisionManager` and `Cshape` for details; for __init__parameters look at the respective implementation.
+Look at :class:`~cocos.collision_model.CollisionManager` and :class:`~cocos.collision_model.Cshape` for details; for __init__parameters look at the respective implementation.
 
 Performance numbers
 -------------------

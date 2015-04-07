@@ -33,6 +33,7 @@ A node position is defined relative to the parent node, most precisely with resp
     - .x, .y .position: properties giving position relative to parent origin; updating x or y automatically updates position, the reverse is also true.
     - .anchor_x, .anchor_y, anchor: properties giving the center for the scale and rotation, they automatically maintain the relation anchor == (anchor_x, anchor_y). Notice that different CocosNodes subclasses can have different default values for anchor.
     - .scale : 1.0 is the default scale, with 2.0 the node will double its apparent size.
+    - .scale_x, .scale_y : per axis scaling factors. The total scaling in axis x is .scale * .scale_x , and analogous for axis y
     - .rotation : in degrees
 
 `Spatial Placement snippets`_ ; also most of scripts in directory tests do explicit placement.
@@ -88,46 +89,48 @@ Scene
 The root of the tree depicting the full content to be displayed.
 To change between scenes you use director.
 
+References: :ref:`guide Scene<guide_scene>` , :class:`api Scene<cocos.scene.Scene>`
+
+
 TransitionScene
 ^^^^^^^^^^^^^^^
-
-`TransitionScene`
 
 Base class to implement a gradual change from one screen (scene) to other. Typical examples are fade in and fade out.
 
 Cocos provides a bunch of ready made scene transitions (sample code in test/test_transition_*.py)
 
+References: :class:`api Scene <cocos.scenes.transitions.TransitionScene>`
+
+
 Layer
 ^^^^^
-
-`Layer`
 
 Helps to organize the view in the depth axis.
 Subclasses often offer specialized services to the childs (like ScrollingManager), and can be used to build higher order functionality (like Menu)
 
+References: :ref:`guide Layer<guide_layer>` , :class:`api Layer<cocos.layer.base_layers.Layer>`
 
 ColorLayer
 ^^^^^^^^^^
 
-`ColorLayer`
-
 The primary use is to provide a solid color background to a scene, also used to draw solid color rectangles.
 
+References: :class:`api ColorLayer<cocos.layer.util_layers.ColorLayer>`
 
 MultiplexLayer
 ^^^^^^^^^^^^^^
 
-`MultiplexLayer`
-
 Allows to show only one of his childs, and to select which one.
 An use case is when you want to show one of a number of menus.
+
+References: :class:`api MultiplexLayer<cocos.layer.base_layers.MultiplexLayer>`
 
 ScrollingManager
 ^^^^^^^^^^^^^^^^
 
-`ScrollingManager`
-
 Coordinates a number of ScrollableLayer to do scroll and parallax so that the scroll don't goes out of the the world.
+
+References: :class:`api ScrollingManager<cocos.layer.scrolling.ScrollingManager>`
 
 ScrollableLayer
 ^^^^^^^^^^^^^^^
@@ -135,6 +138,8 @@ ScrollableLayer
 Used as childs of ScrollingManager, helps to manage scroll limits and parallax.
 You must set attributes px_with and px_height in a `ScrollableLayer` instance so restrictions in the scroll are enforced.
 If using parallax, it must be provided in the constructor.
+
+References: :class:`api ScrollableLayer<cocos.layer.scrolling.ScrollableLayer>`
 
 RectMapLayer and HexMapLayer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -147,19 +152,23 @@ A tilemap is a world description where
 
 Examples are test/test_tiles.py and test/test_platformer.py
 
-InterpreterLayer
-^^^^^^^^^^^^^^^^
+References: :class:`api RectMapLayer<cocos.tiles.RectMapLayer>` , :class:`api HexMapLayer<cocos.tiles.HexMapLayer>`
+
+PythonInterpreterLayer
+^^^^^^^^^^^^^^^^^^^^^^
 
 Used by director to show a python console that allows to inspect and modify the objects in the application using director.
-You don't instantiate manually an InterpreterLayer, simply press ctrl + i (cmd + i on mac) to toggle the layer's visibility.
+You don't instantiate manually an PythonInterpreterLayer, simply press ctrl + i (cmd + i on mac) to toggle the layer's visibility.
+
+References: :doc:`guide PythonInterpreterLayer<interpreter>` , :class:`api PythonInterpreterLayer<cocos.layer.python_interpreter.PythonInterpreterLayer>`
 
 Sprite
 ^^^^^^
 
-`Sprite`
-
 Sprites allows to display an image in a rectangular area, which can be rotated,
 scaled and moved.
+
+References: :class:`api Sprite<cocos.sprite.Sprite>`
 
 
 Animating a sprite
@@ -235,61 +244,59 @@ For a ballpark data point, a 2008 low gamming spec machine (athon 5200, radeon 4
 Notice that sprites out of view has a fraction of the cost that visible sprites: they are discarded at the openGL geometry stage (in most of openGL implementations)
 
     
-ParticleSystems
-^^^^^^^^^^^^^^^
-
-`ParticleSystems`
+Particle Systems
+^^^^^^^^^^^^^^^^
 
 Certain effects are best rendered as a big number of translucent, colored images, by example explosions and smoke.
-Cocos provides the base class `ParticleSystems` to efficiently render those entities, and some specialized subclasses like `Fireworks`, `Spiral`, `Meteor`, `Sun`, `Fire`, `Galaxy`, `Flower`, `Explosion`, `Smoke`.
+Cocos provides the base class :class:`~cocos.particle.ParticleSystem` to efficiently render those entities, and some specialized subclasses in module :mod:`cocos.particle_systems` like `Fireworks`, `Spiral`, `Meteor`, `Sun`, `Fire`, `Galaxy`, `Flower`, `Explosion`, `Smoke`.
 
 The most common method to customize particle systems is to subclass one of the cocos particle systems and modify some of the class members defining its behavior.
 If you change the particle texture remember to load it with pyglet.image.load, not pyglet.resource.image
 Of course, deeper customization can be achieved with subclassing and code customization.
 
-Look at test/test_particle_*.py for smaple code.
+Look at test/test_particle_*.py for sample code.
 
 TextElement, Label, HTMLLabel, RichLabel
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Overall opacity, Family and Font size can be specified for all.
 
-`TextElement`: base class for all cocos text. Holds internally (member 'element') a suitable pyglet text object, providing the CocosNode interface and pyglet Batch to store parts.
+:class:`~cocos.text.TextElement`: base class for all cocos text. Holds internally (member 'element') a suitable pyglet text object, providing the CocosNode interface and pyglet Batch to store parts.
 Features other than opacity and the common cocosnode ones should be accessed trough the instance.element.   
 
-`Label`: provide the most simple text display; color can also be set.
+:class:`~cocos.text.Label`: provide the most simple text display; color can also be set.
  
-`HTMLLabel`: a slightly more powerful label, it can use mixed styles. Uses HTML syntax for text and styles; opacity as a whole can be set.
+:class:`~cocos.text.HTMLLabel`: a slightly more powerful label, it can use mixed styles. Uses HTML syntax for text and styles; opacity as a whole can be set.
 
-`RichTextLabel`: Allows rich text attributes.
+:class:`~cocos.text.RichLabel`: Allows rich text attributes.
 
 Look for examples at test/test_label_*.py, test/test_htmllabel_*.py, test/test_rich_label.py
 
 Menu
 ^^^^
 
-`Menu`
-
 - Does the layout of menu items
 - Handles navigation between menu items
 - Passes to the items the desired animation to play when the focus changes from one to another item
 
 Look for examples at test/test_menu_*.py
+
+References: :class:`~cocos.menu.Menu`
  
 Menu items
 ^^^^^^^^^^
 
-`MenuItem`: A menu item that shows text
+:class:`~cocos.menu.MenuItem`: A menu item that shows text
 
-`ImageMenuItem`: A menu item that shows a image and optionally text 
+:class:`~cocos.menu.ImageMenuItem`: A menu item that shows a image and optionally text 
 
-`MultipleMenuItem`: Allows to cycle trough a customizable list of options
+:class:`~cocos.menu.MultipleMenuItem`: Allows to cycle trough a customizable list of options
 
-`ToggleMenuItem`: Exposes a on/off selection
+:class:`~cocos.menu.ToggleMenuItem`: Exposes a on/off selection
 
-`EntryMenuItem`: Exposes a label and a text entry field
+:class:`~cocos.menu.EntryMenuItem`: Exposes a label and a text entry field
 
-`ColorMenuItem`: Allows to select a color
+:class:`~cocos.menu.ColorMenuItem`: Allows to select a color
 
 Look at test/test_menu_items.py for sample code.
 
@@ -378,7 +385,7 @@ Example::
 Automated changes along the time snippets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     
-You can modify attributes to **any** `CocosNode` object.
+You can modify attributes to any `CocosNode` object.
 By example::
 
     scene.do( ScaleTo(2, duration=2) )

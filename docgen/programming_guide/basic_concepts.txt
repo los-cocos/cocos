@@ -7,6 +7,8 @@ need to know when developing a cocos2d application:
 .. contents::
     :local:
 
+.. _guide_scene:
+
 Scenes
 ------
 
@@ -49,7 +51,7 @@ Example for the main menu screen::
 			item3 : MenuItem , 'quit'
 
 There is also a family of `Scene` subclasses called transitions (implemented with
-the :class:`~cocos.scenes.transitions.TrasitionScene` object) which allow you to
+the :class:`~cocos.scenes.transitions.TransitionScene` object) which allow you to
 make transitions between two scenes (fade out/in, slide from a side, etc).
 
 Since scenes are subclass of `CocosNode`, they can be transformed manually or
@@ -75,6 +77,8 @@ To get the director object you do::
 	from cocos.director import director
 
 Implementation lives in :mod:`cocos.director`
+
+.. _guide_layer:
 
 Layers
 ------

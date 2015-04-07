@@ -17,6 +17,10 @@ Keep customization at a minimun to avoid the need of maintenace when sphinx chan
 Hints for some common markup operations
 =======================================
 
+please use 4 spaces indentation
+
+tabs usually break things, convert them to spaces
+
 inline literal text: \`\`:class:\`\` -> ``:class:`` 
 
 (in link syntax ``~`` is a modidier that supress the high parts in a dotted name)
@@ -47,3 +51,13 @@ There are other roles like
 
 ``:obj:``  -> Reference an object of unspecified type. Useful e.g. as the default_role.
 
+Link to a section or some arbitrary point in any document:
+
+	- declare a label at the target location with ``.. _labelname:`` (the '_' is not part of labelname)
+	- write the link as ``:ref:`TextToShowInLink<labelname>``` (brackets included)
+	- if TextToShowInLink is ommited the ref should be just before a section and the section title will be used as the text to show in the link
+	- labelname must be unique across all documents
+	
+Link to another document in the current sphinx build: 
+    - ``:doc:`TextToShowInLink<documentName>``` (brackets included)
+    - ``:doc:`documentName``` (will show the document title in the link)
