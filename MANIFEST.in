@@ -17,3 +17,4 @@ recursive-include samples *
 recursive-include tools *
 recursive-include cocos *
 recursive-include docgen *
+recursive-include docs *
