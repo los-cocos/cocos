@@ -166,6 +166,24 @@ After a release, please update this document if any change was needed.
    Probably more info at:
        http://packages.python.org/an_example_pypi_project/setuptools.html#intermezzo-pypirc-file-and-gpg
 
+	year 2015: the .pypirc format seems to have changed, at least for what can be seen at
+	https://packaging.python.org/en/latest/distributing.html#uploading-your-project-to-pypi
+	or
+	https://wiki.python.org/moin/TestPyPI
+
+	
+   Theres a test site parallel pypi, https://testpypi.python.org/pypi , which can
+   be handy to test the real display of package page and other pypi related things, see
+   https://wiki.python.org/moin/TestPyPI
+   
+   warn: with the recomended .pypirc (login info for both pypi and testpypi)
+   python setup.py register sdist upload -r https://testpypi.python.org/pypi
+   wrote both to the test and the real site; in the real only the package page was
+   updated (no download), also the pakage upload terminated with error, so it should
+   be better to delete / modify the real login info when testing
+   Maybe the register part was directed to the real pypi ?
+   
+
 7.  tagging the release
 	( remember to change the version in the example if doing copy & paste )
 

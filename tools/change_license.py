@@ -14,10 +14,11 @@ import optparse
 import os
 import sys
 
-old_license = """# ----------------------------------------------------------------------------
+old_license =  """# ----------------------------------------------------------------------------
 # cocos2d
 # Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
+# Copyright (c) 2009-2014  Richard Jones, Claudio Canepa
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -53,7 +54,7 @@ new_license = """# -------------------------------------------------------------
 # cocos2d
 # Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
-# Copyright (c) 2009-2014  Richard Jones, Claudio Canepa
+# Copyright (c) 2009-2015  Richard Jones, Claudio Canepa
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -174,7 +175,12 @@ if __name__ == '__main__':
                 for filename in filenames:
                     if (filename.endswith('.py') and 
                         filename not in exclude):
-                        process_file(os.path.join(root, filename))
+                        try:
+                            process_file(os.path.join(root, filename))
+                        except Exception as ex:
+                            print("Exception while processing %s" % os.path.join(root, filename))
+                            print(ex)
+                            
         else:
             if (path.endswith('.py') and 
                 path not in exclude):
