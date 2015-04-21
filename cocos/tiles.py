@@ -277,6 +277,8 @@ def load_tmx(filename):
     tile_width = int(map.attrib['tilewidth'])
     tile_height = int(map.attrib['tileheight'])
 
+    map_height_pixels = height * tile_height
+    
     # load all the tilesets
     tilesets = []
     for tag in map.findall('tileset'):
@@ -358,7 +360,7 @@ def load_tmx(filename):
 
     # finally, object groups
     for tag in map.findall('objectgroup'):
-        layer = TmxObjectLayer.fromxml(tag, tilesets, tile_width, tile_height)
+        layer = TmxObjectLayer.fromxml(tag, tilesets, map_height_pixels)
         resource.add_resource(layer.name, layer)
 
     return resource
@@ -1655,6 +1657,18 @@ class TmxObject(Rect):
 
     @classmethod
     def fromxml(cls, tag, tilesets, map_height):
+        """
+        :Parameters:
+            `tag` : xml tag
+                assumed an object tag
+            `tileset` : enumerable giving tilesets
+                only the tilesets used used by an object tile are needed, can be []
+            `map_height` : int
+                map height in pixels, needed to change coords from tmx to gl
+
+        :Returns: a TmxObject instance
+            attributes in the instance will store the info parsed from the class
+        """
         # tiled uses origin at topleft map corner, convert to gl bottomleft origin
         left = int(tag.attrib['x'])
         top = map_height - int(tag.attrib['y'])
@@ -1754,17 +1768,15 @@ class TmxObjectLayer(MapLayer):
         return '<TmxObjectLayer "%s" at 0x%x>' % (self.name, id(self))
 
     @classmethod
-    def fromxml(cls, tag, tilesets, tile_width, tile_height):
+    def fromxml(cls, tag, tilesets, map_height):
         color = tag.attrib.get('color')
         if color:
             color = p_html._parse_color(color)
         layer = cls(tag.attrib['name'], color, [],
                     float(tag.attrib.get('opacity', 1)),
                     int(tag.attrib.get('visible', 1)))
-        width = tile_width * int(tag.attrib['width'])
-        height = tile_height * int(tag.attrib['height'])
         for obj in tag.findall('object'):
-            layer.objects.append(TmxObject.fromxml(obj, tilesets, height))
+            layer.objects.append(TmxObject.fromxml(obj, tilesets, map_height))
         for c in tag.findall('property'):
             # store additional properties.
             name = c.attrib['name']
@@ -1780,7 +1792,7 @@ class TmxObjectLayer(MapLayer):
         pass
 
     def find_cells(self, **requirements):
-        """Find all cells with the given properties set.
+        """Find all objects with the given properties set.
 
         Called "find_cells" for compatibility with existing cocos tile API.
         """
@@ -1838,7 +1850,10 @@ class TmxObjectLayer(MapLayer):
 
     def _update_sprite_set(self):
         self._sprites = {}
-        color = tuple(self.color[:3] + [128])
+        color = self.color
+        if color is None:
+            color = [255] * 3
+        color = tuple(color[:3] + [128])
         color_image = pyglet.image.SolidColorImagePattern(color)
         for cell in self.get_visible_cells():
             cx, cy = key = cell.origin[:2]
