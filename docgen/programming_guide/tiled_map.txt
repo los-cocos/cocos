@@ -23,17 +23,17 @@ cocos.tiles supports two file formats:
 
 Both file formats are loaded with the same API call::
 
-	#This loads a TMX format map
-	cocos.tiles.load('filename.tmx')
+    #This loads a TMX format map
+    cocos.tiles.load('filename.tmx')
 
-	#This loads a cocos2d XML format map
-	cocos.tiles.load('filename.xml')
+    #This loads a cocos2d XML format map
+    cocos.tiles.load('filename.xml')
 
 Once the map is loaded the API for accessing the map information is the same
 regardless of the on-disk format.
 
 Fairly simple examples of using the cocos.tiles module is provided in
-test/test_tiles.py and test/test_tmx.py
+test/test_tiles.py, test/test_tmx.py, test_platformer.py
 
 A basic tile map editor is provided in tools/editor.py
 
@@ -335,3 +335,22 @@ A third approach is to create a cocos Action derivative which handles the
 player controls and collision. This is the approach taken in the
 test/test_platformer.py code.
 
+Suppport for TMX object layers
+------------------------------
+
+The TMX map format allows to specify 'object layers' also know as 'object groups'.
+
+An 'object layer' is a collection of entities freely placed in the world, that is, they dont need to align with a tile map grid.
+
+Objects can represent abstract 'ellipse', 'polygon', 'polyline', 'rect' or 'tile'
+
+When a TMX file is loaded each 'object layer' produces an instance of :class:`~cocos.tiles.TmxObjectLayer`, the member '.objects' holds a list of the objects in the group, each one translated as an instance of :class:`~cocos.tiles.TmxObject`.
+
+cocos does not intend to provide a real visualization of the TmxObjects, for debug purposes if you add TmxObjectLayer to the scene the axis aligned bounding box of each object will be draw.
+
+Usually after load your app code iterates over '.objects' and takes appropriate actions, like
+
+    - build a specific CocosNode for visualization(particle system, animated sprite,...) based in the TmxObject.usertype and other attributes, then add to the scene
+    - translate to some model class, like a zone trigger or a patrol path and store in your level info
+
+Other than the debug view, TmxObjectLayer provides some methods to select objects with certain properties or into a specified area.

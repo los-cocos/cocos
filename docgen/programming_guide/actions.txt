@@ -84,6 +84,90 @@ Basic actions are the ones that modifies basic attributes like:
 
 Examples can be seen in ``test/test_<action name>.py`` , like ``test/test_moveby.py`` for MoveBy action  
 
+Special Actions
+---------------
+
+**time related:** do nothing along a duration
+  - :class:`~cocos.actions.interval_actions.Delay`
+  - :class:`~cocos.actions.interval_actions.RandomDelay`
+
+**flow control:**  call a specified function. Used usually in conjuction with the sequence operator to express the semantic 'after action_1 call this function' 
+  - :class:`~cocos.actions.instant_actions.CallFunc`
+  - :class:`~cocos.actions.instant_actions.CallFuncS`
+
+**grid helpers:** helpers to do grid actions
+  - :class:`~cocos.actions.basegrid_actions.StopGrid`
+  - :class:`~cocos.actions.basegrid_actions.ReuseGrid`
+  
+**camera related**
+  - :class:`~cocos.actions.camera_actions.OrbitCamera`
+ 
+
+Composition and modification of actions
+---------------------------------------
+
+Cocos also provide some powerful operators to combine or modify actions, the
+more important being listed below. Runnable examples are named as ``test_<operator or modifier name>.py``
+
+**sequence operator:**   action_1 + action_2 -> action_result
+
+where action_result performs by first doing all that action_1 would do and
+then perform all that action_2 would do
+
+Example use::
+
+    move_2 = MoveTo((100, 100), 10) + MoveTo((200, 200), 15)
+
+When activated, move_2 will move the target first to (100, 100), it will
+arrive there 10 seconds after departure; then it will move to (200, 200),
+and will arrive there 10 seconds after having arrived to (100, 100)
+
+**spawn operator:**  action_1 | action_2 -> action_result
+
+where action_result performs by doing what would do action_1 in parallel with
+what would perform action_2
+
+Example use::
+
+    move_rotate = MoveTo((100,100), 10) | RotateBy(360, 5)
+
+When activated, move_rotate will move the target from the position at the
+time of activation to (100, 100); also in the first 5 seconds target will
+be rotated 360 degrees
+
+**loop operator:**   action_1 * n -> action_result
+
+Where n non negative integer, action_result would repeat n times in a
+row the same that action_1 would perform.
+
+Example use::
+
+    rotate_3 = RotateBy(360, 5) * 3
+
+When activated, rotate_3 will rotate target 3 times, spending 5 sec in each
+turn.
+
+**repeat forever:**  Repeat(action_1) -> action_result
+
+where action_result plays action_1, then repeats action_1 each time that action_1 terminates 
+
+Example use::
+
+    rotate_forever = Repeat(RotateBy(360, 3))
+
+When activated, the target will rotate forever, doing a revolution each 3 seconds
+  	
+**Time-flow modifiers**
+    - :class:`~cocos.actions.interval_actions.Accelerate`
+    - :class:`~cocos.actions.interval_actions.AccelDeccel`
+    - :class:`~cocos.actions.interval_actions.Speed`
+    - :class:`~cocos.actions.base_actions.Reverse`
+
+**Grid Amplitude modifiers**
+    - :class:`~cocos.actions.basegrid_actions.AccelAmplitude`
+    - :class:`~cocos.actions.basegrid_actions.DeccelAmplitude`
+    - :class:`~cocos.actions.basegrid_actions.AccelDeccelAmplitude`
+    
 
 Effects
 -------
@@ -185,51 +269,6 @@ Some examples::
     
 Working samples can be found as ``test/test_<action name>.py`` , like ``test/test_lens_3d.py``
 	
-Composition
------------
-
- - :func:`~cocos.actions.base_actions.sequence`
- - :func:`~cocos.actions.base_actions.spawn`
- - :func:`~cocos.actions.base_actions.Repeat`
- 
-Example::
-
-    XXX: finish this part
-
-    
-Modifiers
----------
-
- - Time modifiers
-    - :class:`~cocos.actions.interval_actions.Accelerate`
-    - :class:`~cocos.actions.interval_actions.AccelDeccel`
-    - :class:`~cocos.actions.interval_actions.Speed`
-    - :class:`~cocos.actions.base_actions.Reverse`
-
- - Grid Amplitude modifiers
-    - :class:`~cocos.actions.basegrid_actions.AccelAmplitude`
-    - :class:`~cocos.actions.basegrid_actions.DeccelAmplitude`
-    - :class:`~cocos.actions.basegrid_actions.AccelDeccelAmplitude`
-   
-Example::
-    
-    XXX: finish this part
-    
-
-Special Actions
----------------
-
-  - :class:`~cocos.actions.interval_actions.Delay`
-  - :class:`~cocos.actions.interval_actions.RandomDelay`
-  - :class:`~cocos.actions.instant_actions.CallFunc`
-  - :class:`~cocos.actions.instant_actions.CallFuncS`
-  - :class:`~cocos.actions.basegrid_actions.StopGrid`
-  - :class:`~cocos.actions.basegrid_actions.ReuseGrid`
-  - :class:`~cocos.actions.camera_actions.OrbitCamera`
- 
- Example::
- 
-    XXX: finish this part
     
 Creating your own actions
 -------------------------

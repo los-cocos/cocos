@@ -64,8 +64,8 @@ Time management
     - .resume_scheduler(self): Time will continue/start passing for this node and callbacks will be called, worker actions will be called
 
     
-Automated changes along the time
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Automated changes along the time (actions management)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     - .do(self, template_action, target=None): most of the time it is called with target=None, which result in target being self. The action will perform a potentially gradual change in target. Returns the worker action, which is the object doing the changes. You must save a reference to the worker if you plan to call later to .action_remove
     - .action_remove(self, worker_action): the worker action will terminate
