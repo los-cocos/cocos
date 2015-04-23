@@ -51,7 +51,7 @@ def gen_hex_map(meta, h):
             k = j
             if not i % 2:  k += 1
             c.append(HexCell(i, j, None, h, dict(info), Tile('dbg', {}, None)))
-    return HexMap('debug', None, h, r)
+    return HexMap('debug', h, r)
 
 def gen_rect_map(meta, w, h):
     r = []
