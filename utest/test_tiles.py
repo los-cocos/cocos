@@ -47,11 +47,11 @@ def gen_hex_map(meta, h):
         r.append(c)
         for j, info in enumerate(m):
             if cell is None:
-                cell = HexCell(0, 0, h, None, None)
+                cell = HexCell(0, 0, None, h, None, None)
             k = j
             if not i % 2:  k += 1
-            c.append(HexCell(i, j, h, dict(info), Tile('dbg', {}, None)))
-    return HexMap('debug', h, r)
+            c.append(HexCell(i, j, None, h, dict(info), Tile('dbg', {}, None)))
+    return HexMap('debug', None, h, r)
 
 def gen_rect_map(meta, w, h):
     r = []
