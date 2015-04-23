@@ -1,6 +1,8 @@
-New in cocos 0.6.2
+New in cocos 0.6.3
 ==================
 
+  - support to load (some) .tmx maps with hexagonal tiles
+  - compatibility break: HexMapLayer and HexCell changed __init__ signature
   - support collisions between CircleShape and AARectShape in collision_model, 
     thanks Daniel Gillet
   - support to read .tmx (Tiled Editor) object layers and objects

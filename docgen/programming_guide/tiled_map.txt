@@ -335,7 +335,7 @@ A third approach is to create a cocos Action derivative which handles the
 player controls and collision. This is the approach taken in the
 test/test_platformer.py code.
 
-Suppport for TMX object layers
+Support for TMX object layers
 ------------------------------
 
 The TMX map format allows to specify 'object layers' also know as 'object groups'.
@@ -354,3 +354,14 @@ Usually after load your app code iterates over '.objects' and takes appropriate 
     - translate to some model class, like a zone trigger or a patrol path and store in your level info
 
 Other than the debug view, TmxObjectLayer provides some methods to select objects with certain properties or into a specified area.
+
+Support for .TMX maps with hexagonal tiles
+------------------------------------------
+
+To have the same visualization in cocos than in Tiled Editor, you should set in Tiled the following map properties
+
+    - 'orientation': 'hexagonal'
+    - 'staggeraxis': 'x' (top and bottom hexagon sides parallel to the x axis)
+    - 'staggerindex': 'even' (lower columns are the even ones)
+    
+Draw order is not guaranteed by cocos, so tilesets which expands outside the hexagon will not look good.

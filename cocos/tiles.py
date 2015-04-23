@@ -277,8 +277,29 @@ def load_tmx(filename):
     tile_width = int(map.attrib['tilewidth'])
     tile_height = int(map.attrib['tileheight'])
 
-    map_height_pixels = height * tile_height
-    
+    tiling_style = map.attrib['orientation']
+
+    if tiling_style == "hexagonal":
+        hex_sidelenght = int(map.attrib["hexsidelength"])
+        # 'x' meant hexagons with top and bottom sides parallel to x axis,
+        # 'y' meant hexagons with left and right sides paralel to y axis        
+        s = map.attrib["staggeraxis"]
+        hex_orientation = {'x':'pointy_left', 'y':'pointy_up'}
+        # 'even' or 'odd', currently cocos only displays correctly 'even'       
+        lowest_columns = map.attrib["staggerindex"]=="even"
+        cell_cls = HexCell  
+        layer_cls = HexMapLayer
+        map_height_pixels = height * tile_height + tile_height // 2
+
+    elif tiling_style == "orthogonal":
+        cell_cls = RectCell  
+        layer_cls = RectMapLayer
+        map_height_pixels = height * tile_height
+
+    else:
+        raise ValueError("Unsuported tiling style, must be 'orthogonal' or 'hexagonal'")
+
+        
     # load all the tilesets
     tilesets = []
     for tag in map.findall('tileset'):
@@ -349,11 +370,11 @@ def load_tmx(filename):
                         break
             i = n % width
             j = height - (n//width + 1)
-            cells[i][j] = RectCell(i, j, tile_width, tile_height, {}, tile)
+            cells[i][j] = cell_cls(i, j, tile_width, tile_height, {}, tile)
 
         id = layer.attrib['name']
 
-        m = RectMapLayer(id, tile_width, tile_height, cells, None, {})
+        m = layer_cls(id, tile_width, tile_height, cells, None, {})
         m.visible = int(layer.attrib.get('visible', 1))
 
         resource.add_resource(id, m)
@@ -651,10 +672,10 @@ def hexmap_factory(resource, tag):
             else:
                 tile = None
             properties = _handle_properties(cell)
-            c.append(HexCell(i, j, height, properties, tile))
+            c.append(HexCell(i, j, None, height, properties, tile))
 
     properties = _handle_properties(tag)
-    m = HexMapLayer(id, height, cells, origin, properties)
+    m = HexMapLayer(id, None, height, cells, origin, properties)
     resource.add_resource(id, m)
 
     return m
@@ -1387,7 +1408,8 @@ class HexMapLayer(HexMap, MapLayer):
 
     has cells = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
     """
-    def __init__(self, id, th, cells, origin=None, properties=None):
+    # param 'ignored' only to match signature of RectmapLayer; not used
+    def __init__(self, id, ignored, th, cells, origin=None, properties=None):
         HexMap.__init__(self, id, th, cells, origin, properties)
         MapLayer.__init__(self, properties)
 
@@ -1429,7 +1451,8 @@ class HexCell(Cell):
     Note that all pixel attributes are *not* adjusted for screen,
     view or layer transformations.
     """
-    def __init__(self, i, j, height, properties, tile):
+    # param 'ignored' only to match signature of RectCell; not used
+    def __init__(self, i, j, ignored, height, properties, tile):
         width = hex_width(height)
         Cell.__init__(self, i, j, width, height, properties, tile)
 
