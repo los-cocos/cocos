@@ -1,5 +1,6 @@
 v0.6.3 - ?
 
+  - support for 'spacing' in .tmx's tilesets
   - support to load (some) .tmx maps with hexagonal tiles
   - support collisions between CircleShape and AARectShape in collision_model, 
     #220, thanks Daniel Gillet

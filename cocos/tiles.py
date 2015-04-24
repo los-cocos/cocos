@@ -312,13 +312,15 @@ def load_tmx(filename):
             firstgid = int(tag.attrib['firstgid'])
 
         name = tag.attrib['name']
-
+        
+        spacing = int(tag.attrib.get('spacing', 0))
         for c in tag.getchildren():
             if c.tag == "image":
                 # create a tileset from the image atlas
                 path = resource.find_file(c.attrib['source'])
                 tileset = TileSet.from_atlas(name, firstgid, path, tile_width,
-                                             tile_height)
+                                             tile_height, row_padding=spacing,
+                                             column_padding=spacing)
                 # TODO consider adding the individual tiles to the resource?
                 tilesets.append(tileset)
                 resource.add_resource(name, tileset)
@@ -588,11 +590,11 @@ class TileSet(dict):
         return self[id]
 
     @classmethod
-    def from_atlas(cls, name, firstgid, file, tile_width, tile_height):
+    def from_atlas(cls, name, firstgid, file, tile_width, tile_height, row_padding=0, column_padding=0):
         image = pyglet.image.load(file)
         rows = image.height // tile_height
         columns = image.width // tile_width
-        image_grid = pyglet.image.ImageGrid(image, rows, columns)
+        image_grid = pyglet.image.ImageGrid(image, rows, columns, row_padding=row_padding, column_padding=column_padding)
         atlas = pyglet.image.TextureGrid(image_grid)
         id = firstgid
         ts = cls(name, {})
