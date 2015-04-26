@@ -60,8 +60,8 @@ or::
 
 should work, you will miss the docs and code samples. Its is therefore recommended to
 
-	+ install six and pyglet
-    + download cocos2d-0.6.3.zip from https://pypi.python.org/pypi/cocos2d/
+    + install six and pyglet
+    + download cocos2d-0.6.3.zip from ``https://pypi.python.org/pypi/cocos2d``
     + decompress to a convenient location, the top dir will be cocos2d-0.6.3
     + the html docs will be in cocos2d-0.6.3/doc/html
     + useful code samples will be in cocos2d-0.6.3/test, cocos2d-0.6.3/samples, cocos2d-0.6.3/utest

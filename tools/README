@@ -1,27 +1,10 @@
-Using gendoc.sh
-----------------
- 1. Edit gendoc.sh and change PYGLETBASE variable (needed for the
-modified epydoc)
- 2. Generate API ref first::
-
-	$ tools/gendoc.sh html-api
-
- 3. Generate prog guide second::
-
-	$ tools/gendoc.sh html-guide
-
- 4. The documentation will be @ doc/html/api and doc/html/programming_guide
-
-
-It is important to run step2 before step3 since it will generate the index
-of the API ref, so you can link prog guide to the api ref.
 
 HOWTO modify the documentation
 ------------------------------
 
  1. To modify the API ref, just modify the docstrings in the code
- 2. To modify the Programing guide, modify the files located in doc/programming_guide
-
+ 2. To modify the Programing guide, modify the files located in docgen/programming_guide
+ 3. See some hints in the documentation, in the section Dev
 
 Bezier path builder
 -------------------
@@ -34,9 +17,4 @@ Run:
  press 'n' to create a new path
  press 's' to save your changes to the foo.py file
 
-
-
-Documentation generation
-------------------------
-
-Tools were copied from pyglet ( pyglet/tools/* )
+...
