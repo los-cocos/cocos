@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="hexagonal" renderorder="right-down" width="20" height="15" tilewidth="64" tileheight="55" hexsidelength="31" staggeraxis="x" staggerindex="even" nextobjectid="1">
+ <tileset firstgid="1" name="waterHex" tilewidth="64" tileheight="55">
+  <image source="waterHex.png" width="64" height="55"/>
+ </tileset>
+ <layer name="tile_layer_1" width="20" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYBzFo3gUj+IhgAHGRgEt
+  </data>
+ </layer>
+</map>

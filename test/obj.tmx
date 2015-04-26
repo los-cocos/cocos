@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="9" height="6" tilewidth="128" tileheight="128" nextobjectid="19">
+ <tileset firstgid="1" name="road" tilewidth="128" tileheight="128">
+  <image source="road-tiles.png" width="640" height="512"/>
+ </tileset>
+ <layer name="tiles_layer_1" width="9" height="6">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAesAMxBxKNDfAAMS8STUtzmNAwMgAARKgAqQ==
+  </data>
+ </layer>
+ <objectgroup name="test_object_layer">
+  <object id="15" name="rect_1" x="353.717" y="197.333" width="64.05" height="128"/>
+  <object id="16" name="ellipse" type="usertype_ellipse" x="605.333" y="199" width="74.6667" height="114.667">
+   <ellipse/>
+  </object>
+  <object id="17" name="polygon_1" type="usertype_adad" x="341.333" y="529">
+   <polygon points="0,0 25,50 76,31 96,-33 58,-64 -2,-69"/>
+  </object>
+  <object id="18" x="576.333" y="468">
+   <polyline points="0,0 20,88 100,88 132,20"/>
+  </object>
+ </objectgroup>
+</map>
