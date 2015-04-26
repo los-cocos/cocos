@@ -1582,7 +1582,7 @@ def parse_tmx_points(tag, obj_x, obj_y):
     pa = []
     for pair in points_parts:
         coords = pair.split(',')
-        pa.append((int(coords[0]) + obj_x, -int(coords[1]) + obj_y))
+        pa.append((float(coords[0]) + obj_x, -float(coords[1]) + obj_y))
 
     left = min([x for x, y in pa])
     bottom = min([y for x, y in pa])
@@ -1695,8 +1695,8 @@ class TmxObject(Rect):
             attributes in the instance will store the info parsed from the class
         """
         # tiled uses origin at topleft map corner, convert to gl bottomleft origin
-        left = int(tag.attrib['x'])
-        top = map_height - int(tag.attrib['y'])
+        left = float(tag.attrib['x'])
+        top = map_height - float(tag.attrib['y'])
         bottom = None
         points = None
 
@@ -1713,8 +1713,8 @@ class TmxObject(Rect):
         else:
             gid = None
             tile = None
-            w = int(tag.attrib.get('width', 0))
-            h = int(tag.attrib.get('height', 0))
+            w = float(tag.attrib.get('width', 0))
+            h = float(tag.attrib.get('height', 0))
 
             subtags = {}
             for c in tag.getchildren():
@@ -1885,10 +1885,10 @@ class TmxObjectLayer(MapLayer):
             if cell.tile:
                 image = cell.tile.image
             else:
-                image = color_image.create_image(cell.width, cell.height)
+                image = color_image.create_image(int(cell.width), int(cell.height))
 
             if key not in self._sprites:
-                self._sprites[key] = pyglet.sprite.Sprite(image, x=cx, y=cy,
+                self._sprites[key] = pyglet.sprite.Sprite(image, x=int(cx), y=int(cy),
                                                           batch=self.batch)
 
 
