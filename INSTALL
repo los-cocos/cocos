@@ -11,7 +11,7 @@ most of functionality
 ______________________
 
     + six https://pypi.python.org/pypi/six/
-    + pyglet http://code.google.com/p/pyglet/
+    + pyglet https://bitbucket.org/pyglet/pyglet
 
 particles support
 _________________
@@ -32,30 +32,23 @@ ____________________
 
 
 What explicit dependencies are declared in the setup.py ?
-six, pyglet from hg repository
-        
+six and pyglet
+
 
 Compatibility
 ^^^^^^^^^^^^^
 
-Compatibility notes at the time of writing, March 2014
+Compatibility notes at the time of writing, April 2015
 
     + python : cocos needs python 2.6, 2.7 or 3.3+
       The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3  
 
-    + pyglet : pyglet 1.2 or better
-
-          + In pypi the last pyglet is 1.1.4, from 2009
-          + In pyglet's googlecode downloads the last is an old 1.2alpha1 (2012)
-          + It is recomended to use pyglet from repo at a revision near the tip.
-          + For reference, this cocos release was tested with revision c7f948a848cb
-            of pyglet, dated 2014 03 20
-          
+    + pyglet : pyglet 1.2 or better          
 
 Installing
 ^^^^^^^^^^
 
-Have a modern setuptools or pip installed, also you will need Mercurial ( http://mercurial.selenic.com/ ) to install pyglet.
+Have a modern setuptools or pip installed.
 
 While::
 
@@ -63,17 +56,18 @@ While::
 
 or::
 
-    pip install cocos2d --process-dependency-links
+    pip install cocos2d
 
 should work, you will miss the docs and code samples. Its is therefore recommended to
 
-    + download cocos2d-0.6.0.zip from https://pypi.python.org/pypi/cocos2d/
-    + decompress to a convenient location, the top dir will be cocos2d-0.6.0
-    + the html docs will be in cocos2d-0.6.0/doc/html
-    + useful code samples will be in cocos2d-0.6.0/test, cocos2d-0.6.0/samples, cocos2d-0.6.0/utest
+	+ install six and pyglet
+    + download cocos2d-0.6.3.zip from https://pypi.python.org/pypi/cocos2d/
+    + decompress to a convenient location, the top dir will be cocos2d-0.6.3
+    + the html docs will be in cocos2d-0.6.3/doc/html
+    + useful code samples will be in cocos2d-0.6.3/test, cocos2d-0.6.3/samples, cocos2d-0.6.3/utest
     + install by::
 
-        cd cocos2d-0.6.0
+        cd cocos2d-0.6.3
         setup.py install
 
       or alternatively by pointing that directory from a .pth or PYTHONPATH

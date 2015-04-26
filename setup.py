@@ -19,8 +19,8 @@ As a release builder:
 
 __author__ = "cocos2d team"
 __author_email__ = "lucio.torre@gmail.com"
-__version__ = "0.6.2"
-__date__ = "2015 02 28"
+__version__ = "0.6.3"
+__date__ = "2015 04 26"
 
 try:
     import setuptools

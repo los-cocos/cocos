@@ -20,58 +20,56 @@ Finishing:
   update version and date in
       cocos/__init__.py
       setup.py
-	  docgen/conf.py
-
-  additionally, update version in
+	  documentation gets version from docgen/conf.py, which gets from cocos/__init__.py
       CHANGELOG
+	  INSTALL
 
 - new big capabilities should be updated in
     cocos/__init__.py docstring
     README    
     docgen/programming_guide/introduction.txt
     
+- initial test 'build sdist' and 'install' with setup.py;
+
+	- don't bother with docs generation at this stage
+	- sometimes the build was broken by upgrades in setuptools, so check with latest in pypi 
+    - adjust dependencies if needed, remember to mention in INSTALL
+	- adjust MANIFEST.in if needed (usually when something is missed in the generated .zip)
+	- test installation with pip, fix if necessary
+
 - Update text files in the top trunk directory
-  Keep in mind that
-      - README it is also used as reST for the pypi page
-        (see 1 in building_release_notes.txt)
-
-      - INSTALL is also used as docs/programming_guide/installation.txt
-        (manual copy atm), so use reST- epydoc compatible markup
-
 	- CHANGELOG
 	- LICENSE
 	- INSTALL
 	- README		
 
-- Others updates to setup.py
+Keep in mind that
+  - README it is also used as reST for the pypi page
+	(see 1 in building_release_notes.txt), and also is rendered
+	in the github project landing page
 
-    - dependencies if needed.
+  - INSTALL is also used as docgen/programming_guide/installation.txt
+	(manual copy atm), so use reST- sphinx compatible markup
+	Keep the markup at a minimun, so the plain text is readable
 
-- adjust MANIFEST.in if needed
+- copy INSTALL to docgen/programming_guide/installation.txt
 
 - build the docs (see 2 in building_release_notes.txt)
+  currently the docs build produces 7 warnings, keep fixing while your number is higher. 
 
-- build the package
-  *.py line endings to unix if building in windows ?
+- build the final package that includes the docs
   (see tools/build_release_notes.txt for details)
-
-- check log for errors
 
 - verify that non-code resources are included (currently docs\html, cocos\resources)
 
-- install the new package, see 4 in building_release_notes.txt
-
-- Test that the package built with setup.py works
-
-- upload library and docs archives to googlecode , mark as featured; if this is a final release
-unmark as featured older packages. Download and binary compare just in case.
+- verify install works, see 4 in building_release_notes.txt
 
 - Update cocos2d.org site and the backup( see 5 in building_release_notes.txt)
 
 - upload to pypi ( see 6 in building_release_notes.txt )
   For Release Candidates, alphas, betas we don't upload to pypi (automatic installers can't differentiate between stable or unstable releases, so by example 'easy_install foo' can silently install an unstable release if it where uploaded to pypi) 
 
-  check how the pypi page looks, download the zip / tar and binary compare with the originals.
+- check how the pypi page looks, download the zip / tar and binary compare with the originals.
 
 - tag the release in the repo (see 7 in building_release_notes.txt)
 
