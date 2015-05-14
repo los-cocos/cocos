@@ -592,9 +592,11 @@ class TileSet(dict):
     @classmethod
     def from_atlas(cls, name, firstgid, file, tile_width, tile_height, row_padding=0, column_padding=0):
         image = pyglet.image.load(file)
-        rows = image.height // tile_height
-        columns = image.width // tile_width
-        image_grid = pyglet.image.ImageGrid(image, rows, columns, row_padding=row_padding, column_padding=column_padding)
+        rows = (image.height + row_padding) // (tile_height + row_padding)
+        columns = (image.width + column_padding) // (tile_width + column_padding)
+        image_grid = pyglet.image.ImageGrid(image, rows, columns,
+                                            row_padding=row_padding,
+                                            column_padding=column_padding)
         atlas = pyglet.image.TextureGrid(image_grid)
         id = firstgid
         ts = cls(name, {})
