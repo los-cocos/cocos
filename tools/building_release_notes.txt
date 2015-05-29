@@ -164,7 +164,7 @@ After a release, please update this document if any change was needed.
 	https://wiki.python.org/moin/TestPyPI 
 
 	
-   Theres a test site parallel pypi, https://testpypi.python.org/pypi , which can
+   Theres a test site parallel to pypi, https://testpypi.python.org/pypi , which can
    be handy to test the real display of package page and other pypi related things, see
    https://wiki.python.org/moin/TestPyPI
    
@@ -183,3 +183,6 @@ After a release, please update this document if any change was needed.
 		git push --tags
 
 	( remember to change the version in the example if doing copy & paste )
+
+    If a commit after the release was done, then add to the first line the hash of the
+	commit used for the release
