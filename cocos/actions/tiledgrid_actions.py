@@ -423,7 +423,7 @@ class JumpTiles3D(TiledGrid3DAction):
     def update(self, t):
 
         sinz = (math.sin(t*math.pi*self.jumps*2 + 0*.01) * self.amplitude * self.amplitude_rate)
-        sinz = (math.sin(math.pi + t*math.pi*self.jumps*2 + 0*.01) * self.amplitude * self.amplitude_rate)
+        sinz2 = (math.sin(math.pi + t*math.pi*self.jumps*2 + 0*.01) * self.amplitude * self.amplitude_rate)
 
         for i in range(0, self.grid.x):
             for j in range(0, self.grid.y):
