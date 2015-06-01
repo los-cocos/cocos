@@ -73,6 +73,9 @@ class TilesPropertyWithoutValue(Exception):
     pass
 
 
+class TmxUnsupportedVariant(Exception):
+    pass
+
 class Resource(object):
     """Load some tile mapping resources from an XML file.
     """
@@ -346,18 +349,32 @@ def load_tmx(filename):
         if data is None:
             raise ValueError('layer %s does not contain <data>' % layer.name)
 
+        encoding = data.attrib.get('encoding')
         compression = data.attrib.get('compression')
-        data = data.text.strip()
-        data = decode_base64(data)
-        if compression is not None:
-            if compression == 'zlib':
-                data = decompress_zlib(data)
-            elif compression == 'gzip':
-                data = decompress_gzip(data)
+        if encoding is None:
+            # tiles data as xml
+            data = [int(tile.attrib.get('gid')) for tile in data.findall('tile')]
+        else:
+            data = data.text.strip()
+            if encoding == 'csv':
+                data.replace('\n', '')
+                data = [int(s) for s in data.split(',')]
+            elif encoding == 'base64':
+                data = decode_base64(data)
+                if compression == 'zlib':
+                    data = decompress_zlib(data)
+                elif compression == 'gzip':
+                    data = decompress_gzip(data)
+                elif compression is None:
+                    pass
+                else:
+                    raise ResourceError('Unknown compression method: %r' % compression)
+                data = struct.unpack(str('<%di' % (len(data)//4)), data)
             else:
-                raise ResourceError('Unknown compression method: %r' % compression)
+                raise TmxUnsupportedVariant("Unsupported tiles layer format " +
+                                            "use 'csv', 'xml' or one of " +
+                                            "the 'base64'")
 
-        data = struct.unpack(str('<%di' % (len(data)//4)), data)
         assert len(data) == width * height
 
         cells = [[None] * height for x in range(width)]

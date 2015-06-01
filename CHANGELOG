@@ -1,6 +1,7 @@
 v? - ?
 
-  - fix JumTiles3D, typo introduced in pep8 refactor bf6dce6d, thanks dossjh
+  - support the variants 'csv', 'xml', 'base64(uncompressed)' for .tmx tiles layer data, #243
+  - fix JumpTiles3D, typo introduced in pep8 refactor bf6dce6d, thanks dossjh
   - fix tmx tileset num rows - columns with nonzero separation, ( adc7054c7 )
 
 v0.6.3 - April 26, 2015
