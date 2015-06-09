@@ -1750,7 +1750,11 @@ class TmxObject(Rect):
                 tmxtype = 'rect'
 
         if bottom is None:
-            bottom = top - h
+            if tmxtype == 'tile':
+                # special case, see https://github.com/bjorn/tiled/issues/91
+                bottom = top
+            else:
+                bottom = top - h
 
         o = cls(tmxtype, tag.attrib.get('type'), left, bottom, w, h,
                 tag.attrib.get('name'), gid, tile, int(tag.attrib.get('visible', 1)),

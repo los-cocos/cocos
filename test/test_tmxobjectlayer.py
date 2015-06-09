@@ -25,7 +25,7 @@ The tiles layer is rendered as black region with four green dots.
 The debug view of the TmxObjectLayer is draw over that, with four objects
 of type 'rect', 'ellipse', 'polygon', 'polyline'
 
-The debug view only draws the Axis Aligned Bounding Box of each objects.
+The debug view only draws the Axis Aligned Bounding Box of each object.
 
 You should see four green points covered by translucid white-ish rectangles,
 roughly centered at each point. 
