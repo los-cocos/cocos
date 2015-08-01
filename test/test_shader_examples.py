@@ -58,11 +58,13 @@ class TestLayer(cocos.layer.Layer):
         y = y//2
         d = 100
 
-        glEnable(GL_TEXTURE_2D)
         if self.shader_program:
             # bind the shader program and initialize his params
             self.shader_program.set_state(self)
         else:
+            # Do not use glEnable(GL_TEXTURE_2D) when using shaders.
+            # See https://www.opengl.org/wiki/GLSL_:_common_mistakes#Enable_Or_Not_To_Enable
+            glEnable(GL_TEXTURE_2D)
             # if this were the only texture used in the scene it would be better
             # to bind only once, outside draw, by example in load_texture()
             glBindTexture(GL_TEXTURE_2D, self.texture.id)
@@ -106,8 +108,8 @@ class TestLayer(cocos.layer.Layer):
         else:
             #unbind texture
             glBindTexture(GL_TEXTURE_2D, 0)
-
-        glDisable(GL_TEXTURE_2D);
+            glDisable(GL_TEXTURE_2D)
+        
 
     def update(self, dt):
         multiplier = 0.5 + 0.5 * ((time.time() - self.start_time) % 2.0 / 2.0)
