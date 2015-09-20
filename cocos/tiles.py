@@ -1121,27 +1121,35 @@ class RectMapCollider(object):
 
         Returns the (possibly modified) (dx, dy)
         """
+        # skip cell if it does not intersect the *current* new
+        if (new.left >= cell.right or new.right <= cell.left or
+            new.bottom >= cell.top or new.top <= cell.bottom):
+            return dx, dy
         g = cell.get
         if g('top') and last.bottom >= cell.top and new.bottom < cell.top:
             dy = last.y - new.y
             new.bottom = cell.top
             if dy:
                 self.collide_bottom(dy)
+            return dx, dy
         if g('left') and last.right <= cell.left and new.right > cell.left:
             dx = last.x - new.x
             new.right = cell.left
             if dx:
                 self.collide_right(dx)
+            return dx, dy
         if g('right') and last.left >= cell.right and new.left < cell.right:
             dx = last.x - new.x
             new.left = cell.right
             if dx:
                 self.collide_left(dx)
+            return dx, dy
         if g('bottom') and last.top <= cell.bottom and new.top > cell.bottom:
             dy = last.y - new.y
             new.top = cell.bottom
             if dy:
                 self.collide_top(dy)
+            return dx, dy
         return dx, dy
 
 
