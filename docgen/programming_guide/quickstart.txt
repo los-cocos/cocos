@@ -30,26 +30,28 @@ Subclass a `Layer`  and define the logic of you program here::
 Always call ``super`` in the constructor::
 
     def __init__(self):
-        super( HelloWorld, self ).__init__()
+        super(HelloWorld, self).__init__()
 
 To display the text, we'll create a `Label`.  Keyword arguments are used
 to set the font, position and alignment of the label::
 
-    label = cocos.text.Label('Hello, world',
-                              font_name='Times New Roman',
-                              font_size=32,
-                              anchor_x='center', anchor_y='center')
+    label = cocos.text.Label(
+        'Hello, world',
+        font_name='Times New Roman',
+        font_size=32,
+        anchor_x='center', anchor_y='center'
+    )
 
 The label position will be the center of the screen::
 
-    label.position = 320,240
+    label.position = 320, 240
 
 Since `Label` is a subclass of `CocosNode` it can be added
 as a child. All `CocosNode` objects know how to render itself, perform actions
 and transformations.
 To add it as a layer's child, use the `CocosNode.add` method::
 
-        self.add( label )
+        self.add(label)
 
 After defining the ``HelloWorld`` class, we need to initialize and create a window.
 To do this, we initialize the `Director`::
@@ -58,7 +60,7 @@ To do this, we initialize the `Director`::
 
 Then we create a ``HelloWorld`` instance::
 
-    hello_layer = HelloWorld ()
+    hello_layer = HelloWorld()
 
 Then we create an `Scene` that contains the ``HelloWorld`` layer as a child::
 
@@ -66,11 +68,11 @@ Then we create an `Scene` that contains the ``HelloWorld`` layer as a child::
 
 And finally we run the scene::
 
-    cocos.director.director.run (main_scene)
+    cocos.director.director.run(main_scene)
 
 A shorter way to write the last 3 statements is this::
 
-    #cocos.director.director.run( cocos.scene.Scene( HelloWorld() ) )
+    #cocos.director.director.run(cocos.scene.Scene(HelloWorld()))
 
 
 Hello Actions
@@ -295,10 +297,10 @@ And then add event handlers to update the text when the mouse is moved, and chan
 The only thing a bit unusual here is the call to `director.get_virtual_coordinates` (x, y). As explained in the example before, cocos has two coordinates systems, a physical one and a virtual one. The mouse event handlers receive their arguments from pyglet in physical coordinates. If you want to map that to virtual coordinates, you need to use the director.get_virtual_coordinates method, which does the correct mapping. If you put instead ``self.posx``, ``self.posy = x,y`` in the on_mouse_press handler above, you will see that the app seems to work, but if you resize the window, the clicks will move the text to the wrong place.
 
 For completneddes, they are other mouse events that can be of interest:
-	on_mouse_release : called when a button is released
-	on_mouse_scroll : called when the mouse wheel moved
-	on_mouse_leave : called when the mouse cursor goes out of the window
-	on_mouse_enter : called when the mouse cursor enters the window
+    on_mouse_release : called when a button is released
+    on_mouse_scroll : called when the mouse wheel moved
+    on_mouse_leave : called when the mouse cursor goes out of the window
+    on_mouse_enter : called when the mouse cursor enters the window
 
 The demo does not have much more code, just creating a scene with these two layers and running it::
 
