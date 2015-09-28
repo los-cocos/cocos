@@ -10,6 +10,7 @@ output/
 build/
 .idea/
 __pycache__/
+.cache/
 *.egg-info/
 
 # coverage.py
