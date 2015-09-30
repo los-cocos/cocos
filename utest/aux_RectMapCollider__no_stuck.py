@@ -125,10 +125,10 @@ mapstrings = {
 # with potential displacement greater on x than y and the reverse case
 dxdy_by_push_style = {
     # name: [(dx, dy), (other_dx, other_dy)]
-    'up_left': [(-2, 3), (-3, 2)],
-    'up_right': [(2, 3), (3, 2)],
-    'down_left': [(-2, -3), (-3, -2)],
-    'down_right': [(2, -3), (3, -2)]
+    'up_left': [(-2, 1), (-1, 2)],
+    'up_right': [(2, 1), (1, 2)],
+    'down_left': [(-2, -1), (-1, -2)],
+    'down_right': [(2, -1), (1, -2)]
     }
 
 combo_sizes = [
@@ -139,7 +139,7 @@ combo_sizes = [
     ]
 
 def generate_maps(tile_filled):
-    global mapstrings
+    global mapstrings    
     maps_cache = {}
     cell_sizes = ( (w, h) for w, h, _, _ in combo_sizes) 
     for w, h in cell_sizes:
@@ -227,8 +227,12 @@ def first_expansion(maps_cache, generic_cases):
         for case in generic_cases:
             generic_id = str(case)
             mapname, push_style, cell_start, delta_start = case
-            tilemap = maps_cache[(mapname, sizes[0], sizes[1])]
+            cell_width = sizes[0]
+            cell_height =sizes[1]
+            tilemap = maps_cache[(mapname, cell_width, cell_height)]
             for dx, dy in dxdy_by_push_style[push_style]:
+                # sanity check, else tunneling across wall, and will show as errors
+                assert abs(dx) < cell_width and abs(dy) < cell_height
                 base_rect_start, expect_dxdy = calc_base_rect_and_expect_dxdy(
                                         dx, dy, cell_start, delta_start, sizes)
                 yield (generic_id, tilemap, base_rect_start, expect_dxdy,
