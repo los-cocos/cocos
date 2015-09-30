@@ -1142,15 +1142,15 @@ class RectMapCollider(object):
             dx_correction = cell.left - new.right
         elif g('right') and last.left >= cell.right and new.left < cell.right:
             dx_correction = cell.right - new.left
-        
+
         if dx_correction != 0.0 and dy_correction != 0.0:
             # Correction on both axis
             if hasattr(cell, 'collide_later'):
                 if abs(dx_correction) < abs(dy_correction):
-                    # do correction only on X (below)
+                    # do correction only on x (below)
                     dy_correction = 0.0
                 elif abs(dy_correction) < abs(dx_correction):
-                     # do correction only on Y (below)
+                     # do correction only on y (below)
                     dx_correction = 0.0
                 else:
                     # let both corrections happen below
@@ -1176,6 +1176,36 @@ class RectMapCollider(object):
             else:
                 self.collide_top(dy)
         return dx, dy
+
+    def _collision_resolution_x(self, new, dx, dx_correction):
+        """Resolve the collision on the X axis.
+
+        Adjust new rect left position and dx velocity by dx_correction.
+        Calls the relevant method collide_left or collide_right.
+        Returns the modified dx.
+        """
+        new.left += dx_correction
+        dx += dx_correction
+        if dx_correction > 0.:
+            self.collide_left(dx)
+        else:
+            self.collide_right(dx)
+        return dx
+
+    def _collision_resolution_y(self, new, dy, dy_correction):
+        """Resolve the collision on the Y axis.
+
+        Adjust new rect top position and dy velocity by dy_correction.
+        Calls the relevant method collide_top or collide_bottom.
+        Returns the modified dy.
+        """
+        new.top += dy_correction
+        dy += dy_correction
+        if dy_correction > 0.:
+            self.collide_bottom(dy)
+        else:
+            self.collide_top(dy)
+        return dy
 
 
 class Cell(object):
@@ -1949,23 +1979,37 @@ class TmxObjectLayer(MapLayer):
 
 
 class TmxObjectMapCollider(RectMapCollider):
-    def collide_map(self, map, last, new, dy, dx):
-        """Collide a rect with the given TmxObjectLayer map.
+    pass
 
-        Apart from "map" the arguments are as per `do_collision`.
+    # QUESTION:
+    # Should we keep this code which is exactly the same as in RectMapCollider?
 
-        Mutates the new rect to conform with the map.
+    # def collide_map(self, map, last, new, dy, dx):
+    #     """Collide a rect with the given TmxObjectLayer map.
 
-        Returns the (possibly modified) (dx, dy)
-        """
-        self.resting = False
-        tested = set()
-        for cell in map.get_in_region(*(new.bottomleft + new.topright)):
-            if cell is None or cell.tile is None:
-                continue
-            # don't re-test
-            if cell in tested:
-                continue
-            tested.add(cell)
-            dx, dy = self.do_collision(cell, last, new, dy, dx)
-        return dx, dy
+    #     Apart from "map" the arguments are as per `do_collision`.
+
+    #     Mutates the new rect to conform with the map.
+
+    #     Returns the (possibly modified) (dx, dy)
+    #     """
+    #     self.resting = False
+    #     tested = set()
+    #     cells = map.get_in_region(*(new.bottomleft + new.topright))
+    #     for cell in cells:
+    #         if cell is None or cell.tile is None or not cell.intersects(new):
+    #             continue
+    #         # don't re-test
+    #         if cell in tested:
+    #             continue
+    #         tested.add(cell)
+    #         dx, dy = self.do_collision(cell, last, new, dy, dx)
+    #     cells_collide_later = [cell for cell in tested 
+    #                         if getattr(cell, 'collide_later', False) is True]
+    #     for cell in cells_collide_later:
+    #         if not cell.intersects(new):
+    #             continue
+    #         dx, dy = self.do_collision(cell, last, new, dy, dx)
+    #     for cell in cells_collide_later:
+    #         del cell.collide_later
+    #     return dx, dy
