@@ -1147,10 +1147,10 @@ class RectMapCollider(object):
             # Correction on both axis
             if hasattr(cell, 'collide_later'):
                 if abs(dx_correction) < abs(dy_correction):
-                    # do correction only on x (below)
+                    # do correction only on X (below)
                     dy_correction = 0.0
                 elif abs(dy_correction) < abs(dx_correction):
-                     # do correction only on y (below)
+                     # do correction only on Y (below)
                     dx_correction = 0.0
                 else:
                     # let both corrections happen below
@@ -1176,36 +1176,6 @@ class RectMapCollider(object):
             else:
                 self.collide_top(dy)
         return dx, dy
-
-    def _collision_resolution_x(self, new, dx, dx_correction):
-        """Resolve the collision on the X axis.
-
-        Adjust new rect left position and dx velocity by dx_correction.
-        Calls the relevant method collide_left or collide_right.
-        Returns the modified dx.
-        """
-        new.left += dx_correction
-        dx += dx_correction
-        if dx_correction > 0.:
-            self.collide_left(dx)
-        else:
-            self.collide_right(dx)
-        return dx
-
-    def _collision_resolution_y(self, new, dy, dy_correction):
-        """Resolve the collision on the Y axis.
-
-        Adjust new rect top position and dy velocity by dy_correction.
-        Calls the relevant method collide_top or collide_bottom.
-        Returns the modified dy.
-        """
-        new.top += dy_correction
-        dy += dy_correction
-        if dy_correction > 0.:
-            self.collide_bottom(dy)
-        else:
-            self.collide_top(dy)
-        return dy
 
 
 class Cell(object):
