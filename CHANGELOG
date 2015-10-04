@@ -1,5 +1,6 @@
 v? - ?
-
+  - fixed RectMapCollider stuck sometimes, #238
+  - * Rect.intersects behavior change: now points on border do not count, only interior ones
   - support the variants 'csv', 'xml', 'base64(uncompressed)' for .tmx tiles layer data, #243
   - fix position for TmxObject when type is 'tile', #245, thanks ottopotto for bug report
   - fix JumpTiles3D, typo introduced in pep8 refactor bf6dce6d, thanks dossjh

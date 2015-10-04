@@ -1083,19 +1083,23 @@ class RectMapCollider(object):
         """
         self.resting = False
         tested = set()
-        for cell in map.get_in_region(*(new.bottomleft + new.topright)):
-            if cell is None or cell.tile is None:
+        cells = map.get_in_region(*(new.bottomleft + new.topright))
+        for cell in cells:
+            if cell is None or cell.tile is None or not cell.intersects(new):
                 continue
-            # don't re-test
-            key = (cell.i, cell.j)
-            if key in tested:
+            if cell in tested:
+                # don't re-test
                 continue
             tested.add(cell)
             dx, dy = self.do_collision(cell, last, new, dy, dx)
+        cells_collide_later = [cell for cell in tested 
+                            if hasattr(cell, 'collide_later')]
+        for cell in cells_collide_later:
+            if cell.intersects(new):
+                dx, dy = self.do_collision(cell, last, new, dy, dx)
+            del cell.collide_later
         return dx, dy
 
-    # resolve them and re-collide if necessary; make sure the cells
-    # colliding the sprite midpoints are done first
     def do_collision(self, cell, last, new, dy, dx):
         """Collide a Rect moving from "last" to "new" with the given map
         RectCell "cell". The "dx" and "dy" values may indicate the velocity
@@ -1110,7 +1114,14 @@ class RectMapCollider(object):
 
         1. The "new" rect's position will be modified to its closest position
            to the side of the cell that the collision is on, and
-        2. If the "dx" and "dy" values are passed in the methods
+        2. If the "new" rect position should be modified on both axis, then 
+           nothing is done but the cell is flagged with an attribute 
+           collide_later = True. This collision resolution should be treated 
+           last, and collide_map is responsible to call again this function 
+           on the flagged cell. This will force this function to move the 
+           "new" rect on the axis requiring the smallest displacement.
+           If the displacement is the same on both axis, move on both axis.
+        3. If the "dx" and "dy" values are passed in the methods
            collide_<side> will be called to indicate that the rect has
            collided with the cell on the rect's side indicated. The value
            passed to the collide method will be a *modified* distance based
@@ -1121,35 +1132,49 @@ class RectMapCollider(object):
 
         Returns the (possibly modified) (dx, dy)
         """
-        # skip cell if it does not intersect the *current* new
-        if (new.left >= cell.right or new.right <= cell.left or
-            new.bottom >= cell.top or new.top <= cell.bottom):
-            return dx, dy
         g = cell.get
+        dx_correction = dy_correction = 0.0
         if g('top') and last.bottom >= cell.top and new.bottom < cell.top:
-            dy = last.y - new.y
-            new.bottom = cell.top
-            if dy:
-                self.collide_bottom(dy)
-            return dx, dy
+            dy_correction = cell.top - new.bottom
+        elif g('bottom') and last.top <= cell.bottom and new.top > cell.bottom:
+            dy_correction = cell.bottom - new.top
         if g('left') and last.right <= cell.left and new.right > cell.left:
-            dx = last.x - new.x
-            new.right = cell.left
-            if dx:
-                self.collide_right(dx)
-            return dx, dy
-        if g('right') and last.left >= cell.right and new.left < cell.right:
-            dx = last.x - new.x
-            new.left = cell.right
-            if dx:
+            dx_correction = cell.left - new.right
+        elif g('right') and last.left >= cell.right and new.left < cell.right:
+            dx_correction = cell.right - new.left
+        
+        if dx_correction != 0.0 and dy_correction != 0.0:
+            # Correction on both axis
+            if hasattr(cell, 'collide_later'):
+                if abs(dx_correction) < abs(dy_correction):
+                    # do correction only on X (below)
+                    dy_correction = 0.0
+                elif abs(dy_correction) < abs(dx_correction):
+                     # do correction only on Y (below)
+                    dx_correction = 0.0
+                else:
+                    # let both corrections happen below
+                    pass
+            else:
+                cell.collide_later = True
+                return dx, dy
+
+        if dx_correction != 0.0:
+            # Correction on X axis
+            new.left += dx_correction
+            dx += dx_correction
+            if dx_correction > 0.0:
                 self.collide_left(dx)
-            return dx, dy
-        if g('bottom') and last.top <= cell.bottom and new.top > cell.bottom:
-            dy = last.y - new.y
-            new.top = cell.bottom
-            if dy:
+            else:
+                self.collide_right(dx)
+        if dy_correction != 0.0:
+            # Correction on Y axis
+            new.top += dy_correction
+            dy += dy_correction
+            if dy_correction > 0.0:
+                self.collide_bottom(dy)
+            else:
                 self.collide_top(dy)
-            return dx, dy
         return dx, dy
 
 

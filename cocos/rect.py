@@ -154,16 +154,17 @@ class Rect(object):
         return True
 
     def intersects(self, other):
-        """Return boolean whether the "other" rect (an object with .x, .y,
-        .width and .height attributes) overlaps this Rect in any way.
+        """Return boolean whether the interior of "other" rect (an object 
+        with .x, .y, .width and .height attributes) overlaps the interior
+        of this Rect in any way.
         """
-        if self.x + self.width < other.x:
+        if self.x + self.width <= other.x:
             return False
-        if other.x + other.width < self.x:
+        if other.x + other.width <= self.x:
             return False
-        if self.y + self.height < other.y:
+        if self.y + self.height <= other.y:
             return False
-        if other.y + other.height < self.y:
+        if other.y + other.height <= self.y:
             return False
         return True
 
