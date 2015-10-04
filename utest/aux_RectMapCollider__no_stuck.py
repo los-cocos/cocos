@@ -71,53 +71,53 @@ def align_corner(rect, reference, corner):
 
 
 mapstrings = {    
-    'horizontal_no_hole': ( "o o o o o" +
-                            "o o o o o" +
-                            "x x x x x" +
-                            "o o o o o" +
-                            "o o o o o" +
+    'horizontal_no_hole': ( "o o o o o"
+                            "o o o o o"
+                            "x x x x x"
+                            "o o o o o"
+                            "o o o o o"
                             "o o o o o" ),
 
-    'horizontal_w_hole':  ( "o o o o o" +
-                            "o o o o o" +
-                            "x x o x x" +
-                            "o o o o o" +
-                            "o o o o o" +
+    'horizontal_w_hole':  ( "o o o o o"
+                            "o o o o o"
+                            "x x o x x"
+                            "o o o o o"
+                            "o o o o o"
                             "o o o o o" ),
 
-    'vertical_no_hole':   ( "o o x o o" +
-                            "o o x o o" +
-                            "o o x o o" +
-                            "o o x o o" +
-                            "o o x o o" +
+    'vertical_no_hole':   ( "o o x o o"
+                            "o o x o o"
+                            "o o x o o"
+                            "o o x o o"
+                            "o o x o o"
                             "o o x o o" ),
 
-    'vertical_w_hole':    ( "o o x o o" +
-                            "o o x o o" +
-                            "o o o o o" +
-                            "o o x o o" +
-                            "o o x o o" +
+    'vertical_w_hole':    ( "o o x o o"
+                            "o o x o o"
+                            "o o o o o"
+                            "o o x o o"
+                            "o o x o o"
                             "o o x o o" ),
 
-    'diagonal_gap_1':     ( "o o o o o" +
-                            "o o o o o" +
-                            "o x o o o" +
-                            "o o o x o" +
-                            "o o o o o" +
+    'diagonal_gap_1':     ( "o o o o o"
+                            "o o o o o"
+                            "o x o o o"
+                            "o o o x o"
+                            "o o o o o"
                             "o o o o o" ),
 
-    'diagonal_gap_2v':    ( "o o o o o" +
-                            "o o o o o" +
-                            "x o o o o" +
-                            "o o o x o" +
-                            "o o o o o" +
+    'diagonal_gap_2v':    ( "o o o o o"
+                            "o o o o o"
+                            "x o o o o"
+                            "o o o x o"
+                            "o o o o o"
                             "o o o o o" ),
 
-    'diagonal_gap_2h':    ( "o o o o o" +
-                            "o o o o o" +
-                            "o x o o o" +
-                            "o o o o o" +
-                            "o o o o o" +
+    'diagonal_gap_2h':    ( "o o o o o"
+                            "o o o o o"
+                            "o x o o o"
+                            "o o o o o"
+                            "o o o o o"
                             "o o o x o" ),
     }
 
