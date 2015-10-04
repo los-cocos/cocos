@@ -1058,8 +1058,6 @@ class RectMapCollider(object):
     """This class implements collisions between a moving rect object and a
     tilemap.
     """
-    resting = False
-
     def collide_bottom(self, dy):
         pass
 
@@ -1081,14 +1079,10 @@ class RectMapCollider(object):
 
         Returns the (possibly modified) (dx, dy)
         """
-        self.resting = False
         tested = set()
         cells = map.get_in_region(*(new.bottomleft + new.topright))
         for cell in cells:
             if cell is None or cell.tile is None or not cell.intersects(new):
-                continue
-            if cell in tested:
-                # don't re-test
                 continue
             tested.add(cell)
             dx, dy = self.do_collision(cell, last, new, dy, dx)
