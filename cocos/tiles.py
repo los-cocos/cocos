@@ -1949,37 +1949,23 @@ class TmxObjectLayer(MapLayer):
 
 
 class TmxObjectMapCollider(RectMapCollider):
-    pass
+    def collide_map(self, map, last, new, dy, dx):
+        """Collide a rect with the given TmxObjectLayer map.
 
-    # QUESTION:
-    # Should we keep this code which is exactly the same as in RectMapCollider?
+        Apart from "map" the arguments are as per `do_collision`.
 
-    # def collide_map(self, map, last, new, dy, dx):
-    #     """Collide a rect with the given TmxObjectLayer map.
+        Mutates the new rect to conform with the map.
 
-    #     Apart from "map" the arguments are as per `do_collision`.
-
-    #     Mutates the new rect to conform with the map.
-
-    #     Returns the (possibly modified) (dx, dy)
-    #     """
-    #     self.resting = False
-    #     tested = set()
-    #     cells = map.get_in_region(*(new.bottomleft + new.topright))
-    #     for cell in cells:
-    #         if cell is None or cell.tile is None or not cell.intersects(new):
-    #             continue
-    #         # don't re-test
-    #         if cell in tested:
-    #             continue
-    #         tested.add(cell)
-    #         dx, dy = self.do_collision(cell, last, new, dy, dx)
-    #     cells_collide_later = [cell for cell in tested 
-    #                         if getattr(cell, 'collide_later', False) is True]
-    #     for cell in cells_collide_later:
-    #         if not cell.intersects(new):
-    #             continue
-    #         dx, dy = self.do_collision(cell, last, new, dy, dx)
-    #     for cell in cells_collide_later:
-    #         del cell.collide_later
-    #     return dx, dy
+        Returns the (possibly modified) (dx, dy)
+        """
+        self.resting = False
+        tested = set()
+        for cell in map.get_in_region(*(new.bottomleft + new.topright)):
+            if cell is None or cell.tile is None:
+                continue
+            # don't re-test
+            if cell in tested:
+                continue
+            tested.add(cell)
+            dx, dy = self.do_collision(cell, last, new, dy, dx)
+        return dx, dy
