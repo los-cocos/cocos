@@ -46,7 +46,7 @@ class PlatformerController(actions.Action, tiles.RectMapCollider):
         new.y += dy * dt
 
         # run the collider
-        dx, dy = self.target.velocity = self.collide_map(tilemap, last, new, dy, dx)
+        dx, dy = self.target.velocity = self.collide_map(tilemap, last, new, dx, dy)
         self.on_ground = bool(new.y == last.y)
 
         # player position is anchored in the center of the image rect

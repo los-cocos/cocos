@@ -96,7 +96,7 @@ class Model(object):
         new = start_rect.copy()
         new.x += dx
         new.y += dy
-        new_dx, new_dy = collider.collide_map(tilemap, start_rect, new, dy, dx)
+        new_dx, new_dy = collider.collide_map(tilemap, start_rect, new, dx, dy)
         expected = start_rect.copy()
         expected.position = (expected.x + expect_dxdy[0],
                              expected.y + expect_dxdy[1])

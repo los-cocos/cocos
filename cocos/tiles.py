@@ -1070,7 +1070,7 @@ class RectMapCollider(object):
     def collide_top(self, dy):
         pass
 
-    def collide_map(self, map, last, new, dy, dx):
+    def collide_map(self, map, last, new, dx, dy):
         """Collide a rect with the given RectMap map.
 
         Apart from "map" the arguments are as per `do_collision`.
@@ -1085,16 +1085,16 @@ class RectMapCollider(object):
             if cell is None or cell.tile is None or not cell.intersects(new):
                 continue
             tested.add(cell)
-            dx, dy = self.do_collision(cell, last, new, dy, dx)
+            dx, dy = self.do_collision(cell, last, new, dx, dy)
         cells_collide_later = [cell for cell in tested 
                             if hasattr(cell, 'collide_later')]
         for cell in cells_collide_later:
             if cell.intersects(new):
-                dx, dy = self.do_collision(cell, last, new, dy, dx)
+                dx, dy = self.do_collision(cell, last, new, dx, dy)
             del cell.collide_later
         return dx, dy
 
-    def do_collision(self, cell, last, new, dy, dx):
+    def do_collision(self, cell, last, new, dx, dy):
         """Collide a Rect moving from "last" to "new" with the given map
         RectCell "cell". The "dx" and "dy" values may indicate the velocity
         of the moving rect.
@@ -1943,7 +1943,7 @@ class TmxObjectLayer(MapLayer):
 
 
 class TmxObjectMapCollider(RectMapCollider):
-    def collide_map(self, map, last, new, dy, dx):
+    def collide_map(self, map, last, new, dx, dy):
         """Collide a rect with the given TmxObjectLayer map.
 
         Apart from "map" the arguments are as per `do_collision`.
@@ -1961,5 +1961,5 @@ class TmxObjectMapCollider(RectMapCollider):
             if cell in tested:
                 continue
             tested.add(cell)
-            dx, dy = self.do_collision(cell, last, new, dy, dx)
+            dx, dy = self.do_collision(cell, last, new, dx, dy)
         return dx, dy

@@ -1,4 +1,5 @@
 v? - ?
+  - * RectMapCollider.collide_map and .do_collision now take dx, dy instead of dy, dx
   - fixed RectMapCollider stuck sometimes, #238
   - * Rect.intersects behavior change: now points on border do not count, only interior ones
   - support the variants 'csv', 'xml', 'base64(uncompressed)' for .tmx tiles layer data, #243

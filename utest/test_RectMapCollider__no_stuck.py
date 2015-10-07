@@ -121,9 +121,9 @@ class TestClass():
         new = start_rect.copy()
         new.x += dx
         new.y += dy
-        new_dx, new_dy = collider.collide_map(tilemap, start_rect, new, dy, dx)
+        new_dx, new_dy = collider.collide_map(tilemap, start_rect, new, dx, dy)
         assert new.position == (start_rect.x + expect_dxdy[0],
                                 start_rect.y + expect_dxdy[1])
         # uncomment if changed behavior in RectMapCollider 
-        # assert new_dx, new_dy == expect_dxdy
+        assert (new_dx, new_dy) == expect_dxdy
 
