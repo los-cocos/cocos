@@ -1,4 +1,5 @@
 v? - ?
+  - fixed ScrollingManager scale makes the image jitter, #253
   - * RectMapCollider.collide_map and .do_collision now take dx, dy instead of dy, dx
   - fixed RectMapCollider stuck sometimes, #238
   - * Rect.intersects behavior change: now points on border do not count, only interior ones

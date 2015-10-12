@@ -300,7 +300,6 @@ class ScrollingManager(Layer):
         # therefore also its children).
         # The result is that all chilren will have their viewport set, defining
         # which of their pixels should be visible.
-        fx, fy = int(fx), int(fy)
         self.fx, self.fy = fx, fy
 
         a = (fx, fy, self.scale)
@@ -326,13 +325,13 @@ class ScrollingManager(Layer):
         # figure the child layer min/max bounds
         b_min_x = min(x1)
         b_min_y = min(y1)
-        b_max_x = min(x2)
-        b_max_y = min(y2)
+        b_max_x = max(x2)
+        b_max_y = max(y2)
 
         # get our viewport information, scaled as appropriate
-        w = int(self.view_w / self.scale)
-        h = int(self.view_h / self.scale)
-        w2, h2 = w // 2, h // 2
+        w = self.view_w / self.scale
+        h = self.view_h / self.scale
+        w2, h2 = w / 2, h / 2
 
         if (b_max_x - b_min_x) <= w:
             # this branch for prety centered view and no view jump when
@@ -358,11 +357,11 @@ class ScrollingManager(Layer):
                 restricted_fy = fy
 
         # ... and this is our focus point, center of screen
-        self.restricted_fx = int(restricted_fx)
-        self.restricted_fy = int(restricted_fy)
+        self.restricted_fx = restricted_fx
+        self.restricted_fy = restricted_fy
 
         # determine child view bounds to match that focus point
-        x, y = int(restricted_fx - w2), int(restricted_fy - h2)
+        x, y = (restricted_fx - w2), (restricted_fy - h2)
 
         childs_scroll_x = x  # - self.view_x/self.scale
         childs_scroll_y = y  # - self.view_y/self.scale
