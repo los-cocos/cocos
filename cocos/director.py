@@ -521,6 +521,8 @@ class Director(event.EventDispatcher):
 
         # always true except when terminating the app
         if self.scene is not None:
+            # active scene is the top node
+            self.scene.parent = None
             self.scene.enable_handlers(True)
             scene.on_enter()
 

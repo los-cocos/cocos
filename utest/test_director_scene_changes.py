@@ -14,7 +14,7 @@ assert pyglet.mock_level == 1
 
 import pytest
 
-from cocos.director import director, Director
+from cocos.director import director
 from cocos.scene import Scene
 director.init()
 
@@ -204,3 +204,58 @@ class Test_run(object):
         assert director.scene is scene0
         
 ##    def test_8_pop_from_empty_stack_termitate_app(self):
+
+
+class TestRunningScene(object):
+    """When a scene becomes the active scene the director
+    must make sure that this scene has no parent anymore.
+    This allows nodes to traverse up the tree and find the
+    current running scene.
+    """
+    def test_0_replace(self):
+        scene = Scene()
+        director.run(scene)
+
+        new_scene = Scene()
+        new_scene.parent = not_None_value
+        director.replace(new_scene)
+        # pyglet mockup 1 don't tickle on_draw, we call
+        # directly so the push / pop operation completes
+        director.on_draw()
+
+        assert new_scene.parent is None
+
+    def test_1_push(self):
+        old_scene = Scene()
+        director.run(old_scene)
+
+        new_scene = Scene()
+        new_scene.parent = not_None_value
+        director.on_push(new_scene)
+        # pyglet mockup 1 don't tickle on_draw, we call
+        # directly so the push / pop operation completes
+        director.on_draw()
+
+        assert new_scene.parent is None
+
+    def test_2_pop(self):
+        scene = Scene()
+        director.run(scene)
+
+        new_scene = Scene()
+        director.on_push(new_scene)
+        # pyglet mockup 1 don't tickle on_draw, we call
+        # directly so the push / pop operation completes
+        director.on_draw()
+
+        scene.parent = not_None_value
+        director.on_pop()
+        # pyglet mockup 1 don't tickle on_draw, we call
+        # directly so the push / pop operation completes
+        director.on_draw()
+
+        assert scene.parent is None
+
+class NotNone(object):
+    pass
+not_None_value = NotNone()  

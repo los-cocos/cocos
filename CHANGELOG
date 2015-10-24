@@ -1,4 +1,5 @@
 v? - ?
+  - fix active scene not always the top node in the scenegraph, #254
   - fixed ScrollingManager scale makes the image jitter, #253
   - * RectMapCollider.collide_map and .do_collision now take dx, dy instead of dy, dx
   - fixed RectMapCollider stuck sometimes, #238

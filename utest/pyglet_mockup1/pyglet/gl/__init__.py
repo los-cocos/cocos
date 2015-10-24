@@ -60,3 +60,5 @@ def glBindTexture(a1, a2):
 def glTexParameteri(a1, a2, a3):
     pass
 
+def glTranslatef(a1, a2, a3):
+    pass
