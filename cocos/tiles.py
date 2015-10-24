@@ -1136,7 +1136,7 @@ class RectMapCollider(object):
             dx_correction = cell.left - new.right
         elif g('right') and last.left >= cell.right and new.left < cell.right:
             dx_correction = cell.right - new.left
-        
+
         if dx_correction != 0.0 and dy_correction != 0.0:
             # Correction on both axis
             if hasattr(cell, 'collide_later'):
