@@ -96,8 +96,8 @@ and then either manually select the tiles to display:
 
 or if you wish for the level to scroll, you use the ScrollingManager::
 
-  >>> from cocos import layers
-  >>> manager = layers.ScrollingManager()
+  >>> from cocos import layer
+  >>> manager = layer.ScrollingManager()
   >>> manager.add(map)
 
 and later set the focus with::
