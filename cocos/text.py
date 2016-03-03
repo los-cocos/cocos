@@ -107,7 +107,7 @@ class Label(TextElement):
         - height: Height of the label in pixels, or None
         - anchor_x: one of "left", "center" or "right"
         - anchor_y : one of "bottom", "baseline", "center" or "top"
-        - halign : applies when width is supplied. One of "left", "center" or "right".
+        - align : applies when width is supplied. One of "left", "center" or "right".
         - multiline: bool
         - dpi: Resolution of the fonts in this layout. Defaults to 96.
 
@@ -145,7 +145,7 @@ class PygletRichLabel(pyglet.text.DocumentLabel):
                  color=None,
                  x=0, y=0, width=None, height=None,
                  anchor_x='left', anchor_y='baseline',
-                 halign='left',
+                 align='left',
                  multiline=False, dpi=None, batch=None, group=None):
         """Create a rich text label.
 
@@ -178,7 +178,7 @@ class PygletRichLabel(pyglet.text.DocumentLabel):
             `anchor_y` : str
                 Anchor point of the Y coordinate: one of ``"bottom"``,
                 ``"baseline"``, ``"center"`` or ``"top"``.
-            `halign` : str
+            `align` : str
                 Horizontal alignment of text on a line, only applies if
                 a width is supplied. One of ``"left"``, ``"center"``
                 or ``"right"``.
@@ -199,7 +199,7 @@ class PygletRichLabel(pyglet.text.DocumentLabel):
         super(PygletRichLabel, self).__init__(document, x, y, width, height,
                                               anchor_x, anchor_y,
                                               multiline, dpi, batch, group)
-        style = dict(halign=halign)
+        style = dict(align=align)
 
         if font_name:
             style['font_name'] = font_name
@@ -231,7 +231,7 @@ class RichLabel(TextElement):
         - height: Height of the label in pixels, or None
         - anchor_x: "left", "center" or "right"
         - anchor_y: one of "bottom", "baseline", "center" or "top"
-        - halign :  only when a width is supplied. One of "left", "center", "right".
+        - align :  only when a width is supplied. One of "left", "center", "right".
         - multiline : bool
         - dpi : Resolution of the fonts in this layout.  Defaults to 96.
 
