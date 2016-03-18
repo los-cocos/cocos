@@ -296,6 +296,7 @@ class ParticleSystem(CocosNode):
         # glPointSize(self.get_scaled_particle_size())
 
         glEnable(GL_TEXTURE_2D)
+        glEnable(GL_PROGRAM_POINT_SIZE)
         # glBindTexture(GL_TEXTURE_2D, self.texture.id)
 
 
@@ -352,6 +353,7 @@ class ParticleSystem(CocosNode):
         glDisableClientState(GL_VERTEX_ARRAY)
 
         glDisable(GL_POINT_SPRITE)
+        glDisable(GL_PROGRAM_POINT_SIZE)
         glDisable(GL_TEXTURE_2D)
 
         glPopMatrix()
