@@ -213,6 +213,8 @@ class ParticleSystem(CocosNode):
         self.particle_life.fill(-1.0)
         # size x 1
         self.particle_size = numpy.zeros((self.total_particles, 1), numpy.float32)
+        # particle size in respect to node scaling and window resizing
+        self.particle_size_scaled = self.particle_size
         # start position
         self.start_pos = numpy.zeros((self.total_particles, 2), numpy.float32)
 
@@ -240,7 +242,7 @@ class ParticleSystem(CocosNode):
         self.schedule(self.step)
 
     def _init_shader(self):
-        vertex_code = '''
+        vertex_code = """
         #version 120
         attribute float particle_size;
 
@@ -250,8 +252,8 @@ class ParticleSystem(CocosNode):
             gl_Position = ftransform();
             gl_FrontColor = gl_Color;
         }
-        '''
-        frag_code = '''
+        """
+        frag_code = """
         #version 120
         uniform sampler2D sprite_texture;
 
@@ -259,9 +261,9 @@ class ParticleSystem(CocosNode):
         {
             gl_FragColor = gl_Color * texture2D(sprite_texture, gl_PointCoord);
         }
-        '''
+        """
         self.sprite_shader = ShaderProgram.simple_program('sprite', vertex_code, frag_code)
-        self.particle_size_idx = glGetAttribLocation(self.sprite_shader.program, "particle_size")
+        self.particle_size_idx = glGetAttribLocation(self.sprite_shader.program, b'particle_size')
 
     def load_texture(self):
         if self.texture is None:
@@ -270,22 +272,39 @@ class ParticleSystem(CocosNode):
 
     def on_enter(self):
         super(ParticleSystem, self).on_enter()
+        director.push_handlers(self)
         # self.add_particle()
 
-    def get_scaled_particle_size(self):
-        """calculates the value to pass in glPointSize to respect node scaling
-        and window resize; only used when rendering with point sprites.
+    def on_exit(self):
+        super(ParticleSystem, self).on_exit()
+        director.remove_handlers(self)
+
+    def on_cocos_resize(self, usable_width, usable_height):
+        self._scale_particle_size()
+
+    @CocosNode.scale.setter
+    def scale(self, s):
+        # Extend CocosNode scale setter property
+        # The use of super(CocosNode, CocosNode).name.__set__(self, s) in the setter function is no mistake.
+        # To delegate to the previous implementation of the setter, control needs to pass
+        # through the __set__() method of the previously defined name property. However, the
+        # only way to get to this method is to access it as a class variable instead of an instance
+        # variable. This is what happens with the super(CocosNode, CocosNode) operation.
+        super(ParticleSystem, ParticleSystem).scale.__set__(self, s)
+        self._scale_particle_size()
+
+    def _scale_particle_size(self):
+        """Resize the particles in respect to node scaling and window resize;
+        only used when rendering with shaders.
         """
         node = self
         scale = 1.0
-        while 1:
+        while node.parent:
             scale *= node.scale
             node = node.parent
-            if node.parent is None:
-                break
         if director.autoscale:
             scale *= 1.0 * director._usable_width / director._window_virtual_width
-        return self.size * scale
+        self.particle_size_scaled = self.particle_size * scale
 
     def draw(self):
         glPushMatrix()
@@ -312,7 +331,8 @@ class ParticleSystem(CocosNode):
         glColorPointer(4, GL_FLOAT, 0, color_ptr)
 
         glEnableVertexAttribArray(self.particle_size_idx)
-        size_ptr = PointerToNumpy(self.particle_size)
+
+        size_ptr = PointerToNumpy(self.particle_size_scaled)
         glVertexAttribPointer(self.particle_size_idx, 1, GL_FLOAT,
             False, 0, size_ptr)
 
@@ -518,6 +538,7 @@ class ParticleSystem(CocosNode):
 
         # size
         self.particle_size[idx] = self.size + self.size_var * rand()
+        self._scale_particle_size()
 
         # gravity
         self.particle_grav[idx][0] = self.gravity.x
