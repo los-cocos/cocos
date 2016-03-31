@@ -1,4 +1,5 @@
 v? - ?
+  - fix TmxObjectMapCollider should not redefine collide_map, #252
   - fix RichLabel keyword halgin to align, #258
   - fix active scene not always the top node in the scenegraph, #254
   - fixed ScrollingManager scale makes the image jitter, #253

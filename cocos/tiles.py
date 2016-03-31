@@ -1943,23 +1943,4 @@ class TmxObjectLayer(MapLayer):
 
 
 class TmxObjectMapCollider(RectMapCollider):
-    def collide_map(self, map, last, new, dx, dy):
-        """Collide a rect with the given TmxObjectLayer map.
-
-        Apart from "map" the arguments are as per `do_collision`.
-
-        Mutates the new rect to conform with the map.
-
-        Returns the (possibly modified) (dx, dy)
-        """
-        self.resting = False
-        tested = set()
-        for cell in map.get_in_region(*(new.bottomleft + new.topright)):
-            if cell is None or cell.tile is None:
-                continue
-            # don't re-test
-            if cell in tested:
-                continue
-            tested.add(cell)
-            dx, dy = self.do_collision(cell, last, new, dx, dy)
-        return dx, dy
+    pass
