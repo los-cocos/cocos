@@ -36,9 +36,9 @@ from __future__ import division, print_function, unicode_literals
 import six
 from . import compat
 
-from ctypes import *
+from ctypes import byref, c_char, c_char_p, c_float, c_int, cast, create_string_buffer, POINTER
 
-from pyglet.gl import *
+from pyglet import gl
 
 
 class GLSLException(Exception):
@@ -50,7 +50,7 @@ def glsl_log(handle):
         return ''
     log_len = c_int(0)
 
-    glGetObjectParameterivARB(handle, GL_OBJECT_INFO_LOG_LENGTH_ARB,
+    gl.glGetObjectParameterivARB(handle, gl.GL_OBJECT_INFO_LOG_LENGTH_ARB,
                               byref(log_len))
     if log_len.value == 0:
         return ''
@@ -58,7 +58,7 @@ def glsl_log(handle):
     log = create_string_buffer(log_len.value)  # does log_len include the NUL?
 
     chars_written = c_int(0)
-    glGetInfoLogARB(handle, log_len.value, byref(chars_written), log)
+    gl.glGetInfoLogARB(handle, log_len.value, byref(chars_written), log)
 
     return log.value
 
@@ -97,26 +97,26 @@ class Shader(object):
             return
         self.compiling = True
 
-        self.shader = glCreateShaderObjectARB(self.shaderType())
+        self.shader = gl.glCreateShaderObjectARB(self.shaderType())
         if self.shader == 0:
             raise GLSLException('faled to create shader object')
 
         prog = c_char_p(self.prog)
         length = c_int(-1)
-        glShaderSourceARB(self.shader,
+        gl.glShaderSourceARB(self.shader,
                           1,
                           cast(byref(prog), POINTER(POINTER(c_char))),
                           byref(length))
-        glCompileShaderARB(self.shader)
+        gl.glCompileShaderARB(self.shader)
 
         self.compiling = False
 
         compile_status = c_int(0)
-        glGetObjectParameterivARB(self.shader, GL_OBJECT_COMPILE_STATUS_ARB, byref(compile_status))
+        gl.glGetObjectParameterivARB(self.shader, gl.GL_OBJECT_COMPILE_STATUS_ARB, byref(compile_status))
 
         if not compile_status.value:
             err = glsl_log(self.shader)
-            glDeleteObjectARB(self.shader)
+            gl.glDeleteObjectARB(self.shader)
             self.shader = 0
             raise GLSLException('failed to compile shader', err)
 
@@ -130,7 +130,7 @@ class Shader(object):
             d._attachTo(program)
 
         if self.isCompiled():
-            glAttachObjectARB(program, self.shader)
+            gl.glAttachObjectARB(program, self.shader)
 
     def addDependency(self, shader):
         self.dependencies.append(shader)
@@ -138,7 +138,7 @@ class Shader(object):
 
     def destroy(self):
         if self.shader != 0:
-            glDeleteObjectARB(self.shader)
+            gl.glDeleteObjectARB(self.shader)
 
     def shaderType(self):
         raise NotImplementedError()
@@ -153,31 +153,31 @@ class Shader(object):
     # ATI/apple's glsl compiler is broken.
     def attachFlat(self, program):
         if self.isCompiled():
-            glAttachObjectARB(program, self.shader)
+            gl.glAttachObjectARB(program, self.shader)
 
     def compileFlat(self):
         if self.isCompiled():
             return
 
-        self.shader = glCreateShaderObjectARB(self.shaderType())
+        self.shader = gl.glCreateShaderObjectARB(self.shaderType())
         if self.shader == 0:
             raise GLSLException('faled to create shader object')
 
         all_source = [b'\n'.join(self._source())]
         prog = (c_char_p * len(all_source))(*all_source)
         length = (c_int * len(all_source))(-1)
-        glShaderSourceARB(self.shader,
+        gl.glShaderSourceARB(self.shader,
                           len(all_source),
                           cast(prog, POINTER(POINTER(c_char))),
                           length)
-        glCompileShaderARB(self.shader)
+        gl.glCompileShaderARB(self.shader)
 
         compile_status = c_int(0)
-        glGetObjectParameterivARB(self.shader, GL_OBJECT_COMPILE_STATUS_ARB, byref(compile_status))
+        gl.glGetObjectParameterivARB(self.shader, gl.GL_OBJECT_COMPILE_STATUS_ARB, byref(compile_status))
 
         if not compile_status.value:
             err = glsl_log(self.shader)
-            glDeleteObjectARB(self.shader)
+            gl.glDeleteObjectARB(self.shader)
             self.shader = 0
             raise GLSLException('failed to compile shader', err)
 
@@ -193,12 +193,12 @@ class Shader(object):
 
 class VertexShader(Shader):
     def shaderType(self):
-        return GL_VERTEX_SHADER_ARB
+        return gl.GL_VERTEX_SHADER_ARB
 
 
 class FragmentShader(Shader):
     def shaderType(self):
-        return GL_FRAGMENT_SHADER_ARB
+        return gl.GL_FRAGMENT_SHADER_ARB
 
 
 class ShaderProgram(object):
@@ -229,7 +229,7 @@ class ShaderProgram(object):
 
     def destroy(self):
         if self.program != 0:
-            glDeleteObjectARB(self.program)
+            gl.glDeleteObjectARB(self.program)
 
     def setShader(self, shader):
         if isinstance(shader, FragmentShader):
@@ -237,7 +237,7 @@ class ShaderProgram(object):
         if isinstance(shader, VertexShader):
             self.vertex_shader = shader
         if self.program != 0:
-            glDeleteObjectARB(self.program)
+            gl.glDeleteObjectARB(self.program)
 
     def link(self):
         if self.vertex_shader is not None:
@@ -245,7 +245,7 @@ class ShaderProgram(object):
         if self.fragment_shader is not None:
             self.fragment_shader.compileFlat()
 
-        self.program = glCreateProgramObjectARB()
+        self.program = gl.glCreateProgramObjectARB()
         if self.program == 0:
             raise GLSLException('failed to create program object')
 
@@ -254,13 +254,13 @@ class ShaderProgram(object):
         if self.fragment_shader is not None:
             self.fragment_shader.attachFlat(self.program)
 
-        glLinkProgramARB(self.program)
+        gl.glLinkProgramARB(self.program)
 
         link_status = c_int(0)
-        glGetObjectParameterivARB(self.program, GL_OBJECT_LINK_STATUS_ARB, byref(link_status))
+        gl.glGetObjectParameterivARB(self.program, gl.GL_OBJECT_LINK_STATUS_ARB, byref(link_status))
         if link_status.value == 0:
             err = glsl_log(self.program)
-            glDeleteObjectARB(self.program)
+            gl.glDeleteObjectARB(self.program)
             self.program = 0
             raise GLSLException('failed to link shader', err)
 
@@ -277,10 +277,10 @@ class ShaderProgram(object):
     def install(self):
         p = self.prog()
         if p != 0:
-            glUseProgramObjectARB(p)
+            gl.glUseProgramObjectARB(p)
 
     def uninstall(self):
-        glUseProgramObjectARB(0)
+        gl.glUseProgramObjectARB(0)
 
     def uniformLoc(self, var):
         var = compat.asciibytes(var)
@@ -289,34 +289,34 @@ class ShaderProgram(object):
         except:
             if self.program == 0:
                 self.link()
-            self.__class__._uloc_[var] = v = glGetUniformLocationARB(self.program, var)
+            self.__class__._uloc_[var] = v = gl.glGetUniformLocationARB(self.program, var)
             return v
 
     def uset1F(self, var, x):
-        glUniform1fARB(self.uniformLoc(var), x)
+        gl.glUniform1fARB(self.uniformLoc(var), x)
 
     def uset2F(self, var, x, y):
-        glUniform2fARB(self.uniformLoc(var), x, y)
+        gl.glUniform2fARB(self.uniformLoc(var), x, y)
 
     def uset3F(self, var, x, y, z):
-        glUniform3fARB(self.uniformLoc(var), x, y, z)
+        gl.glUniform3fARB(self.uniformLoc(var), x, y, z)
 
     def uset4F(self, var, x, y, z, w):
-        glUniform4fARB(self.uniformLoc(var), x, y, z, w)
+        gl.glUniform4fARB(self.uniformLoc(var), x, y, z, w)
 
     def uset1I(self, var, x):
-        glUniform1iARB(self.uniformLoc(var), x)
+        gl.glUniform1iARB(self.uniformLoc(var), x)
 
     def uset2I(self, var, x, y):
-        glUniform2iARB(self.uniformLoc(var), x, y)
+        gl.glUniform2iARB(self.uniformLoc(var), x, y)
 
     def uset3I(self, var, x, y, z):
-        glUniform3iARB(self.uniformLoc(var), x, y, z)
+        gl.glUniform3iARB(self.uniformLoc(var), x, y, z)
 
     def usetM4F(self, var, matrix, transpose=False):
         # some matrixs readed from openGl will come as the transpose of the
         # matrix we want to feed, so there it comes handy the transpose param
-        glUniformMatrix4fvARB(self.uniformLoc(var), 1, transpose,
+        gl.glUniformMatrix4fvARB(self.uniformLoc(var), 1, transpose,
                               (c_float * 16)(*matrix))
 
     def usetTex(self, var, unit, target, tx):
@@ -326,8 +326,8 @@ class ShaderProgram(object):
         target : target for glBindTexture
         tx : texture ID
         """
-        glUniform1iARB(self.uniformLoc(var), unit)
-        glActiveTexture(GL_TEXTURE0 + unit)
-        glBindTexture(target, tx)
+        gl.glUniform1iARB(self.uniformLoc(var), unit)
+        gl.glActiveTexture(gl.GL_TEXTURE0 + unit)
+        gl.glBindTexture(target, tx)
 
 __all__ = ['VertexShader', 'FragmentShader', 'ShaderProgram', 'GLSLException']

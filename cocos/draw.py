@@ -37,10 +37,11 @@ from __future__ import division, print_function, unicode_literals
 
 from cocos.cocosnode import CocosNode
 import pyglet
-from pyglet.gl import *
-from cocos.euclid import *
+from pyglet import gl
 import math
 import copy
+from ctypes import c_char, c_char_p, c_int, cast, POINTER
+from cocos.euclid import *
 
 cuadric_t = '''
 void main() {
@@ -58,34 +59,34 @@ void main() {
 class Shader(object):
     def __init__(self, source):
         self.source = source
-        self.shader_no = glCreateShader(self.shader_type)
+        self.shader_no = gl.glCreateShader(self.shader_type)
         if not self.shader_no:
             raise Exception("could not create shader")
         prog = (c_char_p * 1)(source + chr(0))
         length = (c_int * 1)(0)
-        glShaderSource(self.shader_no, 1,
+        gl.glShaderSource(self.shader_no, 1,
                        cast(prog, POINTER(POINTER(c_char))),
                        cast(0, POINTER(c_int)))
-        glCompileShader(self.shader_no)
-        self.program_no = glCreateProgram()
+        gl.glCompileShader(self.shader_no)
+        self.program_no = gl.glCreateProgram()
         if not self.program_no:
             raise Exception("could not create program")
-        glAttachShader(self.program_no, self.shader_no)
-        glLinkProgram(self.program_no)
+        gl.glAttachShader(self.program_no, self.shader_no)
+        gl.glLinkProgram(self.program_no)
 
     def begin(self):
-        glUseProgram(self.program_no)
+        gl.glUseProgram(self.program_no)
 
     def end(self):
-        glUseProgram(0)
+        gl.glUseProgram(0)
 
 
 class VertexShader(Shader):
-    shader_type = GL_VERTEX_SHADER
+    shader_type = gl.GL_VERTEX_SHADER
 
 
 class FragmentShader(Shader):
-    shader_type = GL_FRAGMENT_SHADER
+    shader_type = gl.GL_FRAGMENT_SHADER
 
 # cuadric = FragmentShader(cuadric_t)
 __parameter_count = 0
@@ -118,12 +119,12 @@ class Context(object):
         self.transform = Matrix3()
 
     def set_state(self):
-        glPushAttrib(GL_CURRENT_BIT | GL_LINE_BIT)
-        glColor4ub(*self.color)
-        glLineWidth(self.stroke_width)
+        gl.glPushAttrib(gl.GL_CURRENT_BIT | gl.GL_LINE_BIT)
+        gl.glColor4ub(*self.color)
+        gl.glLineWidth(self.stroke_width)
 
     def unset_state(self):
-        glPopAttrib()
+        gl.glPopAttrib()
 
     def copy(self):
         return copy.deepcopy(self)
@@ -223,23 +224,23 @@ class Canvas(CocosNode):
             self._dirty = False
 
         # set
-        glEnable(self._texture.target)
-        glBindTexture(self._texture.target, self._texture.id)
-        glPushAttrib(GL_COLOR_BUFFER_BIT)
+        gl.glEnable(self._texture.target)
+        gl.glBindTexture(self._texture.target, self._texture.id)
+        gl.glPushAttrib(gl.GL_COLOR_BUFFER_BIT)
 
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        gl.glEnable(gl.GL_BLEND)
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
 
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
         # cuadric.begin()
-        self._vertex_list.draw(GL_TRIANGLES)
+        self._vertex_list.draw(gl.GL_TRIANGLES)
         # cuadric.end()
 
         # unset
-        glPopMatrix()
-        glPopAttrib()
-        glDisable(self._texture.target)
+        gl.glPopMatrix()
+        gl.glPopAttrib()
+        gl.glDisable(self._texture.target)
 
     def endcap(self, line, cap_type):
         strip = []

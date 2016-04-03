@@ -89,22 +89,22 @@ if sys.platform == 'win32':
     except ImportError:
         sdl_lib_path = None
 
-
-def import_all():
-    import cocos.actions
-    import cocos.director
-    import cocos.layer
-    import cocos.menu
-    import cocos.sprite
-    import cocos.path
-    import cocos.scene
-    import cocos.grid
-    import cocos.text
-    import cocos.camera
-    import cocos.draw
-    import cocos.skeleton
-    import cocos.rect
-    import cocos.tiles
-
 if not unittesting:
-    import_all()
+
+    # using 'from cocos import zzz' to make zzz appear in pycharm's autocomplete for cocos.
+    from cocos import cocosnode
+    from cocos import actions
+    from cocos import director
+    from cocos import layer
+    from cocos import menu
+    from cocos import sprite
+    from cocos import path
+    from cocos import scene
+    from cocos import grid
+    from cocos import text
+    from cocos import camera
+    from cocos import draw
+    from cocos import skeleton
+    from cocos import rect
+    from cocos import tiles
+

@@ -14,6 +14,7 @@ from cocos.director import director
 import cocos.actions as ac
 from cocos.layer import *
 import pyglet
+from pyglet import gl
 
 class BackgroundLayer(cocos.layer.Layer):
     def __init__(self):
@@ -21,11 +22,11 @@ class BackgroundLayer(cocos.layer.Layer):
         self.img = pyglet.resource.image('background_image.png')
 
     def draw( self ):
-        glColor4ub(255, 255, 255, 255)
-        glPushMatrix()
+        gl.glColor4ub(255, 255, 255, 255)
+        gl.glPushMatrix()
         self.transform()
         self.img.blit(0,0)
-        glPopMatrix()
+        gl.glPopMatrix()
 
 def toggle_fullscreen():
     director.window.set_fullscreen( not director.window.fullscreen )

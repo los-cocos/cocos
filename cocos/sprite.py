@@ -72,7 +72,7 @@ import math
 
 import pyglet
 from pyglet import image
-from pyglet.gl import *
+from pyglet import gl
 
 from cocos.batch import BatchableNode
 from cocos.rect import Rect
@@ -304,7 +304,7 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         """
         self._group.set_state()
         if self._vertex_list is not None:
-            self._vertex_list.draw(GL_QUADS)
+            self._vertex_list.draw(gl.GL_QUADS)
         self._group.unset_state()
 
     def _update_position(self):

@@ -44,7 +44,7 @@ import numpy
 import ctypes
 
 import pyglet
-from pyglet.gl import *
+from pyglet import gl
 
 from cocos.cocosnode import CocosNode
 from cocos.euclid import Point2
@@ -66,8 +66,8 @@ def point_sprites_available():
         return forced_point_sprites
     have_point_sprites = True
     try:
-        glEnable(GL_POINT_SPRITE)
-        glDisable(GL_POINT_SPRITE)
+        gl.glEnable(gl.GL_POINT_SPRITE)
+        gl.glDisable(gl.GL_POINT_SPRITE)
     except:
         have_point_sprites = False
     return have_point_sprites
@@ -263,7 +263,7 @@ class ParticleSystem(CocosNode):
         }
         """
         self.sprite_shader = ShaderProgram.simple_program('sprite', vertex_code, frag_code)
-        self.particle_size_idx = glGetAttribLocation(self.sprite_shader.program, b'particle_size')
+        self.particle_size_idx = gl.glGetAttribLocation(self.sprite_shader.program, b'particle_size')
 
     def load_texture(self):
         if self.texture is None:
@@ -307,41 +307,41 @@ class ParticleSystem(CocosNode):
         self.particle_size_scaled = self.particle_size * scale
 
     def draw(self):
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
 
         # color preserve - at least nvidia 6150SE needs that
-        glPushAttrib(GL_CURRENT_BIT)
+        gl.glPushAttrib(gl.GL_CURRENT_BIT)
         # glPointSize(self.get_scaled_particle_size())
 
-        glEnable(GL_TEXTURE_2D)
-        glEnable(GL_PROGRAM_POINT_SIZE)
+        gl.glEnable(gl.GL_TEXTURE_2D)
+        gl.glEnable(gl.GL_PROGRAM_POINT_SIZE)
         # glBindTexture(GL_TEXTURE_2D, self.texture.id)
 
 
-        glEnable(GL_POINT_SPRITE)
-        glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE)
+        gl.glEnable(gl.GL_POINT_SPRITE)
+        gl.glTexEnvi(gl.GL_POINT_SPRITE, gl.GL_COORD_REPLACE, gl.GL_TRUE)
 
-        glEnableClientState(GL_VERTEX_ARRAY)
+        gl.glEnableClientState(gl.GL_VERTEX_ARRAY)
         vertex_ptr = PointerToNumpy(self.particle_pos)
-        glVertexPointer(2, GL_FLOAT, 0, vertex_ptr)
+        gl.glVertexPointer(2, gl.GL_FLOAT, 0, vertex_ptr)
 
-        glEnableClientState(GL_COLOR_ARRAY)
+        gl.glEnableClientState(gl.GL_COLOR_ARRAY)
         color_ptr = PointerToNumpy(self.particle_color)
-        glColorPointer(4, GL_FLOAT, 0, color_ptr)
+        gl.glColorPointer(4, gl.GL_FLOAT, 0, color_ptr)
 
-        glEnableVertexAttribArray(self.particle_size_idx)
+        gl.glEnableVertexAttribArray(self.particle_size_idx)
 
         size_ptr = PointerToNumpy(self.particle_size_scaled)
-        glVertexAttribPointer(self.particle_size_idx, 1, GL_FLOAT,
+        gl.glVertexAttribPointer(self.particle_size_idx, 1, gl.GL_FLOAT,
             False, 0, size_ptr)
 
-        glPushAttrib(GL_COLOR_BUFFER_BIT)
-        glEnable(GL_BLEND)
+        gl.glPushAttrib(gl.GL_COLOR_BUFFER_BIT)
+        gl.glEnable(gl.GL_BLEND)
         if self.blend_additive:
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE)
+            gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE)
         else:
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
 
         # mode = GLint()
         # glTexEnviv( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode )
@@ -353,30 +353,30 @@ class ParticleSystem(CocosNode):
 
         self.sprite_shader.install()
         self.sprite_shader.usetTex('sprite_texture', 0, 
-            GL_TEXTURE_2D, self.texture.id)
+            gl.GL_TEXTURE_2D, self.texture.id)
 
-        glDrawArrays(GL_POINTS, 0, self.total_particles)
+        gl.glDrawArrays(gl.GL_POINTS, 0, self.total_particles)
 
         self.sprite_shader.uninstall()
         # un -blend
-        glPopAttrib()
+        gl.glPopAttrib()
 
         # color restore
-        glPopAttrib()
+        gl.glPopAttrib()
 
         # restore env mode
         # glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode)
 
         # disable states
-        glDisableVertexAttribArray(self.particle_size_idx)
-        glDisableClientState(GL_COLOR_ARRAY)
-        glDisableClientState(GL_VERTEX_ARRAY)
+        gl.glDisableVertexAttribArray(self.particle_size_idx)
+        gl.glDisableClientState(gl.GL_COLOR_ARRAY)
+        gl.glDisableClientState(gl.GL_VERTEX_ARRAY)
 
-        glDisable(GL_POINT_SPRITE)
-        glDisable(GL_PROGRAM_POINT_SIZE)
-        glDisable(GL_TEXTURE_2D)
+        gl.glDisable(gl.GL_POINT_SPRITE)
+        gl.glDisable(gl.GL_PROGRAM_POINT_SIZE)
+        gl.glDisable(gl.GL_TEXTURE_2D)
 
-        glPopMatrix()
+        gl.glPopMatrix()
 
     def step(self, delta):
 
@@ -563,50 +563,50 @@ class ParticleSystem(CocosNode):
         self.update_vertexs_from_pos()
         self.update_per_vertex_colors()
 
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
 
         # color preserve - at least intel 945G needs that
-        glPushAttrib(GL_CURRENT_BIT)
+        gl.glPushAttrib(gl.GL_CURRENT_BIT)
 
-        glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, self.texture.id)
+        gl.glEnable(gl.GL_TEXTURE_2D)
+        gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture.id)
 
-        glEnableClientState(GL_VERTEX_ARRAY)
+        gl.glEnableClientState(gl.GL_VERTEX_ARRAY)
         vertexs_ptr = PointerToNumpy(self.vertexs)
-        glVertexPointer(2, GL_FLOAT, 0, vertexs_ptr)
+        gl.glVertexPointer(2, gl.GL_FLOAT, 0, vertexs_ptr)
 
-        glEnableClientState(GL_COLOR_ARRAY)
+        gl.glEnableClientState(gl.GL_COLOR_ARRAY)
         color_ptr = PointerToNumpy(self.per_vertex_colors)
-        # glColorPointer(4, GL_UNSIGNED_BYTE, 0, color_ptr)
-        glColorPointer(4, GL_FLOAT, 0, color_ptr)
+        # gl.glColorPointer(4, gl.GL_UNSIGNED_BYTE, 0, color_ptr)
+        gl.glColorPointer(4, gl.GL_FLOAT, 0, color_ptr)
 
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+        gl.glEnableClientState(gl.GL_TEXTURE_COORD_ARRAY)
         tex_coord_ptr = PointerToNumpy(self.tex_coords)
-        glTexCoordPointer(2, GL_FLOAT, 0, tex_coord_ptr)
+        gl.glTexCoordPointer(2, gl.GL_FLOAT, 0, tex_coord_ptr)
 
-        glPushAttrib(GL_COLOR_BUFFER_BIT)
-        glEnable(GL_BLEND)
+        gl.glPushAttrib(gl.GL_COLOR_BUFFER_BIT)
+        gl.glEnable(gl.GL_BLEND)
         if self.blend_additive:
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE)
+            gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE)
         else:
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
 
-        glDrawArrays(GL_QUADS, 0, len(self.vertexs) * 4)
+        gl.glDrawArrays(gl.GL_QUADS, 0, len(self.vertexs) * 4)
 
         # un -blend
-        glPopAttrib()
+        gl.glPopAttrib()
 
         # color restore
-        glPopAttrib()
+        gl.glPopAttrib()
 
         # disable states
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY)
-        glDisableClientState(GL_COLOR_ARRAY)
-        glDisableClientState(GL_VERTEX_ARRAY)
-        glDisable(GL_TEXTURE_2D)
+        gl.glDisableClientState(gl.GL_TEXTURE_COORD_ARRAY)
+        gl.glDisableClientState(gl.GL_COLOR_ARRAY)
+        gl.glDisableClientState(gl.GL_VERTEX_ARRAY)
+        gl.glDisable(gl.GL_TEXTURE_2D)
 
-        glPopMatrix()
+        gl.glPopMatrix()
 
     def update_vertexs_from_pos(self):
         vertexs = self.vertexs

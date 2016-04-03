@@ -15,6 +15,7 @@ from cocos.actions import *
 from cocos.layer import *
 import pyglet
 from pyglet.gl import *
+from pyglet import gl
 
 class BackgroundLayer(cocos.layer.Layer):
     def __init__(self):
@@ -23,10 +24,10 @@ class BackgroundLayer(cocos.layer.Layer):
 
     def draw( self ):
         glColor4ub(255, 255, 255, 255)
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
         self.img.blit(0,0)
-        glPopMatrix()
+        gl.glPopMatrix()
 
 def main():
     director.init( resizable=True )

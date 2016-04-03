@@ -42,7 +42,7 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-from pyglet.gl import *
+from pyglet import gl
 from pyglet import image
 import pyglet
 
@@ -121,7 +121,7 @@ class GenericGrabber(_TextureGrabber):
 
         glPushAttrib(GL_COLOR_BUFFER_BIT)
 
-        self.vertex_list.draw(pyglet.gl.GL_QUADS)
+        self.vertex_list.draw(gl.GL_QUADS)
 
         glPopAttrib()
         glDisable(self.before.texture.target)
@@ -136,13 +136,13 @@ class PbufferGrabber(_TextureGrabber):
     TODO: finish pbuffer grabber
     """
     def grab(self, texture):
-        self.pbuf = Pbuffer(director.window, [
-            GLX_CONFIG_CAVEAT, GLX_NONE,
-            GLX_RED_SIZE, 8,
-            GLX_GREEN_SIZE, 8,
-            GLX_BLUE_SIZE, 8,
-            GLX_DEPTH_SIZE, 24,
-            GLX_DOUBLEBUFFER, 1,
+        self.pbuf = gl.Pbuffer(director.window, [
+            gl.GLX_CONFIG_CAVEAT, gl.GLX_NONE,
+            gl.GLX_RED_SIZE, 8,
+            gl.GLX_GREEN_SIZE, 8,
+            gl.GLX_BLUE_SIZE, 8,
+            gl.GLX_DEPTH_SIZE, 24,
+            gl.GLX_DOUBLEBUFFER, 1,
             ])
 
     def before_render(self, texture):
@@ -179,7 +179,7 @@ class FBOGrabber(_TextureGrabber):
 
     def before_render(self, texture):
         self.fbuf.bind()
-        glClear(GL_COLOR_BUFFER_BIT)
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
 
     def after_render(self, texture):
         self.fbuf.unbind()

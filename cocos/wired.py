@@ -34,8 +34,6 @@
 # ----------------------------------------------------------------------------
 from __future__ import division, print_function, unicode_literals
 
-from pyglet.gl import *
-from pyglet import window, image
 
 from cocos.shader import ShaderProgram, VertexShader, FragmentShader
 

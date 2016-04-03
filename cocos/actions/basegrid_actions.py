@@ -62,8 +62,6 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-from pyglet.gl import *
-
 from cocos.grid import Grid3D, TiledGrid3D
 from cocos.director import director
 from cocos.euclid import *
