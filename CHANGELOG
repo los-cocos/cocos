@@ -1,4 +1,5 @@
 v? - ?
+  - fix changes in pyglet.sprite.Sprite properties break cocos Sprites #260
   - fix Particle size_var isn't used, #259
   - fix RichLabel keyword halgin to align, #258
   - fix active scene not always the top node in the scenegraph, #254

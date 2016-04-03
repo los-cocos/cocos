@@ -200,53 +200,60 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         y = v[1], v[3], v[5], v[7]
         return Rect(min(x), min(y), max(x) - min(x), max(y) - min(y))
 
-    def _set_rotation(self, a):
-        BatchableNode._set_rotation(self, a)
-        pyglet.sprite.Sprite._set_rotation(self, a)
+    @BatchableNode.rotation.setter
+    def rotation(self, a):
+        super(Sprite, Sprite).rotation.__set__(self, a)
+        pyglet.sprite.Sprite.rotation.__set__(self, a)
 
-    def _set_scale(self, s):
-        BatchableNode._set_scale(self, s)
-        pyglet.sprite.Sprite._set_scale(self, s)
+    @BatchableNode.scale.setter
+    def scale(self, s):
+        super(Sprite, Sprite).scale.__set__(self, s)
+        pyglet.sprite.Sprite.scale.__set__(self, s)
 
-    def _set_scale_x(self, s):
-        BatchableNode._set_scale_x(self, s)
+    @BatchableNode.scale_x.setter
+    def scale_x(self, s):
+        super(Sprite, Sprite).scale_x.__set__(self, s)
         self._update_position()
 
-    def _set_scale_y(self, s):
-        BatchableNode._set_scale_y(self, s)
+    @BatchableNode.scale_y.setter
+    def scale_y(self, s):
+        super(Sprite, Sprite).scale_y.__set__(self, s)
         self._update_position()
 
-    def _get_width(self):
+    @property
+    def width(self):
+        """Scaled width of the sprite.
+
+        Read-only.  Invariant under rotation.
+
+        :type: int
+        """
         return int(self._texture.width * self._scale * self._scale_x)
-    width = property(_get_width,
-                     doc='''Scaled width of the sprite.
 
-    Read-only.  Invariant under rotation.
+    @property
+    def height(self):
+        """Scaled height of the sprite.
 
-    :type: int
-    ''')
+        Read-only.  Invariant under rotation.
 
-    def _get_height(self):
+        :type: int
+        """
         return int(self._texture.height * self._scale * self._scale_y)
-    height = property(_get_height,
-                      doc='''Scaled height of the sprite.
 
-    Read-only.  Invariant under rotation.
+    @BatchableNode.position.setter
+    def position(self, p):
+        super(Sprite, Sprite).position.__set__(self, p)
+        pyglet.sprite.Sprite.position.__set__(self, p)
 
-    :type: int
-    ''')
+    @BatchableNode.x.setter
+    def x(self, x):
+        super(Sprite, Sprite).x.__set__(self, x)
+        pyglet.sprite.Sprite.x.__set__(self, x)
 
-    def _set_position(self, p):
-        BatchableNode._set_position(self, p)
-        pyglet.sprite.Sprite.set_position(self, *p)
-
-    def _set_x(self, x):
-        BatchableNode._set_x(self, x)
-        pyglet.sprite.Sprite._set_x(self, x)
-
-    def _set_y(self, y):
-        BatchableNode._set_y(self, y)
-        pyglet.sprite.Sprite._set_y(self, y)
+    @BatchableNode.y.setter
+    def y(self, y):
+        super(Sprite, Sprite).y.__set__(self, y)
+        pyglet.sprite.Sprite.y.__set__(self, y)
 
     def contains(self, x, y):
         """Test whether this (untransformed) Sprite contains the pixel coordinates
@@ -261,32 +268,33 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         if y < sy or y > sy + self.height:
             return False
         return True
+ 
+    @property
+    def image_anchor_x(self):
+        return self._image_anchor_x
 
-    def _set_anchor_x(self, value):
+    @image_anchor_x.setter
+    def image_anchor_x(self, value):
         self._image_anchor_x = value
         self._update_position()
 
-    def _get_anchor_x(self):
-        return self._image_anchor_x
-    image_anchor_x = property(_get_anchor_x, _set_anchor_x)
+    @property
+    def image_anchor_y(self):
+        return self._image_anchor_y
 
-    def _set_anchor_y(self, value):
+    @image_anchor_y.setter
+    def image_anchor_y(self, value):
         self._image_anchor_y = value
         self._update_position()
 
-    def _get_anchor_y(self):
-        return self._image_anchor_y
-    image_anchor_y = property(_get_anchor_y, _set_anchor_y)
+    @property
+    def image_anchor(self):
+        return self._image_anchor
 
-    def _set_anchor(self, value):
-        self._image_anchor_x = value[0]
-        self._image_anchor_y = value[1]
+    @image_anchor.setter
+    def image_anchor(self, value):
+        self._image_anchor_x, self.image_anchor_y = value
         self._update_position()
-
-    def _get_anchor(self):
-        return self._get_anchor_x(), self._get_anchor_y()
-
-    image_anchor = property(_get_anchor, _set_anchor)
 
     def draw(self):
         """
