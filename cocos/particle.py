@@ -49,6 +49,7 @@ from pyglet.gl import *
 from cocos.cocosnode import CocosNode
 from cocos.euclid import Point2
 from cocos.director import director
+from cocos.shader import ShaderProgram
 
 # for dev and diagnostic, None means real automatic, True / False means
 # return this value inconditionally
@@ -212,6 +213,8 @@ class ParticleSystem(CocosNode):
         self.particle_life.fill(-1.0)
         # size x 1
         self.particle_size = numpy.zeros((self.total_particles, 1), numpy.float32)
+        # particle size in respect to node scaling and window resizing
+        self.particle_size_scaled = self.particle_size
         # start position
         self.start_pos = numpy.zeros((self.total_particles, 2), numpy.float32)
 
@@ -233,8 +236,34 @@ class ParticleSystem(CocosNode):
         if fallback:
             self._fallback_init()
             self.draw = self.draw_fallback
+        else:
+            self._init_shader()
 
         self.schedule(self.step)
+
+    def _init_shader(self):
+        vertex_code = """
+        #version 120
+        attribute float particle_size;
+
+        void main()
+        {
+            gl_PointSize = particle_size;
+            gl_Position = ftransform();
+            gl_FrontColor = gl_Color;
+        }
+        """
+        frag_code = """
+        #version 120
+        uniform sampler2D sprite_texture;
+
+        void main()
+        {
+            gl_FragColor = gl_Color * texture2D(sprite_texture, gl_PointCoord);
+        }
+        """
+        self.sprite_shader = ShaderProgram.simple_program('sprite', vertex_code, frag_code)
+        self.particle_size_idx = glGetAttribLocation(self.sprite_shader.program, b'particle_size')
 
     def load_texture(self):
         if self.texture is None:
@@ -243,22 +272,39 @@ class ParticleSystem(CocosNode):
 
     def on_enter(self):
         super(ParticleSystem, self).on_enter()
+        director.push_handlers(self)
         # self.add_particle()
 
-    def get_scaled_particle_size(self):
-        """calculates the value to pass in glPointSize to respect node scaling
-        and window resize; only used when rendering with point sprites.
+    def on_exit(self):
+        super(ParticleSystem, self).on_exit()
+        director.remove_handlers(self)
+
+    def on_cocos_resize(self, usable_width, usable_height):
+        self._scale_particle_size()
+
+    @CocosNode.scale.setter
+    def scale(self, s):
+        # Extend CocosNode scale setter property
+        # The use of super(CocosNode, CocosNode).name.__set__(self, s) in the setter function is no mistake.
+        # To delegate to the previous implementation of the setter, control needs to pass
+        # through the __set__() method of the previously defined name property. However, the
+        # only way to get to this method is to access it as a class variable instead of an instance
+        # variable. This is what happens with the super(CocosNode, CocosNode) operation.
+        super(ParticleSystem, ParticleSystem).scale.__set__(self, s)
+        self._scale_particle_size()
+
+    def _scale_particle_size(self):
+        """Resize the particles in respect to node scaling and window resize;
+        only used when rendering with shaders.
         """
         node = self
         scale = 1.0
-        while 1:
+        while node.parent:
             scale *= node.scale
             node = node.parent
-            if node.parent is None:
-                break
         if director.autoscale:
             scale *= 1.0 * director._usable_width / director._window_virtual_width
-        return self.size * scale
+        self.particle_size_scaled = self.particle_size * scale
 
     def draw(self):
         glPushMatrix()
@@ -266,10 +312,12 @@ class ParticleSystem(CocosNode):
 
         # color preserve - at least nvidia 6150SE needs that
         glPushAttrib(GL_CURRENT_BIT)
-        glPointSize(self.get_scaled_particle_size())
+        # glPointSize(self.get_scaled_particle_size())
 
         glEnable(GL_TEXTURE_2D)
-        glBindTexture(GL_TEXTURE_2D, self.texture.id)
+        glEnable(GL_PROGRAM_POINT_SIZE)
+        # glBindTexture(GL_TEXTURE_2D, self.texture.id)
+
 
         glEnable(GL_POINT_SPRITE)
         glTexEnvi(GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE)
@@ -281,6 +329,12 @@ class ParticleSystem(CocosNode):
         glEnableClientState(GL_COLOR_ARRAY)
         color_ptr = PointerToNumpy(self.particle_color)
         glColorPointer(4, GL_FLOAT, 0, color_ptr)
+
+        glEnableVertexAttribArray(self.particle_size_idx)
+
+        size_ptr = PointerToNumpy(self.particle_size_scaled)
+        glVertexAttribPointer(self.particle_size_idx, 1, GL_FLOAT,
+            False, 0, size_ptr)
 
         glPushAttrib(GL_COLOR_BUFFER_BIT)
         glEnable(GL_BLEND)
@@ -297,8 +351,13 @@ class ParticleSystem(CocosNode):
         # else:
         #   glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE )
 
+        self.sprite_shader.install()
+        self.sprite_shader.usetTex('sprite_texture', 0, 
+            GL_TEXTURE_2D, self.texture.id)
+
         glDrawArrays(GL_POINTS, 0, self.total_particles)
 
+        self.sprite_shader.uninstall()
         # un -blend
         glPopAttrib()
 
@@ -309,9 +368,12 @@ class ParticleSystem(CocosNode):
         # glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, mode)
 
         # disable states
+        glDisableVertexAttribArray(self.particle_size_idx)
         glDisableClientState(GL_COLOR_ARRAY)
         glDisableClientState(GL_VERTEX_ARRAY)
+
         glDisable(GL_POINT_SPRITE)
+        glDisable(GL_PROGRAM_POINT_SIZE)
         glDisable(GL_TEXTURE_2D)
 
         glPopMatrix()
@@ -476,6 +538,7 @@ class ParticleSystem(CocosNode):
 
         # size
         self.particle_size[idx] = self.size + self.size_var * rand()
+        self._scale_particle_size()
 
         # gravity
         self.particle_grav[idx][0] = self.gravity.x
@@ -488,14 +551,12 @@ class ParticleSystem(CocosNode):
     # draw method which should be manually adapted
 
     def _fallback_init(self):
-        self.vertexs = numpy.zeros((self.total_particles * 4, 2), numpy.float32)
+        self.vertexs = numpy.zeros((self.total_particles, 4, 2), numpy.float32)
         tex_coords_for_quad = numpy.array([[0.0, 1.0], [0.0, 0.0], [1.0, 0.0], [1.0, 1.0]], numpy.float32)
-        self.tex_coords = numpy.zeros((self.total_particles * 4, 2), numpy.float32)
-        all_tex_coords = self.tex_coords
-        for i in range(0, len(self.vertexs), 4):
-            all_tex_coords[i: i + 4] = tex_coords_for_quad
-        self.per_vertex_colors = numpy.zeros((self.total_particles * 4, 4), numpy.float32)
-        self.delta_pos_to_vertex = numpy.zeros((4, 2), numpy.float32)
+        self.tex_coords = numpy.zeros((self.total_particles, 4, 2), numpy.float32)
+        self.tex_coords[:] = tex_coords_for_quad[numpy.newaxis, :, :]
+        self.per_vertex_colors = numpy.zeros((self.total_particles, 4, 4), numpy.float32)
+        self.delta_pos_to_vertex = numpy.zeros((self.total_particles, 4, 2), numpy.float32)
 
     def draw_fallback(self):
         self.make_delta_pos_to_vertex()
@@ -531,7 +592,7 @@ class ParticleSystem(CocosNode):
         else:
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        glDrawArrays(GL_QUADS, 0, len(self.vertexs))
+        glDrawArrays(GL_QUADS, 0, len(self.vertexs) * 4)
 
         # un -blend
         glPopAttrib()
@@ -551,21 +612,18 @@ class ParticleSystem(CocosNode):
         vertexs = self.vertexs
         delta = self.delta_pos_to_vertex
         pos = self.particle_pos
-        for i, pos_i in enumerate(pos):
-            i4 = i*4
-            vertexs[i4:i4 + 4] = delta + pos_i
+        vertexs[:] = delta + pos[:, numpy.newaxis, :]
 
     def update_per_vertex_colors(self):
         colors = self.particle_color
         per_vertex_colors = self.per_vertex_colors
-        for i, color in enumerate(colors):
-            i4 = i*4
-            per_vertex_colors[i4:i4 + 4] = color
+        per_vertex_colors[:] = colors[:, numpy.newaxis, :]
 
     def make_delta_pos_to_vertex(self):
-        size2 = self.size / 2.0
+        size2 = self.particle_size / 2.0
+
         # counter-clockwise
-        self.delta_pos_to_vertex[0] = (-size2, +size2)  # NW
-        self.delta_pos_to_vertex[1] = (-size2, -size2)  # SW
-        self.delta_pos_to_vertex[2] = (+size2, -size2)  # SE
-        self.delta_pos_to_vertex[3] = (+size2, +size2)  # NE
+        self.delta_pos_to_vertex[:,0] = numpy.array([-size2, +size2]).T  # NW
+        self.delta_pos_to_vertex[:,1] = numpy.array([-size2, -size2]).T  # SW
+        self.delta_pos_to_vertex[:,2] = numpy.array([+size2, -size2]).T  # SE
+        self.delta_pos_to_vertex[:,3] = numpy.array([+size2, +size2]).T  # NE
