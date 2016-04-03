@@ -46,7 +46,7 @@ from __future__ import division, print_function, unicode_literals
 __docformat__ = 'restructuredtext'
 
 import pyglet
-from pyglet.gl import *
+from pyglet import gl
 
 from cocos.cocosnode import CocosNode
 
@@ -75,10 +75,10 @@ class BatchNode(CocosNode):
         """ All children are placed in to self.batch, so nothing to visit """
         if not self.visible:
             return
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
         self.batch.draw()
-        glPopMatrix()
+        gl.glPopMatrix()
 
     def remove(self, child):
         if isinstance(child, str):

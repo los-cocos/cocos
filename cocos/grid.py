@@ -40,7 +40,7 @@ __docformat__ = 'restructuredtext'
 
 import pyglet
 from pyglet import image
-from pyglet.gl import *
+from pyglet import gl
 
 from cocos.euclid import Point2, Point3
 from cocos.director import director
@@ -78,8 +78,8 @@ class GridBase(object):
 
         if self.texture is None:
             self.texture = image.Texture.create_for_size(
-                GL_TEXTURE_2D, width,
-                height, GL_RGBA)
+                gl.GL_TEXTURE_2D, width,
+                height, gl.GL_RGBA)
 
         self.grabber = framegrabber.TextureGrabber()
         self.grabber.grab(self.texture)
@@ -122,15 +122,15 @@ class GridBase(object):
         camera.locate(force=True)
 
         # blit
-        glEnable(self.texture.target)
-        glBindTexture(self.texture.target, self.texture.id)
+        gl.glEnable(self.texture.target)
+        gl.glBindTexture(self.texture.target, self.texture.id)
 
-        glPushAttrib(GL_COLOR_BUFFER_BIT)
+        gl.glPushAttrib(gl.GL_COLOR_BUFFER_BIT)
 
         self._blit()
 
-        glPopAttrib()
-        glDisable(self.texture.target)
+        gl.glPopAttrib()
+        gl.glDisable(self.texture.target)
 
     def _set_active(self, bool):
         if self._active == bool:
@@ -164,23 +164,23 @@ class GridBase(object):
 
     @classmethod
     def _set_3d_projection(cls):
-        glViewport(director._offset_x, director._offset_y, director._usable_width, director._usable_height)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluPerspective(60, 1.0 * director._usable_width / director._usable_height, 0.1, 3000.0)
-        glMatrixMode(GL_MODELVIEW)
+        gl.glViewport(director._offset_x, director._offset_y, director._usable_width, director._usable_height)
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glLoadIdentity()
+        gl.gluPerspective(60, 1.0 * director._usable_width / director._usable_height, 0.1, 3000.0)
+        gl.glMatrixMode(gl.GL_MODELVIEW)
 
     @classmethod
     def _set_2d_projection(cls):
 
         # director.set_2d_projection()
         width, height = director.get_window_size()
-        glLoadIdentity()
-        glViewport(0, 0, width, height)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0, width, 0, height, -100, 100)
-        glMatrixMode(GL_MODELVIEW)
+        gl.glLoadIdentity()
+        gl.glViewport(0, 0, width, height)
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glLoadIdentity()
+        gl.glOrtho(0, width, 0, height, -100, 100)
+        gl.glMatrixMode(gl.GL_MODELVIEW)
 
 
 class Grid3D(GridBase):

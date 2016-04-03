@@ -14,6 +14,7 @@ import cocos
 from cocos.director import director
 from cocos.actions import *
 from cocos.layer import *
+from pyglet import gl
 
 class BackgroundLayer(cocos.layer.Layer):
     def __init__(self):
@@ -21,11 +22,11 @@ class BackgroundLayer(cocos.layer.Layer):
         self.img = pyglet.resource.image('background_image.png')
 
     def draw( self ):
-        glColor4ub(255, 255, 255, 255)
-        glPushMatrix()
+        gl.glColor4ub(255, 255, 255, 255)
+        gl.glPushMatrix()
         self.transform()
         self.img.blit(0,0)
-        glPopMatrix()
+        gl.glPopMatrix()
 
 description = """
 Shows how to use AccelAmplitude to modify a GridAction.

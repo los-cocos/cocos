@@ -38,7 +38,7 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-from pyglet.gl import *
+from pyglet import gl
 
 from cocos.director import director
 from cocos.euclid import Point3
@@ -107,8 +107,8 @@ class Camera(object):
                 whether or not the camera will be located even if it is not dirty
         """
         if force or self.dirty or self.once:
-            glLoadIdentity()
-            gluLookAt(self._eye.x, self._eye.y, self._eye.z,             # camera eye
+            gl.glLoadIdentity()
+            gl.gluLookAt(self._eye.x, self._eye.y, self._eye.z,             # camera eye
                       self._center.x, self._center.y, self._center.z,    # camera center
                       self._up_vector.x, self._up_vector.y, self._up_vector.z  # camera up vector
                       )

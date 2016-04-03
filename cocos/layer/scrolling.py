@@ -74,7 +74,8 @@ __docformat__ = 'restructuredtext'
 from cocos.director import director
 from .base_layers import Layer
 import pyglet
-from pyglet.gl import *
+from pyglet import gl
+
 
 
 class ScrollableLayer(Layer):
@@ -136,10 +137,10 @@ class ScrollableLayer(Layer):
         super(ScrollableLayer, self).draw()
 
         # XXX overriding draw eh?
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
         self.batch.draw()
-        glPopMatrix()
+        gl.glPopMatrix()
 
     def set_dirty(self):
         """The viewport has changed in some way.
@@ -404,21 +405,21 @@ class ScrollingManager(Layer):
 
     def set_state(self):
         # preserve gl scissors info
-        self._scissor_enabled = glIsEnabled(GL_SCISSOR_TEST)
-        self._old_scissor_flat = (GLint * 4)()  # 4-tuple
-        glGetIntegerv(GL_SCISSOR_BOX, self._old_scissor_flat)
+        self._scissor_enabled = gl.glIsEnabled(gl.GL_SCISSOR_TEST)
+        self._old_scissor_flat = (gl.GLint * 4)()  # 4-tuple
+        gl.glGetIntegerv(gl.GL_SCISSOR_BOX, self._old_scissor_flat)
 
         # set our scissor
         if not self._scissor_enabled:
-            glEnable(GL_SCISSOR_TEST)
+            gl.glEnable(gl.GL_SCISSOR_TEST)
 
-        glScissor(*self._scissor_flat)
+        gl.glScissor(*self._scissor_flat)
 
     def unset_state(self):
         # restore gl scissors info
-        glScissor(*self._old_scissor_flat)
+        gl.glScissor(*self._old_scissor_flat)
         if not self._scissor_enabled:
-            glDisable(GL_SCISSOR_TEST)
+            gl.glDisable(gl.GL_SCISSOR_TEST)
 
     def visit(self):
         if self.viewport is not None:

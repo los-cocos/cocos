@@ -48,7 +48,7 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-from cocos.director import *
+from cocos.director import director
 from cocos import cocosnode
 from cocos import scene
 

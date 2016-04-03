@@ -42,7 +42,6 @@ __docformat__ = 'restructuredtext'
 
 __all__ = ['Scene']
 
-from pyglet.gl import *
 
 import cocos
 from cocos.director import director

@@ -18,7 +18,7 @@ import weakref
 
 from pyglet.window import key
 from pyglet.window import mouse
-from pyglet.gl import *
+from pyglet import gl
 
 import cocos
 from cocos.director import director
@@ -105,14 +105,14 @@ class ProbeQuad(cocos.cocosnode.CocosNode):
         self.vertexes = [(r, 0, 0), (0, r, 0), (-r, 0, 0), (0, -r, 0)]
 
     def draw(self):
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
-        glBegin(GL_QUADS)
-        glColor4ub(*self.color4)
+        gl.glBegin(gl.GL_QUADS)
+        gl.glColor4ub(*self.color4)
         for v in self.vertexes:
-            glVertex3i(*v)
-        glEnd()
-        glPopMatrix()
+            gl.glVertex3i(*v)
+        gl.glEnd()
+        gl.glPopMatrix()
 
 
 class MinMaxRect(cocos.cocosnode.CocosNode):
@@ -137,13 +137,13 @@ class MinMaxRect(cocos.cocosnode.CocosNode):
     def draw(self):
         if not self.visible:
             return
-        glLineWidth(2)  # deprecated
-        glColor3ub(*self.color3)
-        glBegin(GL_LINE_STRIP)
+        gl.glLineWidth(2)  # deprecated
+        gl.glColor3ub(*self.color3)
+        gl.glBegin(gl.GL_LINE_STRIP)
         for v in self.vertexes:
-            glVertex2f(*v)
-        glVertex2f(*self.vertexes[0])
-        glEnd()
+            gl.glVertex2f(*v)
+        gl.glVertex2f(*self.vertexes[0])
+        gl.glEnd()
 
     def set_vertexes_from_minmax(self, minx, maxx, miny, maxy):
         self.vertexes = [(minx, miny), (minx, maxy), (maxx, maxy), (maxx, miny)]
@@ -534,14 +534,14 @@ class ColorRect(cocos.cocosnode.CocosNode):
         self.vertexes = [(0, 0, 0), (0, height, 0), (width, height, 0), (width, 0, 0)]
 
     def draw(self):
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
-        glBegin(GL_QUADS)
-        glColor4ub(*self.color4)
+        gl.glBegin(gl.GL_QUADS)
+        gl.glColor4ub(*self.color4)
         for v in self.vertexes:
-            glVertex3i(*v)
-        glEnd()
-        glPopMatrix()
+            gl.glVertex3i(*v)
+        gl.glEnd()
+        gl.glPopMatrix()
 
 
 class Worldview(cocos.layer.ScrollableLayer):

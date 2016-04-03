@@ -45,7 +45,7 @@ import cocos
 from cocos import euclid
 
 import pyglet
-from pyglet.gl import *
+from pyglet  import gl
 
 import copy
 
@@ -63,24 +63,24 @@ class ColorSkin(Skin):
 
     def draw(self):
         self.skeleton.propagate_matrix()
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
         self.skeleton.visit_children(lambda bone: self.draw_bone(bone))
         bones = self.skeleton.visit_children(
             lambda bone: (bone.label, bone.parent_matrix * bone.matrix))
         bones = dict(bones)
-        glPopMatrix()
+        gl.glPopMatrix()
 
     def draw_bone(self, bone):
         p1 = bone.get_start()
         p2 = bone.get_end()
 
-        glColor4ub(*self.color)
-        glLineWidth(5)
-        glBegin(GL_LINES)
-        glVertex2f(*p1)
-        glVertex2f(*p2)
-        glEnd()
+        gl.glColor4ub(*self.color)
+        gl.glLineWidth(5)
+        gl.glBegin(gl.GL_LINES)
+        gl.glVertex2f(*p1)
+        gl.glVertex2f(*p2)
+        gl.glEnd()
 
 
 class BitmapSkin(Skin):
@@ -111,7 +111,7 @@ class BitmapSkin(Skin):
 
     def draw(self):
         self.skeleton.propagate_matrix()
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
 
         bones = self.skeleton.visit_children(
@@ -121,18 +121,18 @@ class BitmapSkin(Skin):
         for bname, position, scale, image in self.parts:
             matrix = bones[bname]
             self.blit_image(matrix, position, scale, image)
-        glPopMatrix()
+        gl.glPopMatrix()
 
     def blit_image(self, matrix, position, scale, image):
         x, y = image.width * scale, image.height * scale
         # dx = self.x + position[0]
         # dy = self.y + position[1]
         dx, dy = position
-        glEnable(image.target)
-        glBindTexture(image.target, image.id)
-        glPushAttrib(GL_COLOR_BUFFER_BIT)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        gl.glEnable(image.target)
+        gl.glBindTexture(image.target, image.id)
+        gl.glPushAttrib(gl.GL_COLOR_BUFFER_BIT)
+        gl.glEnable(gl.GL_BLEND)
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
 
         # blit img
         points = [
@@ -145,26 +145,26 @@ class BitmapSkin(Skin):
         textures = [a, b, c, d, e, f, g, h]
         np = [matrix * euclid.Point2(*p) for p in points]
 
-        glColor4ub(255, 255, 255, self.alpha)
-        glBegin(GL_QUADS)
-        glTexCoord2f(a, b)
-        glVertex2f(*np[0])
-        glTexCoord2f(c, d)
-        glVertex2f(*np[1])
-        glTexCoord2f(e, f)
-        glVertex2f(*np[2])
-        glTexCoord2f(g, h)
-        glVertex2f(*np[3])
-        glEnd()
-        glColor4ub(255, 255, 255, 255)
+        gl.glColor4ub(255, 255, 255, self.alpha)
+        gl.glBegin(gl.GL_QUADS)
+        gl.glTexCoord2f(a, b)
+        gl.glVertex2f(*np[0])
+        gl.glTexCoord2f(c, d)
+        gl.glVertex2f(*np[1])
+        gl.glTexCoord2f(e, f)
+        gl.glVertex2f(*np[2])
+        gl.glTexCoord2f(g, h)
+        gl.glVertex2f(*np[3])
+        gl.glEnd()
+        gl.glColor4ub(255, 255, 255, 255)
         # pyglet.graphics.draw(4, GL_QUADS,
         #     ("v2f", new_points),
         #     ("t2f", textures),
         #     ("c4B", [255, 255, 255, self.alpha] * 4),
         #     )
 
-        glPopAttrib()
-        glDisable(image.target)
+        gl.glPopAttrib()
+        gl.glDisable(image.target)
 
     def flip(self):
         nsp = []

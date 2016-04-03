@@ -50,7 +50,7 @@ from cocos.cocosnode import CocosNode
 import pyglet
 from pyglet.graphics import OrderedGroup
 from pyglet import image
-from pyglet.gl import *
+from pyglet import gl
 
 
 class TextElement(CocosNode):
@@ -77,10 +77,10 @@ class TextElement(CocosNode):
         self.element = self.klass(group=self.group, batch=self.batch, **self.kwargs)
 
     def draw(self):
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
         self.element.draw()
-        glPopMatrix()
+        gl.glPopMatrix()
 
     def _get_opacity(self):
         return self.element.color[3]

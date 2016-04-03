@@ -46,7 +46,7 @@ import math
 import weakref
 
 import pyglet
-from pyglet.gl import *
+from pyglet import gl
 
 from cocos.director import director
 from cocos.camera import Camera
@@ -606,17 +606,17 @@ class CocosNode(object):
             # otherwise, the camera will be applied inside the grid
             self.camera.locate()
 
-        glTranslatef(self.position[0], self.position[1], 0)
-        glTranslatef(self.transform_anchor_x, self.transform_anchor_y, 0)
+        gl.glTranslatef(self.position[0], self.position[1], 0)
+        gl.glTranslatef(self.transform_anchor_x, self.transform_anchor_y, 0)
 
         if self.rotation != 0.0:
-            glRotatef(-self._rotation, 0, 0, 1)
+            gl.glRotatef(-self._rotation, 0, 0, 1)
 
         if self.scale != 1.0 or self.scale_x != 1.0 or self.scale_y != 1.0:
-            glScalef(self._scale * self._scale_x, self._scale * self._scale_y, 1)
+            gl.glScalef(self._scale * self._scale_x, self._scale * self._scale_y, 1)
 
         if self.transform_anchor != (0, 0):
-            glTranslatef(
+            gl.glTranslatef(
                 -self.transform_anchor_x,
                 -self.transform_anchor_y,
                 0)
@@ -678,7 +678,7 @@ class CocosNode(object):
         # we visit all nodes that should be drawn before ourselves
 
         if self.children and self.children[0][0] < 0:
-            glPushMatrix()
+            gl.glPushMatrix()
             self.transform()
             for z, c in self.children:
                 if z >= 0:
@@ -686,18 +686,18 @@ class CocosNode(object):
                 position += 1
                 c.visit()
 
-            glPopMatrix()
+            gl.glPopMatrix()
 
         # we draw ourselves
         self.draw()
 
         # we visit all the remaining nodes, that are over ourselves
         if position < len(self.children):
-            glPushMatrix()
+            gl.glPushMatrix()
             self.transform()
             for z, c in self.children[position:]:
                 c.visit()
-            glPopMatrix()
+            gl.glPopMatrix()
 
         if self.grid and self.grid.active:
             self.grid.after_draw(self.camera)

@@ -49,7 +49,7 @@ from __future__ import division, print_function, unicode_literals
 __docformat__ = 'restructuredtext'
 
 import pyglet
-from pyglet.gl import *
+from pyglet import gl
 
 from cocos.director import *
 from .base_layers import Layer
@@ -107,12 +107,12 @@ class ColorLayer(Layer):
 
     def draw(self):
         super(ColorLayer, self).draw()
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
-        glPushAttrib(GL_CURRENT_BIT)
+        gl.glPushAttrib(gl.GL_CURRENT_BIT)
         self._batch.draw()
-        glPopAttrib()
-        glPopMatrix()
+        gl.glPopAttrib()
+        gl.glPopMatrix()
 
     def _update_color(self):
         if self._vertex_list:

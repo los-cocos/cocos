@@ -59,13 +59,13 @@ __docformat__ = 'restructuredtext'
 import pyglet
 from pyglet import font
 from pyglet.window import key
-from pyglet.gl import *
+from pyglet import gl
 import pyglet.graphics
 
-from cocos.layer import *
-from cocos.director import *
-from cocos.cocosnode import *
-from cocos.actions import *
+from cocos.layer import Layer
+from cocos.director import director
+from cocos.cocosnode import CocosNode
+import cocos.actions as ac
 from cocos.sprite import Sprite
 from cocos import rect
 
@@ -294,10 +294,10 @@ class Menu(Layer):
             self._build_items(layout_strategy)
 
     def draw(self):
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
         self.title_label.draw()
-        glPopMatrix()
+        gl.glPopMatrix()
 
     def on_text(self, text):
         if text == '\r':
@@ -511,13 +511,13 @@ class MenuItem (BaseMenuItem):
         self.item_selected = pyglet.text.Label(**font_item_selected)
 
     def draw(self):
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
         if self.is_selected:
             self.item_selected.draw()
         else:
             self.item.draw()
-        glPopMatrix()
+        gl.glPopMatrix()
 
 
 class ImageMenuItem (BaseMenuItem):
@@ -543,13 +543,13 @@ class ImageMenuItem (BaseMenuItem):
         self.selected_item.position = int(pos_x), int(pos_y)
 
     def draw(self):
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
         if self.is_selected:
             self.selected_item.draw()
         else:
             self.item.draw()
-        glPopMatrix()
+        gl.glPopMatrix()
 
 
 class MultipleMenuItem(MenuItem):
@@ -748,7 +748,7 @@ class ColorMenuItem(MenuItem):
 
     def draw(self, *args, **kwargs):
         super(ColorMenuItem, self).draw()
-        glPushMatrix()
+        gl.glPushMatrix()
         self.transform()
 
         if self.is_selected:
@@ -763,7 +763,7 @@ class ColorMenuItem(MenuItem):
         pyglet.graphics.draw(4, pyglet.graphics.GL_QUADS,
                              ('v2f', (x1, y1, x1, y2, x2, y2, x2, y1)),
                              ('c3B', self.items[self.idx] * 4))
-        glPopMatrix()
+        gl.glPopMatrix()
 
 
 def shake():
@@ -773,21 +773,21 @@ def shake():
     angle = 5
     duration = 0.05
 
-    rot = Accelerate(RotateBy(angle, duration), 2)
-    rot2 = Accelerate(RotateBy(-angle * 2, duration), 2)
-    return rot + (rot2 + Reverse(rot2)) * 2 + Reverse(rot)
+    rot = ac.Accelerate(ac.RotateBy(angle, duration), 2)
+    rot2 = ac.Accelerate(ac.RotateBy(-angle * 2, duration), 2)
+    return rot + (rot2 + ac.Reverse(rot2)) * 2 + ac.Reverse(rot)
 
 
 def shake_back():
     """Predefined action that rotates to 0 degrees in 0.1 seconds"""
-    return RotateTo(0, 0.1)
+    return ac.RotateTo(0, 0.1)
 
 
 def zoom_in():
     """Predefined action that scales to 1.5 factor in 0.2 seconds"""
-    return ScaleTo(1.5, duration=0.2)
+    return ac.ScaleTo(1.5, duration=0.2)
 
 
 def zoom_out():
     """Predefined action that scales to 1.0 factor in 0.2 seconds"""
-    return ScaleTo(1.0, duration=0.2)
+    return ac.ScaleTo(1.0, duration=0.2)
