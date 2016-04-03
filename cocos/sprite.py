@@ -293,7 +293,7 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
 
     @image_anchor.setter
     def image_anchor(self, value):
-        self._image_anchor = value
+        self._image_anchor_x, self.image_anchor_y = value
         self._update_position()
 
     def draw(self):
