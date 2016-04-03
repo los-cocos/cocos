@@ -1338,7 +1338,9 @@ class HexMap(RegularTesselationMap):
         bottom = max(0, (bottom - oy)//self.th - 1)
         right = min(len(self.cells), right//col_width + 1)
         top = min(len(self.cells[0]), top//self.th + 1)
-        return [self.cells[i][j] for i in range(left, right) for j in range(bottom, top)]
+        return [self.cells[i][j] 
+                for i in range(int(left), int(right))
+                for j in range(int(bottom), int(top))]
 
     # XXX add get_from_screen
 

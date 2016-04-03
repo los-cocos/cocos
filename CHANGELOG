@@ -1,4 +1,5 @@
 v? - ?
+  - fix traceback in test_tmx_hexmap.py with py35, #263
   - autocompletion friendly, #261
   - fix changes in pyglet.sprite.Sprite properties break cocos Sprites #260
   - fix Particle size_var isn't used, #259
