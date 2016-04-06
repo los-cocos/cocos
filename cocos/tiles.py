@@ -1070,21 +1070,6 @@ class RectMapCollider(object):
     def collide_top(self, dy):
         pass
 
-    def get_cells_in_region(self, tilemap, rect):
-        """
-        Find all :class:`RectCell` in the given region.
-
-        Args:
-            tilemap (RectMap): Tile map containing the :class:`RectCell`.
-            rect (Rect): Rectangular region.
-         
-        Returns:
-            set: The set of :class:`RectCell` in the region
-        """
-        return {cell for cell in tilemap.get_in_region(*(rect.bottomleft + rect.topright))
-                if cell is not None and
-                   cell.tile is not None and
-                   cell.intersects(rect)}
 
     def collide_map(self, tilemap, last, new, dx, dy):
         """Collide a rect with the given RectMap tilemap.
@@ -1095,16 +1080,21 @@ class RectMapCollider(object):
 
         Returns the (possibly modified) (dx, dy)
         """
-        cells = self.get_cells_in_region(tilemap, new)
+        tested = set()
+        cells = tilemap.get_in_region(*(new.bottomleft + new.topright))
         for cell in cells:
+            if cell is None or cell.tile is None or not cell.intersects(new):
+                continue
+            tested.add(cell)
             dx, dy = self.do_collision(cell, last, new, dx, dy)
-        cells_collide_later = [cell for cell in cells 
+        cells_collide_later = [cell for cell in tested 
                             if hasattr(cell, 'collide_later')]
         for cell in cells_collide_later:
             if cell.intersects(new):
                 dx, dy = self.do_collision(cell, last, new, dx, dy)
             del cell.collide_later
         return dx, dy
+
 
     def do_collision(self, cell, last, new, dx, dy):
         """Collide a Rect moving from "last" to "new" with the given map
@@ -1955,17 +1945,26 @@ class TmxObjectLayer(MapLayer):
 
 
 class TmxObjectMapCollider(RectMapCollider):
-    def get_cells_in_region(self, tmx_map, rect):
-        """
-        Find all :class:`TmxObject` in the given region.
+    def collide_map(self, tilemap, last, new, dx, dy):
+        """Collide a rect with the given TmxObjectLayer tilemap.
 
-        Args:
-            tmx_map (TmxObjectLayer): Tmx map containing the :class:`TmxObject`.
-            rect (Rect): Rectangular region.
-         
-        Returns:
-            set: The set of :class:`TmxObject` in the region
+        Apart from "tilemap" the arguments are as per `do_collision`.
+
+        Mutates the new rect to conform with the tilemap.
+
+        Returns the (possibly modified) (dx, dy)
         """
-        return {cell for cell in tmx_map.get_in_region(*(rect.bottomleft + rect.topright))
-                if cell is not None and
-                   cell.intersects(rect)}
+        tested = set()
+        cells = tilemap.get_in_region(*(new.bottomleft + new.topright))
+        for cell in cells:
+            if cell is None or not cell.intersects(new):
+                continue
+            tested.add(cell)
+            dx, dy = self.do_collision(cell, last, new, dx, dy)
+        cells_collide_later = [cell for cell in tested 
+                            if hasattr(cell, 'collide_later')]
+        for cell in cells_collide_later:
+            if cell.intersects(new):
+                dx, dy = self.do_collision(cell, last, new, dx, dy)
+            del cell.collide_later
+        return dx, dy
