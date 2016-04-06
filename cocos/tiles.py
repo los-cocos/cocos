@@ -1070,23 +1070,35 @@ class RectMapCollider(object):
     def collide_top(self, dy):
         pass
 
-    def collide_map(self, map, last, new, dx, dy):
-        """Collide a rect with the given RectMap map.
+    def get_cells_in_region(self, tilemap, rect):
+        """
+        Find all :class:`RectCell` in the given region.
 
-        Apart from "map" the arguments are as per `do_collision`.
+        Args:
+            tilemap (RectMap): Tile map containing the :class:`RectCell`.
+            rect (Rect): Rectangular region.
+         
+        Returns:
+            set: The set of :class:`RectCell` in the region
+        """
+        return {cell for cell in tilemap.get_in_region(*(rect.bottomleft + rect.topright))
+                if cell is not None and
+                   cell.tile is not None and
+                   cell.intersects(rect)}
 
-        Mutates the new rect to conform with the map.
+    def collide_map(self, tilemap, last, new, dx, dy):
+        """Collide a rect with the given RectMap tilemap.
+
+        Apart from "tilemap" the arguments are as per `do_collision`.
+
+        Mutates the new rect to conform with the tilemap.
 
         Returns the (possibly modified) (dx, dy)
         """
-        tested = set()
-        cells = map.get_in_region(*(new.bottomleft + new.topright))
+        cells = self.get_cells_in_region(tilemap, new)
         for cell in cells:
-            if cell is None or cell.tile is None or not cell.intersects(new):
-                continue
-            tested.add(cell)
             dx, dy = self.do_collision(cell, last, new, dx, dy)
-        cells_collide_later = [cell for cell in tested 
+        cells_collide_later = [cell for cell in cells 
                             if hasattr(cell, 'collide_later')]
         for cell in cells_collide_later:
             if cell.intersects(new):
@@ -1943,4 +1955,17 @@ class TmxObjectLayer(MapLayer):
 
 
 class TmxObjectMapCollider(RectMapCollider):
-    pass
+    def get_cells_in_region(self, tmx_map, rect):
+        """
+        Find all :class:`TmxObject` in the given region.
+
+        Args:
+            tmx_map (TmxObjectLayer): Tmx map containing the :class:`TmxObject`.
+            rect (Rect): Rectangular region.
+         
+        Returns:
+            set: The set of :class:`TmxObject` in the region
+        """
+        return {cell for cell in tmx_map.get_in_region(*(rect.bottomleft + rect.topright))
+                if cell is not None and
+                   cell.intersects(rect)}
