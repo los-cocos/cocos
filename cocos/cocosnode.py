@@ -57,20 +57,26 @@ __all__ = ['CocosNode']
 
 class CocosNode(object):
     """
-    Cocosnode is the main element. Anything thats gets drawn or contains things that get drawn is a cocosnode.
-    The most popular cocosnodes are scenes, layers and sprites.
+    Cocosnode is the main element. Anything that gets drawn or contains things
+    that gets drawn is a :class:`CocosNode`.
+    The most popular :class:`CocosNode` are :class:`cocos.scene.Scene`, 
+    :class:`cocos.layer.base_layers.Layer` and :class:`cocos.sprite.Sprite`.
 
-    The main features of a cocosnode are:
-        - They can contain other cocos nodes (add, get, remove, etc)
-        - They can schedule periodic callback (schedule, schedule_interval, etc)
-        - They can execute actions (do, pause, stop, etc)
+    The main features of a :class:`CocosNode` are:
+        - They can contain other :class:`CocosNode` (:meth:`add`, :meth:`get`, 
+          :meth:`remove`, etc)
+        - They can schedule periodic callback (:meth:`schedule`, 
+          :meth:`schedule_interval`, etc)
+        - They can execute actions (:meth:`do`, :meth:`pause`, :meth:`stop`, 
+          etc)
 
-    Some cocosnodes provide extra functionality for them or their children.
+    Some :class:`CocosNode` provide extra functionality for them or their 
+    children.
 
-    Subclassing a cocosnode usually means (one/all) of:
-        - overriding __init__ to initialize resources and schedule calbacks
+    Subclassing a :class:`CocosNode` usually means (one/all) of:
+        - overriding ``__init__`` to initialize resources and schedule callbacks
         - create callbacks to handle the advancement of time
-        - overriding draw to render the node
+        - overriding :meth:`draw` to render the node
     """
     def __init__(self):
         # composition stuff
@@ -111,19 +117,22 @@ class CocosNode(object):
         #: Default: 0.0
         self._rotation = 0.0
 
-        #: eye, center and up vector for the `Camera`.
+        #: eye, center and up vector for the :class:`.Camera`.
         #: gluLookAt() is used with these values.
         #: Default: FOV 60, center of the screen.
-        #: IMPORTANT: The camera can perform exactly the same
-        #: transformation as ``scale``, ``rotation`` and the
-        #: ``x``, ``y`` attributes (with the exception that the
-        #: camera can modify also the z-coordinate)
-        #: In fact, they all transform the same matrix, so
-        #: use either the camera or the other attributes, but not both
-        #: since the camera will be overridden by the transformations done
-        #: by the other attributes.
-        #: You can change the camera manually or by using the `Camera3DAction`
-        #: action.
+        #:
+        #: .. NOTE::
+        #:      The camera can perform exactly the same
+        #:      transformation as ``scale``, ``rotation`` and the
+        #:      ``x``, ``y`` attributes (with the exception that the
+        #:      camera can modify also the z-coordinate)
+        #:      In fact, they all transform the same matrix, so
+        #:      use either the camera or the other attributes, but not both
+        #:      since the camera will be overridden by the transformations done
+        #:      by the other attributes.
+        #:
+        #: You can change the camera manually or by using the 
+        #: :class:`.Camera3DAction` action.
         self.camera = Camera()
 
         #: offset from (x,0) from where rotation and scale will be applied.
@@ -184,16 +193,18 @@ class CocosNode(object):
 
             :type: %s""" % (attr, types[attr]))
 
-    #: Anchor point of the object.
+    #: Anchor point of the object. Alias for :class:`transform_anchor`
     #: Children will be added at this point
     #: and transformations like scaling and rotation will use this point
-    #: as the center
+    #: as the center.
     anchor = make_property("anchor")
 
-    #: Anchor x value for transformations and adding children
+    #: Anchor x value for transformations and adding children. Alias for
+    #: :class:`transform_anchor_x`
     anchor_x = make_property("anchor_x")
 
-    #: Anchor y value for transformations and adding children
+    #: Anchor y value for transformations and adding children. Alias for
+    #: :class:`transform_anchor_y`
     anchor_y = make_property("anchor_y")
 
     def make_property(attr):
@@ -210,35 +221,39 @@ class CocosNode(object):
             set_attr(),
             doc='''a property to get fast access to "+attr+"_[x|y]
 
-            :type: (int,int)
+            :type: (int, int)
             ''')
 
-    #: Transformation anchor point.
-    #: Transformations like scaling and rotation
-    #: will use this point as it's center
+    #: Transformation anchor point. Children will be added at this point and
+    #: transformations like scaling and rotation
+    #: will use this point as its center.
     transform_anchor = make_property("transform_anchor")
     del make_property
 
     def schedule_interval(self, callback, interval, *args, **kwargs):
         """
-        Schedule a function to be called every `interval` seconds.
+        Schedule a function to be called every ``interval`` seconds.
 
         Specifying an interval of 0 prevents the function from being
-        called again (see `schedule` to call a function as often as possible).
+        called again (see :meth:`schedule` to call a function as often as 
+        possible).
 
-        The callback function prototype is the same as for `schedule`.
+        The callback function prototype is the same as for :meth:`schedule`.
 
-        :Parameters:
-            `callback` : function
-                The function to call when the timer lapses.
-            `interval` : float
-                The number of seconds to wait between each call.
-
-        This function is a wrapper to pyglet.clock.schedule_interval.
+        This function is a wrapper to ``pyglet.clock.schedule_interval``.
         It has the additional benefit that all calllbacks are paused and
         resumed when the node leaves or enters a scene.
 
         You should not have to schedule things using pyglet by yourself.
+        
+        Arguments:
+            callback (a function): 
+                The function to call when the timer elapsed.
+            interval (float): 
+                The number of seconds to wait between each call.
+            *args: Variable length argument list passed to the ``callback``.
+            **kwargs: Arbitrary keyword arguments  passed to the ``callback``.
+
         """
         if self.is_running:
             pyglet.clock.schedule_interval(callback, interval, *args, **kwargs)
@@ -258,15 +273,17 @@ class CocosNode(object):
             def callback(dt, *args, **kwargs):
                 pass
 
-        :Parameters:
-            `callback` : function
-                The function to call each frame.
-
-        This function is a wrapper to pyglet.clock.schedule.
+        This function is a wrapper to ``pyglet.clock.schedule``.
         It has the additional benefit that all calllbacks are paused and
         resumed when the node leaves or enters a scene.
 
         You should not have to schedule things using pyglet by yourself.
+
+        Arguments:
+            callback (a function):
+                The function to call each frame.
+            *args: Variable length argument list passed to the ``callback``.
+            **kwargs: Arbitrary keyword arguments  passed to the ``callback``.
         """
         if self.is_running:
             pyglet.clock.schedule(callback, *args, **kwargs)
@@ -279,18 +296,18 @@ class CocosNode(object):
         Remove a function from the schedule.
 
         If the function appears in the schedule more than once, all occurances
-        are removed.  If the function was not scheduled, no error is raised.
-
-        :Parameters:
-            `callback` : function
-                The function to remove from the schedule.
+        are removed. If the function was not scheduled, no error is raised.
 
         This function is a wrapper to pyglet.clock.unschedule.
         It has the additional benefit that all calllbacks are paused and
         resumed when the node leaves or enters a scene.
 
         You should not unschedule things using pyglet that where scheduled
-        by node.schedule/node.schedule_interface.
+        by :meth:`schedule`/:meth:`schedule_interval`.
+        
+        Arguments:
+            callback (a function):
+                The function to remove from the schedule.
         """
 
         self.scheduled_calls = [
@@ -306,7 +323,7 @@ class CocosNode(object):
     def resume_scheduler(self):
         """
         Time will continue/start passing for this node and callbacks
-        will be called, worker actions will be called
+        will be called, worker actions will be called.
         """
         for c, i, a, k in self.scheduled_interval_calls:
             pyglet.clock.schedule_interval(c, i, *a, **k)
@@ -315,8 +332,8 @@ class CocosNode(object):
 
     def pause_scheduler(self):
         """
-        Time will stop passing for this node: scheduled callbacks will
-        not be called, worker actions will not be called
+        Time will stop for this node: scheduled callbacks will
+        not be called, worker actions will not be called.
         """
         for f in set(
                 [x[0] for x in self.scheduled_interval_calls] +
@@ -340,15 +357,17 @@ class CocosNode(object):
 
     parent = property(_get_parent, _set_parent, doc='''The parent of this object.
 
-    :type: object
+    Returns:
+        CocosNode or None
     ''')
 
     def get_ancestor(self, klass):
         """
-        Walks the nodes tree upwards until it finds a node of the class `klass`
-        or returns None
+        Walks the nodes tree upwards until it finds a node of the class
+        ``klass`` or returns None.
 
-        :rtype: `CocosNode` or None
+        Returns:
+            CocosNode or None
         """
         if isinstance(self, klass):
             return self
@@ -366,7 +385,7 @@ class CocosNode(object):
         self._x = x
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
-    x = property(_get_x, lambda self, x: self._set_x(x), doc="The x coordinate of the object")
+    x = property(_get_x, lambda self, x: self._set_x(x), doc="The x coordinate of the CocosNode")
 
     def _get_y(self):
         return self._y
@@ -375,7 +394,7 @@ class CocosNode(object):
         self._y = y
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
-    y = property(_get_y, lambda self, y: self._set_y(y), doc="The y coordinate of the object")
+    y = property(_get_y, lambda self, y: self._set_y(y), doc="The y coordinate of the CocosNode")
 
     def _get_position(self):
         return (self._x, self._y)
@@ -388,7 +407,7 @@ class CocosNode(object):
     position = property(_get_position, lambda self, p: self._set_position(p),
                         doc='''The (x, y) coordinates of the object.
 
-    :type: (int, int)
+    :type: tuple[int, int]
     ''')
 
     def _get_scale(self):
@@ -399,7 +418,11 @@ class CocosNode(object):
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 
-    scale = property(_get_scale, lambda self, scale: self._set_scale(scale))
+    scale = property(_get_scale, lambda self, scale: self._set_scale(scale),
+                     doc='''The scaling factor of the object.
+
+    :type: float
+    ''')
 
     def _get_scale_x(self):
         return self._scale_x
@@ -409,7 +432,11 @@ class CocosNode(object):
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 
-    scale_x = property(_get_scale_x, lambda self, scale: self._set_scale_x(scale))
+    scale_x = property(_get_scale_x, lambda self, scale: self._set_scale_x(scale),
+                       doc='''The scale x of this object.
+
+    :type: float
+    ''')
 
     def _get_scale_y(self):
         return self._scale_y
@@ -419,7 +446,11 @@ class CocosNode(object):
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 
-    scale_y = property(_get_scale_y, lambda self, scale: self._set_scale_y(scale))
+    scale_y = property(_get_scale_y, lambda self, scale: self._set_scale_y(scale),
+                       doc='''The scale y of this object.
+
+    :type: float
+    ''')
 
     def _get_rotation(self):
         return self._rotation
@@ -429,21 +460,27 @@ class CocosNode(object):
         self.is_transform_dirty = True
         self.is_inverse_transform_dirty = True
 
-    rotation = property(_get_rotation, lambda self, angle: self._set_rotation(angle))
+    rotation = property(_get_rotation, lambda self, angle: self._set_rotation(angle),
+                        doc='''The rotation of this object in degrees.
+    Defaults to 0.0.
+
+    :type: float
+    ''')
 
     def add(self, child, z=0, name=None):
-        """Adds a child and if it becomes part of the active scene calls its on_enter method
+        """Adds a child and if it becomes part of the active scene, it calls
+        its :meth:`on_enter` method.
 
-        :Parameters:
-            `child` : CocosNode
+        Arguments:
+            child (CocosNode):
                 object to be added
-            `z` : float
-                the z index of self
-            `name` : str
-                Name of the child
+            z (Optional[float]):
+                the child z index. Defaults to 0.
+            name (Optional[str]):
+                Name of the child. Defaults to ``None``
 
-        :rtype: `CocosNode` instance
-        :return: self
+        Returns:
+            CocosNode: self
 
         """
         # child must be a subclass of supported_classes
@@ -485,15 +522,15 @@ class CocosNode(object):
         """Removes a child given its name or object
 
         If the node was added with name, it is better to remove by name, else
-        the name will be unavailable for further adds ( and will raise Exception
-        if add with this same name is attempted)
+        the name will be unavailable for further adds (and will raise an 
+        Exception if add with this same name is attempted)
 
-        If the node was part of the active scene, its on_exit method will be called.
+        If the node was part of the active scene, its :meth:`on_exit` method 
+        will be called.
 
-        :Parameters:
-            `obj` : string or object
-                name of the reference to be removed
-                or object to be removed
+        Arguments:
+            obj (str or object):
+                Name of the reference to be removed or object to be removed.
         """
         if isinstance(obj, string_types):
             if obj in self.children_names:
@@ -515,10 +552,10 @@ class CocosNode(object):
             child.on_exit()
 
     def get_children(self):
-        """Return a list with the node's childs, order is back to front
+        """Return a list with the node's children, order is back to front.
 
-        :rtype: list of CocosNode
-        :return: childs of this node, ordered back to front
+        Returns:
+            list[CocosNode]: children of this node, ordered back to front.
 
         """
         return [c for (z, c) in self.children]
@@ -527,18 +564,20 @@ class CocosNode(object):
         return child in self.get_children()
 
     def get(self, name):
-        """Gets a child given its name
+        """Gets a child given its name.
 
-        :Parameters:
-            `name` : string
-                name of the reference to be get
+        Arguments:
+            name (str):
+                name of the reference to retrieve.
 
-        :rtype: CocosNode
-        :return: the child named 'name'. Will raise Exception if not present
+        Returns:
+            CocosNode: The child named 'name'. Will raise an ``Exception`` if 
+            not present.
 
-        Warning: if a node is added with name, then removed not by name, the name
-        cannot be recycled: attempting to add other node with this name will
-        produce an Exception.
+        Warning:
+            If a node is added with name, then removing it differently
+            than by name will prevent the name to be recycled: attempting to add 
+            another node with this name will produce an Exception.
         """
         if name in self.children_names:
             return self.children_names[name]
@@ -549,13 +588,16 @@ class CocosNode(object):
         """
         Called every time just before the node enters the stage.
 
-        scheduled calls and worker actions begins or continues to perform
+        Scheduled calls and worker actions begin or continue to perform.
 
-        Good point to do .push_handlers if you have custom ones
-        Rule: a handler pushed there is near certain to require a .pop_handlers
-        in the .on_exit method (else it will be called even after removed from
-        the active scene, or, if going on stage again will be called multiple
-        times for each event ocurrence)
+        Good point to do ``push_handlers()`` if you have custom ones
+        
+        Note:
+            A handler pushed there is near certain to require a 
+            ``pop_handlers()`` in the :meth:`on_exit` method (else it will be 
+            called even after being removed from the active scene, or if going 
+            on stage again it will be called multiple times for each event 
+            ocurrences).
         """
         self.is_running = True
 
@@ -570,16 +612,16 @@ class CocosNode(object):
 
     def on_exit(self):
         """
-        Called every time just before the node leaves the stage
+        Called every time just before the node leaves the stage.
 
-        scheduled calls and worker actions are suspended, that is, will not
-        be called until an on_enter event happens.
+        Scheduled calls and worker actions are suspended, that is, they will not
+        be called until an :meth:`on_enter` event happens.
 
-        Most of the time you will want to .pop_handlers for all explicit
-        .push_handlers found in on_enter
+        Most of the time you will want to ``pop_handlers()`` for all explicit
+        ``push_handlers()`` found in meth:`on_enter`.
 
         Consider to release here openGL resources created by this node, like
-        compiled vertex lists
+        compiled vertex lists.
         """
         self.is_running = False
 
@@ -594,10 +636,10 @@ class CocosNode(object):
 
     def transform(self):
         """
-        Apply ModelView transformations
+        Apply ModelView transformations.
 
-        you will most likely want to wrap calls to this function with
-        glPushMatrix/glPopMatrix
+        You will most likely want to wrap calls to this function with
+        ``glPushMatrix()``/``glPopMatrix()``
         """
         x, y = director.get_window_size()
 
@@ -624,16 +666,16 @@ class CocosNode(object):
     def walk(self, callback, collect=None):
         """
         Executes callback on all the subtree starting at self.
-        returns a list of all return values that are not none
+        returns a list of all return values that are not ``None``.
 
-        :Parameters:
-            `callback` : function
-                callable, takes a cocosnode as argument
-            `collect` : list
-                list of visited nodes
+        Arguments:
+            callback (a function):
+                Callable that takes a :class:`CocosNode` as an argument.
+            collect (list):
+                List of non-`None` returned values from visited nodes.
 
-        :rtype: list
-        :return: the list of not-none return values
+        Returns:
+            list: The list of non-`None` return values.
 
         """
         if collect is None:
@@ -650,13 +692,13 @@ class CocosNode(object):
 
     def visit(self):
         """
-        This function *visits* it's children in a recursive
+        This function *visits* its children in a recursive
         way.
 
         It will first *visit* the children that
         that have a z-order value less than 0.
 
-        Then it will call the `draw` method to
+        Then it will call the :meth:`draw` method to
         draw itself.
 
         And finally it will *visit* the rest of the
@@ -664,8 +706,8 @@ class CocosNode(object):
         or equal than 0)
 
         Before *visiting* any children it will call
-        the `transform` method to apply any possible
-        transformation.
+        the :meth:`transform` method to apply any possible
+        transformations.
         """
         if not self.visible:
             return
@@ -705,7 +747,7 @@ class CocosNode(object):
     def draw(self, *args, **kwargs):
         """
         This is the function you will have to override if you want your
-        subclassed to draw something on screen.
+        subclassed :class:`CocosNode` to draw something on screen.
 
         You *must* respect the position, scale, rotation and anchor attributes.
         If you want OpenGL to do the scaling for you, you can::
@@ -719,18 +761,19 @@ class CocosNode(object):
         pass
 
     def do(self, action, target=None):
-        """Executes an *action*.
-        When the action finished, it will be removed from the node's actions
+        """Executes an :class:`.Action`.
+        When the action is finished, it will be removed from the node's actions
         container.
+        
+        To remove an action you must use the :meth:`do` return value to
+        call :meth:`remove_action`.
 
-        :Parameters:
-            `action` : an `Action` instance
+        Arguments:
+            action (Action): 
                 Action that will be executed.
-        :rtype: `Action` instance
-        :return: A clone of *action*
+        Returns:
+            Action: A clone of ``action``
 
-        to remove an action you must use the .do return value to
-        call .remove_action
         """
         a = copy.deepcopy(action)
 
@@ -749,16 +792,18 @@ class CocosNode(object):
         return a
 
     def remove_action(self, action):
-        """Removes an action from the node actions container, potentially calling action.stop()
+        """Removes an action from the node actions container, potentially 
+        calling ``action.stop()``.
 
-        If action was running, action.stop is called
-        Mandatory interfase to remove actions in the node actions container.
-        When skipping this there is the posibility to double call the action.stop
+        If action was running, :meth:`.Action.stop` is called.
+        Mandatory interface to remove actions in the node actions container.
+        When skipping this there is the posibility to double call the 
+        ``action.stop``
 
-        :Parameters:
-            `action` : Action
-                Action to be removed
-                Must be the return value for a .do(...) call
+        Arguments:
+            action (Action):
+                Action to be removed.
+                Must be the return value for a :meth:`do` call
         """
         assert action in self.actions
         if not action.scheduled_to_remove:
@@ -788,10 +833,10 @@ class CocosNode(object):
 
     def stop(self):
         """
-        Removes all actions from the running action list
+        Removes all actions from the running action list.
 
-        For each action running the stop method will be called,
-        and the action will be retired from the actions container.
+        For each action running, the stop method will be called,
+        and the action will be removed from the actions container.
         """
         for action in self.actions:
             self.remove_action(action)
@@ -805,15 +850,16 @@ class CocosNode(object):
     def _step(self, dt):
         """pumps all the actions in the node actions container
 
-            The actions scheduled to be removed are removed
-            Then an action.step() is called for each action in the
-            node actions container, and if the action doenst need any more step
-            calls will be scheduled to remove. When scheduled to remove,
-            the stop method for the action is called.
+            The actions scheduled to be removed are removed.
+            Then a :meth:`.Action.step` is called for each action in the
+            node actions container, and if the action doesn't need any more step
+            calls, it will be scheduled to be removed. When scheduled to be
+            removed, the :meth:`.Action.stop` method for the action is called.
 
-        :Parameters:
-            `dt` : delta_time
-                The time that elapsed since that last time this functions was called.
+        Arguments:
+            dt (float):
+                The time in seconds that elapsed since that last time this 
+                function was called.
         """
         for x in self.to_remove:
             if x in self.actions:
@@ -836,9 +882,10 @@ class CocosNode(object):
 
     # world to local / local to world methods
     def get_local_transform(self):
-        """returns an euclid.Matrix3 with the local transformation matrix
+        """Returns an :class:`.euclid.Matrix3` with the local transformation matrix
 
-        :rtype: euclid.Matrix3
+        Returns:
+            euclid.Matrix3
         """
         if self.is_transform_dirty:
 
@@ -857,9 +904,10 @@ class CocosNode(object):
         return self.transform_matrix
 
     def get_world_transform(self):
-        """returns an euclid.Matrix3 with the world transformation matrix
+        """Returns an :class:`.euclid.Matrix3` with the world transformation matrix
 
-        :rtype: euclid.Matrix3
+        Returns:
+            euclid.Matrix3
         """
         matrix = self.get_local_transform()
 
@@ -871,18 +919,24 @@ class CocosNode(object):
         return matrix
 
     def point_to_world(self, p):
-        """returns an euclid.Vector2 converted to world space
+        """Returns an :class:`.euclid.Vector2` converted to world space.
 
-        :rtype: euclid.Vector2
+        Arguments:
+            p (Vector2): Vector to convert
+
+        Returns:
+            Vector2: ``p`` vector converted to world coordinates.
         """
         v = euclid.Point2(p[0], p[1])
         matrix = self.get_world_transform()
         return matrix * v
 
     def get_local_inverse(self):
-        """returns an euclid.Matrix3 with the local inverse transformation matrix
+        """Returns an :class:`.euclid.Matrix3` with the local inverse 
+        transformation matrix.
 
-        :rtype: euclid.Matrix3
+        Returns:
+            euclid.Matrix3
         """
         if self.is_inverse_transform_dirty:
 
@@ -893,9 +947,11 @@ class CocosNode(object):
         return self.inverse_transform_matrix
 
     def get_world_inverse(self):
-        """returns an euclid.Matrix3 with the world inverse transformation matrix
+        """returns an :class:`.euclid.Matrix3` with the world inverse 
+        transformation matrix.
 
-        :rtype: euclid.Matrix3
+        Returns:
+            euclid.Matrix3
         """
         matrix = self.get_local_inverse()
 
@@ -907,9 +963,13 @@ class CocosNode(object):
         return matrix
 
     def point_to_local(self, p):
-        """returns an euclid.Vector2 converted to local space
+        """returns an :class:`.euclid.Vector2` converted to local space.
 
-        :rtype: euclid.Vector2
+        Arguments:
+            p (Vector2): Vector to convert.
+
+        Returns:
+            Vector2: ``p`` vector converted to local coordinates.
         """
         v = euclid.Point2(p[0], p[1])
         matrix = self.get_world_inverse()

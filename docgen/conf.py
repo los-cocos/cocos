@@ -54,11 +54,16 @@ autosummary_generate = True
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.inheritance_diagram', # needs grapviz
+              'sphinx.ext.napoleon'
               ]
 
 inheritance_graph_attrs = dict(rankdir="LR", size='""')
 
 autodoc_member_order='groupwise'
+
+
+# Napoleon settings
+napoleon_use_rtype = False
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['_templates']

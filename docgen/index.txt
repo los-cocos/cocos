@@ -20,6 +20,11 @@ Programming Guide
 API Reference
 =============
 
+.. Note::
+    - Type annotations in the API reference uses python 3 types
+    - When text strings are expected (``str`` in py3) ``str`` or ``unicode`` are accepted in py2.
+    - To future proof your code please use ``unicode`` for text strings.
+
 .. toctree::
    :maxdepth: 3
    

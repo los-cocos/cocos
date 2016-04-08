@@ -57,10 +57,12 @@ forced_point_sprites = None
 
 
 def point_sprites_available():
-    """returns a bool telling if point sprites are available
+    """
+    Returns:
+        bool: tells if ``point sprites`` are available.
 
-    For development and diagonostic cocos.particle.forced_point_sprites could
-    be set to force the desired return value
+    For development and diagonostic :class:`cocos.particle.forced_point_sprites`
+    could be set to force the desired return value.
     """
     if forced_point_sprites is not None:
         return forced_point_sprites
@@ -74,21 +76,42 @@ def point_sprites_available():
 
 
 class ExceptionNoEmptyParticle(Exception):
-    """particle system have no room for another particle"""
+    """Particle system has no room for another particle."""
     pass
 
 
 rand = lambda: random.random() * 2 - 1
+"""Function generating a random float beween -1.0 and 1.0."""
 
 
 # PointerToNumpy by Gary Herron
 # from pyglet's user list
 def PointerToNumpy(a, ptype=ctypes.c_float):
-    a = numpy.ascontiguousarray(a)  # Probably a NO-OP, but perhaps not
+    """PointerToNumpy(a, ptype=ctypes.c_float)
+
+    Provides a ctype pointer to a Numpy array.
+
+    Arguments:
+        a (numpy.array): The Numpy array.
+        ptype (ctypes): The ctypes type contained in the array.
+
+    Returns:
+        Pointer to the Numpy array.
+
+    """
+    a = numpy.ascontiguousarray(a)           # Probably a NO-OP, but perhaps not
     return a.ctypes.data_as(ctypes.POINTER(ptype))  # Ugly and undocumented!
 
 
 class Color(object):
+    """Representation of a rgba color
+
+    Arguments:
+        r (float): red component
+        g (float): green component
+        b (float): blue component
+        a (float): alpha component
+    """
     def __init__(self, r, g, b, a):
         self.r = r
         self.g = g
@@ -96,22 +119,38 @@ class Color(object):
         self.a = a
 
     def to_array(self):
+        """Convert :class:`Color` to a tuple.
+
+        Returns:
+            tuple: r, g, b and a components.
+        """
         return self.r, self.g, self.b, self.a
+
+    def __repr__(self):
+        return "Color({0:.2f}, {1:.2f}, {2:.2f}, {3:.2f})".format(self.r, self.g, self.b, self.a)
 
 
 class ParticleSystem(CocosNode):
     """
-    Base class for many flavors of cocos particle systems
+    Base class for many flavors of cocos particle systems.
 
-    The most easy way to customize is subclass and redefine some class members;
-    see particle_systems by example.
+    The easiest way to customize is to subclass and redefine some class attributes;
+    see :mod:`cocos.particle_systems` for examples.
 
-    To define a per-class custom texture override load_texture
-
+    To define a per-class custom texture, override :meth:`load_texture`.
     To use a per-instance custom texture, pass it in the __init__ texture kw-param
+
+    Arguments:
+        fallback (Optional[None, True, False]): Defaults to None.
+            
+            - False: use point sprites, faster, not always available
+            - True: use quads, slower but always available
+            - None: autodetect, use the fastest available
+        texture (Optional[pyglet.image.Texture]): The texture image to be used for
+            the particles.
     """
 
-    # type of particle
+    #: type of particle
     POSITION_FREE, POSITION_GROUPED = range(2)
 
     #: is the particle system active ?
@@ -126,13 +165,13 @@ class ParticleSystem(CocosNode):
     #: Gravity of the particles
     gravity = Point2(0.0, 0.0)
 
-    #: position is from "superclass" CocosNode
+    # position is from "superclass" CocosNode
     #: Position variance
     pos_var = Point2(0.0, 0.0)
 
     #: The angle (direction) of the particles measured in degrees
     angle = 0.0
-    #: Angle variance measured in degrees;
+    #: Angle variance measured in degrees
     angle_var = 0.0
 
     #: The speed the particles will have.
@@ -145,7 +184,7 @@ class ParticleSystem(CocosNode):
     #: Tangential acceleration variance
     tangential_accel_var = 0.0
 
-    #: Radial acceleration
+    #: Radial acceleration in degrees per second
     radial_accel = 0.0
     #: Radial acceleration variance
     radial_accel_var = 0.0
@@ -172,7 +211,11 @@ class ParticleSystem(CocosNode):
     #: Maximum particles
     total_particles = 0
 
-    #: texture for the particles, to be filled in __init__ because Intel weakness, #235
+    #: texture for the particles, will be loaded in __init__ because Intel weakness, 
+    #: `#235 <https://github.com/los-cocos/cocos/issues/235>`_.
+    #: Either override the :meth:`load_texture` method in a subclass to define a common
+    #: texture for all particles system of this class, or provide a ``texture`` argument
+    #: to the ``__init__`` method to define a custom texture for that instance.
     texture = None
 
     #: blend additive
@@ -181,8 +224,9 @@ class ParticleSystem(CocosNode):
     #: color modulate
     color_modulate = True
 
-    # position type
+    #: position type. Defaults to :class:`POSITION_GROUPED`
     position_type = POSITION_GROUPED
+
 
     def __init__(self, fallback=None, texture=None):
         """
@@ -190,7 +234,7 @@ class ParticleSystem(CocosNode):
             False: use point sprites, faster, not always available
             True: use quads, slower but always available)
             None: autodetect, use the faster available
-
+        texture: The texture image to be used for the particles.
         """
         super(ParticleSystem, self).__init__()
 
@@ -225,7 +269,7 @@ class ParticleSystem(CocosNode):
         #: Count of particles
         self.particle_count = 0
 
-        #: auto remove when particle finishes
+        # auto remove when particle finishes
         self.auto_remove_on_finish = False
 
         # resolve which texture will be used
@@ -238,7 +282,7 @@ class ParticleSystem(CocosNode):
             # the explicit texture provided will be used
             self.texture = texture
 
-        #: rendering mode; True is quads, False is point_sprites, None is auto fallback
+        # rendering mode; True is quads, False is point_sprites, None is auto fallback
         if fallback is None:
             fallback = not point_sprites_available()
         self.fallback = fallback
@@ -275,28 +319,44 @@ class ParticleSystem(CocosNode):
         self.particle_size_idx = gl.glGetAttribLocation(self.sprite_shader.program, b'particle_size')
 
     def load_texture(self):
-        """sets the default texture used by all instances of particle systems with same class
+        """Sets the default texture used by all instances of this particles system.
 
-        Override this method to change the default texture
+        Override this method to change the default texture.
 
-        By issue #168 the texture should hold only one image, so don't use
-            texture = pyglet.resource.image('z.png').texture  (produces an atlas, ie multiple images in a texture)
+        Note:
+            By `issue #168 <https://github.com/los-cocos/cocos/issues/168>`_ 
+            the texture should hold only one image, so don't use::
 
-        using texture = pyglet.image.load(...).get_texture() is fine
+                texture = pyglet.resource.image('z.png').texture # (produces an atlas, ie multiple images in a texture)
+
+            You can use instead::
+
+                texture = pyglet.image.load(...).get_texture()
+                # Or using pyglet resource mechanism
+                texture = pyglet.image.load('filename.png', file=pyglet.resource.file('filename.png')).get_texture()
         """
         pic = pyglet.image.load('fire.png', file=pyglet.resource.file('fire.png'))
         self.__class__.texture = pic.get_texture()
 
+
     def on_enter(self):
+        """Called everytime the Particle system enters the stage."""
         super(ParticleSystem, self).on_enter()
         director.push_handlers(self)
         # self.add_particle()
 
     def on_exit(self):
+        """Called everytime the Particle system exits the stage."""
         super(ParticleSystem, self).on_exit()
         director.remove_handlers(self)
 
     def on_cocos_resize(self, usable_width, usable_height):
+        """Handler for windows resize.
+
+        Arguments:
+            usable_width (int): New window width.
+            usable_height (int): New window height.
+        """
         self._scale_particle_size()
 
     @CocosNode.scale.setter
@@ -324,6 +384,7 @@ class ParticleSystem(CocosNode):
         self.particle_size_scaled = self.particle_size * scale
 
     def draw(self):
+        """Draw the particles system"""
         gl.glPushMatrix()
         self.transform()
 
@@ -396,7 +457,16 @@ class ParticleSystem(CocosNode):
         gl.glPopMatrix()
 
     def step(self, delta):
+        """Called every frame to create new particles if needed and
+        update the particles position.
 
+        If a duration was given to this particle system, the method will check
+        if it needs to remove itself from its parent node when its time has 
+        arrived.
+
+        Arguments:
+            delta (float): time in seconds since last frame.
+        """
         # update particle count
         self.particle_count = numpy.sum(self.particle_life >= 0)
 
@@ -425,25 +495,32 @@ class ParticleSystem(CocosNode):
 
     def add_particle(self):
         """
-        Code calling add_particle must be either:
-          be sure there is room for the particle
-          or
-          be prepared to catch the exception ExceptionNoEmptyParticle
-          It is acceptable to try: ... except...: pass
+        Code calling add_particle must either:
+            - be sure there is room for the particle
+            - be prepared to catch the exception :class:`ExceptionNoEmptyParticle`
+          
+        It is acceptable to ``try: ... except...: pass``
         """
         self.init_particle()
         self.particle_count += 1
 
     def stop_system(self):
+        """Stop the particle system."""
         self.active = False
         self.elapsed = self.duration
         self.emit_counter = 0
 
     def reset_system(self):
+        """Resets the particle system."""
         self.elapsed = self.duration
         self.emit_counter = 0
 
     def update_particles(self, delta):
+        """Updates particles position.
+
+        Arguments:
+            delta (float): time in seconds since last frame.
+        """
         # radial: posx + posy
         norm = numpy.sqrt(self.particle_pos[:, 0] ** 2 + self.particle_pos[:, 1] ** 2)
         # XXX prevent div by 0
@@ -485,6 +562,7 @@ class ParticleSystem(CocosNode):
         # print self.pas[0,0:4]
 
     def init_particle(self):
+        """Set initial particles state."""
         # position
         # p=self.particles[idx]
 
@@ -576,6 +654,9 @@ class ParticleSystem(CocosNode):
         self.delta_pos_to_vertex = numpy.zeros((self.total_particles, 4, 2), numpy.float32)
 
     def draw_fallback(self):
+        """Called instead of :meth:`draw` when quads are used instead of
+        Point Sprite.
+        """
         self.make_delta_pos_to_vertex()
         self.update_vertexs_from_pos()
         self.update_per_vertex_colors()
@@ -626,17 +707,26 @@ class ParticleSystem(CocosNode):
         gl.glPopMatrix()
 
     def update_vertexs_from_pos(self):
+        """Helper function to update particle quad vertices based
+        on particle position.
+        """
         vertexs = self.vertexs
         delta = self.delta_pos_to_vertex
         pos = self.particle_pos
         vertexs[:] = delta + pos[:, numpy.newaxis, :]
 
     def update_per_vertex_colors(self):
+        """Helper function to update particle quad colors based
+        on particle color.
+        """
         colors = self.particle_color
         per_vertex_colors = self.per_vertex_colors
         per_vertex_colors[:] = colors[:, numpy.newaxis, :]
 
     def make_delta_pos_to_vertex(self):
+        """Helper function creating quad vertices based on particles
+        position.
+        """
         size2 = self.particle_size / 2.0
 
         # counter-clockwise

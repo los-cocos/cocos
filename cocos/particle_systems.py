@@ -32,7 +32,11 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-"""Pre-defined Particle Systems"""
+"""Pre-defined Particle Systems.
+
+Here are some concrete implementations of Particle Systems. They 
+are built by subclassing :class:`ParticleSystem` and overriding
+the desired class attributes."""
 
 from __future__ import division, print_function, unicode_literals
 

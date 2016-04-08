@@ -33,7 +33,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 """
-Sprites allows to display a image in a rectangular area, which can be rotated,
+Sprites allows to display an image in a rectangular area, which can be rotated,
 scaled and moved.
 The placement in the scene follows the standard CocosNode rules.
 Also, all stock actions will work with sprites.
@@ -45,7 +45,7 @@ Animation as in cartoon style animation, that is, replacing the image fast
 enough to give the illusion of movement, can be accomplished by:
 
  - using an animated .gif file as source for the image
- - passing a pyglet.image.Animation as image, which collects a number of images
+ - passing a ``pyglet.image.Animation`` as image, which collects a number of images
  - have an array of images and let your code assign to the sprite image member
 
 Changing a sprite by way of actions
@@ -53,7 +53,7 @@ Changing a sprite by way of actions
 
 To execute any action you need to create an action::
 
-    move = MoveBy( (50,0), 5 )
+    move = MoveBy((50, 0), 5)
 
 In this case, ``move`` is an action that will move the sprite
 50 pixels to the right (``x`` coordinate) and  0 pixel in the ``y`` coordinate
@@ -61,7 +61,7 @@ in 5 seconds.
 
 And now tell the sprite to execute it::
 
-    sprite.do( move )
+    sprite.do(move)
 """
 
 from __future__ import division, print_function, unicode_literals
@@ -89,32 +89,33 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
     Example::
 
         sprite = Sprite('grossini.png')
+
+    Arguments:
+        image (str or pyglet.image.AbstractImage):
+            name of the image resource or a pyglet image.
+        position (tuple[float]):
+            position of the anchor. Defaults to (0,0)
+        rotation (float):
+            the rotation (in degrees). Defaults to 0.
+        scale (float):
+            the zoom factor. Defaults to 1.
+        scale_x  (float):
+            additional horizontal-only zoom factor. Defaults to 1.
+        scale_y (float):
+            additional vertical-only zoom factor. Defaults to 1.
+        opacity (int):
+            the opacity (0=transparent, 255=opaque). Defaults to 255.
+        color (tuple[int]):
+            the color to colorize the child (RGB 3-tuple). Defaults to 
+            (255,255,255).
+        anchor (tuple[float]):
+            (x, y) - point from where the image will be positioned, 
+            rotated and scaled in pixels. For example 
+            ``(image.width/2, image.height/2)`` is the center (default).
     """
 
     def __init__(self, image, position=(0, 0), rotation=0, scale=1,
                  opacity = 255, color=(255, 255, 255), anchor = None):
-        """Initialize the sprite
-
-        :Parameters:
-                `image` : string or image
-                    name of the image resource or a pyglet image.
-                `position` : tuple
-                    position of the anchor. Defaults to (0,0)
-                `rotation` : float
-                    the rotation (degrees). Defaults to 0.
-                `scale` : float
-                    the zoom factor. Defaults to 1.
-                `scale_x` : float
-                    additional horizontal-only zoom factor. Defaults to 1.
-                `scale_y` : float
-                    additional vertical-only zoom factor. Defaults to 1.
-                `opacity` : int
-                    the opacity (0=transparent, 255=opaque). Defaults to 255.
-                `color` : tuple
-                    the color to colorize the child (RGB 3-tuple). Defaults to (255,255,255).
-                `anchor` : (float, float)
-                    (x,y)-point from where the image will be positions, rotated and scaled in pixels. For example (image.width/2, image.height/2) is the center (default).
-        """
 
         if isinstance(image, string_types):
             image = pyglet.resource.image(image)
@@ -148,29 +149,30 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         # This is for batching
         self.children_group = None
 
-        #: position of the sprite in (x,y) coordinates
+        #: position of the sprite in (x, y) coordinates
         self.position = position
 
-        #: rotation degrees of the sprite. Default: 0 degrees
+        #: rotation in degrees of the sprite. Default: 0 degrees
         self.rotation = rotation
 
-        #: scale of the sprite where 1.0 the default value
+        #: scale of the sprite where 1.0 is the default value
         self.scale = scale
 
-        #: additional horizontal-only scale of the sprite where 1.0 the default value
+        #: additional horizontal-only scale of the sprite where 1.0 is the default value
         self.scale_x = 1
 
-        #: additional vertical-only scale of the sprite where 1.0 the default value
+        #: additional vertical-only scale of the sprite where 1.0 is the default value
         self.scale_y = 1
 
         #: opacity of the sprite where 0 is transparent and 255 is solid
         self.opacity = opacity
 
-        #: color of the sprite in R,G,B format where 0,0,0 is black and 255,255,255 is white
+        #: color of the sprite in R, G, B format where 0, 0, 0 is black and 
+        #: 255, 255, 255 is white
         self.color = color
 
     def get_rect(self):
-        """Get a cocos.rect.Rect for this sprite.
+        """Get a :class:`cocos.rect.Rect` for this sprite.
 
         Note that this rect's position is most likely NOT the same
         as the Sprite's position - in fact by default the rect's
@@ -183,7 +185,8 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
             rect.midbottom = (0, 100)
             sprite.position = rect.center
 
-        Returns a cocos.rect.Rect instance.
+        Returns:
+            :class:`cocos.rect.Rect`: The bounding box for this sprite.
         """
         x, y = self.position
         x -= self.image_anchor_x
@@ -191,9 +194,9 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         return Rect(x, y, self.width, self.height)
 
     def get_AABB(self):
-        """Returns a local-coordinates Axis aligned Bounding Box
-
-        Returns a cocos.rect.Rect instance.
+        """
+        Returns:
+            :class:`cocos.rect.Rect`: Local-coordinates Axis Aligned Bounding Box.
         """
         v = self._vertex_list.vertices
         x = v[0], v[2], v[4], v[6]
@@ -236,7 +239,8 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
 
         Read-only.  Invariant under rotation.
 
-        :type: int
+        Returns: 
+            int
         """
         return int(self._texture.height * self._scale * self._scale_y)
 
@@ -256,8 +260,11 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         pyglet.sprite.Sprite.y.__set__(self, y)
 
     def contains(self, x, y):
-        """Test whether this (untransformed) Sprite contains the pixel coordinates
-        given.
+        """Test if the point is in the area covered by the (untransformed) 
+        :class:`Sprite` bounding box.
+        
+        Returns:
+            bool
         """
         sx, sy = self.position
         ax, ay = self.image_anchor
@@ -271,6 +278,9 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
  
     @property
     def image_anchor_x(self):
+        """float: x coordinate from where the image will be positioned, 
+        rotated and scaled in pixels.
+        """
         return self._image_anchor_x
 
     @image_anchor_x.setter
@@ -280,6 +290,9 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
 
     @property
     def image_anchor_y(self):
+        """float: y coordinate from where the image will be positioned, 
+        rotated and scaled in pixels.
+        """
         return self._image_anchor_y
 
     @image_anchor_y.setter
@@ -289,6 +302,9 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
 
     @property
     def image_anchor(self):
+        """tuple[float]: Point from where the image will be positioned, 
+        rotated and scaled in pixels.
+        """
         return self._image_anchor_x, self._image_anchor_y
 
     @image_anchor.setter
@@ -298,7 +314,7 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
 
     def draw(self):
         """
-        When the sprite is not into a batch it will be draw with this method.
+        When the sprite is not into a batch it will be drawn with this method.
         If in a batch, this method is not called, and the draw is done by
         the batch.
         """
@@ -308,7 +324,7 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         self._group.unset_state()
 
     def _update_position(self):
-        """updates vertex list"""
+        """Updates the vertex list"""
         if not self._visible:
             self._vertex_list.vertices[:] = [0, 0, 0, 0, 0, 0, 0, 0]
             return
