@@ -77,13 +77,14 @@ class ExceptionNoEmptyParticle(Exception):
     """particle system have no room for another particle"""
     pass
 
+
 rand = lambda: random.random() * 2 - 1
 
 
 # PointerToNumpy by Gary Herron
 # from pyglet's user list
 def PointerToNumpy(a, ptype=ctypes.c_float):
-    a = numpy.ascontiguousarray(a)           # Probably a NO-OP, but perhaps not
+    a = numpy.ascontiguousarray(a)  # Probably a NO-OP, but perhaps not
     return a.ctypes.data_as(ctypes.POINTER(ptype))  # Ugly and undocumented!
 
 
@@ -100,14 +101,14 @@ class Color(object):
 
 class ParticleSystem(CocosNode):
     """
-    Base class for many flawors of cocos particle systems
+    Base class for many flavors of cocos particle systems
 
     The most easy way to customize is subclass and redefine some class members;
     see particle_systems by example.
 
-    If you want to use a custom texture remember it should hold only one image,
-    so don't use texture = pyglet.resource.image(...) (it would produce an atlas,
-    ie multiple images in a texture); using texture = pyglet.image.load(...) is fine
+    To define a per-class custom texture override load_texture
+
+    To use a per-instance custom texture, pass it in the __init__ texture kw-param
     """
 
     # type of particle
@@ -171,7 +172,7 @@ class ParticleSystem(CocosNode):
     #: Maximum particles
     total_particles = 0
 
-    #: texture for the particles. Lazy loaded because Intel weakness, #235
+    #: texture for the particles, to be filled in __init__ because Intel weakness, #235
     texture = None
 
     #: blend additive
@@ -183,10 +184,10 @@ class ParticleSystem(CocosNode):
     # position type
     position_type = POSITION_GROUPED
 
-    def __init__(self, fallback=None):
+    def __init__(self, fallback=None, texture=None):
         """
         fallback can be None, True, False; default is None
-            False: use point sprites, faster, not always availabel
+            False: use point sprites, faster, not always available
             True: use quads, slower but always available)
             None: autodetect, use the faster available
 
@@ -227,7 +228,15 @@ class ParticleSystem(CocosNode):
         #: auto remove when particle finishes
         self.auto_remove_on_finish = False
 
-        self.load_texture()
+        # resolve which texture will be used
+        if texture is None:
+            # no explicit texture, the class default texture will be
+            # implicitly used; ensure it is loaded
+            if self.texture is None:
+                self.load_texture()
+        else:
+            # the explicit texture provided will be used
+            self.texture = texture
 
         #: rendering mode; True is quads, False is point_sprites, None is auto fallback
         if fallback is None:
@@ -266,9 +275,17 @@ class ParticleSystem(CocosNode):
         self.particle_size_idx = gl.glGetAttribLocation(self.sprite_shader.program, b'particle_size')
 
     def load_texture(self):
-        if self.texture is None:
-            pic = pyglet.image.load('fire.png', file=pyglet.resource.file('fire.png'))
-            self.__class__.texture = pic.get_texture()
+        """sets the default texture used by all instances of particle systems with same class
+
+        Override this method to change the default texture
+
+        By issue #168 the texture should hold only one image, so don't use
+            texture = pyglet.resource.image('z.png').texture  (produces an atlas, ie multiple images in a texture)
+
+        using texture = pyglet.image.load(...).get_texture() is fine
+        """
+        pic = pyglet.image.load('fire.png', file=pyglet.resource.file('fire.png'))
+        self.__class__.texture = pic.get_texture()
 
     def on_enter(self):
         super(ParticleSystem, self).on_enter()
@@ -334,7 +351,7 @@ class ParticleSystem(CocosNode):
 
         size_ptr = PointerToNumpy(self.particle_size_scaled)
         gl.glVertexAttribPointer(self.particle_size_idx, 1, gl.GL_FLOAT,
-            False, 0, size_ptr)
+                                 False, 0, size_ptr)
 
         gl.glPushAttrib(gl.GL_COLOR_BUFFER_BIT)
         gl.glEnable(gl.GL_BLEND)
@@ -352,8 +369,8 @@ class ParticleSystem(CocosNode):
         #   glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE )
 
         self.sprite_shader.install()
-        self.sprite_shader.usetTex('sprite_texture', 0, 
-            gl.GL_TEXTURE_2D, self.texture.id)
+        self.sprite_shader.usetTex('sprite_texture', 0,
+                                   gl.GL_TEXTURE_2D, self.texture.id)
 
         gl.glDrawArrays(gl.GL_POINTS, 0, self.total_particles)
 
@@ -387,8 +404,8 @@ class ParticleSystem(CocosNode):
             rate = 1.0 / self.emission_rate
             self.emit_counter += delta
 
-#            if random.random() < 0.01:
-#                delta += 0.5
+            #            if random.random() < 0.01:
+            #                delta += 0.5
 
             while self.particle_count < self.total_particles and self.emit_counter > rate:
                 self.add_particle()
@@ -402,9 +419,9 @@ class ParticleSystem(CocosNode):
         self.update_particles(delta)
 
         if (not self.active and
-                self.particle_count == 0 and self.auto_remove_on_finish is True):
-                self.unschedule(self.step)
-                self.parent.remove(self)
+                    self.particle_count == 0 and self.auto_remove_on_finish is True):
+            self.unschedule(self.step)
+            self.parent.remove(self)
 
     def add_particle(self):
         """
@@ -623,7 +640,7 @@ class ParticleSystem(CocosNode):
         size2 = self.particle_size / 2.0
 
         # counter-clockwise
-        self.delta_pos_to_vertex[:,0] = numpy.array([-size2, +size2]).T  # NW
-        self.delta_pos_to_vertex[:,1] = numpy.array([-size2, -size2]).T  # SW
-        self.delta_pos_to_vertex[:,2] = numpy.array([+size2, -size2]).T  # SE
-        self.delta_pos_to_vertex[:,3] = numpy.array([+size2, +size2]).T  # NE
+        self.delta_pos_to_vertex[:, 0] = numpy.array([-size2, +size2]).T  # NW
+        self.delta_pos_to_vertex[:, 1] = numpy.array([-size2, -size2]).T  # SW
+        self.delta_pos_to_vertex[:, 2] = numpy.array([+size2, -size2]).T  # SE
+        self.delta_pos_to_vertex[:, 3] = numpy.array([+size2, +size2]).T  # NE

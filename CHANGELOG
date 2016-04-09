@@ -1,4 +1,5 @@
 v? - ?
+  - particle systems can have a per-instance custom texture, #264
   - fix traceback in test_tmx_hexmap.py with py35, #263
   - autocompletion friendly, #261
   - fix changes in pyglet.sprite.Sprite properties break cocos Sprites #260
