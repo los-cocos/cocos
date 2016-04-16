@@ -125,13 +125,12 @@ import warnings
 
 import pyglet
 from pyglet import window, event
-from pyglet import clock
-# from pyglet import media
 from pyglet import gl
 
 import cocos
 import cocos.audio
 import cocos.custom_clocks
+import cocos.fps
 
 if hasattr(sys, 'is_cocos_sphinx') and sys.is_cocos_sphinx:
     __all__ = ['director', 'Director', 'DefaultHandler']
@@ -266,6 +265,8 @@ class Director(event.EventDispatcher):
         :rtype: pyglet.window.Window
         :returns: The main window, an instance of pyglet.window.Window class.
         """
+        #: callable that would provide the object to calculate and eventually draw fps stats
+        self.fps_display_provider = cocos.fps.get_default_fpsdisplay
 
         #: whether or not the FPS are displayed
         self.show_FPS = False
@@ -384,9 +385,10 @@ class Director(event.EventDispatcher):
 
     def set_show_FPS(self, value):
         if value and self.fps_display is None:
-            self.fps_display = clock.ClockDisplay()
-        elif not value and self.fps_display is not None:
-            self.fps_display.unschedule()
+            self.fps_display = self.fps_display_provider()
+            self.fps_display.init()
+        elif not value and self.fps_display:
+            self.fps_display.terminate()
             self.fps_display = None
 
     show_FPS = property(lambda self: self.fps_display is not None, set_show_FPS)
@@ -460,6 +462,7 @@ class Director(event.EventDispatcher):
 
         # finally show the FPS
         if self.show_FPS:
+            self.fps_display.tick()
             self.fps_display.draw()
 
         if self.show_interpreter:

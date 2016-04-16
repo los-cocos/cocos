@@ -55,6 +55,7 @@ from __future__ import division, print_function, unicode_literals
 __docformat__ = 'restructuredtext'
 
 import pyglet
+import pyglet.clock
 
 
 def get_recorder_clock(framerate, template, duration=0):
