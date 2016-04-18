@@ -126,6 +126,7 @@ import warnings
 import pyglet
 from pyglet import window, event
 from pyglet import gl
+import pyglet.clock
 
 import cocos
 import cocos.audio
@@ -400,9 +401,9 @@ class Director(event.EventDispatcher):
             `scene` : `Scene`
                 The scene that will be run.
         """
-
         self._set_scene(scene)
-
+        # workaround pyglet 1.3 not calling on_draw if nothing scheduled (at least in Windows)
+        pyglet.clock.schedule_interval(lambda dt: None, 0.1)
         event_loop.run()
 
     def set_recorder(self, framerate, template="frame-%d.png", duration=None):
