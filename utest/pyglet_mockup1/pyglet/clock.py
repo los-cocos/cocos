@@ -28,3 +28,6 @@ def schedule_once(func, delay, *args, **kwargs):
 
 def unschedule(func):
     _default.unschedule(func)
+
+class ClockDisplay(object):
+    pass
