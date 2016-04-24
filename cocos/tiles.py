@@ -76,6 +76,7 @@ class TilesPropertyWithoutValue(Exception):
 class TmxUnsupportedVariant(Exception):
     pass
 
+
 class Resource(object):
     """Load some tile mapping resources from an XML file.
     """
@@ -105,6 +106,7 @@ class Resource(object):
         def decorate(func):
             cls.factories[name] = func
             return func
+
         return decorate
 
     def handle(self, tag):
@@ -287,22 +289,21 @@ def load_tmx(filename):
         # 'x' meant hexagons with top and bottom sides parallel to x axis,
         # 'y' meant hexagons with left and right sides paralel to y axis        
         s = map.attrib["staggeraxis"]
-        hex_orientation = {'x':'pointy_left', 'y':'pointy_up'}
+        hex_orientation = {'x': 'pointy_left', 'y': 'pointy_up'}
         # 'even' or 'odd', currently cocos only displays correctly 'even'       
-        lowest_columns = map.attrib["staggerindex"]=="even"
-        cell_cls = HexCell  
+        lowest_columns = map.attrib["staggerindex"] == "even"
+        cell_cls = HexCell
         layer_cls = HexMapLayer
         map_height_pixels = height * tile_height + tile_height // 2
 
     elif tiling_style == "orthogonal":
-        cell_cls = RectCell  
+        cell_cls = RectCell
         layer_cls = RectMapLayer
         map_height_pixels = height * tile_height
 
     else:
         raise ValueError("Unsuported tiling style, must be 'orthogonal' or 'hexagonal'")
 
-        
     # load all the tilesets
     tilesets = []
     for tag in map.findall('tileset'):
@@ -315,7 +316,7 @@ def load_tmx(filename):
             firstgid = int(tag.attrib['firstgid'])
 
         name = tag.attrib['name']
-        
+
         spacing = int(tag.attrib.get('spacing', 0))
         for c in tag.getchildren():
             if c.tag == "image":
@@ -369,7 +370,7 @@ def load_tmx(filename):
                     pass
                 else:
                     raise ResourceError('Unknown compression method: %r' % compression)
-                data = struct.unpack(str('<%di' % (len(data)//4)), data)
+                data = struct.unpack(str('<%di' % (len(data) // 4)), data)
             else:
                 raise TmxUnsupportedVariant("Unsupported tiles layer format " +
                                             "use 'csv', 'xml' or one of " +
@@ -388,7 +389,7 @@ def load_tmx(filename):
                         tile = ts[gid]
                         break
             i = n % width
-            j = height - (n//width + 1)
+            j = height - (n // width + 1)
             cells[i][j] = cell_cls(i, j, tile_width, tile_height, {}, tile)
 
         id = layer.attrib['name']
@@ -404,6 +405,7 @@ def load_tmx(filename):
         resource.add_resource(layer.name, layer)
 
     return resource
+
 
 #
 # XML PROPERTY PARSING
@@ -421,6 +423,7 @@ def text_to_4tuple_int(s):
 
 def color4_to_text(v):
     return repr(v)
+
 
 _xml_to_python = dict(
     # built in types
@@ -570,6 +573,7 @@ def tileset_factory(resource, tag):
 class Tile(object):
     """Tiles hold an image and some optional properties.
     """
+
     def __init__(self, id, properties, image, offset=None):
         self.id = id
         self.properties = properties
@@ -584,6 +588,7 @@ class Tile(object):
 class TileSet(dict):
     """Contains a set of Tile objects referenced by some id.
     """
+
     def __init__(self, id, properties):
         self.id = id
         self.properties = properties
@@ -635,6 +640,7 @@ class TileSet(dict):
                 ts[id] = Tile(id, {}, tile_image)
                 id += 1
         return ts
+
 
 #
 # RECT AND HEX MAPS
@@ -728,6 +734,7 @@ class MapLayer(cocos.layer.ScrollableLayer):
     The debug flag turns on textual display of data about each visible cell
     including its cell index, origin pixel and any properties set on the cell.
     """
+
     def __init__(self, properties):
         self._sprites = {}
         self.properties = properties
@@ -885,6 +892,7 @@ class RegularTesselationMap(object):
     """A regularly tesselated map that allows access to its cells by index
     (i, j).
     """
+
     def get_cell(self, i, j):
         """ Return Cell at cell pos=(i, j).
 
@@ -913,6 +921,7 @@ class RectMap(RegularTesselationMap):
 
     (and thus the cell at (0, 0) is 'a' and (0, 1) is 'd')
     """
+
     def __init__(self, id, tw, th, cells, origin=None, properties=None):
         """
         :Parameters:
@@ -1054,124 +1063,6 @@ class RectMapLayer(RectMap, MapLayer):
         MapLayer.__init__(self, properties)
 
 
-class RectMapCollider(object):
-    """This class implements collisions between a moving rect object and a
-    tilemap.
-    """
-    def collide_bottom(self, dy):
-        pass
-
-    def collide_left(self, dx):
-        pass
-
-    def collide_right(self, dx):
-        pass
-
-    def collide_top(self, dy):
-        pass
-
-    def collide_map(self, map, last, new, dx, dy):
-        """Collide a rect with the given RectMap map.
-
-        Apart from "map" the arguments are as per `do_collision`.
-
-        Mutates the new rect to conform with the map.
-
-        Returns the (possibly modified) (dx, dy)
-        """
-        tested = set()
-        cells = map.get_in_region(*(new.bottomleft + new.topright))
-        for cell in cells:
-            if cell is None or cell.tile is None or not cell.intersects(new):
-                continue
-            tested.add(cell)
-            dx, dy = self.do_collision(cell, last, new, dx, dy)
-        cells_collide_later = [cell for cell in tested 
-                            if hasattr(cell, 'collide_later')]
-        for cell in cells_collide_later:
-            if cell.intersects(new):
-                dx, dy = self.do_collision(cell, last, new, dx, dy)
-            del cell.collide_later
-        return dx, dy
-
-    def do_collision(self, cell, last, new, dx, dy):
-        """Collide a Rect moving from "last" to "new" with the given map
-        RectCell "cell". The "dx" and "dy" values may indicate the velocity
-        of the moving rect.
-
-        The RectCell must have the boolean properties "top", "left",
-        "bottom" and "right" for those sides which the rect should collide.
-
-        If there is no collision then nothing is done.
-
-        If there is a collision:
-
-        1. The "new" rect's position will be modified to its closest position
-           to the side of the cell that the collision is on, and
-        2. If the "new" rect position should be modified on both axis, then 
-           nothing is done but the cell is flagged with an attribute 
-           collide_later = True. This collision resolution should be treated 
-           last, and collide_map is responsible to call again this function 
-           on the flagged cell. This will force this function to move the 
-           "new" rect on the axis requiring the smallest displacement.
-           If the displacement is the same on both axis, move on both axis.
-        3. If the "dx" and "dy" values are passed in the methods
-           collide_<side> will be called to indicate that the rect has
-           collided with the cell on the rect's side indicated. The value
-           passed to the collide method will be a *modified* distance based
-           on the position of the rect after collision (according to step
-           #1).
-
-        Mutates the new rect to conform with the map.
-
-        Returns the (possibly modified) (dx, dy)
-        """
-        g = cell.get
-        dx_correction = dy_correction = 0.0
-        if g('top') and last.bottom >= cell.top and new.bottom < cell.top:
-            dy_correction = cell.top - new.bottom
-        elif g('bottom') and last.top <= cell.bottom and new.top > cell.bottom:
-            dy_correction = cell.bottom - new.top
-        if g('left') and last.right <= cell.left and new.right > cell.left:
-            dx_correction = cell.left - new.right
-        elif g('right') and last.left >= cell.right and new.left < cell.right:
-            dx_correction = cell.right - new.left
-        
-        if dx_correction != 0.0 and dy_correction != 0.0:
-            # Correction on both axis
-            if hasattr(cell, 'collide_later'):
-                if abs(dx_correction) < abs(dy_correction):
-                    # do correction only on X (below)
-                    dy_correction = 0.0
-                elif abs(dy_correction) < abs(dx_correction):
-                     # do correction only on Y (below)
-                    dx_correction = 0.0
-                else:
-                    # let both corrections happen below
-                    pass
-            else:
-                cell.collide_later = True
-                return dx, dy
-
-        if dx_correction != 0.0:
-            # Correction on X axis
-            new.left += dx_correction
-            dx += dx_correction
-            if dx_correction > 0.0:
-                self.collide_left(dx)
-            else:
-                self.collide_right(dx)
-        if dy_correction != 0.0:
-            # Correction on Y axis
-            new.top += dy_correction
-            dy += dy_correction
-            if dy_correction > 0.0:
-                self.collide_bottom(dy)
-            else:
-                self.collide_top(dy)
-        return dx, dy
-
-
 class Cell(object):
     """Base class for cells from rect and hex maps.
 
@@ -1194,6 +1085,7 @@ class Cell(object):
     If the named property does not exist on the cell it will be looked up
     on the cell's tile.
     """
+
     def __init__(self, i, j, width, height, properties, tile):
         self.width, self.height = width, height
         self.i, self.j = i, j
@@ -1264,6 +1156,7 @@ class RectCell(Rect, Cell):
     Note that all pixel attributes are *not* adjusted for screen,
     view or layer transformations.
     """
+
     def __init__(self, i, j, width, height, properties, tile):
         Rect.__init__(self, i * width, j * height, width, height)
         Cell.__init__(self, i, j, width, height, properties, tile)
@@ -1306,6 +1199,7 @@ class HexMap(RegularTesselationMap):
 
     (and this the cell at (0, 0) is 'a' and (1, 1) is 'd')
     """
+
     def __init__(self, id, th, cells, origin=None, properties=None):
         properties = properties or {}
         self.id = id
@@ -1322,7 +1216,7 @@ class HexMap(RegularTesselationMap):
         # now figure map dimensions
         width = len(cells)
         height = len(cells[0])
-        self.px_width = self.tw + (width - 1) * (s + s//2)
+        self.px_width = self.tw + (width - 1) * (s + s // 2)
         self.px_height = height * self.th
         if not width % 2:
             self.px_height += (th // 2)
@@ -1333,12 +1227,12 @@ class HexMap(RegularTesselationMap):
         """
         ox = self.origin_x
         oy = self.origin_y
-        col_width = self.tw//2 + self.tw//4
-        left = max(0, (left - ox)//col_width - self.tw//4)
-        bottom = max(0, (bottom - oy)//self.th - 1)
-        right = min(len(self.cells), right//col_width + 1)
-        top = min(len(self.cells[0]), top//self.th + 1)
-        return [self.cells[i][j] 
+        col_width = self.tw // 2 + self.tw // 4
+        left = max(0, (left - ox) // col_width - self.tw // 4)
+        bottom = max(0, (bottom - oy) // self.th - 1)
+        right = min(len(self.cells), right // col_width + 1)
+        top = min(len(self.cells[0]), top // self.th + 1)
+        return [self.cells[i][j]
                 for i in range(int(left), int(right))
                 for j in range(int(bottom), int(top))]
 
@@ -1356,13 +1250,13 @@ class HexMap(RegularTesselationMap):
         height = self.th
 
         ci = int(floor(x / side))
-        cx = int(x - side*ci)
+        cx = int(x - side * ci)
 
         ty = int(y - (ci % 2) * height / 2.0)
         cj = int(floor(1.0 * ty / height))
         cy = ty - height * cj
 
-        if cx <= abs(radius/2.0 - radius*cy/height):
+        if cx <= abs(radius / 2.0 - radius * cy / height):
             cj = cj + (ci % 2) - (1 if (cy < height / 2.0) else 0)
             ci = ci - 1
         return ci, cj
@@ -1458,6 +1352,7 @@ class HexMapLayer(HexMap, MapLayer):
 
     has cells = [['a', 'b'], ['c', 'd'], ['e', 'f'], ['g', 'h']]
     """
+
     # param 'ignored' only to match signature of RectmapLayer; not used
     def __init__(self, id, ignored, th, cells, origin=None, properties=None):
         HexMap.__init__(self, id, th, cells, origin, properties)
@@ -1501,108 +1396,125 @@ class HexCell(Cell):
     Note that all pixel attributes are *not* adjusted for screen,
     view or layer transformations.
     """
+
     # param 'ignored' only to match signature of RectCell; not used
     def __init__(self, i, j, ignored, height, properties, tile):
         width = hex_width(height)
         Cell.__init__(self, i, j, width, height, properties, tile)
 
     def get_origin(self):
-        x = self.i * (self.width//2 + self.width//4)
+        x = self.i * (self.width // 2 + self.width // 4)
         y = self.j * self.height
         if self.i % 2:
             y += self.height // 2
         return x, y
+
     origin = property(get_origin)
 
     # ro, side in pixels, y extent
     def get_top(self):
         y = self.get_origin()[1]
         return y + self.height
+
     top = property(get_top)
 
     # ro, side in pixels, y extent
     def get_bottom(self):
         return self.get_origin()[1]
+
     bottom = property(get_bottom)
 
     # ro, in pixels, (x, y)
     def get_center(self):
         x, y = self.get_origin()
-        return x + self.width//2, y + self.height//2
+        return x + self.width // 2, y + self.height // 2
+
     center = property(get_center)
 
     # ro, mid-point in pixels, (x, y)
     def get_midtop(self):
         x, y = self.get_origin()
-        return x + self.width//2, y + self.height
+        return x + self.width // 2, y + self.height
+
     midtop = property(get_midtop)
 
     # ro, mid-point in pixels, (x, y)
     def get_midbottom(self):
         x, y = self.get_origin()
-        return x + self.width//2, y
+        return x + self.width // 2, y
+
     midbottom = property(get_midbottom)
 
     # ro, side in pixels, x extent
     def get_left(self):
         x, y = self.get_origin()
-        return x, y + self.height//2
+        return x, y + self.height // 2
+
     left = property(get_left)
 
     # ro, side in pixels, x extent
     def get_right(self):
         x, y = self.get_origin()
-        return x + self.width, y + self.height//2
+        return x + self.width, y + self.height // 2
+
     right = property(get_right)
 
     # ro, corner in pixels, (x, y)
     def get_topleft(self):
         x, y = self.get_origin()
-        return x + self.width//4, y + self.height
+        return x + self.width // 4, y + self.height
+
     topleft = property(get_topleft)
 
     # ro, corner in pixels, (x, y)
     def get_topright(self):
         x, y = self.get_origin()
-        return x + self.width//2 + self.width//4, y + self.height
+        return x + self.width // 2 + self.width // 4, y + self.height
+
     topright = property(get_topright)
 
     # ro, corner in pixels, (x, y)
     def get_bottomleft(self):
         x, y = self.get_origin()
-        return x + self.width//4, y
+        return x + self.width // 4, y
+
     bottomleft = property(get_bottomleft)
 
     # ro, corner in pixels, (x, y)
     def get_bottomright(self):
         x, y = self.get_origin()
-        return x + self.width//2 + self.width//4, y
+        return x + self.width // 2 + self.width // 4, y
+
     bottomright = property(get_bottomright)
 
     # ro, middle of side in pixels, (x, y)
     def get_midtopleft(self):
         x, y = self.get_origin()
-        return x + self.width//8, y + self.height//2 + self.height//4
+        return x + self.width // 8, y + self.height // 2 + self.height // 4
+
     midtopleft = property(get_midtopleft)
 
     # ro, middle of side in pixels, (x, y)
     def get_midtopright(self):
         x, y = self.get_origin()
-        return (x + self.width//2 + self.width//4 + self.width//8,
-                y + self.height//2 + self.height//4)
+        return (x + self.width // 2 + self.width // 4 + self.width // 8,
+                y + self.height // 2 + self.height // 4)
+
     midtopright = property(get_midtopright)
 
     # ro, middle of side in pixels, (x, y)
     def get_midbottomleft(self):
         x, y = self.get_origin()
-        return x + self.width//8, y + self.height//4
+        return x + self.width // 8, y + self.height // 4
+
     midbottomleft = property(get_midbottomleft)
 
     # ro, middle of side in pixels, (x, y)
     def get_midbottomright(self):
         x, y = self.get_origin()
-        return (x + self.width//2 + self.width//4 + self.width//8,
-                y + self.height//4)
+        return (x + self.width // 2 + self.width // 4 + self.width // 8,
+                y + self.height // 4)
+
     midbottomright = property(get_midbottomright)
 
 
@@ -1670,6 +1582,7 @@ class TmxObject(Rect):
 
     A 'rect' AABB is itself, so x,y is it's bottomleft corner.
     """
+
     def __init__(self, tmxtype, usertype, x, y, width=0, height=0, name=None,
                  gid=None, tile=None, visible=1, points=None):
         if tile:
@@ -1804,17 +1717,6 @@ class TmxObject(Rect):
             o.properties[name] = value
         return o
 
-    def intersects(self, x1, y1, x2, y2):
-        if x2 < self.px:
-            return False
-        if y2 < self.py:
-            return False
-        if x1 > self.px + self.width:
-            return False
-        if y1 > self.py + self.height:
-            return False
-        return True
-
 
 class TmxObjectLayer(MapLayer):
     """A layer composed of basic primitive shapes.
@@ -1831,6 +1733,7 @@ class TmxObjectLayer(MapLayer):
         visible - whether the layer is shown (1) or hidden (0).
         objects - the objects in this Layer (TmxObject instances)
     """
+
     def __init__(self, name, color, objects, opacity=1,
                  visible=1, position=(0, 0)):
         MapLayer.__init__(self, {})
@@ -1908,13 +1811,13 @@ class TmxObjectLayer(MapLayer):
         return r
 
     def get_in_region(self, left, bottom, right, top):
-        """Return objects that are within the map-space
-        pixel bounds specified by the bottom-left (x1, y1) and top-right
-        (x2, y2) corners.
+        """Return objects that overlaps any interior point of the rect with
+        bottom-left (left, bottom) and top-right (right, top) corners.
 
         Return a list of TmxObject instances.
         """
-        return [obj for obj in self.objects if obj.intersects(left, bottom, right, top)]
+        region = Rect(left, bottom, right - left, top - bottom)
+        return [obj for obj in self.objects if obj.intersects(region)]
 
     def get_at(self, x, y):
         """Return the first object found at the nominated (x, y) coordinate.
@@ -1933,35 +1836,22 @@ class TmxObjectLayer(MapLayer):
         color = tuple(color[:3] + [128])
         color_image = pyglet.image.SolidColorImagePattern(color)
         for cell in self.get_visible_cells():
-            cx, cy = key = cell.origin[:2]
+            cx, cy = cell.origin[:2]
             if cell.tile:
                 image = cell.tile.image
             else:
                 image = color_image.create_image(int(cell.width), int(cell.height))
 
-            if key not in self._sprites:
-                self._sprites[key] = pyglet.sprite.Sprite(image, x=int(cx), y=int(cy),
-                                                          batch=self.batch)
+            if cell not in self._sprites:
+                self._sprites[cell] = pyglet.sprite.Sprite(image, x=int(cx), y=int(cy),
+                                                           batch=self.batch)
 
 
-class TmxObjectMapCollider(RectMapCollider):
-    def collide_map(self, map, last, new, dx, dy):
-        """Collide a rect with the given TmxObjectLayer map.
-
-        Apart from "map" the arguments are as per `do_collision`.
-
-        Mutates the new rect to conform with the map.
-
-        Returns the (possibly modified) (dx, dy)
-        """
-        self.resting = False
-        tested = set()
-        for cell in map.get_in_region(*(new.bottomleft + new.topright)):
-            if cell is None or cell.tile is None:
-                continue
-            # don't re-test
-            if cell in tested:
-                continue
-            tested.add(cell)
-            dx, dy = self.do_collision(cell, last, new, dx, dy)
-        return dx, dy
+class RectMapCollider(object):
+    """moved to cocos.mapcolliders"""
+    def __init__(self):
+        import warnings
+        warnings.warn('RectMapCollider been has moved to cocos.mapcolliders and changed behavior',
+                      DeprecationWarning, stacklevel=2)
+        import cocos.mapcolliders
+        cocos.mapcolliders.RectMapWithPropsCollider()

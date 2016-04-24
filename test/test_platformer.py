@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 testinfo = "s, q"
-tags = "tilemap, collide_map"
+tags = "tilemap, collide_map, collider"
 
 import pyglet
 from pyglet.window import key
@@ -15,48 +15,56 @@ pyglet.resource.path.append(pyglet.resource.get_script_home())
 pyglet.resource.reindex()
 
 import cocos
-from cocos import tiles, actions, layer
+from cocos import tiles, actions, layer, mapcolliders
 
 
-class PlatformerController(actions.Action, tiles.RectMapCollider):
+class PlatformerController(actions.Action):
     on_ground = True
-    MOVE_SPEED = 200
-    JUMP_SPEED = 500
-    GRAVITY = -1500
+    MOVE_SPEED = 300
+    JUMP_SPEED = 600
+    GRAVITY = -1200
 
     def start(self):
-        # initial velocity
         self.target.velocity = (0, 0)
 
     def step(self, dt):
-        global keyboard, tilemap, scroller
-        dx, dy = self.target.velocity
+        global keyboard, scroller
+        vx, vy = self.target.velocity
 
         # using the player controls, gravity and other acceleration influences
         # update the velocity
-        dx = (keyboard[key.RIGHT] - keyboard[key.LEFT]) * self.MOVE_SPEED *dt
-        dy = dy + self.GRAVITY * dt
+        vx = (keyboard[key.RIGHT] - keyboard[key.LEFT]) * self.MOVE_SPEED
+        vy += self.GRAVITY * dt
         if self.on_ground and keyboard[key.SPACE]:
-            dy = self.JUMP_SPEED
+            vy = self.JUMP_SPEED
+
+        # with the updated velocity calculate the (tentative) displacement
+        dx = vx * dt
+        dy = vy * dt
 
         # get the player's current bounding rectangle
         last = self.target.get_rect()
+
+        # build the tentative displaced rect
         new = last.copy()
         new.x += dx
-        new.y += dy * dt
+        new.y += dy
 
-        # run the collider
-        dx, dy = self.target.velocity = self.collide_map(tilemap, last, new, dx, dy)
-        self.on_ground = bool(new.y == last.y)
+        # account for hitting obstacles, it will adjust new and vx, vy
+        self.target.velocity = self.target.collision_handler(last, new, vx, vy)
 
-        # player position is anchored in the center of the image rect
+        # update on_ground status
+        self.on_ground = (new.y == last.y)
+
+        # update player position; player position is anchored at the center of the image rect
         self.target.position = new.center
 
         # move the scrolling view to center on the player
         scroller.set_focus(*new.center)
 
 description = """
-Shows how to use a tilemap to control collision between actors and the terrain.
+Shows how to use a mapcollider to control collision between actors and
+the terrain as described by a tilemap.
 Use Left-Right arrows and space to control.
 Use D to show cell / tile info
 """
@@ -90,6 +98,10 @@ def main():
 
     # player image anchor (position) is in the center of the sprite
     player.position = r.center
+
+    # give a collision handler to the player
+    mapcollider = mapcolliders.RectMapWithPropsCollider(velocity_on_bump='slide')
+    player.collision_handler = mapcolliders.make_collision_handler(mapcollider, tilemap)
 
     # construct the scene with a background layer color and the scrolling layers
     platformer_scene = cocos.scene.Scene()

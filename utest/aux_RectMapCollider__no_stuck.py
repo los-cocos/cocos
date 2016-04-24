@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-""" Tests that an actor using RectMapCollider does not get stuck
+""" Tests that an actor using RectMapCollider or RectMapWithPropsCollider,
+ with on_bump_handler==on_bump_slide does not get stuck when moving along a
+ wall while at the same time pushing against the wall.
 Run the tests with pytest.
 
 Implementation description
@@ -27,8 +29,9 @@ Implementation description
         push style: dx, dy
         actor start position: move the start position along the wall to cover
           all int alignements with the grid, ie do offsets 1..cell_width if
-          free movement axis is x, ... 
+          free movement axis is x, ...
 """
+
 from __future__ import division, print_function, unicode_literals
 
 # DON'T import cocos or pyglet: they will be imported from other modules in

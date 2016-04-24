@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-""" Tests that an actor using RectMapCollider does not get stuck
+""" Tests that an actor using RectMapCollider or RectMapWithPropsCollider,
+ with on_bump_handler==on_bump_slide does not get stuck when moving along a
+ wall while at the same time pushing against the wall.
 Run the tests with pytest.
 
 Implementation description
@@ -52,7 +54,8 @@ import py
 
 import cocos
 import cocos.layer
-from cocos.tiles import RectMap, RectCell, RectMapCollider 
+from cocos.tiles import RectMap, RectCell
+from cocos.mapcolliders import RectMapCollider, RectMapWithPropsCollider
 from cocos.rect import Rect
 
 import aux_RectMapCollider__no_stuck as aux
@@ -113,17 +116,26 @@ scenario = [ d for d in aux.case_generator(aux.first_expansion(maps_cache, aux.c
 
 class TestClass():
     params = {
-        'test_no_stuck': scenario,
+        'test_RectMapCollider__no_stuck': scenario,
+        'test_RectMapWithPropsCollider__no_stuck': scenario,
         }
 
-    def test_no_stuck(self, generic_id, tilemap, start_rect, dx, dy, expect_dxdy):
+    def test_RectMapCollider__no_stuck(self, generic_id, tilemap, start_rect, dx, dy, expect_dxdy):
         collider = RectMapCollider()
+        collider.on_bump_handler = collider.on_bump_slide
         new = start_rect.copy()
         new.x += dx
         new.y += dy
-        new_dx, new_dy = collider.collide_map(tilemap, start_rect, new, dx, dy)
+        collider.collide_map(tilemap, start_rect, new, 0, 0)
         assert new.position == (start_rect.x + expect_dxdy[0],
                                 start_rect.y + expect_dxdy[1])
-        # uncomment if changed behavior in RectMapCollider 
-        assert (new_dx, new_dy) == expect_dxdy
 
+    def test_RectMapWithPropsCollider__no_stuck(self, generic_id, tilemap, start_rect, dx, dy, expect_dxdy):
+        collider = RectMapWithPropsCollider()
+        collider.on_bump_handler = collider.on_bump_slide
+        new = start_rect.copy()
+        new.x += dx
+        new.y += dy
+        collider.collide_map(tilemap, start_rect, new, 0, 0)
+        assert new.position == (start_rect.x + expect_dxdy[0],
+                                start_rect.y + expect_dxdy[1])

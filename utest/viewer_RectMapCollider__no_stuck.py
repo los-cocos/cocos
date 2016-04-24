@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """
+run the script without params to visualize RectMapCollider collider cases
+run the script with any param to visualize RectMapWithPropsCollider cases
+
 Visualization for test cases used by test_RectMapCollider__no_stuck.py
 
 Use arrows UP and DOWN to change the case, ESC to quit.
@@ -41,7 +44,8 @@ from cocos.rect import Rect
 from cocos.sprite import Sprite
 from cocos.director import director
 from cocos.layer import Layer, ColorLayer, ScrollingManager, ScrollableLayer
-from cocos.tiles import RectMapLayer, Tile
+from cocos.tiles import RectMap, RectCell, RectMapLayer, Tile
+from cocos.mapcolliders import RectMapCollider, RectMapWithPropsCollider
 import pyglet
 from pyglet.window import key as pkey
 from cocos.text import Label
@@ -54,7 +58,7 @@ aux.Rect = Rect
 
 
 class Model(object):
-    """remember to set .scroller before allowing to recive .change calls"""
+    """remember to set .scroller before allowing to receive .change calls"""
     def __init__(self, cases):
         self.scroller = None
         self.cases = cases
@@ -92,11 +96,12 @@ class Model(object):
         self.current_tilemap = tilemap
 
         # calc as in test_no_stuck
-        collider = RectMapCollider()
+        collider = collider_cls()
+        collider.on_bump_handler = collider.on_bump_slide
         new = start_rect.copy()
         new.x += dx
         new.y += dy
-        new_dx, new_dy = collider.collide_map(tilemap, start_rect, new, dx, dy)
+        collider.collide_map(tilemap, start_rect, new, dx, dy)
         expected = start_rect.copy()
         expected.position = (expected.x + expect_dxdy[0],
                              expected.y + expect_dxdy[1])
@@ -123,6 +128,12 @@ class ControllerLayer(Layer):
             self.model.change(-1)
 
 print(__doc__)
+if len(sys.argv) < 2:
+    selector = 0
+else:
+    selector = 1
+collider_cls = [RectMapCollider, RectMapWithPropsCollider][selector]
+
 director.init()
 tile_filled = Tile('z', {}, pyglet.image.load('white4x3.png'))
 maps_cache = aux.generate_maps(tile_filled)
