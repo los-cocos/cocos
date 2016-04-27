@@ -32,39 +32,33 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-"""This module defines the ScrollableLayer and ScrollingManager classes.
+"""This module defines the :class:`ScrollableLayer` and 
+:class:`ScrollingManager` classes.
 
-Controlling Scrolling
----------------------
+This module helps to handle what will be visible on screen when the game world
+does not fit in the window area.
 
-You have two options for scrolling:
+It models this concept: the game world is a big volume. We have a camera
+that follows the actor moving parallel to one of the volume faces, without 
+rotations. What the camera sees is what  will be seen on the app window. Also, 
+the camera's movements can be restricted in order not to show parts outside 
+of the world. This technique is usually named *'scrolling'*.
 
-1. automatically scroll the map but stop at the map edges, and
-2. scroll the map an allow the edge of the map to be displayed.
+It has support for parallax rendering, that is, faking perspective by using
+layers that slide slower the farther they are.
 
-The ScrollingManager has a concept of "focus" which is the pixel
-position of the player's view focus (*usually* the center of the
-player sprite itself, but the player may be allowed to
-move the view around, or you may move it around for them to highlight
-something else in the scene). The ScrollingManager is clever enough to
-manage many layers and handle scaling them.
+The important concepts are:
+  - The coordinator, implemented as :class:`ScrollingManager` which enforces the
+    view limits imposed by the managed layers, accounts for layer's parallax.
 
-Two methods are available for setting the map focus:
+  - The managed layers, implemented each by a :class:`ScrollableLayer`, which as
+    a group holds all the entities in the world and each one can define what
+    area of the x-y plane should be shown on camera.
 
-**set_focus(x, y)**
-  Attempt to set the focus to the pixel coordinates given. The layer(s)
-  contained in the ScrollingManager are moved accordingly. If a layer
-  would be moved outside of its define px_width, px_height then the
-  scrolling is restricted. The resultant restricted focal point is stored
-  on the ScrollingManager as restricted_fx and restricted_fy.
-
-
-**force_focus(x, y)**
-  Force setting the focus to the pixel coordinates given. The layer(s)
-  contained in the ScrollingManager are moved accordingly regardless of
-  whether any out-of-bounds cells would be displayed. The .fx and .fy
-  attributes are still set, but they'll *always* be set to the supplied
-  x and y values.
+  -The focus, tied to ScrollingManager ``fx`` and ``fy`` attributes, which 
+    indicates that point (fx, fy) in world coordinates is the point of interest,
+    and should show at the center of the *screen view* if no restriction is
+    violated.
 """
 
 from __future__ import division, print_function, unicode_literals
@@ -77,24 +71,29 @@ import pyglet
 from pyglet import gl
 
 
-
 class ScrollableLayer(Layer):
-    """A Cocos Layer that is scrollable in a Scene.
+    """Layer that supports scrolling.
 
-    A layer may have a "parallax" value which is used to scale the position
-    (and not the dimensions) of the view of the layer - the layer's view
+    If ``px_width`` (resp ``px_height``) is defined, scrolling will be limited 
+    to only show areas with origin_x <= x < = px_width (resp 
+    origin_y <= y <= px_height).
+
+    A layer may have a ``parallax`` value which is used to scale the position
+    (and not the dimensions) of the view for the layer - the layer's view
     (x, y) coordinates are calculated as::
 
        my_view_x = parallax * passed_view_x
        my_view_y = parallax * passed_view_y
 
-    Scrollable layers have a view which identifies the section of the layer
-    currently visible.
+    The scrolling is managed by the parent node of :class:`ScrollingManager` 
+    class.
 
-    The scrolling is usually managed by a ScrollingManager.
+    .. Warning::
+        Don't change ``scale_x`` , ``scale_y`` from the default 1.0 or scrolling and
+        coordinate changes will fail.
 
-    Don't change scale_x , scale_y from the default 1.0 or scrolling and
-    coordinate changes will fail
+    Arguments:
+        parallax (float): the parallax for this layer. Defaults to 1.
     """
 
     def __init__(self, parallax=1):
@@ -109,31 +108,42 @@ class ScrollableLayer(Layer):
         # XXX batch eh?
         self.batch = pyglet.graphics.Batch()
 
-        #: The view x position
+        # The view x position
         self.view_x = 0
-        #: The view y position
+        # The view y position
         self.view_y = 0
-        #: The view width
+        # The view width
         self.view_w = 0
-        #: The view height
+        # The view height
         self.view_h = 0
 
         self.origin_x = self.origin_y = self.origin_z = 0
 
     def on_enter(self):
+        """Called every time just before the node enters the stage."""
         director.push_handlers(self.on_cocos_resize)
         super(ScrollableLayer, self).on_enter()
 
     def on_exit(self):
+        """Called every time just before the node exits the stage."""
         super(ScrollableLayer, self).on_exit()
         director.pop_handlers()
 
     def set_view(self, x, y, w, h, viewport_ox=0, viewport_oy=0):
+        """Sets the position of the viewport for this layer.
+
+        Arguments:
+            x (float): The view x position
+            y (float): The view y position
+            w (float): The width of the view
+            h (float): The height of the view
+            viewport_ox (float) : The viewport x origin
+            viewport_oy (float) : The viewport y origin
+        """
         x *= self.parallax
         y *= self.parallax
         self.view_x, self.view_y = x, y
         self.view_w, self.view_h = w, h
-        # print self, 'set_view - x, y, w, h:', self.view_x, self.view_y, self.view_w, self.view_h
         x -= self.origin_x
         y -= self.origin_y
         x -= viewport_ox
@@ -141,6 +151,7 @@ class ScrollableLayer(Layer):
         self.position = (-x, -y)
 
     def draw(self):
+        """Draws itself"""
         # invoked by Cocos machinery
         super(ScrollableLayer, self).draw()
 
@@ -156,24 +167,29 @@ class ScrollableLayer(Layer):
         pass
 
     def on_cocos_resize(self, usable_width, usable_height):
+        """Event handler for window resizing."""
         self.set_dirty()
 
 
 class ScrollingManager(Layer):
-    """Manages scrolling of Layers in a Cocos Scene.
+    """Handles scrolling for his children, which should be ScrollableLayer 
+    instances.
 
-    Each ScrollableLayer that is added to this manager (via standard list
-    methods) may have pixel dimensions .px_width and .px_height. Tile
-    module MapLayers have these attribtues. The manager will limit scrolling
-    to stay within the pixel boundary of the most limiting layer.
+    Restricts the scrolling so that all the visibility restriction imposed by
+    the children are honored; at least one child should define a constraint for 
+    the scrolling to be limited.
 
-    If a layer has no dimensions it will scroll freely and without bound.
+    The drawing can be limited to a specific window's rectangle by passing the
+    ``viewport`` parameter.
 
-    The manager is initialised with the viewport (usually a Window) which has
-    the pixel dimensions .width and .height which are used during focusing.
+    The scrolling manager also provides coordinate changes between screen coords
+    and world coords.
 
-    A ScrollingManager knows how to convert pixel coordinates from its own
-    pixel space to the screen space.
+    Args:
+        viewport (Rect): A rectangle defining the viewport. [Optional]
+        do_not_scale (bool): Whether the :class:`ScrollingManager` should scale
+            the view during Window resizes. (Defaults to None, meaning it takes
+            the same value as ``director.autoscale``)
     """
     def __init__(self, viewport=None, do_not_scale=None):
         if do_not_scale is None:
@@ -202,16 +218,21 @@ class ScrollingManager(Layer):
         self._old_focus = None
 
     def on_enter(self):
+        """"Called every time just before the node enters the stage."""
         super(ScrollingManager, self).on_enter()
         director.push_handlers(self.on_cocos_resize)
         self.update_view_size()
         self.refresh_focus()
 
     def on_exit(self):
+        """Called every time just before the node exits the stage."""
         director.pop_handlers()
         super(ScrollingManager, self).on_exit()
 
     def update_view_size(self):
+        """Updates the view size based on the director usable width and height,
+        and on the optional viewport.
+        """
         if self.viewport is not None:
             self.view_w, self.view_h = self.viewport.width, self.viewport.height
             self.view_x, self.view_y = getattr(self.viewport, 'position', (0, 0))
@@ -231,6 +252,7 @@ class ScrollingManager(Layer):
             self.view_h = director._usable_height
 
     def on_cocos_resize(self, usable_width, usable_height):
+        """Event handler for Window resize."""
         # when using an explicit viewport you should adjust the viewport for
         # resize changes here, before the lines that follows.
         # Also, if your app performs other changes in viewport it should
@@ -239,6 +261,7 @@ class ScrollingManager(Layer):
         self.refresh_focus()
 
     def refresh_focus(self):
+        """Resets the focus at the focus point."""
         if self.children:
             self._old_focus = None  # disable NOP check
             self.set_focus(self.fx, self.fy)
@@ -255,6 +278,12 @@ class ScrollingManager(Layer):
 
     def add(self, child, z=0, name=None):
         """Add the child and then update the manager's focus / viewport.
+
+        Args:
+            child (CocosNode): The node to add. Normally it's a
+                :class:`ScrollableLayer`.
+            z (int) : z-order for this child.
+            name (str) : The name of this child. [Optional]
         """
         super(ScrollingManager, self).add(child, z=z, name=name)
         # set the focus again and force it so we don't just skip because the
@@ -265,6 +294,13 @@ class ScrollingManager(Layer):
         """Look up the Layer-space pixel matching the screen-space pixel.
 
         Account for viewport, layer and screen transformations.
+
+        Arguments:
+            x (int): x coordinate in screen space
+            y (int): y coordinate in screen space
+
+        Returns:
+            tuple[int, int]: coordinates in map-space
         """
         # director display scaling
         if director.autoscale:
@@ -282,8 +318,6 @@ class ScrollingManager(Layer):
         w = int(self.view_w / self.scale)
         h = int(self.view_h / self.scale)
 
-        # print (int(x), int(y)), (vx, vy, w, h), int(vx + sx * w), int(vy + sy * h)
-
         # convert screen pixel to map pixel
         return int(vx + sx * w), int(vy + sy * h)
 
@@ -291,6 +325,13 @@ class ScrollingManager(Layer):
         """Look up the screen-space pixel matching the Layer-space pixel.
 
         Account for viewport, layer and screen transformations.
+
+        Arguments:
+            x (int): x coordinate in map space
+            y (int): y coordinate in map space
+
+        Returns:
+            tuple[int, int]: coordinates in screen space
         """
         screen_x = self.scale * (x - self.childs_ox)
         screen_y = self.scale * (y - self.childs_oy)
@@ -302,7 +343,13 @@ class ScrollingManager(Layer):
         child layers.
 
         The focus will always be shifted to ensure no child layers display
-        out-of-bounds data, as defined by their dimensions px_width and px_height.
+        out-of-bounds data, as defined by their dimensions ``px_width`` and ``px_height``.
+
+        Args:
+            fx (int): the focus point x coordinate
+            fy (int): the focus point y coordinate
+            force (bool): If True, forces the update of the focus, eventhough the
+                focus point or the scale did not change. Defaults to False.
         """
         # if no child specifies dimensions then just force the focus
         if not [l for z, l in self.children if hasattr(l, 'px_width')]:
@@ -357,7 +404,7 @@ class ScrollingManager(Layer):
             else:
                 restricted_fx = fx
         if (b_max_y - b_min_y) <= h:
-            # this branch for prety centered view and no view jump when
+            # this branch for pretty centered view and no view jump when
             # crossing the center; both when world height <= view height
             restricted_fy = (b_max_y + b_min_y) / 2
         else:
@@ -388,10 +435,13 @@ class ScrollingManager(Layer):
         """Force the manager to focus on a point, regardless of any managed layer
         visible boundaries.
 
+        Args:
+            fx (int): the focus point x coordinate
+            fy (int): the focus point y coordinate
         """
         # This calculation takes into account the scaling of this Layer (and
         # therefore also its children).
-        # The result is that all chilren will have their viewport set, defining
+        # The result is that all children will have their viewport set, defining
         # which of their pixels should be visible.
 
         self.fx, self.fy = map(int, (fx, fy))
@@ -415,6 +465,7 @@ class ScrollingManager(Layer):
                            self.view_x / self.scale, self.view_y / self.scale)
 
     def set_state(self):
+        """Sets OpenGL state for using scissor test."""
         # preserve gl scissors info
         self._scissor_enabled = gl.glIsEnabled(gl.GL_SCISSOR_TEST)
         self._old_scissor_flat = (gl.GLint * 4)()  # 4-tuple
@@ -427,12 +478,18 @@ class ScrollingManager(Layer):
         gl.glScissor(*self._scissor_flat)
 
     def unset_state(self):
+        """Unsets OpenGL state for using scissor test."""
         # restore gl scissors info
         gl.glScissor(*self._old_scissor_flat)
         if not self._scissor_enabled:
             gl.glDisable(gl.GL_SCISSOR_TEST)
 
     def visit(self):
+        """Draws itself and its children into the viewport area.
+
+        Same as in :meth:`.CocosNode.visit`, but will restrict drawing
+        to the rect viewport.
+        """
         if self.viewport is not None:
             self.set_state()
             super(ScrollingManager, self).visit()

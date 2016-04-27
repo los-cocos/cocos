@@ -32,16 +32,17 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-"""Layer class and subclasses
+"""Layer class and subclasses.
 
-A `Layer` has as size the whole drawable area (window or screen),
-and knows how to draw itself. It can be semi transparent (having holes
-and/or partial transparency in some/all places), allowing to see other layers
-behind it. Layers are the ones defining appearance and behavior, so most
-of your programming time will be spent coding Layer subclasses that do what
-you need. The layer is where you define event handlers.
-Events are propagated to layers (from front to back) until some layer catches
-the event and accepts it.
+Layers are typically thought as event handlers and / or as containers that help
+to organize the scene visuals or logic.
+
+The transform_anchor is set by default to the window's center, which most of the
+time provides the desired behavior on rotation and scale.
+
+By default a layer will not listen to events, his `is_event_handler` must be set
+to True before the layer enters the stage to enable the automatic registering as
+event handler.
 """
 
 from __future__ import division, print_function, unicode_literals
@@ -56,11 +57,9 @@ __all__ = ['Layer', 'MultiplexLayer']
 
 
 class Layer(cocosnode.CocosNode):
-    """a CocosNode that automatically handles listening to director.window events"""
+    """A CocosNode that can automatically register to listen to director.window events"""
 
-    #: if True the layer will listen to director.window events
-    #: Default: False
-    is_event_handler = False  #: if true, the event handlers of this layer will be registered. defaults to false.
+    is_event_handler = False  #: If ``True``, the event handlers of this layer will be registered. Defaults to ``False``.
 
     def __init__(self):
         super(Layer, self).__init__()
@@ -70,11 +69,13 @@ class Layer(cocosnode.CocosNode):
         self.transform_anchor_y = y // 2
 
     def on_enter(self):
+        "Called every time just before the node enters the stage."
         super(Layer, self).on_enter()
         if self.is_event_handler:
             director.window.push_handlers(self)
 
     def on_exit(self):
+        "Called every time just before the node exits the stage."
         super(Layer, self).on_exit()
         if self.is_event_handler:
             director.window.remove_handlers(self)
@@ -82,10 +83,16 @@ class Layer(cocosnode.CocosNode):
 
 # MultiplexLayer
 class MultiplexLayer(Layer):
-    """A Composite layer that only enables one layer at the time.
+    """A Composite layer that only enables one layer at a time.
 
-     This is useful, for example, when you have 3 or 4 menus, but you want to
-     show one at the time"""
+    This is useful, for example, when you have 3 or 4 menus, but you want to
+    show one at the time.
+
+    After instantiation the enabled layer is layers[0]
+
+    Arguments:
+        *layers : iterable with the layers to be managed.
+    """
 
     def __init__(self, *layers):
         super(MultiplexLayer, self).__init__()
@@ -96,13 +103,16 @@ class MultiplexLayer(Layer):
         self.add(self.layers[self.enabled_layer])
 
     def switch_to(self, layer_number):
-        """Switches to another Layer that belongs to the Multiplexor.
+        """Switches to another of the layers managed by this instance.
 
-        :Parameters:
-            `layer_number` : Integer
-                MUST be a number between 0 and the quantities of layers - 1.
-                The running layer will receive an "on_exit()" call, and the
-                new layer will receive an "on_enter()" call.
+        Arguments:
+            layer_number (int) :
+                **Must** be a number between 0 and the (number of layers - 1).
+                The running layer will receive an ``on_exit()`` call, and the
+                new layer will receive an ``on_enter()`` call.
+
+        Raises:
+            Exception: layer_number was out of bound.
         """
         if layer_number < 0 or layer_number >= len(self.layers):
             raise Exception("Multiplexlayer: Invalid layer number")

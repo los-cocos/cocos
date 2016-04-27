@@ -32,16 +32,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-"""Layer class and subclasses
-
-A `Layer` has as size the whole drawable area (window or screen),
-and knows how to draw itself. It can be semi transparent (having holes
-and/or partial transparency in some/all places), allowing to see other layers
-behind it. Layers are the ones defining appearance and behavior, so most
-of your programming time will be spent coding Layer subclasses that do what
-you need. The layer is where you define event handlers.
-Events are propagated to layers (from front to back) until some layer catches
-the event and accepts it.
+"""Special purpose layers
 """
 
 from __future__ import division, print_function, unicode_literals
@@ -58,18 +49,25 @@ __all__ = ['ColorLayer']
 
 
 class ColorLayer(Layer):
-    """Creates a layer of a certain color.
-    The color shall be specified in the format (r,g,b,a).
+    """Creates a layer of a given color.
+    The color shall be specified in the format (r, g, b, a).
 
-    For example, to create green layer::
+    For example, to create a green layer::
 
-        l = ColorLayer(0, 255, 0, 0 )
+        layer = ColorLayer(0, 255, 0, 0)
 
     The size and position can be changed, for example::
 
-        l = ColorLayer( 0, 255,0,0, width=200, height=400)
-        l.position = (50,50)
+        layer = ColorLayer(0, 255,0,0, width=200, height=400)
+        layer.position = (50,50)
 
+    Arguments:
+        r (int): red component
+        g (int): green component
+        b (int): blue component
+        a (int): alpha component
+        width (int): width of the color layer [Optional]
+        height (int): height of the color layer [Optional]
     """
     def __init__(self, r, g, b, a, width=None, height=None):
         super(ColorLayer, self).__init__()
@@ -88,6 +86,7 @@ class ColorLayer(Layer):
             self.height = h
 
     def on_enter(self):
+        "Called every time just before the node enters the stage."
         super(ColorLayer, self).on_enter()
         x, y = self.width, self.height
         ox, oy = 0, 0
@@ -101,11 +100,13 @@ class ColorLayer(Layer):
         self._update_color()
 
     def on_exit(self):
+        "Called every time just before the node exits the stage."
         super(ColorLayer, self).on_exit()
         self._vertex_list.delete()
         self._vertex_list = None
 
     def draw(self):
+        "Draws itself."
         super(ColorLayer, self).draw()
         gl.glPushMatrix()
         self.transform()
@@ -124,30 +125,33 @@ class ColorLayer(Layer):
         self._update_color()
 
     opacity = property(lambda self: self._opacity, _set_opacity,
-                       doc='''Blend opacity.
+                       doc="""Blend opacity.
 
     This property sets the alpha component of the colour of the layer's
     vertices.  This allows the layer to be drawn with fractional opacity,
     blending with the background.
 
     An opacity of 255 (the default) has no effect.  An opacity of 128 will
-    make the sprite appear translucent.
+    make the ColorLayer appear translucent.
 
-    :type: int
-    ''')
+    Arguments:
+        opacity (int): the opacity ranging from 0 (transparent) to 255 (opaque).
+    """)
 
     def _set_color(self, rgb):
         self._rgb = map(int, rgb)
         self._update_color()
 
     color = property(lambda self: self._rgb, _set_color,
-                     doc='''Blend color.
+                     doc="""Blend color.
 
     This property sets the color of the layer's vertices. This allows the
     layer to be drawn with a color tint.
 
-    The color is specified as an RGB tuple of integers ``(red, green, blue)``.
-    Each color component must be in the range 0 (dark) to 255 (saturated).
+    
 
-    :type: (int, int, int)
-    ''')
+    Arguments:
+        color (tuple[int, int, int]): The color is specified as an RGB tuple
+            of integers ``(red, green, blue)``.
+            Each color component must be in the range 0 (dark) to 255 (saturated).
+    """)

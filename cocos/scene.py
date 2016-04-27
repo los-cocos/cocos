@@ -33,7 +33,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 """
-Scene class and subclasses
+Scene class.
 """
 
 from __future__ import division, print_function, unicode_literals
@@ -55,22 +55,21 @@ except Exception:
 
 class Scene(cocosnode.CocosNode):
     """
-    """
-
-    def __init__(self, *children):
-        """
         Creates a Scene with layers and / or scenes.
 
         Responsibilities:
-            Control the dispatching of events to its layers; and background music playback
+            Control the dispatching of events to its layers; and background 
+            music playback.
 
-        :Parameters:
-            `children` : list of `Layer` or `Scene`
+        Arguments:
+            children (list[Layer or Scene]):
                 Layers or Scenes that will be part of the scene.
                 They are automatically assigned a z-level from 0 to
                 num_children.
         """
 
+    def __init__(self, *children):
+        
         super(Scene, self).__init__()
         self._handlers_enabled = False
         for i, c in enumerate(children):
@@ -84,6 +83,7 @@ class Scene(cocosnode.CocosNode):
         self.music_playing = False
 
     def on_enter(self):
+        """Called every time the Scene enters the stage."""
         for c in self.get_children():
             c.parent = self
         super(Scene, self).on_enter()
@@ -93,16 +93,20 @@ class Scene(cocosnode.CocosNode):
             cocos.audio.music.control.play()
 
     def on_exit(self):
+        """Called every time the :class:`Scene` exits the stage."""
         super(Scene, self).on_exit()
         # _apply_music after super, because is_running must be already False
         if self.music_playing:
             cocos.audio.music.control.stop()
 
     def end(self, value=None):
-        """Ends the current scene setting director.return_value with `value`
+        """Ends the current scene.
 
-        :Parameters:
-            `value` : anything
+        This is accomplished by calling :meth:`.Director.pop`.
+        Also sets ``director.return_value`` to ``value``.
+
+        Arguments:
+            value(anything):
                 The return value. It can be anything. A type or an instance.
         """
         director.return_value = value
@@ -113,12 +117,10 @@ class Scene(cocosnode.CocosNode):
 
         Music will be stopped after calling this (even if it was playing before).
 
-        :Parameters:
-            `filename` : fullpath
-                Filename of music to load.
+        Arguments:
+            filename (str): Filename of music to load.
                 Depending on installed libraries, supported formats may be
-                WAV, MP3, OGG, MOD;
-                You can also use 'None' to unset music
+                WAV, MP3, OGG, MOD. You can also use ``None`` to unset music.
         """
         self.music = filename
         self.music_playing = False
@@ -129,7 +131,8 @@ class Scene(cocosnode.CocosNode):
                 cocos.audio.music.control.stop()
 
     def play_music(self):
-        """Enable music playback for this scene. Nothing happens if music was already playing
+        """Enable music playback for this scene. Nothing happens if music was 
+        already playing.
 
         Note that if you call this method on an inactive scene, the music will
         start playing back only if/when the scene gets activated.

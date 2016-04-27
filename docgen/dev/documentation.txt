@@ -5,7 +5,7 @@ Documentation Notes
 Making the switch to sphinx
 ===========================
 
-Documentation was rendered with epydoc and some custom extensions until cocos 0.5.5. Epydoc is long time unmaintained, and needs patchs to work with newer python and docutils versions, so a change to a well maintained doc library was needed.
+Documentation was rendered with epydoc and some custom extensions until cocos 0.5.5. Epydoc is long time unmaintained, and needs patches to work with newer python and docutils versions, so a change to a well maintained doc library was needed.
 
 Sphinx is the current de facto standard, so documentation will use sphinx.
 
@@ -14,42 +14,47 @@ Guidelines for sphinx customization
 
 Keep customization at a minimun to avoid the need of maintenace when sphinx changes.
 
-Hints for some common markup operations
-=======================================
+Hints for some common markup operations in docstrings
+=====================================================
 
-please use 4 spaces indentation
+Please use 4 spaces indentation.
 
-tabs usually break things, convert them to spaces
+Tabs usually break things, convert them to spaces.
 
-inline literal text: \`\`:class:\`\` -> ``:class:`` 
-
-(in link syntax ``~`` is a modidier that supress the high parts in a dotted name)
+Inline literal text: \`\`my_literal_text\`\` -> ``my_literal_text``.
+(in link syntax ``~`` is a modidier that supress the high parts in a dotted name). 
  
-link to a cocos module: ``:mod:`~cocos.cocosnode` ->`` :mod:`~cocos.cocosnode`
+Link to a cocos module: ``:mod:`~cocos.cocosnode` ->`` :mod:`~cocos.cocosnode`
 
-link to a cocos module: ``:mod:`cocos.cocosnode` ->`` :mod:`cocos.cocosnode`
+Link to a cocos module: ``:mod:`cocos.cocosnode` ->`` :mod:`cocos.cocosnode`
 
-link to a class: ``:class:`~cocos.cocosnode.CocosNode` ->`` :class:`~cocos.cocosnode.CocosNode`
+Link to a class: ``:class:`~cocos.cocosnode.CocosNode` ->`` :class:`~cocos.cocosnode.CocosNode`
 
-link to a method: ``:meth:`~cocos.cocosnode.CocosNode.add` ->``  :meth:`~cocos.cocosnode.CocosNode.add`
+Link to a method: ``:meth:`~cocos.cocosnode.CocosNode.add` ->``  :meth:`~cocos.cocosnode.CocosNode.add`
 
-link to a method:
-
+Link to a method:
 ``:meth:`CocosNode.add<cocos.cocosnode.CocosNode.add>` ->``  :meth:`CocosNode.add()<cocos.cocosnode.CocosNode.add>`
 
-link to a function: ``:func:`cocos.tiles.load` ->`` :func:`cocos.tiles.load`
+Link to a function: ``:func:`cocos.tiles.load` ->`` :func:`cocos.tiles.load`
 
-There are other roles like
+.. Note::
+    If the class, method, attribute or function exists in the cocos project, 
+    prepending the name with a dot is normally sufficient. This works as well for
+    argument types
 
-``:data:`` -> Reference a module-level variable.
+    * link to a class ``:class:`.CocosNode` ->`` :class:`.CocosNode`
 
-``:const:`` -> Reference a defined constant. This may be a Python variable that is not intended to be changed.
+There are other roles like:
 
-``:attr:`` -> Reference a data attribute of an object.
+* ``:data:`` -> Reference a module-level variable.
 
-``:exc:``  -> Reference an exception. A dotted name may be used.
+* ``:const:`` -> Reference a defined constant. This may be a Python variable that is not intended to be changed.
 
-``:obj:``  -> Reference an object of unspecified type. Useful e.g. as the default_role.
+* ``:attr:`` -> Reference a data attribute of an object.
+
+* ``:exc:``  -> Reference an exception. A dotted name may be used.
+
+* ``:obj:``  -> Reference an object of unspecified type. Useful e.g. as the default_role.
 
 Link to a section or some arbitrary point in any document:
 
@@ -61,3 +66,44 @@ Link to a section or some arbitrary point in any document:
 Link to another document in the current sphinx build: 
     - ``:doc:`TextToShowInLink<documentName>``` (brackets included)
     - ``:doc:`documentName``` (will show the document title in the link)
+
+Functions and Methods docstring
+===============================
+
+We use `Napoleon <http://www.sphinx-doc.org/en/stable/ext/napoleon.html>`_ extension from Sphinx. Docstrings are laid out using the `Google style <http://google.github.io/styleguide/pyguide.html#Comments>`_. 
+The docstring should contain a section for Arguments (if they are present in the signature) and for the Return type if different from ``None``.
+
+Examples::
+
+    def add(self, child, z=0, name=None):
+        """Add the child and then update the manager's focus / viewport.
+
+        Args:
+            child (CocosNode): The node to add. Normally it's a 
+                :class:`ScrollableLayer`.
+            z (int) : z-order for this child.
+            name (str) : The name of this child. [Optional]
+        """
+
+::
+
+    def pixel_to_screen(self, x, y):
+        """Look up the screen-space pixel matching the Layer-space pixel.
+
+        Account for viewport, layer and screen transformations.
+
+        Arguments:
+            x (int): x coordinate in map space
+            y (int): y coordinate in map space
+
+        Returns:
+            tuple[int, int]: coordinates in screen space
+        """
+
+Here are some guidelines when writing documentation
+
+* The content should be precise enough so that anyone can understand what the class, method or function does.
+* No markup in docstring's first line. That line is presented raw by editors in autocomplete tooltips, so the markup looks weird.
+* Don't linkify class A or function f mentions in their own docstring(s). The reader is already in the class / function doc, so the link adds nothing except visual noise. It is fine to link to some specific subppart, like :method:...
+* Use triple double quotes to delimit docstrings.
+* When a subclass changes a bit some baseclass methods, and the baseclass method's docstring is large, it is better to signal only the differences with the baseclass method and to point to the base for extra explanations.
