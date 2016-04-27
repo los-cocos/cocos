@@ -517,17 +517,19 @@ class Director(event.EventDispatcher):
 
         # always true except for first scene in the app
         if self.scene is not None:
+            assert self.scene._handlers_enabled is True
             self.scene.on_exit()
-            self.scene.enable_handlers(False)
+            self.scene._handlers_enabled = False
 
         old = self.scene
         self.scene = scene
 
         # always true except when terminating the app
         if self.scene is not None:
+            assert self.scene._handlers_enabled is False
             # active scene is the top node
             self.scene.parent = None
-            self.scene.enable_handlers(True)
+            self.scene._handlers_enabled = True
             scene.on_enter()
 
         return old

@@ -53,29 +53,7 @@ except Exception:
     pass
 
 
-class EventHandlerMixin(object):
-    def add(self, child, *args, **kwargs):
-        super(EventHandlerMixin, self).add(child, *args, **kwargs)
-
-        scene = self.get(Scene)
-        if not scene:
-            return
-
-        if scene._handlers_enabled and scene.is_running and isinstance(child, cocos.layer.Layer):
-            child.push_all_handlers()
-
-    def remove(self, child):
-        super(EventHandlerMixin, self).remove(child)
-
-        scene = self.get(Scene)
-        if not scene:
-            return
-
-        if scene._handlers_enabled and scene.is_running and isinstance(child, cocos.layer.Layer):
-            child.remove_all_handlers()
-
-
-class Scene(cocosnode.CocosNode, EventHandlerMixin):
+class Scene(cocosnode.CocosNode):
     """
     """
 
@@ -119,26 +97,6 @@ class Scene(cocosnode.CocosNode, EventHandlerMixin):
         # _apply_music after super, because is_running must be already False
         if self.music_playing:
             cocos.audio.music.control.stop()
-
-    def push_all_handlers(self):
-        for child in self.get_children():
-            if isinstance(child, cocos.layer.Layer):
-                child.push_all_handlers()
-
-    def remove_all_handlers(self):
-        for child in self.get_children():
-            if isinstance(child, cocos.layer.Layer):
-                child.remove_all_handlers()
-
-    def enable_handlers(self, value=True):
-        """
-        This function makes the scene elegible for receiving events
-        """
-        if value and not self._handlers_enabled and self.is_running:
-            self.push_all_handlers()
-        elif not value and self._handlers_enabled and self.is_running:
-            self.remove_all_handlers()
-        self._handlers_enabled = value
 
     def end(self, value=None):
         """Ends the current scene setting director.return_value with `value`

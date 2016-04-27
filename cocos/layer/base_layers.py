@@ -55,7 +55,7 @@ from cocos import scene
 __all__ = ['Layer', 'MultiplexLayer']
 
 
-class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
+class Layer(cocosnode.CocosNode):
     """a CocosNode that automatically handles listening to director.window events"""
 
     #: if True the layer will listen to director.window events
@@ -69,47 +69,15 @@ class Layer(cocosnode.CocosNode, scene.EventHandlerMixin):
         self.transform_anchor_x = x // 2
         self.transform_anchor_y = y // 2
 
-    def push_all_handlers(self):
-        """ registers itself to receive director.window events and propagates
-            the call to childs that are layers.
-            class member is_event_handler must be True for this to work"""
-        if self.is_event_handler:
-            director.window.push_handlers(self)
-        for child in self.get_children():
-            if isinstance(child, Layer):
-                child.push_all_handlers()
-
-    def remove_all_handlers(self):
-        """ de-registers itself to receive director.window events and propagates
-            the call to childs that are layers.
-            class member is_event_handler must be True for this to work"""
-        if self.is_event_handler:
-            director.window.remove_handlers(self)
-        for child in self.get_children():
-            if isinstance(child, Layer):
-                child.remove_all_handlers()
-
     def on_enter(self):
         super(Layer, self).on_enter()
-
-        scn = self.get_ancestor(scene.Scene)
-        if not scn:
-            return
-
-        if scn._handlers_enabled:
-            if self.is_event_handler:
-                director.window.push_handlers(self)
+        if self.is_event_handler:
+            director.window.push_handlers(self)
 
     def on_exit(self):
         super(Layer, self).on_exit()
-
-        scn = self.get_ancestor(scene.Scene)
-        if not scn:
-            return
-
-        if scn._handlers_enabled:
-            if self.is_event_handler:
-                director.window.remove_handlers(self)
+        if self.is_event_handler:
+            director.window.remove_handlers(self)
 
 
 # MultiplexLayer
