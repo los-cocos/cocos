@@ -8,19 +8,19 @@ Using Director's API
 --------------------
 
 As we mentioned earlier, one of the main responsibilities of
-the `Director` is to manage the flow control of the scenes.
+the `Director` is to manage the control flow of the scenes.
 
 To do this, the director provides an API::
 
-    director.replace( new_scene )
+    director.replace(new_scene)
 
-    director.push( new_scene )
+    director.push(new_scene)
     director.pop()
 
-Use `Director.replace` to replace the current scene with a new one,
-and use `Director.push` to push a new scene on the stack. 
-The old scene will be stack, under the new one.
-You can remove an scene from the stack using `Director.pop`.
+Use :meth:`.Director.replace` to replace the current scene with a new one,
+and use :meth:`.Director.push` to push a new scene on the stack. 
+The old scene will be stacked under the new one.
+You can remove a scene from the stack using :meth:`.Director.pop`.
 
 When a new scene is pushed or replaced, these actions will be executed::
 
@@ -28,18 +28,18 @@ When a new scene is pushed or replaced, these actions will be executed::
     outgoing_scene.on_exit()
 
     # disable handlers
-    outgoing_scnee.enable_handlers( False)
+    outgoing_scene.enable_handlers(False)
 
 
     # calls on_enter() on the 'new' scene
     incoming_scene.on_enter()
 
     # enable handlers
-    incoming_scene.enable_handlers( True )
+    incoming_scene.enable_handlers(True)
 
 
-When an `Scene` is *entered*, it will propagate the *on_enter* message
-to all it's children, and it's children will do the same with it's children,
+When a :class:`.Scene` is *entered*, it will propagate the *on_enter* message
+to all its children, and its children will do the same with their children,
 and so on.
 
 The same happens with the *on_exit* message.
@@ -51,7 +51,7 @@ Transitions
 A nicer way to change between scenes, is to *decorate* the new scene with
 a *Transition* *Scene*.
 
-**Technically**, a transition scene is an scene that performs a transition effect before
+**Technically**, a transition scene is a scene that performs a transition effect before
 setting control to the new scene.
 
 And **visually**, a transition scene is like the transitions you see using any
@@ -66,11 +66,11 @@ Example::
 
     # using director replace
     # using the Fade-Top-Right Transition that lasts 2 seconds
-    director.replace( FadeTRTransition( gameover_scene, duration=2 ) )
+    director.replace(FadeTRTransition(gameover_scene, duration=2))
 
 
     # or, using 'push' with the Flip-X transition that lasts 1 second.
-    director.push( FlipX3DTransition( gameover_scene, duration=1 ) )
+    director.push(FlipX3DTransition(gameover_scene, duration=1))
 
 List of available transitions:
-    - `transitions`
+    - :mod:`.transitions`

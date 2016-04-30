@@ -1,4 +1,5 @@
 v? - ?
+  - Fix Scene push_all_handlers and remove_all_handlers problems #269
   - Fix Obsolete EventHandlerMixin class, #268
   - new interface for easy customize fps stats, #255
   - particle systems can have a per-instance custom texture, #264

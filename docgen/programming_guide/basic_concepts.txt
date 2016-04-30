@@ -29,8 +29,8 @@ cutscene if you lose, etc.).
 
 .. figure:: scenes.png
 
-A scene is described in cocos2d as a tree of CocosNodes where the root is
-a `Scene` node, the most near descendants usually are `Layers`, and they
+A scene is described in cocos2d as a tree of :class:`.CocosNodes` where the root is
+a :class:`.Scene` node, the most near descendants usually are :class:`.Layers`, and they
 hold and organize individual elements.
 
 Example for the main menu screen::
@@ -54,9 +54,9 @@ There is also a family of `Scene` subclasses called transitions (implemented wit
 the :class:`~cocos.scenes.transitions.TransitionScene` object) which allow you to
 make transitions between two scenes (fade out/in, slide from a side, etc).
 
-Since scenes are subclass of `CocosNode`, they can be transformed manually or
+Since scenes are subclass of :class:`.CocosNode`, they can be transformed manually or
 by using actions.
-See :doc:`actions` for more detail about actions.
+See :doc:`actions` for more details about actions.
 
 Director
 --------
@@ -66,10 +66,10 @@ between scenes.
 
 The director is a shared (singleton) object. It knows which scene is currently
 active, and it handles a stack of scenes to allow things like "scene calls"
-(pausing a `Scene` and putting it on hold while other enters, and then returning
+(pausing a :class:`.Scene` and putting it on hold while other enters, and then returning
 to the original). The push, replacement or end of the current scene is made by director.
 
-The director is also responsible of initializing the main window.
+The director is also responsible for initializing the main window.
 
 To get the director object you do::
 
@@ -83,7 +83,7 @@ Implementation lives in :mod:`cocos.director`
 Layers
 ------
 
-Layers helps you organize the scene in the back to front axis, by example
+Layers helps you organize the scene in the back to front axis, for example
 
 	- background : a fixed draw of landscape
 	- far : decorative trees and birds
@@ -91,34 +91,35 @@ Layers helps you organize the scene in the back to front axis, by example
 	- near : player, enemies, coins
 	- HUD : Heads Up Display to show game stats like life, energy
 
-You can think layers as (usually) transparent sheets where the children are drawn, and the scene as the stack of sheets
+You can think layers as (usually) transparent sheets where the children are drawn, and the scene as the stack of sheets.
 
 .. image:: layers.png
 
-In non MVC design style some code related to nodes interaction tends to float at the layer holding the entities, providing higher functional units.
-By example, `Menu` is a Layer subclass that knows how to layout and animate items, read user input and do control flow.
+In non MVC (model - view - controller) design style, some code related to nodes interaction tends to float in the layer holding the entities, 
+providing higher functional units.
+For example, :class:`.Menu` is a Layer subclass that knows how to layout and animate items, read user inputs and do control flow.
 
 Layers are the ones defining appearance and behavior, so most of your programming
-time will be spent coding `Layer` subclasses that do what you need. 
+time will be spent coding :class:`.Layer` subclasses that do what you need. 
 
-The `Layer` is where you define event handlers. Events are propagated to layers
+The :class:`.Layer` is where you define event handlers. Events are propagated to layers
 (from front to back) until some layer catches the event and accepts it.
 
-Even if any serious app will require you to define some :class:`~cocos.layer.base_layers.Layer` subclasses, cocos2d
-provides some useful specialized layers
+Even if any serious app will require you to define some :class:`.Layer` subclasses, cocos2d
+provides some useful specialized layers:
 
-	- :class:`~cocos.layer.base_layers.MultiplexLayer`, a group of layers where only one is seen at a time
-	- :class:`~cocos.layer.scrolling.ScrollingManager`, :class:`~cocos.layer.scrolling.ScrollableLayer`; does the logic to limit scroll to viewable areas
-	- :class:`~cocos.tiles.RectMapLayer`, :class:`~cocos.tiles.HexMapLayer`; displays a group of rectangular or hexagonal tiles
-	- :class:`~cocos.menu.Menu`, implements simple menus
-	- :class:`~cocos.layer.util_layers.ColorLayer`, a solid color rectangle
-	- :class:`~cocos.layer.python_interpreter.PythonInterpreterLayer`, used by director to pop up an interactive console to peek and poke at the objects in our scene ( ctrl + I to toggle on-off)
+	- :class:`.MultiplexLayer`, a group of layers where only one is seen at a time
+	- :class:`.ScrollingManager`, :class:`~cocos.layer.scrolling.ScrollableLayer`; does the logic to limit scroll to viewable areas
+	- :class:`.RectMapLayer`, :class:`.HexMapLayer`, :class:`.TmxObjectLayer`; displays a group of rectangular or hexagonal tiles or TMX objects
+	- :class:`.Menu`, implements simple menus
+	- :class:`.ColorLayer`, a solid color rectangle
+	- :class:`.PythonInterpreterLayer`, used by director to pop up an interactive console to peek and poke at the objects in our scene (ctrl + I to toggle on-off)
 
 To make loading of appropriate assets easier you may override the ``__init__``
-method of your `Layer` subclass. This will be called when your Layer is
+method of your :class:`.Layer` subclass. This will be called when your Layer is
 created.
 
-Since layers are subclass of `CocosNode`, they can be transformed manually or 
+Since layers are subclasses of :class:`.CocosNode`, they can be transformed manually or 
 by using actions.
 See :doc:`actions` for more detail about actions.
 
@@ -129,10 +130,10 @@ Sprites
 A cocos2d' sprite is like any other computer sprite.
 It is a 2D image that can be moved, rotated, scaled, animated, etc. 
 
-Sprites (implemented using the :class:`~cocos.sprite.Sprite` class) can have other sprites
+Sprites (implemented using the :class:`.Sprite` class) can have other sprites
 as children. When a parent is transformed, all its children are transformed as well.
 
-Since sprites are subclass of `CocosNode`, they can be transformed manually
+Since sprites are subclass of :class:`.CocosNode`, they can be transformed manually
 or by using actions.
 See :doc:`actions` for more detail about actions.
 
@@ -145,9 +146,9 @@ cocos2d uses `The pyglet Event Framework`_ to handle events.
 The pyglet event framework in a pinch
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
- - you have **emitters** (instances of pyglet.event.EventDispatcher)
+ - you have **emitters** (instances of `pyglet.event.EventDispatcher <http://pyglet.readthedocs.io/en/pyglet-1.2-maintenance/api/pyglet/event/pyglet.event.EventDispatcher.html>`_)
 
- - each emitter registers as much events as desired, each one identified by a
+ - each emitter registers as many events as desired, each one identified by a
    string (the event name)
 
  - to act over events, you register **listeners** with the emitter.
@@ -234,14 +235,14 @@ The pyglet event framework in a pinch
 
         emitter.remove_handlers(...) # params as in push_handlers
 
- - Event propagation : The event is propagated to all handlers from the top of the emitter stack until one returns EVENT_HANDLED.
+ - Event propagation : The event is propagated to all handlers from the top of the emitter stack until one returns EVENT_HANDLED (which is the value True).
 
 
 Cocos and events
 ^^^^^^^^^^^^^^^^
 
-Besides using events to get user input ('on_key_press', 'on_mouse_move',...) or window status change ( 'on_activate', ... )
-, you can use events to decouple the model from the view in your app. The game Tetrico, to be found in samples/tetrico is an example of this usage.
+Besides using events to get user input ('on_key_press', 'on_mouse_move',...) or window status change ( 'on_activate', ... ),
+you can use events to decouple the model from the view in your app. The game Tetrico, to be found in samples/tetrico is an example of this usage.
 
 Cocos in general will **not** automatically handle listeners registration/de-registration, except for one special case: the emitter is director.window and the listener is a layer or scene
 Thus, for the general case, you must handle the push_handlers - remove_handlers thing by yourself.
@@ -250,18 +251,17 @@ Also, for custom events, it is a good practice to not use event names that direc
 
 For the special case that emitter is director.window and the listeners are layers or scenes, cocos can handle the registration / de-registration:
 
- - When a scene becomes active it would walk the scene tree to allow layers autoregistering for director.window events
-   It would not attempt to register itself as a listener except if the scene.enable_handlers is called.
-   The walk begins in the scene, and passes only to layer class childs.
+ - When a scene becomes active, it would walk the scene tree to allow layers autoregistering for director.window events.
+   The walk begins in the scene, and passes only to layer class children.
 
- - When prompted from the above walk, a layer whose class member is_event_handler has value True will register itself as a director.window listener
-   The registration will be on the form::
+ - When prompted from the above walk, a layer whose class member is_event_handler has a True value, it will register itself as a director.window listener.
+   The registration will be in the form::
           
-        director.window.push_handler(layer)
+        director.window.push_handlers(layer)
 
-   so any method whose name matchs a <event name> will be registered as a listener.
+   So any method whose name matches an <event name> will be registered as a listener.
 
- - When the scene becomes inactive ( by director.pop by example ), the matching walk calling::
+ - When the scene becomes inactive (by director.pop or director.replace for example), the matching walk calling::
 
         director.window.remove_handlers(layer)      
 
@@ -269,10 +269,10 @@ For the special case that emitter is director.window and the listeners are layer
 
 Events generated by cocos itself:
 
-    - ( director, 'on_push' )
-    - ( director, 'on_pop' )
-    - ( director, 'on_resize' )
-    - ( director, 'on_cocos_resize')
+    - (director, 'on_push')
+    - (director, 'on_pop')
+    - (director, 'on_resize')
+    - (director, 'on_cocos_resize')
 
 Cocos registers a default key listener that provides handy functionality, see :doc:`default_handlers`
 
