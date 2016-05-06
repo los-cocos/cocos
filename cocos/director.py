@@ -183,7 +183,6 @@ class DefaultHandler(object):
             if not director.show_interpreter:
                 if director.python_interpreter is None:
                     director.python_interpreter = cocos.scene.Scene(PythonInterpreterLayer())
-                    director.python_interpreter.enable_handlers(True)
                 director.python_interpreter.on_enter()
                 director.show_interpreter = True
             else:

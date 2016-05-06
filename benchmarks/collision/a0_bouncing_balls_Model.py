@@ -221,7 +221,6 @@ def cocos_visualization():
 
     mv_update = make_updater(world, model_to_view)
     scene.schedule(mv_update)
-    scene.enable_handlers()
 
     # run
     director.run(scene)
