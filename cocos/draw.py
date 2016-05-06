@@ -38,57 +38,9 @@ from __future__ import division, print_function, unicode_literals
 from cocos.cocosnode import CocosNode
 import pyglet
 from pyglet import gl
-import math
 import copy
-from ctypes import c_char, c_char_p, c_int, cast, POINTER
 from cocos.euclid import *
 
-cuadric_t = '''
-void main() {
-    vec2 pos = gl_TexCoord[0].st;
-    float res = pos.x*pos.x - pos.y;
-    if (res<0.0) {
-        gl_FragColor = gl_Color;
-    } else {
-        gl_FragColor = vec4(0.0,0.0,0.0,0.0);
-    }
-}
-'''
-
-
-class Shader(object):
-    def __init__(self, source):
-        self.source = source
-        self.shader_no = gl.glCreateShader(self.shader_type)
-        if not self.shader_no:
-            raise Exception("could not create shader")
-        prog = (c_char_p * 1)(source + chr(0))
-        length = (c_int * 1)(0)
-        gl.glShaderSource(self.shader_no, 1,
-                       cast(prog, POINTER(POINTER(c_char))),
-                       cast(0, POINTER(c_int)))
-        gl.glCompileShader(self.shader_no)
-        self.program_no = gl.glCreateProgram()
-        if not self.program_no:
-            raise Exception("could not create program")
-        gl.glAttachShader(self.program_no, self.shader_no)
-        gl.glLinkProgram(self.program_no)
-
-    def begin(self):
-        gl.glUseProgram(self.program_no)
-
-    def end(self):
-        gl.glUseProgram(0)
-
-
-class VertexShader(Shader):
-    shader_type = gl.GL_VERTEX_SHADER
-
-
-class FragmentShader(Shader):
-    shader_type = gl.GL_FRAGMENT_SHADER
-
-# cuadric = FragmentShader(cuadric_t)
 __parameter_count = 0
 
 
