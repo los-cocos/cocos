@@ -36,7 +36,7 @@
 from __future__ import division, print_function, unicode_literals
 
 
-class Path:
+class Path(object):
     def at(self, t):
         pass
 
