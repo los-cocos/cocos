@@ -82,12 +82,24 @@ del os, pyglet
 # in windows we use the pygame package to get the SDL dlls
 # we must get the path here because the inner pygame module will hide the real
 if sys.platform == 'win32':
-    import imp
-    try:
-        dummy, sdl_lib_path, dummy = imp.find_module('pygame')
-        del dummy
-    except ImportError:
-        sdl_lib_path = None
+    # module imp is deprecated in 3.5, the 3.x functionality
+    # needed appears in 3.4
+    major, minor = sys.version_info[0:2]
+    if major == 2 or major == 3 and minor < 4:
+        import imp
+        try:
+            dummy, sdl_lib_path, dummy = imp.find_module('pygame')
+            del dummy
+        except ImportError:
+            sdl_lib_path = None
+    else:
+        import importlib
+        try:
+            spec = importlib.util.find_spec("pygame")
+            sdl_lib_path = spec.submodule_search_locations[0]
+        except Exception:
+            sdl_lib_path = None
+
 
 if not unittesting:
 
