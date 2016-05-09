@@ -373,3 +373,20 @@ if __name__ == '__main__':
     director.run(EditorScene(edit_level_xml))
 
 
+# Notes:
+#
+# Define tilesets resources in a separate ,xml file, else the map will load
+# but would crash the editor when saving. (needs fixing in tiles.py)
+#
+# For a tile to be visible in the tile selection widget it must have a <tile>
+# entry in the tileset, ant the image region asociated to this tile have been
+# declared in the <imageatlas> section with an <image> element
+#
+# The tiles widget can be mouse dragged to another screen place
+# 
+# The editor can open and save correctly maps with more than one layer, but
+# it doens
+# if 't have an interactive way that allows to change the active layer:
+# Probably using the interpreter layer it can be set.
+# Also, which one will be the active layer changes in different runs (probably
+# related to dict iterator order changes between runs in modern python)

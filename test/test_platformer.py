@@ -21,7 +21,7 @@ from cocos import tiles, actions, layer, mapcolliders
 class PlatformerController(actions.Action):
     on_ground = True
     MOVE_SPEED = 300
-    JUMP_SPEED = 600
+    JUMP_SPEED = 800
     GRAVITY = -1200
 
     def start(self):
@@ -83,14 +83,17 @@ def main():
     player_layer.add(player)
     player.do(PlatformerController())
 
-    # add the tilemap and the player sprite layer to a scrolling manager
+    # add the tilemaps and the player sprite layer to a scrolling manager
     scroller = layer.ScrollingManager()
-    tilemap = tiles.load('platformer-map.xml')['level0']
-    scroller.add(tilemap, z=0)
-    scroller.add(player_layer, z=1)
+    fullmap = tiles.load('platformer-map.xml')
+    tilemap_walls = fullmap['walls']
+    scroller.add(tilemap_walls, z=0)
+    tilemap_decoration = fullmap['decoration']
+    scroller.add(tilemap_decoration, z=1)
+    scroller.add(player_layer, z=2)
 
-    # set the player start using the player_start token from the tilemap
-    start = tilemap.find_cells(player_start=True)[0]
+    # set the player start using the player_start token from the map
+    start = tilemap_decoration.find_cells(player_start=True)[0]
     r = player.get_rect()
 
     # align the mid bottom of the player with the mid bottom of the start cell
@@ -100,8 +103,9 @@ def main():
     player.position = r.center
 
     # give a collision handler to the player
-    mapcollider = mapcolliders.RectMapWithPropsCollider(velocity_on_bump='slide')
-    player.collision_handler = mapcolliders.make_collision_handler(mapcollider, tilemap)
+    mapcollider = mapcolliders.RectMapCollider(velocity_on_bump='slide')
+    player.collision_handler = mapcolliders.make_collision_handler(
+        mapcollider, tilemap_walls)
 
     # construct the scene with a background layer color and the scrolling layers
     platformer_scene = cocos.scene.Scene()
