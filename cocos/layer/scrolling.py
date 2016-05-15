@@ -96,9 +96,6 @@ class ScrollableLayer(Layer):
     Don't change scale_x , scale_y from the default 1.0 or scrolling and
     coordinate changes will fail
     """
-    view_x, view_y = 0, 0
-    view_w, view_h = 0, 0
-    origin_x = origin_y = origin_z = 0
 
     def __init__(self, parallax=1):
         super(ScrollableLayer, self).__init__()
@@ -111,6 +108,17 @@ class ScrollableLayer(Layer):
 
         # XXX batch eh?
         self.batch = pyglet.graphics.Batch()
+
+        #: The view x position
+        self.view_x = 0
+        #: The view y position
+        self.view_y = 0
+        #: The view width
+        self.view_w = 0
+        #: The view height
+        self.view_h = 0
+
+        self.origin_x = self.origin_y = self.origin_z = 0
 
     def on_enter(self):
         director.push_handlers(self.on_cocos_resize)
@@ -191,6 +199,8 @@ class ScrollingManager(Layer):
         self.transform_anchor_x = 0
         self.transform_anchor_y = 0
 
+        self._old_focus = None
+
     def on_enter(self):
         super(ScrollingManager, self).on_enter()
         director.push_handlers(self.on_cocos_resize)
@@ -233,12 +243,15 @@ class ScrollingManager(Layer):
             self._old_focus = None  # disable NOP check
             self.set_focus(self.fx, self.fy)
 
-    _scale = 1.0
-
-    def set_scale(self, scale):
+    def _set_scale(self, scale):
         self._scale = 1.0 * scale
         self.refresh_focus()
-    scale = property(lambda s: s._scale, set_scale)
+
+    scale = property(lambda s: s._scale, _set_scale, 
+        doc = """The scaling factor of the object.
+
+        :type: float
+        """)
 
     def add(self, child, z=0, name=None):
         """Add the child and then update the manager's focus / viewport.
@@ -282,8 +295,6 @@ class ScrollingManager(Layer):
         screen_x = self.scale * (x - self.childs_ox)
         screen_y = self.scale * (y - self.childs_oy)
         return int(screen_x), int(screen_y)
-
-    _old_focus = None
 
     def set_focus(self, fx, fy, force=False):
         """Determine the viewport based on a desired focus pixel in the
