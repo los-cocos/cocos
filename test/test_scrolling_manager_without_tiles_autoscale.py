@@ -136,8 +136,8 @@ class SquareLand(cocos.layer.ScrollableLayer):
     def on_mouse_press(self,x,y,button,modifiers):
         # test from screen coords
         print('on_mouse_press:')
-        vx, vy = self.scroller.pixel_from_screen(x,y)
-        print('\tpixel_from_screen(x, y):', vx, vy)
+        vx, vy = self.scroller.screen_to_world(x,y)
+        print('\tscreen_to_world(x, y):', vx, vy)
 
     def clamp(self, actor, new_pos):
         x,y = new_pos
@@ -181,7 +181,7 @@ class SquareLand(cocos.layer.ScrollableLayer):
 
     def refresh_marks(self):
         for mark, position in zip(self.scene.marks, self.marks_positions):
-            screen_pos = self.scroller.pixel_to_screen(*position)
+            screen_pos = self.scroller.world_to_screen(*position)
             mark.position = screen_pos
 
     def teleport_player(self, x, y):
@@ -219,11 +219,6 @@ results text will match the mode.
 use arrows to move, +- in the main keyboard (not the keypad) for zoom,
 ctrl-f to toggle fullscreen status.
 
-You will need grossinis_sister1.png , to be found in the test directory.
-
-You will need cocos r966+ ( for 'cocos_on_resize' event and supresion of
-NotImplementedError in pixel_to_screen)
-
 For clarity set view_width, view_height to respect your desktop aspect
 ratio; look near the script begin
 
@@ -252,17 +247,17 @@ resize:
     zoom in or out using key '+' or '-', not so much that all the world shows
     in a single screen, then repeat 1), 2)
 
-4. consistency screen to world coordinates conversion(aka pixel_from_screen):
+4. consistency screen to world coordinates conversion:
     a. restart the script, mouse click the inner bottom left corner, do ctrl-f
     click again over the inner bottom left corner, zoom a little, click again
     over the the inner bottom left corner.
-    Now look at the console: the pixel_from_screen values must all be near a
+    Now look at the console: the screen_to_world values must all be near a
     common value.
 
     b. restart the script, scroll to the top right corner, repeat a. replacing
     'botton left' by 'top left'
 
-5. world to screen coordinate changes (aka pixel_to_screen) correctness:
+5. world to screen coordinate changes correctness:
     restart the script; move a bit. Look at the lower left corners in the lower
     row of squares; you should see a small square in the shades of green.
     moving, zomming, resizing (ctrl-f) should not alter the relative position of
@@ -302,17 +297,17 @@ resize:
     zoom in or out using key '+' or '-', not so much that all the world shows
     in a single screen, then repeat 1), 2)
 
-4. consistency screen to world coordinates conversion(aka pixel_from_screen):
+4. consistency screen to world coordinates conversion:
     a. restart the script, mouse click the inner bottom left corner, do ctrl-f
     click again over the inner bottom left corner, zoom a litle, click again
     over the the inner bottom left corner.
-    Now look at the console: the pixel_from_screen values must all be near a
+    Now look at the console: the screen_to_world values must all be near a
     common value.
 
     b. restart the script, scroll to the top right corner, repeat a. replacing
     'botton left' by 'top left'
 
-5. world to screen coordinate changes (aka pixel_to_screen) correctness:
+5. world to screen coordinate changes correctness:
     restart the script; move a bit. Look at the lower left corners in the lower
     row of squares; you should see a small square in the shades of green.
     moving, zomming, resizing (ctrl-f) should not alter the relative position of

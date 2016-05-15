@@ -104,7 +104,7 @@ class TileEditorLayer(cocos.layer.ScrollableLayer):
         m = self.selector.map_layer
 
         # get the cell and cell coordinate
-        x, y = self.manager.pixel_from_screen(x, y)
+        x, y = self.manager.screen_to_world(x, y)
         cell = m.get_at_pixel(x, y)
         if not cell:
             # click not in map
@@ -121,7 +121,7 @@ class TileEditorLayer(cocos.layer.ScrollableLayer):
 
     def on_mouse_motion(self, x, y, dx, dy):
         m = self.selector.map_layer
-        cell = m.get_at_pixel(*self.manager.pixel_from_screen(x, y))
+        cell = m.get_at_pixel(*self.manager.screen_to_world(x, y))
         if not cell:
             self.highlight = None
             return True

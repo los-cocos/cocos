@@ -1,4 +1,4 @@
-# -*- coding: cp1252 -*-
+# -*- coding: utf-8 -*-
 """
 Interactive test for CollisionManager.objs_into_box
 Implements click selection plus elastic box selection
@@ -601,8 +601,8 @@ scrolling_manager = cocos.layer.ScrollingManager()
 scene.add(scrolling_manager)
 playview = Worldview(**consts['world'])
 scrolling_manager.add(playview, z=0)
-world_to_screen = scrolling_manager.pixel_to_screen
-screen_to_world = scrolling_manager.pixel_from_screen
+world_to_screen = scrolling_manager.world_to_screen
+screen_to_world = scrolling_manager.screen_to_world
 editor = EditLayer(scrolling_manager, playview, **consts['edit'])
 scene.add(editor)
 director.run(scene)

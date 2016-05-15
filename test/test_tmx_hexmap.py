@@ -83,7 +83,7 @@ def main():
     def on_mouse_motion(x, y, dx, dy ):
         global scroller, old_ij, old_cell, old_highlighted_color
         #vh, vy = director.get_virtual_coordinates(x, y)
-        vx, vy = scroller.pixel_from_screen(x,y)
+        vx, vy = scroller.screen_to_world(x,y)
         ij = test_layer.get_key_at_pixel(vx, vy)
         if ij == old_ij:
             return

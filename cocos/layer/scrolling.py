@@ -65,6 +65,8 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
+import warnings
+
 from cocos.director import director
 from .base_layers import Layer
 import pyglet
@@ -74,9 +76,11 @@ from pyglet import gl
 class ScrollableLayer(Layer):
     """Layer that supports scrolling.
 
-    If ``px_width`` (resp ``px_height``) is defined, scrolling will be limited 
-    to only show areas with origin_x <= x < = px_width (resp 
+    If ``px_width`` is defined, then ``px_height`` must also be defined; scrolling
+    will be limited to only show areas with origin_x <= x < = px_width and
     origin_y <= y <= px_height).
+
+    If ``px_width`` is not defined, then the layer will not limit the scrolling.
 
     A layer may have a ``parallax`` value which is used to scale the position
     (and not the dimensions) of the view for the layer - the layer's view
@@ -291,7 +295,14 @@ class ScrollingManager(Layer):
         self.set_focus(self.fx, self.fy, force=True)
 
     def pixel_from_screen(self, x, y):
-        """Look up the Layer-space pixel matching the screen-space pixel.
+        """deprecated, was renamed as screen_to_world"""
+        warnings.warn("Cocos Deprecation Warning: ScrollingManager.pixel_from_screen "
+                      "was renamed to Scrolling Manager.screen_to_world; the"
+                      " former will disappear in future cocos releases")
+        return self.screen_to_world(x, y)
+
+    def screen_to_world(self, x, y):
+        """Translates screen coordinates to world coordinates.
 
         Account for viewport, layer and screen transformations.
 
@@ -300,7 +311,7 @@ class ScrollingManager(Layer):
             y (int): y coordinate in screen space
 
         Returns:
-            tuple[int, int]: coordinates in map-space
+            tuple[int, int]: coordinates in world-space
         """
         # director display scaling
         if director.autoscale:
@@ -322,13 +333,20 @@ class ScrollingManager(Layer):
         return int(vx + sx * w), int(vy + sy * h)
 
     def pixel_to_screen(self, x, y):
-        """Look up the screen-space pixel matching the Layer-space pixel.
+        """deprecated, was renamed as world_to_screen"""
+        warnings.warn("Cocos Deprecation Warning: ScrollingManager.pixel_to_screen "
+                      "was renamed to Scrolling Manager.world_to_screen; the"
+                      " former will disappear in future cocos releases")
+        return self.world_to_screen(x, y)
+
+    def world_to_screen(self, x, y):
+        """Translates world coordinates to screen coordinates.
 
         Account for viewport, layer and screen transformations.
 
         Arguments:
-            x (int): x coordinate in map space
-            y (int): y coordinate in map space
+            x (int): x coordinate in world space
+            y (int): y coordinate in world space
 
         Returns:
             tuple[int, int]: coordinates in screen space
@@ -338,12 +356,11 @@ class ScrollingManager(Layer):
         return int(screen_x), int(screen_y)
 
     def set_focus(self, fx, fy, force=False):
-        """Determine the viewport based on a desired focus pixel in the
-        Layer space (fx, fy) and honoring any bounding restrictions of
-        child layers.
+        """Makes the point (fx, fy) show as near the view's center as possible.
 
-        The focus will always be shifted to ensure no child layers display
-        out-of-bounds data, as defined by their dimensions ``px_width`` and ``px_height``.
+        Changes his children so that the point (fx, fy) in world coordinates
+        will be seen as near the view center as possible, while at the
+        same time not displaying out-of-bounds areas in the children.
 
         Args:
             fx (int): the focus point x coordinate
