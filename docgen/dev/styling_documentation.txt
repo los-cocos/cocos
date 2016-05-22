@@ -29,7 +29,7 @@ So the commit introducing the bluish variation on 'classic' theme consist of thr
 Sphinx 1.4.1 was used for the bluish work.
 
 To keep cocos.css small across a number of style changes it would be better to:
-	- disable cocos.css styles by commenting out all his content (CSS multiline comment is /* ... */)
+	- disable cocos.css styles by commenting out all his content (CSS multiline comment is ``/* ... */``)
 	- aproach the desired new style editing the 'html_theme_options' in conf.py
 	- using the browser inspector and comenting in and out parts of cocos.css determine changes needed in cocos.css
 	- adjust cocos.css, delete al unused parts to not grow crust.
