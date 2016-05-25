@@ -6,4 +6,3 @@ Dev Notes
    :maxdepth: 1
 
    documentation
-   styling_documentation

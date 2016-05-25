@@ -66,8 +66,7 @@ autodoc_member_order='groupwise'
 napoleon_use_rtype = False
 
 # Add any paths that contain templates here, relative to this directory.
-# commenting out this will inhibit cocos.css influence in styling.
-templates_path = ['_templates']
+#templates_path = ['_templates']
 
 # The suffix of source filenames.
 source_suffix = '.txt'
@@ -140,29 +139,29 @@ html_theme = 'classic'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    "footerbgcolor"    : "#0074b3",
+    "footerbgcolor"    : "#88927A",
     "footertextcolor"  : "#ffffff",
 
-    "sidebarbgcolor"   : "#99dbff",
+    "sidebarbgcolor"   : "#EEF8E0",
     "sidebarbtncolor"  : "#3c6e83",
     "sidebartextcolor" : "#222222",
     "sidebarlinkcolor" : "#7A3D99",
 
-    "relbarbgcolor"    : "#0074b3",
+    "relbarbgcolor"    : "#88927A",
     "relbartextcolor"  : "#ffffff",
     "relbarlinkcolor"  : "#ffffff",
 
-    "bgcolor"          : "#e5f6ff",
+    "bgcolor"          : "#F9FDF5",
     "textcolor"        : "#000000",
 
-    "headbgcolor"      : "#99dbff",
+    "headbgcolor"      : "#EEF8E0",
     "headtextcolor"    : "#20435c",
     "headlinkcolor"    : "#c60f0f",
 
     "linkcolor"        : "#7A3D99",
     "visitedlinkcolor" : "#7A3D99",
 
-    "codebgcolor"      : "#eaf8ff",
+    "codebgcolor"      : "#eeffcc",
     "codetextcolor"    : "#333333",
 
     "bodyfont"         : "sans-serif",
