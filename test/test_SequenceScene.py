@@ -11,14 +11,10 @@ tags = "SequenceScene, CallFunc"
 
 from cocos.director import director
 from cocos.scene import Scene
-from cocos.sprite import *
-from cocos.utils import SequenceScene
-from cocos.text import *
+from cocos.scenes.sequences import SequenceScene
 from cocos.layer import *
 import cocos.actions as ac
 
-from pyglet import font
-from pyglet.window import key
 
 def pop_scene():
     director.pop()
@@ -37,7 +33,7 @@ def push_sequence_scene():
     director.push( SequenceScene(scene_blue, scene_red) )
 
 description = """
-Uses SequenceSecene to push some scenes in the director stack.
+Uses SequenceScene to push some scenes in the director stack.
 You should see 2 sec Green, 2 sec Blue, 2 sec Red, forever Green
 """
 

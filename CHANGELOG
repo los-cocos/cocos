@@ -1,4 +1,5 @@
 v? - ?
+  - moved SequenceScene from cocos.utils to cocos.scenes.sequences
   - Fix Scene push_all_handlers and remove_all_handlers problems #269
   - Fix Obsolete EventHandlerMixin class, #268
   - new interface for easy customize fps stats, #255
