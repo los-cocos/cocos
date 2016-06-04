@@ -11,22 +11,6 @@ API reference, provided separately.
 If this is your first time reading about cocos2d, we suggest you start at :doc:`quickstart` .
 
 .. toctree::
-   :titlesonly:
-
-   introduction
-   installation
-   quickstart
-   basic_concepts
-   actions
-   transitions
-   tiled_map
-   cocosnodes
-   interpreter
-   default_handlers
-   collision
-   skeleton/skeleton
-
-.. toctree::
    :maxdepth: 3
 
    introduction
