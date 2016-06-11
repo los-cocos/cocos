@@ -14,31 +14,32 @@ That's fine when the actor does not find an obstacle, like a wall.
 
 If there is an obstacle, we usually want to
  - stop the position change so the actor touches the obstacle but does
-   not overlap it
- - do something sensible with the velocity (stop ?, bounce ?)
- - maybe do some action based on which obstacle (spikes ?, glass ?)
+   not overlap it.
+ - do something sensible with the velocity (stop ?, bounce ?).
+ - maybe do some action based on which obstacle (spikes ?, glass ?).
 
 To do this we can represent the actor and the obstacles as rects with sides
 parallel to the axis, and do the calculations.
 
-This is what 'map colliders' do::
- - with the actor velocity, rect before, tentative rect after
- - with a 'map layer' that groups a number of obstacles
+This is what `map colliders` do given:
+ - the actor velocity, rect before and tentative rect after
+ - a `map layer` that contains a number of obstacles
 
 it will
-    - Properly update velocity and position
-    - Call appropriate methods when it detects actor bumped into an obstacle
-    - Tell if any collision in the x and / or y axis happened
+    - Properly update the velocity and the position.
+    - Call appropriate methods when it detects the actor bumped into an 
+      obstacle.
+    - Tell if any collision in the x and / or y axis happened.
 
-While some mapcolliders are meant to be used in tiled maps (RectMapCollider,
-RectMapWithPropsCollider), others (TmxObjectMapCollider) can be used with no
-tiles at all.
+While some `mapcolliders` are meant to be used in tiled maps (
+:class:`~.mapcolliders.RectMapCollider`, :class:`.RectMapWithPropsCollider`),
+others (:class:`.TmxObjectMapCollider`) can be used with no tiles at all.
 
 
-Properly update velocity and position
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Properly update the velocity and the position
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-the position and velocity update can be written as::
+The position and the velocity update can be written as::
 
     vx, vy = actor.velocity
 
@@ -70,60 +71,67 @@ the position and velocity update can be written as::
     # update player position; player position is anchored at the center of the image rect
     actor.position = new.center
 
-How velocity changes in a collision is handled by method mapcollider.on_bump_handler;
-it can be set to custom code or to one of the stock handlers:
+How velocity changes in a collision is handled by method 
+:attr:`~.mapcolliders.RectMapCollider.on_bump_handler()`; it can be set to 
+custom code or to one of the stock handlers:
 
-    - on_bump_bounce(): Bounces when a wall is touched.
-    - on_bump_stick(): Stops all movement when any wall is touched. (sticky bomb...)
-    - on_bump_slide(): Blocks movement only in the axis that touched a wall. (player...)
+    - :meth:`~.mapcolliders.RectMapCollider.on_bump_bounce()`: Bounces when 
+      a wall is touched.
+    - :meth:`~.mapcolliders.RectMapCollider.on_bump_stick()`: Stops all 
+      movement when any wall is touched. (sticky bomb...).
+    - :meth:`~.mapcolliders.RectMapCollider.on_bump_slide()`: Blocks movement 
+      only in the axis that touched a wall. (player...).
 
 For convenience, a stock handler can be specified at instantiation time with
-the 'velocity_on_bump' parameter.
+the ``velocity_on_bump`` parameter.
 
 
 Call appropriate methods when it detects actor bumped into an obstacle
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When mapcollider.collide_map detects that actor collides with obj 'someobj' from
-side 'someside', it will call mapcollider.collide_<someside>(someobj).
+When ``mapcollider.collide_map`` detects that actor collides with obj 
+'someobj' from side 'someside', it will call 
+``mapcollider.collide_<someside>(someobj)``.
 
 There 'someside' is one of 'left', 'right', 'top' and 'bottom'.
 
-This provides an opportunity to do things based on which object the actor touched,
-like 'spike' ? -> init spikes animation and kill actor.
+This provides an opportunity to do things based on which object the actor 
+touched, like 'spike' ? -> init the spikes animation and kill the actor.
 
-Notice that each mapcollider.collide_* can receive multiple calls in the same
-mapcollider.collide_map call.
+Note that each ``mapcollider.collide_*`` can receive multiple calls in the 
+same ``mapcollider.collide_map`` call.
 
 
 Tell if any collision in the x and / or y axis happened
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-After collide_map returns, the flags mapcollider.bumped_x and mapcollider.bumped_y
-tells if there's have been any collision along the respective axis.
+After ``collide_map`` returns, the flags ``mapcollider.bumped_x`` and 
+``mapcollider.bumped_y`` tells if there has been any collisions along the 
+respective axis.
 
-This can be handy to flip actor's animation animation direction, by example from
-'walk_left' to 'walk_right'
+This can be handy to flip the actor's animation direction, by example from
+'walk_left' to 'walk_right'.
 
 
 Variants
 ---------
 
-Currently they are three map colliders variants,
+Currently they are three map colliders variants:
 
 RectMapCollider
 ^^^^^^^^^^^^^^^
 
-Obstacles are rectangular tiles grouped into a RectMapLayer; all non empty cells
-are deemed solid.
+Obstacles are rectangular tiles grouped into a :class:`.RectMapLayer`; all non
+empty cells are deemed solid.
 
 :class:`implementation <cocos.mapcolliders.RectMapCollider>`
 
 RectMapWithPropsCollider
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Obstacles are rectangular tiles grouped into a RectMapLayer, cells use properties
-"left", "right", "top" and "bottom" to signal which side(s) block movements.
+Obstacles are rectangular tiles grouped into a :class:`.RectMapLayer`, cells 
+use properties "left", "right", "top" and "bottom" to signal which side(s) 
+block movements.
 
 A solid block would probably have all four sides set; a platform can set
 only the top so the player might jump up from underneath and pass through.
@@ -141,8 +149,8 @@ See :ref:`cell_properties_label` for information about properties.
 TmxObjectMapCollider
 ^^^^^^^^^^^^^^^^^^^^
 
-Obstacles are TmxObjects grouped into a TmxObjectLayer, each object is meant
-to block movement.
+Obstacles are :class:`.TmxObjects` grouped into a :class:`.TmxObjectLayer`, 
+each object is meant to block movement.
 
 A common use case is to do moving platforms in a platform game.
 
@@ -153,22 +161,28 @@ How to use
 -----------------------
 
 There are basically two ways to include this functionality into an
-actor class
+actor class:
 
     - as a component, essentially passing (mapcollider, maplayer) in
-      the actor's __init__
-    - mixin style, by using RectMapCollider or a subclass as a secondary
-      base class for actor.
+      the actor's __init__ method.
+    - mixin style, by using :class:`~.mapcolliders.RectMapCollider` or a 
+      subclass as a secondary base class for the actor.
 
-Component way is more decoupled, Mixin style is more powerful because
-the collision code will have access to the entire actor trough his 'self'.
+The component way is more decoupled while the Mixin style is more powerful 
+because the collision code will have access to the entire actor through its 
+``self`` attribute.
 
-To have a working instance the behavior of velocity in a collision must be
-defined, and that's the job of method `on_bump_handler`
+To have a working instance, the behavior of the velocity in a collision must 
+be defined, and that's the job of the method ``on_bump_handler``
 
-    - if one of the stock on_bump_<variant> suits the requirements, suffices
-        `mapcollider.on_bump_handler = mapcollider.on_bump_<desired variant>`
-      or passing a selector at instantiation time
-        `mapcollider = MapCollider(<desired variant>)`
+    - if one of the stock ``on_bump_<variant>`` suits the requirements, 
+      suffices to write::
+      
+        mapcollider.on_bump_handler = mapcollider.on_bump_<desired variant>
 
-    - for custom behavior define on_bump_handler in a subclass and instantiate it.
+      or passing a selector at instantiation time::
+      
+        mapcollider = MapCollider(<desired variant>)
+
+    - for custom behavior define ``on_bump_handler`` in a subclass and 
+      instantiate it.
