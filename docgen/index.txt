@@ -30,6 +30,13 @@ API Reference
    
    api/cocos
 
+Compatibility Notes
+====================
+
+.. toctree::
+   :maxdepth: 1
+   
+   compatibility_notes
 
 Frequently Asked Questions
 ==========================

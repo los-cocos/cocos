@@ -1,0 +1,28 @@
+Api changes and other compatibility notes from previous version
+
+cocos 0.6.4
+-----------
+
+This is the first release supporting pyglet 1.3+
+
+Imports in cocos library are more specific, so user code that were doing
+``from cocos.somemodule import *`` may fail to find some symbols.
+To fix that user code, add explicit exports as needed.
+
+MapColliders classes changed API to be more useful and clear. 
+  - MapColliders moved to his own module, 'mapcolliders'.
+  - RectMapCollider was renamed to RectMapWithPropsCollider.
+  - The new RectMapCollider handles a simpler collision case, when all tiles
+    are solid: now no need to set cells properties to signal a cell border should
+    not be walked over.
+  - TmxObjectMapCollider now handles AABB collision with any TmxObject that
+    can be loaded.
+
+Rect.intersects() now it only intersects iff some interior points overlaps 
+
+Removed Scene methods push_all_handlers() and remove_all_handlers()
+
+In ScrollingManager two methods had been renamed, the old name still valid but
+will be removed in future:
+ - pixel_from_screen() -> screen_to_world()
+ - pixel_to_screen() -> world_to_screen()
