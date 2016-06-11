@@ -39,7 +39,8 @@ regardless of the on-disk format.
 Fairly simple examples of using the cocos.tiles module is provided in
 test/test_tiles.py, test/test_tmx.py, test_platformer.py
 
-A basic tile map editor is provided in tools/editor.py
+A basic tile map editor is provided in tools/editor.py; use tools\gentileset.py
+to generate separate .xml for each tileset used.
 
 
 Maps
@@ -165,6 +166,16 @@ Sets up a TileSet object. Child tags are of the form::
 
 The <image> tag is optional; these tiles may have only properties (or be
 completely empty). The id is used by maps to reference the tile.
+
+.. Warning::
+    Currently tools/editor.py fails to save if a tileset is inlined in the .xml
+    
+    Workaround: use tools/gentileset.py to generate a .xml for each tileset used,
+    and then include in the map using a::
+
+        <requires file="my-tiles.xml" ...>
+    
+    element for each tileset.
 
 ::
 
