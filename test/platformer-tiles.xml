@@ -17,6 +17,7 @@
         <image id="i-treefruit" offset="512,384" />
         <image id="i-cauldron" offset="512,256" />
         <image id="black" offset="0,512" />
+
 	</imageatlas>
 
     <tileset>
@@ -35,6 +36,7 @@
         <tile id="bl"><image ref="i-bl" /></tile>
         <tile id="br"><image ref="i-br" /></tile>
         <tile id="tl"><image ref="i-tl" />
+
         </tile>
         <tile id="tr"><image ref="i-tr" />
         </tile>
@@ -43,5 +45,6 @@
         </tile>
         <tile id="cauldron"><image ref="i-cauldron" /></tile>
         <tile id="black"><image ref="black" /></tile>
+
     </tileset>
 </resource>

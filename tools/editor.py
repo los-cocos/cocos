@@ -68,7 +68,7 @@ class TileEditorLayer(cocos.layer.ScrollableLayer):
             return True
 
     def on_text_motion(self, motion):
-        fx, fy = self.manager.fx, self.manager.fy
+        fx, fy = self.manager.restricted_fx, self.manager.restricted_fy
         if motion == pyglet.window.key.MOTION_UP:
             self.manager.set_focus(fx, fy+64/self._desired_scale)
         elif motion == pyglet.window.key.MOTION_DOWN:
@@ -83,7 +83,7 @@ class TileEditorLayer(cocos.layer.ScrollableLayer):
 
     _dragging = False
     def on_mouse_press(self, x, y, buttons, modifiers):
-        self._drag_start = (x, y)
+        self._drag_start = x, y
         self._dragging = False
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
@@ -94,8 +94,9 @@ class TileEditorLayer(cocos.layer.ScrollableLayer):
             if abs(x - _x) + abs(y - _y) < 6:
                 return False
         self._dragging = True
-        self.manager.set_focus(self.manager.fx-dx/self._desired_scale,
-            self.manager.fy-dy/self._desired_scale)
+        self.manager.set_focus(
+            self.manager.restricted_fx-dx/self._desired_scale,
+            self.manager.restricted_fy-dy/self._desired_scale)
 
     def on_mouse_release(self, x, y, buttons, modifiers):
         if self._dragging:
@@ -344,14 +345,16 @@ class EditorScene(cocos.scene.Scene):
             self.manager.add(layer, z=layer.origin_z)
             mz = max(layer.origin_z, mz)
         self.add(self.manager)
-
+        
         s = TileSetLayer(level_to_edit)
         self.add(s, z=mz+2)
 
         e = TileEditorLayer(self.manager, level_to_edit, s, edit_level_xml)
         self.manager.add(e, z=mz+1)
 
-        self.manager.set_focus(0, 0)
+        screen_rect = cocos.rect.Rect(0, 0, 0, 0)
+        screen_rect.size = director.get_window_size()
+        self.manager.set_focus(*screen_rect.center)
 
     def edit_complete(self, layer):
         pyglet.app.exit()
