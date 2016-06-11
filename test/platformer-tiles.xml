@@ -1,59 +1,47 @@
 <?xml version="1.0"?>
 <resource>
- <imageatlas size="128x128" file="platformer-tiles.png">
-    <image id="i-b1" offset="0,0" />
-    <image id="i-br" offset="128,0" />
-    <image id="i-bl" offset="256,0" />
-    <image id="i-b2" offset="384,0" />
+    <imageatlas size="128x128" file="platformer-tiles.png">
+        <image id="i-b1" offset="0,0" />
+        <image id="i-br" offset="128,0" />
+        <image id="i-bl" offset="256,0" />
+        <image id="i-b2" offset="384,0" />
 
-    <image id="i-r1" offset="128,128" />
-    <image id="i-r2" offset="128,256" />
-    <image id="i-tl" offset="128,384" />
-    <image id="i-tr" offset="256,384" />
-    <image id="i-l1" offset="256,256" />
-    <image id="i-l2" offset="256,128" />
+        <image id="i-r1" offset="128,128" />
+        <image id="i-r2" offset="128,256" />
+        <image id="i-tl" offset="128,384" />
+        <image id="i-tr" offset="256,384" />
+        <image id="i-l1" offset="256,256" />
+        <image id="i-l2" offset="256,128" />
 
-    <image id="i-tree" offset="512,512" />
-    <image id="i-treefruit" offset="512,384" />
-    <image id="i-cauldron" offset="512,256" />
-    <image id="black" offset="0,512" />
+        <image id="i-tree" offset="512,512" />
+        <image id="i-treefruit" offset="512,384" />
+        <image id="i-cauldron" offset="512,256" />
+        <image id="black" offset="0,512" />
 	</imageatlas>
 
- <tileset>
-    <tile id="b1"><image ref="i-b1" />
-        <property name="top" type="bool" value="True" />
-    </tile>
-    <tile id="b2"><image ref="i-b2" />
-        <property name="top" type="bool" value="True" />
-    </tile>
-    <tile id="l1"><image ref="i-l1" />
-        <property name="right" type="bool" value="True" />
-    </tile>
-    <tile id="l2"><image ref="i-l2" />
-        <property name="right" type="bool" value="True" />
-    </tile>
-    <tile id="r1"><image ref="i-r1" />
-        <property name="left" type="bool" value="True" />
-    </tile>
-    <tile id="r2"><image ref="i-r2" />
-        <property name="left" type="bool" value="True" />
-    </tile>
-    <tile id="bl"><image ref="i-bl" /></tile>
-    <tile id="br"><image ref="i-br" /></tile>
-    <tile id="tl"><image ref="i-tl" />
-        <property name="top" type="bool" value="True" />
-        <property name="left" type="bool" value="True" />
-    </tile>
-    <tile id="tr"><image ref="i-tr" />
-        <property name="top" type="bool" value="True" />
-        <property name="right" type="bool" value="True" />
-    </tile>
-    <tile id="tree"><image ref="i-tree" /></tile>
-    <tile id="treefruit"><image ref="i-treefruit" />
-        <property name="fruit" type="bool" value="True" />
-    </tile>
-    <tile id="cauldron"><image ref="i-cauldron" /></tile>
-	<tile id="black"><image ref="black" /></tile>
-
- </tileset>
+    <tileset>
+        <tile id="b1"><image ref="i-b1" />
+        </tile>
+        <tile id="b2"><image ref="i-b2" />
+        </tile>
+        <tile id="l1"><image ref="i-l1" />
+        </tile>
+        <tile id="l2"><image ref="i-l2" />
+        </tile>
+        <tile id="r1"><image ref="i-r1" />
+        </tile>
+        <tile id="r2"><image ref="i-r2" />
+        </tile>
+        <tile id="bl"><image ref="i-bl" /></tile>
+        <tile id="br"><image ref="i-br" /></tile>
+        <tile id="tl"><image ref="i-tl" />
+        </tile>
+        <tile id="tr"><image ref="i-tr" />
+        </tile>
+        <tile id="tree"><image ref="i-tree" /></tile>
+        <tile id="treefruit"><image ref="i-treefruit" />
+        </tile>
+        <tile id="cauldron"><image ref="i-cauldron" /></tile>
+        <tile id="black"><image ref="black" /></tile>
+    </tileset>
 </resource>
