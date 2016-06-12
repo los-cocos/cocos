@@ -1,4 +1,4 @@
-v0.6.4 - ?
+v0.6.4 - June 12, 2016
 
   - moved SequenceScene from cocos.utils to cocos.scenes.sequences
   - clean-up automatic event registration #268, #269

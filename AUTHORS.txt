@@ -12,3 +12,4 @@ Hugo Ruscitti <https://github.com/hugoruscitti>
 Facundo Batista <https://github.com/facundobatista>
 Alejandro J. Cura <https://github.com/alecu>
 Macarse <https://github.com/Macarse>
+Daniel Gillet <https://github.com/dangillet>
