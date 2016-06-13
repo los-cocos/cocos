@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resource><requires file="platformer-tiles.xml" />
 <rectmap id="walls" origin="0,0,1" tile_size="128x128"><column><cell tile="bl" />
 <cell tile="l1" />

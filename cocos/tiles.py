@@ -49,6 +49,7 @@ from math import ceil, sqrt, floor
 import struct
 import weakref
 from xml.etree import ElementTree
+import abc
 
 import pyglet
 from pyglet import gl
@@ -78,22 +79,27 @@ class TmxUnsupportedVariant(Exception):
 
 
 class Resource(object):
-    """Load some tile mapping resources from an XML file.
-    """
-    cache = {}
+    """Load some tile mapping resources from a file.
 
+    This is an Abstract Base Class. To load from new file format, subclass
+    and override the ``__init__`` method.
+
+    Arguments:
+        filename (str): the name of the file to load from.
+    """
+    __metaclass__ = abc.ABCMeta
+    cache = {} # TODO: What is this used for ???
+
+    @abc.abstractmethod
     def __init__(self, filename):
         self.filename = filename
 
         # id to map, tileset, etc.
         self.contents = {}
 
-        # list of (namespace, Resource) from <requires> tags
-        self.requires = []
+        self.path = self._find_file(filename)
 
-        self.path = self.find_file(filename)
-
-    def find_file(self, filename):
+    def _find_file(self, filename):
         if os.path.isabs(filename):
             return filename
         if os.path.exists(filename):
@@ -101,24 +107,30 @@ class Resource(object):
         path = pyglet.resource.location(filename).path
         return os.path.join(path, filename)
 
-    @classmethod
-    def register_factory(cls, name):
-        def decorate(func):
-            cls.factories[name] = func
-            return func
-
-        return decorate
-
-    def handle(self, tag):
-        ref = tag.get('ref')
-        if not ref:
-            return self.factories[tag.tag](self, tag)
-        return self.get_resource(ref)
-
     def __contains__(self, ref):
+        """Check if element contained in this resource.
+
+        Arguments:
+            ref (str): the name of the element.
+
+        Returns:
+            bool: whether the name is found.
+        """
         return ref in self.contents
 
     def __getitem__(self, ref):
+        """Get element contained in this resource.
+
+        Arguments:
+            ref (str): the name of the element. The name can contain a
+            column to seperate the namespace from the name of the element.
+
+        Returns:
+            any: the resource associated with the given name.
+
+        Raises:
+            KeyError: no resource found for the given name.
+        """
         reqns = ''
         id = ref
         if ':' in ref:
@@ -134,6 +146,13 @@ class Resource(object):
 
     def find(self, cls):
         """Find all elements of the given class in this resource.
+        
+        Arguments:
+            cls (type): Class name to find.
+
+        Yields:
+            tuple[str, any]: A tuple containing the name of the resource and
+                the resource itself.
         """
         for k in self.contents:
             if isinstance(self.contents[k], cls):
@@ -142,6 +161,14 @@ class Resource(object):
     def findall(self, cls, ns=''):
         """Find all elements of the given class in this resource and all
         <requires>'ed resources.
+
+        Arguments:
+            cls (type): Class name to find.
+            ns (str): a namespace. Defaults to ''
+
+        Yields:
+            tuple[str, any]: A tuple containing the name of the resource and
+                the resource itself.
         """
         for k in self.contents:
             if isinstance(self.contents[k], cls):
@@ -154,39 +181,265 @@ class Resource(object):
                 yield item
 
     def add_resource(self, id, resource):
+        """Add a resource.
+
+        Arguments:
+            id (str): the name to identify uniquely this resource.
+            resource (any): the resource we want to keep track of.
+        """
         self.contents[id] = resource
 
     def get_resource(self, ref):
+        """Get a resource previously added.
+
+        Arguments:
+            ref (str): the name which uniquely identifies this resource.
+
+        Returns:
+            any: the resource we requested.
+        """
         return self[ref]
+
+
+class XMLResource(Resource):
+    """Resource coming from an XML file.
+    
+    Arguments:
+        filename (str): the name of the XML file.
+    """
+    def __init__(self, filename):
+        super(XMLResource, self).__init__(filename)
+        # list of (namespace, Resource) from <requires> tags
+        self.requires = []
+        # Parse the XML and build resources
+        tree = ElementTree.parse(self.path)
+        root = tree.getroot()
+        if root.tag != 'resource':
+            raise ResourceError('document is <%s> instead of <resource>' % root.name)
+        self.handle(root)
 
     def save_xml(self, filename):
         """Save this resource's XML to the indicated file.
+
+        At the moment, only changes to RectMap is correctly modified. All
+        other elements like TileSet, ImageAtlas, ... are unmodified.
+
+        Arguments:
+            filename (str): name of the saved file.
         """
         # generate the XML
-        root = ElementTree.Element('resource')
-        root.tail = '\n'
-        for namespace, res in self.requires:
-            r = ElementTree.SubElement(root, 'requires', file=res.filename)
-            r.tail = '\n'
-            if namespace:
-                r.set('namespace', namespace)
-        for element in self.contents.values():
-            element._as_xml(root)
-        tree = ElementTree.ElementTree(root)
-        tree.write(filename)
+        tree = ElementTree.parse(self.path)
+        root = tree.getroot()
+        for rectmap in root.findall('rectmap'):
+            _id = rectmap.get('id')
+            root.remove(rectmap)
+            rectmap = self[_id]
+            rectmap._as_xml(root)
+
+        tree.write(filename, encoding='utf-8', xml_declaration=True)
+
+    @classmethod
+    def register_factory(cls, name):
+        """
+        Add a function to build a new type of resource
+
+        Arguments:
+            name (str): name for the factory function which matches the
+                XML tag.
+
+        Returns:
+            func: decorator function.
+        """
+        def decorate(func):
+            cls.factories[name] = func
+            return func
+
+        return decorate
+
+    def handle(self, tag):
+        """Process the given XML tag and build the corresponding resource.
+
+        Arguments:
+            tag (xml.etree.ElementTree.Element): the XML tag to process.
+
+        Returns:
+            any: the resource built from this xml tag element.
+        """
+        ref = tag.get('ref')
+        if not ref:
+            return self.factories[tag.tag](self, tag)
+        return self.get_resource(ref)
 
     def resource_factory(self, tag):
+        """
+        A factory method to build all children of a <resource> tag.
+
+        Arguments:
+            tag (xml.etree.ElementTree.Element): the XML tag to process.
+        """
         for child in tag:
             self.handle(child)
 
     def requires_factory(self, tag):
+        """
+        A factory method to process <requires> tag.
+
+        This tag allows to include other XML files into this Resource, 
+        allowing for easy composition of assets.
+
+        Arguments:
+            tag (xml.etree.ElementTree.Element): the XML tag to process.
+        """
         resource = load(tag.get('file'))
         self.requires.append((tag.get('namespace', ''), resource))
 
+    #: Factory functions for each type of XML tag.
     factories = {
         'resource': resource_factory,
         'requires': requires_factory,
     }
+
+class TMXResource(Resource):
+    """Resource coming from a TMX file.
+    
+    Arguments:
+        filename (str): the name of the XML file.
+    """
+    def __init__(self, filename):
+        super(TMXResource, self).__init__(filename)
+        tree = ElementTree.parse(self.path)
+        map_ = tree.getroot()
+        if map_.tag != 'map':
+            raise ResourceError('document is <%s> instead of <map>' % map_.name)
+
+        width = int(map_.attrib['width'])
+        height = int(map_.attrib['height'])
+
+        # XXX this is ASSUMED to be consistent
+        tile_width = int(map_.attrib['tilewidth'])
+        tile_height = int(map_.attrib['tileheight'])
+
+        tiling_style = map_.attrib['orientation']
+
+        if tiling_style == "hexagonal":
+            hex_sidelenght = int(map_.attrib["hexsidelength"])
+            # 'x' meant hexagons with top and bottom sides parallel to x axis,
+            # 'y' meant hexagons with left and right sides paralel to y axis        
+            s = map_.attrib["staggeraxis"]
+            hex_orientation = {'x': 'pointy_left', 'y': 'pointy_up'}
+            # 'even' or 'odd', currently cocos only displays correctly 'even'       
+            lowest_columns = map_.attrib["staggerindex"] == "even"
+            cell_cls = HexCell
+            layer_cls = HexMapLayer
+            map_height_pixels = height * tile_height + tile_height // 2
+
+        elif tiling_style == "orthogonal":
+            cell_cls = RectCell
+            layer_cls = RectMapLayer
+            map_height_pixels = height * tile_height
+
+        else:
+            raise ValueError("Unsuported tiling style, must be 'orthogonal' or 'hexagonal'")
+
+        # load all the tilesets
+        tilesets = []
+        for tag in map_.findall('tileset'):
+            if 'source' in tag.attrib:
+                firstgid = int(tag.attrib['firstgid'])
+                path = self._find_file(tag.attrib['source'])
+                with open(path) as f:
+                    tag = ElementTree.fromstring(f.read())
+            else:
+                firstgid = int(tag.attrib['firstgid'])
+
+            name = tag.attrib['name']
+
+            spacing = int(tag.attrib.get('spacing', 0))
+            for c in tag.getchildren():
+                if c.tag == "image":
+                    # create a tileset from the image atlas
+                    path = self._find_file(c.attrib['source'])
+                    tileset = TileSet.from_atlas(name, firstgid, path, tile_width,
+                                                 tile_height, row_padding=spacing,
+                                                 column_padding=spacing)
+                    # TODO consider adding the individual tiles to the self?
+                    tilesets.append(tileset)
+                    self.add_resource(name, tileset)
+                elif c.tag == 'tile':
+                    # add properties to tiles in the tileset
+                    gid = tileset.firstgid + int(c.attrib['id'])
+                    tile = tileset[gid]
+                    props = c.find('properties')
+                    if props is None:
+                        continue
+                    for p in props.findall('property'):
+                        # store additional properties.
+                        name = p.attrib['name']
+                        value = p.attrib['value']
+                        # TODO consider more type conversions?
+                        if value.isdigit():
+                            value = int(value)
+                        tile.properties[name] = value
+
+        # now load all the layers
+        for layer in map_.findall('layer'):
+            data = layer.find('data')
+            if data is None:
+                raise ValueError('layer %s does not contain <data>' % layer.name)
+
+            encoding = data.attrib.get('encoding')
+            compression = data.attrib.get('compression')
+            if encoding is None:
+                # tiles data as xml
+                data = [int(tile.attrib.get('gid')) for tile in data.findall('tile')]
+            else:
+                data = data.text.strip()
+                if encoding == 'csv':
+                    data.replace('\n', '')
+                    data = [int(s) for s in data.split(',')]
+                elif encoding == 'base64':
+                    data = decode_base64(data)
+                    if compression == 'zlib':
+                        data = decompress_zlib(data)
+                    elif compression == 'gzip':
+                        data = decompress_gzip(data)
+                    elif compression is None:
+                        pass
+                    else:
+                        raise ResourceError('Unknown compression method: %r' % compression)
+                    data = struct.unpack(str('<%di' % (len(data) // 4)), data)
+                else:
+                    raise TmxUnsupportedVariant("Unsupported tiles layer format " +
+                                                "use 'csv', 'xml' or one of " +
+                                                "the 'base64'")
+
+            assert len(data) == width * height
+
+            cells = [[None] * height for x in range(width)]
+            for n, gid in enumerate(data):
+                if gid < 1:
+                    tile = None
+                else:
+                    # UGH
+                    for ts in tilesets:
+                        if gid in ts:
+                            tile = ts[gid]
+                            break
+                i = n % width
+                j = height - (n // width + 1)
+                cells[i][j] = cell_cls(i, j, tile_width, tile_height, {}, tile)
+
+            id = layer.attrib['name']
+
+            m = layer_cls(id, tile_width, tile_height, cells, None, {})
+            m.visible = int(layer.attrib.get('visible', 1))
+
+            self.add_resource(id, m)
+
+        # finally, object groups
+        for tag in map_.findall('objectgroup'):
+            layer = TmxObjectLayer.fromxml(tag, tilesets, map_height_pixels)
+            self.add_resource(layer.name, layer)
 
 
 _cache = weakref.WeakValueDictionary()
@@ -225,12 +478,7 @@ def load(filename):
 def load_tiles(filename):
     """Load some tile mapping resources from an XML file.
     """
-    resource = Resource(filename)
-    tree = ElementTree.parse(resource.path)
-    root = tree.getroot()
-    if root.tag != 'resource':
-        raise ResourceError('document is <%s> instead of <resource>' % root.name)
-    resource.handle(root)
+    resource = XMLResource(filename)
     return resource
 
 
@@ -268,142 +516,7 @@ def decompress_gzip(in_bytes):
 def load_tmx(filename):
     """Load some tile mapping resources from a TMX file.
     """
-    resource = Resource(filename)
-
-    tree = ElementTree.parse(resource.path)
-    map = tree.getroot()
-    if map.tag != 'map':
-        raise ResourceError('document is <%s> instead of <map>' % map.name)
-
-    width = int(map.attrib['width'])
-    height = int(map.attrib['height'])
-
-    # XXX this is ASSUMED to be consistent
-    tile_width = int(map.attrib['tilewidth'])
-    tile_height = int(map.attrib['tileheight'])
-
-    tiling_style = map.attrib['orientation']
-
-    if tiling_style == "hexagonal":
-        hex_sidelenght = int(map.attrib["hexsidelength"])
-        # 'x' meant hexagons with top and bottom sides parallel to x axis,
-        # 'y' meant hexagons with left and right sides paralel to y axis        
-        s = map.attrib["staggeraxis"]
-        hex_orientation = {'x': 'pointy_left', 'y': 'pointy_up'}
-        # 'even' or 'odd', currently cocos only displays correctly 'even'       
-        lowest_columns = map.attrib["staggerindex"] == "even"
-        cell_cls = HexCell
-        layer_cls = HexMapLayer
-        map_height_pixels = height * tile_height + tile_height // 2
-
-    elif tiling_style == "orthogonal":
-        cell_cls = RectCell
-        layer_cls = RectMapLayer
-        map_height_pixels = height * tile_height
-
-    else:
-        raise ValueError("Unsuported tiling style, must be 'orthogonal' or 'hexagonal'")
-
-    # load all the tilesets
-    tilesets = []
-    for tag in map.findall('tileset'):
-        if 'source' in tag.attrib:
-            firstgid = int(tag.attrib['firstgid'])
-            path = resource.find_file(tag.attrib['source'])
-            with open(path) as f:
-                tag = ElementTree.fromstring(f.read())
-        else:
-            firstgid = int(tag.attrib['firstgid'])
-
-        name = tag.attrib['name']
-
-        spacing = int(tag.attrib.get('spacing', 0))
-        for c in tag.getchildren():
-            if c.tag == "image":
-                # create a tileset from the image atlas
-                path = resource.find_file(c.attrib['source'])
-                tileset = TileSet.from_atlas(name, firstgid, path, tile_width,
-                                             tile_height, row_padding=spacing,
-                                             column_padding=spacing)
-                # TODO consider adding the individual tiles to the resource?
-                tilesets.append(tileset)
-                resource.add_resource(name, tileset)
-            elif c.tag == 'tile':
-                # add properties to tiles in the tileset
-                gid = tileset.firstgid + int(c.attrib['id'])
-                tile = tileset[gid]
-                props = c.find('properties')
-                if props is None:
-                    continue
-                for p in props.findall('property'):
-                    # store additional properties.
-                    name = p.attrib['name']
-                    value = p.attrib['value']
-                    # TODO consider more type conversions?
-                    if value.isdigit():
-                        value = int(value)
-                    tile.properties[name] = value
-
-    # now load all the layers
-    for layer in map.findall('layer'):
-        data = layer.find('data')
-        if data is None:
-            raise ValueError('layer %s does not contain <data>' % layer.name)
-
-        encoding = data.attrib.get('encoding')
-        compression = data.attrib.get('compression')
-        if encoding is None:
-            # tiles data as xml
-            data = [int(tile.attrib.get('gid')) for tile in data.findall('tile')]
-        else:
-            data = data.text.strip()
-            if encoding == 'csv':
-                data.replace('\n', '')
-                data = [int(s) for s in data.split(',')]
-            elif encoding == 'base64':
-                data = decode_base64(data)
-                if compression == 'zlib':
-                    data = decompress_zlib(data)
-                elif compression == 'gzip':
-                    data = decompress_gzip(data)
-                elif compression is None:
-                    pass
-                else:
-                    raise ResourceError('Unknown compression method: %r' % compression)
-                data = struct.unpack(str('<%di' % (len(data) // 4)), data)
-            else:
-                raise TmxUnsupportedVariant("Unsupported tiles layer format " +
-                                            "use 'csv', 'xml' or one of " +
-                                            "the 'base64'")
-
-        assert len(data) == width * height
-
-        cells = [[None] * height for x in range(width)]
-        for n, gid in enumerate(data):
-            if gid < 1:
-                tile = None
-            else:
-                # UGH
-                for ts in tilesets:
-                    if gid in ts:
-                        tile = ts[gid]
-                        break
-            i = n % width
-            j = height - (n // width + 1)
-            cells[i][j] = cell_cls(i, j, tile_width, tile_height, {}, tile)
-
-        id = layer.attrib['name']
-
-        m = layer_cls(id, tile_width, tile_height, cells, None, {})
-        m.visible = int(layer.attrib.get('visible', 1))
-
-        resource.add_resource(id, m)
-
-    # finally, object groups
-    for tag in map.findall('objectgroup'):
-        layer = TmxObjectLayer.fromxml(tag, tilesets, map_height_pixels)
-        resource.add_resource(layer.name, layer)
-
+    resource = TMXResource(filename)
     return resource
 
 
@@ -479,9 +592,9 @@ def _handle_properties(tag):
 #
 # IMAGE and IMAGE ATLAS
 #
-@Resource.register_factory('image')
+@XMLResource.register_factory('image')
 def image_factory(resource, tag):
-    filename = resource.find_file(tag.get('file'))
+    filename = resource._find_file(tag.get('file'))
     if not filename:
         raise ResourceError('No file= on <image> tag')
     image = pyglet.image.load(filename)
@@ -495,9 +608,9 @@ def image_factory(resource, tag):
     return image
 
 
-@Resource.register_factory('imageatlas')
+@XMLResource.register_factory('imageatlas')
 def imageatlas_factory(resource, tag):
-    filename = resource.find_file(tag.get('file'))
+    filename = resource._find_file(tag.get('file'))
     if not filename:
         raise ResourceError('No file= on <imageatlas> tag')
     atlas = pyglet.image.load(filename)
@@ -545,7 +658,7 @@ def imageatlas_factory(resource, tag):
 #
 # TILE SETS
 #
-@Resource.register_factory('tileset')
+@XMLResource.register_factory('tileset')
 def tileset_factory(resource, tag):
     id = tag.get('id')
     properties = _handle_properties(tag)
@@ -647,7 +760,7 @@ class TileSet(dict):
 #
 
 
-@Resource.register_factory('rectmap')
+@XMLResource.register_factory('rectmap')
 # TODO: more diagnostics for malformed files; by example when a columm has less
 # cells than expected
 def rectmap_factory(resource, tag):
@@ -678,7 +791,7 @@ def rectmap_factory(resource, tag):
     return m
 
 
-@Resource.register_factory('hexmap')
+@XMLResource.register_factory('hexmap')
 def hexmap_factory(resource, tag):
     height = int(tag.get('tile_height'))
     width = hex_width(height)
@@ -1055,12 +1168,12 @@ class RectMap(RegularTesselationMap):
                 cell._as_xml(c)
 
 
-class RectMapLayer(RectMap, MapLayer):
+class RectMapLayer(MapLayer, RectMap):
     """A renderable, scrollable rect map.
     """
     def __init__(self, id, tw, th, cells, origin=None, properties=None):
-        RectMap.__init__(self, id, tw, th, cells, origin, properties)
         MapLayer.__init__(self, properties)
+        RectMap.__init__(self, id, tw, th, cells, origin, properties)
 
 
 class Cell(object):
