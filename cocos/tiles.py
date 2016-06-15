@@ -78,7 +78,7 @@ class TmxUnsupportedVariant(Exception):
     pass
 
 
-class Resource(object):
+class Resource(six.with_metaclass(abc.ABCMeta)):
     """Load some tile mapping resources from a file.
 
     This is an Abstract Base Class. To load from new file format, subclass
@@ -87,7 +87,6 @@ class Resource(object):
     Arguments:
         filename (str): the name of the file to load from.
     """
-    __metaclass__ = abc.ABCMeta
     cache = {} # TODO: What is this used for ???
 
     @abc.abstractmethod

@@ -16,7 +16,7 @@ assert pyglet.mock_level == 1
 import cocos
 from cocos.director import director
 import cocos.layer
-from cocos.tiles import TmxObjectLayer, RectMapLayer
+from cocos.tiles import TmxObjectLayer, RectMapLayer, Resource
 
 import pytest
 
@@ -76,6 +76,7 @@ def rectmap_filename(tmpdir_factory):
 
 @pytest.fixture
 def tmxmap_filename(tmpdir_factory):
+    "Make a temp tmx file with a objectgroup definition for testing."
     data = """\
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="9"
@@ -149,3 +150,7 @@ def test_resource_xml_save_modified_rectmap(rectmap_filename):
     saved_tree = ET.parse(saved_filename).getroot()
     cell = saved_tree.find('rectmap//cell')
     assert cell.get('tile') == '2'
+
+def test_cannot_instanciate_ressource():
+    with pytest.raises(TypeError):
+        resource = Resource("nofile.txt")
