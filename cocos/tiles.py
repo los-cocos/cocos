@@ -631,7 +631,7 @@ class TileSet(dict):
                                               atlas[j, i].height)
 
                 # Set texture clamping to avoid mis-rendering subpixel edges
-                gl.glBindTexture(tile_image.texture.target, id)
+                gl.glBindTexture(tile_image.texture.target,  tile_image.texture.id)
                 gl.glTexParameteri(tile_image.texture.target,
                                    gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
                 gl.glTexParameteri(tile_image.texture.target,

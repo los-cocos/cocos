@@ -1,3 +1,7 @@
+v ? - ?
+
+  - fix bad texture clamping in tiles, crashing sometimes, #272 thanks FluffyInkie 
+
 v0.6.4 - June 12, 2016
 
   - moved SequenceScene from cocos.utils to cocos.scenes.sequences
