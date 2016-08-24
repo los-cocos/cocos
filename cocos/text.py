@@ -79,7 +79,7 @@ class TextElement(CocosNode):
     def draw(self):
         gl.glPushMatrix()
         self.transform()
-        self.element.draw()
+        self.batch.draw()
         gl.glPopMatrix()
 
     def _get_opacity(self):
