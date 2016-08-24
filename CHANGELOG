@@ -1,5 +1,6 @@
 v ? - ?
 
+  - Fix Cannot pass keyword args to pyglet.Sprite, #274
   - Fix issue HMTLLabel does not show img, #276
   - fix bad texture clamping in tiles, crashing sometimes, #272 thanks FluffyInkie 
 
