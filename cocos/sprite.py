@@ -115,7 +115,7 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
     """
 
     def __init__(self, image, position=(0, 0), rotation=0, scale=1,
-                 opacity = 255, color=(255, 255, 255), anchor = None):
+                 opacity=255, color=(255, 255, 255), anchor=None, **kwargs):
 
         if isinstance(image, string_types):
             image = pyglet.resource.image(image)
@@ -129,7 +129,7 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         self._scale_x = 1
         self._scale_y = 1
 
-        pyglet.sprite.Sprite.__init__(self, image)
+        pyglet.sprite.Sprite.__init__(self, image, **kwargs)
         BatchableNode.__init__(self)
 
         if anchor is None:

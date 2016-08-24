@@ -1,5 +1,6 @@
 v0.6.4 - June 12, 2016
 
+  - Added kwargs to Sprite to pass to pyglet.Sprite
   - moved SequenceScene from cocos.utils to cocos.scenes.sequences
   - clean-up automatic event registration #268, #269
   - new interface for easy customize fps stats, #255
