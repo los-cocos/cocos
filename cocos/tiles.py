@@ -1114,6 +1114,8 @@ class Cell(object):
     def __contains__(self, key):
         if key in self.properties:
             return True
+        if self.tile is None:
+            return False
         return key in self.tile.properties
 
     def __getitem__(self, key):
