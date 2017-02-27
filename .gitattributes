@@ -1,1 +1,4 @@
 *.anim -text
+*.py text=auto diff=python
+*.txt text=auto
+*.rst text=auto
