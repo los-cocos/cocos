@@ -470,7 +470,7 @@ def update_23(db, filename_persist, snapshots_dir, snapshots_reference_dir):
 # filename to persist the db
 filename_persist = 'initial.dat'
 # change the string to identify about which machine is the info collected 
-testbed = 'cpu intel E7400, gpu ati 6570 with Catalyst 11-5 drivers, win xp sp3'
+testbed = 'cocos master, pyglet master'
 # dir used to calculate canonical paths
 basepath = '../..'
 # dir where update_snapshots will store snapshots
@@ -509,38 +509,38 @@ if clean:
                                             snapshots_dir)
     assert len(unknowns)==0
     
-    # asses these tests pass human inspection; store snapshots for reference
-    update_3(db, filename_persist, snapshots_dir, snapshots_reference_dir)
-
-    # redo scan + snapshots due to test editions
-    #update_5(db, filename_persist, snapshots_dir)
-
-    # asses these tests pass human inspection; store snapshots for reference
-    update_6(db, filename_persist, snapshots_dir, snapshots_reference_dir)
-
-    # add some newly writen tests
-    #update_7(db, filename_persist)
-
-    # asses these tests pass human inspection; store snapshots for reference
-    update_9(db, filename_persist, snapshots_dir, snapshots_reference_dir)
-
-    # erasing some wrong entered entities
-    #update_10(db, filename_persist, snapshots_dir)
-
-    # renaming some tests added but without testinfo (delete + add)
-    #update_11(db, filename_persist, snapshots_dir)
-
-    # asses these tests pass human inspection; store snapshots for reference
-    update_19(db, filename_persist, snapshots_dir, snapshots_reference_dir)
-
-    # asses these tests pass human inspection; store snapshots for reference
-    update_21(db, filename_persist, snapshots_dir, snapshots_reference_dir)
-
-    # asses these tests have problems
-    update_22(db, filename_persist, snapshots_dir, snapshots_reference_dir)
-
-    # asses these tests pass human inspection; store snapshots for reference
-    update_23(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+##    # asses these tests pass human inspection; store snapshots for reference
+##    update_3(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+##
+##    # redo scan + snapshots due to test editions
+##    #update_5(db, filename_persist, snapshots_dir)
+##
+##    # asses these tests pass human inspection; store snapshots for reference
+##    update_6(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+##
+##    # add some newly writen tests
+##    #update_7(db, filename_persist)
+##
+##    # asses these tests pass human inspection; store snapshots for reference
+##    update_9(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+##
+##    # erasing some wrong entered entities
+##    #update_10(db, filename_persist, snapshots_dir)
+##
+##    # renaming some tests added but without testinfo (delete + add)
+##    #update_11(db, filename_persist, snapshots_dir)
+##
+##    # asses these tests pass human inspection; store snapshots for reference
+##    update_19(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+##
+##    # asses these tests pass human inspection; store snapshots for reference
+##    update_21(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+##
+##    # asses these tests have problems
+##    update_22(db, filename_persist, snapshots_dir, snapshots_reference_dir)
+##
+##    # asses these tests pass human inspection; store snapshots for reference
+##    update_23(db, filename_persist, snapshots_dir, snapshots_reference_dir)
 
 else:
     db = dbm.db_load(filename_persist, default_testbed=testbed)
@@ -548,28 +548,28 @@ else:
 # a concise status report
 print(progress_report(db, verbose=False))
 
-### list tests with bad testinfo
-##print(hl.rpt(db, ['testinfo_invalid'], verbose=True))
-##
-### details for tests with bad testinfo, including diagnostic
-##print(hl.rpt_detail_diagnostics(db, 'testinfo_invalid'))
-##
-##
-### entities with no props, it can be 'added but not scaned' or 'added with
-### wrong name'
-###print(hl.rpt(db, ['no_props'], verbose=True))
-##
-### tests that don't have testinfo at all
-##print(hl.rpt(db, ['testinfo_missing'], verbose=True))
-##
-### tests that can't be readed, probably due to name mismatch 
-### print(hl.rpt(db, ['IOerror']))
-##
+# list tests with bad testinfo
+print(hl.rpt(db, ['testinfo_invalid'], verbose=True))
+
+# details for tests with bad testinfo, including diagnostic
+print(hl.rpt_detail_diagnostics(db, 'testinfo_invalid'))
+
+
+# entities with no props, it can be 'added but not scaned' or 'added with
+# wrong name'
+#print(hl.rpt(db, ['no_props'], verbose=True))
+
+# tests that don't have testinfo at all
+print(hl.rpt(db, ['testinfo_missing'], verbose=True))
+
+# tests that can't be readed, probably due to name mismatch 
+# print(hl.rpt(db, ['IOerror']))
+
 # print detailed info about test that tried but failed to take snapshots
 print(hl.rpt_detail_diagnostics(db, 'snapshots_failure'))
 ##
-### lists test that took snapshots without technical problems
-####print(hl.rpt(db, ['snapshots_success'], verbose=True))
+# lists test that took snapshots without technical problems
+##print(hl.rpt(db, ['snapshots_success'], verbose=True))
 ##
 # dump the entire db to console
 #pprint.pprint(db.db)
