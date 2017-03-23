@@ -161,8 +161,8 @@ class Canvas(CocosNode):
         self._vertex_list = None
         self._context = Context()
         self._context_stack = []
-        self._texture = image = pyglet.resource.image('draw_texture.png').get_texture()
-
+        # ensure texture loads outside an atlas, so tex coords maps to [0, 1] x [0, 1] (#288)
+        self._texture = pyglet.image.load('draw_texture.png', file=pyglet.resource.file('draw_texture.png')).get_texture()
         self._context_change = True
         self._position = 0, 0
 
