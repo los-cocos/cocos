@@ -26,3 +26,4 @@ If this is your first time reading about cocos2d, we suggest you start at :doc:`
    default_handlers
    collision
    skeleton/skeleton
+   threading_and_multiprocessing

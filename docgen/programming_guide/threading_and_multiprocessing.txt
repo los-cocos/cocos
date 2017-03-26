@@ -1,0 +1,16 @@
+===========================================
+A few tips on threading and multiprocessing
+===========================================
+
+  * be familiarized with cocos and pyglet in single threaded code before attempting threads or subprocess
+  * consider to use events and timers instead of threads or subproces
+  * multiprocessing: import cocos and pyglet only in one process, see `issue #281 <https://github.com/los-cocos/cocos/issues/281>`_
+  * threading
+
+    - the gui thread must be the main thread
+    - cocos code is not reentrant or thread-safe; call it only from the gui thread
+    - use a queue to communicate with the gui thread; in the gui thread schedule a function to poll (non-blocking) the queue and dispatch as events
+  * The pyglet and cocos google groups have a few threads relevant, search there for 'threading' or 'subprocess'
+
+    
+  
