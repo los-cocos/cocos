@@ -119,7 +119,7 @@ def main():
     # allow display info about cells / tiles 
     def on_key_press(key, modifier):
         if key == pyglet.window.key.D:
-            tilemap.set_debug(True)
+            tilemap_walls.set_debug(True)
     director.window.push_handlers(on_key_press)
 
     # run the scene
