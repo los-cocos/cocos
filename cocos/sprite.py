@@ -91,8 +91,8 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         sprite = Sprite('grossini.png')
 
     Arguments:
-        image (str or pyglet.image.AbstractImage):
-            name of the image resource or a pyglet image.
+        image (str,  pyglet.image.AbstractImage or pyglet.image.Animation):
+            name of the image resource, a pyglet image or a pyglet animation
         position (tuple[float]):
             position of the anchor. Defaults to (0,0)
         rotation (float):
@@ -116,7 +116,7 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
 
     def __init__(self, image, position=(0, 0), rotation=0, scale=1,
                  opacity=255, color=(255, 255, 255), anchor=None, **kwargs):
-    
+
         if isinstance(image, string_types):
             image = pyglet.resource.image(image)
 
@@ -125,7 +125,7 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         self._image_anchor_x = 0
         self._image_anchor_y = 0
 
-        # These need to be forward-defined here because pyglet sprites don't have them.
+        # These need to be forward-defined here because pyglet<1.3 sprites don't have them.
         self._scale_x = 1
         self._scale_y = 1
 
