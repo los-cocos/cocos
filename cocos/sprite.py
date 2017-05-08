@@ -71,7 +71,6 @@ __docformat__ = 'restructuredtext'
 import math
 
 import pyglet
-from pyglet import image
 from pyglet import gl
 
 from cocos.batch import BatchableNode
