@@ -207,10 +207,14 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         super(Sprite, Sprite).rotation.__set__(self, a)
         pyglet.sprite.Sprite.rotation.__set__(self, a)
 
-    @BatchableNode.scale.setter
+    @property
+    def scale(self):
+        return pyglet.sprite.Sprite.scale.__get__(self)
+
+    @scale.setter
     def scale(self, s):
-        super(Sprite, Sprite).scale.__set__(self, s)
         pyglet.sprite.Sprite.scale.__set__(self, s)
+        self._update_position()
 
     @BatchableNode.scale_x.setter
     def scale_x(self, s):
@@ -332,10 +336,10 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
         if self.transform_anchor_x == self.transform_anchor_y == 0:
 
             if self._rotation:
-                x1 = -self._image_anchor_x * self._scale * self._scale_x
-                y1 = -self._image_anchor_y * self._scale * self._scale_y
-                x2 = x1 + img.width*self._scale*self._scale_x
-                y2 = y1 + img.height*self._scale*self._scale_y
+                x1 = -self._image_anchor_x * self._scale_x
+                y1 = -self._image_anchor_y * self._scale_y
+                x2 = x1 + img.width*self._scale_x
+                y2 = y1 + img.height*self._scale_y
                 x = self._x
                 y = self._y
 
@@ -352,11 +356,11 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
                 dy = int(x1*sr + y2*cr + y)
 
                 self._vertex_list.vertices[:] = [ax, ay, bx, by, cx, cy, dx, dy]
-            elif self._scale != 1.0 or self._scale_x != 1.0 or self._scale_y != 1.0:
-                x1 = int(self._x - self._image_anchor_x*self._scale*self._scale_x)
-                y1 = int(self._y - self._image_anchor_y*self._scale*self._scale_y)
-                x2 = int(x1 + img.width*self._scale*self._scale_x)
-                y2 = int(y1 + img.height*self._scale*self._scale_y)
+            elif self._scale_x != 1.0 or self._scale_y != 1.0:
+                x1 = int(self._x - self._image_anchor_x*self._scale_x)
+                y1 = int(self._y - self._image_anchor_y*self._scale_y)
+                x2 = int(x1 + img.width*self._scale_x)
+                y2 = int(y1 + img.height*self._scale_y)
                 self._vertex_list.vertices[:] = [x1, y1, x2, y1, x2, y2, x1, y2]
             else:
                 x1 = int(self._x - self._image_anchor_x)
