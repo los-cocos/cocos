@@ -3,7 +3,7 @@ Running:
 
 tests with filenames like test_p_* depends on py.test
 py.test can run tests written for unittest.
-latest py.test version used : pytest 2.1.0
+latest py.test version used : pytest-3.2.1
 
 For most tests, you must set cocos_utest=1 in the environment before running.
 You should have py.test in the executable search path

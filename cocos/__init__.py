@@ -2,7 +2,7 @@
 # cocos2d
 # Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
-# Copyright (c) 2009-2016  Richard Jones, Claudio Canepa
+# Copyright (c) 2009-2017  Richard Jones, Claudio Canepa
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -59,7 +59,7 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-__version__ = "0.6.4"
+__version__ = "0.6.5"
 __author__ = "cocos2d team"
 version = __version__
 
