@@ -1,6 +1,6 @@
 v0.6.5 - August 24, 2017
 
-  - First cocos release compatible with pyglet 1.3 (tested against 1.3RC)
+  - First cocos release compatible with pyglet 1.3 (tested against 1.3.0rc1)
   - Fix cocos.draw compatibility with pyglet master, #288  
   - Fix Cannot pass keyword args to pyglet.Sprite, #274
   - Fix issue HMTLLabel does not show img, #276
