@@ -134,76 +134,82 @@ After a release, please update this document if any change was needed.
 
   The files are maintained in the repo https://github.com/los-cocos/cocos-site
 
-  When the contentents are ready to publish ensure that all changes were pushed to github, then
-  ask the contact in Chukong to update python.cocos2d.org from the repo.
+  When the contentents are ready to publish, sftp to host and sync to python.cocos2d.org .
    
  7 Updating PyPI page
-   Albeit pypi home page tells to use "python setup.py upload" to upload the
-   package, this gave me 401: You must be identified to edit package information
+   (2017 notes)
+   Updated pip and setuptools, setuptools.__version__ -> '36.2.7'
+   In https://packaging.python.org/tutorials/distributing-packages/ they recomend to upload with twine, available from pypi
+   Installed with pip, got twine 1.9.1
+   Tried	
+	 py -3.6 -m twine upload -r https://test.pypi.org -u user -p pwd dist/*
+	No, failed. Changing the url to https://test.pypi.org/legacy/ , failed also.
+	So, decayed to old method; remember that each upload will do a build so be patient.
 
-   A search suggested
-
-	python setup.py register sdist upload
-
-   which should build, request user:pwd interactively and upload
-   In windows xp sp3 with python 2.6 that failed: it request the user,
-   you fill it, it request pwd, it wont accept characters.
-   You must ctrl-c or wait a timeout.
-
-   Another search suggested using the same line but creating a .pypirc file
-   in your HOME directory with the contents
-    [pypirc]
-    servers = pypi
-    [server-login]
-    username:pypi_user
-    password:pypi_pwd
-
-in 2017
-	[distutils]
-	index-servers=
-		pypi
-		testpypi
-
-	[testpypi]
-	repository: https://test.pypi.org/legacy/
-	username: your-testpy-user
-	password: your-testpy-pwd
+	0. Have at hand the usr/pwd for both pypi and test.pypi
 	
-   Just in case, I stored that with unix line endings.
-   That worked for me.
+	1. set a c:\Users\user\.pypirc file with content
+		[distutils]
+		index-servers =
+		  pypi
+		  pypitest
+
+		[pypi]
+		repository=https://pypi.python.org/pypi
+		username=not_the_real_user
+		password=not_the_real_pwd
+
+		[pypitest]
+		repository=https://testpypi.python.org/pypi
+		username=real_test_user
+		password=real_test_pwd
    
-   For windows users, you can see where your HOME directory is by typing
-     set homepath
-   in a cmd console (usually Documents and Settings\<user>)
-
-   Probably more info at:
-       http://packages.python.org/an_example_pypi_project/setuptools.html#intermezzo-pypirc-file-and-gpg
-
-	year 2015: the .pypirc format seems to have changed, at least for what can be seen at
-	https://packaging.python.org/en/latest/distributing.html#uploading-your-project-to-pypi
-	or
-	https://wiki.python.org/moin/TestPyPI 
-
+    Notice for the test try I don't put the real credentials for pypi, only for pypitest
 	
-   Theres a test site parallel to pypi, https://testpypi.python.org/pypi , which can
-   be handy to test the real display of package page and other pypi related things, see
-   https://wiki.python.org/moin/TestPyPI
-   
-   warn: with the recomended .pypirc (login info for both pypi and testpypi)
-   python setup.py register sdist upload -r https://testpypi.python.org/pypi
-   wrote both to the test and the real site; in the real only the package page was
-   updated (no download), also the pakage upload terminated with error, so it should
-   be better to delete / modify the real login info when testing
-   Maybe the register part was directed to the real pypi ?
-   
+	2.  from the root of repo checkout, with the docs in position run
+	
+			py -3.6 setup.py sdist upload -r pypitest
+
+		Fails; setting the pypitest URL to https://test.pypi.org/legacy/
+
+		And trying again the same command
+
+			py -3.6 setup.py sdist upload -r pypitest
+			Server response (200): OK
+
+		Check if it visible and looks good at https://test.pypi.org/project/cocos2d/
+		Looks good. (search for cocos2d pointed to an older release)
+		
+	3. 	Now to the real upload
+		Set the real pypi credentials in .pypirc and run
+		
+			py -3.6 setup.py sdist upload -r pypi
+			200 OK
+
+		Notice the last arg is different; also no 'legacy' was required here.
+
+		Check if it visible and looks good at https://pypi.python.org/pypi/cocos2d
+		Looks good. (search for cocos2d pointed to an older release)
+
+	4. 	Download the file in that page, decompress, compare with repo; only some artifacts from the build will
+	    show as missing files
+
+	5. 	I deleted the .pypirc to not let cleartext credentials in sight.
 
 8.  tagging the release 
 
-	from a working copy, in the checkout of master that reflects the state at release do
-		git tag release-0.6.3 -m "tagging release 0.6.3"
-		git push --tags
+	from the repo clone used to upload:
 
-	( remember to change the version in the example if doing copy & paste )
-
-    If a commit after the release was done, then add to the first line the hash of the
-	commit used for the release
+		- delete release artifacts, use git status to see what should be deleted
+		
+		- If some last moment change was not comited, commit now and push
+		
+		- run
+			git tag release-0.6.5 -m "tagging release 0.6.5"
+			git push --tags
+			
+		- lookup the last hash commit, edit the following line to meet your release
+			git commit -a -m "tagged  fe6beb3 as release-0.6.5"
+		  save file 
+			
+		- commit using the line just edited, push.

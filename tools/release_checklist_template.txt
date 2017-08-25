@@ -74,7 +74,7 @@ Keep in mind that
 
   - check how the pypi page looks, download the zip / tar and binary compare with the originals.
 
-- tag the release in the repo (see 7 in building_release_notes.txt)
+- tag the release in the repo (see 8 in building_release_notes.txt)
 
 - Update release_checklist_template.txt and or building_release_notes.txt if necessary.
 
