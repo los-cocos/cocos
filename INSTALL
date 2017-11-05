@@ -40,8 +40,9 @@ Compatibility
 
 Compatibility notes at the time of writing, August 2017
 
-    + python : cocos needs python 2.6, 2.7 or 3.3+
+    + python : cocos needs python 2.7 or 3.4+
       The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3
+	  
 
     + pyglet : pyglet 1.2 or better (1.3+ recomended)      
 

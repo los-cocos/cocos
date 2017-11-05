@@ -2,6 +2,10 @@
 language: python
 
 # For pypy versions, see https://github.com/pyenv/pyenv/tree/master/plugins/python-build/share/python-build
+# notice that pypy may or may not work for real: test in CI has small coverage, pyglet and cocos uses ctypes,
+# cocos particles and audio SDL uses numpy (ctypes and numpy are problematic with pypy)
+# py3 should be tested only on CPython versions actively supported, meaning receiving security updates, look
+# at https://docs.python.org/devguide/#status-of-python-branches for status
 python: 
   - "pypy2.7-5.8.0"
   - "pypy3.5-5.8.0"
