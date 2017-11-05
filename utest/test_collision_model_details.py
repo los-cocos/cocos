@@ -73,3 +73,36 @@ def test_ops_near_boundaries():
 
     nears = collman.objs_near(lo_lo, w_width + w_height)
     assert set(nears) == set([lo_hi, hi_lo, hi_hi])
+
+# test that collision manager methods that state in the docstring 'obj does
+# not need to be a known object' comply with that clause; currently
+# objs_colliding, iter_colliding, any_near, objs_near, objs_near_wdistance,
+# ranked_objs_near
+
+def test_CollisionManagerGrid_fulfil_obj_can_be_not_known():
+    w_width = 200.0
+    w_height = 100.0
+    cell_side = 20.00
+    collman = cm.CollisionManagerGrid(0.0, w_width, 0.0, w_height, cell_side,
+                                      cell_side)
+
+    known = create_obj_with_circle('known', eu.Vector2(10, 12), 10)
+    collman.add(known)
+    not_known = create_obj_with_circle('not-known', eu.Vector2(10, 12), 10)
+
+    for e in collman.objs_colliding(not_known):
+        assert e is known
+
+    for e in collman.iter_colliding(not_known):
+        assert e is known
+
+    assert known is collman.any_near(not_known, 1.0)
+
+    for e in collman.objs_near(not_known, 1.0):
+        assert e is known
+
+    for e in collman.objs_near_wdistance(not_known, 1.0):
+        assert e[0] is known
+
+    for e in collman.ranked_objs_near(not_known, 1.0):
+        assert e[0] is known

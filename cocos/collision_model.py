@@ -781,7 +781,7 @@ class CollisionManagerGrid(CollisionManager):
             for other in self.buckets[cell_id]:
                 if other not in collides and (f_distance(other.cshape) < near_distance):
                     collides.add(other)
-        collides.remove(obj)
+        collides.discard(obj)
         return collides
 
     def objs_near_wdistance(self, obj, near_distance):
