@@ -1715,7 +1715,13 @@ class TmxObject(Rect):
             else:
                 bottom = top - h
 
-        o = cls(tmxtype, tag.attrib.get('type'), left, bottom, w, h,
+        usertype = tag.attrib.get('type')
+        if not usertype:
+            # Check if the tile has a usertype
+            if tile.usertype:
+                usertype = tile.usertype
+
+        o = cls(tmxtype, usertype, left, bottom, w, h,
                 tag.attrib.get('name'), gid, tile, int(tag.attrib.get('visible', 1)),
                 points)
 
