@@ -219,7 +219,7 @@ def scanprops_from_text(text, fname):
         diagnostic, expected_snapshots = st.ScreenSampler.validated_info(testinfo, basename)
         propdict['testinfo_diagnostic'] = diagnostic 
         propdict['expected_snapshots'] = expected_snapshots
-    propdict['md5_at_testinfo'] = doers.md5_hex(text)
+    propdict['md5_at_testinfo'] = doers.md5_hex_for_text(text)
 
     return propdict
 
@@ -680,7 +680,7 @@ def info_outdated_strong(db, candidates=None):
         except Exception:
             outdated.add(name)
             continue
-        actual_md5 = doers.md5_hex(text)
+        actual_md5 = doers.md5_hex_for_text(text)
         if actual_md5 != db.get_prop_value(name,'testrun_md5'):
             outdated.add(name)
 

@@ -7,6 +7,7 @@ As a release builder:
 
    release 0.6.2, built from py2.7 + setuptools 5.7 (or 12.2)
    release 0.6.4  built from py 3.5 + setuptools 18.2 (or 23.0.0)
+   release 0.6.5  built from py 3.6 + setuptools 28.8.0
 
    example operation for generating release without handling the docs:
        git clone https://github.com/los-cocos/cocos.git cocos_trunk
@@ -20,8 +21,8 @@ As a release builder:
 
 __author__ = "cocos2d team"
 __author_email__ = "lucio.torre@gmail.com"
-__version__ = "0.6.4"
-__date__ = "2016 06 12"
+__version__ = "0.6.6.dev"
+__date__ = "2017 11 05 +"
 
 try:
     import setuptools

@@ -29,6 +29,11 @@ class PlatformerController(actions.Action):
 
     def step(self, dt):
         global keyboard, scroller
+        if dt > 0.1:
+            # a too big dt will move the player through walls
+            # dt can be big at startup in slow hardware, as a raspi3
+            # so do nothing on big dt
+            return
         vx, vy = self.target.velocity
 
         # using the player controls, gravity and other acceleration influences
@@ -119,7 +124,7 @@ def main():
     # allow display info about cells / tiles 
     def on_key_press(key, modifier):
         if key == pyglet.window.key.D:
-            tilemap.set_debug(True)
+            tilemap_walls.set_debug(True)
     director.window.push_handlers(on_key_press)
 
     # run the scene

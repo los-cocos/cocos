@@ -1,12 +1,6 @@
-New in cocos 0.6.4
+New in cocos 0.6.5
 ==================
 
-  - MapColliders classes changed API to be more useful and clear: collision between actors and tiles and between actors and TmxObject are easier to handle 
-  - Supports the variants 'csv', 'xml', 'base64(uncompressed)' for Tiled Editor layer data
-  - Simpler Scene and Layer code for automatic window events registration
-  - Particle systems now accepts per-instance texture
-  - Better IDEs autocompletion: by being more specific in cocos code imports, IDEs can work faster and be more selective with the autocompletion offerings.
-  - Support for pyglet 1.3 
-
-  Be sure to read about compatibility changes in the docs, there has been some api changes.
-  
+  - Support for pyglet 1.3 (tested against 1.3.0rc1) 
+  - Python 2.6 support will we dropped in the next release
+  - Python 2.7 support can be dropped if a new feature requires more than trivial adjusts

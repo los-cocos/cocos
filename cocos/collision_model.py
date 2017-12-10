@@ -2,7 +2,7 @@
 # cocos2d
 # Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
-# Copyright (c) 2009-2016  Richard Jones, Claudio Canepa
+# Copyright (c) 2009-2017  Richard Jones, Claudio Canepa
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,7 @@ import cocos.euclid as eu
 
 # interfaces, abstract base clases ######################################
 
+msg_abstract = "abstract method called, needs implementation"
 
 # cshape reference interfase
 class Cshape(object):
@@ -60,7 +61,7 @@ class Cshape(object):
 
         :rtype: bool
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def distance(self, other):
         """
@@ -71,7 +72,7 @@ class Cshape(object):
 
         :rtype: float
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def near_than(self, other, near_distance):
         """
@@ -79,7 +80,7 @@ class Cshape(object):
 
         :rtype: bool
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def touches_point(self, x, y):
         """
@@ -87,7 +88,7 @@ class Cshape(object):
 
         :rtype: bool
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def fits_in_box(self, packed_box):
         """
@@ -99,7 +100,7 @@ class Cshape(object):
                 An axis aligned rectangle expressed as (minx, maxx, miny, maxy)
         :rtype: bool
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def minmax(self):
         """
@@ -112,7 +113,7 @@ class Cshape(object):
         :rtype: 4-tuple of floats
 
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def copy(self):
         """
@@ -120,7 +121,7 @@ class Cshape(object):
 
         :rtype: Cshape
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
 
 # collision manager interface
@@ -220,7 +221,7 @@ class CollisionManager(object):
         """
         Makes obj a know entity
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def remove_tricky(self, obj):
         """
@@ -234,14 +235,14 @@ class CollisionManager(object):
         """
         Empties the known set
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def they_collide(self, obj1, obj2):
         """
         Returns a boolean, True if obj1 overlaps objs2
         obj1, obj2 are not required to be known objects
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def objs_colliding(self, obj):
         """
@@ -249,7 +250,7 @@ class CollisionManager(object):
         excluding obj itself
         obj is not required to be a known object
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def iter_colliding(self, obj):
         """
@@ -264,7 +265,7 @@ class CollisionManager(object):
                 # process event 'obj touches other'
 
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def any_near(self, obj, near_distance):
         """
@@ -273,7 +274,8 @@ class CollisionManager(object):
         less than near_distance
         obj is not required to be a known object
         """
-        pass
+        raise NotImplementedError(msg_abstract)
+
 
     def objs_near(self, obj, near_distance):
         """
@@ -283,7 +285,7 @@ class CollisionManager(object):
         Notice that it includes the ones colliding with obj.
         obj is not required to be a known object
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def objs_near_wdistance(self, obj, near_distance):
         """
@@ -295,14 +297,14 @@ class CollisionManager(object):
         If the game logic wants the list ordered by ascending distances, use
         ranked_objs_near instead.
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def ranked_objs_near(self, obj, near_distance):
         """
         Same as objs_near_wdistance but the list is ordered in increasing distance
         obj is not required to be a known object
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def iter_all_collisions(self):
         """
@@ -318,20 +320,20 @@ class CollisionManager(object):
         """Returns True if obj was added to the collision manager, false otherwise
         Used for debug and testing.
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def known_objs(self):
         """Returns a set with all the objects known by the CollisionManager
         Used for debug and testing.
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def objs_touching_point(self, x, y):
         """Returns a container with known objects touching point (x, y)
 
         Useful for mouse pick
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
     def objs_into_box(self, minx, maxx, miny, maxy):
         """Returns a container with know objects that fully fits into the axis
@@ -339,13 +341,13 @@ class CollisionManager(object):
 
         Useful for elastic box selection
         """
-        pass
+        raise NotImplementedError(msg_abstract)
 
 
 # Cshape implementations #################################################
 
 
-class CircleShape(object):
+class CircleShape(Cshape):
     """
     Implements the Cshape interface that uses discs as geometric shape.
 
@@ -401,7 +403,7 @@ class CircleShape(object):
         return CircleShape(eu.Vector2(*self.center), self.r)
 
 
-class AARectShape(object):
+class AARectShape(Cshape):
     """
     Implements the Cshape interface that uses rectangles with sides
     parallel to the coordinate axis as geometric shape.
@@ -550,7 +552,7 @@ def aa_rect_distance_aa_rect(aa_rect, other):
 # CollisionManager implementations #######################################
 
 
-class CollisionManagerBruteForce(object):
+class CollisionManagerBruteForce(CollisionManager):
     """
     Implements the CollisionManager interface with with the simpler code possible.
 
@@ -655,7 +657,7 @@ class CollisionManagerBruteForce(object):
         return into
 
 
-class CollisionManagerGrid(object):
+class CollisionManagerGrid(CollisionManager):
     """
     Implements the CollisionManager interface based on the scheme
     known as spatial hashing.
@@ -779,7 +781,7 @@ class CollisionManagerGrid(object):
             for other in self.buckets[cell_id]:
                 if other not in collides and (f_distance(other.cshape) < near_distance):
                     collides.add(other)
-        collides.remove(obj)
+        collides.discard(obj)
         return collides
 
     def objs_near_wdistance(self, obj, near_distance):

@@ -35,7 +35,7 @@ Requirements
 
 Software:
 
-* python 2.6, 2.7 or 3.3+
+* python 2.7 or 3.4+
 * pyglet 1.2 or newer (http://www.pyglet.org)
 * Linux, Windows or Mac OS/X
 

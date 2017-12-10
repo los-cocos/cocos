@@ -103,7 +103,10 @@ class MessageLayer(cocos.layer.Layer):
                                     font_size=52,
                                     font_name=consts['view']['font_name'],
                                     anchor_y='center',
-                                    anchor_x='center')
+                                    anchor_x='center',
+                                    width=w,
+                                    multiline=True,
+                                    align="center")
         self.msg.position = (w / 2.0, h)
 
         self.add(self.msg)

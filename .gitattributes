@@ -1,4 +1,24 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Explicitly declare text files you want to always be normalized and converted
+# to native line endings on checkout.
+*.py text diff=python
+*.txt text
+*.rst text
+Makefile text
+makefile text
+
+# Declare files that will always have CRLF line endings on checkout.
+*.bat text eol=crlf
+
+# Denote files for which git should not change the line endings.
 *.anim -text
-*.py text=auto eol=lf diff=python
-*.txt text=auto eol=lf
-*.rst text=auto eol=lf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
+*.ttf binary
+*.mp3 binary
+*.gif binary
+*.wav binary

@@ -1,21 +1,28 @@
-# recycling the .travis.yml from other project, commented out things
-# we don't need ATM but may come handy later -
-#before_install:
-#  - sudo apt-get update
-#  - sudo apt-get --reinstall install -qq language-pack-en language-pack-es
 
 language: python
-python:
-  - "2.6"
-  - "2.7"
-  - "3.3"
+
+# For pypy versions, see https://github.com/pyenv/pyenv/tree/master/plugins/python-build/share/python-build
+# notice that pypy may or may not work for real: test in CI has small coverage, pyglet and cocos uses ctypes,
+# cocos particles and audio SDL uses numpy (ctypes and numpy are problematic with pypy)
+# py3 should be tested only on CPython versions actively supported, meaning receiving security updates, look
+# at https://docs.python.org/devguide/#status-of-python-branches for status
+python: 
+  - "pypy2.7-5.8.0"
+  - "pypy3.5-5.8.0"
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.6
+  
+cache:
+  - pip
+  - directories:
+    - $HOME/.pyenv_cache
 
 env:
-    - cocos_utest=1
+  - cocos_utest=1
 
 install:
-#  - "pip install -r requirements.txt --use-mirrors"
-#  - "pip install . --use-mirrors"
    - python setup.py install
 script:
-  - cd utest && py.test --tb native
+- cd utest && py.test --tb native
