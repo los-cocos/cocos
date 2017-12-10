@@ -2,7 +2,7 @@
 # cocos2d
 # Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
-# Copyright (c) 2009-2016  Richard Jones, Claudio Canepa
+# Copyright (c) 2009-2017  Richard Jones, Claudio Canepa
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -248,7 +248,7 @@ class RectMapCollider(object):
         (see the matching method in :class:`RectMapWithPropsCollider` for example).
         """
         dx_correction = dy_correction = 0.0
-        if last.bottom >= obj.top > obj.bottom:
+        if last.bottom >= obj.top > new.bottom:
             dy_correction = obj.top - new.bottom
         elif last.top <= obj.bottom < new.top:
             dy_correction = obj.bottom - new.top
@@ -313,7 +313,7 @@ class RectMapWithPropsCollider(RectMapCollider):
         # shorthand for getting a prop from obj
         g = obj.get
         dx_correction = dy_correction = 0.0
-        if g('top') and last.bottom >= obj.top > obj.bottom:
+        if g('top') and last.bottom >= obj.top > new.bottom:
             dy_correction = obj.top - new.bottom
         elif g('bottom') and last.top <= obj.bottom < new.top:
             dy_correction = obj.bottom - new.top

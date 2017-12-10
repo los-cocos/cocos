@@ -2,7 +2,7 @@
 # cocos2d
 # Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
-# Copyright (c) 2009-2016  Richard Jones, Claudio Canepa
+# Copyright (c) 2009-2017  Richard Jones, Claudio Canepa
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -123,7 +123,7 @@ class Camera(object):
 
     eye = property(_get_eye, _set_eye, doc='''Eye of the camera in x,y,z coordinates
 
-    :type: flaat,float,float
+    :type: float,float,float
     ''')
 
     def _get_center(self):
@@ -135,7 +135,7 @@ class Camera(object):
 
     center = property(_get_center, _set_center, doc='''Center of the camera in x,y,z coordinates
 
-    :type: flaat,float,float
+    :type: float,float,float
     ''')
 
     def _get_up_vector(self):
@@ -147,5 +147,5 @@ class Camera(object):
 
     up_vector = property(_get_up_vector, _set_up_vector, doc='''Up vector of the camera in x,y,z coordinates
 
-    :type: flaat,float,float
+    :type: float,float,float
     ''')

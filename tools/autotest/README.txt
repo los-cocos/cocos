@@ -2,6 +2,8 @@
 Autotest feature
 ================
 
+note: use remembercases >= v.02
+
 Problems
 ========
 

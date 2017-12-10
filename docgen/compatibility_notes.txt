@@ -1,9 +1,15 @@
-Api changes and other compatibility notes from previous version
+Api changes and other compatibility notes
+
+cocos 0.6.5
+-----------
+
+	- First cocos version to support pyglet 1.3 , tested against pyglet 1.3.rc1
+	- This cocos version can also run with pyglet 1.2.x
+	- Next cocos version will drop support for python 2.6
+	- Python 2.7 support can end at any future cocos release, without further advice: if pyglet drops it or a cocos new feature requires more than trivial compatibility code, then cocos will be py3 only
 
 cocos 0.6.4
 -----------
-
-This is the first release supporting pyglet 1.3+
 
 Imports in cocos library are more specific, so user code that were doing
 ``from cocos.somemodule import *`` may fail to find some symbols.

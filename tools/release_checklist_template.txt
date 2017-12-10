@@ -29,13 +29,14 @@ Finishing:
     README    
     docgen/programming_guide/introduction.txt
     
-- initial test 'build sdist' and 'install' with setup.py;
+- initial test 'build sdist' and 'install' with setup.py and pip;
 
+	- update pip and setuptools before starting build & install tests
 	- don't bother with docs generation at this stage
-	- sometimes the build was broken by upgrades in setuptools, so check with latest in pypi 
     - adjust dependencies if needed, remember to mention in INSTALL
 	- adjust MANIFEST.in if needed (usually when something is missed in the generated .zip)
 	- test installation with pip, fix if necessary
+	- check that the dependencies pulled from Pypi come at the expected versions 
 
 - Update text files in the top trunk directory
 	- CHANGELOG
@@ -55,7 +56,7 @@ Keep in mind that
 - copy INSTALL to docgen/programming_guide/installation.txt
 
 - build the docs (see 2 in building_release_notes.txt)
-  currently the docs build produces 7 warnings, keep fixing while your number is higher. 
+  currently (0.6.5) the docs build produces 8 warnings (before was 7), keep fixing while your number is higher. 
 
 - build the final package that includes the docs
   (see tools/build_release_notes.txt for details)
@@ -64,14 +65,16 @@ Keep in mind that
 
 - verify install works, see 4 in building_release_notes.txt
 
-- Update cocos2d.org site and the backup( see 5 in building_release_notes.txt)
+- Update cocos2d.org site and the backup( see 6 in building_release_notes.txt)
 
-- upload to pypi ( see 6 in building_release_notes.txt )
-  For Release Candidates, alphas, betas we don't upload to pypi (automatic installers can't differentiate between stable or unstable releases, so by example 'easy_install foo' can silently install an unstable release if it where uploaded to pypi) 
+- upload to pypi ( see 7 in building_release_notes.txt )
+  For Release Candidates, alphas, betas and RC we can upload to pypi (pip will differentiate between stable or unstable releases, and by default will install the stable; setuptools (easy_install) seems to not diferentiate and will pick the latest, seen that in testing with the dependency pyglet)
 
-- check how the pypi page looks, download the zip / tar and binary compare with the originals.
+  - for best results, try first uploading to https://test.pypi.org/ , a test instance for pypi, and if all goes well then proceed to the real upload.
 
-- tag the release in the repo (see 7 in building_release_notes.txt)
+  - check how the pypi page looks, download the zip / tar and binary compare with the originals.
+
+- tag the release in the repo (see 8 in building_release_notes.txt)
 
 - Update release_checklist_template.txt and or building_release_notes.txt if necessary.
 
