@@ -102,7 +102,7 @@ we call super() with a blueish color::
     class HelloWorld(cocos.layer.ColorLayer):
         def __init__(self):
             # blueish color
-            super( HelloWorld, self ).__init__( 64,64,224,255)
+            super( HelloWorld, self ).__init__( 64, 64, 224, 255 )
 
 As in the previous example, we create and add a label::
 
@@ -112,7 +112,7 @@ As in the previous example, we create and add a label::
         anchor_x='center', anchor_y='center')
 
     # set the label in the center of the screen
-    label.position = 320,240
+    label.position = 320, 240
     self.add( label )
 
 In this example we also create and add an sprite as a child. In cocos2d
@@ -120,9 +120,9 @@ sprites are `Sprite` objects::
 
     sprite = cocos.sprite.Sprite('grossini.png')
 
-We place the sprite in the center of the screen. Default position is (0,0)::
+We place the sprite in the center of the screen. Default position is (0, 0)::
 
-    sprite.position = 320,240
+    sprite.position = 320, 240
 
 We set the scale attribute to 3. This means that our sprite will be 3 times bigger.
 The default scale attribute is 1::
@@ -176,7 +176,7 @@ Handling Events
 All our previous examples are non-interactive. They display something, but do not respond to user input (except for quitting when you press **ESC** or close the window).
 Cocos obtains inputs by listening to director.window events, and conveniently cocos.layer can automatically listen to director.window events: in your layer subclass set the is_event_handler class member to True and cocos will take care.
 
-In this section we will build step by step the demo provided in `samples/handling_events.py`; this is a very simple cocos app which shows which keys are pressed, and reacts to mouse motion and clicks. Run the app before reading on te get a clearer idea of what we are trying to build.
+In this section we will build step by step the demo provided in `samples/handling_events.py`; this is a very simple cocos app which shows which keys are pressed, and reacts to mouse motion and clicks. Run the app before reading on to get a clearer idea of what we are trying to build.
 
 .. figure:: event_demo.py.png
 
@@ -238,7 +238,7 @@ This class defines a key_pressed set, which should be the set of keys pressed at
             # Update self.text
             self.text.element.text = text
 
-With that code, the layer is now fully working. You can press and release keys or key combinations, and you will se how the display is updated telling you which keys are pressed at any time.
+With that code, the layer is now fully working. You can press and release keys or key combinations, and you will see how the display is updated telling you which keys are pressed at any time.
 
 Handling mouse input is similar. You have three events of interest: on_mouse_press, on_mouse_motion and on_mouse_drag. With that, we can define our layer::
 
@@ -292,11 +292,11 @@ And then add event handlers to update the text when the mouse is moved, and chan
            (values like 'SHIFT', 'OPTION', 'ALT')
         """
         self.posx, self.posy = director.get_virtual_coordinates (x, y)
-        self.update_text (x,y)
+        self.update_text (x, y)
 
-The only thing a bit unusual here is the call to `director.get_virtual_coordinates` (x, y). As explained in the example before, cocos has two coordinates systems, a physical one and a virtual one. The mouse event handlers receive their arguments from pyglet in physical coordinates. If you want to map that to virtual coordinates, you need to use the director.get_virtual_coordinates method, which does the correct mapping. If you put instead ``self.posx``, ``self.posy = x,y`` in the on_mouse_press handler above, you will see that the app seems to work, but if you resize the window, the clicks will move the text to the wrong place.
+The only thing a bit unusual here is the call to `director.get_virtual_coordinates` (x, y). As explained in the example before, cocos has two coordinates systems, a physical one and a virtual one. The mouse event handlers receive their arguments from pyglet in physical coordinates. If you want to map that to virtual coordinates, you need to use the director.get_virtual_coordinates method, which does the correct mapping. If you put instead ``self.posx``, ``self.posy = x, y`` in the on_mouse_press handler above, you will see that the app seems to work, but if you resize the window, the clicks will move the text to the wrong place.
 
-For completneddes, they are other mouse events that can be of interest:
+For completneddes, there are other mouse events that can be of interest:
     on_mouse_release : called when a button is released
     on_mouse_scroll : called when the mouse wheel moved
     on_mouse_leave : called when the mouse cursor goes out of the window
@@ -332,8 +332,8 @@ applications you'll need to work with OpenGL directly.  The canonical
 references for OpenGL are `The OpenGL Programming Guide`_ and
 `The OpenGL Shading Language`_.
 
-Since cocos2d uses pyglet you shall also check `pyglet Programming Guide`_
-and `pyglet API Reference`_
+Since cocos2d uses pyglet, you shall also check `pyglet Programming Guide`_
+and `pyglet API Reference`_.
 
 There are numerous examples of cocos2d applications in the ``samples/``
 directory of the documentation and source distributions.  Keep checking
