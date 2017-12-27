@@ -166,11 +166,11 @@ The pyglet event framework in a pinch
             if self.elapsed_time>self.building_time:
                 self.dispatch_event('on_building_complete', self)
 
-        def take_damage(self, damage):
-            self.dispatch_event('on_building_under_attack', self)
-            self.life -= damage
-            if self.life<0:
-                self.dispatch_event('on_building_destroyed', self)
+            def take_damage(self, damage):
+                self.dispatch_event('on_building_under_attack', self)
+                self.life -= damage
+                if self.life<0:
+                    self.dispatch_event('on_building_destroyed', self)
 
         # following lines register the events that Bunker instances can emit
         Bunker.register_event_type('on_building_complete')
