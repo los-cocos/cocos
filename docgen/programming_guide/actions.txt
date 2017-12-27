@@ -120,7 +120,7 @@ Example use::
 
 When activated, move_2 will move the target first to (100, 100), it will
 arrive there 10 seconds after departure; then it will move to (200, 200),
-and will arrive there 10 seconds after having arrived to (100, 100)
+and will arrive there 15 seconds after having arrived to (100, 100)
 
 **spawn operator:**  action_1 | action_2 -> action_result
 
