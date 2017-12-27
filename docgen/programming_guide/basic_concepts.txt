@@ -163,8 +163,8 @@ The pyglet event framework in a pinch
             ...
             def building_update(self, dt):
                 ...
-            if self.elapsed_time>self.building_time:
-                self.dispatch_event('on_building_complete', self)
+                if self.elapsed_time>self.building_time:
+                    self.dispatch_event('on_building_complete', self)
 
             def take_damage(self, damage):
                 self.dispatch_event('on_building_under_attack', self)
