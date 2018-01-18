@@ -74,5 +74,9 @@ class Effect(object):
         if audio._working:
             self.sound.play()
 
+    def stop(self):
+        if audio._working:
+            self.sound.stop()
+
     def get_length(self):
         return self.sound.get_length()
