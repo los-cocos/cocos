@@ -50,7 +50,7 @@ class PlayAction(actions.InstantAction):
         return PlayAction(self.sound)
 
 
-class PlayUntilFinishedAction(actions.IntervalAction):
+class PlayUntilFinishedAction(actions.Action):
     def init(self, sound):
         self.sound = sound
         self.duration = self.sound.get_length()
@@ -62,6 +62,16 @@ class PlayUntilFinishedAction(actions.IntervalAction):
     def stop(self):
         if audio._working:
             self.sound.stop()
+
+    def step(self, dt):
+        self._elapsed += dt
+        try:
+            self.update(min(1, self._elapsed / self.duration))
+        except ZeroDivisionError:
+            self.update(1.0)
+
+    def done(self):
+        return self._elapsed >= self.duration
 
     def __deepcopy__(self, memo):
         # A shallow copy should be enough because sound effects are immutable
