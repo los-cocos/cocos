@@ -70,6 +70,9 @@ class PlayUntilFinishedAction(actions.Action):
         except ZeroDivisionError:
             self.update(1.0)
 
+    def update(self, t):
+        pass
+
     def done(self):
         return self._elapsed >= self.duration
 
