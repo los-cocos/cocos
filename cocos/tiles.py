@@ -350,7 +350,8 @@ def load_tmx(filename):
                     imgpath = resource.find_file(c.find('image').attrib['source'])
                     id = int(c.attrib['id'])
                     tile = Tile(tileset.firstgid + id, {},  pyglet.image.load(imgpath))
-                    tile.usertype = c.attrib['type']
+                    if 'type' in c.attrib:
+                        tile.usertype = c.attrib['type']
                     tileset[tileset.firstgid + id] = tile
 
         if tileset is not None:
