@@ -355,6 +355,14 @@ def load_tmx(filename):
                     tileset[tileset.firstgid + id] = tile
 
         if tileset is not None:
+            # Before adding the tileset, check which tiles are using texture edge clamping (they do by default)
+            for i, tile in tileset.items():
+                if "texture_edge_clamp" not in tile.properties or tile.properties["texture_edge_clamp"] is "true":
+                    gl.glBindTexture(tile.image.texture.target, tile.image.texture.id)
+                    gl.glTexParameteri(tile.image.texture.target,
+                                       gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+                    gl.glTexParameteri(tile.image.texture.target,
+                                       gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
             tilesets.append(tileset)
             # TODO consider adding the individual tiles to the resource?
             resource.add_resource(name, tileset)
@@ -648,12 +656,10 @@ class TileSet(dict):
                                               atlas[j, i].width,
                                               atlas[j, i].height)
 
-                # Set texture clamping to avoid mis-rendering subpixel edges
                 gl.glBindTexture(tile_image.texture.target,  tile_image.texture.id)
+                # Use nearest neighbour filtering instead of linear filtering
                 gl.glTexParameteri(tile_image.texture.target,
-                                   gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-                gl.glTexParameteri(tile_image.texture.target,
-                                   gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+                                  gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
 
                 ts[id] = Tile(id, {}, tile_image)
                 id += 1
