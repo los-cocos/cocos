@@ -93,6 +93,9 @@ class Resource(object):
 
         self.path = self.find_file(filename)
 
+        # Different properties the map may have, such as background colour
+        self.properties = {}
+
     def find_file(self, filename):
         if os.path.isabs(filename):
             return filename
@@ -283,6 +286,12 @@ def load_tmx(filename):
     tile_height = int(map.attrib['tileheight'])
 
     tiling_style = map.attrib['orientation']
+
+    resource.properties["backgroundcolor"] = map.attrib["backgroundcolor"]
+    # Get all map properties
+    for tag in map.findall('properties'):
+        for prop in tag.getchildren():
+            resource.properties[prop.attrib.get('name')] = prop.attrib.get('value')
 
     if tiling_style == "hexagonal":
         hex_sidelenght = int(map.attrib["hexsidelength"])
