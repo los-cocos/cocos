@@ -315,11 +315,14 @@ def load_tmx(filename):
 
     # load all the tilesets
     tilesets = []
+    # Lord forgive me for my hacky tsx_dir fix. I know not what evils I sow.
+    tsx_dir = None
     for tag in map.findall('tileset'):
         if 'source' in tag.attrib:
             firstgid = int(tag.attrib['firstgid'])
             path = resource.find_file(tag.attrib['source'])
             with open(path) as f:
+                tsx_dir = os.path.dirname(tag.attrib['source'])
                 tag = ElementTree.fromstring(f.read())
         else:
             firstgid = int(tag.attrib['firstgid'])
@@ -331,7 +334,12 @@ def load_tmx(filename):
         for c in tag.getchildren():
             if c.tag == "image":
                 # create a tileset from the image atlas
-                path = resource.find_file(c.attrib['source'])
+                # If we're in a tsx, make sure the right path is passed to find_file
+                if tsx_dir is not None:
+                    resource_path = os.path.dirname(filename) + "/" + tsx_dir + "/" + c.attrib['source']
+                    path = resource.find_file(resource_path)
+                else:
+                    path = resource.find_file(c.attrib['source'])
                 tileset = TileSet.from_atlas(name, firstgid, path, tile_width,
                                              tile_height, row_padding=spacing,
                                              column_padding=spacing)
