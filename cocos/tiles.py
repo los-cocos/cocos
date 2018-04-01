@@ -364,7 +364,15 @@ def load_tmx(filename):
                     if tileset is None:
                         tileset = TileSet(name, {})
                         tileset.firstgid = firstgid
-                    imgpath = resource.find_file(c.find('image').attrib['source'])
+
+                    img_resource = c.find('image').attrib['source']
+                    # Hacky hack hack hack
+                    # If an image resource path contains a '..', assume the parent dir is the map file's dir
+                    # This is not a good assumption
+                    if ".." in img_resource:
+                        img_resource = img_resource.replace('..', os.path.dirname(filename))
+                    imgpath = resource.find_file(img_resource)
+
                     id = int(c.attrib['id'])
                     tile = Tile(tileset.firstgid + id, {},  pyglet.image.load(imgpath))
                     if 'type' in c.attrib:
