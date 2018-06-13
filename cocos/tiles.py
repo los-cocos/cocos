@@ -287,7 +287,8 @@ def load_tmx(filename):
 
     tiling_style = map.attrib['orientation']
 
-    resource.properties["backgroundcolor"] = map.attrib["backgroundcolor"]
+    if map.attrib.get('backgroundcolor'):
+        resource.properties["backgroundcolor"] = map.attrib["backgroundcolor"]
     # Get all map properties
     for tag in map.findall('properties'):
         for prop in tag.getchildren():
@@ -296,10 +297,10 @@ def load_tmx(filename):
     if tiling_style == "hexagonal":
         hex_sidelenght = int(map.attrib["hexsidelength"])
         # 'x' meant hexagons with top and bottom sides parallel to x axis,
-        # 'y' meant hexagons with left and right sides paralel to y axis        
+        # 'y' meant hexagons with left and right sides paralel to y axis
         s = map.attrib["staggeraxis"]
         hex_orientation = {'x': 'pointy_left', 'y': 'pointy_up'}
-        # 'even' or 'odd', currently cocos only displays correctly 'even'       
+        # 'even' or 'odd', currently cocos only displays correctly 'even'
         lowest_columns = map.attrib["staggerindex"] == "even"
         cell_cls = HexCell
         layer_cls = HexMapLayer
@@ -1191,7 +1192,7 @@ class RectCell(Rect, Cell):
     """A rectangular cell from a MapLayer.
 
     Cell attributes::
-    
+
         i, j            -- index of this cell in the map
         x, y            -- bottom-left pixel
         width, height   -- dimensions
@@ -1416,14 +1417,14 @@ class HexCell(Cell):
     """A flat-top, regular hexagon cell from a HexMap.
 
     Cell attributes::
-    
+
         i, j            -- index of this cell in the map
         width, height   -- dimensions
         properties      -- arbitrary properties
         cell            -- cell from the MapLayer's cells
 
     Read-only attributes::
-    
+
         x, y            -- bottom-left pixel
         top             -- y pixel extent
         bottom          -- y pixel extent
