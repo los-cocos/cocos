@@ -2,6 +2,8 @@ v0.6.6.dev - ??
 
   - py 3.3 and py 2.6 support dropped 
   - collision manager honors promises to accept non-known objects, #300
+  - fix loading tmx tilesets composed of individual tile elements, #301
+  - Fix inheriting tmx objects not inheriting usertype from their tile counterpart
   
 v0.6.5 - August 24, 2017
 

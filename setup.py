@@ -46,7 +46,7 @@ if os.environ.get("TRAVIS", False):
     pass
 else:
     # normal install, add the pyglet dependency
-    install_requires.append('pyglet>=1.2')
+    install_requires.append('pyglet>=1.2,<1.3')
 
 setup(
     name = "cocos2d",
