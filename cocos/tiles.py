@@ -334,8 +334,8 @@ def load_tmx(filename):
         spacing = int(tag.attrib.get('spacing', 0))
         for c in tag.getchildren():
             if c.tag == "image":
-                tileset = crete_tileset(c, filename, firstgid, resource, spacing, tile_height, tile_width,
-                                        tileset_name, tsx_dir)
+                tileset = create_tileset(c, filename, firstgid, resource, spacing, tile_height, tile_width,
+                                         tileset_name, tsx_dir)
             elif c.tag == 'tile':
                 gid = tileset.firstgid + int(c.attrib['id'])
                 tile = tileset.get('gid')
@@ -475,7 +475,7 @@ def create_properties(tag, tile):
         tile.properties[prop_name] = value
 
 
-def crete_tileset(tags, filename, firstgid, resource, spacing, tile_height, tile_width, tileset_name, tsx_dir):
+def create_tileset(tags, filename, firstgid, resource, spacing, tile_height, tile_width, tileset_name, tsx_dir):
     # create a tileset from the image atlas
     # If we're in a tsx, make sure the right path is passed to find_file
     if tsx_dir is not None:
