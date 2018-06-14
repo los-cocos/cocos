@@ -328,57 +328,21 @@ def load_tmx(filename):
         else:
             firstgid = int(tag.attrib['firstgid'])
 
-        name = tag.attrib['name']
+        tileset_name = tag.attrib['name']
         tileset = None
 
         spacing = int(tag.attrib.get('spacing', 0))
         for c in tag.getchildren():
             if c.tag == "image":
-                # create a tileset from the image atlas
-                # If we're in a tsx, make sure the right path is passed to find_file
-                if tsx_dir is not None:
-                    resource_path = os.path.dirname(filename) + "/" + tsx_dir + "/" + c.attrib['source']
-                    path = resource.find_file(resource_path)
-                else:
-                    path = resource.find_file(c.attrib['source'])
-                tileset = TileSet.from_atlas(name, firstgid, path, tile_width,
-                                             tile_height, row_padding=spacing,
-                                             column_padding=spacing)
+                tileset = crete_tileset(c, filename, firstgid, resource, spacing, tile_height, tile_width,
+                                        tileset_name, tsx_dir)
             elif c.tag == 'tile':
-                try:
-                    # add properties to tiles in the tileset
-                    gid = tileset.firstgid + int(c.attrib['id'])
-                    tile = tileset[gid]
-                    props = c.find('properties')
-                    if props is None:
-                        continue
-                    for p in props.findall('property'):
-                        # store additional properties.
-                        name = p.attrib['name']
-                        value = p.attrib['value']
-                        # TODO consider more type conversions?
-                        if value.isdigit():
-                            value = int(value)
-                        tile.properties[name] = value
-                except (KeyError, AttributeError):
-                    # If we couldn't get the tile, then it doesn't coordinate to any existing tile, so it's a new tile
-                    if tileset is None:
-                        tileset = TileSet(name, {})
-                        tileset.firstgid = firstgid
-
-                    img_resource = c.find('image').attrib['source']
-                    # Hacky hack hack hack
-                    # If an image resource path contains a '..', assume the parent dir is the map file's dir
-                    # This is not a good assumption
-                    if ".." in img_resource:
-                        img_resource = img_resource.replace('..', os.path.dirname(filename))
-                    imgpath = resource.find_file(img_resource)
-
-                    id = int(c.attrib['id'])
-                    tile = Tile(tileset.firstgid + id, {},  pyglet.image.load(imgpath))
-                    if 'type' in c.attrib:
-                        tile.usertype = c.attrib['type']
-                    tileset[tileset.firstgid + id] = tile
+                gid = tileset.firstgid + int(c.attrib['id'])
+                tile = tileset.get('gid')
+                if tile is None:
+                    tile = add_tile_to_tileset(c, filename, firstgid, resource, tileset, tileset_name)
+                else:
+                    create_properties(c, tile)
 
         if tileset is not None:
             # Before adding the tileset, check which tiles are using texture edge clamping (they do by default)
@@ -391,64 +355,12 @@ def load_tmx(filename):
                                        gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
             tilesets.append(tileset)
             # TODO consider adding the individual tiles to the resource?
-            resource.add_resource(name, tileset)
-
-
+            resource.add_resource(tileset_name, tileset)
 
     # now load all the layers
     for layer in map.findall('layer'):
-        data = layer.find('data')
-        if data is None:
-            raise ValueError('layer %s does not contain <data>' % layer.name)
-
-        encoding = data.attrib.get('encoding')
-        compression = data.attrib.get('compression')
-        if encoding is None:
-            # tiles data as xml
-            data = [int(tile.attrib.get('gid')) for tile in data.findall('tile')]
-        else:
-            data = data.text.strip()
-            if encoding == 'csv':
-                data.replace('\n', '')
-                data = [int(s) for s in data.split(',')]
-            elif encoding == 'base64':
-                data = decode_base64(data)
-                if compression == 'zlib':
-                    data = decompress_zlib(data)
-                elif compression == 'gzip':
-                    data = decompress_gzip(data)
-                elif compression is None:
-                    pass
-                else:
-                    raise ResourceError('Unknown compression method: %r' % compression)
-                data = struct.unpack(str('<%di' % (len(data) // 4)), data)
-            else:
-                raise TmxUnsupportedVariant("Unsupported tiles layer format " +
-                                            "use 'csv', 'xml' or one of " +
-                                            "the 'base64'")
-
-        assert len(data) == width * height
-
-        cells = [[None] * height for x in range(width)]
-        for n, gid in enumerate(data):
-            if gid < 1:
-                tile = None
-            else:
-                # UGH
-                for ts in tilesets:
-                    if gid in ts:
-                        tile = ts[gid]
-                        break
-            i = n % width
-            j = height - (n // width + 1)
-            cells[i][j] = cell_cls(i, j, tile_width, tile_height, {}, tile)
-
-        id = layer.attrib['name']
-
-        m = layer_cls(id, tile_width, tile_height, cells, None, {})
-        m.visible = int(layer.attrib.get('visible', 1))
-
-        resource.add_resource(id, m)
+        layer_id, layer = load_layer(height, width, layer, cell_cls, layer_cls, tile_height, tile_width, tilesets)
+        resource.add_resource(layer_id, layer)
 
     # finally, object groups
     for tag in map.findall('objectgroup'):
@@ -457,6 +369,124 @@ def load_tmx(filename):
 
     return resource
 
+
+def load_layer(map_height, map_width, layer, cell_cls, layer_cls, tile_height, tile_width, tilesets):
+    """
+    Load layer data.
+    :param map_height: used to reserve cells
+    :param map_width: used to reserve cells
+    :param layer: layer xml tag payload
+    :param cell_cls: class, which used to create cells and fill layer with them
+    :param layer_cls: class for create Layer object, wich will be added to resource
+    :param tile_height: width for tile, used in layer_cls
+    :param tile_width: height for tile, used in layer_cls
+    :param tilesets: list of TileSet. used for find tile gid. If tile presented in any tileset, so cell will get real object.
+    Else - Cell will be fullfilled with None instead Tile.
+    :return: layer id and created layer
+    """
+    data = layer.find('data')
+    if data is None:
+        raise ValueError('layer %s does not contain <data>' % layer.name)
+    encoding = data.attrib.get('encoding')
+    compression = data.attrib.get('compression')
+    # tiles data as xml
+    if encoding is None:
+        try:
+            data = [int(t.attrib.get('gid')) for t in data.findall('tile')]
+        except TypeError as e:
+            raise ResourceError("Error while reading xml-tiles in layer: tile has no gid attr? ('%s')" % layer.name)
+    # tiles data as coded text(csv, base64, etc.)
+    else:
+        data = data.text.strip()
+        if encoding == 'csv':
+            data.replace('\n', '')
+            data = [int(s) for s in data.split(',')]
+        elif encoding == 'base64':
+            data = decode_base64(data)
+            if compression == 'zlib':
+                data = decompress_zlib(data)
+            elif compression == 'gzip':
+                data = decompress_gzip(data)
+            elif compression is None:
+                pass
+            else:
+                raise ResourceError('Unknown compression method: %r' % compression)
+            data = struct.unpack(str('<%di' % (len(data) // 4)), data)
+        else:
+            raise TmxUnsupportedVariant("Unsupported tiles layer format " +
+                                        "use 'csv', 'xml' or one of " +
+                                        "the 'base64'")
+    assert len(data) == map_width * map_height
+    cells = [[None] * map_height for x in range(map_width)]
+
+    for n, gid in enumerate(data):
+        tile = None
+        if gid >= 1:
+            # UGH
+            for ts in tilesets:
+                if gid in ts:
+                    tile = ts[gid]
+                    break
+        i = n % map_width
+        j = map_height - (n // map_width + 1)
+        cells[i][j] = cell_cls(i, j, tile_width, tile_height, {}, tile)
+    id = layer.attrib['name']
+    result = layer_cls(id, tile_width, tile_height, cells, None, {})
+    result.visible = int(layer.attrib.get('visible', 1))
+    return id, result
+
+
+def add_tile_to_tileset(c, filename, firstgid, resource, tileset, tileset_name):
+    # If we couldn't get the tile, then it doesn't coordinate to any existing tile, so it's a new tile
+    if tileset is None:
+        tileset = TileSet(tileset_name, {})
+        tileset.firstgid = firstgid
+    img_resource = c.find('image').attrib['source']
+    # Hacky hack hack hack
+    # If an image resource path contains a '..', assume the parent dir is the map file's dir
+    # This is not a good assumption
+    if ".." in img_resource:
+        img_resource = img_resource.replace('..', os.path.dirname(filename))
+    imgpath = resource.find_file(img_resource)
+    id = int(c.attrib['id'])
+    tile = Tile(tileset.firstgid + id, {}, pyglet.image.load(imgpath))
+    if 'type' in c.attrib:
+        tile.usertype = c.attrib['type']
+    tileset[tileset.firstgid + id] = tile
+    return tile
+
+
+def create_properties(tag, tile):
+    """
+    Copy props from tag to tile
+    :param tag: xml tag
+    :param tile: target Tile object
+    """
+    props = tag.find('properties')
+    if props is None:
+        return
+    for p in props.findall('property'):
+        # store additional properties.
+        prop_name = p.attrib['name']
+        value = p.attrib['value']
+        # TODO consider more type conversions?
+        if value.isdigit():
+            value = int(value)
+        tile.properties[prop_name] = value
+
+
+def crete_tileset(tags, filename, firstgid, resource, spacing, tile_height, tile_width, tileset_name, tsx_dir):
+    # create a tileset from the image atlas
+    # If we're in a tsx, make sure the right path is passed to find_file
+    if tsx_dir is not None:
+        resource_path = os.path.dirname(filename) + "/" + tsx_dir + "/" + tags.attrib['source']
+        path = resource.find_file(resource_path)
+    else:
+        path = resource.find_file(tags.attrib['source'])
+    tileset = TileSet.from_atlas(tileset_name, firstgid, path, tile_width,
+                                 tile_height, row_padding=spacing,
+                                 column_padding=spacing)
+    return tileset
 
 
 #
