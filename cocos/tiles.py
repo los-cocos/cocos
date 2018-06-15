@@ -319,47 +319,14 @@ def load_tmx(filename):
     # Lord forgive me for my hacky tsx_dir fix. I know not what evils I sow.
     tsx_dir = None
     for tag in map.iterfind('tileset'):
-        if 'source' in tag.attrib:
-            firstgid = int(tag.attrib['firstgid'])
-            path = resource.find_file(tag.attrib['source'])
-            with open(path) as f:
-                tsx_dir = os.path.dirname(tag.attrib['source'])
-                tag = ElementTree.fromstring(f.read())
-        else:
-            firstgid = int(tag.attrib['firstgid'])
-
-        tileset_name = tag.attrib['name']
-        tileset = None
-
-        spacing = int(tag.attrib.get('spacing', 0))
-        for c in tag.getchildren():
-            if c.tag == "image":
-                tileset = create_tileset(c, filename, firstgid, resource, spacing, tile_height, tile_width,
-                                         tileset_name, tsx_dir)
-            elif c.tag == 'tile':
-                gid = tileset.firstgid + int(c.attrib['id'])
-                tile = tileset.get('gid')
-                if tile is None:
-                    tile = add_tile_to_tileset(c, filename, firstgid, resource, tileset, tileset_name)
-                else:
-                    create_properties(c, tile)
-
-        if tileset is not None:
-            # Before adding the tileset, check which tiles are using texture edge clamping (they do by default)
-            for i, tile in tileset.items():
-                if "texture_edge_clamp" not in tile.properties or tile.properties["texture_edge_clamp"] is "true":
-                    gl.glBindTexture(tile.image.texture.target, tile.image.texture.id)
-                    gl.glTexParameteri(tile.image.texture.target,
-                                       gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-                    gl.glTexParameteri(tile.image.texture.target,
-                                       gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
-            tilesets.append(tileset)
-            # TODO consider adding the individual tiles to the resource?
-            resource.add_resource(tileset_name, tileset)
+        tileset, tileset_name = _create_tileset(tag, filename, resource, tile_height, tile_width, tsx_dir)
+        tilesets.append(tileset)
+        # TODO consider adding the individual tiles to the resource?
+        resource.add_resource(tileset_name, tileset)
 
     # now load all the layers
     for layer in map.findall('layer'):
-        layer_id, layer = load_layer(height, width, layer, cell_cls, layer_cls, tile_height, tile_width, tilesets)
+        layer_id, layer = _load_layer(height, width, layer, cell_cls, layer_cls, tile_height, tile_width, tilesets)
         resource.add_resource(layer_id, layer)
 
     # finally, object groups
@@ -370,7 +337,64 @@ def load_tmx(filename):
     return resource
 
 
-def load_layer(map_height, map_width, layer, cell_cls, layer_cls, tile_height, tile_width, tilesets):
+def _create_tileset(tag, filename, resource, tile_height, tile_width, tsx_dir):
+    """
+    Create tileset from tag. It's can handle tileset from atlas image, or from tiles with images
+    :param tag: tileset tag
+    :param filename: path to source map file
+    :param resource: resource container
+    :param tile_height: map tile height
+    :param tile_width: map tile width
+    :param tsx_dir: directory of map, where can be placed separate tileset files(*.tsx)
+    :return: TileSet object and it's name
+    """
+    # is tileset in separate file
+    if 'source' in tag.attrib:
+        firstgid = int(tag.attrib['firstgid'])
+        path = resource.find_file(tag.attrib['source'])
+        with open(path) as f:
+            tsx_dir = os.path.dirname(tag.attrib['source'])
+            tag = ElementTree.fromstring(f.read())
+    else:
+        firstgid = int(tag.attrib['firstgid'])
+    tileset_name = tag.attrib['name']
+    spacing = int(tag.attrib.get('spacing', 0))
+    maybe_atlas = tag.find('image')
+    if maybe_atlas is not None:
+        # create tileset from atlas if it's has image tag.
+        atlas_source_file = maybe_atlas.attrib['source']
+        if tsx_dir is not None:
+            resource_path = os.path.dirname(filename) + "/" + tsx_dir + "/" + atlas_source_file
+            path = resource.find_file(resource_path)
+        else:
+            path = resource.find_file(atlas_source_file)
+        tileset = TileSet.from_atlas(tileset_name, firstgid, path, tile_width,
+                                     tile_height, row_padding=spacing,
+                                     column_padding=spacing)
+    else:
+        # create empty, and push tile to tileset
+        tileset = TileSet(tileset_name, {})
+        tileset.firstgid = firstgid
+    # fullfill tileset with tiles
+    for tile_tag in tag.iterfind('tile'):
+        gid = tileset.firstgid + int(tile_tag.attrib['id'])
+        tile = tileset.get('gid')
+        # If we couldn't get the tile, then it doesn't coordinate to any existing tile, so it's a new tile
+        if tile is None:
+            tile = _create_tile_in_tileset(tile_tag, filename, resource, tileset)
+
+    # Before adding the tileset, check which tiles are using texture edge clamping (they do by default)
+    for i, tile in tileset.items():
+        if "texture_edge_clamp" not in tile.properties or tile.properties["texture_edge_clamp"] is "true":
+            gl.glBindTexture(tile.image.texture.target, tile.image.texture.id)
+            gl.glTexParameteri(tile.image.texture.target,
+                               gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+            gl.glTexParameteri(tile.image.texture.target,
+                               gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+    return tileset, tileset_name
+
+
+def _load_layer(map_height, map_width, layer, cell_cls, layer_cls, tile_height, tile_width, tilesets):
     """
     Load layer data.
     :param map_height: used to reserve cells
@@ -436,33 +460,29 @@ def load_layer(map_height, map_width, layer, cell_cls, layer_cls, tile_height, t
     return id, result
 
 
-def add_tile_to_tileset(c, filename, firstgid, resource, tileset, tileset_name):
-    # If we couldn't get the tile, then it doesn't coordinate to any existing tile, so it's a new tile
-    if tileset is None:
-        tileset = TileSet(tileset_name, {})
-        tileset.firstgid = firstgid
-    img_resource = c.find('image').attrib['source']
+def _create_tile_in_tileset(tile_tag, filename, resource, tileset):
+    """
+    Create new tile in tileset
+    :param tile_tag:
+    :param filename: map filename
+    :param resource: file finder (o_O)
+    :param tileset:
+    :return:
+    """
+    img_resource = tile_tag.find('image').attrib['source']
     # Hacky hack hack hack
     # If an image resource path contains a '..', assume the parent dir is the map file's dir
     # This is not a good assumption
     if ".." in img_resource:
         img_resource = img_resource.replace('..', os.path.dirname(filename))
     imgpath = resource.find_file(img_resource)
-    id = int(c.attrib['id'])
+    id = int(tile_tag.attrib['id'])
     tile = Tile(tileset.firstgid + id, {}, pyglet.image.load(imgpath))
-    if 'type' in c.attrib:
-        tile.usertype = c.attrib['type']
+    if 'type' in tile_tag.attrib:
+        tile.usertype = tile_tag.attrib['type']
     tileset[tileset.firstgid + id] = tile
-    return tile
-
-
-def create_properties(tag, tile):
-    """
-    Copy props from tag to tile
-    :param tag: xml tag
-    :param tile: target Tile object
-    """
-    props = tag.find('properties')
+    # create properties for tile
+    props = tile_tag.find('properties')
     if props is None:
         return
     for p in props.findall('property'):
@@ -474,25 +494,11 @@ def create_properties(tag, tile):
             value = int(value)
         tile.properties[prop_name] = value
 
-
-def create_tileset(tags, filename, firstgid, resource, spacing, tile_height, tile_width, tileset_name, tsx_dir):
-    # create a tileset from the image atlas
-    # If we're in a tsx, make sure the right path is passed to find_file
-    if tsx_dir is not None:
-        resource_path = os.path.dirname(filename) + "/" + tsx_dir + "/" + tags.attrib['source']
-        path = resource.find_file(resource_path)
-    else:
-        path = resource.find_file(tags.attrib['source'])
-    tileset = TileSet.from_atlas(tileset_name, firstgid, path, tile_width,
-                                 tile_height, row_padding=spacing,
-                                 column_padding=spacing)
-    return tileset
-
+    return tile
 
 #
 # XML PROPERTY PARSING
 #
-
 
 def text_to_4tuple_int(s):
     s = s.strip()
