@@ -318,7 +318,7 @@ def load_tmx(filename):
     tilesets = []
     # Lord forgive me for my hacky tsx_dir fix. I know not what evils I sow.
     tsx_dir = None
-    for tag in map.findall('tileset'):
+    for tag in map.iterfind('tileset'):
         if 'source' in tag.attrib:
             firstgid = int(tag.attrib['firstgid'])
             path = resource.find_file(tag.attrib['source'])
