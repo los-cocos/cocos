@@ -21,8 +21,8 @@ As a release builder:
 
 __author__ = "cocos2d team"
 __author_email__ = "lucio.torre@gmail.com"
-__version__ = "0.6.6.dev"
-__date__ = "2017 11 05 +"
+__version__ = "1.0.0"
+__date__ = "2019 08 10"
 
 try:
     import setuptools
@@ -46,7 +46,7 @@ if os.environ.get("TRAVIS", False):
     pass
 else:
     # normal install, add the pyglet dependency
-    install_requires.append('pyglet>=1.2')
+    install_requires.append('pyglet>=1.4')
 
 setup(
     name = "cocos2d",
