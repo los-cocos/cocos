@@ -18,10 +18,10 @@ _________________
 
     + numpy www.numpy.org
 
-audio and video support by AVbin
-________________________________
+audio and video support by FFmpeg
+_________________________________
 
-    + AVbin http://avbin.github.io/AVbin/Home/Home.html
+    + FFmpeg https://ffmpeg.org/
     
 audio support by SDL
 ____________________
