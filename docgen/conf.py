@@ -22,22 +22,24 @@ sys.path.insert(0, os.path.abspath('.'))
 try:
     import pyglet
 except:
-    print "ERROR: pyglet not found"
+    print("ERROR: pyglet not found")
     sys.exit(1)
-    
+
+# pyglet thinks it's generating its documentation, which breaks our documentation build
+sys.is_pyglet_doc_run = False
 
 sys.is_cocos_sphinx = True
 try:
     import cocos
 except:
-    print "ERROR: cocos not found"
+    print("ERROR: cocos not found")
     sys.exit(1)
 
-print "Generating cocos %s Documentation" % (cocos.version)
+print("Generating cocos %s Documentation" % (cocos.version))
 
 # workaround for raise GLException('No GL context; create a Window first') when
 # sphinx autodoc attemp to import cocos_particles
-print "\n***don't close the opened cocos windows untile document generation ends ***"
+print("\n***don't close the opened cocos windows until document generation ends ***")
 from cocos.director import director
 director.init(300,100)
 
