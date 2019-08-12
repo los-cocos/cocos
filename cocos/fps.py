@@ -241,7 +241,7 @@ class InfoLabel(object):
         if font is None:
             font = pyglet.font.load('', 36, bold=True)
 
-        self.label = pyglet.text.Label(font, '', color=color, x=10, y=10)
+        self.label = pyglet.text.Label('', color=color, x=10, y=10)
 
     def update_info(self, *args):
         self.label.text = self.template.format(*args)
