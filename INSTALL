@@ -11,7 +11,7 @@ most of functionality
 ______________________
 
     + six https://pypi.python.org/pypi/six/
-    + pyglet https://bitbucket.org/pyglet/pyglet
+    + pyglet https://github.com/pyglet/pyglet
 
 particles support
 _________________
@@ -38,13 +38,13 @@ six and pyglet
 Compatibility
 ^^^^^^^^^^^^^
 
-Compatibility notes at the time of writing, August 2017
+Compatibility notes at the time of writing, August 2019
 
     + python : cocos needs python 2.7 or 3.4+
       The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3
 	  
 
-    + pyglet : pyglet 1.2 or better (1.3+ recomended)      
+    + pyglet : pyglet between 1.2 and 1.32 better (1.3+ recomended). Not compatible with 1.4      
 
 Installing
 ^^^^^^^^^^
@@ -53,23 +53,19 @@ Have a modern setuptools or pip installed.
 
 While::
 
-    easy_install cocos2d
+    python -m pip install cocos2d
 
-or::
+works, you will miss the docs and code samples. Its is therefore recommended to
 
-    pip install cocos2d
-
-should work, you will miss the docs and code samples. Its is therefore recommended to
-
-    + install six and pyglet
-    + download cocos2d-0.6.5.zip from https://pypi.python.org/pypi/cocos2d/
-    + decompress to a convenient location, the top dir will be cocos2d-0.6.5
-    + the html docs will be in cocos2d-0.6.5/doc/html
-    + useful code samples will be in cocos2d-0.6.5/test, cocos2d-0.6.5/samples, cocos2d-0.6.5/utest
+    + install six and pyglet, pay attention to the pyglet version, see above 
+    + download cocos2d-0.6.6.zip from https://pypi.python.org/pypi/cocos2d/
+    + decompress to a convenient location, the top dir will be cocos2d-0.6.6
+    + the html docs will be in cocos2d-0.6.6/doc/html
+    + useful code samples will be in cocos2d-0.6.6/test, cocos2d-0.6.6/samples, cocos2d-0.6.6/utest
     + install by::
 
-        cd cocos2d-0.6.5
-        setup.py install
+        cd cocos2d-0.6.6
+        python -m pip install -e .
 
       or alternatively by pointing that directory from a .pth or PYTHONPATH
     + All of cocos should be usable now, with the possible exceptions

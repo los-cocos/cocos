@@ -1,5 +1,11 @@
 Api changes and other compatibility notes
 
+cocos 0.6.6
+-----------
+
+	- this is exactly 0.6.5 except that pip or setup.py install will select pyglet < 1.4
+	- this version is not compatible with pyglet 1.4
+
 cocos 0.6.5
 -----------
 
