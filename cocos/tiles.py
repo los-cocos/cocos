@@ -322,10 +322,8 @@ def load_tmx(filename):
             if c.tag == "image":
                 # create a tileset from the image atlas
                 path = resource.find_file(c.attrib['source'])
-                tileset_tile_height = int(tag.attrib.get('tileheight', tile_height))
-                tileset_tile_width = int(tag.attrib.get('tilewidth', tile_width))
-                tileset = TileSet.from_atlas(name, firstgid, path, tileset_tile_width,
-                                             tileset_tile_height, row_padding=spacing,
+                tileset = TileSet.from_atlas(name, firstgid, path, tile_width,
+                                             tile_height, row_padding=spacing,
                                              column_padding=spacing)
                 # TODO consider adding the individual tiles to the resource?
                 tilesets.append(tileset)

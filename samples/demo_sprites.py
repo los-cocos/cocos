@@ -9,6 +9,7 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
+from pyglet import font
 from pyglet.gl import *
 from pyglet.window import key
 
@@ -40,8 +41,8 @@ class FontLayer(Layer):
                                             font_size=32,
                                             x=5,
                                             y=director.get_window_size()[1],
-                                            anchor_x='left',
-                                            anchor_y='top',
+                                            anchor_x=font.Text.LEFT,
+                                            anchor_y=font.Text.TOP,
                                             batch=self.batch)
 
         self.text_subtitle = pyglet.text.Label(self.subtitle,
@@ -50,8 +51,8 @@ class FontLayer(Layer):
                                                font_size=16,
                                                x=5,
                                                y=director.get_window_size()[1] - 80,
-                                               anchor_x='left',
-                                               anchor_y='top',
+                                               anchor_x=font.Text.LEFT,
+                                               anchor_y=font.Text.TOP,
                                                batch=self.batch)
 
         self.text_help = pyglet.text.Label("Press LEFT / RIGHT for prev/next test, "
@@ -59,8 +60,8 @@ class FontLayer(Layer):
                                            font_size=16,
                                            x=director.get_window_size()[0] // 2,
                                            y=20,
-                                           anchor_x='center',
-                                           anchor_y='center',
+                                           anchor_x=font.Text.CENTER,
+                                           anchor_y=font.Text.CENTER,
                                            batch=self.batch)
 
     def draw(self):

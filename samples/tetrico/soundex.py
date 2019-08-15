@@ -7,11 +7,12 @@ from __future__ import division, print_function, unicode_literals
 from constants import MUSIC, SOUND
 import pyglet
 
-if pyglet.media.codecs.get_decoders('test.mp3'):
-    have_mp3 = False
-else:
+try:
+    import pyglet.media.avbin
+    have_avbin = True
+except:
     pyglet.options['audio'] = ('silent')
-    have_mp3 = False
+    have_avbin = False
     MUSIC = False
     SOUND = False
 
@@ -27,7 +28,7 @@ music_player.volume = 0.4
 def set_music(name):
     global current_music
 
-    if not have_mp3:
+    if not have_avbin:
         return
 
     if name == current_music:
@@ -50,7 +51,7 @@ def music_volume(vol):
 def queue_music(name):
     global current_music
 
-    if not have_mp3:
+    if not have_avbin:
         return
 
 #    if name == current_music:
@@ -64,7 +65,7 @@ def play_music():
     if music_player.playing or not current_music:
         return
 
-    if not have_mp3:
+    if not have_avbin:
         return
 
     name = current_music

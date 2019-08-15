@@ -12,7 +12,6 @@ build/
 __pycache__/
 .cache/
 *.egg-info/
-docgen/_build
 
 # coverage.py
 .coverage

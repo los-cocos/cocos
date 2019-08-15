@@ -83,13 +83,13 @@ __all__ = ['Menu',  # menu class
 #
 
 # Horizontal Align
-CENTER = 'center'
-LEFT = 'left'
-RIGHT = 'right'
+CENTER = font.Text.CENTER
+LEFT = font.Text.LEFT
+RIGHT = font.Text.RIGHT
 
 # Vertical Align
-TOP = 'top'
-BOTTOM = 'bottom'
+TOP = font.Text.TOP
+BOTTOM = font.Text.BOTTOM
 
 
 def verticalMenuLayout(menu):
