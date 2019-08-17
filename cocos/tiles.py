@@ -529,11 +529,11 @@ def imageatlas_factory(resource, tag):
         image = atlas.get_region(x, y, width, height)
 
         # set texture clamping to avoid mis-rendering subpixel edges
-        image.texture.id
-        gl.glBindTexture(image.texture.target, image.texture.id)
-        gl.glTexParameteri(image.texture.target,
+        tx = image.get_texture()
+        gl.glBindTexture(tx.target, tx.id)
+        gl.glTexParameteri(tx.target,
                            gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-        gl.glTexParameteri(image.texture.target,
+        gl.glTexParameteri(tx.target,
                            gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
 
         # save the image off and set properties
@@ -633,10 +633,11 @@ class TileSet(dict):
                                               atlas[j, i].height)
 
                 # Set texture clamping to avoid mis-rendering subpixel edges
-                gl.glBindTexture(tile_image.texture.target,  tile_image.texture.id)
-                gl.glTexParameteri(tile_image.texture.target,
+                tx = tile_image.get_texture()
+                gl.glBindTexture(tx.target,  tx.id)
+                gl.glTexParameteri(tx.target,
                                    gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-                gl.glTexParameteri(tile_image.texture.target,
+                gl.glTexParameteri(tx.target,
                                    gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
 
                 ts[id] = Tile(id, {}, tile_image)
