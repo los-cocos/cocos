@@ -23,6 +23,8 @@ pyglet.clock.ClockDisplay no longer exists, use pyglet.clock.FPSDisplay
 
 pyglet constants for text layout like pyglet.font.LEFT no longer exist, use the string lowercase of last member, "left"
 
+When calling .push_handlers(foo) the pyglet event dispatcher will (roughtly) retain a weak reference to foo. If you don't keept a reference to foo in your code it will go out of scope after the call to .push_handlers(foo), so your handler will never be called. In particular something like window.push_handlers(MyEventsHandlerClass()) will not work in pyglet 1.4
+ 
 what about textures??
 	
 cocos 0.6.5
