@@ -25,8 +25,12 @@ pyglet constants for text layout like pyglet.font.LEFT no longer exist, use the 
 
 When calling .push_handlers(foo) the pyglet event dispatcher will (roughtly) retain a weak reference to foo. If you don't keept a reference to foo in your code it will go out of scope after the call to .push_handlers(foo), so your handler will never be called. In particular something like window.push_handlers(MyEventsHandlerClass()) will not work in pyglet 1.4
  
-what about textures??
-	
+Some classes in pyglet.image eliminated some properties. The sugested fix is to change pyglet.image.SomeClass.foo with ...SomeClass.get_foo(...) for read and SomeClass.set_foo(...) for write if code working with pyglet<1.4 tracebacks with "AttributeError: 'SomeClass' object has no attribute 'foo' " with pyglet 1.4. Concrete cases found while fixing cocos compatibility with pyglet:
+
+- ImageDataRegion: image.texture.target -> image.get_texture().target , image.texture.id -> image.get_texture().id
+		
+- TextureRegion: same
+
 cocos 0.6.5
 -----------
 
