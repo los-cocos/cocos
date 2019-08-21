@@ -1,3 +1,10 @@
+"""Usage:
+    python %s file_with_skeleton.py
+
+An example of input file is ../test/sample_skeleton.py
+
+Should show a cocos window drawing the skeleton defined in said file, red over white.
+"""
 from __future__ import division, print_function, unicode_literals
 
 # This code is so you can run the samples without installing the package
@@ -32,6 +39,10 @@ class TestLayer(cocos.layer.Layer):
    
     
 if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print(__doc__ % sys.argv[0])
+        sys.exit()
+
     # usual cocos setup
     director.init()
     test_layer = TestLayer()

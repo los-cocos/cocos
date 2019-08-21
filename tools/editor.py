@@ -362,7 +362,7 @@ if __name__ == '__main__':
     try:
         edit_level_xml = sys.argv[1]
     except:
-        print('Usage: %s <level.xml>'%sys.argv[0])
+        print(__doc__)
         sys.exit(0)
 
     director.init(width=1024, height=768)

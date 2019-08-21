@@ -8,6 +8,7 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
+import pyglet
 from pyglet.window import mouse, key
 from pyglet.gl import *
 from pyglet import font
@@ -122,6 +123,7 @@ class Point:
     
 class PathDraw(Layer):
     SWITCH, SHOW, CREATE_A, CREATE_B, DRAG, ANIMATE = range(6)
+    is_event_handler = True
     
     @property
     def path(self):
@@ -145,7 +147,8 @@ class PathDraw(Layer):
         self.stop = False
         self.mouse = Point(0,0)
 
-        self.font = font.load('Arial', 18)
+        self.font_name ='Arial'
+        self.font_size =18
         self.duration = 3
         self.time_warp = 1
         self.number = ""
@@ -224,20 +227,18 @@ class PathDraw(Layer):
         elif self.state == self.DRAG:
             if button == mouse.LEFT:
                 self.state = self.SHOW       
-        
+
+     # TODO : instantiate labels only once in __init__ and then update and make
+     # visible / invisible instead of recreate at each draw   
     def draw(self):
         if self.stop:
             director.scene.end()
-            
+
         if self.state == self.SWITCH:
-            text = font.Text(self.font, 'switch to:',color=(0.,0.5,0.5,0.5))
-            text.x = 20
-            text.y = 300
-            text.draw()
-            text = font.Text(self.font, self.number ,color=(0.,0.5,0.5,0.5))
-            text.x = 20
-            text.y = 250
-            text.draw()
+            text = "switch to: %s" % self.number
+            label = pyglet.text.Label(text, font_name=self.font_name, font_size=self.font_size,
+                                     color=(0, 128, 128, 128), x=20, y=300)
+            label.draw()
             
         elif self.state in (self.SHOW, self.DRAG):
             self.path.render()
@@ -261,17 +262,15 @@ class PathDraw(Layer):
                         )
                 c.render()
                     
-                
-        text = font.Text(self.font, '[%i,%i] t**%0.2f d=%0.2f n=%d p=%d'%(
+        text =  '[%i,%i] t**%0.2f d=%0.2f n=%d p=%d'%(
                     self.mouse.x, self.mouse.y,
                     self.time_warp,
                     self.duration,
                     len(self.paths), self.pathp
-                ),
-                color=(0.,0.5,0.5,0.5))
-        text.x = 100
-        text.y = 20
-        text.draw()
+                )
+        label = pyglet.text.Label(text, font_name=self.font_name, font_size=self.font_size,
+                                     color=(0, 128, 128, 128), x=100, y=20)
+        label.draw()
 
                  
     def new_path(self):
@@ -287,14 +286,24 @@ def usage():
     python %s file_with_paths.py
 
 An example of input file is tools/foo.py
+
+Keybindings
+
+A : animate
+S : save
+N : add new bezier curve, make it the selected one
+<digits> + Enter : selects the n-th bezier curve
+D : multiplies duration by 1.1
+Shift D : divides duration by 1.1
+T : time_warp * 1.1
+shift T: time_warp / 1.1
 """
     return text
   
 if __name__ == "__main__":
     import imp, sys
-    
+    print(usage() % sys.argv[0])
     if len(sys.argv) < 2:
-        print(usage() % sys.argv[0])
         sys.exit()
         
     path = sys.argv[1]
