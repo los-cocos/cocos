@@ -40,7 +40,7 @@ class BackgroundLayer(Layer):
         self.image = image.load(path_name)
 
     def draw(self):
-        texture = self.image.texture
+        texture = self.image.get_texture()
 
         rx = director.window.width - 2 * director._offset_x
         ry = director.window.height - 2 * director._offset_y
@@ -197,38 +197,50 @@ class ControlLayer(cocos.layer.Layer):
     def on_enter(self):
         super(ControlLayer, self).on_enter()
 
+        ft_name = "Arial"
+        ft_size_title = 32
+        ft_size_subtitle = 18
+        ft_size_help = 16
         ft_title = font.load("Arial", 32)
         ft_subtitle = font.load("Arial", 18)
         ft_help = font.load("Arial", 16)
 
-        self.text_title = font.Text(ft_title, "Transition Demos",
+        self.title_label = pyglet.text.Label("Transition Demos",
+                                    font_name = ft_name,
+                                    font_size = ft_size_title,
                                     x=5,
                                     y=480,
-                                    anchor_x=font.Text.LEFT,
-                                    anchor_y=font.Text.TOP)
+                                    anchor_x="left",
+                                    anchor_y="top")
 
-        self.text_subtitle = font.Text(ft_subtitle, transition_list[current_transition].__name__,
-                                       x=5,
-                                       y=400,
-                                       anchor_x=font.Text.LEFT,
-                                       anchor_y=font.Text.TOP)
+        self.subtitle_label = pyglet.text.Label(transition_list[current_transition].__name__,
+                                    font_name = ft_name,
+                                    font_size = ft_size_subtitle,
+                                    x=5,
+                                    y=400,
+                                    anchor_x="left",
+                                    anchor_y="top")
 
-        self.text_help = font.Text(ft_help, "Press LEFT / RIGHT for prev/next example, "
+        self.help_label = pyglet.text.Label("Press LEFT / RIGHT for prev/next example, "
                                    "ENTER to restart example",
-                                   x=320,
-                                   y=20,
-                                   anchor_x=font.Text.CENTER,
-                                   anchor_y=font.Text.CENTER)
+                                    font_name = ft_name,
+                                    font_size = ft_size_help,
+                                    x=320,
+                                    y=20,
+                                    anchor_x="left",
+                                    anchor_y="top")
 
     def step(self, df):
-        self.text_help.draw()
+        raise Exception
+        self.help_label.draw()
 
-        self.text_subtitle.text = transition_list[current_transition].__name__
-        self.text_subtitle.draw()
-        self.text_title.draw()
+        self.subtitle_label.text = transition_list[current_transition].__name__
+        self.subtitle_label.draw()
+        self.title_label.draw()
 
     def on_key_press(self, k, m):
         global current_transition, control_p
+        print("current transition:", current_transition)
         if k == key.LEFT:
             current_transition = (current_transition - 1) % len(transition_list)
         if k == key.RIGHT:
@@ -403,7 +415,7 @@ if __name__ == "__main__":
 
     transitions = [getattr(cocos.scenes.transitions, all_t[i % len(all_t)])
                    for i in range(len(scenes) - 1)]
-
+    
     TransitionControl(scenes, transitions)
 
     def color_name_scene(name, color):
@@ -420,4 +432,5 @@ if __name__ == "__main__":
     director.interpreter_locals["dos"] = color_name_scene("dos", (0, 255, 0, 255))
     director.interpreter_locals["tres"] = color_name_scene("tres", (0, 0, 255, 255))
 
+    print("Use PgUp / PgDn to change slide")
     director.run(scenes[0])
