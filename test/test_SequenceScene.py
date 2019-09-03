@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 2.1, s, t 4.1, s, t 6.1, s, q"
+testinfo = "t 0.1, s, t 2.1, s, t 4.1, s, t 6.1, s, q"
 tags = "SequenceScene, CallFunc"
 
 from cocos.director import director

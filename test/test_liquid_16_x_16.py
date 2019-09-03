@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 1.0, s, t 2.0"
+testinfo = "t 0.1, s, t 1.0, s, t 2.0"
 tags = "Liquid"
 
 import cocos

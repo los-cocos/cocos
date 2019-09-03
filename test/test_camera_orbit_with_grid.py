@@ -14,7 +14,7 @@ from cocos.layer import *
 
 from pyglet.gl import *
 
-testinfo = "s, t 3, s, t 6, s, t 8.1, s, q"
+testinfo = "t 0.1, s, t 3, s, t 6, s, t 8.1, s, q"
 tags = "OrbitCamera, reuse_grid"
 
 class BackgroundLayer(cocos.layer.Layer):

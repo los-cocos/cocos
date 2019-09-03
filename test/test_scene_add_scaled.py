@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, q"
+testinfo = "t 0.1, s, q"
 tags = "Scene, Layer, scale, zoom, resizable"
 
 import cocos
