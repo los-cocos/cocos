@@ -33,7 +33,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
+"""
+    python anim_player.py [options] skeleton animation.anim...
+
+Arguments
+    skeleton: a python file with a skeleton variable inside which has
+                    the skeleton you will want to animate
+    animation.anim... : a list of animation file names, each of this files
+    will be asigned to a number 1-0
+
+More info: see the section skeleton in the cocos programming guide"
+"""
+
 from __future__ import division, print_function, unicode_literals
+
 
 import math
 try:
@@ -51,7 +64,7 @@ from pyglet.window import key
 
 import ui
 import animator
-from skeleton import Bone, Skeleton, Skin, Animation, Animate
+from cocos.skeleton import Bone, Skeleton, Skin, Animation, Animate
 
 class Player(cocos.layer.Layer):
     """ Skeletal animation player example
@@ -124,16 +137,9 @@ if __name__ == "__main__":
     pyglet.resource.reindex()
     director.init()
 
-    def usage():
-        return "USAGE:\n"+\
-               "python animator.py skeleton animation.anim+ \n" +\
-               "   skeleton is a python file with a skeleton variable inside \n"+\
-               "       which has the skeleton you will want to animate\n"+\
-               "   animation.anim+ means a list of animation file names \n"+\
-               "       each of this files will be asigned to a number 1-0"
 
     if len(sys.argv)<3:
-        print(usage())
+        print(__doc__)
         sys.exit()
 
     skin_data = imp.load_source("skin", sys.argv[2]).skin

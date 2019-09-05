@@ -32,6 +32,13 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
+
+"""
+    python animator.py [options] skeleton.py animation_file.anim
+
+More info: see the section skeleton in the cocos programming guide
+"""
+
 from __future__ import division, print_function, unicode_literals
 
 import sys
@@ -302,7 +309,7 @@ if __name__ == "__main__":
     import sys, imp
     director.init()
 
-    parser = OptionParser()
+    parser = OptionParser(usage=__doc__)
     parser.add_option("-b", "--background", dest="background",
                   help="use file as background", default=False, metavar="FILE")
     parser.add_option("-s", "--scale", dest="scale",
@@ -314,11 +321,9 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
 
-    def usage():
-        return "python animator.py skeleton.py animation_file.anim"
     if len(args)!=2:
-        print(usage())
-        print(parser.error("incorrect number of arguments"))
+        print("\n *** Error: incorrect number of arguments")
+        parser.print_usage()
         sys.exit()
 
     sk_file = imp.load_source("skeleton", args[0])

@@ -33,6 +33,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
 
+"""
+    python skeleton_editor.py [options] skeleton.py skin.py
+
+More info: see the section skeleton in the cocos programming guide
+"""
+
 from __future__ import division, print_function, unicode_literals
 
 import os, sys
@@ -170,13 +176,11 @@ skeleton = Skeleton( root_bone )"""%self.skeleton.bone.repr())
             self.add( SkinControl(self.skin, idx, bones[name], skinpos ), z=5)
 
 
-
-
 if __name__ == "__main__":
     import sys, imp
     director.init()
 
-    parser = OptionParser()
+    parser = OptionParser(usage=__doc__)
     parser.add_option("-b", "--background", dest="background",
                   help="use file as background", default=False, metavar="FILE")
     parser.add_option("-s", "--scale", dest="scale",
@@ -186,11 +190,9 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
 
-    def usage():
-        return "python animator.py skeleton.py skin.py"
     if len(args) not in [2]:
-        print(usage())
-        print(parser.error("incorrect number of arguments"))
+        print("\n *** Error: incorrect number of arguments")
+        parser.print_usage()
         sys.exit()
         
 
