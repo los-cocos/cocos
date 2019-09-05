@@ -90,15 +90,14 @@ class PauseLayer(Layer):
 
         x, y = director.get_window_size()
 
-        ft = pyglet.font.load('Arial', 36)
-        self.text = pyglet.font.Text(ft,
-                                     'PAUSED',
-                                     halign=pyglet.font.Text.CENTER)
-        self.text.x = x // 2
-        self.text.y = y // 2
+        self.label = pyglet.text.Label('PAUSED', font_name='Arial', font_size=36,
+                                       width = x, height = y,
+                                      align='center', x = x // 2, y = y // 2)
+
+        self.label.x = (x - self.label.content_width) // 2
 
     def draw(self):
-        self.text.draw()
+        self.label.draw()
 
     def on_key_press(self, k, m):
         if k == pyglet.window.key.P and m & pyglet.window.key.MOD_ACCEL:

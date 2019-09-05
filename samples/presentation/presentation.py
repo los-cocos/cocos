@@ -355,5 +355,6 @@ if __name__ == "__main__":
     director.interpreter_locals["three"] = color_name_scene("three", (0, 0, 255, 255))
 
     director.interpreter_locals["grid_scene"] = demo_grid_effects.start()
-
+    
+    print("Use Left / Right to change slide")
     director.run(scenes[0])

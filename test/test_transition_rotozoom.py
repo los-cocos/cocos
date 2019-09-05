@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 0.45, s, t 0.71, s, t 1, s, t 1.21, s, t 1.47, s, t 1.72, s, t 2.1, s, q"
+testinfo = "t 0.1, s, t 0.45, s, t 0.71, s, t 1, s, t 1.21, s, t 1.47, s, t 1.72, s, t 2.1, s, q"
 tags = "RotoZoomTransition"
 
 import cocos

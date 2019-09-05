@@ -43,10 +43,10 @@ class FireManager(Layer):
         self.goodies = []
         self.batch = pyglet.graphics.Batch()
         self.fimg = pyglet.resource.image('fire.jpg')
-        self.group = pyglet.sprite.SpriteGroup(self.fimg.texture,
+        self.group = pyglet.sprite.SpriteGroup(self.fimg,
                                                blend_src=GL_SRC_ALPHA, blend_dest=GL_ONE)
         self.vertex_list = self.batch.add(4 * num, GL_QUADS, self.group,
-                                          'v2i', 'c4B', ('t3f', self.fimg.texture.tex_coords * num))
+                                          'v2i', 'c4B', ('t3f', self.fimg.tex_coords * num))
         for n in range(0, num):
             f = Fire(0, 0, 0, 0, 0)
             self.goodies.append(f)

@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 1, s, t 1.05, s, t 1.15, s, t 1.20, s, q"
+testinfo = "t 0.1, s, t 1, s, t 1.05, s, t 1.15, s, t 1.20, s, q"
 tags = "MoveBy, spawn"
 
 import cocos

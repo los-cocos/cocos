@@ -53,7 +53,10 @@ import time
 
 import six
 
-from pyglet.clock import ClockDisplay
+try:
+    from pyglet.clock import ClockDisplay
+except ImportError:
+    from pyglet.window import FPSDisplay as ClockDisplay
 import pyglet.font
 
 __docformat__ = 'restructuredtext'
@@ -234,11 +237,24 @@ class FpsDisplayDeprecatedPygletOldStyle(FpsStatsABC):
 class InfoLabel(object):
     """Used to draw one liners on top of the scene drawing"""
     def __init__(self, template, font=None, color=(0.5, 0.5, 0.5, 0.5)):
-        self.template = template
-        if font is None:
-            font = pyglet.font.load('', 36, bold=True)
+        raise 
 
-        self.label = pyglet.font.Text(font, '', color=color, x=10, y=10)
+class InfoLabel(object):
+    """Used to draw one liners on top of the scene drawing"""
+    def __init__(self, template, font_name=None, font_size= 36, color=(128, 128, 128, 128)):
+        # changes for compatibility with pyglet 1.4 forced an incompatible API change in this call,
+        # so try to detect and give a clean diagnostic
+        if (font_name is not None and not isinstance(font_name, six.string_types)
+            or not isinstance(font_size, int)
+            or not isinstance(color, tuple)
+            or not isinstance(color[0], int)
+            ):
+            # incompatible old style
+            raise TypeError("Bad type(s) in call to cocos.fps.InfoLabel, correct caller code or use cocos version <= 0.6.5 and pyglet version <= 1.3.2 ")
+
+        self.template = template
+
+        self.label = pyglet.text.Label("", font_name=font_name,font_size=font_size, color=color, x=10, y=10)
 
     def update_info(self, *args):
         self.label.text = self.template.format(*args)

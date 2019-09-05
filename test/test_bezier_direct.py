@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
 # t = duration * t in direct_bezier
-testinfo = "s, t 2.0, s, t 3.0, s, t 5.0, s, q"
+testinfo = "t 0.1, s, t 2.0, s, t 3.0, s, t 5.0, s, q"
 tags = "Bezier, path"
 
 import cocos

@@ -26,20 +26,22 @@ except:
     sys.exit(1)
 
 # pyglet thinks it's generating its documentation, which breaks our documentation build
-sys.is_pyglet_docgen = False   
+sys.is_pyglet_doc_run = False
 
 sys.is_cocos_sphinx = True
-try:
-    import cocos
-except:
-    print("ERROR: cocos not found")
-    sys.exit(1)
+##try:
+##    import cocos
+##except:
+##    print("ERROR: cocos not found")
+##    sys.exit(1)
+
+import cocos
 
 print("Generating cocos %s Documentation" % (cocos.version))
 
 # workaround for raise GLException('No GL context; create a Window first') when
 # sphinx autodoc attemp to import cocos_particles
-print("\n***don't close the opened cocos windows untile document generation ends ***")
+print("\n***don't close the opened cocos windows until document generation ends ***")
 from cocos.director import director
 director.init(300,100)
 
@@ -81,7 +83,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'cocos2d'
-copyright = u'2008-2017, cocos\'s team'
+copyright = u'2008-2019, cocos\'s team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -99,7 +101,7 @@ release = cocos.version
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
 #today = ''
-today = "2019 08 15"
+today = "2019 09 05"
 # Else, today_fmt is used as the format for a strftime call.
 #today_fmt = '%B %d, %Y'
 

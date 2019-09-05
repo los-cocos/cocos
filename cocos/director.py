@@ -358,7 +358,9 @@ class Director(event.EventDispatcher):
         self.set_alpha_blending()
 
         # default handler
-        self.window.push_handlers(DefaultHandler())
+        # pyglet 1.4 requires to keep a reference to an event handler instance
+        self._default_event_handler = DefaultHandler()
+        self.window.push_handlers(self._default_event_handler)
 
         # Environment variable COCOS2d_NOSOUND=1 overrides audio settings
         if getenv('COCOS2D_NOSOUND', None) == '1' or audio_backend == 'pyglet':

@@ -1,5 +1,38 @@
 Api changes and other compatibility notes
 
+cocos 0.6.7
+-----------
+
+First cocos version to run with the pyglet 1.4 series, needs at least pyglet 1.4.3
+
+This cocos version will not run with previous pyglet versions
+
+Signature changes that break compatibilty
+
+	- Class cocos.fps.InfoLabel.__init__
+
+For compatibilty with pyglet 1.4 some cocos's classes internal state has changed, which only matters if your code subclass those classes, and / or instantiate and modify instance state from outside. Classes affected:
+	- cocos.fps.InfoLabel: member .text changed to .label ; it now holds a pyglet.text.Label
+	- cocos.scenes.pause.PauseLayer : member .text changed to .label ; it now holds a pyglet.text.Label
+
+Old user code that access underlying pyglet objects may need to adjust to breaking changes in pyglet 1.4; the ones we encountered were:
+
+pyglet.font.Text no longer exists; pyglet sugestion is to replace with pyglet.text.Label. Not a drop-in replacement because the API is diferent, pay attention to differences in parameters types.
+
+pyglet.clock.ClockDisplay no longer exists, use pyglet.clock.FPSDisplay
+
+pyglet constants for text layout like pyglet.font.LEFT no longer exist, use the string lowercase of last member, "left"
+
+When calling .push_handlers(foo) the pyglet event dispatcher will (roughtly) retain a weak reference to foo. If you don't keept a reference to foo in your code it will go out of scope after the call to .push_handlers(foo), so your handler will never be called. In particular something like window.push_handlers(MyEventsHandlerClass()) will not work in pyglet 1.4
+ 
+Some classes in pyglet.image eliminated some properties. The sugested fix is to change pyglet.image.SomeClass.foo with ...SomeClass.get_foo(...) for read and SomeClass.set_foo(...) for write if code working with pyglet<1.4 tracebacks with "AttributeError: 'SomeClass' object has no attribute 'foo' " with pyglet 1.4. Concrete cases found while fixing cocos compatibility with pyglet:
+
+- ImageDataRegion: image.texture.target -> image.get_texture().target , image.texture.id -> image.get_texture().id
+		
+- TextureRegion: same
+
+pyglet does not support anymore AVBin audio / video, now it uses ffmpeg v4
+
 cocos 0.6.6
 -----------
 
@@ -10,6 +43,7 @@ cocos 0.6.5
 -----------
 
 	- First cocos version to support pyglet 1.3 , tested against pyglet 1.3.rc1
+	- Does not support pyglet 1.4 series
 	- This cocos version can also run with pyglet 1.2.x
 	- Next cocos version will drop support for python 2.6
 	- Python 2.7 support can end at any future cocos release, without further advice: if pyglet drops it or a cocos new feature requires more than trivial compatibility code, then cocos will be py3 only

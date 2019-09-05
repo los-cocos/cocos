@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 7, s, t 8, s, t 10.1, s, q"
+testinfo = "t 1, s, t 7, s, t 8, s, t 10.1, s, q"
 tags = "grid_actions, AccelAmplitude, Waves3D"
 
 import pyglet

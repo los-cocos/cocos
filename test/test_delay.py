@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 3, s, t 4.1, s, t 6, s, q"
+testinfo = "t 0.1, s, t 3, s, t 4.1, s, t 6, s, q"
 tags = "Delay, RandomDelay"
 
 import cocos

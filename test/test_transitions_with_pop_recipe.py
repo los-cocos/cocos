@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 2.5, s, t 3, s, t 5, s, t 5.5, dt 0.016, s, q"
+testinfo = "t 0.1, s, t 2.5, s, t 3, s, t 5, s, t 5.5, dt 0.016, s, q"
 tags = "transitions with pop, unschedule, schedule, on_enter, on_exit"
 
 import cocos

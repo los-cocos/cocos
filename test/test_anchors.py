@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, q"
+testinfo = "t 1, s, q"
 tags = "transform_anchor, scale, zoom"
 
 import cocos

@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 1.7, s, t 3.7, s, t 6.7, s, t 9.7, s, t 12, s, q"
+testinfo = "t 0.1, s, t 1.7, s, t 3.7, s, t 6.7, s, t 9.7, s, t 12, s, q"
 tags = "Sprites, Waves, Twirl, WavesTiles3D, TurnOffTiles, StopGrid"
 
 import cocos

@@ -6,7 +6,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 #
 
-testinfo = "s, t 0.5, s, t 5.1, s, t 5.2, s, q"
+testinfo = "t 0.1, s, t 0.5, s, t 5.1, s, t 5.2, s, q"
 tags = "FadeIn"
 
 import cocos

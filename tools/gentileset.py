@@ -9,6 +9,9 @@ this file, if it's not the output is written to the standard output.
 More info on the schema of the generated xml can be found on cocos.tiles
 documentation.
 
+Example test run
+    cd tools
+    python gentileset.py ../test/background_image.png 128 256 gentileset_test_output.xml
 '''
 
 from __future__ import division, print_function, unicode_literals

@@ -59,7 +59,7 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-__version__ = "0.6.6"
+__version__ = "0.6.7"
 __author__ = "cocos2d team"
 version = __version__
 
@@ -73,10 +73,10 @@ pyglet.resource.path.append(
     )
 pyglet.resource.reindex()
 
-# refuse to run with pyglet 1.4; is not compatible
+# refuse to run with pyglet < 1.4.3; is not compatible or hits pyglet's bugs
 parts = pyglet.version.split(".")
-if int(parts[0]) != 1 or int(parts[1]) < 2 or int(parts[1]) > 3:
-    raise Exception("\n*** pyglet version must be >=1.2  and <1.4, found version %s***\n" %  pyglet.version)
+if int(parts[0]) != 1 or int(parts[1]) != 4 or int(parts[2]) < 3:
+    raise Exception("\n*** pyglet version must be at least 1.4.3, found version %s ***\n" %  pyglet.version)
 
 
 try:

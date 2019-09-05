@@ -141,7 +141,7 @@ class BitmapSkin(Skin):
             (x - dx, y - dy),
             (-dx, y - dy)
             ]
-        a, b, _, c, d, _, e, f, _, g, h, _ = image.texture.tex_coords
+        a, b, _, c, d, _, e, f, _, g, h, _ = image.get_texture().tex_coords
         textures = [a, b, c, d, e, f, g, h]
         np = [matrix * euclid.Point2(*p) for p in points]
 

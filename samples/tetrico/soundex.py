@@ -3,16 +3,28 @@
 # modified later for this game
 #
 from __future__ import division, print_function, unicode_literals
+import os
 
 from constants import MUSIC, SOUND
 import pyglet
 
 try:
-    import pyglet.media.avbin
-    have_avbin = True
-except:
+    import pyglet_ffmpeg
+except ImportError:
+    pyglet_ffmpeg = None
+    print("warn; package pyglet_ffmpeg not found")
+if pyglet_ffmpeg:
+    try:
+        pyglet_ffmpeg.load_ffmpeg()
+    except Exception as ex:
+        print(ex)
+
+decoders = pyglet.media.codecs._decoder_extensions.get(".mp3", [])
+if decoders:
+    have_mp3 = True
+else:
     pyglet.options['audio'] = ('silent')
-    have_avbin = False
+    have_mp3 = False
     MUSIC = False
     SOUND = False
 
@@ -25,59 +37,26 @@ current_music = None
 sound_vol = 0.7
 music_player.volume = 0.4
 
-def set_music(name):
+def set_music(name): 
     global current_music
-
-    if not have_avbin:
-        return
-
-    if name == current_music:
-        return
     current_music = name
 
-    if not MUSIC:
-        return
-
-    music_player.next()
-    music_player.queue(pyglet.resource.media(name, streaming=True))
-    music_player.play()
-    # pyglet bug
-    music_player.volume = music_player.volume
-    music_player.eos_action = 'loop'
-
 def music_volume(vol):
+    "sets player volume, vol a float between 0 and 1"
     music_player.volume=vol
 
-def queue_music(name):
-    global current_music
-
-    if not have_avbin:
-        return
-
-#    if name == current_music:
-#        return
-
-    music_player.queue(pyglet.resource.media(name, streaming=True))
-    music_player.eos_action = 'next'
-
-
-def play_music():
+def play_music(): 
     if music_player.playing or not current_music:
         return
-
-    if not have_avbin:
+    if not have_mp3:
         return
-
+                           
     name = current_music
-    music_player.next()
+    music_player.next_source()
     music_player.queue(pyglet.resource.media(name, streaming=True))
     music_player.play()
-    music_player.eos_action = 'loop'
-
-@music_player.event
-def on_eos():
-    music_player.eos_action = 'loop'
-
+    music_player.volume = music_player.volume
+    music_player.loop = True
 
 def stop_music():
 #    import pdb
