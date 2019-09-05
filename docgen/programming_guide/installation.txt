@@ -11,17 +11,19 @@ most of functionality
 ______________________
 
     + six https://pypi.python.org/pypi/six/
-    + pyglet https://bitbucket.org/pyglet/pyglet
+    + pyglet https://github.com/pyglet/pyglet
 
 particles support
 _________________
 
     + numpy www.numpy.org
 
-audio and video support by AVbin
-________________________________
+audio and video support by pyglet and ffmpeg
+____________________________________________
 
-    + AVbin http://avbin.github.io/AVbin/Home/Home.html
+    + for Windows and Mac the simplest is 'python -m pip install pyglet-ffmpeg2'
+    + for Linux you should use your package manager to get ffmpeg, version 4.x is
+	the one tested with pyglet.
     
 audio support by SDL
 ____________________
@@ -38,12 +40,13 @@ six and pyglet
 Compatibility
 ^^^^^^^^^^^^^
 
-Compatibility notes at the time of writing, August 2017
+Compatibility notes at the time of writing, August 2019
 
-    + python : cocos needs python 2.6, 2.7 or 3.3+
-      The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3  
+    + python : cocos needs python 2.7 or 3.4+
+      The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3
 
-    + pyglet : pyglet 1.2 or better (1.3+ recomended)      
+
+    + pyglet : pyglet 1.4.3, don't use lower versions, 
 
 Installing
 ^^^^^^^^^^
@@ -52,30 +55,26 @@ Have a modern setuptools or pip installed.
 
 While::
 
-    easy_install cocos2d
+    python -m pip install cocos2d
 
-or::
+works, you will miss the docs and code samples. Its is therefore recommended to
 
-    pip install cocos2d
-
-should work, you will miss the docs and code samples. Its is therefore recommended to
-
-    + install six and pyglet
-    + download cocos2d-0.6.5.zip from https://pypi.python.org/pypi/cocos2d/
-    + decompress to a convenient location, the top dir will be cocos2d-0.6.5
-    + the html docs will be in cocos2d-0.6.5/doc/html
-    + useful code samples will be in cocos2d-0.6.5/test, cocos2d-0.6.5/samples, cocos2d-0.6.5/utest
+    + install six and pyglet, pay attention to the pyglet version, see above 
+    + download cocos2d-0.6.7.zip from https://pypi.python.org/pypi/cocos2d/
+    + decompress to a convenient location, the top dir will be cocos2d-0.6.7
+    + the html docs will be in cocos2d-0.6.7/doc/html
+    + useful code samples will be in cocos2d-0.6.7/test, cocos2d-0.6.7/samples, cocos2d-0.6.7/utest
     + install by::
 
-        cd cocos2d-0.6.5
-        setup.py install
+        cd cocos2d-0.6.7
+        python -m pip install -e .
 
       or alternatively by pointing that directory from a .pth or PYTHONPATH
     + All of cocos should be usable now, with the possible exceptions
 
         - cocos particles
         - SDL audio backend
-        - AVBin (pyglet) audio-video backend 
+        - ffmpeg audio-video backend 
 
 If you want to add these, look at the dependencies section.
 
@@ -85,9 +84,4 @@ Using PYTHONPATH or .pth
 It is safe to point a checkout of cocos from a .pth or PYTHONPATH both
 in python 2.x and 3.x; the same checkout can be pointed at the same time from both pythons.
 
-The same is valid for pyglet vs 1.3+ (but note that at pyglet 1.3.0rc1 you will need to also 
-install the pakage 'future')
-
-Pyglet with version < 1.3 does python 3 compatibility by running 2to3 at install time, so while
-a pyglet checkout can be pointed from a .pth or PYTHONPATH in python 2.x,
-that will not work for python 3.
+The same is valid for pyglet.

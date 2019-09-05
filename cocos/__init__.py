@@ -59,7 +59,7 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-__version__ = "0.6.5"
+__version__ = "0.6.7"
 __author__ = "cocos2d team"
 version = __version__
 
@@ -72,6 +72,12 @@ pyglet.resource.path.append(
     os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources")
     )
 pyglet.resource.reindex()
+
+# refuse to run with pyglet < 1.4.3; is not compatible or hits pyglet's bugs
+parts = pyglet.version.split(".")
+if int(parts[0]) != 1 or int(parts[1]) != 4 or int(parts[2]) < 3:
+    raise Exception("\n*** pyglet version must be at least 1.4.3, found version %s ***\n" %  pyglet.version)
+
 
 try:
     unittesting = os.environ['cocos_utest']

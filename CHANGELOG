@@ -1,8 +1,11 @@
-v0.6.6.dev - ??
+v0.6.7 - ??
 
-  - changes for compatibilty with pyglet 1.4, look at compatibility in docs
-  - changeset 9bb2808a05 from 2017 12 26 is the last supporting pyglet < 1.4
-  ==========================================================================
+  - fixed compatibility with pyglet 1.4.x, needs at least pyglet 1.4.3 
+
+v0.6.6 - August 15, 2019
+
+  - pip or setuptools will request pyglet >=1.2 and <1.4
+  - pyglet version checked when importing cocos, terminate if out of range
   - py 3.3 and py 2.6 support dropped 
   - collision manager honors promises to accept non-known objects, #300
   

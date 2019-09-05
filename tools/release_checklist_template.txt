@@ -24,6 +24,9 @@ Finishing:
       CHANGELOG
 	  INSTALL
 
+- in cocos/__init__.py update / uncoment the pyglet version check
+  (while preparing cocos 0.6.7 is commented out because pyglet 1.4.3 is not out)
+  
 - new big capabilities should be updated in
     cocos/__init__.py docstring
     README    

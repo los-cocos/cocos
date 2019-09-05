@@ -29,11 +29,13 @@ except:
 sys.is_pyglet_doc_run = False
 
 sys.is_cocos_sphinx = True
-try:
-    import cocos
-except:
-    print("ERROR: cocos not found")
-    sys.exit(1)
+##try:
+##    import cocos
+##except:
+##    print("ERROR: cocos not found")
+##    sys.exit(1)
+
+import cocos
 
 print("Generating cocos %s Documentation" % (cocos.version))
 
@@ -81,7 +83,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'cocos2d'
-copyright = u'2008-2017, cocos\'s team'
+copyright = u'2008-2019, cocos\'s team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -99,7 +101,7 @@ release = cocos.version
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
 #today = ''
-today = ''
+today = "2019 09 05"
 # Else, today_fmt is used as the format for a strftime call.
 #today_fmt = '%B %d, %Y'
 

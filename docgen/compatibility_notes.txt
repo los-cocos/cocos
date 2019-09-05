@@ -3,7 +3,7 @@ Api changes and other compatibility notes
 cocos 0.6.7
 -----------
 
-First cocos version to support pyglet 1.4, needs at least pyglet 1.4.3
+First cocos version to run with the pyglet 1.4 series, needs at least pyglet 1.4.3
 
 This cocos version will not run with previous pyglet versions
 
@@ -30,6 +30,14 @@ Some classes in pyglet.image eliminated some properties. The sugested fix is to 
 - ImageDataRegion: image.texture.target -> image.get_texture().target , image.texture.id -> image.get_texture().id
 		
 - TextureRegion: same
+
+pyglet does not support anymore AVBin audio / video, now it uses ffmpeg v4
+
+cocos 0.6.6
+-----------
+
+	- this is exactly 0.6.5 except that pip or setup.py install will select pyglet < 1.4
+	- this version is not compatible with pyglet 1.4
 
 cocos 0.6.5
 -----------

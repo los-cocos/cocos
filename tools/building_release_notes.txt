@@ -209,7 +209,7 @@ After a release, please update this document if any change was needed.
 			git push --tags
 			
 		- lookup the last hash commit, edit the following line to meet your release
-			git commit -a -m "tagged  fe6beb3 as release-0.6.5"
+			git commit -a -m "tagged  d90978d7c924a as release-0.6.6"
 		  save file 
 			
 		- commit using the line just edited, push.
