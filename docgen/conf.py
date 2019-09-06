@@ -49,7 +49,7 @@ director.init(300,100)
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = '1.3'
+needs_sphinx = '1.3' # latest build uses 2.2.0
 
 autosummary_generate = True
 
