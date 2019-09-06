@@ -7,12 +7,12 @@ language: python
 # py3 should be tested only on CPython versions actively supported, meaning receiving security updates, look
 # at https://docs.python.org/devguide/#status-of-python-branches for status
 python: 
-  - "pypy2.7-5.8.0"
-  - "pypy3.5-5.8.0"
+  - "pypy2.7-7.1.1"
+  - "pypy3.6-v7.1.1"
   - 2.7
   - 3.4
-  - 3.5
   - 3.6
+  - 3.7
   
 cache:
   - pip
