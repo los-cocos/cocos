@@ -205,11 +205,11 @@ After a release, please update this document if any change was needed.
 		- If some last moment change was not comited, commit now and push
 		
 		- run
-			git tag release-0.6.5 -m "tagging release 0.6.5"
+			git tag release-0.6.7 -m "tagging release 0.6.7"
 			git push --tags
 			
 		- lookup the last hash commit, edit the following line to meet your release
-			git commit -a -m "tagged  d90978d7c924a as release-0.6.6"
+			git commit -a -m "tagged  32af346945c1 as release-0.6.7"
 		  save file 
 			
 		- commit using the line just edited, push.
