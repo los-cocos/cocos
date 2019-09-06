@@ -40,11 +40,11 @@ six and pyglet
 Compatibility
 ^^^^^^^^^^^^^
 
-Compatibility notes at the time of writing, August 2019
+Compatibility notes at the time of writing, September 2019
 
     + python : cocos needs python 2.7 or 3.4+
-      The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3
-
+	
+    + The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3
 
     + pyglet : pyglet 1.4.3, don't use lower versions, 
 

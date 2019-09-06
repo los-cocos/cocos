@@ -59,8 +59,8 @@ Dev notes
 Related documentation
 =====================
 
-  * `pyglet Programming Guide <http://pyglet.org/doc/programming_guide/>`_
-  * `pyglet API Reference <http://pyglet.org/doc/api/>`_
+  * `pyglet Programming Guide <https://pyglet.readthedocs.io/en/stable/#programming-guide>`_
+  * `pyglet API Reference <https://pyglet.readthedocs.io/en/stable/#api-reference>`_
   * `OpenGL Programming Guide <http://www.glprogramming.com/red/>`_
   * `OpenGL Reference Pages <http://opengl.org/sdk/docs/man/>`_
 

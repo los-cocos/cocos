@@ -345,6 +345,6 @@ http://www.cocos2d.org/ for more examples and tutorials as they are written.
 
 .. _The OpenGL Programming Guide: http://opengl.org/documentation/books/#the_opengl_programming_guide_the_official_guide_to_learning_opengl_version
 .. _The OpenGL Shading Language: http://opengl.org/documentation/books/#the_opengl_shading_language_2nd_edition
-.. _pyglet Programming Guide: http://pyglet.org/doc/programming_guide/
-.. _pyglet API Reference: http://pyglet.org/doc/api/
+.. _pyglet Programming Guide: https://pyglet.readthedocs.io/en/stable/#programming-guide
+.. _pyglet API Reference: https://pyglet.readthedocs.io/en/stable/#api-reference
 .. _The pyglet Event Framework: http://www.pyglet.org/doc/programming_guide/the_pyglet_event_framework.html
