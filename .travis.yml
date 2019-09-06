@@ -6,9 +6,14 @@ language: python
 # cocos particles and audio SDL uses numpy (ctypes and numpy are problematic with pypy)
 # py3 should be tested only on CPython versions actively supported, meaning receiving security updates, look
 # at https://docs.python.org/devguide/#status-of-python-branches for status
+
+# Travis refs
+# https://docs.travis-ci.com/user/languages/python/
+# https://docs.travis-ci.com/user/languages/python/#pypy-support
+
+
 python: 
-  - "pypy2.7-7.1.1"
-#  - "pypy3.6-v7.1.1" not found
+  - "pypy2"
   - "pypy3"
   - 2.7
   - 3.4
