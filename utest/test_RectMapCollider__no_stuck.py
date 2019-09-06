@@ -29,7 +29,12 @@ Implementation description
         push style: dx, dy
         actor start position: move the start position along the wall to cover
           all int alignements with the grid, ie do offsets 1..cell_width if
-          free movement axis is x, ... 
+          free movement axis is x, ...
+
+Companion to this file, test_RectMapCollider__no_stuck.py, is
+viewer_RectMapCollider__no_stuck.py, which produces a view for the same cases.
+This allows visual inspection of test cases and test results.
+Changes in any of those files must be in sync so that both scripts remain operational. 
 """
 from __future__ import division, print_function, unicode_literals
 
@@ -51,6 +56,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 # for py.test
 import py
+import pytest
 
 import cocos
 import cocos.layer
@@ -85,57 +91,52 @@ maps_cache = aux.generate_maps('-')
 ##             {(2, 0), (2,1), (2, 2), (2, 4), (2, 5) } )
     
 
-def pytest_generate_tests(metafunc):
-    # called once per each test function
-    for funcargs in metafunc.cls.params[metafunc.function.__name__]:
-        # schedule a new test function run with applied **funcargs
-        metafunc.addcall(funcargs=funcargs)
- 
-##class TestClass():
-##    params = {
-##        'test_equals': [dict(a=1, b=2), dict(a=3, b=3), dict(a=5, b=4)],
-##        'test_zerodivision': [dict(a=1, b=0), dict(a=3, b=2)],
+##    A scenario received in the 'scenaries = ...' line is sort-of of a case description:
+##    misses the param 'cls' (class to test) and includes part of a case descriptive name in
+##    'generic'. That was fine for test code writen for pytest < 4.0, here it will be adapted to
+##    the new parametrize style.
+##    this was the scenario in it's old form
+##    d = {
+##        'generic_id': generic_id,
+##        'tilemap': tilemap,
+##        'start_rect': start_rect,
+##        'dx': dx,
+##        'dy': dy,
+##        'expect_dxdy': expect_dxdy
 ##    }
-## 
-##    def test_equals(self, a, b):
-##        assert a == b
-## 
-##    def test_zerodivision(self, a, b):
-##        py.test.raises(ZeroDivisionError, "a/b")
-##
-##class TestClass2():
-##    params = {
-##        "test_concatenation": [dict(r='a', s='b', res='ab'),
-##                               dict(r='aa', s='bb', res='aabb')]
-##        }
-##
-##    def test_concatenation(self, r, s, res):
-##        assert r+s+'z' == res
+##    To transform from the old scenario to the new case description we need to
+##            - add 'cls' param
+##            - extract from d 'generic_id'; combine with 'cls' to form the sufix for parametrized test
+##            - transform d to tuple, with known and consistent order
+##            - put the sufixces in one list, the tuple params in other
 
-scenario = [ d for d in aux.case_generator(aux.first_expansion(maps_cache, aux.common_base_cases))]
+def scenario_to_test_sufix_and_tuple_params(d):
+    test_sufix = d["cls"].__name__ + "_" + d["generic_id"]
+    params = (d["cls"], d['tilemap'],  d['start_rect'], d['dx'], d['dy'], d['expect_dxdy'])
+    return test_sufix, params
+    
+def params_for_test_no_stuck():
+    param_names = ['cls', 'tilemap', 'start_rect', 'dx', 'dy', 'expect_dxdy']
+    scenaries = [ d for d in aux.case_generator(aux.first_expansion(maps_cache, aux.common_base_cases))]
+    sufixes_parametrized_tests = []
+    cases = []
+    for cls in [RectMapCollider,  RectMapWithPropsCollider]:
+        for d in scenaries:
+            d['cls'] = cls
+            test_sufix, params = scenario_to_test_sufix_and_tuple_params(d)
+            sufixes_parametrized_tests.append(test_sufix)
+            cases.append(params)
+    return (param_names, cases, False,  sufixes_parametrized_tests)
 
-class TestClass():
-    params = {
-        'test_RectMapCollider__no_stuck': scenario,
-        'test_RectMapWithPropsCollider__no_stuck': scenario,
-        }
+# (argnames, argvalues, indirect=False, ids=None, scope=None)
+@pytest.mark.parametrize(*params_for_test_no_stuck())
+def test_no_stuck(cls,  tilemap, start_rect, dx, dy, expect_dxdy):
+    collider = cls()
+    collider.on_bump_handler = collider.on_bump_slide
+    new = start_rect.copy()
+    new.x += dx
+    new.y += dy
+    collider.collide_map(tilemap, start_rect, new, 0, 0)
+    assert new.position == (start_rect.x + expect_dxdy[0],
+                            start_rect.y + expect_dxdy[1])
 
-    def test_RectMapCollider__no_stuck(self, generic_id, tilemap, start_rect, dx, dy, expect_dxdy):
-        collider = RectMapCollider()
-        collider.on_bump_handler = collider.on_bump_slide
-        new = start_rect.copy()
-        new.x += dx
-        new.y += dy
-        collider.collide_map(tilemap, start_rect, new, 0, 0)
-        assert new.position == (start_rect.x + expect_dxdy[0],
-                                start_rect.y + expect_dxdy[1])
-
-    def test_RectMapWithPropsCollider__no_stuck(self, generic_id, tilemap, start_rect, dx, dy, expect_dxdy):
-        collider = RectMapWithPropsCollider()
-        collider.on_bump_handler = collider.on_bump_slide
-        new = start_rect.copy()
-        new.x += dx
-        new.y += dy
-        collider.collide_map(tilemap, start_rect, new, 0, 0)
-        assert new.position == (start_rect.x + expect_dxdy[0],
-                                start_rect.y + expect_dxdy[1])

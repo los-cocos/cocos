@@ -78,7 +78,7 @@ class Model(object):
             self.current_tilemap.remove(self.view_new)
             self.current_tilemap.remove(self.view_expected)
             self.scroller.remove(self.current_tilemap)
-            print("num active tilemaps:", len(self.scroller.children))
+            #print("num active tilemaps:", len(self.scroller.children))
             self.iCase = (self.iCase + delta) % len(self.cases)
         else:
             self.iCase = 0

@@ -1,4 +1,5 @@
 from __future__ import division, print_function, unicode_literals
+import pytest
 
 # collision_model tests
 
@@ -187,59 +188,48 @@ def plot_aarect_data1(offset):
     #pylab.show()
     pylab.savefig('aarect1_data.png')
 
-def pytest_generate_tests(metafunc):
-    param_names = ['variant', 'ctor_args', 'offset']
+fe = 1.0e-4
+
+def params_for_test_collman_aarects():
+    param_names =  ['cls_name', 'ctor_args', 'offset']
     cases = {
-        "BruteForce":
+        "uniform":
             ('CollisionManagerBruteForce', [], (2.2, 3.7)),
-        "Grid, target don't crosses bucket edges":
-            ('CollisionManagerGrid',
-             [0.0, 100.0, 0.0, 100.0, 4.0, 4.0],
-             (2.0, 2.0)
-             ),
-        "Grid, target crosses horizontal bucket edge":
-            ('CollisionManagerGrid',
-             [0.0, 100.0, 0.0, 100.0, 4.0, 4.0],
-             (2.0, 4.0)
-             ),
-        "Grid, target crosses vertical bucket edge":
-            ('CollisionManagerGrid',
-             [0.0, 100.0, 0.0, 100.0, 4.0, 4.0],
-             (4.0, 2.0)
-             ),
-        "Grid, target crosses vertical and horizontal bucket edges":
-            ('CollisionManagerGrid',
-             [0.0, 100.0, 0.0, 100.0, 4.0, 4.0],
-             (4.0, 4.0)
-             ),
-        "Grid, target bigger than cell":
-            ('CollisionManagerGrid',
-             [0.0, 100.0, 0.0, 100.0, 0.5, 0.5],
-             (2.0, 2.0)
-             ),
+        "target don't crosses bucket edges":
+            ('CollisionManagerGrid', [0.0, 100.0, 0.0, 100.0, 4.0, 4.0], (2.0, 2.0)),
+        "target crosses horizontal bucket edge":
+            ('CollisionManagerGrid', [0.0, 100.0, 0.0, 100.0, 4.0, 4.0], (2.0, 4.0)),
+        "target crosses vertical bucket edge":
+            ('CollisionManagerGrid', [0.0, 100.0, 0.0, 100.0, 4.0, 4.0], (4.0, 2.0)),
+        "target crosses vertical and horizontal bucket edges":
+            ('CollisionManagerGrid', [0.0, 100.0, 0.0, 100.0, 4.0, 4.0], (4.0, 4.0)),
+        "target bigger than cell":
+            ('CollisionManagerGrid', [0.0, 100.0, 0.0, 100.0, 2.0, 2.0], (2.0, 2.0)),
         }
+    sufixes_parametrized_tests = []
+    params = []
+    for k, v in cases.items():
+        sufixes_parametrized_tests.append("%s_%s" % (v[0], k))
+        params.append(v)
+    return (param_names, params, False,  sufixes_parametrized_tests)
 
-    for name in cases:
-        metafunc.addcall(id=name, funcargs=dict(zip(param_names, cases[name])))
 
-
-fe = 1.0e-4    
-def test_collman_aarects(variant, ctor_args, offset):
+# (argnames, argvalues, indirect=False, ids=None, scope=None)
+@pytest.mark.parametrize(*params_for_test_collman_aarects())   
+def test_collman_aarects(cls_name, ctor_args, offset):
     """
     Tests collision manager basic behavoir when shape is AARectShape,
     test data is defined by aabb_data1(offset),
-    the collision manager variant is determined by 'variant',
-    and 'ctor_args' provide the parameters needed to instantiate the
-    collision manager.
-
-    'variant' is the class name to use, and the class definition is assumed
-    to be in the module cocos.collision_model
+    the collision manager variant is determined by
+      - 'cls_name' which is assumed to live in cocos.collision_model
+      - 'ctor_args' provide the parameters needed to instantiate the
+        collision manager.
     """
     emptyset = set()
     (center_aarect, ring_touching, ring_near, ring_far,
      near_distance, far_distance, rays) = aarect_data1(eu.Vector2(*offset))
 
-    collman_cls = getattr(cm, variant)
+    collman_cls = getattr(cm, cls_name)
     collman = collman_cls(*ctor_args)
 
     collman.add(center_aarect)

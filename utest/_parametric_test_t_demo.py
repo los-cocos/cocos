@@ -1,30 +1,36 @@
 from __future__ import division, print_function, unicode_literals
 
-# example running test with diferent parameters.
-# here we use py.test to run the test
-# references:
-# http://tetamap.wordpress.com/2009/05/13/parametrizing-python-tests-generalized/
-# code here is a modification of test_parametrize3.py in that page
-##run with
-##py.test -v _parametric_test_t_demo.py
-##(you may need to put pythonxx\scripts in your path)
+import pytest
+# example running test with diferent parameters, for pytest >= 4.0
+# reference: https://docs.pytest.org/en/5.1.2/parametrize.html
+#
+# run with
+# py.test -v _parametric_test_t_demo.py
+# (you may need to put pythonxx\scripts in your path)
+#
+# example line from the output:
+# _parametric_test_t_demo.py::TestSampleWithParameters::test2_demo[d1_gt_5] PASSED [ 63%]
+# notice how the 'd1_gt_5' comes from the params in the call to parametrize
+#
+# Theres many ways to build the params for parametrize, this seems sensible 
 
-def pytest_generate_tests(metafunc):
+def params_for_TestSampleWithParameters():
     param_names = ['duration1', 'duration2']
-    values = [  (0.0, 0.0),
-                (0.0, 3.0),
-                (3.0, 0.0),
-                (3.0, 3.0),
-                (3.0, 5.0),
-                (5.0, 3.0)
+    cases = [ ((0.0, 0.0), "d1_eq_d2_eq_0"),
+                   ((0.0, 3.0),  "d1_eq_0_d2_gt_0"),
+                   ((3.0, 0.0),  "d1_lt_4_d2_eq_0"),
+                   ((3.0, 3.0),  "d1_eq_d2_lt_4"),
+                   ((3.0, 5.0),  "d1_lt_4_d2_gt_4"),
+                   ((5.0, 3.0),  "d1_gt_5"),
                 ]
-    scenarios = {}
-    for v in values:
-        name = ' '.join(['%s'%e for e in v])
-        scenarios[name] = dict(zip(param_names, v))
-    for k in scenarios:
-        metafunc.addcall(id=k, funcargs=scenarios[k])
-
+    params = [e[0] for e in cases]
+    sufixes_parametrized_tests = [e[1] for e in cases] 
+    # return tuple must match pytest.mark.parametrize signature; for pytest 5.1.2
+    # it is Metafunc.parametrize(argnames, argvalues, indirect=False, ids=None, scope=None)
+    return (param_names, params, False,  sufixes_parametrized_tests)
+    
+# (argnames, argvalues, indirect=False, ids=None, scope=None)
+@pytest.mark.parametrize(*params_for_TestSampleWithParameters())
 class TestSampleWithParameters:
 
     def test_demo(self, duration1, duration2):
@@ -41,10 +47,9 @@ class TestSampleWithParameters:
         # yes, the test listed as PASS in the case with duration1 == 5.0
 
 
-### ? can we have a non-parametrized test in same file ?
-##class TestSampleNoParameters:
-##    def test_demo(self):
-##        assert 1==1
-### ? not this way: the test are called with params, so a 'unexpected argument'
-### triggers
+# ? can we have a non-parametrized test in same file ?
+class TestSampleNoParameters:
+    def test_demo(self):
+        assert 1==1
+# Yes!
         

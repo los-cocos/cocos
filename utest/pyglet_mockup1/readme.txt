@@ -51,4 +51,5 @@ Capabilities:
  can be imported
 
 
- 
+ Changes for compatibility pyglet 1.4:
+	- version bumped to 1.4.3

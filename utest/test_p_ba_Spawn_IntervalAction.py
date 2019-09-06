@@ -1,5 +1,5 @@
 from __future__ import division, print_function, unicode_literals
-
+import pytest
 # parametrized test, using py.test 
 # see _parametric_test_t_demo.py for a skeletal.
 
@@ -23,21 +23,20 @@ fe = 1.0e-6 # used to compare floats; a==b <-> abs(a-b)<fe
 
 director.init()
 
-def pytest_generate_tests(metafunc):
+def params_for_Test_Spawn_IntervalAction():
     param_names = ['duration1', 'duration2']
-    values = [  (0.0, 0.0),
-                (0.0, 3.0),
-                (3.0, 0.0),
-                (3.0, 3.0),
-                (3.0, 5.0),
-                (5.0, 3.0)
+    cases = [ ((0.0, 0.0), "d1_eq_d2_eq_0"),
+                   ((0.0, 3.0),  "d1_eq_0_d2_gt_0"),
+                   ((3.0, 0.0),  "d1_lt_4_d2_eq_0"),
+                   ((3.0, 3.0),  "d1_eq_d2_lt_4"),
+                   ((3.0, 5.0),  "d1_lt_4_d2_gt_4"),
+                   ((5.0, 3.0),  "d1_gt_5"),
                 ]
-    scenarios = {}
-    for v in values:
-        name = ' '.join(['%s'%e for e in v])
-        scenarios[name] = dict(zip(param_names, v))
-    for k in scenarios:
-        metafunc.addcall(id=k, funcargs=scenarios[k])
+    params = [e[0] for e in cases]
+    sufixes_parametrized_tests = [e[1] for e in cases] 
+    # return tuple must match pytest.mark.parametrize signature; for pytest 5.1.2
+    # it is Metafunc.parametrize(argnames, argvalues, indirect=False, ids=None, scope=None)
+    return (param_names, params, False,  sufixes_parametrized_tests)
 
 rec = []
 
@@ -63,6 +62,8 @@ class UIntervalAction(ac.IntervalAction):
 ##    def done(self):
 ##        rec.append((self.name, 'done', 
 
+# (argnames, argvalues, indirect=False, ids=None, scope=None)
+@pytest.mark.parametrize(*params_for_Test_Spawn_IntervalAction())
 class Test_Spawn_IntervalAction:
     def test_instantiation(self, duration1, duration2):
         global rec
