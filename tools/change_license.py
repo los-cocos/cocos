@@ -14,11 +14,11 @@ import optparse
 import os
 import sys
 
-old_license =   """# ----------------------------------------------------------------------------
+old_license = """# ----------------------------------------------------------------------------
 # cocos2d
 # Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
-# Copyright (c) 2009-2016  Richard Jones, Claudio Canepa
+# Copyright (c) 2009-2017  Richard Jones, Claudio Canepa
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -49,12 +49,11 @@ old_license =   """# -----------------------------------------------------------
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------"""
 
-
 new_license = """# ----------------------------------------------------------------------------
 # cocos2d
 # Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
-# Copyright (c) 2009-2017  Richard Jones, Claudio Canepa
+# Copyright (c) 2009-2019  Richard Jones, Claudio Canepa
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
