@@ -8,7 +8,8 @@ language: python
 # at https://docs.python.org/devguide/#status-of-python-branches for status
 python: 
   - "pypy2.7-7.1.1"
-  - "pypy3.6-v7.1.1"
+#  - "pypy3.6-v7.1.1" not found
+  - pypy3.6
   - 2.7
   - 3.4
   - 3.6
