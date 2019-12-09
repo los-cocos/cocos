@@ -1,3 +1,8 @@
+v0.6.8 - December ?, 2019
+
+  - fixed ColorLayer crash when changing colors, #330, thanks MartinHowarth
+  - unpinned pyglet version, they are releasing fast. accept >= 1.4.9, < 2 
+  
 v0.6.7 - September 6, 2019 
 
   - fixed compatibility with pyglet 1.4.x, needs at least pyglet 1.4.3 
