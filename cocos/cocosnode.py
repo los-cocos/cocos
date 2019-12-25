@@ -133,7 +133,11 @@ class CocosNode(object):
         #:
         #: You can change the camera manually or by using the 
         #: :class:`.Camera3DAction` action.
-        self.camera = Camera()
+        #
+        # The camera is created lazily so that a CocosNode can be instantiated without the
+        # director being initialised. This allows for non-graphical testing of the CocosNode
+        # functionality.
+        self._camera = None
 
         #: offset from (x,0) from where rotation and scale will be applied.
         #: Default: 0
@@ -173,6 +177,17 @@ class CocosNode(object):
         self.transform_matrix = euclid.Matrix3().identity()
         self.is_inverse_transform_dirty = False
         self.inverse_transform_matrix = euclid.Matrix3().identity()
+
+    @property
+    def camera(self):
+        """Provide access to the camera lazily."""
+        if self._camera is None:
+            self._camera = Camera()
+        return self._camera
+
+    @camera.setter
+    def camera(self, value):
+        self._camera = value
 
     def make_property(attr):
         types = {'anchor_x': "int", 'anchor_y': "int", "anchor": "(int, int)"}
