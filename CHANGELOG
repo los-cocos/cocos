@@ -1,7 +1,9 @@
 v0.6.8 - December ?, 2019
 
   - fixed ColorLayer crash when changing colors, #330, thanks MartinHowarth
-  - unpinned pyglet version, they are releasing fast. accept >= 1.4.9, < 2 
+  - unpinned pyglet version, they are releasing fast. accept >= 1.4.9, < 2
+  - make the Camera lazily evaluated in CocosNodes to allow creation of them without
+      the director being initialised.
   
 v0.6.7 - September 6, 2019 
 
