@@ -9,15 +9,9 @@ from constants import MUSIC, SOUND
 import pyglet
 
 try:
-    import pyglet_ffmpeg
+    import pyglet_ffmpeg2
 except ImportError:
-    pyglet_ffmpeg = None
-    print("warn; package pyglet_ffmpeg not found")
-if pyglet_ffmpeg:
-    try:
-        pyglet_ffmpeg.load_ffmpeg()
-    except Exception as ex:
-        print(ex)
+    print("warn; package pyglet_ffmpeg2 not found")
 
 decoders = pyglet.media.codecs._decoder_extensions.get(".mp3", [])
 if decoders:
