@@ -11,13 +11,26 @@ import pyglet
 try:
     import pyglet_ffmpeg2
 except ImportError:
-    print("warn; package pyglet_ffmpeg2 not found")
+    pyglet_ffmpeg2 = None
 
-decoders = pyglet.media.codecs._decoder_extensions.get(".mp3", [])
+if pyglet_ffmpeg2:
+    try:
+        pyglet_ffmpeg2.load_ffmpeg()
+    except Exception as ex:
+        print("While trying to use ffmpeg audio from package pyglet_ffmpeg2 an exception was rised:")
+        print(ex)
+
+try:
+    decoders = pyglet.media.codecs._decoder_extensions.get(".mp3", [])
+except Exception:
+    decoders = None
+
 if decoders:
     have_mp3 = True
 else:
-    pyglet.options['audio'] = ('silent')
+    print("warn: cocos running with no sound, no mp3 decoder found.")
+    print("      Try installing pyglet_ffmpeg2.")
+    pyglet.options['audio'] = ('silent',)
     have_mp3 = False
     MUSIC = False
     SOUND = False
