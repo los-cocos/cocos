@@ -5,7 +5,7 @@ import pyglet.resource
 import pyglet.app
 import pyglet.text.formats.html
 
-version = "1.4.3"
+version = "1.4.10"
 
 def set_pyglet_text():
     class Label(object):
