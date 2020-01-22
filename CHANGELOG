@@ -1,7 +1,9 @@
-v0.6.8 - December ?, 2019
+v0.6.8 - January 31, 2020
 
+  - removed py 3.4 from testing, added py 3.8
+  - replaced pyglet_ffmpeg with pyglet_ffmpeg2 (thanks chcarmen)
   - fixed ColorLayer crash when changing colors, #330, thanks MartinHowarth
-  - unpinned pyglet version, they are releasing fast. accept >= 1.4.9, < 2 
+  - unpinned pyglet version, they are releasing fast. accept 1.4 >= 1.4.10, 1.5.x, < 2 
   
 v0.6.7 - September 6, 2019 
 

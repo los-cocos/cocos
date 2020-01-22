@@ -18,9 +18,9 @@ python:
   - "pypy3"
 #  - "pypy3.6-v7.1.1" finer spec don't work
   - 2.7
-  - 3.4
   - 3.6
   - 3.7
+  - 3.8
   
 cache:
   - pip

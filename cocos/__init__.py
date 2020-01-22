@@ -59,7 +59,7 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-__version__ = "0.6.7"
+__version__ = "0.6.8"
 __author__ = "cocos2d team"
 version = __version__
 
@@ -73,11 +73,21 @@ pyglet.resource.path.append(
     )
 pyglet.resource.reindex()
 
-# refuse to run with pyglet < 1.4.3; is not compatible or hits pyglet's bugs
+# ensure pyglet >= 1.4.10 or pyglet at 1.5.x
 parts = pyglet.version.split(".")
-if int(parts[0]) != 1 or int(parts[1]) != 4 or int(parts[2]) < 3:
-    raise Exception("\n*** pyglet version must be at least 1.4.3, found version %s ***\n" %  pyglet.version)
+p_major, p_med, p_step = *parts
+bad_pyglet_version = True
+if p_major != "1":
+    print("This cocos version needs pyglet >= 1.4.10 and < 2.0")
+elif p_med not in ["4", "5"]:
+    print("This cocos version needs pyglet >= 1.4.10 or 1.5.x")
+elif p_med == "4" and int(p_step) < 10:
+    print("This cocos version needs pyglet >= 1.4.10 or 1.5.x")
+else:
+    bad_pyglet_version = False
 
+if bad_pyglet_version:
+    raise Exception("\n*** bad pyglet version, found version %s ***\n" %  pyglet.version)
 
 try:
     unittesting = os.environ['cocos_utest']

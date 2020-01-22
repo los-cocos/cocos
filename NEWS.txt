@@ -1,6 +1,0 @@
-New in cocos 0.6.5
-==================
-
-  - Support for pyglet 1.3 (tested against 1.3.0rc1) 
-  - Python 2.6 support will we dropped in the next release
-  - Python 2.7 support can be dropped if a new feature requires more than trivial adjusts
