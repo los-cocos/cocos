@@ -75,7 +75,7 @@ pyglet.resource.reindex()
 
 # ensure pyglet >= 1.4.10 or pyglet at 1.5.x
 parts = pyglet.version.split(".")
-p_major, p_med, p_step = *parts
+p_major, p_med, p_step = parts
 bad_pyglet_version = True
 if p_major != "1":
     print("This cocos version needs pyglet >= 1.4.10 and < 2.0")
