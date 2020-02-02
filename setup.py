@@ -23,7 +23,7 @@ As a release builder:
 __author__ = "cocos2d team"
 __author_email__ = "lucio.torre@gmail.com"
 __version__ = "0.6.8"
-__date__ = "2020 01 31"
+__date__ = "2020 02 02"
 
 try:
     import setuptools
@@ -68,7 +68,6 @@ setup(
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX :: Linux",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         ("Topic :: Software Development :: Libraries :: Python Modules"),
         ("Topic :: Games/Entertainment"),

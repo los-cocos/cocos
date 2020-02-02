@@ -40,13 +40,11 @@ six and pyglet
 Compatibility
 ^^^^^^^^^^^^^
 
-Compatibility notes at the time of writing, September 2019
+Compatibility notes at the time of writing, January 2020
 
-    + python : cocos needs python 2.7 or 3.4+
+    + python : cocos needs python 3.6+ (2.7 should still work but is unsuported)
 	
-    + The cocos codebase has direct support for 2.x and 3.x, so no need to run 2to3
-
-    + pyglet : pyglet 1.4.3, don't use lower versions, 
+    + pyglet : pyglet >= 1.4.10, < 2.0  (prefer 1.4.x, 1.5 is unstable)
 
 Installing
 ^^^^^^^^^^
@@ -60,13 +58,13 @@ While::
 works, you will miss the docs and code samples. Its is therefore recommended to
 
     + install six and pyglet, pay attention to the pyglet version, see above 
-    + download cocos2d-0.6.7.zip from https://pypi.python.org/pypi/cocos2d/
-    + decompress to a convenient location, the top dir will be cocos2d-0.6.7
-    + the html docs will be in cocos2d-0.6.7/doc/html
-    + useful code samples will be in cocos2d-0.6.7/test, cocos2d-0.6.7/samples, cocos2d-0.6.7/utest
+    + download cocos2d-0.6.8.zip from https://pypi.python.org/pypi/cocos2d/
+    + decompress to a convenient location, the top dir will be cocos2d-0.6.8
+    + the html docs will be in cocos2d-0.6.8/doc/html
+    + useful code samples will be in cocos2d-0.6.8/test, cocos2d-0.6.8/samples, cocos2d-0.6.8/utest
     + install by::
 
-        cd cocos2d-0.6.7
+        cd cocos2d-0.6.8
         python -m pip install -e .
 
       or alternatively by pointing that directory from a .pth or PYTHONPATH
@@ -81,7 +79,6 @@ If you want to add these, look at the dependencies section.
 Using PYTHONPATH or .pth
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-It is safe to point a checkout of cocos from a .pth or PYTHONPATH both
-in python 2.x and 3.x; the same checkout can be pointed at the same time from both pythons.
+It is safe to point a checkout of cocos from a .pth or PYTHONPATH
 
 The same is valid for pyglet.

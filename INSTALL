@@ -44,7 +44,7 @@ Compatibility notes at the time of writing, January 2020
 
     + python : cocos needs python 3.6+ (2.7 should still work but is unsuported)
 	
-    + pyglet : pyglet >= 1.4.10, < 2.0
+    + pyglet : pyglet >= 1.4.10, < 2.0  (prefer 1.4.x, 1.5 is unstable)
 
 Installing
 ^^^^^^^^^^
@@ -79,7 +79,6 @@ If you want to add these, look at the dependencies section.
 Using PYTHONPATH or .pth
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-It is safe to point a checkout of cocos from a .pth or PYTHONPATH both
-in python 2.x and 3.x; the same checkout can be pointed at the same time from both pythons.
+It is safe to point a checkout of cocos from a .pth or PYTHONPATH
 
 The same is valid for pyglet.

@@ -1,5 +1,12 @@
 Api changes and other compatibility notes
 
+cocos 0.6.8
+-----------
+
+Tested with python 3.6+ , python 2.x not supported
+No changes in cocos API
+Prefered pyglet 1.4.10+ (2.x unsupported, 1.5 unstable)
+
 cocos 0.6.7
 -----------
 
