@@ -70,8 +70,10 @@ def set_init_interceptor():
 
 def quit_pyglet_app():
     #sys.stderr.write('\nin quit_pyglet_app')
-    pyglet.app.exit()
-
+    #pyglet.app.exit()
+    director.terminate_app = True
+    director.window.close()
+    
 def take_snapshot_cocos_app(fname):
     pyglet.image.get_buffer_manager().get_color_buffer().save(fname)
     #sys.stderr.write('\nafter take_snapshot_cocos_app')

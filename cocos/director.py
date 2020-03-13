@@ -404,8 +404,14 @@ class Director(event.EventDispatcher):
         """
         self._set_scene(scene)
         # workaround pyglet 1.3 not calling on_draw if nothing scheduled (at least in Windows)
-        pyglet.clock.schedule_interval(lambda dt: None, 0.1)
+        # also does a defered close, outside of on_draw and on_key_.. to not
+        # emit spureous exception on console, see issue #334
+        pyglet.clock.schedule_interval(self.handle_closing, 0.1)
         event_loop.run()
+
+    def handle_closing(self, dt):
+        if self.terminate_app:
+            self.window.close()
 
     def set_recorder(self, framerate, template="frame-%d.png", duration=None):
         """Will replace the app clock so that now we can ensure a steady
@@ -451,8 +457,7 @@ class Director(event.EventDispatcher):
         if self.next_scene is not None or self.terminate_app:
             self._set_scene(self.next_scene)
 
-        if self.terminate_app:
-            pyglet.app.exit()
+        if self.terminate_app or self.scene is None:
             return
 
         self.window.clear()

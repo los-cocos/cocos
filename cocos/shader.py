@@ -40,6 +40,7 @@ from ctypes import byref, c_char, c_char_p, c_float, c_int, cast, create_string_
 
 from pyglet import gl
 
+import sys
 
 class GLSLException(Exception):
     pass
@@ -138,7 +139,16 @@ class Shader(object):
 
     def destroy(self):
         if self.shader != 0:
-            gl.glDeleteObjectARB(self.shader)
+            # try added to fix special case of spureous exception
+            # when terminating test_shader
+            try:
+                gl.glDeleteObjectARB(self.shader)
+            except ImportError:
+                if sys.meta_path is None:
+                    # Python is likely shutting down, ignore
+                    pass
+                else:
+                    raise
 
     def shaderType(self):
         raise NotImplementedError()
@@ -229,7 +239,16 @@ class ShaderProgram(object):
 
     def destroy(self):
         if self.program != 0:
-            gl.glDeleteObjectARB(self.program)
+            # try added to fix special case of spureous exception
+            # when terminating test_shader
+            try:
+                gl.glDeleteObjectARB(self.program)
+            except ImportError:
+                if sys.meta_path is None:
+                    # Python is likely shutting down, ignore
+                    pass
+                else:
+                    raise
 
     def setShader(self, shader):
         if isinstance(shader, FragmentShader):
