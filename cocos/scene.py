@@ -62,7 +62,7 @@ class Scene(cocosnode.CocosNode):
             music playback.
 
         Arguments:
-            children (list[Layer or Scene]):
+            children (union[Layer or Scene]):
                 Layers or Scenes that will be part of the scene.
                 They are automatically assigned a z-level from 0 to
                 num_children.
