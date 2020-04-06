@@ -316,6 +316,7 @@ def load_tmx(filename):
             firstgid = int(tag.attrib['firstgid'])
 
         name = tag.attrib['name']
+        tileset = None
 
         spacing = int(tag.attrib.get('spacing', 0))
         for c in tag.getchildren():
@@ -327,24 +328,39 @@ def load_tmx(filename):
                 tileset = TileSet.from_atlas(name, firstgid, path, tileset_tile_width,
                                              tileset_tile_height, row_padding=spacing,
                                              column_padding=spacing)
-                # TODO consider adding the individual tiles to the resource?
-                tilesets.append(tileset)
-                resource.add_resource(name, tileset)
             elif c.tag == 'tile':
-                # add properties to tiles in the tileset
-                gid = tileset.firstgid + int(c.attrib['id'])
-                tile = tileset[gid]
-                props = c.find('properties')
-                if props is None:
-                    continue
-                for p in props.findall('property'):
-                    # store additional properties.
-                    name = p.attrib['name']
-                    value = p.attrib['value']
-                    # TODO consider more type conversions?
-                    if value.isdigit():
-                        value = int(value)
-                    tile.properties[name] = value
+                try:
+                    # add properties to tiles in the tileset
+                    gid = tileset.firstgid + int(c.attrib['id'])
+                    tile = tileset[gid]
+                    props = c.find('properties')
+                    if props is None:
+                        continue
+                    for p in props.findall('property'):
+                        # store additional properties.
+                        name = p.attrib['name']
+                        value = p.attrib['value']
+                        # TODO consider more type conversions?
+                        if value.isdigit():
+                            value = int(value)
+                        tile.properties[name] = value
+                except (KeyError, AttributeError):
+                    # If we couldn't get the tile, then it doesn't coordinate to any existing tile, so it's a new tile
+                    if tileset is None:
+                        tileset = TileSet(name, {})
+                        tileset.firstgid = firstgid
+                    imgpath = resource.find_file(c.find('image').attrib['source'])
+                    id = int(c.attrib['id'])
+                    tile = Tile(tileset.firstgid + id, {},  pyglet.image.load(imgpath))
+                    tile.usertype = c.attrib['type']
+                    tileset[tileset.firstgid + id] = tile
+
+        if tileset is not None:
+            tilesets.append(tileset)
+            # TODO consider adding the individual tiles to the resource?
+            resource.add_resource(name, tileset)
+
+
 
     # now load all the layers
     for layer in map.findall('layer'):
@@ -407,6 +423,7 @@ def load_tmx(filename):
         resource.add_resource(layer.name, layer)
 
     return resource
+
 
 
 #
