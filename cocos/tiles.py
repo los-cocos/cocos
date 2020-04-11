@@ -264,13 +264,26 @@ def decompress_gzip(in_bytes):
     inp.close()
     return out_bytes
 
+def tmx_get_path(node_path, source_attrib):
+    """
+    In a tmx file a node can reference an external file using the "source"
+    attrib.
+    
+    If present, it will contain a relative path from the node path, and the
+    relpath will use the linux path separator even in Windows.
+    
+    If not present, content is embedded in the node.
+    """
+    fpath = os.path.join(os.path.dirname(node_path), source_attrib)
+    return fpath
 
 def load_tmx(filename):
     """Load some tile mapping resources from a TMX file.
     """
     resource = Resource(filename)
-
-    tree = ElementTree.parse(resource.path)
+    map_path = resource.path
+    
+    tree = ElementTree.parse(map_path)
     map = tree.getroot()
     if map.tag != 'map':
         raise ResourceError('document is <%s> instead of <map>' % map.name)
@@ -307,44 +320,17 @@ def load_tmx(filename):
     # load all the tilesets
     tilesets = []
     for tag in map.findall('tileset'):
+        firstgid = int(tag.attrib['firstgid'])
         if 'source' in tag.attrib:
-            firstgid = int(tag.attrib['firstgid'])
-            path = resource.find_file(tag.attrib['source'])
-            with open(path) as f:
+            tileset_path = tmx_get_path(map_path, tag.attrib['source'])
+            with open(tileset_path) as f:
                 tag = ElementTree.fromstring(f.read())
         else:
-            firstgid = int(tag.attrib['firstgid'])
-
-        name = tag.attrib['name']
-
-        spacing = int(tag.attrib.get('spacing', 0))
-        for c in tag.getchildren():
-            if c.tag == "image":
-                # create a tileset from the image atlas
-                path = resource.find_file(c.attrib['source'])
-                tileset_tile_height = int(tag.attrib.get('tileheight', tile_height))
-                tileset_tile_width = int(tag.attrib.get('tilewidth', tile_width))
-                tileset = TileSet.from_atlas(name, firstgid, path, tileset_tile_width,
-                                             tileset_tile_height, row_padding=spacing,
-                                             column_padding=spacing)
-                # TODO consider adding the individual tiles to the resource?
-                tilesets.append(tileset)
-                resource.add_resource(name, tileset)
-            elif c.tag == 'tile':
-                # add properties to tiles in the tileset
-                gid = tileset.firstgid + int(c.attrib['id'])
-                tile = tileset[gid]
-                props = c.find('properties')
-                if props is None:
-                    continue
-                for p in props.findall('property'):
-                    # store additional properties.
-                    name = p.attrib['name']
-                    value = p.attrib['value']
-                    # TODO consider more type conversions?
-                    if value.isdigit():
-                        value = int(value)
-                    tile.properties[name] = value
+            tileset_path = map_path
+        tileset = capture_tileset(tag, tileset_path, firstgid, tile_width, tile_height)
+        if tileset is not None:
+            tilesets.append(tileset)
+            resource.add_resource(tileset.id, tileset)
 
     # now load all the layers
     for layer in map.findall('layer'):
@@ -407,6 +393,52 @@ def load_tmx(filename):
         resource.add_resource(layer.name, layer)
 
     return resource
+
+def capture_tileset(tileset_tag, tileset_path, firstgid, tile_width, tile_height): 
+    name = tileset_tag.attrib['name']
+    image_tag = tileset_tag.find("image")
+    if image_tag is None:
+        # tileset with individual images, each tile has its own image
+        # unsupported ATM 
+        return None
+    else:
+        # tileset from spritesheet
+        # create a tileset from the image atlas
+        spacing = int(tileset_tag.attrib.get('spacing', 0))
+        if 'source' in image_tag.attrib:
+            image_path = tmx_get_path(tileset_path, image_tag.attrib['source'])
+        else:
+            # malformed file missing "source" or very old file which
+            # embeds the image content in a <data> child node.
+            # unsuported in modern Tiled editor, cocos will not support it
+            raise(TmxUnsupportedVariant("<image> missing 'source' attrib"))
+        # create a tileset from the image atlas
+        tileset_tile_height = int(tileset_tag.attrib.get('tileheight', tile_height))
+        tileset_tile_width = int(tileset_tag.attrib.get('tilewidth', tile_width))
+        tileset = TileSet.from_atlas(name, firstgid, image_path, tileset_tile_width,
+                                     tileset_tile_height, row_padding=spacing,
+                                     column_padding=spacing)
+        # TODO consider adding the individual tiles to the resource?
+        for c in tileset_tag:
+            if c.tag == "image":
+                # seen before,
+                pass
+            elif c.tag == 'tile':
+                # add properties to tiles in the tileset
+                gid = tileset.firstgid + int(c.attrib['id'])
+                tile = tileset[gid]
+                props = c.find('properties')
+                if props is None:
+                    continue
+                for p in props.findall('property'):
+                    # store additional properties.
+                    name = p.attrib['name']
+                    value = p.attrib['value']
+                    # TODO consider more type conversions?
+                    if value.isdigit():
+                        value = int(value)
+                    tile.properties[name] = value
+        return tileset
 
 
 #
