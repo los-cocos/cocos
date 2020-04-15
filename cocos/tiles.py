@@ -404,58 +404,8 @@ def load_tmx(filename):
 
     # now load all the layers
     for layer in map.findall('layer'):
-        data = layer.find('data')
-        if data is None:
-            raise ValueError('layer %s does not contain <data>' % layer.name)
-
-        encoding = data.attrib.get('encoding')
-        compression = data.attrib.get('compression')
-        if encoding is None:
-            # tiles data as xml
-            data = [int(tile.attrib.get('gid')) for tile in data.findall('tile')]
-        else:
-            data = data.text.strip()
-            if encoding == 'csv':
-                data.replace('\n', '')
-                data = [int(s) for s in data.split(',')]
-            elif encoding == 'base64':
-                data = decode_base64(data)
-                if compression == 'zlib':
-                    data = decompress_zlib(data)
-                elif compression == 'gzip':
-                    data = decompress_gzip(data)
-                elif compression is None:
-                    pass
-                else:
-                    raise ResourceError('Unknown compression method: %r' % compression)
-                data = struct.unpack(str('<%di' % (len(data) // 4)), data)
-            else:
-                raise TmxUnsupportedVariant("Unsupported tiles layer format " +
-                                            "use 'csv', 'xml' or one of " +
-                                            "the 'base64'")
-
-        assert len(data) == width * height
-
-        cells = [[None] * height for x in range(width)]
-        for n, gid in enumerate(data):
-            if gid < 1:
-                tile = None
-            else:
-                # UGH
-                for ts in tilesets:
-                    if gid in ts:
-                        tile = ts[gid]
-                        break
-            i = n % width
-            j = height - (n // width + 1)
-            cells[i][j] = cell_cls(i, j, tile_width, tile_height, {}, tile)
-
-        id = layer.attrib['name']
-
-        m = layer_cls(id, tile_width, tile_height, cells, None, {})
-        m.visible = int(layer.attrib.get('visible', 1))
-
-        resource.add_resource(id, m)
+        m = capture_layer(layer, tilesets, width, height, cell_cls, layer_cls, tile_width, tile_height)
+        resource.add_resource(m.id, m)
 
     # finally, object groups
     for tag in map.findall('objectgroup'):
@@ -510,6 +460,58 @@ def capture_tileset(tileset_tag, tileset_path, firstgid, tile_width, tile_height
                     tile.properties[name] = value
         return tileset
 
+def capture_layer(layer, tilesets, width, height, cell_cls, layer_cls, tile_width, tile_height):
+    data = layer.find('data')
+    if data is None:
+        raise ValueError('layer %s does not contain <data>' % layer.name)
+
+    encoding = data.attrib.get('encoding')
+    compression = data.attrib.get('compression')
+    if encoding is None:
+        # tiles data as xml
+        data = [int(tile.attrib.get('gid')) for tile in data.findall('tile')]
+    else:
+        data = data.text.strip()
+        if encoding == 'csv':
+            data.replace('\n', '')
+            data = [int(s) for s in data.split(',')]
+        elif encoding == 'base64':
+            data = decode_base64(data)
+            if compression == 'zlib':
+                data = decompress_zlib(data)
+            elif compression == 'gzip':
+                data = decompress_gzip(data)
+            elif compression is None:
+                pass
+            else:
+                raise ResourceError('Unknown compression method: %r' % compression)
+            data = struct.unpack(str('<%di' % (len(data) // 4)), data)
+        else:
+            raise TmxUnsupportedVariant("Unsupported tiles layer format " +
+                                        "use 'csv', 'xml' or one of " +
+                                        "the 'base64'")
+
+    assert len(data) == width * height
+
+    cells = [[None] * height for x in range(width)]
+    for n, gid in enumerate(data):
+        if gid < 1:
+            tile = None
+        else:
+            # UGH
+            for ts in tilesets:
+                if gid in ts:
+                    tile = ts[gid]
+                    break
+        i = n % width
+        j = height - (n // width + 1)
+        cells[i][j] = cell_cls(i, j, tile_width, tile_height, {}, tile)
+
+    id = layer.attrib['name']
+
+    m = layer_cls(id, tile_width, tile_height, cells, None, {})
+    m.visible = int(layer.attrib.get('visible', 1))
+    return m
 
 #
 # XML PROPERTY PARSING
