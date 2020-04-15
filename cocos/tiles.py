@@ -358,6 +358,10 @@ def load_tmx(filename):
     if map.tag != 'map':
         raise ResourceError('document is <%s> instead of <map>' % map.name)
 
+    tilesets = OrderedDict()
+    layeroids = OrderedDict()
+    properties = OrderedDict()
+
     width = int(map.attrib['width'])
     height = int(map.attrib['height'])
 
@@ -387,30 +391,29 @@ def load_tmx(filename):
     else:
         raise ValueError("Unsuported tiling style, must be 'orthogonal' or 'hexagonal'")
 
-    # load all the tilesets
-    tilesets = []
-    for tag in map.findall('tileset'):
-        firstgid = int(tag.attrib['firstgid'])
-        if 'source' in tag.attrib:
-            tileset_path = tmx_get_path(map_path, tag.attrib['source'])
-            with open(tileset_path) as f:
-                tag = ElementTree.fromstring(f.read())
-        else:
-            tileset_path = map_path
-        tileset = capture_tileset(tag, tileset_path, firstgid, tile_width, tile_height)
-        if tileset is not None:
-            tilesets.append(tileset)
-            resource.add_resource(tileset.id, tileset)
+    for tag in map:
+        if tag.tag == 'tileset':
+            firstgid = int(tag.attrib['firstgid'])
+            if 'source' in tag.attrib:
+                tileset_path = tmx_get_path(map_path, tag.attrib['source'])
+                with open(tileset_path) as f:
+                    tag = ElementTree.fromstring(f.read())
+            else:
+                tileset_path = map_path
+            tileset = capture_tileset(tag, tileset_path, firstgid, tile_width, tile_height)
+            if tileset is not None:
+                tilesets[tileset.id] = tileset
+                resource.add_resource(tileset.id, tileset)
+            continue
 
-    # now load all the layers
-    for layer in map.findall('layer'):
-        m = capture_layer(layer, tilesets, width, height, cell_cls, layer_cls, tile_width, tile_height)
-        resource.add_resource(m.id, m)
-
-    # finally, object groups
-    for tag in map.findall('objectgroup'):
-        layer = TmxObjectLayer.fromxml(tag, tilesets, map_height_pixels)
-        resource.add_resource(layer.name, layer)
+        elif tag.tag == "layer":
+            m = capture_layer(tag, tilesets, width, height, cell_cls, layer_cls, tile_width, tile_height)
+            resource.add_resource(m.id, m)
+            continue
+        
+        elif tag.tag == 'objectgroup':
+            layer = TmxObjectLayer.fromxml(tag, tilesets, map_height_pixels)
+            resource.add_resource(layer.name, layer)
 
     return resource
 
@@ -499,7 +502,7 @@ def capture_layer(layer, tilesets, width, height, cell_cls, layer_cls, tile_widt
             tile = None
         else:
             # UGH
-            for ts in tilesets:
+            for ts in tilesets.values():
                 if gid in ts:
                     tile = ts[gid]
                     break
