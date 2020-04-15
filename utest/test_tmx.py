@@ -22,8 +22,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 import xml.etree.ElementTree as ET
 import cocos.layer
-from cocos.tiles import TmxObject
+from cocos.tiles import TmxObject, tmx_get_properties, TmxPropertyValueError
 from cocos.euclid import Vector2 as v2
+
+import pytest
 
 class Test_TmxObject(object):
     # all object samples used a 4 x 3 grid, with tile size 64 x 32
@@ -314,3 +316,208 @@ class Test_TmxObject(object):
         assert vertices_gl_absolute == vertices_gl_abs
         # and, being (px, py) the bottomleft corner of bounding box must be
         assert 0 == min([y for x,y in tmx_obj.points])
+
+class Test_tmx_get_properties:
+    def test_no_properties(self):
+        text = r"""
+        <aaa>
+        </aaa>"""
+        node = ET.fromstring(text)
+        res = tmx_get_properties(node, "")
+        assert res == (None, None)
+
+    def test_empty_properties(self):
+        text = r"""
+        <aaa>
+         <properties>
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        res = tmx_get_properties(node, "")
+        assert len(res[0]) == 0 and len(res[1]) == 0
+
+    def test_default_type(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" value="the_value"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        d, dtypes = tmx_get_properties(node, "")
+        assert len(d) == 1 and len(dtypes) == 1
+        assert d["the_name"] == "the_value"
+        assert dtypes["the_name"] == "string"
+
+    def test_string_type(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="string" value="the_value"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        d, dtypes = tmx_get_properties(node, "")
+        assert len(d) == 1 and len(dtypes) == 1
+        assert d["the_name"] == "the_value"
+        assert dtypes["the_name"] == "string"
+    
+    def test_bool_type__true(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="bool" value="true"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        d, dtypes = tmx_get_properties(node, "")
+        assert len(d) == 1 and len(dtypes) == 1
+        assert d["the_name"] is True
+        assert dtypes["the_name"] == "bool"
+                
+    def test_bool_type__false(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="bool" value="false"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        d, dtypes = tmx_get_properties(node, "")
+        assert len(d) == 1 and len(dtypes) == 1
+        assert d["the_name"] is False
+        assert dtypes["the_name"] == "bool"
+
+    def test_bool_type__bad_value(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="bool" value="asas"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        with pytest.raises(TmxPropertyValueError) as excinfo:
+            d, dtypes = tmx_get_properties(node, "")
+        assert "Boolean property" in str(excinfo.value)
+        
+    def test_int_type__good_value(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="int" value="123"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        d, dtypes = tmx_get_properties(node, "")
+        assert len(d) == 1 and len(dtypes) == 1
+        assert d["the_name"] == 123
+        assert dtypes["the_name"] == "int"
+
+    def test_int_type__bad_value(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="int" value="1z"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        with pytest.raises(TmxPropertyValueError) as excinfo:
+            d, dtypes = tmx_get_properties(node, "")
+        assert "int property" in str(excinfo.value)
+
+    def test_float_type__good_value(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="float" value="1.23"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        d, dtypes = tmx_get_properties(node, "")
+        assert len(d) == 1 and len(dtypes) == 1
+        assert d["the_name"] == 1.23
+        assert dtypes["the_name"] == "float"
+
+    def test_float_type__bad_value(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="float" value="1z"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        with pytest.raises(TmxPropertyValueError) as excinfo:
+            d, dtypes = tmx_get_properties(node, "")
+        assert "float property" in str(excinfo.value)
+
+    def test_color_type__good_value(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="color" value="#FF010203"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        d, dtypes = tmx_get_properties(node, "")
+        assert len(d) == 1 and len(dtypes) == 1
+        assert d["the_name"] == (1, 2, 3, 255)
+        assert dtypes["the_name"] == "color"
+
+    def test_color_type__bad_value(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="color" value="1z"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        with pytest.raises(TmxPropertyValueError) as excinfo:
+            d, dtypes = tmx_get_properties(node, "")
+        assert "color property" in str(excinfo.value)
+
+    def test_file_type(self):
+        # ballpark test to not handle OS differences
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="file" value="shortname.txt"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        d, dtypes = tmx_get_properties(node, "basedir")
+        assert len(d) == 1 and len(dtypes) == 1
+        assert dtypes["the_name"] == "file"
+        path = d["the_name"]
+        assert "basedir" in path
+        assert "shortname.txt" in path
+        
+    def test_unknown_type(self):
+        # expected to emit a TmxPropertyTypeUnknownWarning
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="foo" value="the_value"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        d, dtypes = tmx_get_properties(node, "")
+        assert len(d) == 1 and len(dtypes) == 1
+        assert d["the_name"] == "the_value"
+        assert dtypes["the_name"] == "foo"
+
+    def test_two_property_s(self):
+        text = r"""
+        <aaa>
+         <properties>
+           <property name="the_name" type="string" value="the_value"/>           
+           <property name="other_name" type="int" value="123"/>           
+         </properties>
+        </aaa>"""
+        node = ET.fromstring(text)
+        d, dtypes = tmx_get_properties(node, "")
+        assert len(d) == 2 and len(dtypes) == 2
+        assert d["the_name"] == "the_value"
+        assert dtypes["the_name"] == "string"
+        
+        assert d["other_name"] == 123
+        assert dtypes["other_name"] == "int"

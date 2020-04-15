@@ -44,10 +44,12 @@ import six
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: resource.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 
+from collections import OrderedDict
 import os
 from math import ceil, sqrt, floor
 import struct
 import weakref
+import warnings
 from xml.etree import ElementTree
 
 import pyglet
@@ -76,6 +78,12 @@ class TilesPropertyWithoutValue(Exception):
 class TmxUnsupportedVariant(Exception):
     pass
 
+
+class TmxPropertyValueError(Exception):
+    pass
+
+class TmxPropertyTypeUnknownWarning(UserWarning):
+    pass
 
 class Resource(object):
     """Load some tile mapping resources from an XML file.
@@ -276,6 +284,68 @@ def tmx_get_path(node_path, source_attrib):
     """
     fpath = os.path.join(os.path.dirname(node_path), source_attrib)
     return fpath
+
+def tmx_get_properties(node, map_path):
+    """
+    type of the property can be string (default), int, float, bool, color or
+    file; file value in the xml is relative to the map element, here it will
+    be returned as an abspath
+    """
+    properties_xml = node.find("properties")
+    if properties_xml is None:
+        properties = None
+        property_types = None
+    else:
+        properties = OrderedDict()
+        property_types = OrderedDict()
+        for p in properties_xml.findall("property"):
+            name = p.attrib["name"]
+            svalue = p.attrib["value"]
+            ttype = p.attrib.get("type", "string")
+            if ttype == "string":
+                value = svalue
+            elif ttype == "bool":
+                value = (svalue == "true")
+                if not value and svalue != "false":
+                    msg = "Boolean property '%s' has value '%s'" % (name, svalue)
+                    raise TmxPropertyValueError(msg)
+            elif ttype == "int":
+                try:
+                    value = int(svalue)
+                except ValueError:
+                    msg = "int property '%s' has value '%s'" % (name, svalue)
+                    raise TmxPropertyValueError(msg)
+            elif ttype == "float":
+                try:
+                    value = float(svalue)
+                except ValueError:
+                    msg = "float property '%s' has value '%s'" % (name, svalue)
+                    raise TmxPropertyValueError(msg)
+            elif ttype == "color":
+                # expect #AARRGGBB
+                bad_value = len(svalue) != 9
+                if not bad_value:
+                    try:
+                        n = int(svalue[1:], 16)
+                    except ValueError:
+                        bad_value = True
+                if bad_value:
+                    fmt = "color property '%s' expected as #AARRGGBB has value '%s'"
+                    msg = fmt % (name, svalue)
+                    raise TmxPropertyValueError(msg)
+                value = ((n>>16) & 0xff, (n>>8) & 0xff, n & 0xff, (n>>24) & 0xff)
+            elif ttype == "file":
+                # file is relative to the map element
+                value = os.path.abspath(os.path.join(map_path, svalue))
+            else:
+                # unknown type, warn and handle as "string"
+                msg = "property '%s' has unknown type '%s'" % (name, ttype)
+                warnings.warn(TmxPropertyTypeUnknownWarning(msg))
+                value = svalue
+    
+            properties[name] = value
+            property_types[name] = ttype
+    return properties, property_types
 
 def load_tmx(filename):
     """Load some tile mapping resources from a TMX file.

@@ -3,7 +3,7 @@ Running:
 
 tests with filenames like test_p_* depends on py.test
 py.test can run tests written for unittest.
-latest py.test version used : pytest-5.1.2
+latest py.test version used : pytest-5.4.1
 
 Note: in win7 pytest-5.1.2 does not work with python 3.7.4; use 3.7.3, 3.7.5 or 3.6.8
 https://github.com/pytest-dev/pytest/issues/5724 ,
