@@ -400,7 +400,7 @@ def load_tmx(filename):
                     tag = ElementTree.fromstring(f.read())
             else:
                 tileset_path = map_path
-            tileset = capture_tileset(tag, tileset_path, firstgid, tile_width, tile_height)
+            tileset = capture_tileset(map_path, tag, tileset_path, firstgid, tile_width, tile_height)
             if tileset is not None:
                 tilesets[tileset.id] = tileset
                 resource.add_resource(tileset.id, tileset)
@@ -417,7 +417,7 @@ def load_tmx(filename):
 
     return resource
 
-def capture_tileset(tileset_tag, tileset_path, firstgid, tile_width, tile_height): 
+def capture_tileset(map_path, tileset_tag, tileset_path, firstgid, tile_width, tile_height): 
     name = tileset_tag.attrib['name']
     image_tag = tileset_tag.find("image")
     uses_spritesheet = (image_tag is not None)
@@ -447,17 +447,9 @@ def capture_tileset(tileset_tag, tileset_path, firstgid, tile_width, tile_height
         # add properties to tiles in the tileset
         gid = tileset.firstgid + int(c.attrib['id'])
         tile = tileset[gid]
-        props = c.find('properties')
-        if props is None:
-            continue
-        for p in props.findall('property'):
-            # store additional properties.
-            name = p.attrib['name']
-            value = p.attrib['value']
-            # TODO consider more type conversions?
-            if value.isdigit():
-                value = int(value)
-            tile.properties[name] = value
+        property_values, property_types = tmx_get_properties(c, map_path)
+        tile.properties = property_values
+        tile.property_types = property_types
     return tileset
 
 def capture_layer(layer, tilesets, width, height, cell_cls, layer_cls, tile_width, tile_height):
