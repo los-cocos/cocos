@@ -420,12 +420,8 @@ def load_tmx(filename):
 def capture_tileset(tileset_tag, tileset_path, firstgid, tile_width, tile_height): 
     name = tileset_tag.attrib['name']
     image_tag = tileset_tag.find("image")
-    if image_tag is None:
-        # tileset with individual images, each tile has its own image
-        # unsupported ATM 
-        return None
-    else:
-        # tileset from spritesheet
+    uses_spritesheet = (image_tag is not None)
+    if uses_spritesheet:
         # create a tileset from the image atlas
         spacing = int(tileset_tag.attrib.get('spacing', 0))
         if 'source' in image_tag.attrib:
@@ -441,27 +437,28 @@ def capture_tileset(tileset_tag, tileset_path, firstgid, tile_width, tile_height
         tileset = TileSet.from_atlas(name, firstgid, image_path, tileset_tile_width,
                                      tileset_tile_height, row_padding=spacing,
                                      column_padding=spacing)
-        # TODO consider adding the individual tiles to the resource?
-        for c in tileset_tag:
-            if c.tag == "image":
-                # seen before,
-                pass
-            elif c.tag == 'tile':
-                # add properties to tiles in the tileset
-                gid = tileset.firstgid + int(c.attrib['id'])
-                tile = tileset[gid]
-                props = c.find('properties')
-                if props is None:
-                    continue
-                for p in props.findall('property'):
-                    # store additional properties.
-                    name = p.attrib['name']
-                    value = p.attrib['value']
-                    # TODO consider more type conversions?
-                    if value.isdigit():
-                        value = int(value)
-                    tile.properties[name] = value
-        return tileset
+    else:
+        # tileset with individual images, each tile has its own image
+        # unsupported ATM
+        return None
+
+    # TODO consider adding the individual tiles to the resource?
+    for c in tileset_tag.findall("tile"):
+        # add properties to tiles in the tileset
+        gid = tileset.firstgid + int(c.attrib['id'])
+        tile = tileset[gid]
+        props = c.find('properties')
+        if props is None:
+            continue
+        for p in props.findall('property'):
+            # store additional properties.
+            name = p.attrib['name']
+            value = p.attrib['value']
+            # TODO consider more type conversions?
+            if value.isdigit():
+                value = int(value)
+            tile.properties[name] = value
+    return tileset
 
 def capture_layer(layer, tilesets, width, height, cell_cls, layer_cls, tile_width, tile_height):
     data = layer.find('data')
