@@ -738,19 +738,20 @@ class TileSet(dict):
                                               atlas[j, i].y,
                                               atlas[j, i].width,
                                               atlas[j, i].height)
-
-                # Set texture clamping to avoid mis-rendering subpixel edges
-                tx = tile_image.get_texture()
-                gl.glBindTexture(tx.target,  tx.id)
-                gl.glTexParameteri(tx.target,
-                                   gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
-                gl.glTexParameteri(tx.target,
-                                   gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
-
-                ts[id] = Tile(id, {}, tile_image)
+                ts[id] = ts.get_tile(id, tile_image)
                 id += 1
         return ts
 
+    def get_tile(self, gid, texture_region):
+        # Set texture clamping to avoid mis-rendering subpixel edges
+        tx = texture_region.get_texture()
+        gl.glBindTexture(tx.target,  tx.id)
+        gl.glTexParameteri(tx.target,
+                           gl.GL_TEXTURE_WRAP_S, gl.GL_CLAMP_TO_EDGE)
+        gl.glTexParameteri(tx.target,
+                           gl.GL_TEXTURE_WRAP_T, gl.GL_CLAMP_TO_EDGE)
+
+        return Tile(gid, {}, texture_region)
 
 #
 # RECT AND HEX MAPS
