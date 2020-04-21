@@ -439,13 +439,33 @@ def capture_tileset(map_path, tileset_tag, tileset_path, firstgid, tile_width, t
                                      column_padding=spacing)
     else:
         # tileset with individual images, each tile has its own image
-        # unsupported ATM
-        return None
+        texture_bin = pyglet.image.atlas.TextureBin()
+        tileset = TileSet(name, {})
 
     # TODO consider adding the individual tiles to the resource?
     for c in tileset_tag.findall("tile"):
+        local_id = int(c.attrib["id"])
+        gid = firstgid + local_id
+        if not uses_spritesheet:
+            image_tag = c.find("image")
+            if image_tag is None:
+                fmt = "In tileset '%s', <tile> with id=%d don't have <image> child"
+                msg = fmt % (name, local_id)
+                raise(TmxUnsupportedVariant(msg))
+            if 'source' in image_tag.attrib:
+                image_path = tmx_get_path(tileset_path, image_tag.attrib['source'])
+                image = pyglet.image.load(image_path)
+            else:
+                # malformed file missing "source" or very old file which
+                # embeds the image content in a <data> child node.
+                # unsuported in modern Tiled editor, cocos will not support it
+                fmt = "In tileset '%s', <tile> with id=%d has <image> missing 'source' attrib"
+                msg = fmt % (name, local_id)
+                raise(TmxUnsupportedVariant(msg))
+            tile_image = texture_bin.add(image)
+            tileset[gid] = tileset.get_tile(gid, tile_image)
+        
         # add properties to tiles in the tileset
-        gid = tileset.firstgid + int(c.attrib['id'])
         tile = tileset[gid]
         property_values, property_types = tmx_get_properties(c, map_path)
         tile.properties = property_values
