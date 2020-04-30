@@ -230,8 +230,6 @@ class Director(event.EventDispatcher):
                 False: your app must include logic to deal with different window
                 sizes along the session.
                 Defaults to False
-            `do_not_scale` : bool
-                Deprecated. The logical negation of autoscale
             `audio_backend` : string
                 one in ['pyglet','sdl']. Defaults to 'pyglet' for legacy support.
             `audio` : dict or None
@@ -291,37 +289,13 @@ class Director(event.EventDispatcher):
 
         # pop out the Cocos-specific flags
 
-        # 'autoscale' / 'do_not_scale' - Scheduled for cleanup at v0.7
-        if 'do_not_scale' in kwargs:
-            warnings.warn("'do_not_scale' kw-param in director.init is deprecated, use 'autoscale'")
-            if 'autoscale' in kwargs:
-                warnings.warn("Conflict between deprecated 'do_not_scale' and 'autoscale', " +
-                              "'autoscale' wins")
-                self.autoscale = kwargs.pop('autoscale')
-            else:
-                self.autoscale = not kwargs.pop('do_not_scale')
-        else:
-            self.autoscale = kwargs.pop('autoscale', True)
-
-        def _get_do_not_scale_window():
-            warnings.warn('Access to deprecated director.do_not_scale_window')
-            return not self.autoscale
-
-        def _set_do_not_scale_window(v):
-            warnings.warn('Access to deprecated director.do_not_scale_window')
-            self.autoscale = not v
-        do_not_scale_window = property(_get_do_not_scale_window, _set_do_not_scale_window)
+        self.autoscale = kwargs.pop('autoscale', True)
 
         audio_backend = kwargs.pop('audio_backend', 'pyglet')
         audio_settings = kwargs.pop('audio', {})
 
-        # handle pyglet 1.1.x vs 1.2dev differences in fullscreen
         self._window_virtual_width = kwargs.get('width', None)
         self._window_virtual_height = kwargs.get('height', None)
-        if pyglet.version.startswith('1.1') and kwargs.get('fullscreen', False):
-            # pyglet 1.1.x dont allow fullscreen with explicit width or height
-            kwargs.pop('width', 0)
-            kwargs.pop('height', 0)
 
         #: pyglet's window object
         self.window = window.Window(*args, **kwargs)
@@ -621,9 +595,6 @@ class Director(event.EventDispatcher):
             # setting viewport geometry, not handling an event
             return
 
-        # deprecated - see issue 154
-        self.dispatch_event("on_resize", width, height)
-
         self.dispatch_event("on_cocos_resize", self._usable_width, self._usable_height)
 
         # dismiss the pyglet BaseWindow default 'on_resize' handler
@@ -653,9 +624,6 @@ class Director(event.EventDispatcher):
         if self._resize_no_events:
             # setting viewport geometry, not handling an event
             return
-
-        # deprecated - see issue 154
-        self.dispatch_event("on_resize", width, height)
 
         self.dispatch_event("on_cocos_resize", self._usable_width, self._usable_height)
 
@@ -726,5 +694,4 @@ director.interpreter_locals["cocos"] = cocos
 
 Director.register_event_type('on_push')
 Director.register_event_type('on_pop')
-Director.register_event_type('on_resize')
 Director.register_event_type('on_cocos_resize')

@@ -138,11 +138,11 @@ class PythonInterpreterLayer(ColorLayer):
         self.caret = caret.Caret(self.layout, color=self.cfg['caret.color'])
         self.caret.on_activate()
 
-        self.on_resize(vw, vh)
+        self.on_cocos_resize(vw, vh)
 
         self.start_of_line = len(self.document.text)
 
-    def on_resize(self, x, y):
+    def on_cocos_resize(self, x, y):
         vw, vh = director.get_window_size()
         self.layout.begin_update()
         self.layout.height = vh
