@@ -3,22 +3,29 @@ Api changes and other compatibility notes
 cocos 0.6.9
 -----------
 
- - Removed deprecated features
-     - Director.init : kwparam do_not_scale removed, use its negation, kwparam autoscale
-     - Director will not publish an 'on_resize' event, use the 'on_cocos_resize' Director event, see issue #154
+**Removed deprecated features**
 
-TMX related changes
- - properties for nodes in a tmx (Tiled Editor) file were captured only as int or str,
-   now all types in Tiled 1.3 are traslated, as in
-     + 'string' -> str
-     + 'int' -> int
-     + 'bool' -> bool
-     + 'float' -> float
-     + 'color' #AARRGGBB -> tuple color4u, (intRR, intGG, intBB, intAA)
-     + 'file' -> os.abspath(os.path.join(map_path, value))
+- Director.init : kwparam do_not_scale removed, use its negation, kwparam autoscale
+- Director will not publish an 'on_resize' event, use the 'on_cocos_resize' Director event, see issue #154
 
-   User code that parsed a property to do conversion will need to be adjusted.
-   
+**TMX related changes**
+
+- properties for nodes in a tmx (Tiled Editor) file were captured only as int or str, now all types in Tiled 1.3 are traslated, as in
+
+ + 'string' -> str
+ + 'int' -> int
+ + 'bool' -> bool
+ + 'float' -> float
+ + 'color' #AARRGGBB -> tuple color4u, (intRR, intGG, intBB, intAA)
+ + 'file' -> os.abspath(os.path.join(map_path, value))
+
+ User code that parsed a property to do conversion will need to be adjusted.
+	
+- path resolution in tmx resources now follow the Tiled Editor spec
+
+  + a path in a "source" attrib is relative to the node where the "source" happens
+  + a property of type "file" is relative to the <map> node  
+
 cocos 0.6.8
 -----------
 
