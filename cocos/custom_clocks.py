@@ -119,7 +119,13 @@ def set_app_clock(clock):
         # pyglet.app.base.EventLoop._run_estimated murks the water by accessing
         # the clock's time provider (which is not in sync with our fake time),
         # so use _run instead
-        pyglet.app.event_loop._run_estimated = pyglet.app.event_loop._run
+        if hasattr(pyglet.app.event_loop, "_run"):
+            # pyglet before 2020 04 06, commit 97659a5aca, roughtly vs < 1.5.3
+            pyglet.app.event_loop._run_estimated = pyglet.app.event_loop._run
+        else:
+            # pyglet after 2020 04 06, commit 97659a5aca, vs >  1.5.3
+            # eliminated _run and _run-estimates, now uses .run
+            pass           
 
 
 class ScreenReaderClock(pyglet.clock.Clock):
