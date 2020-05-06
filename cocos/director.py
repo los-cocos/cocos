@@ -88,15 +88,13 @@ Other functions you can use are:
 
     * ``director.get_window_size():``
       Returns an (x,y) pair with the _logical_ dimensions of the display.
-      The display might have been resized, but coordinates are always relative
-      to this size. If you need the _physical_ dimensions, check the dimensions
-      of ``director.window``
-
+      When autoscale=True was specified in director.init the __logical__
+      dimensions will remain the same even if the windows have been resized
 
     * ``get_virtual_coordinates(self, x, y):``
-      Transforms coordinates that belongs the real (physical) window size, to
-      the coordinates that belongs to the virtual (logical) window. Returns
-      an x,y pair in logical coordinates.
+      Returns the logical coordinates for the screen coordinates x, y
+      When using autoscale=True the x, y in pyglet's mouse events should be
+      transformed to logical coordinates. 
 
 The director also has some useful attributes:
 
@@ -294,31 +292,32 @@ class Director(event.EventDispatcher):
         audio_backend = kwargs.pop('audio_backend', 'pyglet')
         audio_settings = kwargs.pop('audio', {})
 
-        self._window_virtual_width = kwargs.get('width', None)
-        self._window_virtual_height = kwargs.get('height', None)
-
         #: pyglet's window object
         self.window = window.Window(*args, **kwargs)
 
         # complete the viewport geometry info, both virtual and real,
         # also set the appropriate on_resize handler
-        if self._window_virtual_width is None:
-            self._window_virtual_width = self.window.width
-        if self._window_virtual_height is None:
-            self._window_virtual_height = self.window.height
-
-        self._window_virtual_aspect = (
-            self._window_virtual_width / float(self._window_virtual_height))
-
-        self._offset_x = 0
-        self._offset_y = 0
-
+        width = kwargs.get('width', self.window.width)
+        height = kwargs.get('height', self.window.height)
+ 
         if self.autoscale:
+            self._window_virtual_width = width
+            self._window_virtual_height = height
+            self._window_virtual_aspect = (
+                self._window_virtual_width / float(self._window_virtual_height))
+            self._offset_x = 0
+            self._offset_y = 0
+
+            self.get_window_size = self._get_window_size_autoscale
+            self.get_virtual_coordinates = self.get_virtual_coordinates_autoscale
             resize_handler = self.scaled_resize_window
             self.set_projection = self.set_projection3D
         else:
+            self.get_window_size = self._get_window_size_no_autoscale
+            self.get_virtual_coordinates = self.get_virtual_coordinates_no_autoscale
             resize_handler = self.unscaled_resize_window
             self.set_projection = self.set_projection2D
+
         # the offsets and size for the viewport will be proper after this
         self._resize_no_events = True
         resize_handler(self.window.width, self.window.height)
@@ -532,9 +531,20 @@ class Director(event.EventDispatcher):
         :rtype: (x,y)
         :returns: The size of the window when it was created
         """
+        raise NotImplemented
+        #return self._window_virtual_width, self._window_virtual_height
+
+    def _get_window_size_autoscale(self):
         return self._window_virtual_width, self._window_virtual_height
+        
+    def _get_window_size_no_autoscale(self):
+        return self.window.width, self.window.height 
 
     def get_virtual_coordinates(self, x, y):
+        "placeholder, will be replaced"
+        raise NotImplemented
+
+    def get_virtual_coordinates_autoscale(self, x, y):
         """Transforms coordinates that belongs the *real* window size, to the
         coordinates that belongs to the *virtual* window.
 
@@ -555,6 +565,9 @@ class Director(event.EventDispatcher):
         adjust_y = (self.window.height * y_diff - self._window_virtual_height) / 2
 
         return int(x_diff * x) - adjust_x, int(y_diff * y) - adjust_y
+
+    def get_virtual_coordinates_no_autoscale(self, x, y):
+        return x, y
 
     def scaled_resize_window(self, width, height):
         """One of two possible methods that are called when the main window is resized.
