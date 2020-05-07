@@ -299,6 +299,7 @@ class Director(event.EventDispatcher):
         # also set the appropriate on_resize handler
         width = kwargs.get('width', self.window.width)
         height = kwargs.get('height', self.window.height)
+        self.resizable = kwargs.get('resizable', False)
  
         if self.autoscale:
             self._window_virtual_width = width
@@ -610,8 +611,17 @@ class Director(event.EventDispatcher):
 
         self.dispatch_event("on_cocos_resize", self._usable_width, self._usable_height)
 
+        # eliminate ugly padding bands used to keep the aspect ratio truogh resizes
+        if self.resizable and (ox > 1 or oy > 1):
+            pyglet.clock.schedule(self.post_resize_adjust)
+
         # dismiss the pyglet BaseWindow default 'on_resize' handler
         return pyglet.event.EVENT_HANDLED
+
+    def post_resize_adjust(self, _):
+        "resize to eliminate the filling bands introduced"
+        if not self.window.fullscreen:
+            self.window.set_size(self._usable_width, self._usable_height)
 
     def unscaled_resize_window(self, width, height):
         """One of two possible methods that are called when the main window is resized.
