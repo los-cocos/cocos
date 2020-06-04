@@ -10,6 +10,8 @@ from ctypes import *
 
 from . import dll
 
+import cocos.audio.SDL as SDL
+
 SDL_GetTicks = dll.function(
     'SDL_GetTicks',
     '''Get the number of milliseconds since the SDL library initialization.
