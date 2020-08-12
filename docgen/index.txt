@@ -30,6 +30,8 @@ API Reference
    
    api/cocos
 
+`bundled euclid docs <../euclid.html>`_
+
 Compatibility Notes
 ====================
 

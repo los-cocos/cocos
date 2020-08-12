@@ -22,7 +22,7 @@ Please use 4 spaces indentation.
 Tabs usually break things, convert them to spaces.
 
 Inline literal text: \`\`my_literal_text\`\` -> ``my_literal_text``.
-(in link syntax ``~`` is a modidier that supress the high parts in a dotted name). 
+(in link syntax ``~`` is a modifier that suppress the high parts in a dotted name). 
  
 Link to a cocos module: ``:mod:`~cocos.cocosnode` ->`` :mod:`~cocos.cocosnode`
 
@@ -60,12 +60,15 @@ Link to a section or some arbitrary point in any document:
 
 	- declare a label at the target location with ``.. _labelname:`` (the '_' is not part of labelname)
 	- write the link as ``:ref:`TextToShowInLink<labelname>``` (brackets included)
-	- if TextToShowInLink is ommited the ref should be just before a section and the section title will be used as the text to show in the link
+	- if TextToShowInLink is omitted the ref should be just before a section and the section title will be used as the text to show in the link
 	- labelname must be unique across all documents
 	
 Link to another document in the current sphinx build: 
     - ``:doc:`TextToShowInLink<documentName>``` (brackets included)
     - ``:doc:`documentName``` (will show the document title in the link)
+
+Link to another generated html (example to link drom the api to a top level document):
+	- ```euclid docs <../euclid.html>`_``
 
 Functions and Methods docstring
 ===============================
