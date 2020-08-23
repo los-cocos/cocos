@@ -38,13 +38,11 @@ This module provides an API for loading, saving and rendering a map
 constructed of image tiles.
 """
 
-from __future__ import division, print_function, unicode_literals
-import six
-
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: resource.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 
 from collections import OrderedDict
+import io
 import os
 from math import ceil, sqrt, floor
 import struct
@@ -59,8 +57,6 @@ import pyglet.text.formats.html as p_html
 import cocos
 from cocos.director import director
 from cocos.rect import Rect
-
-unicode = six.text_type
 
 
 class ResourceError(Exception):
@@ -244,28 +240,22 @@ def load_tiles(filename):
 
 def decode_base64(s):
     """returns a bytes object"""
-    if six.PY2:
-        return s.decode('base64')
-    else:
-        import base64
-        b = s.encode('utf-8')
-        return base64.b64decode(b)
+    import base64
+    b = s.encode('utf-8')
+    return base64.b64decode(b)
 
 
 def decompress_zlib(in_bytes):
     """decompress the input array of bytes to an array of bytes using zlib"""
-    if six.PY2:
-        out_bytes = in_bytes.decode('zlib')
-    else:
-        import zlib
-        out_bytes = zlib.decompress(in_bytes)
+    import zlib
+    out_bytes = zlib.decompress(in_bytes)
     return out_bytes
 
 
 def decompress_gzip(in_bytes):
     """decompress the input array of bytes to an array of bytes using gzip"""
     import gzip
-    inp = six.BytesIO(in_bytes)
+    inp = io.BytesIO(in_bytes)
     f = gzip.GzipFile(fileobj=inp)
     out_bytes = f.read()
     f.close()
@@ -545,7 +535,7 @@ def color4_to_text(v):
 
 _xml_to_python = dict(
     # built in types
-    unicode=unicode,
+    unicode=str,
     int=int,
     float=float,
     bool=lambda value: value != "False",
@@ -554,8 +544,7 @@ _xml_to_python = dict(
 )
 _python_to_xml = {
     # built in types
-    str: unicode,
-    unicode: unicode,
+    str: str,
     int: repr,
     float: repr,
     bool: repr,
@@ -565,7 +554,6 @@ _python_to_xml = {
 _xml_type = {
     # type is the type of value
     str: 'unicode',
-    unicode: 'unicode',
     int: 'int',
     float: 'float',
     bool: 'bool',

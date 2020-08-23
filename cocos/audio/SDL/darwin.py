@@ -5,9 +5,6 @@
 Appropriated from pygame.macosx
 """
 
-from __future__ import division, print_function, unicode_literals
-import six
-
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
 
@@ -119,7 +116,7 @@ FUNCTIONS = [
 def WMEnable(name=None):
     if name is None:
         name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
-    if isinstance(name, six.unicode):
+    if isinstance(name, str):
         name = name.encode('utf-8')
     if not hasattr(objc, 'loadBundleFunctions'):
         return False

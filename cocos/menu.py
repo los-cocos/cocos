@@ -51,9 +51,6 @@ To use a menu in your code, just subclass `Menu` and add the menu to an `Scene` 
 another `Layer`.
 """
 
-from __future__ import division, print_function, unicode_literals
-from six import string_types
-
 __docformat__ = 'restructuredtext'
 
 import pyglet
@@ -523,7 +520,7 @@ class MenuItem (BaseMenuItem):
 class ImageMenuItem (BaseMenuItem):
     """ A menu item that shows a selectable Image """
     def __init__(self, image, callback_func, *args, **kwargs):
-        if isinstance(image, string_types):
+        if isinstance(image, str):
             image = pyglet.resource.image(image)
         self.image = image
         super(ImageMenuItem, self).__init__(callback_func, *args, **kwargs)

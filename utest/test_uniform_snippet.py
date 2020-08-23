@@ -1,6 +1,4 @@
 """tests tools\\uniform_snippet.py , use py.test to run"""
-from __future__ import division, print_function, unicode_literals
-import six
 
 # make the test find the script in tools directory
 import sys, os
@@ -27,7 +25,7 @@ def test_start_1st_line_match():
 
     start_line = get_start_line(it, target)
     assert start_line == 0
-    assert six.next(it) == (1, lines[1])
+    assert next(it) == (1, lines[1])
 
 
 def test_start_last_line_match():
@@ -46,7 +44,7 @@ def test_start_last_line_match():
     # here next should raise StoptIteration
     StopIteration_raised = False
     try:
-        six.next(it)
+        next(it)
     except StopIteration:
         StopIteration_raised = True
     assert StopIteration_raised
@@ -64,7 +62,7 @@ def test_start_inner_line_match():
 
     start_line = get_start_line(it, target)
     assert start_line == 1
-    assert six.next(it) == (2, lines[2])
+    assert next(it) == (2, lines[2])
 
 def test_start_no_match():
     target = 'classBackgroundLayer('
@@ -81,7 +79,7 @@ def test_start_no_match():
     # here next should raise StoptIteration
     StopIteration_raised = False
     try:
-        six.next(it)
+        next(it)
     except StopIteration:
         StopIteration_raised = True
     assert StopIteration_raised

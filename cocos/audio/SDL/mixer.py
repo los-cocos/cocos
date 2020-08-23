@@ -24,8 +24,6 @@ __version__ = '$Id: $'
 
 from ctypes import *
 
-import cocos.compat
-
 from . import dll
 from . import version
 from . import array
@@ -152,7 +150,7 @@ def Mix_LoadWAV(file):
 
     :rtype: `Mix_Chunk`
     """
-    filename = cocos.compat.asciibytes(file)
+    filename = bytes(file, "ASCII")
     return Mix_LoadWAV_RW(rwops.SDL_RWFromFile(filename, b'rb'), 1)
 
 Mix_LoadMUS = _dll.function(

@@ -12,7 +12,7 @@ import remembercases.doers as doers
 import remembercases.snapshot_taker as st
 import remembercases.proxy as proxy
 
-from cocos import compat
+import compat
 
 #>>> helpers to define script props by matching strings in the script's text
 

@@ -50,7 +50,6 @@ Release workflow:
     4. test all the scripts changed in the process.
 """
 from __future__ import division, print_function, unicode_literals
-import six
 
 import os
 import sys
@@ -159,7 +158,7 @@ def get_start_line(iter_enumerated_lines, target):
     """
     try:
         while 1:
-            lineno, line = six.next(iter_enumerated_lines)
+            lineno, line = next(iter_enumerated_lines)
             line = line.strip()
             line = line.replace(' ', '')
             if line.startswith(target):
@@ -183,7 +182,7 @@ def get_endplus_line(iter_enumerated_lines):
     last_no_blank = None
     while 1:
         try:
-            lineno, line = six.next(iter_enumerated_lines)
+            lineno, line = next(iter_enumerated_lines)
         except StopIteration:
             # EOF
             break

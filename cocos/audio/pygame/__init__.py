@@ -27,9 +27,6 @@ language. The package is highly portable, with games running on
 Windows, MacOS, OS X, BeOS, FreeBSD, IRIX, and Linux.
 """
 
-from __future__ import division, print_function, unicode_literals
-import six
-
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: __init__.py 899 2006-08-04 16:52:18Z aholkner $'
 
@@ -52,12 +49,8 @@ class MissingModule:
         MissingPygameModule = "%s module not available" % self.name
         raise NotImplementedError(MissingPygameModule)
 
-    if six.PY2:
-        def __nonzero__(self):
-            return 0
-    else:
-        def __bool__(self):
-            return 0
+    def __bool__(self):
+        return 0
 
     def warn(self):
         if self.urgent:

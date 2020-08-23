@@ -3,7 +3,6 @@
 """
 """
 
-import six
 
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
@@ -188,11 +187,8 @@ class SDL_DLL:
             if args:
                 _f._args = args
             _f.__doc__ = doc
-            if six.PY2:
-                _f.func_name = name
-            else:
-                _f.__name__ = name
-                return _f
+            _f.__name__ = name
+            return _f
 
         # Ok, get function from ctypes
         func = getattr(self._dll, name)
@@ -251,10 +247,7 @@ class SDL_DLL:
         if args:
             _f._args = args
         _f.__doc__ = doc
-        if six.PY2:
-            _f.func_name = name
-        else:
-            _f.__name__ = name
+        _f.__name__ = name
         return _f
 
 # Shortcuts to the SDL core library

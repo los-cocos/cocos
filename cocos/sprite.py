@@ -64,9 +64,6 @@ And now tell the sprite to execute it::
     sprite.do(move)
 """
 
-from __future__ import division, print_function, unicode_literals
-from six import string_types
-
 __docformat__ = 'restructuredtext'
 import math
 
@@ -116,7 +113,7 @@ class Sprite(BatchableNode, pyglet.sprite.Sprite):
     def __init__(self, image, position=(0, 0), rotation=0, scale=1,
                  opacity=255, color=(255, 255, 255), anchor=None, **kwargs):
 
-        if isinstance(image, string_types):
+        if isinstance(image, str):
             image = pyglet.resource.image(image)
 
         self.transform_anchor_x = 0

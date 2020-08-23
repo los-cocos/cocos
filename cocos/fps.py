@@ -45,13 +45,10 @@ This is enough most of the time, if more functionality is desired then
     - re-enable stats collection with ctrl + X (interactive) or by `director.show_FPS=True` (programatically).
     - your subclass instance will be called as described in :class:FpsStatsABC.
 """
-from __future__ import division, print_function, unicode_literals
 
 import abc
 import sys
 import time
-
-import six
 
 try:
     from pyglet.clock import ClockDisplay
@@ -62,9 +59,7 @@ import pyglet.font
 __docformat__ = 'restructuredtext'
 
 
-#class FpsStatsABC(metaclass=abc.ABCMeta): #<- only py3, so, with six>=1.4 use
-@six.add_metaclass(abc.ABCMeta)
-class FpsStatsABC(object):
+class FpsStatsABC(metaclass=abc.ABCMeta):
     """Interface to collect fps stats, optionally maintains a view
 
     Methods are called by director at appropriate times.
@@ -244,7 +239,7 @@ class InfoLabel(object):
     def __init__(self, template, font_name=None, font_size= 36, color=(128, 128, 128, 128)):
         # changes for compatibility with pyglet 1.4 forced an incompatible API change in this call,
         # so try to detect and give a clean diagnostic
-        if (font_name is not None and not isinstance(font_name, six.string_types)
+        if (font_name is not None and not isinstance(font_name, str)
             or not isinstance(font_size, int)
             or not isinstance(color, tuple)
             or not isinstance(color[0], int)

@@ -36,9 +36,6 @@
 CocosNode: the basic element of cocos2d
 """
 
-from __future__ import division, print_function, unicode_literals
-from six import string_types
-
 __docformat__ = 'restructuredtext'
 
 import copy
@@ -532,7 +529,7 @@ class CocosNode(object):
             obj (str or object):
                 Name of the reference to be removed or object to be removed.
         """
-        if isinstance(obj, string_types):
+        if isinstance(obj, str):
             if obj in self.children_names:
                 child = self.children_names.pop(obj)
                 self._remove(child)

@@ -39,7 +39,7 @@ f = open('README.rst','rU')
 long_description = f.read()
 f.close()
 
-install_requires=['six>=1.4', ]
+install_requires=[]
 dependency_links = []
 if os.environ.get("TRAVIS", False):
     # Travis CI run

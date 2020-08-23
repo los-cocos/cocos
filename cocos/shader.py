@@ -32,9 +32,6 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ----------------------------------------------------------------------------
-from __future__ import division, print_function, unicode_literals
-import six
-from . import compat
 
 from ctypes import byref, c_char, c_char_p, c_float, c_int, cast, create_string_buffer, POINTER
 
@@ -68,7 +65,7 @@ class Shader(object):
     s_tag = 0
 
     def __init__(self, name, prog):
-        prog = compat.asciibytes(prog)
+        prog = bytes(prog, "ASCII")
         self.name = name
         self.prog = prog
         self.shader = 0
@@ -302,7 +299,7 @@ class ShaderProgram(object):
         gl.glUseProgramObjectARB(0)
 
     def uniformLoc(self, var):
-        var = compat.asciibytes(var)
+        var = bytes(var, "ASCII")
         try:
             return self.__class__._uloc_[var]
         except:
