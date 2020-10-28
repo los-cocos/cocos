@@ -49,12 +49,15 @@ v0.6.3 - April 26, 2015
 
   - support for 'spacing' in .tmx's tilesets
   - support to load (some) .tmx maps with hexagonal tiles
+  - fixed debug view of tmx object layers
+
+v0.6.2 - April 8, 2015
+
   - support collisions between CircleShape and AARectShape in collision_model, 
     #220, thanks Daniel Gillet
   - support to read .tmx (Tiled Editor) object layers and objects, #215
   - deprecated do_not_scale and do_not_scale_window, use autoscale, #214
 
-  - fixed debug view of tmx object layers
   - fixed access cell properties for HexMap, #237, thanks Ezequiel Pozzo
   - workaround to some cases of 'unable to share contexts' on Intel gpu, #235
   - fixed tmx color problem in py2, thanks Daniel Gillet
