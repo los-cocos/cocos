@@ -24,6 +24,12 @@ ____________________________________________
     + for Windows and Mac the simplest is 'python -m pip install pyglet-ffmpeg2'
     + for Linux you should use your package manager to get ffmpeg, version 4.x is
 	the one tested with pyglet.
+
+support for extra image file formats
+____________________________________
+ 
+	+ python -m pip install pillow
+	+ if using pyglet < 1.5.9 then must be pillow < 8 
     
 audio support by SDL
 ____________________
