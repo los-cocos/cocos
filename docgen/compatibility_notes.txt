@@ -1,5 +1,7 @@
 Api changes and other compatibility notes
 
+general: if using pyglet < 1.5.9 then use  pillow < 8.0
+
 cocos 0.6.9
 -----------
 
