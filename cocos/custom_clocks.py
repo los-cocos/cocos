@@ -163,7 +163,7 @@ class ScreenReaderClock(pyglet.clock.Clock):
             delta_t = 0
         else:
             delta_t = ts - self.last_ts
-            self.times.insert(0, delta_t)
+            self.times.appendleft(delta_t)
             if len(self.times) > self.window_size:
                 self.cumulative_time -= self.times.pop()
         self.cumulative_time += delta_t
@@ -265,7 +265,7 @@ class ScreenReaderClock_12dev(pyglet.clock.Clock):
             delta_t = 0
         else:
             delta_t = ts - self.last_ts
-            self.times.insert(0, delta_t)
+            self.times.appendleft(delta_t)
             if len(self.times) > self.window_size:
                 self.cumulative_time -= self.times.pop()
         self.cumulative_time += delta_t
@@ -322,7 +322,7 @@ class AutotestClock(pyglet.clock.Clock):
             delta_t = 0
         else:
             delta_t = ts - self.last_ts
-            self.times.insert(0, delta_t)
+            self.times.appendleft(delta_t)
             if len(self.times) > self.window_size:
                 self.cumulative_time -= self.times.pop()
         self.cumulative_time += delta_t
@@ -405,7 +405,7 @@ class AutotestClock_12dev(pyglet.clock.Clock):
             delta_t = 0
         else:
             delta_t = ts - self.last_ts
-            self.times.insert(0, delta_t)
+            self.times.appendleft(delta_t)
             if len(self.times) > self.window_size:
                 self.cumulative_time -= self.times.pop()
         self.cumulative_time += delta_t
