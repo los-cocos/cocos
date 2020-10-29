@@ -9,16 +9,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 testinfo = "dt 0.016, s, f 20 0.016, s, f 20 0.016, s, f 20 0.016, s, q"
 tags = "vertex_list"
 
-import cocos
-from cocos.director import director
-
 import pyglet
 from pyglet.gl import *
 import math
 
 def sign(x): return 1 if x >= 0 else -1
 
-class MeshSprite:
+class MeshSprite(object):
     def __init__(self, image, x_quads, y_quads):
         x_step = image.width // (x_quads)
         y_step = image.height // (y_quads)
@@ -78,26 +75,26 @@ description = """
 A prof of concept: using pyglet vertex lists to deform a sprite.
 The entity is not a CocosNode, and some details should be adjusted: by
 example at rest the top of grossini sprite is not visible.
-Pressing a key other than ESC will replay the deformation.
 """
 
 def main():
     print(description)
-    director.init()
+    window = pyglet.window.Window()
+
     grossini = pyglet.resource.image("grossini.png")
     grossini.anchor_x = grossini.width // 2
     grossini.anchor_y = grossini.height // 2
     ms = MeshSprite( grossini, 15,31 )
     def update(dt):
-        director.window.clear()
+        window.clear()
         ms.draw(dt)
 
     pyglet.clock.schedule(update)
 
-    @director.window.event
+    @window.event
     def on_key_press(key, mods):
         ms.elapsed = 0
-    
+
     pyglet.app.run()
 
 if __name__ == '__main__':
