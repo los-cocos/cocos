@@ -1,3 +1,7 @@
+v0.6.9 - ?
+
+  - fix tiles crash in py39 due to xml removed method, thanks JJ1SLR for bug report
+
 v0.6.8 - January 31, 2020
 
   - removed py 3.4 and 2.7 from testing, added py 3.8

@@ -779,10 +779,10 @@ def rectmap_factory(resource, tag):
 
     # now load the columns
     cells = []
-    for i, column in enumerate(tag.getiterator('column')):
+    for i, column in enumerate(tag.iter('column')):
         c = []
         cells.append(c)
-        for j, cell in enumerate(column.getiterator('cell')):
+        for j, cell in enumerate(column.iter('cell')):
             tile = cell.get('tile')
             if tile:
                 tile = resource.get_resource(tile)
@@ -809,10 +809,10 @@ def hexmap_factory(resource, tag):
 
     # now load the columns
     cells = []
-    for i, column in enumerate(tag.getiterator('column')):
+    for i, column in enumerate(tag.iter('column')):
         c = []
         cells.append(c)
-        for j, cell in enumerate(column.getiterator('cell')):
+        for j, cell in enumerate(column.iter('cell')):
             tile = cell.get('tile')
             if tile:
                 tile = resource.get_resource(tile)
