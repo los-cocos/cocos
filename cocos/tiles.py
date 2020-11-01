@@ -1798,7 +1798,7 @@ class TmxObject(Rect):
             h = float(tag.attrib.get('height', 0))
 
             subtags = {}
-            for c in tag.getchildren():
+            for c in tag:
                 subtags[c.tag] = c
             if 'ellipse' in subtags:
                 tmxtype = 'ellipse'
