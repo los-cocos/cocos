@@ -64,15 +64,15 @@ class Flag3D(cocos.layer.Layer):
 
         # hook on resize to override the default projection with a custom one.
         # cocos2d's default projetion is also a 3d projection, but since this
-        # is a demo, we show how to customize our own on_resize method.
-        director.push_handlers(self.on_resize)
+        # is a demo, we show how to customize our own on_cocos_resize method.
+        director.push_handlers(self.on_cocos_resize)
 
         # the layer is on "stage"
         self.elapsed = 0
 
-    def on_resize(self, width, height):
-        # change the 2D projection to 3D
-        glViewport(0, 0, width, height)
+    def on_cocos_resize(self, width, height):
+        # change to our custom projection
+        glViewport(0, 0, int(0.9*width) , height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         gluPerspective(90, 1.0 * width / height, 0.1, 400.0)
