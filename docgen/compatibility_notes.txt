@@ -1,6 +1,8 @@
 Api changes and other compatibility notes
 
-general: if using pyglet < 1.5.9 then use  pillow < 8.0
+pillow advice:
+  - if using pyglet < 1.5.9 then use  pillow < 8.0
+  - in py39 + windows pillow supports only pillow>8; use with pyglet>=1.5.9 and <2 
 
 cocos 0.6.9
 -----------
@@ -31,7 +33,7 @@ cocos 0.6.9
 cocos 0.6.8
 -----------
 
-Tested with python 3.6+ , python 2.x not supported
+Tested with python 3.6+ , python 2.x not supported but should run
 No changes in cocos API
 Prefered pyglet 1.4.10+ (2.x unsupported, 1.5 unstable)
 

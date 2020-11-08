@@ -59,7 +59,7 @@ from __future__ import division, print_function, unicode_literals
 
 __docformat__ = 'restructuredtext'
 
-__version__ = "0.6.8"
+__version__ = "0.6.9"
 __author__ = "cocos2d team"
 version = __version__
 

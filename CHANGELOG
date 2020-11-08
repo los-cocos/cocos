@@ -1,6 +1,16 @@
-v0.6.9 - ?
+v0.6.9 - November 7, 2020
 
   - fix tiles crash in py39 due to xml removed method, thanks JJ1SLR for bug report
+  - fix custom_clocks compat py2, py34
+  - euclid bugfixes and two new methods for Vector2: angle_oriented and determinant
+  - eliminated ugly black padding when resizing a window created with autoscale=True
+  - refactor window geometry info in director; also get_window_size now returns real size if autoscale==False
+  - fix custom_clocks broken by pyglet 1.5.3
+  - removed deprecated features in Director, see compatibility notes in the docs
+  - tmx map can use tilesets with an image per tile (WIP, may need adjustments in layer)
+  - all tmx properties are parsed and loaded with the correct types
+  - fix handling paths in tmx files, covered map to tileset to image
+  - clean termination for test with py38 and pyglet 1.4+. #334
 
 v0.6.8 - January 31, 2020
 
