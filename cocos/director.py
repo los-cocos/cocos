@@ -518,9 +518,14 @@ class Director(event.EventDispatcher):
     # Window Helper Functions
     #
     def get_window_size(self):
-        """Returns the size of the window when it was created, and not the
-        actual size of the window.
+        """Returns the size of the window
 
+        If director.init(...) was called with autoscale=True it will return
+        a virtuel size, the same as the size set in director.init(...)
+
+        If director.init(...) was called with autoscale=Fakse it will return
+        the physical size of the window.
+        
         Usually you don't want to know the current window size, because the
         Director() hides the complexity of rescaling your objects when
         the Window is resized or if the window is made fullscreen.
@@ -532,8 +537,9 @@ class Director(event.EventDispatcher):
         :rtype: (x,y)
         :returns: The size of the window when it was created
         """
+        # this method will be replaced by _get_window_size_autoscale or
+        # _get_window_size_no_autoscale when director.init(...) is called
         raise NotImplemented
-        #return self._window_virtual_width, self._window_virtual_height
 
     def _get_window_size_autoscale(self):
         return self._window_virtual_width, self._window_virtual_height
