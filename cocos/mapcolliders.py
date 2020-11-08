@@ -46,7 +46,7 @@ class RectMapCollider(object):
         velocity_on_bump (str) : one of ``"bounce"``, ``"stick"``, ``"slide"``.
             selects which of the predefined on_bump handlers will be used
     Attributes:
-        on_bump_handler : method to change velocity when a collision was detected
+        (on_bump_handler) : method to change velocity when a collision was detected
         bumped_x (bool) : True if collide_map detected collision in the x-axis
         bumped_y (bool) : True if collide_map detected collision in the y-axis
 
