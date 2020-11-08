@@ -56,7 +56,7 @@ setup(
     license="BSD",
     description = "a 2D framework for games and multimedia",
     long_description=long_description,
-    url = "http://python.cocos2d.org",
+    url = "http://los-cocos.github.io/cocos-site",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: MacOS X",

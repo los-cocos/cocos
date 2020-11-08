@@ -337,7 +337,7 @@ and `pyglet API Reference`_.
 
 There are numerous examples of cocos2d applications in the ``samples/``
 directory of the documentation and source distributions.  Keep checking
-http://www.cocos2d.org/ for more examples and tutorials as they are written.
+http://los-cocos.github.io/cocos-site for more examples and tutorials as they are written.
 
 
 

@@ -1,6 +1,6 @@
 #
 # cocos2d:
-# http://python.cocos2d.org
+# http://los-cocos.github.io/cocos-site/
 #
 # An example of how to generate a 3D scene manually
 # Of course, the easiest way is to execute an Waves3D action,

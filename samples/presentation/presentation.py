@@ -295,7 +295,7 @@ if __name__ == "__main__":
         ),
 
         cocos.scene.Scene(
-            TitleSubTitleLayer("cocos2d", "http://www.cocos2d.org"),
+            TitleSubTitleLayer("cocos2d", "http://los-cocos.github.io/cocos-site/"),
         ),
     ]
 

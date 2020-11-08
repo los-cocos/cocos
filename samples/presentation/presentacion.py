@@ -389,7 +389,7 @@ if __name__ == "__main__":
                           ),
 
         cocos.scene.Scene(cocos.layer.ColorLayer(0, 0, 0, 255),
-                          TitleSubTitleLayer("cocos2d", "http://www.cocos2d.org"),
+                          TitleSubTitleLayer("cocos2d", "http://los-cocos.github.io/cocos-site/"),
                           ),
     ]
     transitions = [None] * (len(scenes) - 1)

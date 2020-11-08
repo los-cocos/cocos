@@ -1,6 +1,6 @@
 #
 # cocos2d
-# http://python.cocos2d.org
+# http://los-cocos.github.io/cocos-site/
 #
 from __future__ import division, print_function, unicode_literals
 
