@@ -322,12 +322,12 @@ resize:
 
 def main():
     show_common_text()
-    autoscale = True
+    autoscale = False
     if autoscale:
         show_mode_1_text()
     else:
         show_mode_2_text()
-    director.init(view_width, view_height, autoscale=autoscale)
+    director.init(view_width, view_height, autoscale=autoscale, resizable=True)
 
     scene = TestScene()
     world_layer = SquareLand(world_width, world_height)
