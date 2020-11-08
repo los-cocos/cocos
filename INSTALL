@@ -27,11 +27,11 @@ ____________________________________________
 
 support for extra image file formats
 ____________________________________
- 
-	+ python -m pip install pillow
-	+ if using pyglet < 1.5.9 then must be pillow<8 
+
+    + python -m pip install pillow
+    + if using pyglet < 1.5.9 then must be pillow<8
     + in windows, if using python > 3.9, pillow>8 and pyglet>=1.5.9 is needed
-	
+
 audio support by SDL
 ____________________
 
