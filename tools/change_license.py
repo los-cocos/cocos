@@ -18,7 +18,7 @@ old_license = """# -------------------------------------------------------------
 # cocos2d
 # Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
-# Copyright (c) 2009-2017  Richard Jones, Claudio Canepa
+# Copyright (c) 2009-2019  Richard Jones, Claudio Canepa
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@ new_license = """# -------------------------------------------------------------
 # cocos2d
 # Copyright (c) 2008-2012 Daniel Moisset, Ricardo Quesada, Rayentray Tappa,
 # Lucio Torre
-# Copyright (c) 2009-2019  Richard Jones, Claudio Canepa
+# Copyright (c) 2009-2020  Richard Jones, Claudio Canepa
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -126,7 +126,7 @@ def process_file(filename):
     
 if __name__ == '__main__':
     usage = """
-    %prog [options] path1 path2 ...
+    %prog [--mode MODE] path1 path2 ...
 
     With MODE one of 'list-matching-new', 'list-non-matching-new',
     'list-matching-old', 'list-non-matching-old' reports the files matching
