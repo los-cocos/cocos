@@ -20,9 +20,15 @@ if pyglet_ffmpeg2:
         print("While trying to use ffmpeg audio from package pyglet_ffmpeg2 an exception was rised:")
         print(ex)
 
-try:
+if hasattr(pyglet.media.codecs, "_decoder_extensions"):
+    # pyglet <1.5.8
     decoders = pyglet.media.codecs._decoder_extensions.get(".mp3", [])
-except Exception:
+elif hasattr(pyglet.media.codecs, "_codecs"):
+    # pyglet 1.5.8+
+    decoders = pyglet.media.codecs._codecs._decoder_extensions.get(".mp3", [])
+else:
+    # ?
+    print("*** pyglet changed access to decoders. No sound.")
     decoders = None
 
 if decoders:

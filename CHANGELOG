@@ -1,5 +1,6 @@
 v0.6.9 - November 7, 2020
 
+  - fix samples/tetrico no sound defect due to pyglet 1.5.8 changes, #338
   - fix tiles crash in py39 due to xml removed method, thanks JJ1SLR for bug report
   - fix custom_clocks compat py2, py34
   - euclid bugfixes and two new methods for Vector2: angle_oriented and determinant
