@@ -26,7 +26,6 @@ cache:
     - $HOME/.pyenv_cache
 
 env:
-  - cocos_utest=1
 
 install:
    - python setup.py install

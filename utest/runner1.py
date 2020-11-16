@@ -1,7 +1,6 @@
 from __future__ import division, print_function, unicode_literals
 
 #py.test script must be in the path
-#you must set cocos_utest to 1 in the environment before running
 
 import sys
 import os
@@ -20,7 +19,6 @@ Action:
 
 Notes:
     py.test should be in the path
-    you must set cocos_utest to 1 in the environment before running
     tests names must include the .py ending ( ex: test_actions.py )
     test names can have embedded spaces ( ex: test xyz.py)
     test names are blank-stripped
@@ -45,12 +43,7 @@ def get_list(fname):
     return lines
 
 def proceed(fname):
-##    os.environ['cocos_utest'] = '1' #? not propagated
-    if os.environ.get('cocos_utest',None) is None:
-        print('err: you should SET cocos_utest to 1 in the environment')
-        return
     tests = get_list(fname)
-    os.system('set cocos_utest=1') 
     cmd = 'py.test -v ' + ' '.join(tests)
     print(cmd)
     os.system(cmd) 

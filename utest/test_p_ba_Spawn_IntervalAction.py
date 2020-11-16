@@ -3,12 +3,6 @@ import pytest
 # parametrized test, using py.test 
 # see _parametric_test_t_demo.py for a skeletal.
 
-# important: set cocos_utest=1 in the environment before run.
-# that simplifies the pyglet mockup needed
-# remember to erase or set to zero for normal runs
-import os
-assert os.environ['cocos_utest']
-
 # set the desired pyglet mockup
 import sys
 sys.path.insert(0,'pyglet_mockup1')

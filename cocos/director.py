@@ -352,7 +352,7 @@ class Director(event.EventDispatcher):
         # Audio setup:
         # TODO: reshape audio to not screw unittests
         import os
-        if not os.environ.get('cocos_utest', False):
+        if not hasattr(pyglet, 'mock_level'):
             cocos.audio.initialize(audio_settings)
 
         return self.window

@@ -1,10 +1,5 @@
 from __future__ import division, print_function, unicode_literals
 
-# that simplifies the pyglet mockup needed
-# remember to erase or set to zero for normal runs
-import os
-assert os.environ['cocos_utest']
-
 # set the desired pyglet mockup
 import sys
 sys.path.insert(0,'pyglet_mockup1')

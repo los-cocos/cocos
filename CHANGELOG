@@ -1,3 +1,7 @@
+v0.6.10 - next release
+
+  - simplified running a mix of unittests and other tests, eliminated use of env var cocos_utest
+  
 v0.6.9 - November 7, 2020
 
   - fix samples/tetrico no sound defect due to pyglet 1.5.8 changes, #338

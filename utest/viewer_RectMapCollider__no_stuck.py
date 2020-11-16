@@ -28,10 +28,6 @@ collision detection, not a stuck
 
 from __future__ import division, print_function, unicode_literals
 
-# to run as a script for visualization DONT set cocos_utest in the env
-import os
-assert 'cocos_utest' not in os.environ
-    
 # will use the cocos in the same checkout, except if you move this file.
 import sys
 import os

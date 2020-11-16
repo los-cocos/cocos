@@ -89,10 +89,8 @@ else:
 if bad_pyglet_version:
     raise Exception("\n*** bad pyglet version, found version %s ***\n" %  pyglet.version)
 
-try:
-    unittesting = os.environ['cocos_utest']
-except KeyError:
-    unittesting = False
+unittesting = hasattr(pyglet, 'mock_level')
+
 del os, pyglet
 
 # in windows we use the pygame package to get the SDL dlls
@@ -118,8 +116,10 @@ if sys.platform == 'win32':
 
 
 if not unittesting:
-
-    # using 'from cocos import zzz' to make zzz appear in pycharm's autocomplete for cocos.
+    # If unconditionally imported, then to use a pyglet mockup the mockup
+    # would need to cover any pyglet functionality imported in any cocos module
+    # To grow the mockup incrementally modules are not imported if unittesting.
+    # Using 'from cocos import zzz' to make zzz appear in pycharm's autocomplete for cocos.
     from cocos import cocosnode
     from cocos import actions
     from cocos import director
@@ -135,4 +135,3 @@ if not unittesting:
     from cocos import skeleton
     from cocos import rect
     from cocos import tiles
-

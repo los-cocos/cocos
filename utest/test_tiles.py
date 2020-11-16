@@ -10,11 +10,6 @@ from __future__ import division, print_function, unicode_literals
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: MAP_MODEL.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 
-# that simplifies the pyglet mockup needed
-# remember to erase or set to zero for normal runs
-import os
-assert os.environ['cocos_utest']
-
 # set the desired pyglet mockup
 import sys
 sys.path.insert(0,'pyglet_mockup1')

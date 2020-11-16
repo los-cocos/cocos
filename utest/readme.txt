@@ -10,7 +10,6 @@ https://github.com/pytest-dev/pytest/issues/5724 ,
 https://github.com/pytest-dev/pytest/issues/5789
 Used python 3.6.6 to run unit tests for cocos release 0.6.7
 
-For most tests, you must set cocos_utest=1 in the environment before running.
 You should have py.test in the executable search path
 
 Running one test:
@@ -35,6 +34,18 @@ bug count and to encourage people to write unit tests.
 
 In unit tests, whenever possible you will want to replace pyglet with a
 lightweight mockup for fast setUp.
+
+Test to be run by pytest / unittest that import pyglet or a cocos module
+that imports pyglet must include at the begin of file the lines
+
+# set the desired pyglet mockup
+import sys
+sys.path.insert(0,'pyglet_mockup1')
+import pyglet
+assert pyglet.mock_level == 1
+
+Example test that don't need the lines: test_collision_model.py
+Example test that don't need the lines: test_tiles.py
 
 Ideally we will have two or three pyglet mockups, providing increasing
 functionality.
