@@ -5,12 +5,12 @@ It is meant to be run from a clean clone of cocos repo, specifically
 from one of the subdirs tools/ or docgen/
 
 It will copy the sphinx generated documentation from the sphinx dest to
-($clone_topdir)\docs\html
+($clone_topdir)/docs/html
 
 After the copy do a docgen/make clean (docgen/Makefile clean) to clean-up
 before packaging with setuptools
 
-See workflow in tools\building_release_notes.txt
+See workflow in tools/building_release_notes.txt
 """
 from __future__ import division, print_function, unicode_literals
 

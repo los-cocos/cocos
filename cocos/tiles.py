@@ -1299,7 +1299,7 @@ class RectCell(Rect, Cell):
 
 
 class HexMap(RegularTesselationMap):
-    """MapLayer with flat-top, regular hexagonal cells.
+    r"""MapLayer with flat-top, regular hexagonal cells.
 
     Calculated attributes::
 
@@ -1443,7 +1443,7 @@ class HexMap(RegularTesselationMap):
 
 
 class HexMapLayer(HexMap, MapLayer):
-    """A renderable, scrollable tile map covered by hexagonal tiles
+    r"""A renderable, scrollable tile map covered by hexagonal tiles
 
     While visually the tiles look hexagonal, the texture that draws each
     tile is rectangular and should comply:

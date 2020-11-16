@@ -126,7 +126,7 @@ class Cshape(object):
 
 # collision manager interface
 class CollisionManager(object):
-    """
+    r"""
     Answers questions about proximity or collision with known objects.
 
     After instantiation or after calling its 'clear' method the instance

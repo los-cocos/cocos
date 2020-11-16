@@ -3,7 +3,7 @@
 
 """script to work licence header - see usage or use --help 
 
-For the last cocos releases we need to run over ..\cocos  and skeleton
+For the last cocos releases we need to run over ../cocos  and skeleton
 Be sure to check the hardcoded old_license, new_license, exclude are
 the one intended.
 use svn status to confirm what changed.

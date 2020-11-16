@@ -172,7 +172,7 @@ def canonical_names_from_filenames(db, filenames):
 
     A typical example transformation is::
     
-        ..\..\test\test_base.py -> test\test_base.py
+        ../../test/test_base.py -> test/test_base.py
 
     """
     return [ db.canonical_fname(s) for s in filenames ]
