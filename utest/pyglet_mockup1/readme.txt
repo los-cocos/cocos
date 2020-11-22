@@ -39,7 +39,7 @@ Capabilities:
         self._utest_recorded_events.append((event_type, args))
 (remember to clear the record before the critical section you want to test)
 
- pyglet.version will return "1.1.4"
+ pyglet.version will return "1.4.10"
  Director can be instantiated
  from cocos.director import director works
  director.get_window_size() works
@@ -49,7 +49,3 @@ Capabilities:
  from pyglet.gl import *).
  you can 'import cocos.layer'; the classes ScrollingManager and ScrollableLayer
  can be imported
-
-
- Changes for compatibility pyglet 1.4:
-	- version bumped to 1.4.3

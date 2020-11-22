@@ -1,0 +1,760 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<title>release_checklist_details.txt</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 7952 2016-07-26 18:15:59Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+.subscript {
+  vertical-align: sub;
+  font-size: smaller }
+
+.superscript {
+  vertical-align: super;
+  font-size: smaller }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left, table.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right, table.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+.align-top    {
+  vertical-align: top }
+
+.align-middle {
+  vertical-align: middle }
+
+.align-bottom {
+  vertical-align: bottom }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: grey; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document">
+
+
+<p>Generate this doc as html so the links works by issuing:</p>
+<pre class="literal-block">
+rst2html.py  --traceback  release_checklist_details.txt &gt; release_checklist_details.html
+</pre>
+<p>in a <a class="reference external" href="#create-and-use-venvs">venv</a> with doctutils installed.</p>
+<div class="section" id="start">
+<h1>Start</h1>
+<ul class="simple">
+<li>Freeze cocos directory, except for obvious, simple, robust fixes.</li>
+<li>Freeze existing code in samples and test directories</li>
+<li>If after test are completed the code in cocos/ changes, tests should be redone</li>
+<li>Complete CHANGELOG if necessary</li>
+<li>Make a 'cocos_build' python Virtual Environment (venv) to work, <a class="reference external" href="#create-and-use-venvs">venvs</a></li>
+<li><a class="reference external" href="#using-pip">Use pip</a> to upgrade the pip in the venv</li>
+<li>Install normal dependencies pillow and numpy from pypi</li>
+<li>Install Sphinx for docs</li>
+<li>Use pip to install cocos2d into 'cocos_build' in developer mode</li>
+</ul>
+</div>
+<div class="section" id="test-part1">
+<h1>Test part1</h1>
+<p>While doing this keep notes about discoveries in python and libs versions required, they will be handy to update documentation.</p>
+<p>At least the combinations of (py_min, py_max) x (pyglet_min, pyglet_max), with special attention to (py_max, pyglet_max) should be tested.</p>
+<p>Use <a class="reference external" href="#Using-cocos-testcmp">cocos-testcmp</a> to run the unittests and compare snapshots with a know good reference.</p>
+<p>For each python version supported, or at least py_min, py_max, do</p>
+<ul class="simple">
+<li>py_min: &lt;replace with desired value&gt; , pyglet_min: &lt;replace with desired value&gt;
+- Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue</li>
+<li>py_min: &lt;replace with desired value&gt; , pyglet_min: &lt;replace with desired value&gt;
+- Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue</li>
+<li>py_min: &lt;replace with desired value&gt; , pyglet_min: &lt;replace with desired value&gt;
+- Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue</li>
+<li>py_min: &lt;replace with desired value&gt; , pyglet_min: &lt;replace with desired value&gt;
+- Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue</li>
+<li>All of the above passes with the same exact codebase (meaning if py_min was marked
+as ok but then py_max runs required a code change in cocos/, then py_min should be unmarked)</li>
+</ul>
+</div>
+<div class="section" id="test-part-two">
+<h1>Test, part two</h1>
+<p>Scripts outside test/ should be tested, meaning manual run and eyeballing they look good
+Fix any discovered issue.
+Code fixes that touch cocos/ must uncheck the 'Test, part one', and all Test, part two</p>
+<ul class="simple">
+<li>all in samples samples/</li>
+<li>in particular samples/tetrico should be tested with and without sound support</li>
+<li>tools/editor.py</li>
+<li>tools/gentileset.py</li>
+<li>tools/skeleton/anim_player.py</li>
+<li>tools/skeleton/animator.py</li>
+<li>tools/skeleton/skeleton_editor.py</li>
+<li>all apps under samples/</li>
+</ul>
+</div>
+<div class="section" id="build-docs-first-pass">
+<h1>Build docs first pass</h1>
+<ul class="simple">
+<li>Build docs <a class="reference external" href="#Build-docs">Build docs</a></li>
+<li>Fix errors and warnings</li>
+<li>Navigate the resulting docs eyeballing all ok</li>
+</ul>
+</div>
+<div class="section" id="fill-boilerplate-release-data">
+<h1>Fill boilerplate release data</h1>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>Update info about compatibility with python, pyglet and other libraries</dt>
+<dd><ul class="first last">
+<li>INSTALL (kept reST compatible)</li>
+<li>README</li>
+<li>docgen/compatibility_notes.txt</li>
+<li>setup.py</li>
+<li>the check over pyglet version in cocos/__init__.py</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Decide cocos release version and date, then update related parts in</dt>
+<dd><ul class="first last">
+<li>cocos/__init__.py (not in the license header)</li>
+<li>setup.py</li>
+<li>documentation gets version from docgen/conf.py, which gets from cocos/__init__.py</li>
+<li>CHANGELOG</li>
+<li>INSTALL</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Update copyright year range</dt>
+<dd><ul class="first last">
+<li>in LICENSE</li>
+<li>Mass update license header in the py files, care to not target files which needs other license header. Use tools/change_license.py for this.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="packaging-round1">
+<h1>Packaging round1</h1>
+<ul>
+<li><dl class="first docutils">
+<dt>initial test build (don't care for docs here)</dt>
+<dd><ul class="first last">
+<li><p class="first">update pip before starting build</p>
+</li>
+<li><p class="first">built source package with:</p>
+<pre class="literal-block">
+python setup.py sdist &gt;../sdist.log and
+</pre>
+<p>This will leave the built source package under dist/, typically a cocos2d-0.X.Y.tar.gz or cocos2d-0.X.Y.zip</p>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>test pakages contents are as expected</dt>
+<dd><ul class="first last simple">
+<li>pkg has all the files in the Working Directory, except for dist/ and cached python's .pyc (decompress the pkg and use Meld or other directory compare app)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">pip installation works as expected installing from the source package</p>
+<ul>
+<li><p class="first">Create a new py_env, activate</p>
+</li>
+<li><p class="first">Update pip</p>
+</li>
+<li><p class="first">pip install from pkg:</p>
+<pre class="literal-block">
+pip install cocos2d-0.X.Y.tar.gz
+</pre>
+</li>
+<li><p class="first">No errors should have been reported by pip</p>
+</li>
+<li><p class="first">The dependencies pulled from pypi come at the expected versions</p>
+</li>
+<li><p class="first">Check all the files under cocos/ are present at the directory pip installed the package, use Meld or other directory compare tool. To know where pip installed the package issue a 'python -c &quot;import cocos;print(cocos.__file__)&quot;'</p>
+</li>
+<li><p class="first">smoketest installed cocos is functional: install numpy and pillow, then do a quick run to the following scripts, they should run ok</p>
+<ul class="simple">
+<li>test/test_particle_meteor.py</li>
+<li>test/test_tiles.py</li>
+<li>test/test_sprite.py</li>
+<li>samples/tetrico/tetrico.py , before and after installing  ffmpeg</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="final-docs-pass">
+<h1>Final docs pass</h1>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>Final revision to text files in the top trunk directory</dt>
+<dd><ul class="first last">
+<li>CHANGELOG</li>
+<li>LICENSE</li>
+<li>INSTALL (kept reST compatible)</li>
+<li>README  (kept reST compatible)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Verify README and INSTALL are <a class="reference external" href="#Check-a-file-is-reST-compatible">reST compatible</a></li>
+<li>Copy INSTALL to docgen/programming_guide/installation.txt</li>
+<li>if changed, copy  CONTRIBUTING.rst to docgen/dev/CONTRIBUTING.txt</li>
+</ul>
+</div>
+<div class="section" id="final-build">
+<h1>Final build</h1>
+<ul class="simple">
+<li>clean build the docs</li>
+<li>copy the contents of docgen/_build/html to docs/</li>
+<li>do a 'make clean' from the docgen dir</li>
+<li>build the final package that includes the docs</li>
+<li>verify that non-code resources are included (currently docs, cocosresources)</li>
+<li>verify install works</li>
+<li>Update cocos-site repo news and docs, repo at <a class="reference external" href="https://github.com/los-cocos/cocos-site">https://github.com/los-cocos/cocos-site</a></li>
+</ul>
+</div>
+<div class="section" id="upload-to-pypi">
+<h1>Upload to pypi</h1>
+<ul class="simple">
+<li><a class="reference external" href="#Details-upload-to-pypi">upload</a> the final build to pypi</li>
+<li>download from pypi, must compare equal with the original final build file</li>
+<li>verify the pypi's cocos2d page looks okay</li>
+</ul>
+</div>
+<div class="section" id="final-tasks">
+<h1>Final Tasks</h1>
+<ul>
+<li><p class="first">Tag the release in the repo:</p>
+<pre class="literal-block">
+git tag -a release-X.Y.Z -m &quot;tagging release-X.Y.Z&quot;
+git push --follow-tags
+</pre>
+</li>
+<li><dl class="first docutils">
+<dt>Announce the release.</dt>
+<dd><ul class="first last simple">
+<li>cocos list</li>
+<li>pyar discourse</li>
+<li>pyglet list</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">If needed, update release_checklist.txt and  release_checklist_details.txt , then regenerate release_checklist_details.html and commit &amp; push the changes</p>
+</li>
+<li><p class="first">Congratulate yourself and relax :-)</p>
+</li>
+</ul>
+</div>
+<div class="section" id="notes">
+<h1>Notes</h1>
+<p>(Write here things discovered that may need further actions)</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="details">
+<h1>Details</h1>
+<!-- link target -->
+<div class="section" id="create-and-use-venvs">
+<h2>Create and use venvs</h2>
+<p>Details may vary by OS and shell, you can lookup details in the Python's docs for module venv.</p>
+<ul>
+<li><dl class="first docutils">
+<dt>example windows in a 'cmd.exe' shell / console</dt>
+<dd><ul class="first last">
+<li><p class="first">create:</p>
+<pre class="literal-block">
+&gt;py -3.7 -m venv venv_directory
+</pre>
+<p>Creates a venv_directory and sets there the files needed</p>
+</li>
+<li><p class="first">activate:</p>
+<pre class="literal-block">
+&gt;venv_directory\Scripts\activate
+</pre>
+<p>When the venv is active, the command 'python' will invoke the python in venv</p>
+</li>
+<li><p class="first">deactivate:</p>
+<pre class="literal-block">
+&gt;deactivate
+</pre>
+</li>
+<li><dl class="first docutils">
+<dt>while the venv is activated, in that console</dt>
+<dd><ul class="first last simple">
+<li>venv_directoryScripts will be in the path, handy for commands like 'pytest', 'rst2html.py' and other provided by packages installed in the venv</li>
+<li>commands <tt class="docutils literal"><span class="pre">'*.py'</span></tt> issued in the venv console will be executed by the python in the venv, good for commands like 'rst2html.py'</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>example linux (raspbian) in a 'bash' shell / console</dt>
+<dd><ul class="first last">
+<li><p class="first">create:</p>
+<pre class="literal-block">
+$ python -m venv venv_directory
+</pre>
+<p>Creates a venv_directory and sets there the files needed</p>
+</li>
+<li><p class="first">activate:</p>
+<pre class="literal-block">
+$ source venv_directory/Scripts/activate
+</pre>
+<p>When the venv is active, the command 'python' will invoke the python in venv</p>
+</li>
+<li><p class="first">deactivate:</p>
+<pre class="literal-block">
+$ deactivate
+</pre>
+</li>
+<li><dl class="first docutils">
+<dt>while the venv is activated, in that console</dt>
+<dd><ul class="first last simple">
+<li>venv_directory/Scripts will be in the path, handy for commands like 'pytest', 'rst2html.py' and other provided by packages installed in the venv</li>
+<li>commands <tt class="docutils literal"><span class="pre">'*.py'</span></tt> issued in the venv console will be executed by the python in the venv, good for commands like 'rst2html.py'</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">venvdir/Scripts/python will run the python in the venv, meaning imports will give modules and packages installed in that venv, even if the environmet is not activated</p>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<!-- link target -->
+</div>
+<div class="section" id="using-pip">
+<h2>Using pip</h2>
+<ul>
+<li><p class="first"><strong>First of all upgrade pip to last version</strong>:</p>
+<pre class="literal-block">
+python -m pip install pip --upgrade
+</pre>
+</li>
+<li><p class="first"><strong>Installing from pypi</strong></p>
+<p>Some packages have a pypi name different from the import name, by example pypi name 'pillow' uses 'PIL' to import, or pypi name 'cocos2d' uses import name 'cocos'. The pip command needs the pypi name.</p>
+<p>The pypi name can be given version restrictions, and at least in windows when the version restriction includes a '&gt;' or a '&lt;' you must use quotes so the shell don't take as a redirect. Quoting is done with double quotes in windows, single in linux.</p>
+<p>Examples, you must use the quote character appropriate to your shell:</p>
+<pre class="literal-block">
+python -m pip install pillow
+python -m pip install 'pillow&lt;8'
+python -m pip install &quot;pyglet==1.4.11&quot;
+python -m pip install 'pyglet&lt;2,&gt;1.4.10'
+</pre>
+</li>
+<li><p class="first"><strong>Installing from a local package archive</strong></p>
+<p>A package built with <cite>sdist build ...</cite> will produce a file &lt;pkg_name&gt;.[zip | tar.gz | whl]</p>
+<p>To install from that file, use:</p>
+<pre class="literal-block">
+python -m pip install filename
+</pre>
+</li>
+<li><p class="first"><strong>Installing in developer mode</strong></p>
+<p>If dir_z has a setup.py file, then running the command:</p>
+<pre class="literal-block">
+python -m pip install -e dir_z
+</pre>
+<p>will install the package and dependencies described on the setup.py</p>
+<p>This is a common style to install from a DVCS (git, etc) clone</p>
+</li>
+</ul>
+</div>
+<div class="section" id="using-cocos-testcmp">
+<h2>Using cocos-testcmp</h2>
+<p>This app lives at <a class="reference external" href="https://github.com/los-cocos/cocos-testcmp">https://github.com/los-cocos/cocos-testcmp</a></p>
+<p>Instructions to run in cocos-testcmp's Readme</p>
+</div>
+<div class="section" id="build-docs-details">
+<h2>Build-docs-details</h2>
+<ul>
+<li><p class="first">set the SPHINXDIR environment to the (venv dir)/Scripts</p>
+</li>
+<li><p class="first">cd docgen</p>
+</li>
+<li><p class="first">to clean, <cite>make clean</cite> in Windows, <cite>makefile clean</cite> in linux</p>
+</li>
+<li><p class="first">to build, <cite>make build</cite> in Windows, <cite>makefile build</cite> in linux</p>
+</li>
+<li><p class="first">the build will create a log with warnings and errors, docgen/warnings.log</p>
+</li>
+<li><p class="first">some warnings are expected, in windows without sdl installed the build ends with 5 warnings:</p>
+<pre class="literal-block">
+WARNING: html_static_path entry '_static' does not exist
+WARNING: autodoc: failed to import module 'darwin' from module 'cocos.audio.SDL'; the following exception was raised:
+No module named 'Foundation'
+WARNING: autodoc: failed to import module 'sound' from module 'cocos.audio.SDL'; the following exception was raised:
+Dynamic library &quot;SDL_sound&quot; was not found
+D:\dev\cocos2020\docgen\api\modules.txt: WARNING: document isn't included in any toctree
+D:\dev\cocos2020\docgen\euclid.txt: WARNING: document isn't included in any toctree
+</pre>
+<p>The first and the last two are expected warnings, disregard
+The second is an example of cross-compiling error ('darwin' used on mac OS), disregard references to platform specific modules
+The SDL one is expected because SDL was not installed; with SDL installed more sdl related errors will pop-up</p>
+</li>
+<li><p class="first">To start navigating the docs, open docgen_buildhtmlindex.html in a browser</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="check-a-file-is-rest-compatible">
+<h1>Check a file is reST compatible</h1>
+<p>In the venv where Sphix was installed do a:</p>
+<pre class="literal-block">
+rst2html.py --traceback file &gt;out.html
+</pre>
+<p>Fix any traceback appearing, open the .html in a browser, even if they are no warnings, and see if the view is the desired one.</p>
+</div>
+<div class="section" id="details-upload-to-pypi">
+<h1>Details upload to pypi</h1>
+<p>In the activated venv used ro build the package, at the root of Working Directory used ro build the package:</p>
+<pre class="literal-block">
+pip install twine
+twine upload -u user -p pwd dist/*
+</pre>
+<p>Obviously use your pypi user and pwd</p>
+</div>
+</div>
+</body>
+</html>

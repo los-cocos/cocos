@@ -1,0 +1,327 @@
+Generate this doc as html so the links works by issuing::
+
+    rst2html.py  --traceback  release_checklist_details.txt > release_checklist_details.html
+
+in a `venv <#create-and-use-venvs>`_ with doctutils installed. 
+
+Start
+=====
+- Freeze cocos directory, except for obvious, simple, robust fixes.
+- Freeze existing code in samples and test directories
+- If after test are completed the code in cocos/ changes, tests should be redone
+- Complete CHANGELOG if necessary 
+- Make a 'cocos_build' python Virtual Environment (venv) to work, `venvs <#create-and-use-venvs>`_
+- `Use pip <#using-pip>`_ to upgrade the pip in the venv
+- Install normal dependencies pillow and numpy from pypi
+- Install Sphinx for docs
+- Use pip to install cocos2d into 'cocos_build' in developer mode
+  
+Test part1
+==========
+
+While doing this keep notes about discoveries in python and libs versions required, they will be handy to update documentation.
+
+At least the combinations of (py_min, py_max) x (pyglet_min, pyglet_max), with special attention to (py_max, pyglet_max) should be tested.
+
+Use `cocos-testcmp <#Using-cocos-testcmp>`_ to run the unittests and compare snapshots with a know good reference.
+
+For each python version supported, or at least py_min, py_max, do
+
+- py_min: <replace with desired value> , pyglet_min: <replace with desired value>
+  - Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue
+
+- py_min: <replace with desired value> , pyglet_min: <replace with desired value>
+  - Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue
+
+- py_min: <replace with desired value> , pyglet_min: <replace with desired value>
+  - Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue
+
+- py_min: <replace with desired value> , pyglet_min: <replace with desired value>
+  - Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue
+
+- All of the above passes with the same exact codebase (meaning if py_min was marked
+  as ok but then py_max runs required a code change in cocos/, then py_min should be unmarked)
+
+Test, part two
+==============
+ 
+Scripts outside test/ should be tested, meaning manual run and eyeballing they look good
+Fix any discovered issue.
+Code fixes that touch cocos/ must uncheck the 'Test, part one', and all Test, part two 
+
+- all in samples samples/
+- in particular samples/tetrico should be tested with and without sound support
+- tools/editor.py
+- tools/gentileset.py
+- tools/skeleton/anim_player.py
+- tools/skeleton/animator.py
+- tools/skeleton/skeleton_editor.py
+- all apps under samples/
+
+Build docs first pass
+=====================
+
+- Build docs `Build docs <#Build-docs>`_
+- Fix errors and warnings
+- Navigate the resulting docs eyeballing all ok
+
+Fill boilerplate release data
+=============================
+
+- Update info about compatibility with python, pyglet and other libraries
+    - INSTALL (kept reST compatible)
+    - README
+    - docgen/compatibility_notes.txt
+    - setup.py
+    - the check over pyglet version in cocos/__init__.py
+
+- Decide cocos release version and date, then update related parts in
+    - cocos/__init__.py (not in the license header)
+    - setup.py
+    - documentation gets version from docgen/conf.py, which gets from cocos/__init__.py
+    - CHANGELOG
+    - INSTALL
+
+- Update copyright year range
+    - in LICENSE
+    - Mass update license header in the py files, care to not target files which needs other license header. Use tools/change_license.py for this.
+
+Packaging round1
+================
+
+- initial test build (don't care for docs here)
+    - update pip before starting build
+    - built source package with::
+    
+        python setup.py sdist >../sdist.log and
+
+      This will leave the built source package under dist/, typically a cocos2d-0.X.Y.tar.gz or cocos2d-0.X.Y.zip
+      
+- test pakages contents are as expected
+    - pkg has all the files in the Working Directory, except for dist/ and cached python's .pyc (decompress the pkg and use Meld or other directory compare app)
+    
+- pip installation works as expected installing from the source package
+
+  - Create a new py_env, activate
+  - Update pip
+  - pip install from pkg::
+
+      pip install cocos2d-0.X.Y.tar.gz
+
+  - No errors should have been reported by pip
+  - The dependencies pulled from pypi come at the expected versions  
+  - Check all the files under cocos/ are present at the directory pip installed the package, use Meld or other directory compare tool. To know where pip installed the package issue a 'python -c "import cocos;print(cocos.__file__)"'
+  - smoketest installed cocos is functional: install numpy and pillow, then do a quick run to the following scripts, they should run ok
+ 
+    - test/test_particle_meteor.py
+    - test/test_tiles.py
+    - test/test_sprite.py
+    - samples/tetrico/tetrico.py , before and after installing  ffmpeg
+
+Final docs pass
+===============
+
+- Final revision to text files in the top trunk directory
+    - CHANGELOG
+    - LICENSE
+    - INSTALL (kept reST compatible)
+    - README  (kept reST compatible)
+
+- Verify README and INSTALL are `reST compatible <#Check-a-file-is-reST-compatible>`_
+
+- Copy INSTALL to docgen/programming_guide/installation.txt
+- if changed, copy  CONTRIBUTING.rst to docgen/dev/CONTRIBUTING.txt
+
+Final build
+===========
+
+- clean build the docs
+- copy the contents of docgen/_build/html to docs/
+- do a 'make clean' from the docgen dir  
+- build the final package that includes the docs
+- verify that non-code resources are included (currently docs\, cocos\resources)
+- verify install works
+
+- Update cocos-site repo news and docs, repo at https://github.com/los-cocos/cocos-site
+
+Upload to pypi
+==============
+
+- `upload <#Details-upload-to-pypi>`_ the final build to pypi
+- download from pypi, must compare equal with the original final build file      
+- verify the pypi's cocos2d page looks okay
+
+Final Tasks
+===========
+
+- Tag the release in the repo::
+
+    git tag -a release-X.Y.Z -m "tagging release-X.Y.Z"
+    git push --follow-tags
+
+- Announce the release.
+    - cocos list
+    - pyar discourse
+    - pyglet list
+
+- If needed, update release_checklist.txt and  release_checklist_details.txt , then regenerate release_checklist_details.html and commit & push the changes
+    
+- Congratulate yourself and relax :-)
+
+Notes
+=====
+
+(Write here things discovered that may need further actions)
+
+----
+
+Details
+=======
+
+.. link target
+
+Create and use venvs
+--------------------
+
+Details may vary by OS and shell, you can lookup details in the Python's docs for module venv.
+
+- example windows in a 'cmd.exe' shell / console
+    - create::
+    
+        >py -3.7 -m venv venv_directory
+        
+      Creates a venv_directory and sets there the files needed
+
+    - activate::
+    
+        >venv_directory\Scripts\activate
+        
+      When the venv is active, the command 'python' will invoke the python in venv
+        
+    - deactivate::
+    
+        >deactivate
+        
+    - while the venv is activated, in that console
+        - venv_directory\Scripts will be in the path, handy for commands like 'pytest', 'rst2html.py' and other provided by packages installed in the venv
+        
+        - commands ``'*.py'`` issued in the venv console will be executed by the python in the venv, good for commands like 'rst2html.py'
+
+- example linux (raspbian) in a 'bash' shell / console
+    - create::
+    
+        $ python -m venv venv_directory
+        
+      Creates a venv_directory and sets there the files needed
+
+    - activate::
+    
+        $ source venv_directory/Scripts/activate
+        
+      When the venv is active, the command 'python' will invoke the python in venv
+        
+    - deactivate::
+    
+        $ deactivate
+        
+    - while the venv is activated, in that console
+        - venv_directory/Scripts will be in the path, handy for commands like 'pytest', 'rst2html.py' and other provided by packages installed in the venv
+        
+        - commands ``'*.py'`` issued in the venv console will be executed by the python in the venv, good for commands like 'rst2html.py'
+
+    - venvdir/Scripts/python will run the python in the venv, meaning imports will give modules and packages installed in that venv, even if the environmet is not activated
+    
+.. link target
+
+Using pip
+---------
+
+- **First of all upgrade pip to last version**::
+
+    python -m pip install pip --upgrade
+    
+- **Installing from pypi**
+
+  Some packages have a pypi name different from the import name, by example pypi name 'pillow' uses 'PIL' to import, or pypi name 'cocos2d' uses import name 'cocos'. The pip command needs the pypi name.
+  
+  The pypi name can be given version restrictions, and at least in windows when the version restriction includes a '>' or a '<' you must use quotes so the shell don't take as a redirect. Quoting is done with double quotes in windows, single in linux.
+  
+  Examples, you must use the quote character appropriate to your shell::
+  
+    python -m pip install pillow
+    python -m pip install 'pillow<8'
+    python -m pip install "pyglet==1.4.11"
+    python -m pip install 'pyglet<2,>1.4.10'
+
+- **Installing from a local package archive**
+
+  A package built with `sdist build ...` will produce a file <pkg_name>.[zip | tar.gz | whl]
+
+  To install from that file, use::
+
+    python -m pip install filename
+
+- **Installing in developer mode**
+
+  If dir_z has a setup.py file, then running the command::
+  
+    python -m pip install -e dir_z
+    
+  will install the package and dependencies described on the setup.py
+  
+  This is a common style to install from a DVCS (git, etc) clone
+
+
+Using cocos-testcmp
+-------------------
+
+This app lives at https://github.com/los-cocos/cocos-testcmp
+
+Instructions to run in cocos-testcmp's Readme
+
+
+Build-docs-details
+------------------
+
+- set the SPHINXDIR environment to the (venv dir)/Scripts
+- cd docgen
+- to clean, `make clean` in Windows, `makefile clean` in linux
+- to build, `make build` in Windows, `makefile build` in linux
+- the build will create a log with warnings and errors, docgen/warnings.log
+- some warnings are expected, in windows without sdl installed the build ends with 5 warnings::
+
+    WARNING: html_static_path entry '_static' does not exist
+    WARNING: autodoc: failed to import module 'darwin' from module 'cocos.audio.SDL'; the following exception was raised:
+    No module named 'Foundation'
+    WARNING: autodoc: failed to import module 'sound' from module 'cocos.audio.SDL'; the following exception was raised:
+    Dynamic library "SDL_sound" was not found
+    D:\dev\cocos2020\docgen\api\modules.txt: WARNING: document isn't included in any toctree
+    D:\dev\cocos2020\docgen\euclid.txt: WARNING: document isn't included in any toctree
+
+  The first and the last two are expected warnings, disregard
+  The second is an example of cross-compiling error ('darwin' used on mac OS), disregard references to platform specific modules
+  The SDL one is expected because SDL was not installed; with SDL installed more sdl related errors will pop-up 
+  
+- To start navigating the docs, open docgen\_build\html\index.html in a browser
+
+
+Check a file is reST compatible
+===============================
+
+In the venv where Sphix was installed do a::
+
+     rst2html.py --traceback file >out.html
+     
+Fix any traceback appearing, open the .html in a browser, even if they are no warnings, and see if the view is the desired one.
+
+
+Details upload to pypi 
+======================
+
+In the activated venv used ro build the package, at the root of Working Directory used ro build the package::
+
+    pip install twine
+    twine upload -u user -p pwd dist/*
+
+Obviously use your pypi user and pwd
+ 

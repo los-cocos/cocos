@@ -1,0 +1,163 @@
+Copy this file and release_checklist_details.html outside the Working copy.
+
+The idea is to check each task completed in the .txt, the html will have links that explain in mire detail the tasks
+
+Start:
+  - Freeze cocos directory, except for obvious, simple, robust fixes
+  - Freeze existing code in samples and test directories
+  - If after test are completed the code in cocos/ changes, tests should be redone
+  - Complete CHANGELOG if necessary 
+  - Make a 'cocos_build' python Virtual Environment (venv) to work, `venvs <#create-and-use-venvs>`_
+  - `use pip <#using-pip>`_ to upgrade the pip in the venv
+  - Install normal dependencies pillow and numpy from pypi
+  - Install Sphinx for docs
+  - Use pip to install cocos2d into 'cocos_build' in developer mode
+
+Test part1:
+While doing this keep notes about discoveries in python and libs versions required, they will be handy to update documentation.
+
+At least the combinations of (py_min, py_max) x (pyglet_min, pyglet_max), with special attention to (py_max, pyglet_max) should be tested.
+
+Use `cocos-testcmp <#Using-cocos-testcmp>`_ to run the unittests and compare snapshots with a know good reference.
+
+For each python version supported, or at least py_min, py_max, do
+
+- py_min: <replace with desired value> , pyglet_min: <replace with desired value>
+  - Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue
+
+- py_min: <replace with desired value> , pyglet_min: <replace with desired value>
+  - Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue
+
+- py_min: <replace with desired value> , pyglet_min: <replace with desired value>
+  - Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue
+
+- py_min: <replace with desired value> , pyglet_min: <replace with desired value>
+  - Run cocos-testcmp, it runs unittests and exercises the test/ scripts, fix any discovered issue
+
+- All of the above passes with the same exact codebase (meaning if py_min was marked
+  as ok but then py_max runs required a code change in cocos/, then py_min should be unmarked)
+
+Test, part two:
+ 
+Scripts outside test/ should be tested, meaning manual run and eyeballing they look good
+Fix any discovered issue.
+Code fixes that touch cocos/ must uncheck the 'Test, part one', and all Test, part two 
+
+- all in samples samples/
+- in particular samples/tetrico should be tested with and without sound support
+- tools/editor.py
+- tools/gentileset.py
+- tools/skeleton/anim_player.py
+- tools/skeleton/animator.py
+- tools/skeleton/skeleton_editor.py
+- all apps under samples/
+
+
+Build docs first pass
+- build docs
+- fix errors and warnings
+- Navigate the resulting docs eyeballing all ok
+
+Fill boilerplate release data:
+
+- new big capabilities, if any, should be updated in
+    cocos/__init__.py docstring
+    README (used also as pypi project page, kept reST compatible)
+    docgen/programming_guide/introduction.txt
+
+- Update info about compatibility with python, pyglet and other libraries
+    - INSTALL (kept reST compatible)
+	- README
+    - docgen/compatibility_notes.txt
+    - setup.py
+	- the check over pyglet version in cocos/__init__.py
+
+- Decide cocos release version and date, then update related parts in
+    - cocos/__init__.py (not in the license header)
+    - setup.py
+	- documentation gets version from docgen/conf.py, which gets from cocos/__init__.py
+    - CHANGELOG
+	- INSTALL
+
+- Update copyright year range
+	- in LICENSE
+    - Mass update license header in the py files, care to not target files which needs other license header. Use tools/change_license.py for this.
+
+Packaging round1:
+
+- initial test build (don't care for docs here)
+    - update pip before starting build
+    - built source package with::
+	
+	   `python setup.py sdist >../sdist.log` and
+
+	  This will leave the built source package under dist/, typically a cocos2d-0.X.Y.tar.gz or cocos2d-0.X.Y.zip
+	  
+- test pakages contents are as expected
+	- pkg has all the files in the Working Directory, except for dist/ and cached python's .pyc (decompress the pkg and use Meld or other directory compare app)
+	
+- pip installation works as expected installing from the source package
+
+  - Create a new py_env, activate
+  - Update pip
+  - pip install from pkg:
+       pip install cocos2d-0.X.Y.tar.gz
+  - No errors should have been reported by pip
+  - The dependencies pulled from pypi come at the expected versions  
+  - Check all the files under cocos/ are present at the directory pip installed the package, use Meld or other directory compare tool. To know where pip installed the package issue a 'python -c "import cocos;print(cocos.__file__)"'
+  - smoketest installed cocos is functional: install numpy and pillow, then do a quick run to the following scripts, they should run ok
+	- test/test_particle_meteor.py
+	- test/test_tiles.py
+	- test/test_sprite.py
+	- samples/tetrico/tetrico.py , before and after installing  ffmpeg
+
+Final docs pass:
+
+- Final revision to text files in the top trunk directory
+    - CHANGELOG
+    - LICENSE
+    - INSTALL (kept reST compatible)
+    - README  (kept reST compatible)
+
+- Verify README and INSTALL are reST compatible
+
+- Copy INSTALL to docgen/programming_guide/installation.txt
+- if changed, copy  CONTRIBUTING.rst to docgen/dev/CONTRIBUTING.txt
+
+Final build:
+
+- clean build the docs
+- copy the contents of docgen/_build/html to docs/
+- do a 'make clean' from the docgen dir  
+- build the final package that includes the docs
+- verify that non-code resources are included (currently docs\, cocos\resources)
+- verify install works
+
+- Update cocos-site repo news and docs, repo at https://github.com/los-cocos/cocos-site
+
+Upload to pypi:
+
+- upload the final build
+- download from pypi, must compare equal with the original final build file      
+- verify the pypi's cocos2d page looks okay
+
+Final Tasks:
+
+- Tag the release in the repo
+    git tag -a release-X.Y.Z -m "tagging release-X.Y.Z"
+    git push --follow-tags
+
+- Announce the release.
+	- cocos list
+	- pyar discourse
+	- pyglet list
+
+- If needed, update release_checklist.txt and  release_checklist_details.txt , then regenerate release_checklist_details.html and commit & push the changes
+
+- Congratulate yourself and relax :-)
+
+Notes
+=====
+
+(Write here things discovered that may need further actions)
+

@@ -1,5 +1,8 @@
 v0.6.10 - next release
 
+  - updated documentation for release, removed now unused tools/autotest
+  - added py39 to TravisCI
+  - fixed W605 DeprecationWarning, invalid escape sequence
   - simplified running a mix of unittests and other tests, eliminated use of env var cocos_utest
   
 v0.6.9 - November 7, 2020

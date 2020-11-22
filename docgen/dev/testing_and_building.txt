@@ -1,0 +1,13 @@
+============================
+Testing and Building Release
+============================
+
+Testing is done by running the cocos-testcmp app which runs the unittests in utest/ and helps compare snapshots of tests/
+
+See the cocos-testcmp readme for details, https://github.com/los-cocos/cocos-testcmp
+
+Normal testing, like the one needed with a PR involves at the least one run with cocos-testcmp
+
+To release a new version of cocos use tools/release_checklist.txt and release_checklist_details.html
+
+

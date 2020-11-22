@@ -1,0 +1,73 @@
+=================================================
+Reference dependencies used on last cocos2d build
+=================================================
+
+Just for reference, package versions used in the cocos_build venv while building 0.6.9 on py3.7
+
+Notice that for testing more versions were used with cocos-testcmp
+
+The main dependencies, including unittesting (pytest), doc builder (Sphinx), pypi uploader (twine) were::
+
+	six==1.15.0
+	numpy==1.18.4
+	Pillow==7.1.2
+	pyglet==1.5.9
+	pyglet-ffmpeg2==0.1.17
+	pytest==6.0.1
+	Sphinx==3.2.0
+	twine==3.2.0
+  
+Which explodes by way of Sphinx, pytest, twine dependencies to::
+ 
+	(py37_cocos) D:\dev\cocos2020>python -m pip freeze
+	alabaster==0.7.12
+	atomicwrites==1.4.0
+	attrs==20.3.0
+	Babel==2.9.0
+	bleach==3.2.1
+	certifi==2020.6.20
+	chardet==3.0.4
+	cocos2d==0.6.9
+	colorama==0.4.4
+	docutils==0.16
+	future==0.18.2
+	idna==2.10
+	imagesize==1.2.0
+	importlib-metadata==2.0.0
+	iniconfig==1.1.1
+	Jinja2==2.11.2
+	keyring==21.5.0
+	MarkupSafe==1.1.1
+	more-itertools==8.6.0
+	numpy==1.19.4
+	packaging==20.4
+	Pillow==7.2.0
+	pkginfo==1.6.1
+	pluggy==0.13.1
+	py==1.9.0
+	pyglet==1.5.8
+	pyglet-ffmpeg2==0.1.17
+	Pygments==2.7.2
+	pyparsing==2.4.7
+	pytest==6.0.1
+	pytz==2020.4
+	pywin32-ctypes==0.2.0
+	readme-renderer==28.0
+	requests==2.24.0
+	requests-toolbelt==0.9.1
+	rfc3986==1.4.0
+	six==1.15.0
+	snowballstemmer==2.0.0
+	Sphinx==3.2.0
+	sphinxcontrib-applehelp==1.0.2
+	sphinxcontrib-devhelp==1.0.2
+	sphinxcontrib-htmlhelp==1.0.3
+	sphinxcontrib-jsmath==1.0.1
+	sphinxcontrib-qthelp==1.0.3
+	sphinxcontrib-serializinghtml==1.1.4
+	toml==0.10.2
+	tqdm==4.51.0
+	twine==3.2.0
+	urllib3==1.25.11
+	webencodings==0.5.1
+	zipp==3.4.0
