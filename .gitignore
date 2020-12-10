@@ -19,3 +19,4 @@ docgen/_build
 
 # pyenv
 .python-version
+.DS_Store
