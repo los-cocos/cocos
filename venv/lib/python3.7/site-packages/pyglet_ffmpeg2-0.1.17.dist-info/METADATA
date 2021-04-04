@@ -1,0 +1,13 @@
+Metadata-Version: 2.1
+Name: pyglet-ffmpeg2
+Version: 0.1.17
+Summary: Platform wheels with ffmpeg binaries and ctypes for pyglet
+Home-page: https://github.com/pythonarcade/pyglet-ffmpeg
+Author: Paul Craven
+Author-email: paul@cravenfamily.com
+License: UNKNOWN
+Requires-Dist: pyglet (>=1.4.4)
+
+pyglet-ffmpeg
+
+

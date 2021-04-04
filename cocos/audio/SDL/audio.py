@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """Access to the raw audio mixing buffer.
 """
 
@@ -8,6 +7,7 @@ __version__ = '$Id: $'
 
 from ctypes import *
 import sys
+from ctypes import SetPointerType
 
 from . import array
 from . import constants
@@ -48,6 +48,7 @@ class SDL_AudioSpec(Structure):
                 ('size', c_uint),
                 ('_callback', _SDL_AudioSpec_fn),
                 ('_userdata', c_void_p)]
+
 
 _SDL_AudioCVT_p = POINTER('SDL_AudioCVT')
 
@@ -91,6 +92,7 @@ class SDL_AudioCVT(Structure):
                 ('filters', _SDL_AudioCVT_filter_fn * 10),
                 ('filter_index', c_int)]
 
+
 SetPointerType(_SDL_AudioCVT_p, SDL_AudioCVT)
 
 # SDL_AudioInit and SDL_AudioQuit marked private
@@ -128,6 +130,7 @@ def _ctype_audio_format(fmt):
         return c_short
     else:
         raise TypeError('Unsupported format %r' % fmt)
+
 
 _SDL_OpenAudio = dll.private_function('SDL_OpenAudio',
                                       arg_types=[POINTER(SDL_AudioSpec), POINTER(SDL_AudioSpec)],
@@ -207,7 +210,7 @@ def SDL_OpenAudio(desired, obtained):
     ctype = [_ctype_audio_format(desired.format)]  # List, so mutable
 
     def cb(data, stream, len):
-        ar = array.SDL_array(stream, len/sizeof(ctype[0]), ctype[0])
+        ar = array.SDL_array(stream, len / sizeof(ctype[0]), ctype[0])
         callback(userdata, ar)
 
     desired._callback = _SDL_AudioSpec_fn(cb)
@@ -216,6 +219,7 @@ def SDL_OpenAudio(desired, obtained):
         obtained.userdata = desired.userdata
         obtained.callback = desired.callback
         ctype[0] = _ctype_audio_format(obtained.format)
+
 
 SDL_GetAudioStatus = dll.function('SDL_GetAudioStatus',
                                   '''Get the current audio state.
@@ -278,7 +282,7 @@ def SDL_LoadWAV_RW(src, freesrc):
     _SDL_LoadWAV_RW(src, freesrc, spec, byref(audio_buf), byref(audio_len))
     ctype = _ctype_audio_format(spec.format)
     return (spec,
-            array.SDL_array(audio_buf, audio_len.value/sizeof(ctype), ctype))
+            array.SDL_array(audio_buf, audio_len.value / sizeof(ctype), ctype))
 
 
 def SDL_LoadWAV(file):
@@ -291,6 +295,7 @@ def SDL_LoadWAV(file):
     :see: `SDL_LoadWAV_RW`
     """
     return SDL_LoadWAV_RW(rwops.SDL_RWFromFile(file, 'rb'), 1)
+
 
 _SDL_FreeWAV = dll.private_function('SDL_FreeWAV',
                                     arg_types=[POINTER(c_ubyte)],
@@ -306,6 +311,7 @@ def SDL_FreeWAV(audio_buf):
 
     """
     _SDL_FreeWAV(audio_buf.as_bytes().as_ctypes())
+
 
 _SDL_BuildAudioCVT = dll.private_function('SDL_BuildAudioCVT',
                                           arg_types=[POINTER(SDL_AudioCVT), c_ushort, c_ubyte, c_uint,
@@ -336,6 +342,7 @@ def SDL_BuildAudioCVT(src_format, src_channels, src_rate,
     _SDL_BuildAudioCVT(cvt, src_format, src_channels, src_rate,
                        dst_format, dst_channels, dst_rate)
     return cvt
+
 
 SDL_ConvertAudio = dll.function('SDL_ConvertAudio',
                                 '''Convert audio data in-place.
@@ -395,6 +402,7 @@ def SDL_MixAudio(dst, src, length, volume):
     elif len(src) < length:
         raise TypeError('Source buffer too small')
     _SDL_MixAudio(dst, src, length, volume)
+
 
 SDL_LockAudio = dll.function('SDL_LockAudio',
                              '''Guarantee the callback function is not running.

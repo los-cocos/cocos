@@ -6,8 +6,8 @@
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: $'
 
-import cocos.audio.SDL as SDL
 from ctypes import *
+import cocos.audio.SDL as SDL
 
 from . import dll
 

@@ -2,7 +2,9 @@ from __future__ import division, print_function, unicode_literals
 
 # set the desired pyglet mockup
 import sys
+import os
 sys.path.insert(0,'pyglet_mockup1')
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import pyglet
 assert pyglet.mock_level == 1 
 

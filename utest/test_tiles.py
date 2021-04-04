@@ -11,6 +11,7 @@ __docformat__ = 'restructuredtext'
 __version__ = '$Id: MAP_MODEL.py 1078 2007-08-01 03:43:38Z r1chardj0n3s $'
 
 # set the desired pyglet mockup
+import math
 import sys
 sys.path.insert(0,'pyglet_mockup1')
 import pyglet
