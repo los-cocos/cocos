@@ -4,6 +4,9 @@ pillow advice:
   - if using pyglet < 1.5.9 then use  pillow < 8.0
   - in py39 + windows pillow supports only pillow>8; use with pyglet>=1.5.9 and <2 
 
+pyglet advice:
+  - do not use pyglet 1.5.16 due to text problems, see https://github.com/pyglet/pyglet/issues/378
+
 cocos 0.6.9
 -----------
 
