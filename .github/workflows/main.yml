@@ -38,4 +38,5 @@ jobs:
           python -m pip install -e .
       - name: Run utest 
         run: |
-          python -m pytest utest
+          cd utest
+          python -m pytest

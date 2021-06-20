@@ -41,8 +41,8 @@ f.close()
 
 install_requires=['six>=1.4', ]
 dependency_links = []
-if os.environ.get("TRAVIS", False):
-    # Travis CI run
+if os.environ.get("CI", False):
+    # Github actions CI run
     # We don't want to install pyglet
     pass
 else:
