@@ -2,8 +2,8 @@
 cocos2d
 =======
 
-.. image:: https://travis-ci.org/los-cocos/cocos.svg?branch=master
-   :target: https://travis-ci.org/los-cocos
+.. image:: https://github.com/los-cocos/cocos/actions/workflows/main.yml/badge.svg
+   :target: https://github.com/los-cocos/cocos/actions
 
 | A framework for building 2D games, demos, and other graphical/interactive applications.
 | Draws using OpenGL, which is hardware accelerated.
