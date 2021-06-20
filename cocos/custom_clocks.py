@@ -170,13 +170,13 @@ class ScreenReaderClock(pyglet.clock.Clock):
         self.last_ts = ts
 
         # Call functions scheduled for every frame
-        # Dupe list just in case one of the items unchedules itself
+        # Dupe list just in case one of the items unschedules itself
         for item in list(self._schedule_items):
             item.func(delta_t, *item.args, **item.kwargs)
 
         # Call all scheduled interval functions and reschedule for future.
         need_resort = False
-        # Dupe list just in case one of the items unchedules itself
+        # Dupe list just in case one of the items unschedules itself
         for item in list(self._schedule_interval_items):
             if item.next_ts > ts:
                 break
@@ -329,13 +329,13 @@ class AutotestClock(pyglet.clock.Clock):
         self.last_ts = ts
 
         # Call functions scheduled for every frame
-        # Dupe list just in case one of the items unchedules itself
+        # Dupe list just in case one of the items unschedules itself
         for item in list(self._schedule_items):
             item.func(delta_t, *item.args, **item.kwargs)
 
         # Call all scheduled interval functions and reschedule for future.
         need_resort = False
-        # Dupe list just in case one of the items unchedules itself
+        # Dupe list just in case one of the items unschedules itself
         for item in list(self._schedule_interval_items):
             if item.next_ts > ts:
                 break

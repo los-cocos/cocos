@@ -421,7 +421,7 @@ class Action(object):
 
     def init(*args, **kwargs):
         """
-        Gets called by __init__ with all the parameteres received,
+        Gets called by __init__ with all the parameters received,
         At this time the target for the action is unknown.
         Typical use is store parameters needed by the action.
         """

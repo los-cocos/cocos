@@ -241,7 +241,7 @@ class CocosNode(object):
         The callback function prototype is the same as for :meth:`schedule`.
 
         This function is a wrapper to ``pyglet.clock.schedule_interval``.
-        It has the additional benefit that all calllbacks are paused and
+        It has the additional benefit that all callbacks are paused and
         resumed when the node leaves or enters a scene.
 
         You should not have to schedule things using pyglet by yourself.
@@ -274,7 +274,7 @@ class CocosNode(object):
                 pass
 
         This function is a wrapper to ``pyglet.clock.schedule``.
-        It has the additional benefit that all calllbacks are paused and
+        It has the additional benefit that all callbacks are paused and
         resumed when the node leaves or enters a scene.
 
         You should not have to schedule things using pyglet by yourself.
@@ -299,7 +299,7 @@ class CocosNode(object):
         are removed. If the function was not scheduled, no error is raised.
 
         This function is a wrapper to pyglet.clock.unschedule.
-        It has the additional benefit that all calllbacks are paused and
+        It has the additional benefit that all callbacks are paused and
         resumed when the node leaves or enters a scene.
 
         You should not unschedule things using pyglet that where scheduled

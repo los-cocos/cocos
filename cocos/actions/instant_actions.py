@@ -148,7 +148,7 @@ class CallFunc(InstantAction):
 
 
 class CallFuncS(CallFunc):
-    """An action that will call a funtion with the target as the first argument
+    """An action that will call a function with the target as the first argument
 
     Example::
 
