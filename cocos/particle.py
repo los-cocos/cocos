@@ -52,7 +52,7 @@ from cocos.director import director
 from cocos.shader import ShaderProgram
 
 # for dev and diagnostic, None means real automatic, True / False means
-# return this value inconditionally
+# return this value unconditionally
 forced_point_sprites = None
 
 
@@ -61,7 +61,7 @@ def point_sprites_available():
     Returns:
         bool: tells if ``point sprites`` are available.
 
-    For development and diagonostic :class:`cocos.particle.forced_point_sprites`
+    For development and diagnostic :class:`cocos.particle.forced_point_sprites`
     could be set to force the desired return value.
     """
     if forced_point_sprites is not None:

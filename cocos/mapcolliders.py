@@ -242,7 +242,7 @@ class RectMapCollider(object):
             new (Rect) : tentative actor's rect after step
 
         Decides if there is a collision with obj when moving ``last`` -> ``new``
-        and then returns the minimal correctioin in each axis as to not collide.
+        and then returns the minimal correction in each axis as to not collide.
         
         It can be overridden to be more selective about when a collision exists
         (see the matching method in :class:`RectMapWithPropsCollider` for example).

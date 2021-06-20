@@ -480,7 +480,7 @@ class EditLayer(cocos.layer.Layer):
         # how-to update collman: remove/add vs clear/add all
         # when total number of actors is low anyone will be fine,
         # with high numbers, most probably we move only a small fraction
-        # For simplicity I choose remove/add, albeit a hybrid aproach
+        # For simplicity I choose remove/add, albeit a hybrid approach
         # can be implemented later
         self.set_selection_in_collman(False)
 #        print "begin drag: drag_selecting, drag_moving", self.drag_selecting, self.drag_moving

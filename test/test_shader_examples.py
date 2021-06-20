@@ -142,7 +142,7 @@ class ProgramUntexturedFixedHardcodedColor(shader.ShaderProgram):
     Texture info, like texture coords in each vertex or actual active textures
     is ignored.
 
-    Any color info except the harcoded color is ignored.
+    Any color info except the hardcoded color is ignored.
 
     gl_FragColor is a predefined output variable for fragment shaders; it must
     be set in the fragment code or the object will be invisible.

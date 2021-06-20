@@ -15,7 +15,7 @@ Implementation description
       case generator approach was selected
           - base cases depict qualitative diferent situations as a
              (map, actor_rect, push, signed free axis vector)
-          - for each parametrizable value , a set of values of
+          - for each parameterizable value , a set of values of
             interest is defined
           - code will walk the (base cases, params values) generating the
             concrete cases to validate
@@ -25,7 +25,7 @@ Implementation description
         map: the basic form and orientation in the situation
         cell_size, actor_size: mostly
            actor side z <=> cell side z
-           actor side odd or even (because .center assings; division_errors?)
+           actor side odd or even (because .center assigns; division_errors?)
         push style: dx, dy
         actor start position: move the start position along the wall to cover
           all int alignements with the grid, ie do offsets 1..cell_width if

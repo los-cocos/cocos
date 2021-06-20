@@ -19,7 +19,7 @@ import pprint
 import a0_benchmark_time_per_frame as cmark 
 
 # --> specify comparison variants
-# each variant is a dict specifing the cases to compare
+# each variant is a dict specifying the cases to compare
 
 # how to specify cases ('placeholder' would be replaced with implementation_shortname
 ##cases = {

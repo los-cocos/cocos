@@ -95,7 +95,7 @@ class Label(TextElement):
 
     Functionality other that the one common to all cococsnodes, except 'opacity', is
     provided by the member 'element' , which is the underlying pyglet object.
-    The undelying pyglet object is pyglet.text.Label
+    The underlying pyglet object is pyglet.text.Label
 
     For pyglet 1.1.4 the available init keyword arguments are
         - font_name: Font family name(s); the first matching name is used
@@ -120,7 +120,7 @@ class HTMLLabel(TextElement):
 
     Functionality other that the one common to all cococsnodes, except 'opacity', is
     provided by the member 'element' , which is the underlying pyglet object.
-    The undelying pyglet object is pyglet.text.HTMLLabel.
+    The underlying pyglet object is pyglet.text.HTMLLabel.
 
     For pyglet 1.1.4 the available init keyword arguments are
         - location: Location object for loading images referred to in the document. By default, the working directory is used.
@@ -218,7 +218,7 @@ class PygletRichLabel(pyglet.text.DocumentLabel):
 class RichLabel(TextElement):
     """displays pyglet attributed (rich) text
 
-    The undelying pyglet object is a custom, cocos provided PygletRichLabel
+    The underlying pyglet object is a custom, cocos provided PygletRichLabel
     element, subclass of pyglet.text.DocumentLabel.
 
     For pyglet 1.1.4 the available init keyword arguments are

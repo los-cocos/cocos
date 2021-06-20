@@ -4,7 +4,7 @@
 
 This module contains classes for loading Sound objects and controlling
 playback. The mixer module is optional and depends on SDL_mixer. Your
-program should test that pygame.mixer is available and intialized before
+program should test that pygame.mixer is available and initialized before
 using it.
 
 The mixer module has a limited number of channels for playback of sounds.

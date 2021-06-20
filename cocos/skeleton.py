@@ -372,7 +372,7 @@ class Animation(object):
             who.pose_from(prev)
             return
 
-        # we find the dt betwen prev and next and pose from it
+        # we find the dt between prev and next and pose from it
         ft = (nt-dt) / (nt-pt)
 
         who.pose_from(next.interpolated_to(prev, ft))
