@@ -35,7 +35,7 @@ from setuptools import setup, find_packages
 
 import os
 
-f = open('README.rst','rU')
+f = open('README.rst','r')
 long_description = f.read()
 f.close()
 
