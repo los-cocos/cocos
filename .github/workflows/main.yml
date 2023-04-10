@@ -2,7 +2,7 @@
 
 name: UTEST
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
@@ -21,14 +21,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, pypy3]
-        
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "pypy3.7"]
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install
@@ -36,7 +36,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pytest
           python -m pip install -e .
-      - name: Run utest 
+      - name: Run utest
         run: |
           cd utest
           python -m pytest
