@@ -1,5 +1,6 @@
 v0.6.10 - next release
 
+  - fixed python 3.11 compatibility in setup.py 
   - updated documentation for release, removed now unused tools/autotest
   - added py39 to TravisCI
   - fixed W605 DeprecationWarning, invalid escape sequence

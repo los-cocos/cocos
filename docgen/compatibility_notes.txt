@@ -7,6 +7,15 @@ pillow advice:
 pyglet advice:
   - do not use pyglet 1.5.16 due to text problems, see https://github.com/pyglet/pyglet/issues/378
 
+
+cocos 0.6.10
+------------
+
+Tested with python 3.11 and 3.8, pyglet 1.5.9 and 1.5.27
+
+Noticed with some AMD graphics drivers on Windows that programs randomly die before showing the cocos window, no traceback nor error mesages; fixed using drivers from whql-amd-software-adrenalin-edition-23.7.1-win10-win11-july6.exe
+
+
 cocos 0.6.9
 -----------
 
@@ -33,12 +42,14 @@ cocos 0.6.9
   + a path in a "source" attrib is relative to the node where the "source" happens
   + a property of type "file" is relative to the <map> node  
 
+
 cocos 0.6.8
 -----------
 
 Tested with python 3.6+ , python 2.x not supported but should run
 No changes in cocos API
 Prefered pyglet 1.4.10+ (2.x unsupported, 1.5 unstable)
+
 
 cocos 0.6.7
 -----------
@@ -73,11 +84,13 @@ Some classes in pyglet.image eliminated some properties. The sugested fix is to 
 
 pyglet does not support anymore AVBin audio / video, now it uses ffmpeg v4
 
+
 cocos 0.6.6
 -----------
 
     - this is exactly 0.6.5 except that pip or setup.py install will select pyglet < 1.4
     - this version is not compatible with pyglet 1.4
+
 
 cocos 0.6.5
 -----------
@@ -87,6 +100,7 @@ cocos 0.6.5
     - This cocos version can also run with pyglet 1.2.x
     - Next cocos version will drop support for python 2.6
     - Python 2.7 support can end at any future cocos release, without further advice: if pyglet drops it or a cocos new feature requires more than trivial compatibility code, then cocos will be py3 only
+
 
 cocos 0.6.4
 -----------

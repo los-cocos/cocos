@@ -47,13 +47,13 @@ six and pyglet
 Compatibility
 ^^^^^^^^^^^^^
 
-Compatibility notes at the time of writing, November 2020
+Compatibility notes at the time of writing, July 2023
 
     + python : cocos needs python 3.6+ (2.7 and 3.3+ should still work but is unsupported)
 	
-    + pyglet : pyglet >= 1.4.10, < 2.0  (prefer 1.4.x, 1.5 is unstable)
+    + pyglet : pyglet >= 1.4.10, < 2.0
 	
-	+ Just for reference, pyglet 1.5.8, the last (atm) released pyglet works fine. 
+	+ Just for reference, pyglet 1.5.27, the last (atm) released pyglet works fine. 
 
 Installing
 ^^^^^^^^^^
@@ -67,14 +67,14 @@ While::
 works, you will miss the docs and code samples. Its is therefore recommended to
 
     + install six and pyglet, pay attention to the pyglet version, see above 
-    + download cocos2d-0.6.9.zip (or cocos2d-0.6.9.tar.gz )
+    + download cocos2d-0.6.10.zip (or cocos2d-0.6.10.tar.gz )
 	+ from https://pypi.python.org/pypi/cocos2d/
-    + decompress to a convenient location, the top dir will be cocos2d-0.6.9
-    + the html docs will be in cocos2d-0.6.9/doc/html
-    + useful code samples will be in cocos2d-0.6.9/test, cocos2d-0.6.9/samples, cocos2d-0.6.9/utest
+    + decompress to a convenient location, the top dir will be cocos2d-0.6.10
+    + the html docs will be in cocos2d-0.6.10/doc/html
+    + useful code samples will be in cocos2d-0.6.10/test, cocos2d-0.6.10/samples, cocos2d-0.6.10/utest
     + install by::
 
-        cd cocos2d-0.6.9
+        cd cocos2d-0.6.10
         python -m pip install -e .
 
       or alternatively by pointing that directory from a .pth or PYTHONPATH
