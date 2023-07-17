@@ -2,7 +2,7 @@ Installation, Dependencies and Compatibility
 ============================================
 
 .. contents::
-    :local:
+	:local:
 
 Dependencies
 ^^^^^^^^^^^^
@@ -10,34 +10,33 @@ Dependencies
 most of functionality
 ______________________
 
-    + six https://pypi.python.org/pypi/six/
-    + pyglet https://github.com/pyglet/pyglet
+	+ six https://pypi.python.org/pypi/six/
+	+ pyglet https://github.com/pyglet/pyglet
 
 particles support
 _________________
 
-    + numpy www.numpy.org
+	+ numpy www.numpy.org
 
 audio and video support by pyglet and ffmpeg
 ____________________________________________
 
-    + for Windows and Mac the simplest is 'python -m pip install pyglet-ffmpeg2'
-    + for Linux you should use your package manager to get ffmpeg, version 4.x is
-	the one tested with pyglet.
+	+ for Windows and Mac the simplest is 'python -m pip install pyglet-ffmpeg2'
+	+ for Linux you should use your package manager to get ffmpeg, version 4.x or 5.x is the one tested with pyglet.
 
 support for extra image file formats
 ____________________________________
 
-    + python -m pip install pillow
-    + if using pyglet < 1.5.9 then must be pillow<8
-    + in windows, if using python > 3.9, pillow>8 and pyglet>=1.5.9 is needed
+	+ python -m pip install pillow
+	+ if using pyglet < 1.5.9 then must be pillow<8
+	+ in windows, if using python > 3.9, pillow>8 and pyglet>=1.5.9 is needed
 
 audio support by SDL
 ____________________
 
-    + in Windows, pygame http://www.pygame.org
-    + in unix-like OSes libraries sdl 1.2 and sdl-mixer 1.2; in debian/ubuntu their packages are libsdl1.2 and libsdl-mixer1.2
-    + in Mac, there's no confirmed info. Should be similar to unix.
+	+ in Windows, pygame http://www.pygame.org
+	+ in unix-like OSes libraries sdl 1.2 and sdl-mixer 1.2; in debian/ubuntu their packages are libsdl1.2 and libsdl-mixer1.2
+	+ in Mac, there's no confirmed info. Should be similar to unix.
 
 
 What explicit dependencies are declared in the setup.py ?
@@ -49,11 +48,13 @@ Compatibility
 
 Compatibility notes at the time of writing, July 2023
 
-    + python : cocos needs python 3.6+ (2.7 and 3.3+ should still work but is unsupported)
+	+ python : cocos needs python 3.6+ (2.7 and 3.3+ should still work but is unsupported)
 	
-    + pyglet : pyglet >= 1.4.10, < 2.0
+	+ pyglet : pyglet >= 1.4.10, < 2.0
 	
-	+ Just for reference, pyglet 1.5.27, the last (atm) released pyglet works fine. 
+	+ Just for reference, pyglet 1.5.27, the last released pyglet in the 1.5.x series (atm) works fine. 
+	
+	+ cocos is not compatible with pyglet 2+
 
 Installing
 ^^^^^^^^^^
@@ -62,27 +63,27 @@ Have a modern setuptools or pip installed.
 
 While::
 
-    python -m pip install cocos2d
+	python -m pip install cocos2d
 
 works, you will miss the docs and code samples. Its is therefore recommended to
 
-    + install six and pyglet, pay attention to the pyglet version, see above 
-    + download cocos2d-0.6.10.zip (or cocos2d-0.6.10.tar.gz )
+	+ install six and pyglet, pay attention to the pyglet version, see above 
+	+ download cocos2d-0.6.10.zip (or cocos2d-0.6.10.tar.gz )
 	+ from https://pypi.python.org/pypi/cocos2d/
-    + decompress to a convenient location, the top dir will be cocos2d-0.6.10
-    + the html docs will be in cocos2d-0.6.10/doc/html
-    + useful code samples will be in cocos2d-0.6.10/test, cocos2d-0.6.10/samples, cocos2d-0.6.10/utest
-    + install by::
+	+ decompress to a convenient location, the top dir will be cocos2d-0.6.10
+	+ the html docs will be in cocos2d-0.6.10/doc/html
+	+ useful code samples will be in cocos2d-0.6.10/test, cocos2d-0.6.10/samples, cocos2d-0.6.10/utest
+	+ install by::
 
-        cd cocos2d-0.6.10
-        python -m pip install -e .
+		cd cocos2d-0.6.10
+		python -m pip install -e .
 
-      or alternatively by pointing that directory from a .pth or PYTHONPATH
-    + All of cocos should be usable now, with the possible exceptions
+	  or alternatively by pointing that directory from a .pth or PYTHONPATH
+	+ All of cocos should be usable now, with the possible exceptions
 
-        - cocos particles
-        - SDL audio backend
-        - ffmpeg audio-video backend 
+		- cocos particles
+		- SDL audio backend
+		- ffmpeg audio-video backend 
 
 If you want to add these, look at the dependencies section.
 

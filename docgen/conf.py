@@ -49,7 +49,7 @@ director.init(300,100)
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = '1.3' # latest build uses 2.2.0
+needs_sphinx = '1.3' # latest build uses 3.2.0
 
 autosummary_generate = True
 
@@ -83,7 +83,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'cocos2d'
-copyright = u'2008-2020, cocos\'s team'
+copyright = u'2008-2023, cocos\'s team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -101,7 +101,7 @@ release = cocos.version
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
 #today = ''
-today = "2020 11 07"
+today = "2023 07 16"
 # Else, today_fmt is used as the format for a strftime call.
 #today_fmt = '%B %d, %Y'
 

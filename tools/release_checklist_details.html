@@ -1,20 +1,20 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.16: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.20.1: https://docutils.sourceforge.io/" />
 <title>release_checklist_details.txt</title>
 <style type="text/css">
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 7952 2016-07-26 18:15:59Z milde $
+:Id: $Id: html4css1.css 8954 2022-01-20 10:10:25Z milde $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
 
-See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
 customize this style sheet.
 */
 
@@ -378,7 +378,7 @@ rst2html.py  --traceback  release_checklist_details.txt &gt; release_checklist_d
 <li>Make a 'cocos_build' python Virtual Environment (venv) to work, <a class="reference external" href="#create-and-use-venvs">venvs</a></li>
 <li><a class="reference external" href="#using-pip">Use pip</a> to upgrade the pip in the venv</li>
 <li>Install normal dependencies pillow and numpy from pypi</li>
-<li>Install Sphinx for docs</li>
+<li>Install Sphinx for docs. Last build (2023) installed markupsafe==2.0.1, jinja2==2.11.2, sphinx==3.2.0 (in that order)</li>
 <li>Use pip to install cocos2d into 'cocos_build' in developer mode</li>
 </ul>
 </div>
@@ -386,7 +386,7 @@ rst2html.py  --traceback  release_checklist_details.txt &gt; release_checklist_d
 <h1>Test part1</h1>
 <p>While doing this keep notes about discoveries in python and libs versions required, they will be handy to update documentation.</p>
 <p>At least the combinations of (py_min, py_max) x (pyglet_min, pyglet_max), with special attention to (py_max, pyglet_max) should be tested.</p>
-<p>Use <a class="reference external" href="#Using-cocos-testcmp">cocos-testcmp</a> to run the unittests and compare snapshots with a know good reference.</p>
+<p>Use <a class="reference external" href="#using-cocos-testcmp">cocos-testcmp</a> to run the unittests and compare snapshots with a know good reference.</p>
 <p>For each python version supported, or at least py_min, py_max, do</p>
 <ul class="simple">
 <li>py_min: &lt;replace with desired value&gt; , pyglet_min: &lt;replace with desired value&gt;
@@ -420,7 +420,7 @@ Code fixes that touch cocos/ must uncheck the 'Test, part one', and all Test, pa
 <div class="section" id="build-docs-first-pass">
 <h1>Build docs first pass</h1>
 <ul class="simple">
-<li>Build docs <a class="reference external" href="#Build-docs">Build docs</a></li>
+<li><a class="reference external" href="#build-docs-details">Build docs</a></li>
 <li>Fix errors and warnings</li>
 <li>Navigate the resulting docs eyeballing all ok</li>
 </ul>
@@ -532,7 +532,7 @@ pip install cocos2d-0.X.Y.tar.gz
 </dd>
 </dl>
 </li>
-<li>Verify README and INSTALL are <a class="reference external" href="#Check-a-file-is-reST-compatible">reST compatible</a></li>
+<li>Verify README and INSTALL are <a class="reference external" href="#check-a-file-is-rest-compatible">reST compatible</a></li>
 <li>Copy INSTALL to docgen/programming_guide/installation.txt</li>
 <li>if changed, copy  CONTRIBUTING.rst to docgen/dev/CONTRIBUTING.txt</li>
 </ul>
@@ -541,7 +541,7 @@ pip install cocos2d-0.X.Y.tar.gz
 <h1>Final build</h1>
 <ul class="simple">
 <li>clean build the docs</li>
-<li>copy the contents of docgen/_build/html to docs/</li>
+<li>copy the contents of <cite>docgen/_build/html</cite> to docs/</li>
 <li>do a 'make clean' from the docgen dir</li>
 <li>build the final package that includes the docs</li>
 <li>verify that non-code resources are included (currently docs, cocosresources)</li>
@@ -552,7 +552,7 @@ pip install cocos2d-0.X.Y.tar.gz
 <div class="section" id="upload-to-pypi">
 <h1>Upload to pypi</h1>
 <ul class="simple">
-<li><a class="reference external" href="#Details-upload-to-pypi">upload</a> the final build to pypi</li>
+<li><a class="reference external" href="#details-upload-to-pypi">upload</a> the final build to pypi</li>
 <li>download from pypi, must compare equal with the original final build file</li>
 <li>verify the pypi's cocos2d page looks okay</li>
 </ul>
@@ -707,33 +707,67 @@ python -m pip install -e dir_z
 <p>Instructions to run in cocos-testcmp's Readme</p>
 </div>
 <div class="section" id="build-docs-details">
-<h2>Build-docs-details</h2>
+<h2>Build docs details</h2>
 <ul>
+<li><p class="first">Last build (2023) installed markupsafe==2.0.1, jinja2==2.11.2, sphinx==3.2.0 (in that order)</p>
+</li>
 <li><p class="first">set the SPHINXDIR environment to the (venv dir)/Scripts</p>
 </li>
 <li><p class="first">cd docgen</p>
 </li>
 <li><p class="first">to clean, <cite>make clean</cite> in Windows, <cite>makefile clean</cite> in linux</p>
 </li>
-<li><p class="first">to build, <cite>make build</cite> in Windows, <cite>makefile build</cite> in linux</p>
+<li><p class="first">to build, <cite>make html</cite> in Windows, <cite>makefile html</cite> in linux</p>
 </li>
 <li><p class="first">the build will create a log with warnings and errors, docgen/warnings.log</p>
 </li>
-<li><p class="first">some warnings are expected, in windows without sdl installed the build ends with 5 warnings:</p>
+<li><p class="first">some warnings are expected, in windows without sdl installed the build ends with 24 warnings:</p>
 <pre class="literal-block">
+WARNING: while setting up extension sphinx.addnodes: node class 'meta' is already registered, its visitors will be overridden
 WARNING: html_static_path entry '_static' does not exist
-WARNING: autodoc: failed to import module 'darwin' from module 'cocos.audio.SDL'; the following exception was raised:
-No module named 'Foundation'
-WARNING: autodoc: failed to import module 'sound' from module 'cocos.audio.SDL'; the following exception was raised:
-Dynamic library &quot;SDL_sound&quot; was not found
+WARNING: missing attribute mentioned in :members: or __all__: module cocos.audio, attribute SDL
+WARNING: missing attribute mentioned in :members: or __all__: module cocos.audio, attribute pygame
+WARNING: autodoc: failed to import module 'SDL' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.array' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.audio' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.constants' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.darwin' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.dll' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.endian' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.error' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.mixer' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.rwops' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.sound' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.timer' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'SDL.version' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'pygame' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'pygame.base' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'pygame.mixer' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'pygame.music' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
+WARNING: autodoc: failed to import module 'pygame.version' from module 'cocos.audio'; the following exception was raised:
+Dynamic library &quot;SDL&quot; was not found
 D:\dev\cocos2020\docgen\api\modules.txt: WARNING: document isn't included in any toctree
 D:\dev\cocos2020\docgen\euclid.txt: WARNING: document isn't included in any toctree
 </pre>
-<p>The first and the last two are expected warnings, disregard
-The second is an example of cross-compiling error ('darwin' used on mac OS), disregard references to platform specific modules
-The SDL one is expected because SDL was not installed; with SDL installed more sdl related errors will pop-up</p>
 </li>
-<li><p class="first">To start navigating the docs, open docgen_buildhtmlindex.html in a browser</p>
+<li><p class="first">To start navigating the docs, open <cite>docgen_buildhtmlindex.html</cite> in a browser</p>
 </li>
 </ul>
 </div>
