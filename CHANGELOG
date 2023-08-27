@@ -1,4 +1,8 @@
-v0.6.10 - next release
+v0.6.11 - next release
+
+  - fixed HDMI on Mac, #346, #303; thanks Didier Malenfant patch
+  
+v0.6.10 - 2023 07 17
 
   - fixed python 3.11 compatibility in setup.py 
   - updated documentation for release, removed now unused tools/autotest
