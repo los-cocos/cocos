@@ -48,3 +48,35 @@ class PlayAction(actions.InstantAction):
         # A shallow copy should be enough because sound effects are immutable
         # Also, we don't need to use the memo, because there can not be a cycle
         return PlayAction(self.sound)
+
+
+class PlayUntilFinishedAction(actions.Action):
+    def init(self, sound):
+        self.sound = sound
+        self.duration = self.sound.get_length()
+
+    def start(self):
+        if audio._working:
+            self.sound.play()
+
+    def stop(self):
+        if audio._working:
+            self.sound.stop()
+
+    def step(self, dt):
+        self._elapsed += dt
+        try:
+            self.update(min(1, self._elapsed / self.duration))
+        except ZeroDivisionError:
+            self.update(1.0)
+
+    def update(self, t):
+        pass
+
+    def done(self):
+        return self._elapsed >= self.duration
+
+    def __deepcopy__(self, memo):
+        # A shallow copy should be enough because sound effects are immutable
+        # Also, we don't need to use the memo, because there can not be a cycle
+        return PlayUntilFinishedAction(self.sound)
