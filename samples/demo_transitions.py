@@ -111,7 +111,8 @@ class GrossiniLayer2(Layer):
 
 if __name__ == "__main__":
     director.init(resizable=True)
-#    director.window.set_fullscreen(True)
+
+    # director.window.set_fullscreen(True)
 
     transition_list = [
         # ActionTransitions
@@ -151,6 +152,7 @@ if __name__ == "__main__":
     control1 = ControlLayer()
     control2 = ControlLayer()
     controlScene1 = Scene(c2, g, control2)
+
     controlScene2 = Scene(c1, g2, control2)
 
     control_p = 0

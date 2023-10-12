@@ -57,7 +57,7 @@ def SDL_VERSIONNUM(major, minor, patch):
 
     :rtype: int
     """
-    return x*1000 + y*100 + z
+    return major*1000 + minor*100 + patch
 
 SDL_Linked_Version = dll.function(
     'SDL_Linked_Version',

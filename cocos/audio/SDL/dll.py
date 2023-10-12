@@ -22,7 +22,7 @@ class _SDL_version(Structure):
 
     def __repr__(self):
         return '%d.%d.%d' % \
-            (self.major, self.minor, self.patch)
+               (self.major, self.minor, self.patch)
 
 
 def _version_parts(v):
@@ -97,8 +97,9 @@ class SDL_DLL:
         library = find_library(self.library_name)
         if library is None and version is not None:
             # try to lookup with version. this is useful in linux, sometimes
-            # there is'nt a libSDL.so but a libSDL-1.2.so
+            # there isn't a libSDL.so but a libSDL-1.2.so
             library = find_library("%s-%s" % (self.library_name, version))
+            print(library)
         if not library:
             raise ImportError('Dynamic library "%s" was not found' %
                               _platform_library_name(self.library_name))
@@ -185,6 +186,7 @@ class SDL_DLL:
                     '%s requires %s %s; currently using version %s' %
                     (name, self.library_name, _version_string(since),
                      _version_string(self._version)))
+
             if args:
                 _f._args = args
             _f.__doc__ = doc
@@ -256,6 +258,7 @@ class SDL_DLL:
         else:
             _f.__name__ = name
         return _f
+
 
 # Shortcuts to the SDL core library
 _dll = SDL_DLL('SDL', 'SDL_Linked_Version', '1.2')

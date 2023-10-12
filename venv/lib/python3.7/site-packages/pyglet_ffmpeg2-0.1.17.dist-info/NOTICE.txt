@@ -1,0 +1,4 @@
+This package is distributed under a license similar to pyglet, but
+eases the usage of ffmpeg binaries which are under the LGPL. We
+believe an intact redistribution of binaries is permitted. But this
+ultimately is your responsibility to verify.

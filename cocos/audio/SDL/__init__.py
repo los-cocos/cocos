@@ -73,6 +73,7 @@ def SDL_Init(flags):
         cocos.audio.SDL.darwin.init()
     return _SDL_Init(flags)
 
+
 _SDL_InitSubSystem = SDL_dll.private_function('SDL_InitSubSystem',
                                               arg_types=[ctypes.c_uint],
                                               return_type=ctypes.c_int)
@@ -92,6 +93,7 @@ def SDL_InitSubSystem(flags):
         import cocos.audio.SDL.darwin
         cocos.audio.SDL.darwin.init()
     return _SDL_InitSubSystem(flags)
+
 
 SDL_QuitSubSystem = SDL_dll.function('SDL_QuitSubSystem',
                                      '''Clean up specific SDL subsystems.
